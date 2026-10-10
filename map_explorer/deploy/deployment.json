@@ -1,14 +1,14 @@
 {
-  "release": "685ef8f803827350",
+  "release": "0740d13e50ad1027",
   "asset_files": 619,
   "maps": 17,
-  "total_bytes": 123007960,
+  "total_bytes": 123008140,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
   "paid_storage_bindings": [],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "c558f557-7efd-46e1-9900-d96dc0393e75",
+  "cloudflare_version_id": "8a9ded34-573a-44b4-8937-86940ee0f9c0",
   "verified_live": true,
   "checks": [
     "17-map inventory/motion data check passed: unique IDs, finite motion transforms, valid links/zones, unchanged texture polygon order",
@@ -21,6 +21,7 @@
     "Inspector motion button uses playback, not selection; targeted check confirms it starts immediately and preserves the 3D camera",
     "Brush collisions, brush bounds and linked trigger boxes share motion transforms; collider motion checked",
     "Conditions/consequences opens by default using stacked cards; script-dialog tables scoped to avoid original entity-table styling",
-    "Live revised application, stylesheet and motion-map data match local files through CLI HTTP"
+    "Live revised application, stylesheet and motion-map data match local files through CLI HTTP",
+    "Arrow keys alias WASD in Fly, with independent held-key state, no doubled speed, and text-entry/modal guards; syntax and live served application verified through CLI"
   ]
 }
