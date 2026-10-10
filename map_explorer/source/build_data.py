@@ -5,6 +5,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'source/tools'))
 import extract_gbsp as eg
 import render_annotated_maps as ra
+from feature_data import supplement
 names={'training':'Training','bank':'Bank','bar_r':'Downtown Bar','gas_r':'Gas Station','mbase':'Military Base','boat_a':'Capsized Boat A','boat_b':'Capsized Boat B','city_h':'City · hose','const_h':'Construction · hose','dock_h':'Dock · hose','oil_rig_h':'Oil Rig · hose'}
 manifest=[]
 for m in json.loads((ROOT/'source/manifest.json').read_text()):
@@ -20,6 +21,7 @@ for m in json.loads((ROOT/'source/manifest.json').read_text()):
   label=('S' if cat=='START' else 'N')+str(1+sum(a['category']==cat for a in markers))
   markers.append({'entity_index':idx,'label':label,'category':cat,'class':cls,'name':e.get('A_Name') or e.get('%name%',label),'x':loc[0],'y':loc[1],'z':loc[2],'scripts':'','victim_link':'','raw':e})
  modelByName={e['%name%']:models[int(e['Model'])] for e in entities if e.get('classname')=='%Model%' and 'Model' in e and 0<=int(e['Model'])<len(models)}
+ features,model_ids=supplement(ROOT,key,stem,entities,models,markers,p.get(24,b''))
  hiddenFaces=set()
  for e in entities:
   if e.get('classname')=='RCS_BoundsTrigger':
@@ -31,7 +33,7 @@ for m in json.loads((ROOT/'source/manifest.json').read_text()):
   raw=a['raw'];mod=modelByName.get(raw.get('C_Model')) or modelByName.get(raw.get('C_AnimModel0'))
   if mod:a['bounds']={'min':mod['mins'],'max':mod['maxs']}
   if raw.get('classname')=='RCS_BModel':
-   a['brush_bounds']=[{'model':model_name,'min':modelByName[model_name]['mins'],'max':modelByName[model_name]['maxs']} for field,model_name in sorted(raw.items()) if field.startswith('C_AnimModel') and model_name in modelByName]
+   a['brush_bounds']=[{'model':model_name,'model_id':model_ids[model_name],'min':modelByName[model_name]['mins'],'max':modelByName[model_name]['maxs']} for field,model_name in sorted(raw.items()) if field.startswith('C_AnimModel') and model_name in modelByName]
   a['victim_label']=victimById.get(a.get('victim_link'),'')
   a['script_lines']=[v for k,v in sorted(raw.items()) if k.startswith('S_Script') and v and v!='<null>']
   a['id']=a['label'];a['internal_id']=raw.get('%name%','')
@@ -40,6 +42,7 @@ for m in json.loads((ROOT/'source/manifest.json').read_text()):
    match=re.search(r'\broam\s+([0-9.]+)',a['scripts'],re.I)
    a['roam_radius']=float(match[1]) if match else None
   a['path_next']=raw.get('A_NextPoint') or raw.get('FirstPathPoint')
+ face_models={f:i for i,m in enumerate(models) for f in range(m['first_face'],m['first_face']+m['num_faces'])}
  polys=[];walls=[];wallSeen=set();xs=[];ys=[];zs=[]
  for idx,face in enumerate(faces):
   if idx in hiddenFaces:continue
@@ -50,7 +53,7 @@ for m in json.loads((ROOT/'source/manifest.json').read_text()):
   plane=planes[face['plane_num']];n=[v*(-1 if face['plane_side'] else 1) for v in plane['normal']]
   rounded=[[round(v,3) for v in point] for point in pts]
   # Retain actual heights and polygons, rather than extruding old 2D lines.
-  polys.append({'p':rounded,'n':[round(v,3) for v in n],'y':round(sum(v[1] for v in pts)/len(pts),3)})
+  polys.append({'model':face_models.get(idx,0),'p':rounded,'n':[round(v,3) for v in n],'y':round(sum(v[1] for v in pts)/len(pts),3)})
   for x,y,z in pts:xs.append(x);ys.append(y);zs.append(z)
   if abs(n[1])<.28 and max(v[1] for v in pts)-min(v[1] for v in pts)>=32:
    a,b=max(((a,b) for i,a in enumerate(pts) for b in pts[i+1:]),key=lambda ab:(ab[0][0]-ab[1][0])**2+(ab[0][2]-ab[1][2])**2)
@@ -60,7 +63,7 @@ for m in json.loads((ROOT/'source/manifest.json').read_text()):
    if sig not in wallSeen:wallSeen.add(sig);walls.append([qa,qb,lo,hi])
  for a in markers:xs.append(a['x']);ys.append(a['y']);zs.append(a['z'])
  bounds={'minX':min(xs),'maxX':max(xs),'minY':min(ys),'maxY':max(ys),'minZ':min(zs),'maxZ':max(zs)}
- data={'key':key,'stem':stem,'name':name,'bounds':bounds,'markers':markers,'walls':walls,'polygons':polys}
+ data={'key':key,'stem':stem,'name':name,'bounds':bounds,'markers':markers,'walls':walls,'polygons':polys,'models':[{'id':i,'origin':m['origin'],'min':m['mins'],'max':m['maxs']} for i,m in enumerate(models)],'features':features}
  data['script_files']=[str(f.relative_to(ROOT)) for f in sorted((ROOT/'source/scripts/scripts').glob('*.evs'))]
  for f in (ROOT/'source/scripts/maps').glob('*.evs'):
   if f.stem.lower()==stem.lower():data['script_files'].insert(0,str(f.relative_to(ROOT)))
