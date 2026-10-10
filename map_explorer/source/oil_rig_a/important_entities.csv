@@ -1,0 +1,33 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+H1,HOSE,19,RCS_PropModel,coiled hose,-656.0,816.0,328.0,,touch: tell player (touchhose 50)
+V1,VICTIM,20,RCS_VictimRescue,RCS_VictimRescue1,-236.0,590.0,-262.0,,
+D1,DOOR,22,RCS_BModel,door212,-256.0,560.0,-1080.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D2,DOOR,27,RCS_BModel,door213,-858.0,588.0,-876.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D3,DOOR,28,RCS_BModel,door214,-858.0,588.0,-762.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D4,DOOR,29,RCS_BModel,door215,-858.0,588.0,-650.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+V2,VICTIM,33,RCS_VictimRescue,<null>17,-228.0,590.0,-508.0,,
+V3,VICTIM,34,RCS_VictimRescue,<null>18,-742.0,608.0,-762.0,,
+E1,EXIT,35,RCS_EscapeArrow,<null>19,-162.0,680.0,-672.0,,
+E2,EXIT,36,RCS_EscapeArrow,<null>20,-264.0,608.0,-1336.0,,
+E3,EXIT,37,RCS_EscapeArrow,<null>21,-1120.0,674.0,-1200.0,,
+F1,FIRE,43,RCS_FireRescue,dorm fire 01,-444.0,494.0,-806.0,,
+F2,FIRE,44,RCS_FireRescue,dorm fire 2,-340.0,494.0,-516.0,,
+F3,FIRE,45,RCS_FireRescue,dorm fire 3,-254.0,494.0,-572.0,,
+F4,FIRE,46,RCS_FireRescue,dorm fire 4,-582.0,494.0,-728.0,,
+F5,FIRE,47,RCS_FireRescue,dorm fire 5,-928.0,494.0,-758.0,,
+F6,FIRE,48,RCS_FireRescue,dorm fire 6,-986.0,494.0,-792.0,,
+F7,FIRE,49,RCS_FireRescue,dorm fire 7,-936.0,494.0,-970.0,,
+F8,FIRE,50,RCS_FireRescue,dorm fire 8,-1008.0,494.0,-984.0,,
+F9,FIRE,51,RCS_FireRescue,dorm fire 9,-458.0,494.0,-292.0,,
+F10,FIRE,52,RCS_FireRescue,dorm fire 10,-534.0,494.0,-240.0,,
+F11,FIRE,53,RCS_FireRescue,dorm fire 11,-914.0,494.0,-284.0,,
+F12,FIRE,54,RCS_FireRescue,dorm fire 12,-978.0,494.0,-230.0,,
+A1,ALT,59,RCS_VictimAltSpot,RCS_VictimAltSpot5,-744.0,612.0,-648.0,RCS_VictimRescue17,
+A2,ALT,60,RCS_VictimAltSpot,RCS_VictimAltSpot6,-746.0,612.0,-874.0,RCS_VictimRescue17,
+A3,ALT,61,RCS_VictimAltSpot,RCS_VictimAltSpot7,-600.0,612.0,-852.0,RCS_VictimRescue16,
+A4,ALT,62,RCS_VictimAltSpot,RCS_VictimAltSpot8,-1076.0,612.0,-260.0,RCS_VictimRescue1,
+S1,START,63,RCS_PlayerRescue,RCS_PlayerRescue2,-632.0,952.0,-620.0,,equip goggles | equip axe
+D5,DOOR,64,RCS_BModel,door13,-756.0,872.0,328.0,,touch: settimescale 4 | touch: ifclear Dormatory (*DoorOpen) | touch: ifnotclear Dormatory (hint 5 (There are still survivors in the Dormatory.)) | untouch: ifclear Dormatory (*DoorClose)
+F13,FIRE,65,RCS_FireRescue,dorm fire 13,-528.0,357.0,-1010.0,,
+F14,FIRE,68,RCS_FireRescue,<null>1,-280.0,800.0,960.0,,
+F15,FIRE,79,RCS_FireRescue,<null>2,-504.0,792.0,808.0,,

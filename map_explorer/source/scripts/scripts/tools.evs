@@ -1,0 +1,2 @@
+set RefillExt (cmd [(action player (equip extinguisher)), (action player (toolcmd extinguisher refill)), (playsnd Steam4)])
+set GrabAxe (cmd [settimescale 500, touch: once (hint 2 (Break the glass!)), break: cmd [playsnd BreakGlass, tell player (equip axe)]])

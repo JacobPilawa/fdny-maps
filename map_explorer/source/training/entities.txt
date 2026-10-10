@@ -1,0 +1,2942 @@
+NumEntities 262
+
+entity 0
+TextureLib: D:\WINNT\Temp/textures.txl
+SkyAxis: 1.000000 0.000000 0.000000
+SkyRotation: 0.000000
+SkyDrawScale: 0.000000
+SkyLeft: sky_trueblue_bk
+SkyRight: sky_trueblue_ft
+SkyTop: sky_trueblue_up
+SkyFront: sky_trueblue_rt
+SkyBack: sky_trueblue_lf
+
+entity 1
+Model: 1
+classname: %Model%
+%name%: door6
+origin: -71.999947 -172.000000 192.000122
+
+entity 2
+Model: 2
+classname: %Model%
+%name%: door7
+origin: 579.000061 -172.000000 257.000000
+
+entity 3
+Model: 3
+classname: %Model%
+%name%: hinttrigger
+origin: 290.000000 -144.000000 142.000000
+
+entity 4
+Model: 4
+classname: %Model%
+%name%: hinttrigger1
+origin: 142.000000 -128.000000 726.000000
+
+entity 5
+Model: 5
+classname: %Model%
+%name%: ladder4
+origin: -247.999756 -362.000000 -44.000000
+
+entity 6
+Model: 6
+classname: %Model%
+%name%: ladder5
+origin: 208.000244 -362.000000 -1020.000000
+
+entity 7
+Model: 7
+classname: %Model%
+%name%: obj_liftable_metalbox
+origin: -301.999512 -224.000000 -218.999756
+
+entity 8
+Model: 8
+classname: %Model%
+%name%: obj_liftable_metalbox1
+origin: 146.000488 -224.000000 -882.999756
+
+entity 9
+Model: 9
+classname: %Model%
+%name%: box_clip
+origin: -306.285767 -216.000015 -888.622070
+
+entity 10
+Model: 10
+classname: %Model%
+%name%: box_side_d
+origin: -342.285767 -212.000031 -904.622070
+
+entity 11
+Model: 11
+classname: %Model%
+%name%: box_side_e
+origin: -326.285767 -212.000031 -924.622070
+
+entity 12
+Model: 12
+classname: %Model%
+%name%: box_side_h
+origin: -270.285706 -212.000000 -872.622070
+
+entity 13
+Model: 13
+classname: %Model%
+%name%: box_side_a
+origin: -286.285828 -211.999985 -852.622070
+
+entity 14
+Model: 14
+classname: %Model%
+%name%: box_side_c
+origin: -342.285767 -212.000031 -872.622314
+
+entity 15
+Model: 15
+classname: %Model%
+%name%: box_top
+origin: -306.285767 -180.000000 -888.622070
+
+entity 16
+Model: 16
+classname: %Model%
+%name%: box_side_g
+origin: -270.285706 -212.000000 -904.622070
+
+entity 17
+Model: 17
+classname: %Model%
+%name%: box_side_b
+origin: -326.285767 -212.000000 -852.622070
+
+entity 18
+Model: 18
+classname: %Model%
+%name%: box_side_f
+origin: -286.285767 -212.000031 -924.622070
+
+entity 19
+Model: 19
+classname: %Model%
+%name%: obj_breakable_chair2
+origin: 127.955566 -218.558243 -584.476746
+
+entity 20
+Model: 20
+classname: %Model%
+%name%: obj_breakable_chair1
+origin: 126.622375 -193.419662 -598.512634
+
+entity 21
+Model: 21
+classname: %Model%
+%name%: obj_breakable_chair9
+origin: 141.500122 -217.499924 -599.000000
+
+entity 22
+Model: 22
+classname: %Model%
+%name%: obj_breakable_chair5
+origin: 155.965088 -240.546204 -584.430054
+
+entity 23
+Model: 23
+classname: %Model%
+%name%: obj_breakable_chair7
+origin: 141.964233 -238.552216 -584.439941
+
+entity 24
+Model: 24
+classname: %Model%
+%name%: obj_breakable_chair6
+origin: 155.978882 -240.996124 -612.430054
+
+entity 25
+Model: 25
+classname: %Model%
+%name%: obj_breakable_chair8
+origin: 141.977966 -238.594086 -612.439880
+
+entity 26
+Model: 26
+classname: %Model%
+%name%: obj_breakable_chair3
+origin: 127.969360 -218.600189 -612.476685
+
+entity 27
+Model: 27
+classname: %Model%
+%name%: obj_breakable_chair4
+origin: 142.447144 -221.968918 -598.465149
+
+entity 28
+Model: 28
+classname: %Model%
+%name%: obj_breakable_chair10
+origin: 145.500122 -217.499924 -363.000000
+
+entity 29
+Model: 29
+classname: %Model%
+%name%: box_clip1
+origin: 601.714233 -216.000015 -208.622070
+
+entity 30
+Model: 30
+classname: %Model%
+%name%: box_side_d1
+origin: 565.714233 -212.000031 -224.622070
+
+entity 31
+Model: 31
+classname: %Model%
+%name%: box_side_e1
+origin: 581.714233 -212.000031 -244.622070
+
+entity 32
+Model: 32
+classname: %Model%
+%name%: box_side_h1
+origin: 637.714294 -212.000000 -192.622070
+
+entity 33
+Model: 33
+classname: %Model%
+%name%: box_side_a1
+origin: 621.714172 -211.999985 -172.622070
+
+entity 34
+Model: 34
+classname: %Model%
+%name%: box_side_c1
+origin: 565.714233 -212.000031 -192.622314
+
+entity 35
+Model: 35
+classname: %Model%
+%name%: box_top1
+origin: 601.714233 -180.000000 -208.622070
+
+entity 36
+Model: 36
+classname: %Model%
+%name%: box_side_g1
+origin: 637.714294 -212.000000 -224.622070
+
+entity 37
+Model: 37
+classname: %Model%
+%name%: box_side_b1
+origin: 581.714233 -212.000000 -172.622070
+
+entity 38
+Model: 38
+classname: %Model%
+%name%: box_side_f1
+origin: 621.714233 -212.000031 -244.622070
+
+entity 39
+Model: 39
+classname: %Model%
+%name%: obj_breakable_chair11
+origin: 159.965088 -240.546204 -348.430054
+
+entity 40
+Model: 40
+classname: %Model%
+%name%: obj_breakable_chair12
+origin: 131.955566 -218.558243 -348.476746
+
+entity 41
+Model: 41
+classname: %Model%
+%name%: obj_breakable_chair13
+origin: 145.964233 -238.552216 -348.439941
+
+entity 42
+Model: 42
+classname: %Model%
+%name%: obj_breakable_chair14
+origin: 159.978882 -240.996124 -376.430054
+
+entity 43
+Model: 43
+classname: %Model%
+%name%: obj_breakable_chair15
+origin: 145.977966 -238.594086 -376.439880
+
+entity 44
+Model: 44
+classname: %Model%
+%name%: obj_breakable_chair16
+origin: 131.969360 -218.600189 -376.476685
+
+entity 45
+Model: 45
+classname: %Model%
+%name%: obj_breakable_chair17
+origin: 146.447144 -221.968918 -362.465149
+
+entity 46
+Model: 46
+classname: %Model%
+%name%: obj_breakable_chair18
+origin: 130.622375 -193.419662 -362.512634
+
+entity 47
+Model: 47
+classname: %Model%
+%name%: hinttrigger2
+origin: 630.000000 -12.000000 774.000000
+
+entity 48
+Model: 48
+classname: %Model%
+%name%: hinttrigger7
+origin: -1118.000000 -144.000000 1202.000000
+
+entity 49
+Model: 49
+classname: %Model%
+%name%: hinttrigger5
+origin: -770.000000 -144.000000 1482.000000
+
+entity 50
+Model: 50
+classname: %Model%
+%name%: hinttrigger3
+origin: -158.000000 -144.000000 1862.000000
+
+entity 51
+Model: 51
+classname: %Model%
+%name%: hinttrigger4
+origin: -34.000000 -12.000000 2738.000000
+
+entity 52
+Model: 52
+classname: %Model%
+%name%: hinttrigger6
+origin: -522.000000 -128.000000 2690.000000
+
+entity 53
+Model: 53
+classname: %Model%
+%name%: hinttrigger8
+origin: -374.000000 -144.000000 2106.000000
+
+entity 54
+Model: 54
+classname: %Model%
+%name%: door8
+origin: -84.999939 -172.000000 2221.000000
+
+entity 55
+Model: 55
+classname: %Model%
+%name%: door9
+origin: -735.999939 -172.000000 2156.000000
+
+entity 56
+Model: 56
+classname: %Model%
+%name%: door25
+origin: -68.999939 -172.000000 871.000000
+
+entity 57
+Model: 57
+classname: %Model%
+%name%: hinttrigger9
+origin: 574.000000 -144.000000 -2022.000000
+
+entity 58
+Model: 58
+classname: %Model%
+%name%: hinttrigger10
+origin: 1370.000000 -12.000000 -1190.000000
+
+entity 59
+Model: 59
+classname: %Model%
+%name%: hinttrigger11
+origin: 882.000000 -128.000000 -1238.000000
+
+entity 60
+Model: 60
+classname: %Model%
+%name%: hinttrigger12
+origin: 1258.000000 -144.000000 -1818.000000
+
+entity 61
+Model: 61
+classname: %Model%
+%name%: door11
+origin: 1319.000000 -172.000000 -1707.000000
+
+entity 62
+Model: 62
+classname: %Model%
+%name%: door12
+origin: 668.000000 -172.000000 -1772.000000
+
+entity 63
+Model: 63
+classname: %Model%
+%name%: door28
+origin: 647.000061 -172.000000 -1093.000000
+
+entity 64
+Model: 64
+classname: %Model%
+%name%: door14
+origin: 2056.000000 -172.000000 -4044.000000
+
+entity 65
+Model: 65
+classname: %Model%
+%name%: hinttrigger13
+origin: 1906.000000 -144.000000 -4146.000000
+
+entity 66
+Model: 66
+classname: %Model%
+%name%: door15
+origin: 2010.242676 -176.000000 -4667.757324
+
+entity 67
+Model: 67
+classname: %Model%
+%name%: door16
+origin: 1838.242676 -176.000000 -4667.757324
+
+entity 68
+Model: 68
+classname: %Model%
+%name%: door17
+origin: 1674.242676 -176.000000 -4667.757324
+
+entity 69
+Model: 69
+classname: %Model%
+%name%: door18
+origin: 1510.242676 -176.000000 -4667.757324
+
+entity 70
+Model: 70
+classname: %Model%
+%name%: door19
+origin: 1326.242676 -176.000000 -4667.757324
+
+entity 71
+Model: 71
+classname: %Model%
+%name%: door20
+origin: 1150.242676 -176.000000 -4667.757324
+
+entity 72
+Model: 72
+classname: %Model%
+%name%: hinttrigger14
+origin: 1114.000000 -120.000000 -4074.000000
+
+entity 73
+Model: 73
+classname: %Model%
+%name%: hinttrigger15
+origin: 2010.000000 -12.000000 -3154.000000
+
+entity 74
+Model: 74
+classname: %Model%
+%name%: hinttrigger16
+origin: 1522.000000 -128.000000 -3202.000000
+
+entity 75
+Model: 75
+classname: %Model%
+%name%: hinttrigger17
+origin: 1670.000000 -144.000000 -3786.000000
+
+entity 76
+Model: 76
+classname: %Model%
+%name%: door21
+origin: 1959.000000 -172.000000 -3671.000000
+
+entity 77
+Model: 77
+classname: %Model%
+%name%: door22
+origin: 1308.000000 -172.000000 -3736.000000
+
+entity 78
+Model: 78
+classname: %Model%
+%name%: door24
+origin: -644.999939 -172.000000 2835.000000
+
+entity 79
+Model: 79
+classname: %Model%
+%name%: hinttrigger28
+origin: -658.000000 -124.000000 3822.000000
+
+entity 80
+Model: 80
+classname: %Model%
+%name%: hinttrigger23
+origin: -1066.000000 -148.000000 3262.000000
+
+entity 81
+Model: 81
+classname: %Model%
+%name%: hinttrigger24
+origin: -1182.000000 -124.000000 2966.000000
+
+entity 82
+Model: 82
+classname: %Model%
+%name%: hinttrigger25
+origin: -546.000000 -12.000000 4702.000000
+
+entity 83
+Model: 83
+classname: %Model%
+%name%: hinttrigger26
+origin: -1034.000000 -128.000000 4654.000000
+
+entity 84
+Model: 84
+classname: %Model%
+%name%: hinttrigger27
+origin: -886.000000 -144.000000 4070.000000
+
+entity 85
+Model: 85
+classname: %Model%
+%name%: door26
+origin: -596.999939 -172.000000 4185.000000
+
+entity 86
+Model: 86
+classname: %Model%
+%name%: door27
+origin: -1248.000000 -172.000000 4120.000000
+
+entity 87
+Model: 87
+classname: %Model%
+%name%: door29
+origin: 1335.000000 -172.000000 -3057.000000
+
+entity 88
+Model: 88
+classname: %Model%
+%name%: hinttrigger18
+origin: 934.000000 -144.000000 -1814.000000
+
+entity 89
+A_Name: door6
+C_AnimModel0: door6
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -104 -124 136
+ZZ_spawn_message: 10000
+%name%: RCS_BModel1
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 90
+classname: light
+color: 255 255 255
+light: 150
+origin: 116 -4 136
+style: 0
+%name%: light1
+
+entity 91
+classname: light
+color: 221 255 255
+light: 400
+origin: -228 80 -60
+style: 0
+%name%: light2
+
+entity 92
+classname: light
+color: 221 255 255
+light: 400
+origin: 176 80 -64
+style: 0
+%name%: light4
+
+entity 93
+classname: light
+color: 221 255 255
+light: 400
+origin: 576 80 -64
+style: 0
+%name%: light5
+
+entity 94
+classname: light
+color: 221 255 255
+light: 400
+origin: -240 80 -968
+style: 0
+%name%: light6
+
+entity 95
+classname: light
+color: 221 255 255
+light: 400
+origin: 164 80 -972
+style: 0
+%name%: light7
+
+entity 96
+classname: light
+color: 221 255 255
+light: 400
+origin: 564 80 -972
+style: 0
+%name%: light8
+
+entity 97
+classname: light
+color: 221 255 255
+light: 400
+origin: 12 80 -508
+style: 0
+%name%: light9
+
+entity 98
+classname: light
+color: 221 255 255
+light: 400
+origin: 296 80 -504
+style: 0
+%name%: light10
+
+entity 99
+classname: light
+color: 221 255 255
+light: 400
+origin: 584 80 -508
+style: 0
+%name%: light11
+
+entity 100
+classname: light
+color: 221 255 255
+light: 400
+origin: -276 80 -516
+style: 0
+%name%: light12
+
+entity 101
+A_Name: door7
+C_AnimModel0: door7
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 520 -128 280
+ZZ_spawn_message: 10000
+%name%: RCS_BModel2
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 102
+classname: light
+color: 221 255 255
+light: 350
+origin: 532 -12 416
+style: 0
+%name%: light13
+
+entity 103
+classname: light
+color: 221 255 255
+light: 350
+origin: 536 -12 700
+style: 0
+%name%: light16
+
+entity 104
+classname: light
+color: 221 255 255
+light: 350
+origin: 200 -12 708
+style: 0
+%name%: light17
+
+entity 105
+classname: light
+color: 221 255 255
+light: 350
+origin: -80 -12 712
+style: 0
+%name%: light18
+
+entity 106
+A_Name: hinttrigger
+C_Model: hinttrigger
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 5 (In this level, you will practice basic chopping and throwing techniques for clearing obstacles.)
+S_Script02: touch: tell player escape
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 396 -232 188
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger1
+
+entity 107
+A_Name: hinttrigger1
+C_Model: hinttrigger1
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 5 (Excellent!  Let's proceed to the next exercise.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 244 -220 768
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger2
+
+entity 108
+A_Name: ladder2
+C_AnimModel0: ladder4
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+S_Script01: touch: tell player climb
+ZZ_location: -248 -372 -60
+ZZ_spawn_message: 10000
+%name%: RCS_BModel3
+G_Liftable: 0
+S_Script02: untouch: tell player unclimb
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 109
+A_Name: obj_liftable_metalbox
+C_AnimModel0: obj_liftable_metalbox
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+G_Liftable: 1
+S_Script01: touch: hint 2 (Press SPACE to clear this object from your path.)
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -300 -200 -220
+ZZ_spawn_message: 10000
+%name%: RCS_BModel5
+
+entity 110
+A_Name: ladder3
+C_AnimModel0: ladder5
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+S_Script01: touch: tell player climb
+ZZ_location: 216 -376 -1044
+ZZ_spawn_message: 10000
+%name%: RCS_BModel6
+G_Liftable: 0
+S_Script02: untouch: tell player unclimb
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 111
+A_Name: obj_liftable_metalbox1
+C_AnimModel0: obj_liftable_metalbox1
+classname: RCS_BModel
+E_Reach: 20
+F_HitPoints: 0
+G_Liftable: 1
+S_Script01: 
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 148 -204 -884
+ZZ_spawn_message: 10000
+%name%: RCS_BModel8
+
+entity 112
+A_Name: breakable_chair
+C_AnimModel0: obj_breakable_chair1
+C_AnimModel1: obj_breakable_chair2
+C_AnimModel2: obj_breakable_chair3
+C_AnimModel3: obj_breakable_chair4
+C_AnimModel4: obj_breakable_chair5
+C_AnimModel5: obj_breakable_chair6
+C_AnimModel6: obj_breakable_chair7
+C_AnimModel7: obj_breakable_chair8
+C_AnimModel8: obj_breakable_chair9
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: touch: hint 2 (This object can be chopped with the axe.)
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 144 -196 -596
+ZZ_spawn_message: 10000
+%name%: RCS_BModel12
+
+entity 113
+A_Name: breakable_chair1
+C_AnimModel0: obj_breakable_chair18
+C_AnimModel1: obj_breakable_chair12
+C_AnimModel2: obj_breakable_chair16
+C_AnimModel3: obj_breakable_chair17
+C_AnimModel4: obj_breakable_chair11
+C_AnimModel5: obj_breakable_chair14
+C_AnimModel6: obj_breakable_chair13
+C_AnimModel7: obj_breakable_chair15
+C_AnimModel8: obj_breakable_chair10
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 160 -196 -360
+ZZ_spawn_message: 10000
+%name%: RCS_BModel13
+
+entity 114
+A_Name: hinttrigger2
+C_Model: hinttrigger2
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Chopping and Throwing Exercise)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 608 -104 820
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger3
+
+entity 115
+C_Heading: 3
+classname: RCS_PlayerRescue
+S_Script01: equip axe
+S_Script02: exec doors.evs
+S_Script03: setashdensity 0
+S_Script04: setrescuebot 0
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -1268 -172 4692
+ZZ_spawn_message: 10000
+%name%: RCS_PlayerRescue2
+
+entity 116
+A_Name: door8
+C_AnimModel0: door9
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -752 -124 2104
+ZZ_spawn_message: 10000
+%name%: RCS_BModel14
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 117
+classname: light
+color: 255 255 255
+light: 150
+origin: -532 -4 2104
+style: 0
+%name%: light19
+
+entity 118
+classname: light
+color: 221 255 255
+light: 400
+origin: -876 80 1908
+style: 0
+%name%: light20
+
+entity 119
+classname: light
+color: 221 255 255
+light: 400
+origin: -472 80 1904
+style: 0
+%name%: light21
+
+entity 120
+classname: light
+color: 221 255 255
+light: 400
+origin: -72 80 1904
+style: 0
+%name%: light22
+
+entity 121
+classname: light
+color: 221 255 255
+light: 400
+origin: -888 80 1000
+style: 0
+%name%: light23
+
+entity 122
+classname: light
+color: 221 255 255
+light: 400
+origin: -484 80 996
+style: 0
+%name%: light24
+
+entity 123
+classname: light
+color: 221 255 255
+light: 400
+origin: -84 80 996
+style: 0
+%name%: light25
+
+entity 124
+classname: light
+color: 221 255 255
+light: 400
+origin: -636 80 1460
+style: 0
+%name%: light26
+
+entity 125
+classname: light
+color: 221 255 255
+light: 400
+origin: -352 80 1464
+style: 0
+%name%: light27
+
+entity 126
+classname: light
+color: 221 255 255
+light: 400
+origin: -64 80 1460
+style: 0
+%name%: light28
+
+entity 127
+classname: light
+color: 221 255 255
+light: 400
+origin: -924 80 1452
+style: 0
+%name%: light29
+
+entity 128
+A_Name: door9
+C_AnimModel0: door8
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -128 -128 2248
+ZZ_spawn_message: 10000
+%name%: RCS_BModel15
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 129
+classname: light
+color: 221 255 255
+light: 350
+origin: -116 -12 2384
+style: 0
+%name%: light30
+
+entity 130
+classname: light
+color: 221 255 255
+light: 350
+origin: -112 -12 2668
+style: 0
+%name%: light31
+
+entity 131
+classname: light
+color: 221 255 255
+light: 350
+origin: -448 -12 2676
+style: 0
+%name%: light32
+
+entity 132
+classname: light
+color: 221 255 255
+light: 350
+origin: -728 -12 2680
+style: 0
+%name%: light33
+
+entity 133
+A_Name: hinttrigger3
+C_Model: hinttrigger8
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: *Enter1
+S_Script02: touch: tell player escape
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -252 -232 2156
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger4
+
+entity 134
+A_Name: hinttrigger4
+C_Model: hinttrigger6
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch:  hint 5 (Excellent!  Let's proceed to the next exercise.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -404 -220 2736
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger5
+
+entity 135
+A_Name: hinttrigger5
+C_Model: hinttrigger4
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Jumping and Navigation Exercise)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -40 -104 2788
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger6
+
+entity 136
+A_Name: hinttrigger6
+C_Model: hinttrigger3
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 3 (Good!  Now see if you can navigate across the beam.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -40 -232 1908
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger7
+
+entity 137
+A_Name: hinttrigger7
+C_Model: hinttrigger5
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: if NotFirst 1 (*Failure1)
+S_Script02: touch: set NotFirst 1
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -536 -320 1508
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger8
+
+entity 138
+A_Name: hinttrigger8
+C_Model: hinttrigger7
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 4 (Good work!  Now jump across the platforms to proceed to the next section.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -816 -200 1140
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger9
+
+entity 139
+A_Name: door11
+C_AnimModel0: door12
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 656 -124 -1832
+ZZ_spawn_message: 10000
+%name%: RCS_BModel17
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 140
+classname: light
+color: 255 255 255
+light: 150
+origin: 876 -4 -1832
+style: 0
+%name%: light34
+
+entity 141
+classname: light
+color: 221 255 255
+light: 400
+origin: 532 80 -2028
+style: 0
+%name%: light35
+
+entity 142
+classname: light
+color: 221 255 255
+light: 400
+origin: 936 80 -2032
+style: 0
+%name%: light36
+
+entity 143
+classname: light
+color: 221 255 255
+light: 400
+origin: 1336 80 -2032
+style: 0
+%name%: light37
+
+entity 144
+classname: light
+color: 221 255 255
+light: 400
+origin: 520 80 -2936
+style: 0
+%name%: light38
+
+entity 145
+classname: light
+color: 221 255 255
+light: 400
+origin: 924 80 -2940
+style: 0
+%name%: light39
+
+entity 146
+classname: light
+color: 221 255 255
+light: 400
+origin: 1324 80 -2940
+style: 0
+%name%: light40
+
+entity 147
+classname: light
+color: 221 255 255
+light: 400
+origin: 772 80 -2476
+style: 0
+%name%: light41
+
+entity 148
+classname: light
+color: 221 255 255
+light: 400
+origin: 1056 80 -2472
+style: 0
+%name%: light42
+
+entity 149
+classname: light
+color: 221 255 255
+light: 400
+origin: 1344 80 -2476
+style: 0
+%name%: light43
+
+entity 150
+classname: light
+color: 221 255 255
+light: 400
+origin: 484 80 -2484
+style: 0
+%name%: light44
+
+entity 151
+A_Name: door12
+C_AnimModel0: door11
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1280 -128 -1688
+ZZ_spawn_message: 10000
+%name%: RCS_BModel18
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 152
+classname: light
+color: 221 255 255
+light: 350
+origin: 1292 -12 -1552
+style: 0
+%name%: light45
+
+entity 153
+classname: light
+color: 221 255 255
+light: 350
+origin: 1296 -12 -1268
+style: 0
+%name%: light46
+
+entity 154
+classname: light
+color: 221 255 255
+light: 350
+origin: 960 -12 -1260
+style: 0
+%name%: light47
+
+entity 155
+classname: light
+color: 221 255 255
+light: 350
+origin: 680 -12 -1256
+style: 0
+%name%: light48
+
+entity 156
+A_Name: hinttrigger9
+C_Model: hinttrigger12
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: *Welcome2
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1356 -192 -1832
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger10
+
+entity 157
+A_Name: hinttrigger10
+C_Model: hinttrigger11
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 5 (Excellent!  Let's proceed to the next exercise.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1004 -220 -1200
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger11
+
+entity 158
+A_Name: hinttrigger11
+C_Model: hinttrigger10
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Fire Extinguishing Exercise)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1368 -104 -1148
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger12
+
+entity 159
+A_Name: Valve3
+classname: RCS_PropModel
+D_Model: 5
+E_Heading: 9
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: makevalve
+S_Script02: touch: if gothose 1 (hint 6 (Press SPACE to attach or detach the hose.))
+S_Script03: use: hint 5 (When you are done putting out the fires, take the hose to the other valve.)
+ZZ_location: 1368 -176 -2080
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel1
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 160
+A_Name: Hose1
+classname: RCS_PropModel
+D_Model: 4
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: touch: tell player (touchhose 25)
+ZZ_location: 1288 -176 -2744
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel2
+S_Script02: touch: hint 4 (Excellent!  Now attach this hose to the valve and put out the fires!)
+S_Script03: touch: set gothose 1
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 161
+A_Name: ext1
+classname: RCS_PropModel
+D_Model: 2
+E_Heading: 3
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: setscale 0.2 0.2 0.2
+S_Script02: touch: *RefillExt
+ZZ_location: 780 -164 -1748
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel3
+S_Script03: touch: hint 4 (Press '1' and '2' to switch between items.  Return here to refill the extinguisher.)
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 162
+A_Name: fire1
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 250.0000
+H_Radius: 150.0000
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 824 -120 -2092
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue1
+
+entity 163
+A_Name: fire4
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 800.0000
+H_Radius: 500.0000
+K_SprayTime: 4
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 568 -120 -2924
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue2
+
+entity 164
+A_Name: Valve5
+classname: RCS_PropModel
+D_Model: 5
+E_Heading: 3
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: makevalve
+S_Script02: use: hint 3 (Good work!  Now put out the big fires!)
+S_Script03: 
+ZZ_location: 416 -176 -2404
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel4
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 165
+A_Name: fire2
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 250.0000
+H_Radius: 150.0000
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1088 -176 -2092
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue3
+
+entity 166
+A_Name: fire3
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 250.0000
+H_Radius: 150.0000
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1280 -176 -2400
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue4
+
+entity 167
+A_Name: fire6
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 800.0000
+H_Radius: 500.0000
+K_SprayTime: 4
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 616 -176 -2708
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue5
+
+entity 168
+A_Name: fire7
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 800.0000
+H_Radius: 500.0000
+K_SprayTime: 4
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 960 -176 -3008
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue6
+
+entity 169
+A_Name: fire5
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 800.0000
+H_Radius: 350.0000
+K_SprayTime: 4
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 908 -176 -2716
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue7
+
+entity 170
+A_Name: hinttrigger12
+C_Model: hinttrigger9
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: if gothose 1 (*Cmd2b)
+S_Script02: touch: ifnot gothose 1 (*Cmd2a)
+S_Script03: tell player (setashdensity 0.5)
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 468 -224 -1980
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger13
+
+entity 171
+A_Name: door14
+C_AnimModel0: door22
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1300 -124 -3820
+ZZ_spawn_message: 10000
+%name%: RCS_BModel20
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 172
+classname: light
+color: 255 255 255
+light: 150
+origin: 1520 -4 -3820
+style: 0
+%name%: light49
+
+entity 173
+classname: light
+color: 221 255 255
+light: 400
+origin: 1176 80 -4016
+style: 0
+%name%: light50
+
+entity 174
+classname: light
+color: 221 255 255
+light: 400
+origin: 1580 80 -4020
+style: 0
+%name%: light51
+
+entity 175
+classname: light
+color: 221 255 255
+light: 400
+origin: 1980 80 -4020
+style: 0
+%name%: light52
+
+entity 176
+classname: light
+color: 221 255 255
+light: 400
+origin: 1164 80 -4924
+style: 0
+%name%: light53
+
+entity 177
+classname: light
+color: 221 255 255
+light: 400
+origin: 1568 80 -4928
+style: 0
+%name%: light54
+
+entity 178
+classname: light
+color: 221 255 255
+light: 400
+origin: 1968 80 -4928
+style: 0
+%name%: light55
+
+entity 179
+classname: light
+color: 221 255 255
+light: 400
+origin: 1416 80 -4464
+style: 0
+%name%: light56
+
+entity 180
+classname: light
+color: 221 255 255
+light: 400
+origin: 1700 80 -4460
+style: 0
+%name%: light57
+
+entity 181
+classname: light
+color: 221 255 255
+light: 400
+origin: 1988 80 -4464
+style: 0
+%name%: light58
+
+entity 182
+classname: light
+color: 221 255 255
+light: 400
+origin: 1128 80 -4472
+style: 0
+%name%: light59
+
+entity 183
+A_Name: door15
+C_AnimModel0: door21
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1924 -128 -3676
+ZZ_spawn_message: 10000
+%name%: RCS_BModel21
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 184
+classname: light
+color: 221 255 255
+light: 350
+origin: 1936 -12 -3540
+style: 0
+%name%: light60
+
+entity 185
+classname: light
+color: 221 255 255
+light: 350
+origin: 1940 -12 -3256
+style: 0
+%name%: light61
+
+entity 186
+classname: light
+color: 221 255 255
+light: 350
+origin: 1604 -12 -3248
+style: 0
+%name%: light62
+
+entity 187
+classname: light
+color: 221 255 255
+light: 350
+origin: 1324 -12 -3244
+style: 0
+%name%: light63
+
+entity 188
+A_Name: hinttrigger13
+C_Model: hinttrigger17
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 4 (This final exercise illustrates how to locate and rescue survivors.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1800 -232 -3768
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger14
+
+entity 189
+A_Name: hinttrigger14
+C_Model: hinttrigger16
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 5 (Excellent!  Let's proceed to the next exercise.)
+S_Script02: tell player (setashdensity 0)
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1648 -220 -3188
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger15
+
+entity 190
+A_Name: hinttrigger15
+C_Model: hinttrigger15
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Survivor Extraction Exercise)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 2012 -104 -3136
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger16
+
+entity 191
+A_Name: victim1
+classname: RCS_VictimRescue
+D_Type: man
+G_Heading: 6
+J_Radius: 60
+location: 1104 -60 -4976
+S_Script01: pickup: ifnot gotvictim 1 (*Cmd3c)
+S_Script02: 
+S_Script03: pickup: set gotvictim 1
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue1
+
+entity 192
+A_Victim: RCS_VictimRescue1
+B_Heading: 6
+classname: RCS_VictimAltSpot
+ZZ_location: 1300 -120 -4952
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot1
+
+entity 193
+A_Victim: RCS_VictimRescue1
+B_Heading: 6
+classname: RCS_VictimAltSpot
+ZZ_location: 1472 -120 -4972
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot2
+
+entity 194
+A_Name: victim2
+classname: RCS_VictimRescue
+D_Type: man
+G_Heading: 6
+J_Radius: 60
+location: 1656 -120 -4968
+S_Script01: pickup: if gotvictim 1 (*Cmd3b)
+S_Script02: pickup: ifnot gotvictim 1 (*Cmd3c)
+S_Script03: pickup: set gotvictim 1
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue2
+
+entity 195
+A_Victim: RCS_VictimRescue2
+B_Heading: 6
+classname: RCS_VictimAltSpot
+ZZ_location: 1820 -120 -4960
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot3
+
+entity 196
+A_Victim: RCS_VictimRescue2
+B_Heading: 6
+classname: RCS_VictimAltSpot
+ZZ_location: 1972 -120 -4960
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot4
+
+entity 197
+A_Name: hinttrigger16
+C_Model: hinttrigger14
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: que [ wait 3, (*Cmd3a) ]
+S_Script02: touch: once (tell player (equip goggles))
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1272 -208 -4036
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger17
+
+entity 198
+A_Name: door16
+C_AnimModel0: door20
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1132 -120 -4720
+ZZ_spawn_message: 10000
+%name%: RCS_BModel22
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 199
+A_Name: door17
+C_AnimModel0: door19
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1312 -120 -4720
+ZZ_spawn_message: 10000
+%name%: RCS_BModel23
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 200
+A_Name: door18
+C_AnimModel0: door18
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1496 -120 -4720
+ZZ_spawn_message: 10000
+%name%: RCS_BModel24
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 201
+A_Name: door19
+C_AnimModel0: door17
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1668 -120 -4720
+ZZ_spawn_message: 10000
+%name%: RCS_BModel25
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 202
+A_Name: door20
+C_AnimModel0: door16
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1828 -120 -4720
+ZZ_spawn_message: 10000
+%name%: RCS_BModel26
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 203
+A_Name: door21
+C_AnimModel0: door15
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1996 -120 -4720
+ZZ_spawn_message: 10000
+%name%: RCS_BModel27
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 204
+A_Name: hinttrigger17
+C_Model: hinttrigger13
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: 
+S_Script02: touch: tell player escape
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 2032 -232 -4128
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger18
+
+entity 205
+angles: 0.000000 177.357788 -131.522828
+arc: 45
+classname: spotlight
+color: 255 0 0
+DummyRadius: 150
+light: 333
+origin: 1884 -8 -4108
+style: 0
+%name%: spotlight1
+
+entity 206
+classname: light
+color: 221 255 255
+light: 350
+origin: 1300 -120 -4992
+style: 0
+%name%: light64
+
+entity 207
+classname: light
+color: 221 255 255
+light: 350
+origin: 1132 -120 -4996
+style: 0
+%name%: light65
+
+entity 208
+classname: light
+color: 221 255 255
+light: 350
+origin: 1492 -120 -4988
+style: 0
+%name%: light66
+
+entity 209
+classname: light
+color: 221 255 255
+light: 350
+origin: 1636 -120 -5004
+style: 0
+%name%: light67
+
+entity 210
+classname: light
+color: 221 255 255
+light: 350
+origin: 1824 -120 -5000
+style: 0
+%name%: light68
+
+entity 211
+classname: light
+color: 221 255 255
+light: 350
+origin: 1972 -120 -4996
+style: 0
+%name%: light69
+
+entity 212
+A_Name: breakable_box
+C_AnimModel0: box_clip
+C_AnimModel1: box_top
+C_AnimModel2: box_side_a
+C_AnimModel3: box_side_b
+C_AnimModel4: box_side_c
+C_AnimModel5: box_side_d
+C_AnimModel6: box_side_e
+C_AnimModel7: box_side_f
+C_AnimModel8: box_side_g
+C_AnimModel9: box_side_h
+classname: RCS_BModel
+E_Reach: 20
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: touch: hint 2 (Use the axe to chop this object.)
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -316 -220 -896
+ZZ_spawn_message: 10000
+%name%: RCS_BModel29
+
+entity 213
+A_Name: breakable_box1
+C_AnimModel0: box_clip1
+C_AnimModel1: box_top1
+C_AnimModel2: box_side_a1
+C_AnimModel3: box_side_b1
+C_AnimModel4: box_side_c1
+C_AnimModel5: box_side_d1
+C_AnimModel6: box_side_e1
+C_AnimModel7: box_side_f1
+C_AnimModel8: box_side_g1
+C_AnimModel9: box_side_h1
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 592 -220 -216
+ZZ_spawn_message: 10000
+%name%: RCS_BModel30
+
+entity 214
+A_Name: door25
+C_AnimModel0: door27
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -1276 -124 4064
+ZZ_spawn_message: 10000
+%name%: RCS_BModel34
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 215
+classname: light
+color: 255 255 255
+light: 150
+origin: -1056 -4 4064
+style: 0
+%name%: light70
+
+entity 216
+angles: 0.000000 192.010971 -58.537567
+classname: SunLight
+color: 255 255 202
+light: 400
+origin: -560 196 2896
+style: 0
+%name%: SunLight2
+
+entity 217
+classname: light
+color: 221 255 255
+light: 400
+origin: -1400 80 3868
+style: 0
+%name%: light71
+
+entity 218
+classname: light
+color: 221 255 255
+light: 400
+origin: -996 80 3864
+style: 0
+%name%: light72
+
+entity 219
+classname: light
+color: 221 255 255
+light: 400
+origin: -596 80 3864
+style: 0
+%name%: light73
+
+entity 220
+classname: light
+color: 221 255 255
+light: 400
+origin: -1412 80 2960
+style: 0
+%name%: light74
+
+entity 221
+classname: light
+color: 221 255 255
+light: 400
+origin: -1008 80 2956
+style: 0
+%name%: light75
+
+entity 222
+classname: light
+color: 221 255 255
+light: 400
+origin: -608 80 2956
+style: 0
+%name%: light76
+
+entity 223
+classname: light
+color: 221 255 255
+light: 400
+origin: -1160 80 3420
+style: 0
+%name%: light77
+
+entity 224
+classname: light
+color: 221 255 255
+light: 400
+origin: -876 80 3424
+style: 0
+%name%: light78
+
+entity 225
+classname: light
+color: 221 255 255
+light: 400
+origin: -588 80 3420
+style: 0
+%name%: light79
+
+entity 226
+classname: light
+color: 221 255 255
+light: 400
+origin: -1448 80 3412
+style: 0
+%name%: light80
+
+entity 227
+A_Name: door26
+C_AnimModel0: door26
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -652 -128 4208
+ZZ_spawn_message: 10000
+%name%: RCS_BModel35
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 228
+classname: light
+color: 221 255 255
+light: 350
+origin: -640 -12 4344
+style: 0
+%name%: light81
+
+entity 229
+classname: light
+color: 221 255 255
+light: 350
+origin: -636 -12 4628
+style: 0
+%name%: light82
+
+entity 230
+classname: light
+color: 221 255 255
+light: 350
+origin: -972 -12 4636
+style: 0
+%name%: light83
+
+entity 231
+classname: light
+color: 221 255 255
+light: 350
+origin: -1252 -12 4640
+style: 0
+%name%: light84
+
+entity 232
+A_Name: hinttrigger23
+C_Model: hinttrigger27
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 5 (In this level, you will practice basic jumping and crouching techniques.)
+S_Script02: touch: tell player escape
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -776 -232 4116
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger24
+
+entity 233
+A_Name: hinttrigger24
+C_Model: hinttrigger26
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: *Welcome1
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -928 -220 4696
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger25
+
+entity 234
+A_Name: hinttrigger25
+C_Model: hinttrigger25
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Crouching and Jumping Exercise)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -564 -104 4748
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger26
+
+entity 235
+A_Name: hinttrigger26
+C_Model: hinttrigger24
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 4 (Use the right mouse button to jump.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -1072 -212 3008
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger27
+
+entity 236
+A_Name: hinttrigger27
+C_Model: hinttrigger23
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 4 (Press 'C' or 'CTRL' to crouch.)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -956 -236 3304
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger28
+
+entity 237
+A_Name: hinttrigger28
+C_Model: hinttrigger28
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: hint 4 (Good work!)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -552 -212 3864
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger29
+
+entity 238
+A_Name: <null>
+classname: RCS_EscapeArrow
+F_Rotation: 3
+G_Pitch: -0.1
+ZZ_location: 1712 -48 -4028
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow1
+
+entity 239
+A_Name: door23
+C_AnimModel0: door24
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -692 -128 2864
+ZZ_spawn_message: 10000
+%name%: RCS_BModel37
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 240
+A_Name: door24
+C_AnimModel0: door25
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -112 -128 896
+ZZ_spawn_message: 10000
+%name%: RCS_BModel38
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 241
+A_Name: door27
+C_AnimModel0: door28
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 604 -128 -1072
+ZZ_spawn_message: 10000
+%name%: RCS_BModel39
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 242
+A_Name: door28
+C_AnimModel0: door29
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: 1292 -128 -3032
+ZZ_spawn_message: 10000
+%name%: RCS_BModel40
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 243
+A_Name: hinttrigger18
+C_Model: hinttrigger18
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: 
+S_Script02: touch: tell player escape
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1016 -192 -1836
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger30
+
+entity 244
+classname: %typedef%
+%typename%: RCS_VictimAltSpot
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Victim: RCS_VictimRescue
+B_Heading: float
+
+entity 245
+classname: %typedef%
+%typename%: RCS_VictimRescue
+spawn_message: int
+%defaultvalue%: 
+location: point
+A_Name: string
+D_Type: string
+G_Heading: float
+J_Radius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+
+entity 246
+classname: %typedef%
+%typename%: SunLight
+origin: point
+%defaultvalue%: 
+color: color
+light: int
+angles: point
+style: int
+
+entity 247
+classname: %typedef%
+%typename%: RCS_PropModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Name: string
+D_Model: int
+E_Heading: float
+E_Pitch: float
+F_TouchRadius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+
+entity 248
+classname: %typedef%
+%typename%: RCS_PlayerRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+C_Heading: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 249
+classname: %typedef%
+%typename%: RCS_PathPoint
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 250
+classname: %typedef%
+%typename%: RCS_FireRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+F_FireType: int
+H_Radius: float
+H_Height: float
+K_SprayTime: float
+L_FloorMe: int
+M_Smoking: int
+N_IsAlive: int
+P_NumKeys: int
+P_Key1Size: point
+P_Key1TimeOffset: int
+P_Key2Size: point
+P_Key2TimeOffset: int
+P_Key3Size: point
+P_Key3TimeOffset: int
+P_Key4Size: point
+P_Key4TimeOffset: int
+T_UseHeading: int
+T_Heading: point
+ZZ_location: point
+
+entity 251
+classname: %typedef%
+%typename%: RCS_PlayerHose
+spawn_message: int
+%defaultvalue%: 
+location: point
+FirstPathPoint: RCS_HosePath
+
+entity 252
+classname: %typedef%
+%typename%: RCS_HosePath
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_NextPoint: RCS_HosePath
+B_LookAtPoint: RCS_HosePath
+C_IsAHotSpot: int
+D_NextHotSpot: RCS_HosePath
+E_NextHotSpotPathDir: int
+M_IsFirstHotSpot: int
+M_SpotTime: float
+M_MaxPressure: float
+N_PitchSpread: float
+Q_NumCycles: int
+ZF0_FireModel: model
+ZF0_SprayTime: float
+ZF1_FireModel: model
+ZF1_SprayTime: float
+ZF2_FireModel: model
+ZF2_SprayTime: float
+ZF3_FireModel: model
+ZF3_SprayTime: float
+ZF4_FireModel: model
+ZF4_SprayTime: float
+ZF5_FireModel: model
+ZF5_SprayTime: float
+ZF6_FireModel: model
+ZF6_SprayTime: float
+ZF7_FireModel: model
+ZF7_SprayTime: float
+ZF8_FireModel: model
+ZF8_SprayTime: float
+
+entity 253
+classname: %typedef%
+%typename%: RCS_MiscEmitter
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Type: int
+E_Heading: float
+E_Pitch: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+ZZ_location: point
+
+entity 254
+classname: %typedef%
+%typename%: RCS_EscapeArrow
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+F_Rotation: float
+G_Pitch: float
+ZZ_location: point
+
+entity 255
+classname: %typedef%
+%typename%: RCS_BoundsTrigger
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+E_Reach: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 256
+classname: %typedef%
+%typename%: RCS_BModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_AnimModel0: model
+C_AnimModel1: model
+C_AnimModel2: model
+C_AnimModel3: model
+C_AnimModel4: model
+C_AnimModel5: model
+C_AnimModel6: model
+C_AnimModel7: model
+C_AnimModel8: model
+C_AnimModel9: model
+E_Reach: float
+F_HitPoints: int
+G_Liftable: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 257
+classname: %typedef%
+%typename%: RCS_BlinkLight
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+H_radius: float
+K_HideIfNotVisible: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+Y_color: color
+ZZ_location: point
+
+entity 258
+classname: %typedef%
+%typename%: Camera
+origin: point
+%defaultvalue%: 
+angles: point
+
+entity 259
+classname: %typedef%
+%typename%: ModelOrigin
+origin: point
+%defaultvalue%: 
+
+entity 260
+classname: %typedef%
+%typename%: spotlight
+DummyRadius: int
+%defaultvalue%: 
+light: int
+color: color
+style: int
+origin: point
+angles: point
+arc: int
+
+entity 261
+classname: %typedef%
+%typename%: light
+light: int
+%defaultvalue%: 
+color: color
+style: int
+origin: point

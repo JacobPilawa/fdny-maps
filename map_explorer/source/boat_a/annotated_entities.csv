@@ -1,0 +1,107 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+S1,START,104,RCS_PlayerRescue,RCS_PlayerRescue2,-1253.0,16.0,121.0,,equip axe
+F1,FIRE,107,RCS_FireRescue,fireblock,1395.0,-155.0,5533.0,,
+D1,DOOR,110,RCS_BModel,door2,-71.0,-275.0,1644.0,,*Door
+D2,DOOR,112,RCS_BModel,garagedoor2,875.0,-273.0,2527.0,,touch: *DoorOpen | untouch: *DoorClose
+F2,FIRE,113,RCS_FireRescue,fireblock,-1268.0,-90.0,-147.0,,
+F3,FIRE,114,RCS_FireRescue,fire2,132.0,-102.0,1076.0,,
+D3,DOOR,115,RCS_BModel,door3,-73.0,-277.0,1413.0,,*Door
+D4,DOOR,116,RCS_BModel,door4,-173.0,-54.0,1212.0,,*Door
+D5,DOOR,117,RCS_BModel,door5,615.0,-274.0,1337.0,,*Door
+F4,FIRE,118,RCS_FireRescue,fire3,-272.0,-132.0,908.0,,
+D6,DOOR,123,RCS_BModel,door6,-64.0,-50.0,1421.0,,*Door
+F5,FIRE,124,RCS_FireRescue,firetable,255.0,-84.0,1524.0,,
+F6,FIRE,127,RCS_FireRescue,firefork,1014.0,-349.0,1629.0,,
+F7,FIRE,128,RCS_FireRescue,firefork1,1002.0,-357.0,2021.0,,
+F8,FIRE,129,RCS_FireRescue,firefork2,858.0,-257.0,1909.0,,
+V1,VICTIM,130,RCS_VictimRescue,victimfork,698.0,-293.0,2393.0,,
+F9,FIRE,131,RCS_FireRescue,firefork4,436.0,-434.0,2580.0,,
+F10,FIRE,132,RCS_FireRescue,firefork5,1864.0,-278.0,2820.0,,
+F11,FIRE,133,RCS_FireRescue,firefork7,1748.0,-438.0,3708.0,,
+F12,FIRE,134,RCS_FireRescue,firefork8,-298.0,-610.0,3258.0,,
+F13,FIRE,137,RCS_FireRescue,firetable1,531.0,-316.0,1804.0,,
+F14,FIRE,138,RCS_FireRescue,firetable2,365.0,-316.0,1831.0,,
+F15,FIRE,139,RCS_FireRescue,firetable3,187.0,-312.0,1823.0,,
+V2,VICTIM,145,RCS_VictimRescue,girl,-1551.0,-72.0,456.0,,
+F16,FIRE,146,RCS_FireRescue,fireblock2,-1472.0,-80.0,164.0,,
+F17,FIRE,151,RCS_FireRescue,fireblock3,-1268.0,-108.0,620.0,,
+T1,TRIGGER,153,RCS_BoundsTrigger,oxyent,-213.0,0.0,114.0,,touch: tell player escape | untouch: tell player escape
+F18,FIRE,156,RCS_FireRescue,fireblock5,1087.0,-135.0,6393.0,,
+F19,FIRE,157,RCS_FireRescue,fireblock6,987.0,-23.0,6301.0,,
+V3,VICTIM,158,RCS_VictimRescue,victim3,1359.0,105.0,6149.0,,
+D7,DOOR,159,RCS_BModel,door10,1784.0,58.0,6783.0,,*Door
+F20,FIRE,160,RCS_FireRescue,fireblock7,-69.0,-139.0,6709.0,,
+V4,VICTIM,187,RCS_VictimRescue,boy2,308.0,-1018.0,3784.0,,roam 700
+F21,FIRE,188,RCS_FireRescue,firegen,427.0,-151.0,6197.0,,
+D8,DOOR,189,RCS_BModel,door12,911.0,49.0,6783.0,,*Door
+V5,VICTIM,191,RCS_VictimRescue,fatty,119.0,-115.0,6541.0,,
+T2,TRIGGER,193,RCS_BoundsTrigger,rescue3,1870.0,-370.0,4834.0,,touch: tell player escape
+V6,VICTIM,194,RCS_VictimRescue,fatman,551.0,-280.0,1632.0,,
+V7,VICTIM,195,RCS_VictimRescue,fatman1,451.0,-52.0,1344.0,,
+T3,TRIGGER,197,RCS_BoundsTrigger,oxy2,616.0,-169.0,8141.0,,touch: tell player oxyon | untouch: tell player oxyoff | makezone (Ballast Control) | touch: fogenable 0 250 50 50 50 | untouch: fogenable *DefaultFogParams
+V8,VICTIM,200,RCS_VictimRescue,fat,1056.0,-730.0,4532.0,,
+E1,EXIT,201,RCS_EscapeArrow,escape1,-1262.0,24.0,64.0,,
+E2,EXIT,202,RCS_EscapeArrow,escape2,-188.0,0.0,884.0,,
+E3,EXIT,203,RCS_EscapeArrow,escape5,899.0,165.0,6077.0,,
+E4,EXIT,204,RCS_EscapeArrow,escape6,1631.0,125.0,6101.0,,
+E5,EXIT,205,RCS_EscapeArrow,dg,-256.0,-11.0,1546.0,,
+E6,EXIT,206,RCS_EscapeArrow,escape9,838.0,-176.0,2334.0,,
+E7,EXIT,207,RCS_EscapeArrow,escape10,1838.0,-298.0,3272.0,,
+F22,FIRE,208,RCS_FireRescue,fire12,-129.0,-143.0,5781.0,,
+F23,FIRE,209,RCS_FireRescue,fire13,-161.0,-143.0,5577.0,,
+F24,FIRE,210,RCS_FireRescue,fire14,230.0,-80.0,1769.0,,
+H1,HOSE,211,RCS_PropModel,hose,-284.0,0.0,544.0,,touch: tell player (touchhose 50)
+W1,VALVE,212,RCS_PropModel,valve1,-264.0,0.0,6192.0,,makevalve
+V9,VICTIM,213,RCS_VictimRescue,girl,-12.0,-1042.0,4501.0,,roam 200
+T4,TRIGGER,214,RCS_BoundsTrigger,wareAbound,-220.0,-776.0,2615.0,,makezone (Cargo A) | touch: loopsnd ambient1 | untouch: stopsnd ambient1
+H2,HOSE,216,RCS_PropModel,hose1,748.0,-996.0,2549.0,,touch: tell player (touchhose 50)
+T5,TRIGGER,217,RCS_BoundsTrigger,rescue5,-241.0,-284.0,1560.0,,touch: tell player escape
+T6,TRIGGER,219,RCS_BoundsTrigger,dsfg,156.0,-76.0,-148.0,,makezone (Propeller Room A) | once (playsnd 
+T7,TRIGGER,220,RCS_BoundsTrigger,sdf,-1604.0,-36.0,420.0,,makezone (Propeller Room B)
+T8,TRIGGER,221,RCS_BoundsTrigger,sdf,152.0,-112.0,648.0,,makezone (Engine Room)
+T9,TRIGGER,222,RCS_BoundsTrigger,gf,-305.0,-280.0,1236.0,,makezone (Office Area)
+T10,TRIGGER,223,RCS_BoundsTrigger,sdf,55.0,-260.0,1324.0,,makezone (Manager's Office)
+T11,TRIGGER,224,RCS_BoundsTrigger,sdf,-153.0,-71.0,5985.0,,makezone (Boiler Room)
+E8,EXIT,225,RCS_EscapeArrow,dg,926.0,-628.0,3155.0,,
+E9,EXIT,226,RCS_EscapeArrow,dfg,713.0,-981.0,3557.0,,
+F25,FIRE,227,RCS_FireRescue,fireblock8,231.0,-147.0,6685.0,,
+F26,FIRE,228,RCS_FireRescue,fireblock9,51.0,-139.0,6653.0,,
+F27,FIRE,229,RCS_FireRescue,fireblock10,87.0,-139.0,6385.0,,
+F28,FIRE,230,RCS_FireRescue,fireblock11,-41.0,-139.0,6317.0,,
+F29,FIRE,231,RCS_FireRescue,fireblock12,-65.0,-139.0,6505.0,,
+W2,VALVE,232,RCS_PropModel,erg,728.0,-224.0,1248.0,,makevalve
+T12,TRIGGER,233,RCS_BoundsTrigger,sdf,743.0,-198.0,2455.0,,makezone (Forklift Storage)
+F30,FIRE,234,RCS_FireRescue,erg,705.0,-1043.0,3116.0,,
+F31,FIRE,241,RCS_FireRescue,qwe,932.0,-335.0,2103.0,,
+F32,FIRE,242,RCS_FireRescue,asdf,714.0,-339.0,1835.0,,
+W3,VALVE,243,RCS_PropModel,erg1,512.0,-952.0,2568.0,,makevalve
+F33,FIRE,244,RCS_FireRescue,RCS_FireRescue61,710.0,-1047.0,3355.0,,
+F34,FIRE,245,RCS_FireRescue,rg,110.0,-1055.0,3297.0,,
+F35,FIRE,246,RCS_FireRescue,RCS_FireRescue63,897.0,-1067.0,3541.0,,
+F36,FIRE,251,RCS_FireRescue,ret,-101.0,-764.0,3349.0,,
+F37,FIRE,252,RCS_FireRescue,ret1,-157.0,-764.0,3149.0,,
+F38,FIRE,253,RCS_FireRescue,RCS_FireRescue66,422.0,-870.0,3230.0,,
+T13,TRIGGER,258,RCS_BoundsTrigger,rgd,976.0,-201.0,2695.0,,*explosion
+F39,FIRE,259,RCS_FireRescue,RCS_FireRescue67,1815.0,-421.0,5122.0,,
+F40,FIRE,260,RCS_FireRescue,<null>4,1768.0,-421.0,5259.0,,
+F41,FIRE,261,RCS_FireRescue,<null>5,1571.0,-421.0,5286.0,,
+F42,FIRE,262,RCS_FireRescue,<null>6,1895.0,-421.0,5320.0,,
+W4,VALVE,263,RCS_PropModel,erg2,1112.0,-272.0,5344.0,,makevalve
+D9,DOOR,264,RCS_BModel,door13,892.0,207.0,5957.0,,*Door
+F43,FIRE,265,RCS_FireRescue,firefork3,915.0,-349.0,1709.0,,
+F44,FIRE,266,RCS_FireRescue,rg1,107.0,-1055.0,3087.0,,
+E10,EXIT,267,RCS_EscapeArrow,RCS_EscapeArrow16,-244.0,-981.0,4792.0,,
+F45,FIRE,271,RCS_FireRescue,firefork9,1838.0,-276.0,5336.0,,
+F46,FIRE,279,RCS_FireRescue,RCS_FireRescue74,833.0,-1057.0,3635.0,,
+T14,TRIGGER,280,RCS_BoundsTrigger,RCS_BoundsTrigger29,778.0,-181.0,8693.0,,touch: tell player (finalexitloadmap boat_b)
+F47,FIRE,281,RCS_FireRescue,rg2,96.0,-1056.0,3200.0,,
+A1,ALT,290,RCS_VictimAltSpot,RCS_VictimAltSpot1,153.0,-44.0,463.0,RCS_VictimRescue2,
+A2,ALT,291,RCS_VictimAltSpot,RCS_VictimAltSpot2,-579.0,-31.0,784.0,RCS_VictimRescue7,
+A3,ALT,292,RCS_VictimAltSpot,RCS_VictimAltSpot3,529.0,-260.0,1507.0,RCS_VictimRescue6,
+A4,ALT,293,RCS_VictimAltSpot,RCS_VictimAltSpot4,-127.0,-765.0,2628.0,RCS_VictimRescue1,
+A5,ALT,294,RCS_VictimAltSpot,RCS_VictimAltSpot5,1468.0,-994.0,3346.0,RCS_VictimRescue9,
+A6,ALT,295,RCS_VictimAltSpot,RCS_VictimAltSpot6,1274.0,-963.0,4082.0,RCS_VictimRescue4,
+A7,ALT,296,RCS_VictimAltSpot,RCS_VictimAltSpot7,1159.0,-63.0,5502.0,RCS_VictimRescue3,
+T15,TRIGGER,301,RCS_BoundsTrigger,qweee,-569.0,-38.0,192.0,,touch: playsnd stress6
+T16,TRIGGER,302,RCS_BoundsTrigger,dfg,692.0,-182.0,1540.0,,touch: once (playsnd pressure1)
+E11,EXIT,303,RCS_EscapeArrow,RCS_EscapeArrow17,932.0,-287.0,5217.0,,

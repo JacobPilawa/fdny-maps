@@ -1,0 +1,1479 @@
+NumEntities 103
+
+entity 0
+TextureLib: D:\WIN2K\Temp/textures.txl
+SkyAxis: 0.000000 0.000000 1.000000
+SkyRotation: 0.000000
+SkyDrawScale: 0.000000
+SkyLeft: sky_bud_bk
+SkyRight: sky_bud_ft
+SkyTop: sky_bud_up
+SkyBottom: sky_bud_dn
+SkyFront: sky_bud_rt
+SkyBack: sky_bud_lf
+
+entity 1
+Model: 1
+classname: %Model%
+%name%: ScaffFire_01
+origin: 2282.000000 274.000000 6556.000977
+
+entity 2
+Model: 2
+classname: %Model%
+%name%: LumberFire_01
+origin: 6330.000000 80.000000 5521.469727
+
+entity 3
+Model: 3
+classname: %Model%
+%name%: LumberFire_02
+origin: 6482.000000 80.000000 5354.176758
+
+entity 4
+Model: 4
+classname: %Model%
+%name%: DoorFire_01
+origin: 2802.000000 138.000000 5192.000000
+
+entity 5
+Model: 5
+classname: %Model%
+%name%: Spot03_Fire01
+origin: 4633.970215 238.000000 4386.000000
+
+entity 6
+Model: 6
+classname: %Model%
+%name%: Spot02_Fire01
+origin: 4653.970215 354.000000 2638.000000
+
+entity 7
+Model: 7
+classname: %Model%
+%name%: TruckFire_01
+origin: 6266.000000 90.032532 2685.970215
+
+entity 8
+Model: 8
+classname: %Model%
+%name%: Spot01_Fire01
+origin: 4262.000000 90.032532 1770.029785
+
+entity 9
+Model: 9
+classname: %Model%
+%name%: ScaffFire_02
+origin: 2640.719971 274.000000 6556.000000
+
+entity 10
+Model: 10
+classname: %Model%
+%name%: ScaffFire_03
+origin: 2795.280029 686.000183 6556.000000
+
+entity 11
+Model: 11
+classname: %Model%
+%name%: ScaffFire_04
+origin: 2436.719971 686.000183 6556.000000
+
+entity 12
+Model: 12
+classname: %Model%
+%name%: TruckFire_02
+origin: 6634.000000 44.000183 2674.000000
+
+entity 13
+Model: 13
+classname: %Model%
+%name%: DoorFire_02
+origin: 2718.000000 320.000183 5386.000000
+
+entity 14
+Model: 14
+classname: %Model%
+%name%: Spot01_Fire02
+origin: 4310.000000 346.000244 1768.000122
+
+entity 15
+Model: 15
+classname: %Model%
+%name%: Spot01_Fire03
+origin: 4200.000000 292.000183 1662.000000
+
+entity 16
+Model: 16
+classname: %Model%
+%name%: Spot01_Fire04
+origin: 4438.000000 527.999878 1771.999878
+
+entity 17
+Model: 17
+classname: %Model%
+%name%: Spot02_Fire02
+origin: 4652.000000 362.000000 2372.000000
+
+entity 18
+Model: 18
+classname: %Model%
+%name%: Spot02_Fire03
+origin: 4656.000000 527.999878 2211.999756
+
+entity 19
+Model: 19
+classname: %Model%
+%name%: Spot02_Fire04
+origin: 4652.000000 593.999939 2492.000000
+
+entity 20
+Model: 20
+classname: %Model%
+%name%: Spot02_Fire05
+origin: 4660.000000 593.999939 2688.000000
+
+entity 21
+Model: 21
+classname: %Model%
+%name%: Spot03_Fire02
+origin: 4628.000000 242.000046 4260.000000
+
+entity 22
+Model: 22
+classname: %Model%
+%name%: Spot03_Fire03
+origin: 4592.000000 616.000000 4525.999512
+
+entity 23
+Model: 23
+classname: %Model%
+%name%: Spot03_Fire04
+origin: 4592.000000 593.999939 4112.000000
+
+entity 24
+Model: 24
+classname: %Model%
+%name%: DoorFire_03
+origin: 3130.000000 349.999939 5126.000000
+
+entity 25
+classname: RCS_PlayerHose
+FirstPathPoint: RCS_HosePath25
+location: 3640 32 348
+spawn_message: 10000
+%name%: RCS_PlayerHose1
+
+entity 26
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6464 136 2548
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath6
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 27
+A_NextPoint: RCS_HosePath13
+B_LookAtPoint: RCS_HosePath46
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath13
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 1
+M_MaxPressure: .5
+M_SpotTime: 28
+ZF0_FireModel: Spot01_Fire01
+ZF0_SprayTime: 1.5
+ZF1_FireModel: Spot01_Fire02
+ZF1_SprayTime: 1.5
+ZF2_FireModel: Spot01_Fire03
+ZF2_SprayTime: 1.5
+ZF3_FireModel: Spot01_Fire04
+ZF3_SprayTime: 1.5
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5112 76 1468
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath12
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 28
+A_NextPoint: RCS_HosePath27
+B_LookAtPoint: RCS_HosePath19
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath14
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .75
+M_SpotTime: 28
+ZF0_FireModel: Spot02_Fire01
+ZF0_SprayTime: 1.4
+ZF1_FireModel: Spot02_Fire02
+ZF1_SprayTime: 1.5
+ZF2_FireModel: Spot02_Fire03
+ZF2_SprayTime: 1.35
+ZF3_FireModel: Spot02_Fire04
+ZF3_SprayTime: 1.25
+ZF4_FireModel: Spot02_Fire05
+ZF4_SprayTime: 1.5
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5244 452 2448
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath13
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 29
+A_NextPoint: RCS_HosePath35
+B_LookAtPoint: RCS_HosePath20
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath15
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .4
+M_SpotTime: 28
+ZF0_FireModel: TruckFire_01
+ZF0_SprayTime: 1.55
+ZF1_FireModel: TruckFire_02
+ZF1_SprayTime: 1.25
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6092 452 3144
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath14
+N_PitchSpread: 45.0
+Q_NumCycles: 3
+
+entity 30
+A_NextPoint: RCS_HosePath40
+B_LookAtPoint: RCS_HosePath21
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath16
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .5
+M_SpotTime: 25
+ZF0_FireModel: Spot03_Fire01
+ZF0_SprayTime: 1.5
+ZF1_FireModel: Spot03_Fire02
+ZF1_SprayTime: 1.5
+ZF2_FireModel: Spot03_Fire03
+ZF2_SprayTime: 1.5
+ZF3_FireModel: Spot03_Fire04
+ZF3_SprayTime: 1.5
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5372 452 4324
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath15
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 31
+A_NextPoint: RCS_HosePath43
+B_LookAtPoint: RCS_HosePath22
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath18
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .35
+M_SpotTime: 13
+ZF0_FireModel: LumberFire_01
+ZF0_SprayTime: 1.5
+ZF1_FireModel: LumberFire_02
+ZF1_SprayTime: 1.5
+ZF2_SprayTime: 1.5
+ZF3_SprayTime: 1.5
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5856 452 5312
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath16
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 32
+A_NextPoint: RCS_HosePath18
+B_LookAtPoint: RCS_HosePath21
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 4560 452 5580
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath17
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 33
+A_NextPoint: RCS_HosePath45
+B_LookAtPoint: RCS_HosePath23
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath26
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .4
+M_SpotTime: 28
+ZF0_FireModel: DoorFire_01
+ZF0_SprayTime: 1.5
+ZF1_FireModel: DoorFire_02
+ZF1_SprayTime: 1.5
+ZF2_FireModel: DoorFire_03
+ZF2_SprayTime: 1.5
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 3240 452 5524
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath18
+N_PitchSpread: 45.0
+Q_NumCycles: 3
+
+entity 34
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 4500 452 2640
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath19
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 35
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6828 452 2032
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath20
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 36
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2892 452 4724
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath21
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 37
+A_NextPoint: RCS_HosePath17
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 7256 452 5608
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath22
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 38
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1512 452 4760
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath23
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 39
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2372 908 6988
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath24
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 40
+A_NextPoint: RCS_HosePath12
+B_LookAtPoint: RCS_HosePath46
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 3832 76 516
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath25
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 41
+A_NextPoint: RCS_HosePath25
+B_LookAtPoint: RCS_HosePath44
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .45
+M_SpotTime: 26
+ZF0_FireModel: ScaffFire_01
+ZF0_SprayTime: 1.75
+ZF1_FireModel: ScaffFire_02
+ZF1_SprayTime: 1.56
+ZF2_FireModel: ScaffFire_03
+ZF2_SprayTime: 1.5
+ZF3_FireModel: ScaffFire_04
+ZF3_SprayTime: 1.75
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2668 452 5764
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath26
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 42
+A_NextPoint: RCS_HosePath28
+B_LookAtPoint: RCS_HosePath29
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5412 0 2780
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath27
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 43
+A_NextPoint: RCS_HosePath33
+B_LookAtPoint: RCS_HosePath30
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5496 0 3120
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath28
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 44
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 4800 444 3208
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath29
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 45
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5020 248 3984
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath30
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 46
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6740 444 4180
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath31
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 47
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6784 248 2348
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath32
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 48
+A_NextPoint: RCS_HosePath34
+B_LookAtPoint: RCS_HosePath31
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5820 444 3352
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath33
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 49
+A_NextPoint: RCS_HosePath14
+B_LookAtPoint: RCS_HosePath32
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6228 444 3388
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath34
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 50
+A_NextPoint: RCS_HosePath37
+B_LookAtPoint: RCS_HosePath36
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 6084 452 3588
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath35
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 51
+A_NextPoint: RCS_HosePath15
+B_LookAtPoint: RCS_HosePath20
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath15
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5764 452 2396
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath36
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 52
+A_NextPoint: RCS_HosePath15
+B_LookAtPoint: RCS_HosePath19
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5948 452 4144
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath37
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 53
+A_NextPoint: RCS_HosePath41
+B_LookAtPoint: RCS_HosePath24
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5292 248 4824
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath40
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 54
+A_NextPoint: RCS_HosePath16
+B_LookAtPoint: RCS_HosePath42
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5528 248 5212
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath41
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 55
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5352 248 7524
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath42
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 56
+A_NextPoint: RCS_HosePath17
+B_LookAtPoint: RCS_HosePath42
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 5344 248 5628
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath43
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 57
+angles: 87.653290 -300.000000 -200.000007
+classname: SunLight
+color: 252 239 209
+light: 150
+origin: 7048 852 88
+style: 0
+%name%: SunLight1
+
+entity 58
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2372 368 6788
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath44
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 59
+A_NextPoint: RCS_HosePath26
+B_LookAtPoint: RCS_HosePath44
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: .5
+M_SpotTime: 30
+ZF0_FireModel: ScaffFire_01
+ZF0_SprayTime: 1.75
+ZF1_FireModel: ScaffFire_02
+ZF1_SprayTime: 1.56
+ZF2_FireModel: ScaffFire_03
+ZF2_SprayTime: 1.5
+ZF3_FireModel: ScaffFire_04
+ZF3_SprayTime: 1.75
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2848 452 5556
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath45
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 60
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 3912 452 1900
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath46
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+
+entity 61
+classname: light
+color: 0 0 0
+light: 200
+origin: 4200 284 1636
+style: 0
+%name%: light5
+
+entity 62
+classname: light
+color: 0 0 0
+light: 200
+origin: 4200 48 1784
+style: 0
+%name%: light6
+
+entity 63
+classname: light
+color: 0 0 0
+light: 200
+origin: 4308 280 1776
+style: 0
+%name%: light7
+
+entity 64
+classname: light
+color: 0 0 0
+light: 200
+origin: 4452 524 1784
+style: 0
+%name%: light8
+
+entity 65
+classname: light
+color: 0 0 0
+light: 200
+origin: 4648 512 2236
+style: 0
+%name%: light9
+
+entity 66
+classname: light
+color: 0 0 0
+light: 200
+origin: 4648 296 2352
+style: 0
+%name%: light10
+
+entity 67
+classname: light
+color: 0 0 0
+light: 200
+origin: 4640 276 2580
+style: 0
+%name%: light11
+
+entity 68
+classname: light
+color: 0 0 0
+light: 200
+origin: 4644 540 2556
+style: 0
+%name%: light12
+
+entity 69
+classname: light
+color: 0 0 0
+light: 200
+origin: 4644 520 2684
+style: 0
+%name%: light13
+
+entity 70
+classname: light
+color: 0 0 0
+light: 350
+origin: 6628 44 2676
+style: 0
+%name%: light14
+
+entity 71
+classname: light
+color: 0 0 0
+light: 350
+origin: 6336 56 2668
+style: 0
+%name%: light15
+
+entity 72
+classname: light
+color: 0 0 0
+light: 200
+origin: 4636 168 4256
+style: 0
+%name%: light16
+
+entity 73
+classname: light
+color: 0 0 0
+light: 350
+origin: 4640 196 4348
+style: 0
+%name%: light17
+
+entity 74
+classname: light
+color: 0 0 0
+light: 300
+origin: 4628 604 4124
+style: 0
+%name%: light18
+
+entity 75
+classname: light
+color: 0 0 0
+light: 300
+origin: 4640 604 4540
+style: 0
+%name%: light19
+
+entity 76
+classname: light
+color: 0 0 0
+light: 200
+origin: 6336 64 5516
+style: 0
+%name%: light20
+
+entity 77
+classname: light
+color: 0 0 0
+light: 200
+origin: 6496 68 5352
+style: 0
+%name%: light21
+
+entity 78
+classname: light
+color: 0 0 0
+light: 200
+origin: 3128 304 5128
+style: 0
+%name%: light22
+
+entity 79
+classname: light
+color: 0 0 0
+light: 200
+origin: 2820 100 5200
+style: 0
+%name%: light23
+
+entity 80
+classname: light
+color: 0 0 0
+light: 300
+origin: 2684 284 5376
+style: 0
+%name%: light24
+
+entity 81
+classname: light
+color: 0 0 0
+light: 200
+origin: 2808 688 6540
+style: 0
+%name%: light25
+
+entity 82
+classname: light
+color: 0 0 0
+light: 200
+origin: 2440 684 6544
+style: 0
+%name%: light26
+
+entity 83
+classname: light
+color: 0 0 0
+light: 200
+origin: 2636 280 6532
+style: 0
+%name%: light27
+
+entity 84
+classname: light
+color: 0 0 0
+light: 200
+origin: 2276 284 6532
+style: 0
+%name%: light28
+
+entity 85
+classname: %typedef%
+%typename%: RCS_VictimAltSpot
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Victim: RCS_VictimRescue
+B_Heading: float
+
+entity 86
+classname: %typedef%
+%typename%: RCS_VictimRescue
+spawn_message: int
+%defaultvalue%: 
+location: point
+A_Name: string
+D_Type: string
+G_Heading: float
+J_Radius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+
+entity 87
+classname: %typedef%
+%typename%: SunLight
+origin: point
+%defaultvalue%: 
+color: color
+light: int
+angles: point
+style: int
+
+entity 88
+classname: %typedef%
+%typename%: RCS_PropModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Name: string
+D_Model: int
+E_Heading: float
+E_Pitch: float
+F_TouchRadius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+
+entity 89
+classname: %typedef%
+%typename%: RCS_PlayerRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+C_Heading: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 90
+classname: %typedef%
+%typename%: RCS_PathPoint
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 91
+classname: %typedef%
+%typename%: RCS_FireRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+F_FireType: int
+H_Radius: float
+H_Height: float
+K_SprayTime: float
+L_FloorMe: int
+M_Smoking: int
+N_IsAlive: int
+P_NumKeys: int
+P_Key1Size: point
+P_Key1TimeOffset: int
+P_Key2Size: point
+P_Key2TimeOffset: int
+P_Key3Size: point
+P_Key3TimeOffset: int
+P_Key4Size: point
+P_Key4TimeOffset: int
+T_UseHeading: int
+T_Heading: point
+ZZ_location: point
+
+entity 92
+classname: %typedef%
+%typename%: RCS_PlayerHose
+spawn_message: int
+%defaultvalue%: 
+location: point
+FirstPathPoint: RCS_HosePath
+
+entity 93
+classname: %typedef%
+%typename%: RCS_HosePath
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_NextPoint: RCS_HosePath
+B_LookAtPoint: RCS_HosePath
+C_IsAHotSpot: int
+D_NextHotSpot: RCS_HosePath
+E_NextHotSpotPathDir: int
+M_IsFirstHotSpot: int
+M_SpotTime: float
+M_MaxPressure: float
+N_PitchSpread: float
+Q_NumCycles: int
+ZF0_FireModel: model
+ZF0_SprayTime: float
+ZF1_FireModel: model
+ZF1_SprayTime: float
+ZF2_FireModel: model
+ZF2_SprayTime: float
+ZF3_FireModel: model
+ZF3_SprayTime: float
+ZF4_FireModel: model
+ZF4_SprayTime: float
+ZF5_FireModel: model
+ZF5_SprayTime: float
+ZF6_FireModel: model
+ZF6_SprayTime: float
+ZF7_FireModel: model
+ZF7_SprayTime: float
+ZF8_FireModel: model
+ZF8_SprayTime: float
+
+entity 94
+classname: %typedef%
+%typename%: RCS_MiscEmitter
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Type: int
+E_Heading: float
+E_Pitch: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+ZZ_location: point
+
+entity 95
+classname: %typedef%
+%typename%: RCS_EscapeArrow
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+F_Rotation: float
+G_Pitch: float
+ZZ_location: point
+
+entity 96
+classname: %typedef%
+%typename%: RCS_BoundsTrigger
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+E_Reach: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 97
+classname: %typedef%
+%typename%: RCS_BModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_AnimModel0: model
+C_AnimModel1: model
+C_AnimModel2: model
+C_AnimModel3: model
+C_AnimModel4: model
+C_AnimModel5: model
+C_AnimModel6: model
+C_AnimModel7: model
+C_AnimModel8: model
+C_AnimModel9: model
+E_Reach: float
+F_HitPoints: int
+G_Liftable: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 98
+classname: %typedef%
+%typename%: RCS_BlinkLight
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+H_radius: float
+K_HideIfNotVisible: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+Y_color: color
+ZZ_location: point
+
+entity 99
+classname: %typedef%
+%typename%: Camera
+origin: point
+%defaultvalue%: 
+angles: point
+
+entity 100
+classname: %typedef%
+%typename%: ModelOrigin
+origin: point
+%defaultvalue%: 
+
+entity 101
+classname: %typedef%
+%typename%: spotlight
+DummyRadius: int
+%defaultvalue%: 
+light: int
+color: color
+style: int
+origin: point
+angles: point
+arc: int
+
+entity 102
+classname: %typedef%
+%typename%: light
+light: int
+%defaultvalue%: 
+color: color
+style: int
+origin: point

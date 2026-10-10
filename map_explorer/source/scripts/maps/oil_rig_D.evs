@@ -1,0 +1,9 @@
+exec rescue.evs
+
+set Quake (touch: once (cmd [quake 19 6, playsnd Explodelarge]))
+set WarehouseCatwalks (touch: once (que [(tell catwalk03 open), (wait .5), (tell catwalk01 open), (wait .5), (tell catwalk02 open)]))
+
+set StairsDrop (touch: once (que [(wait 1.5), (tell TowerStairs open), (wait 1), (tell steam01 turnon), (tell steam02 turnon), (tell steam03 turnon)]))
+set TowerStairs (touch: ifclear Complex (touch: ifclear Tower (cmd [(*Quake), (*StairsDrop)])))
+
+setlighttable 1 adgjmpsvzvspmjgda

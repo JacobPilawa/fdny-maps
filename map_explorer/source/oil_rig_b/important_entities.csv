@@ -1,0 +1,33 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+D1,DOOR,27,RCS_BModel,door3,712.0,896.0,1040.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D2,DOOR,28,RCS_BModel,door4,712.0,636.0,1040.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D3,DOOR,29,RCS_BModel,door5,-75.0,888.0,1040.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D4,DOOR,30,RCS_BModel,door6,-77.0,888.0,416.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D5,DOOR,31,RCS_BModel,door7,1005.0,888.0,416.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D6,DOOR,32,RCS_BModel,door10,-755.0,886.0,865.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+D7,DOOR,33,RCS_BModel,door101,473.0,815.0,346.0,,touch: settimescale 4 | touch: ifclear Warehouse (*DoorOpen) | untouch: ifclear Warehouse (*DoorClose) | touch: ifnotclear Warehouse (hint 5 (There are still survivors in the Warehouse.))
+D8,DOOR,34,RCS_BModel,door202,-736.0,305.0,1116.0,,touch: settimescale 4 | touch: *DoorOpen | untouch: *DoorClose
+F1,FIRE,36,RCS_FireRescue,RCS_FireRescue2,-272.0,800.0,968.0,,
+F2,FIRE,37,RCS_FireRescue,mail room fire,1016.0,512.0,752.0,,
+F3,FIRE,38,RCS_FireRescue,table fire,990.0,745.0,844.0,,
+H1,HOSE,51,RCS_PropModel,coiled hose,-752.0,816.0,435.0,,touch: tell player (touchhose 50)
+F4,FIRE,52,RCS_FireRescue,table fire 02,1129.0,743.0,828.0,,
+F5,FIRE,53,RCS_FireRescue,<null>1,-496.0,792.0,816.0,,
+W1,VALVE,54,RCS_PropModel,valve,1112.0,304.0,384.0,,makevalve
+F6,FIRE,56,RCS_FireRescue,machine fire,-224.0,272.0,896.0,,
+F7,FIRE,63,RCS_FireRescue,tall fire1,81.0,240.0,450.0,,
+F8,FIRE,64,RCS_FireRescue,tall fire2,499.0,268.0,1065.0,,
+V1,VICTIM,65,RCS_VictimRescue,<null>2,1144.0,496.0,628.0,,
+V2,VICTIM,66,RCS_VictimRescue,<null>3,876.0,832.0,416.0,,
+F9,FIRE,67,RCS_FireRescue,tall fire3,984.0,768.0,976.0,,
+E1,EXIT,68,RCS_EscapeArrow,RCS_EscapeArrow1,52.0,344.0,1068.0,,
+E2,EXIT,69,RCS_EscapeArrow,<null>6,-791.0,418.0,972.0,,
+E3,EXIT,70,RCS_EscapeArrow,<null>7,-741.0,418.0,1363.0,,
+F10,FIRE,71,RCS_FireRescue,oil drum fire,1036.0,298.0,862.0,,
+F11,FIRE,72,RCS_FireRescue,oil drum fire1,578.0,282.0,1022.0,,
+F12,FIRE,73,RCS_FireRescue,machine fire1,-184.0,272.0,956.0,,
+F13,FIRE,74,RCS_FireRescue,machine fire2,-240.0,272.0,836.0,,
+F14,FIRE,75,RCS_FireRescue,machine fire3,-312.0,272.0,944.0,,
+A1,ALT,88,RCS_VictimAltSpot,RCS_VictimAltSpot1,802.0,776.0,1046.0,RCS_VictimRescue3,
+V3,VICTIM,89,RCS_VictimRescue,woman,1080.0,288.0,1032.0,,roam 2400
+S1,START,91,RCS_PlayerRescue,RCS_PlayerRescue2,-752.0,844.0,412.0,,equip goggles | equip axe | equip extinguisher

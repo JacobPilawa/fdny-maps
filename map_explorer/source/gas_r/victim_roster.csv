@@ -1,0 +1,8 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+gas_r,V1,1,0,V1,Victim1,1404.0,-172.0,24.0,250.0,60,roam 250
+gas_r,V2,2,0,V2,Victim2,1576.0,-80.0,512.0,80.0,60,roam 80
+gas_r,V3,3,0,V3,Victim3,756.0,-64.0,648.0,400.0,60,roam 400
+gas_r,V4,4,0,V4,Victim4,1269.0,-172.0,1404.0,350.0,60,roam 350
+gas_r,V5,5,0,V5,Victim6,1988.0,-172.0,480.0,350.0,60,roam 350
+gas_r,V6,6,0,V6,Victim7,1972.0,-172.0,-204.0,350.0,60,roam 350
+gas_r,V7,7,0,V7,Victim5,-404.0,-120.0,1164.0,,40,100

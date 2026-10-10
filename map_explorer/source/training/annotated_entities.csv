@@ -1,0 +1,65 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+D1,DOOR,89,RCS_BModel,door6,-104.0,-124.0,136.0,,*Door
+D2,DOOR,101,RCS_BModel,door7,520.0,-128.0,280.0,,*Door
+T1,TRIGGER,106,RCS_BoundsTrigger,hinttrigger,396.0,-232.0,188.0,,"touch: hint 5 (In this level, you will practice basic chopping and throwing techniques for clearing obstacles.) | touch: tell player escape"
+T2,TRIGGER,107,RCS_BoundsTrigger,hinttrigger1,244.0,-220.0,768.0,,touch: hint 5 (Excellent!  Let's proceed to the next exercise.)
+T3,TRIGGER,114,RCS_BoundsTrigger,hinttrigger2,608.0,-104.0,820.0,,makezone (Chopping and Throwing Exercise)
+S1,START,115,RCS_PlayerRescue,RCS_PlayerRescue2,-1268.0,-172.0,4692.0,,equip axe | exec doors.evs | setashdensity 0 | setrescuebot 0
+D3,DOOR,116,RCS_BModel,door8,-752.0,-124.0,2104.0,,*Door
+D4,DOOR,128,RCS_BModel,door9,-128.0,-128.0,2248.0,,*Door
+T4,TRIGGER,133,RCS_BoundsTrigger,hinttrigger3,-252.0,-232.0,2156.0,,touch: *Enter1 | touch: tell player escape
+T5,TRIGGER,134,RCS_BoundsTrigger,hinttrigger4,-404.0,-220.0,2736.0,,touch:  hint 5 (Excellent!  Let's proceed to the next exercise.)
+T6,TRIGGER,135,RCS_BoundsTrigger,hinttrigger5,-40.0,-104.0,2788.0,,makezone (Jumping and Navigation Exercise)
+T7,TRIGGER,136,RCS_BoundsTrigger,hinttrigger6,-40.0,-232.0,1908.0,,touch: hint 3 (Good!  Now see if you can navigate across the beam.)
+T8,TRIGGER,137,RCS_BoundsTrigger,hinttrigger7,-536.0,-320.0,1508.0,,touch: if NotFirst 1 (*Failure1) | touch: set NotFirst 1
+T9,TRIGGER,138,RCS_BoundsTrigger,hinttrigger8,-816.0,-200.0,1140.0,,touch: hint 4 (Good work!  Now jump across the platforms to proceed to the next section.)
+D5,DOOR,139,RCS_BModel,door11,656.0,-124.0,-1832.0,,*Door
+D6,DOOR,151,RCS_BModel,door12,1280.0,-128.0,-1688.0,,*Door
+T10,TRIGGER,156,RCS_BoundsTrigger,hinttrigger9,1356.0,-192.0,-1832.0,,touch: *Welcome2
+T11,TRIGGER,157,RCS_BoundsTrigger,hinttrigger10,1004.0,-220.0,-1200.0,,touch: hint 5 (Excellent!  Let's proceed to the next exercise.)
+T12,TRIGGER,158,RCS_BoundsTrigger,hinttrigger11,1368.0,-104.0,-1148.0,,makezone (Fire Extinguishing Exercise)
+W1,VALVE,159,RCS_PropModel,Valve3,1368.0,-176.0,-2080.0,,"makevalve | touch: if gothose 1 (hint 6 (Press SPACE to attach or detach the hose.)) | use: hint 5 (When you are done putting out the fires, take the hose to the other valve.)"
+H1,HOSE,160,RCS_PropModel,Hose1,1288.0,-176.0,-2744.0,,touch: tell player (touchhose 25) | touch: hint 4 (Excellent!  Now attach this hose to the valve and put out the fires!) | touch: set gothose 1
+P1,PROP,161,RCS_PropModel,ext1,780.0,-164.0,-1748.0,,setscale 0.2 0.2 0.2 | touch: *RefillExt | touch: hint 4 (Press '1' and '2' to switch between items.  Return here to refill the extinguisher.)
+F1,FIRE,162,RCS_FireRescue,fire1,824.0,-120.0,-2092.0,,
+F2,FIRE,163,RCS_FireRescue,fire4,568.0,-120.0,-2924.0,,
+W2,VALVE,164,RCS_PropModel,Valve5,416.0,-176.0,-2404.0,,makevalve | use: hint 3 (Good work!  Now put out the big fires!)
+F3,FIRE,165,RCS_FireRescue,fire2,1088.0,-176.0,-2092.0,,
+F4,FIRE,166,RCS_FireRescue,fire3,1280.0,-176.0,-2400.0,,
+F5,FIRE,167,RCS_FireRescue,fire6,616.0,-176.0,-2708.0,,
+F6,FIRE,168,RCS_FireRescue,fire7,960.0,-176.0,-3008.0,,
+F7,FIRE,169,RCS_FireRescue,fire5,908.0,-176.0,-2716.0,,
+T13,TRIGGER,170,RCS_BoundsTrigger,hinttrigger12,468.0,-224.0,-1980.0,,touch: if gothose 1 (*Cmd2b) | touch: ifnot gothose 1 (*Cmd2a) | tell player (setashdensity 0.5)
+D7,DOOR,171,RCS_BModel,door14,1300.0,-124.0,-3820.0,,*Door
+D8,DOOR,183,RCS_BModel,door15,1924.0,-128.0,-3676.0,,*Door
+T14,TRIGGER,188,RCS_BoundsTrigger,hinttrigger13,1800.0,-232.0,-3768.0,,touch: hint 4 (This final exercise illustrates how to locate and rescue survivors.)
+T15,TRIGGER,189,RCS_BoundsTrigger,hinttrigger14,1648.0,-220.0,-3188.0,,touch: hint 5 (Excellent!  Let's proceed to the next exercise.) | tell player (setashdensity 0)
+T16,TRIGGER,190,RCS_BoundsTrigger,hinttrigger15,2012.0,-104.0,-3136.0,,makezone (Survivor Extraction Exercise)
+V1,VICTIM,191,RCS_VictimRescue,victim1,1104.0,-60.0,-4976.0,,pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+A1,ALT,192,RCS_VictimAltSpot,RCS_VictimAltSpot1,1300.0,-120.0,-4952.0,RCS_VictimRescue1,
+A2,ALT,193,RCS_VictimAltSpot,RCS_VictimAltSpot2,1472.0,-120.0,-4972.0,RCS_VictimRescue1,
+V2,VICTIM,194,RCS_VictimRescue,victim2,1656.0,-120.0,-4968.0,,pickup: if gotvictim 1 (*Cmd3b) | pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+A3,ALT,195,RCS_VictimAltSpot,RCS_VictimAltSpot3,1820.0,-120.0,-4960.0,RCS_VictimRescue2,
+A4,ALT,196,RCS_VictimAltSpot,RCS_VictimAltSpot4,1972.0,-120.0,-4960.0,RCS_VictimRescue2,
+T17,TRIGGER,197,RCS_BoundsTrigger,hinttrigger16,1272.0,-208.0,-4036.0,,"touch: que [ wait 3, (*Cmd3a) ] | touch: once (tell player (equip goggles))"
+D9,DOOR,198,RCS_BModel,door16,1132.0,-120.0,-4720.0,,*Door
+D10,DOOR,199,RCS_BModel,door17,1312.0,-120.0,-4720.0,,*Door
+D11,DOOR,200,RCS_BModel,door18,1496.0,-120.0,-4720.0,,*Door
+D12,DOOR,201,RCS_BModel,door19,1668.0,-120.0,-4720.0,,*Door
+D13,DOOR,202,RCS_BModel,door20,1828.0,-120.0,-4720.0,,*Door
+D14,DOOR,203,RCS_BModel,door21,1996.0,-120.0,-4720.0,,*Door
+T18,TRIGGER,204,RCS_BoundsTrigger,hinttrigger17,2032.0,-232.0,-4128.0,,touch: tell player escape
+D15,DOOR,214,RCS_BModel,door25,-1276.0,-124.0,4064.0,,*Door
+D16,DOOR,227,RCS_BModel,door26,-652.0,-128.0,4208.0,,*Door
+T19,TRIGGER,232,RCS_BoundsTrigger,hinttrigger23,-776.0,-232.0,4116.0,,"touch: hint 5 (In this level, you will practice basic jumping and crouching techniques.) | touch: tell player escape"
+T20,TRIGGER,233,RCS_BoundsTrigger,hinttrigger24,-928.0,-220.0,4696.0,,touch: *Welcome1
+T21,TRIGGER,234,RCS_BoundsTrigger,hinttrigger25,-564.0,-104.0,4748.0,,makezone (Crouching and Jumping Exercise)
+T22,TRIGGER,235,RCS_BoundsTrigger,hinttrigger26,-1072.0,-212.0,3008.0,,touch: hint 4 (Use the right mouse button to jump.)
+T23,TRIGGER,236,RCS_BoundsTrigger,hinttrigger27,-956.0,-236.0,3304.0,,touch: hint 4 (Press 'C' or 'CTRL' to crouch.)
+T24,TRIGGER,237,RCS_BoundsTrigger,hinttrigger28,-552.0,-212.0,3864.0,,touch: hint 4 (Good work!)
+E1,EXIT,238,RCS_EscapeArrow,RCS_EscapeArrow1,1712.0,-48.0,-4028.0,,
+D17,DOOR,239,RCS_BModel,door23,-692.0,-128.0,2864.0,,*Door
+D18,DOOR,240,RCS_BModel,door24,-112.0,-128.0,896.0,,*Door
+D19,DOOR,241,RCS_BModel,door27,604.0,-128.0,-1072.0,,*Door
+D20,DOOR,242,RCS_BModel,door28,1292.0,-128.0,-3032.0,,*Door
+T25,TRIGGER,243,RCS_BoundsTrigger,hinttrigger18,1016.0,-192.0,-1836.0,,touch: tell player escape

@@ -1,0 +1,95 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+S1,START,116,RCS_PlayerRescue,RCS_PlayerRescue1,105.0,-16.0,5899.0,,equip axe
+D1,DOOR,121,RCS_BModel,door20,329.0,64.0,3842.0,,*subdoor
+D2,DOOR,122,RCS_BModel,door21,385.0,64.0,4402.0,,*subdoor
+D3,DOOR,141,RCS_BModel,door22,89.0,26.0,2871.0,,*subdoor
+D4,DOOR,142,RCS_BModel,door23,-35.0,40.0,3421.0,,*subdoor
+D5,DOOR,157,RCS_BModel,door24,393.0,26.0,1808.0,,*subdoor
+D6,DOOR,158,RCS_BModel,door25,401.0,42.0,2376.0,,*subdoor
+T1,TRIGGER,171,RCS_BoundsTrigger,Fog1,560.0,0.0,6209.0,,touch: fogenable 0 900 30 50 8 | untouch: fogdisable
+D7,DOOR,172,RCS_BModel,BreakDoor1,-216.0,0.0,3882.0,,
+D8,DOOR,176,RCS_BModel,door30,214.0,25.0,2064.0,,*subdoor
+D9,DOOR,177,RCS_BModel,door35,206.0,41.0,1496.0,,*subdoor
+D10,DOOR,195,RCS_BModel,door33,-137.0,160.0,-3101.0,,touch: settimescale 4 | touch: open | untouch: close
+D11,DOOR,196,RCS_BModel,door34,-433.0,168.0,-3581.0,,touch: settimescale 4 | touch: open | untouch: close
+D12,DOOR,206,RCS_BModel,BreakDoor2,-1197.0,-16.0,-1775.0,,
+F1,FIRE,214,RCS_FireRescue,Fire1,384.0,0.0,4737.0,,
+F2,FIRE,215,RCS_FireRescue,Fire2,466.0,0.0,4748.0,,
+F3,FIRE,216,RCS_FireRescue,Fire3,383.0,0.0,3511.0,,
+F4,FIRE,217,RCS_FireRescue,Fire4,529.0,0.0,3506.0,,
+F5,FIRE,218,RCS_FireRescue,Fire5,459.0,0.0,3282.0,,
+F6,FIRE,219,RCS_FireRescue,Fire6,728.0,0.0,2785.0,,
+F7,FIRE,220,RCS_FireRescue,Fire7,189.0,0.0,4303.0,,
+F8,FIRE,221,RCS_FireRescue,Fire9,175.0,0.0,2419.0,,
+F9,FIRE,222,RCS_FireRescue,Fire10,-554.0,-181.0,-3203.0,,
+F10,FIRE,223,RCS_FireRescue,Fire11,-546.0,-138.0,-3115.0,,
+F11,FIRE,224,RCS_FireRescue,Fire12,-695.0,-145.0,-3465.0,,
+F12,FIRE,225,RCS_FireRescue,Fire13,-148.0,-154.0,-3254.0,,
+F13,FIRE,226,RCS_FireRescue,Fire14,-258.0,-100.0,-3475.0,,
+F14,FIRE,227,RCS_FireRescue,Fire15,-418.0,-100.0,-3739.0,,
+F15,FIRE,228,RCS_FireRescue,Fire16,-313.0,-100.0,-3551.0,,
+V1,VICTIM,229,RCS_VictimRescue,Victim1,-2668.0,-117.0,868.0,,
+V2,VICTIM,230,RCS_VictimRescue,Victim2,-1376.0,-100.0,3392.0,,
+V3,VICTIM,231,RCS_VictimRescue,Victim4,-68.0,0.0,-3804.0,,
+V4,VICTIM,232,RCS_VictimRescue,Victim5,541.0,66.0,4070.0,,
+V5,VICTIM,233,RCS_VictimRescue,Victim6,38.0,0.0,1804.0,,
+T2,TRIGGER,234,RCS_BoundsTrigger,obj_exits1,-468.0,-147.0,2809.0,,touch: tell player escape
+T3,TRIGGER,235,RCS_BoundsTrigger,obj_exits2,-1536.0,-140.0,-12.0,,touch: tell player escape
+T4,TRIGGER,236,RCS_BoundsTrigger,obj_exits3,-1265.0,-143.0,-2328.0,,touch: tell player escape
+T5,TRIGGER,237,RCS_BoundsTrigger,obj_exits4,1336.0,108.0,-4121.0,,touch: tell player escape
+F16,FIRE,238,RCS_FireRescue,Fire17,-665.0,-53.0,-3382.0,,
+F17,FIRE,239,RCS_FireRescue,Fire18,-720.0,0.0,-3392.0,,
+F18,FIRE,240,RCS_FireRescue,Fire19,-769.0,0.0,-3525.0,,
+F19,FIRE,241,RCS_FireRescue,Fire20,-537.0,182.0,-3333.0,,
+F20,FIRE,242,RCS_FireRescue,Fire21,533.0,0.0,2929.0,,
+F21,FIRE,243,RCS_FireRescue,Fire23,514.0,0.0,3089.0,,
+D13,DOOR,252,RCS_BModel,Valve_1,-1724.0,-48.0,3244.0,,use: once (tell *DoorFires1 turnoff) | use: open | use: playsnd  (Metal4)
+D14,DOOR,253,RCS_BModel,Valve_2,-2478.0,-109.0,282.0,,use: once (tell *DoorFires2 turnoff) | use: open | use: playsnd  (Metal4)
+T6,TRIGGER,265,RCS_BoundsTrigger,3rd Street,1305.0,0.0,4146.0,,makezone (3rd Sreet Terminal)
+T7,TRIGGER,266,RCS_BoundsTrigger,Sewer area,-924.0,-40.0,2972.0,,makezone (Sewer)
+T8,TRIGGER,267,RCS_BoundsTrigger,Sewer2,-1574.0,0.0,-1189.0,,makezone (Sewer)
+T9,TRIGGER,268,RCS_BoundsTrigger,4th street terminal,664.0,0.0,-3240.0,,makezone (4th Street Terminal)
+W1,VALVE,269,RCS_PropModel,RCS_PropModel1,1568.0,-32.0,3476.0,,makevalve
+H1,HOSE,270,RCS_PropModel,RCS_PropModel2,1020.0,-36.0,3392.0,,touch: tell player (touchhose 20)
+W2,VALVE,271,RCS_PropModel,<null>1,-920.0,-122.0,-2312.0,,makevalve
+E1,EXIT,272,RCS_EscapeArrow,RCS_EscapeArrow1,-132.0,0.0,2600.0,,
+E2,EXIT,273,RCS_EscapeArrow,RCS_EscapeArrow2,284.0,0.0,2508.0,,
+E3,EXIT,274,RCS_EscapeArrow,RCS_EscapeArrow3,620.0,176.0,3040.0,,
+E4,EXIT,275,RCS_EscapeArrow,RCS_EscapeArrow4,-556.0,-32.0,3336.0,,
+E5,EXIT,276,RCS_EscapeArrow,RCS_EscapeArrow5,-1992.0,-44.0,1628.0,,
+E6,EXIT,277,RCS_EscapeArrow,RCS_EscapeArrow6,-2032.0,-44.0,92.0,,
+E7,EXIT,278,RCS_EscapeArrow,RCS_EscapeArrow7,-1608.0,-36.0,-2312.0,,
+E8,EXIT,279,RCS_EscapeArrow,RCS_EscapeArrow8,524.0,64.0,-4212.0,,
+A1,ALT,281,RCS_VictimAltSpot,RCS_VictimAltSpot1,583.0,-53.0,1868.0,RCS_VictimRescue6,
+A2,ALT,282,RCS_VictimAltSpot,RCS_VictimAltSpot2,178.0,-53.0,3213.0,RCS_VictimRescue5,
+A3,ALT,283,RCS_VictimAltSpot,RCS_VictimAltSpot3,-1857.0,-53.0,4118.0,RCS_VictimRescue2,
+A4,ALT,284,RCS_VictimAltSpot,RCS_VictimAltSpot5,584.0,-53.0,-5389.0,RCS_VictimRescue4,
+T10,TRIGGER,286,RCS_BoundsTrigger,brokendoor12,716.0,-2.0,4382.0,,*brokendoor
+T11,TRIGGER,288,RCS_BoundsTrigger,brokendoor13,666.0,21.0,3827.0,,*brokendoor
+T12,TRIGGER,290,RCS_BoundsTrigger,brokendoor14,264.0,-57.0,3493.0,,*brokendoor
+T13,TRIGGER,292,RCS_BoundsTrigger,brokendoor15,406.0,-57.0,2945.0,,*brokendoor
+T14,TRIGGER,294,RCS_BoundsTrigger,brokendoor16,722.0,-57.0,2362.0,,*brokendoor
+T15,TRIGGER,296,RCS_BoundsTrigger,brokendoor17,829.0,-57.0,2366.0,,*brokendoor
+T16,TRIGGER,298,RCS_BoundsTrigger,brokendoor18,704.0,-57.0,1810.0,,*brokendoor
+T17,TRIGGER,300,RCS_BoundsTrigger,brokendoor19,816.0,-57.0,1805.0,,*brokendoor
+T18,TRIGGER,302,RCS_BoundsTrigger,brokendoor20,-98.0,-57.0,1522.0,,*brokendoor
+T19,TRIGGER,304,RCS_BoundsTrigger,brokendoor21,-93.0,-57.0,2075.0,,*brokendoor
+D15,DOOR,305,RCS_BModel,door6,216.0,54.0,5891.0,,*Door
+V6,VICTIM,307,RCS_VictimRescue,Victim7,-1.0,-53.0,4082.0,,roam 1000
+V7,VICTIM,310,RCS_VictimRescue,Victim9,-2014.0,-82.0,-605.0,,roam 1000
+V8,VICTIM,311,RCS_VictimRescue,Victim10,-742.0,-53.0,-5269.0,,roam 1000
+V9,VICTIM,312,RCS_VictimRescue,Victim11,-211.0,-53.0,-4266.0,,roam 1000
+V10,VICTIM,313,RCS_VictimRescue,Victim12,542.0,37.0,-4819.0,,roam 1000
+T20,TRIGGER,318,RCS_BoundsTrigger,brokendoor22,516.0,-3.0,3612.0,,*brokendoor
+T21,TRIGGER,320,RCS_BoundsTrigger,brokendoor23,609.0,-3.0,4611.0,,*brokendoor
+T22,TRIGGER,322,RCS_BoundsTrigger,brokendoor24,82.0,-54.0,3670.0,,*brokendoor
+T23,TRIGGER,324,RCS_BoundsTrigger,brokendoor25,318.0,-54.0,2699.0,,*brokendoor
+T24,TRIGGER,326,RCS_BoundsTrigger,brokendoor26,585.0,-54.0,2574.0,,*brokendoor
+T25,TRIGGER,328,RCS_BoundsTrigger,brokendoor27,570.0,-54.0,1588.0,,*brokendoor
+T26,TRIGGER,330,RCS_BoundsTrigger,brokendoor28,38.0,-54.0,2299.0,,*brokendoor
+T27,TRIGGER,332,RCS_BoundsTrigger,brokendoor29,39.0,-54.0,1297.0,,*brokendoor
+T28,TRIGGER,333,RCS_BoundsTrigger,obj_exits7,1414.0,-30.0,3211.0,,touch: tell player escape
+D16,DOOR,334,RCS_BModel,door8,760.0,-8.0,-4150.0,,*Door
+F22,FIRE,335,RCS_FireRescue,Fire22,647.0,10.0,-4059.0,,
+F23,FIRE,336,RCS_FireRescue,Fire24,669.0,10.0,-4218.0,,
+W3,VALVE,337,RCS_PropModel,<null>2,275.0,-49.0,-5168.0,,makevalve

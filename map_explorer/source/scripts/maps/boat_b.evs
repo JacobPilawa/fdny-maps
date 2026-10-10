@@ -1,0 +1,13 @@
+exec rescue.evs
+action Player (setashdensity 1)
+set DefaultFogParams (0 1000 50 50 50)
+fogenable *DefaultFogParams
+
+set HasBallastKey 1
+
+fogenable 0 250 50 50 50
+
+hint 15 (You managed to right the boat. Now find the control console in the cargo bay to open the cargo doors!)
+
+ambientsnd engine -897.723 -1014.67 6518.08
+ambientsnd motor -265.085 -1015.04 6356.24
