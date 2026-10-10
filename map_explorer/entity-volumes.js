@@ -1,7 +1,7 @@
-// Static, authored positions. These boxes do not simulate moving entities.
+// Authored bounds; the 3D motion inspector transforms linked brush boxes.
 export const VOLUME_TYPES={
   pickup:{label:'Pickup boxes',color:'#008246',description:'Victim pickup contact · J_Radius (fallback 60) on each axis, at base and alternate spawn candidates. Actual victims can move.'},
-  brush:{label:'Brush bounds',color:'#865aae',description:'Authored bounds of all linked animated brush models · doors, ladders, breakable objects and other brushes. Bounds are not exact collision shapes.'}
+  brush:{label:'Brush bounds',color:'#865aae',description:'Authored bounds of all linked animated brush models · doors, ladders, breakable objects and other brushes. Bounds follow motion previews; they are not exact collision shapes.'}
 };
 export function getEntityVolumes(data){
   const victims=new Map(data.markers.filter(m=>m.category==='VICTIM').map(m=>[m.label,m]));

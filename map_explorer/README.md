@@ -32,3 +32,17 @@ Run `python3 deploy/build_static.py` from this folder, then `npx wrangler deploy
 
 Pricing reference: https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/
 Limits reference: https://developers.cloudflare.com/workers/platform/limits/
+
+### Optional inspection tools
+
+The left sidebar has a small **Rooms / zones** selector and a collapsed **Motion preview** panel. Choose a motion to switch to 3D and focus it; drag its time slider, play/pause, or reset. Uncheck Preview to restore the authored geometry. Major events include warehouse catwalks, tower stairs, club rafters, bank collapses, and the boat cargo-door/hook lift; the other moving controllers are available individually. Motion tracks are decoded directly from BSP chunk 24, including compressed timing, model pivots and authored playback rates. Textures, collisions and linked brush bounds follow the same transforms. This inspects object motion rather than running a whole stage; camera shaking, sound, particles, open-away direction and conditional gameplay are not simulated.
+
+**Object inventory**, **Bonus objects**, **Refills**, and **Emitters** are separate collapsed groups, off by default. Existing PDF labels stay intact; supplemental inventory uses O/B/FX labels. Selecting a brush in 3D opens its controller when its category is enabled or its motion is being previewed. Non-brush props and emitters are selectable locations with resource IDs and scripts, rather than newly rendered prop models or particle effects.
+
+The map-tools menu has **Trigger / target connections**, off by default. Select an object to isolate incoming/outgoing arrows; its inspector lists clickable targets. These are possible authored `tell`/`action` links after macro expansion, not a claim that every branch runs. Player actions point to the authored player start marker.
+
+In the inspector, hover a macro button for a short explanation, click it for a command table, or use **Explain** for the entire object's scripts. **Conditions / consequences** also opens a compact table. Original and expanded definitions remain available alongside the plain-language meanings; conditions belong to their own branches.
+
+The 3D **Victim models** checkbox loads original ACT geometry and appearance textures on demand. Bodies use the authored type, heading, skin command and initial pose, at the base spawn or the explicitly selected alternate spot. This does not choose a random spawn, roam, or simulate rescue AI. All new overlays and previews reset off on map changes/reloads; panels start collapsed.
+
+Rebuild supplemental map data with `python3 source/build_data.py`, rebuild victim assets from the copied ACTs with `python3 source/build_actor_assets.py`, and run the small data/motion check with `node source/check_features.mjs`. Both decoders and their source assets are included in this repository. The deployment remains static-only Cloudflare assets; animation and actor files are fetched only when needed, with no R2, KV, database or Worker execution added.

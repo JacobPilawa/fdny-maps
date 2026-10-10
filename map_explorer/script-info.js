@@ -1,0 +1,21 @@
+const definitions={
+ touch:'Runs when the player touches or enters this object.',untouch:'Runs when the player leaves contact.',use:'Runs when the player uses the object.',pickup:'Runs when this object is picked up.',break:'Runs when the object breaks.',
+ once:'Runs this branch once; repeated activation does not repeat it.',cmd:'Groups commands for execution together.',que:'Runs the commands in sequence; waits delay later commands.',wait:'Delays the next step in a sequence by the supplied seconds.',
+ ifclear:'Runs this branch only when the named zone passes its clear condition.',ifnotclear:'Runs this branch while the named zone has not passed its clear condition.',if:'Runs this branch when a variable meets the supplied test.',ifnot:'Runs this branch when a variable does not meet the supplied test.',
+ tell:'Sends an action to another named object or list of objects.',open:'Plays this brush model toward its open/end pose.',openaway:'Opens the door away from the player; this preview uses the stored forward motion.',close:'Plays this brush back toward its closed/start pose.',turnon:'Enables the target entity or effect.',turnoff:'Disables the target entity or effect.',hide:'Hides the target object.',show:'Shows the target object.',
+ settimescale:'Changes this animated brush’s playback rate. 3 means three times normal speed; it is not the global clock.',sethitpoints:'Sets the object’s damage/health value.',set:'Sets a script variable.',inc:'Increments a script variable.',addtimecmd:'Schedules a command on this object’s motion timeline at the supplied time.',flush:'Clears queued commands on this object.',
+ makezone:'Names this bounds region as a gameplay zone.',makevalve:'Defines a valve and the fire/zone it controls.',quake:'Starts camera shaking, using the authored strength and duration.',playsnd:'Plays a named sound once.',loopsnd:'Starts a looping sound.',stopsnd:'Stops the named sound.',hint:'Displays the named hint to the player.',
+ playanim:'Selects a numbered actor animation.',setskin:'Selects an actor appearance/skin.',roam:'Gives a victim an authored roaming radius; runtime state and walls constrain movement.',equip:'Equips an item.',escape:'Starts victim escape behavior.',climb:'Enters climbing behavior.',unclimb:'Leaves climbing behavior.',addbonus:'Awards the supplied bonus score.',oxyon:'Enables oxygen use/state.',oxyoff:'Disables oxygen use/state.',resetplayerpos:'Returns the player to the authored reset position.',moveto:'Moves the target toward the named destination.',setsize:'Sets the entity’s size/scale.',action:'Sends the enclosed command directly to the named target.',toolcmd:'Sends a command to a player tool, such as refilling the extinguisher.',touchhose:'Lets the player refill/use a hose within the supplied contact radius.',finalexit:'Completes this stage at the final exit.',finalexitloadmap:'Completes this stage and requests the named next map.',setashdensity:'Changes the ash effect density.',fogenable:'Sets the authored fog effect and its parameters.'
+};
+export function scriptRows(text){
+ const masked=text.replace(/\b(makezone|hint|playsnd|loopsnd|stopsnd)\s*(?:\d+\s*)?\([^)]*\)/gi,(_,name)=>name),rows=[];
+ for(const match of masked.matchAll(/(?:^|[:\[\],(|])\s*([A-Za-z][A-Za-z0-9_]*)\b/g)){
+  const name=match[1].toLowerCase();if(!definitions[name])continue;
+  const index=match.index+match[0].lastIndexOf(match[1]),tail=masked.slice(index).split(/[\n,\[\]()|:]/)[0].trim();
+  if(!rows.some(r=>r.code===tail))rows.push({name,code:tail,meaning:definitions[name],condition:['if','ifnot','ifclear','ifnotclear','once'].includes(name)});
+ }return rows;
+}
+export function macroNames(text){return [...new Set([...text.matchAll(/\*(\w+)/g)].map(m=>m[1]))];}
+export function macroText(macros,name){const key=Object.keys(macros).find(k=>k.toLowerCase()===name.toLowerCase());return key?macros[key]:null;}
+export function expandScript(text,macros,seen=[]){return text.replace(/\*(\w+)/g,(original,name)=>{const body=macroText(macros,name);return body&&!seen.includes(name.toLowerCase())?expandScript(body,macros,[...seen,name.toLowerCase()]):original;});}
+export function meaning(name){return definitions[name.toLowerCase()]||'Authored script macro; click to inspect its definition and commands.';}
