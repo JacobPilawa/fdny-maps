@@ -1,0 +1,65 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+S1,START,240,RCS_PlayerRescue,RCS_PlayerRescue2,-432.0,-112.0,-556.0,,equip axe | equip extinguisher | *outside
+D1,DOOR,261,RCS_BModel,door6,432.0,-96.0,360.0,,*Door
+D2,DOOR,262,RCS_BModel,door7,1308.0,-100.0,424.0,,*Door
+D3,DOOR,263,RCS_BModel,door8,620.0,-96.0,916.0,,*Door
+D4,DOOR,264,RCS_BModel,door9,1424.0,-96.0,1164.0,,*Door
+F1,FIRE,268,RCS_FireRescue,Fire1,-8.0,-156.0,368.0,,
+F2,FIRE,269,RCS_FireRescue,Fire2,72.0,-172.0,168.0,,
+F3,FIRE,270,RCS_FireRescue,Fire3,-408.0,112.0,664.0,,
+F4,FIRE,271,RCS_FireRescue,Fire5,480.0,-172.0,540.0,,
+F5,FIRE,272,RCS_FireRescue,Fire6,208.0,-152.0,772.0,,
+F6,FIRE,273,RCS_FireRescue,Fire7,92.0,-148.0,904.0,,
+V1,VICTIM,278,RCS_VictimRescue,Victim1,1404.0,-172.0,24.0,,roam 250
+V2,VICTIM,282,RCS_VictimRescue,Victim2,1576.0,-80.0,512.0,,roam 80
+V3,VICTIM,283,RCS_VictimRescue,Victim3,756.0,-64.0,648.0,,roam 400
+V4,VICTIM,284,RCS_VictimRescue,Victim4,1269.0,-172.0,1404.0,,roam 350
+V5,VICTIM,285,RCS_VictimRescue,Victim6,1988.0,-172.0,480.0,,roam 350
+V6,VICTIM,286,RCS_VictimRescue,Victim7,1972.0,-172.0,-204.0,,roam 350
+F7,FIRE,288,RCS_FireRescue,Fire10,1036.0,-172.0,544.0,,
+F8,FIRE,289,RCS_FireRescue,Fire14,948.0,-148.0,100.0,,
+F9,FIRE,290,RCS_FireRescue,Fire15,1016.0,-148.0,60.0,,
+F10,FIRE,291,RCS_FireRescue,Fire16,824.0,-172.0,20.0,,
+F11,FIRE,292,RCS_FireRescue,Fire17,912.0,-172.0,-28.0,,
+F12,FIRE,293,RCS_FireRescue,Fire18,352.0,-184.0,940.0,,
+F13,FIRE,294,RCS_FireRescue,Fire19,304.0,-184.0,1012.0,,
+F14,FIRE,295,RCS_FireRescue,Fire20,44.0,-164.0,1252.0,,
+F15,FIRE,296,RCS_FireRescue,Fire22,-72.0,-184.0,1428.0,,
+F16,FIRE,299,RCS_FireRescue,Fire23,1104.0,-172.0,32.0,,
+F17,FIRE,300,RCS_FireRescue,Fire24,1012.0,-172.0,-16.0,,
+F18,FIRE,303,RCS_FireRescue,Fire25,-328.0,-28.0,1476.0,,
+F19,FIRE,304,RCS_FireRescue,Fire26,-436.0,-172.0,1596.0,,
+F20,FIRE,305,RCS_FireRescue,Fire27,-44.0,-172.0,972.0,,
+F21,FIRE,306,RCS_FireRescue,Fire28,-512.0,-172.0,1512.0,,
+F22,FIRE,307,RCS_FireRescue,Fire11,568.0,-172.0,600.0,,
+F23,FIRE,310,RCS_FireRescue,Fire29,2044.0,-188.0,832.0,,
+F24,FIRE,311,RCS_FireRescue,Fire30,1888.0,-188.0,900.0,,
+F25,FIRE,312,RCS_FireRescue,Fire31,2156.0,-180.0,864.0,,
+F26,FIRE,313,RCS_FireRescue,Fire32,1892.0,-180.0,852.0,,
+W1,VALVE,314,RCS_PropModel,Valve2,2184.0,-164.0,1440.0,,makevalve
+H1,HOSE,315,RCS_PropModel,Hose1,-411.0,-139.0,1971.0,,touch: tell player (touchhose 25)
+F27,FIRE,317,RCS_FireRescue,Fire33,940.0,-148.0,-220.0,,
+F28,FIRE,318,RCS_FireRescue,Fire34,1008.0,-148.0,-260.0,,
+F29,FIRE,319,RCS_FireRescue,Fire35,816.0,-172.0,-300.0,,
+F30,FIRE,320,RCS_FireRescue,Fire36,904.0,-172.0,-348.0,,
+F31,FIRE,321,RCS_FireRescue,Fire37,1096.0,-172.0,-288.0,,
+F32,FIRE,322,RCS_FireRescue,Fire38,1004.0,-172.0,-336.0,,
+F33,FIRE,353,RCS_FireRescue,Fire39,120.0,-184.0,1462.0,,
+F34,FIRE,354,RCS_FireRescue,Fire40,359.0,-184.0,1492.0,,
+F35,FIRE,355,RCS_FireRescue,Fire41,293.0,-138.0,1256.0,,
+F36,FIRE,356,RCS_FireRescue,Fire42,295.0,-125.0,1341.0,,
+F37,FIRE,369,RCS_FireRescue,Fire44,-160.0,-128.0,724.0,,
+E1,EXIT,374,RCS_EscapeArrow,RCS_EscapeArrow1,1276.0,-68.0,320.0,,
+E2,EXIT,375,RCS_EscapeArrow,<null>1,536.0,-32.0,264.0,,
+E3,EXIT,376,RCS_EscapeArrow,<null>2,228.0,-60.0,324.0,,
+E4,EXIT,377,RCS_EscapeArrow,<null>3,228.0,-16.0,-216.0,,
+E5,EXIT,378,RCS_EscapeArrow,<null>4,716.0,-44.0,796.0,,
+E6,EXIT,379,RCS_EscapeArrow,<null>5,400.0,-56.0,924.0,,
+E7,EXIT,380,RCS_EscapeArrow,<null>6,1040.0,-60.0,1632.0,,
+E8,EXIT,381,RCS_EscapeArrow,<null>7,2020.0,-56.0,1868.0,,
+E9,EXIT,398,RCS_EscapeArrow,<null>8,-200.0,-24.0,1772.0,,
+F38,FIRE,399,RCS_FireRescue,Fire45,-244.0,-128.0,772.0,,
+F39,FIRE,400,RCS_FireRescue,Fire46,-336.0,-128.0,744.0,,
+V7,VICTIM,401,RCS_VictimRescue,Victim5,-404.0,-120.0,1164.0,,100
+H2,HOSE,403,RCS_PropModel,Hose2,374.0,-140.0,-375.0,,touch: tell player (touchhose 25)
+H3,HOSE,404,RCS_PropModel,Hose3,1280.0,-140.0,1248.0,,touch: tell player (touchhose 25)

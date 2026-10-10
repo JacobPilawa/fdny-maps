@@ -1,0 +1,17 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+boat_a,V1,1,0,V1,victimfork,698.0,-293.0,2393.0,,0.0,
+boat_a,V1,1,1,A4,RCS_VictimAltSpot4,-127.0,-765.0,2628.0,,0.0,
+boat_a,V2,2,0,V2,girl,-1551.0,-72.0,456.0,,0.0,
+boat_a,V2,2,1,A1,RCS_VictimAltSpot1,153.0,-44.0,463.0,,0.0,
+boat_a,V3,3,0,V3,victim3,1359.0,105.0,6149.0,,0.0,
+boat_a,V3,3,1,A7,RCS_VictimAltSpot7,1159.0,-63.0,5502.0,,0.0,
+boat_a,V4,4,0,V4,boy2,308.0,-1018.0,3784.0,700.0,0.0,roam 700
+boat_a,V4,4,1,A6,RCS_VictimAltSpot6,1274.0,-963.0,4082.0,700.0,0.0,roam 700
+boat_a,V5,5,0,V5,fatty,119.0,-115.0,6541.0,,0.0,
+boat_a,V6,6,0,V6,fatman,551.0,-280.0,1632.0,,0.0,
+boat_a,V6,6,1,A3,RCS_VictimAltSpot3,529.0,-260.0,1507.0,,0.0,
+boat_a,V7,7,0,V7,fatman1,451.0,-52.0,1344.0,,0.0,
+boat_a,V7,7,1,A2,RCS_VictimAltSpot2,-579.0,-31.0,784.0,,0.0,
+boat_a,V8,8,0,V8,fat,1056.0,-730.0,4532.0,,0.0,
+boat_a,V8,8,1,A5,RCS_VictimAltSpot5,1468.0,-994.0,3346.0,,0.0,
+boat_a,V9,9,0,V9,girl,-12.0,-1042.0,4501.0,200.0,0.0,roam 200

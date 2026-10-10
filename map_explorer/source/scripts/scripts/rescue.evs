@@ -1,0 +1,7 @@
+exec tools.evs
+exec bonusitems.evs
+exec doors.evs
+
+ifnot LEVEL training (if DIFFICULTY [0, 1] (tell player (equip goggles)))
+
+tell player (select axe)

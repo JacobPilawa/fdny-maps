@@ -1,0 +1,58 @@
+[
+  {
+    "map": "oil_rig_b",
+    "victim": "V1",
+    "bsp_order": 1,
+    "spot": 0,
+    "label": "V1",
+    "name": "<null>2",
+    "x": 1144.0,
+    "y": 496.0,
+    "z": 628.0,
+    "roam_radius": null,
+    "contact_radius": "40",
+    "scripts": ""
+  },
+  {
+    "map": "oil_rig_b",
+    "victim": "V2",
+    "bsp_order": 2,
+    "spot": 0,
+    "label": "V2",
+    "name": "<null>3",
+    "x": 876.0,
+    "y": 832.0,
+    "z": 416.0,
+    "roam_radius": null,
+    "contact_radius": "40",
+    "scripts": ""
+  },
+  {
+    "map": "oil_rig_b",
+    "victim": "V2",
+    "bsp_order": 2,
+    "spot": 1,
+    "label": "A1",
+    "name": "RCS_VictimAltSpot1",
+    "x": 802.0,
+    "y": 776.0,
+    "z": 1046.0,
+    "roam_radius": null,
+    "contact_radius": "40",
+    "scripts": ""
+  },
+  {
+    "map": "oil_rig_b",
+    "victim": "V3",
+    "bsp_order": 3,
+    "spot": 0,
+    "label": "V3",
+    "name": "woman",
+    "x": 1080.0,
+    "y": 288.0,
+    "z": 1032.0,
+    "roam_radius": 2400.0,
+    "contact_radius": "40",
+    "scripts": "roam 2400"
+  }
+]

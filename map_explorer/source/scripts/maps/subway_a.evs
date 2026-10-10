@@ -1,0 +1,12 @@
+exec rescue.evs
+
+set brokendoor (touch: playsnd Zapp3d)
+
+set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])
+
+ambientsnd ambient3 -85 -37 1948
+ambientsnd trains 2435.8 -646.9 1767.17
+ambientsnd trains2 1053.55 -571.9 -12.8188
+ambientsnd trains 2435.8 -646.9 -1567.17
+ambientsnd trains 2435.8 -646.9 -1987.17
+ambientsnd trains2 1881.04 -653.65 -5076.31

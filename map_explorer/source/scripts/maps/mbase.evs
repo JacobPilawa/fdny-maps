@@ -1,0 +1,3 @@
+exec rescue.evs
+tell player (setashdensity 0)
+tell mortarfire1 (moveto mortar1 1 10 120)

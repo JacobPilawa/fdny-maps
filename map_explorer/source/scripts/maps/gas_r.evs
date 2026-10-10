@@ -1,0 +1,22 @@
+exec doors.evs
+exec bonusitems.evs
+exec refillext.evs
+action Player (setashdensity 0)
+
+set explosion1 (touch: once (que [tell PumpExplosion open, wait .03, tell Fire1 (setsize 300 375 300 .6), quake 30 1, tell ExplodingCar1 open, tell PumpExplosion1 open, tell PumpExplosion2 open, tell Fire2 (setsize 180 350 250 .6), tell Fire3 (setsize 300 375 300 .6), tell ExplodingCar2 open, tell PumpExplosion3 open]))
+
+
+set inside (cmd [touch: action Player (setashdensity 1), touch: fogenable 5 320 60 40 40])
+set outside (cmd [touch: action Player (setashdensity 0), touch: fogdisable])
+
+set GasIsOn 1
+
+set gasoff (use: cmd [tell Fire1 (setsize 10 10 10 2), tell Fire2 (setsize 10 10 10 2), tell Fire9 (setsize 10 10 10 2), tell Fire1 (setsize 10 10 10 2), tell Fire8 (setsize 10 10 10 2), tell Fire27 (setsize 10 10 10 2), set GasIsOn 0]) 
+
+set firespread (tell Fire42 (que [(moveto PathPoint1 1 99999 99999), (moveto PathPoint2 1 99999 99999), (moveto PathPoint3 1 99999 99999), (moveto PathPoint4 1 99999 99999) ]))
+
+set explosion2 (touch: if GasIsOn 1 (once (que [tell Explodingcar3 open, tell Fire41 (setsize 270 315 270 .6), quake 30 1, tell Fire40 (setsize 300 350 300 .6), tell Fire39 (setsize 300 375 300 .6), (playsnd Explodelarge), (*firespread), wait 2, hint 5 (The gas main gas ruptured!.)])))
+
+ambientsnd Engine -373.933 -201.561 -287.401
+ambientsnd Engine -195.876 -201.901 1874.46
+ambientsnd GenericAmb 1897.37,-209.693,1536.68

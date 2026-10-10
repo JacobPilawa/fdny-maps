@@ -1,0 +1,22 @@
+exec rescue.evs
+
+action Player (setashdensity 0)
+set DefaultFogParams (0 600 50 50 50)
+fogenable *DefaultFogParams
+
+set VaultUnlocked 0
+set VaultDoor (touch: if VaultUnlocked 0 (hint 5 (You need to unlock the vault from the security office to open this door.)))
+set VaultConsole (cmd [touch: hint 5 (Press the space bar to use this console.), use: if VaultUnlocked 0 (cmd [hint 5 (You've unlocked the vault.), set VaultUnlocked 1, tell vault open])])
+
+setlighttable 1 aaaaaaaazazzzzzzzzzazzzazzzzzzzzzzaaaaaaaaazzzzzzzzzzzaaaaaaaaazzzzzzzzz
+
+ambientsnd stress5 804.894 -33.5015 490.959
+
+ambientsnd stress5 955.276 -33.8888 -1089.24
+
+ambientsnd stress5 -1397.1 -25.603 -462.955
+
+ambientsnd stress5 -152.182 -33.4465 -1646.37
+
+ambientsnd firealarm -2272.13 222.55 404.36
+ambientsnd engine -939.926 -38.9 1450.19

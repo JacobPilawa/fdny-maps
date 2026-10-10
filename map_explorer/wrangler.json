@@ -1,0 +1,9 @@
+{
+  "name": "fdny-maps",
+  "compatibility_date": "2026-10-09",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "none"
+  }
+}

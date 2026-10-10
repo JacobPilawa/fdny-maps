@@ -1,0 +1,72 @@
+[
+  {
+    "map": "mbase",
+    "victim": "V1",
+    "bsp_order": 1,
+    "spot": 0,
+    "label": "V1",
+    "name": "victim1",
+    "x": 348.0,
+    "y": -136.0,
+    "z": -3068.0,
+    "roam_radius": null,
+    "contact_radius": "20",
+    "scripts": ""
+  },
+  {
+    "map": "mbase",
+    "victim": "V2",
+    "bsp_order": 2,
+    "spot": 0,
+    "label": "V2",
+    "name": "victim3",
+    "x": 1796.0,
+    "y": -540.0,
+    "z": -3284.0,
+    "roam_radius": null,
+    "contact_radius": "20",
+    "scripts": ""
+  },
+  {
+    "map": "mbase",
+    "victim": "V3",
+    "bsp_order": 3,
+    "spot": 0,
+    "label": "V3",
+    "name": "victim4",
+    "x": 840.0,
+    "y": -260.0,
+    "z": -4812.0,
+    "roam_radius": 1000.0,
+    "contact_radius": "20",
+    "scripts": "roam 1000"
+  },
+  {
+    "map": "mbase",
+    "victim": "V4",
+    "bsp_order": 4,
+    "spot": 0,
+    "label": "V4",
+    "name": "victim5",
+    "x": 1852.0,
+    "y": -112.0,
+    "z": -5732.0,
+    "roam_radius": null,
+    "contact_radius": "20",
+    "scripts": ""
+  },
+  {
+    "map": "mbase",
+    "victim": "V5",
+    "bsp_order": 5,
+    "spot": 0,
+    "label": "V5",
+    "name": "victim10",
+    "x": 292.0,
+    "y": -320.0,
+    "z": -1320.0,
+    "roam_radius": 500.0,
+    "contact_radius": "60",
+    "scripts": "roam 500"
+  }
+]

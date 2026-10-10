@@ -1,0 +1,138 @@
+[
+  {
+    "key": "bank",
+    "stem": "bank",
+    "name": "Bank",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/bank.bsp",
+    "out_dir": "extracted/bank",
+    "viewer_data": "viewer/data/bank.json"
+  },
+  {
+    "key": "bar_r",
+    "stem": "bar_r",
+    "name": "Bar R",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/bar_r.bsp",
+    "out_dir": "extracted/bar_r",
+    "viewer_data": "viewer/data/bar_r.json"
+  },
+  {
+    "key": "boat_a",
+    "stem": "boat_a",
+    "name": "Boat A",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/boat_a.bsp",
+    "out_dir": "extracted/boat_a",
+    "viewer_data": "viewer/data/boat_a.json"
+  },
+  {
+    "key": "boat_b",
+    "stem": "boat_b",
+    "name": "Boat B",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/boat_b.bsp",
+    "out_dir": "extracted/boat_b",
+    "viewer_data": "viewer/data/boat_b.json"
+  },
+  {
+    "key": "city_h",
+    "stem": "City_h",
+    "name": "City H",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/City_h.bsp",
+    "out_dir": "extracted/City_h",
+    "viewer_data": "viewer/data/city_h.json"
+  },
+  {
+    "key": "const_h",
+    "stem": "const_h",
+    "name": "Const H",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/const_h.bsp",
+    "out_dir": "extracted/const_h",
+    "viewer_data": "viewer/data/const_h.json"
+  },
+  {
+    "key": "dock_h",
+    "stem": "dock_h",
+    "name": "Dock H",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/dock_h.bsp",
+    "out_dir": "extracted/dock_h",
+    "viewer_data": "viewer/data/dock_h.json"
+  },
+  {
+    "key": "gas_r",
+    "stem": "gas_r",
+    "name": "Gas R",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/gas_r.bsp",
+    "out_dir": "extracted/gas_r",
+    "viewer_data": "viewer/data/gas_r.json"
+  },
+  {
+    "key": "mbase",
+    "stem": "mbase",
+    "name": "Mbase",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/mbase.bsp",
+    "out_dir": "extracted/mbase",
+    "viewer_data": "viewer/data/mbase.json"
+  },
+  {
+    "key": "oil_rig_a",
+    "stem": "oil_rig_A",
+    "name": "Oil Rig A",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/oil_rig_A.bsp",
+    "out_dir": "extracted/oil_rig_A",
+    "viewer_data": "viewer/data/oil_rig_a.json"
+  },
+  {
+    "key": "oil_rig_b",
+    "stem": "oil_rig_B",
+    "name": "Oil Rig B",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/oil_rig_B.bsp",
+    "out_dir": "extracted/oil_rig_B",
+    "viewer_data": "viewer/data/oil_rig_b.json"
+  },
+  {
+    "key": "oil_rig_c",
+    "stem": "oil_rig_C",
+    "name": "Oil Rig C",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/oil_rig_C.bsp",
+    "out_dir": "extracted/oil_rig_C",
+    "viewer_data": "viewer/data/oil_rig_c.json"
+  },
+  {
+    "key": "oil_rig_d",
+    "stem": "oil_rig_D",
+    "name": "Oil Rig D",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/oil_rig_D.bsp",
+    "out_dir": "extracted/oil_rig_D",
+    "viewer_data": "viewer/data/oil_rig_d.json"
+  },
+  {
+    "key": "oil_rig_h",
+    "stem": "oil_rig_h",
+    "name": "Oil Rig H",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/oil_rig_h.bsp",
+    "out_dir": "extracted/oil_rig_h",
+    "viewer_data": "viewer/data/oil_rig_h.json"
+  },
+  {
+    "key": "subway_a",
+    "stem": "subway_a",
+    "name": "Subway A",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/subway_a.bsp",
+    "out_dir": "extracted/subway_a",
+    "viewer_data": "viewer/data/subway_a.json"
+  },
+  {
+    "key": "subway_b",
+    "stem": "subway_b",
+    "name": "Subway B",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/subway_b.bsp",
+    "out_dir": "extracted/subway_b",
+    "viewer_data": "viewer/data/subway_b.json"
+  },
+  {
+    "key": "training",
+    "stem": "training",
+    "name": "Training",
+    "bsp": "FDNY Firefighter 1.0/FireFighter American Hero/Data/Maps/training.bsp",
+    "out_dir": "extracted/training",
+    "viewer_data": "viewer/data/training.json"
+  }
+]

@@ -1,0 +1,11 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+boat_b,V1,1,0,V1,victim3,-271.0,-788.0,6405.0,,0.0,
+boat_b,V1,1,1,A5,RCS_VictimAltSpot6,-1625.0,-943.0,6563.0,,0.0,
+boat_b,V2,2,0,V2,boy2,106.0,-551.0,3794.0,1000.0,0.0,roam 1000
+boat_b,V2,2,1,A1,RCS_VictimAltSpot2,414.0,-126.0,3727.0,1000.0,0.0,roam 1000
+boat_b,V3,3,0,V3,fatty,-1151.0,-578.0,3462.0,,0.0,500
+boat_b,V3,3,1,A3,RCS_VictimAltSpot4,-1545.0,-126.0,3207.0,,0.0,500
+boat_b,V4,4,0,V4,RCS_VictimRescue6,-783.0,-291.0,4517.0,,60,
+boat_b,V4,4,1,A2,RCS_VictimAltSpot3,-1001.0,-325.0,2889.0,,60,
+boat_b,V5,5,0,V5,erg,-910.0,-843.0,7760.0,1500.0,60,roam 1500
+boat_b,V5,5,1,A4,RCS_VictimAltSpot5,-254.0,-616.0,7447.0,1500.0,60,roam 1500

@@ -1,0 +1,23 @@
+__pycache__/
+*.pyc
+map_explorer/dist/
+map_explorer/.wrangler/
+*.log
+.DS_Store
+node_modules/
+.env
+.env.*
+# Local conversation searches and desktop inventories, outside the map tool.
+/FDNY_inventory.md
+/additional_conversation_matches.json
+/conversation_candidates.json
+/conversation_evidence.json
+/conversation_notes/
+/file_inventory.txt
+/folder_counts.json
+/map_file_matches.txt
+/matching_session_paths.txt
+/named_file_matches.txt
+map_explorer/wrangler.local.json
+/public-audit/
+/private-repository-backup*/

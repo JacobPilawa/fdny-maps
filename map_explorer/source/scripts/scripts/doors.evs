@@ -1,0 +1,3 @@
+set DoorOpen (cmd [flush, openaway, (playsnd OpenDoor)])
+set DoorClose (que [close, (playsnd CloseDoor)])
+set Door (cmd [sethitpoints 0, settimescale 3.0, touch: (*DoorOpen), untouch: (*DoorClose)])

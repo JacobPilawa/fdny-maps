@@ -1,0 +1,14 @@
+exec rescue.evs
+
+set DoorFires1 ([FireDoora_1, FireDoora_2, FireDoora_3, FireDoora_4, FireDoora_5, FireDoora_6, FireDoora_7, FireDoora_8])
+set DoorFires2 ([FireDoorB_1, FireDoorB_2, FireDoorB_3, FireDoorB_4, FireDoorB_5, FireDoorB_6, FireDoorB_7, FireDoorB_8])
+set brokendoor (touch: playsnd Zapp3D)
+
+set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])
+
+ambientsnd trains2 364.339 -165.943 5879.34
+ambientsnd OceanWaves -764.396 -181.694 3404.16
+ambientsnd Stress7 686.273 -165.542 4429.71
+ambientsnd OceanWaves -1867.65 -181.9 689.906
+ambientsnd OceanWaves -1540.95 -181.985 -1609.84
+ambientsnd trains -667.48 -181.163 -1957.55

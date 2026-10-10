@@ -1,0 +1,13 @@
+exec rescue.evs
+
+AmbientSnd Engine2 -245 46 309
+AmbientSnd Engine2 -325 58 -1700
+AmbientSnd GenericAmb 2148 302 -212
+AmbientSnd Motor 2209 302 -792
+
+setlighttable 1 aaaaaaaazzzzzzzaaaaaazzzzzzzaaaaaaaazzzzttttnnnlllhhhccc 
+setlighttable 2 zzzzzzzzaaaaaaaaaaaaazzzzzzzaaaaaaaazzzzttttnnnlllhhhccc
+
+;it will only happen once
+set passedClubOnce 0
+set ClubActions (cmd [(quake 100 2.5), (tell ClubRafterFall open), (playsnd Explodelarge 0)])

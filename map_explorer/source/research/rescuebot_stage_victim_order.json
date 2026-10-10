@@ -1,0 +1,641 @@
+[
+  {
+    "stage": "bank",
+    "order": 1,
+    "entity_index": 357,
+    "label": "V1",
+    "name": "betty",
+    "x": 1176.0,
+    "z": -672.0
+  },
+  {
+    "stage": "bank",
+    "order": 2,
+    "entity_index": 359,
+    "label": "V2",
+    "name": "RCS_VictimRescue2",
+    "x": -331.0,
+    "z": -287.0
+  },
+  {
+    "stage": "bank",
+    "order": 3,
+    "entity_index": 369,
+    "label": "V3",
+    "name": "RCS_VictimRescue3",
+    "x": 735.0,
+    "z": -2184.0
+  },
+  {
+    "stage": "bank",
+    "order": 4,
+    "entity_index": 395,
+    "label": "V4",
+    "name": "RCS_VictimRescue4",
+    "x": -768.0,
+    "z": -2160.0
+  },
+  {
+    "stage": "bank",
+    "order": 5,
+    "entity_index": 456,
+    "label": "V5",
+    "name": "RCS_VictimRescue5",
+    "x": 1128.0,
+    "z": 684.0
+  },
+  {
+    "stage": "bank",
+    "order": 6,
+    "entity_index": 473,
+    "label": "V6",
+    "name": "RCS_VictimRescue6",
+    "x": -2213.0,
+    "z": 699.0
+  },
+  {
+    "stage": "bar_r",
+    "order": 1,
+    "entity_index": 134,
+    "label": "V1",
+    "name": "Victim01",
+    "x": 1980.0,
+    "z": -80.0
+  },
+  {
+    "stage": "bar_r",
+    "order": 2,
+    "entity_index": 135,
+    "label": "V2",
+    "name": "Victim02",
+    "x": 96.0,
+    "z": -1700.0
+  },
+  {
+    "stage": "bar_r",
+    "order": 3,
+    "entity_index": 155,
+    "label": "V3",
+    "name": "Victim03",
+    "x": 2164.0,
+    "z": -176.0
+  },
+  {
+    "stage": "bar_r",
+    "order": 4,
+    "entity_index": 156,
+    "label": "V4",
+    "name": "Victim04",
+    "x": 516.0,
+    "z": -1756.0
+  },
+  {
+    "stage": "bar_r",
+    "order": 5,
+    "entity_index": 157,
+    "label": "V5",
+    "name": "Victim05",
+    "x": 2104.0,
+    "z": -1368.0
+  },
+  {
+    "stage": "bar_r",
+    "order": 6,
+    "entity_index": 158,
+    "label": "V6",
+    "name": "Victim06",
+    "x": 1792.0,
+    "z": -324.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 1,
+    "entity_index": 130,
+    "label": "V1",
+    "name": "victimfork",
+    "x": 698.0,
+    "z": 2393.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 2,
+    "entity_index": 145,
+    "label": "V2",
+    "name": "girl",
+    "x": -1551.0,
+    "z": 456.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 3,
+    "entity_index": 158,
+    "label": "V3",
+    "name": "victim3",
+    "x": 1359.0,
+    "z": 6149.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 4,
+    "entity_index": 187,
+    "label": "V4",
+    "name": "boy2",
+    "x": 308.0,
+    "z": 3784.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 5,
+    "entity_index": 191,
+    "label": "V5",
+    "name": "fatty",
+    "x": 119.0,
+    "z": 6541.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 6,
+    "entity_index": 194,
+    "label": "V6",
+    "name": "fatman",
+    "x": 551.0,
+    "z": 1632.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 7,
+    "entity_index": 195,
+    "label": "V7",
+    "name": "fatman1",
+    "x": 451.0,
+    "z": 1344.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 8,
+    "entity_index": 200,
+    "label": "V8",
+    "name": "fat",
+    "x": 1056.0,
+    "z": 4532.0
+  },
+  {
+    "stage": "boat_a",
+    "order": 9,
+    "entity_index": 213,
+    "label": "V9",
+    "name": "girl",
+    "x": -12.0,
+    "z": 4501.0
+  },
+  {
+    "stage": "boat_b",
+    "order": 1,
+    "entity_index": 31,
+    "label": "V1",
+    "name": "victim3",
+    "x": -271.0,
+    "z": 6405.0
+  },
+  {
+    "stage": "boat_b",
+    "order": 2,
+    "entity_index": 57,
+    "label": "V2",
+    "name": "boy2",
+    "x": 106.0,
+    "z": 3794.0
+  },
+  {
+    "stage": "boat_b",
+    "order": 3,
+    "entity_index": 60,
+    "label": "V3",
+    "name": "fatty",
+    "x": -1151.0,
+    "z": 3462.0
+  },
+  {
+    "stage": "boat_b",
+    "order": 4,
+    "entity_index": 124,
+    "label": "V4",
+    "name": "RCS_VictimRescue6",
+    "x": -783.0,
+    "z": 4517.0
+  },
+  {
+    "stage": "boat_b",
+    "order": 5,
+    "entity_index": 126,
+    "label": "V5",
+    "name": "erg",
+    "x": -910.0,
+    "z": 7760.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 1,
+    "entity_index": 278,
+    "label": "V1",
+    "name": "Victim1",
+    "x": 1404.0,
+    "z": 24.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 2,
+    "entity_index": 282,
+    "label": "V2",
+    "name": "Victim2",
+    "x": 1576.0,
+    "z": 512.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 3,
+    "entity_index": 283,
+    "label": "V3",
+    "name": "Victim3",
+    "x": 756.0,
+    "z": 648.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 4,
+    "entity_index": 284,
+    "label": "V4",
+    "name": "Victim4",
+    "x": 1269.0,
+    "z": 1404.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 5,
+    "entity_index": 285,
+    "label": "V5",
+    "name": "Victim6",
+    "x": 1988.0,
+    "z": 480.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 6,
+    "entity_index": 286,
+    "label": "V6",
+    "name": "Victim7",
+    "x": 1972.0,
+    "z": -204.0
+  },
+  {
+    "stage": "gas_r",
+    "order": 7,
+    "entity_index": 401,
+    "label": "V7",
+    "name": "Victim5",
+    "x": -404.0,
+    "z": 1164.0
+  },
+  {
+    "stage": "mbase",
+    "order": 1,
+    "entity_index": 158,
+    "label": "V1",
+    "name": "victim1",
+    "x": 348.0,
+    "z": -3068.0
+  },
+  {
+    "stage": "mbase",
+    "order": 2,
+    "entity_index": 160,
+    "label": "V2",
+    "name": "victim3",
+    "x": 1796.0,
+    "z": -3284.0
+  },
+  {
+    "stage": "mbase",
+    "order": 3,
+    "entity_index": 161,
+    "label": "V3",
+    "name": "victim4",
+    "x": 840.0,
+    "z": -4812.0
+  },
+  {
+    "stage": "mbase",
+    "order": 4,
+    "entity_index": 162,
+    "label": "V4",
+    "name": "victim5",
+    "x": 1852.0,
+    "z": -5732.0
+  },
+  {
+    "stage": "mbase",
+    "order": 5,
+    "entity_index": 197,
+    "label": "V5",
+    "name": "victim10",
+    "x": 292.0,
+    "z": -1320.0
+  },
+  {
+    "stage": "oil_rig_A",
+    "order": 1,
+    "entity_index": 20,
+    "label": "V1",
+    "name": "RCS_VictimRescue1",
+    "x": -236.0,
+    "z": -262.0
+  },
+  {
+    "stage": "oil_rig_A",
+    "order": 2,
+    "entity_index": 33,
+    "label": "V2",
+    "name": "<null>17",
+    "x": -228.0,
+    "z": -508.0
+  },
+  {
+    "stage": "oil_rig_A",
+    "order": 3,
+    "entity_index": 34,
+    "label": "V3",
+    "name": "<null>18",
+    "x": -742.0,
+    "z": -762.0
+  },
+  {
+    "stage": "oil_rig_B",
+    "order": 1,
+    "entity_index": 65,
+    "label": "V1",
+    "name": "<null>2",
+    "x": 1144.0,
+    "z": 628.0
+  },
+  {
+    "stage": "oil_rig_B",
+    "order": 2,
+    "entity_index": 66,
+    "label": "V2",
+    "name": "<null>3",
+    "x": 876.0,
+    "z": 416.0
+  },
+  {
+    "stage": "oil_rig_B",
+    "order": 3,
+    "entity_index": 89,
+    "label": "V3",
+    "name": "woman",
+    "x": 1080.0,
+    "z": 1032.0
+  },
+  {
+    "stage": "oil_rig_C",
+    "order": 1,
+    "entity_index": 221,
+    "label": "V1",
+    "name": "<null>4",
+    "x": 857.0,
+    "z": -320.0
+  },
+  {
+    "stage": "oil_rig_C",
+    "order": 2,
+    "entity_index": 222,
+    "label": "V2",
+    "name": "<null>5",
+    "x": 1073.0,
+    "z": -364.0
+  },
+  {
+    "stage": "oil_rig_C",
+    "order": 3,
+    "entity_index": 238,
+    "label": "V3",
+    "name": "fatman behind rubble",
+    "x": 1076.0,
+    "z": 496.0
+  },
+  {
+    "stage": "oil_rig_C",
+    "order": 4,
+    "entity_index": 239,
+    "label": "V4",
+    "name": "man on ledge1",
+    "x": 1048.0,
+    "z": -120.0
+  },
+  {
+    "stage": "oil_rig_C",
+    "order": 5,
+    "entity_index": 240,
+    "label": "V5",
+    "name": "woman at console",
+    "x": 926.0,
+    "z": -864.0
+  },
+  {
+    "stage": "oil_rig_C",
+    "order": 6,
+    "entity_index": 241,
+    "label": "V6",
+    "name": "other man in A1",
+    "x": 508.0,
+    "z": -1418.0
+  },
+  {
+    "stage": "oil_rig_D",
+    "order": 1,
+    "entity_index": 28,
+    "label": "V1",
+    "name": "man",
+    "x": 1072.0,
+    "z": -1464.0
+  },
+  {
+    "stage": "oil_rig_D",
+    "order": 2,
+    "entity_index": 76,
+    "label": "V2",
+    "name": "man1",
+    "x": 1072.0,
+    "z": -1464.0
+  },
+  {
+    "stage": "oil_rig_D",
+    "order": 3,
+    "entity_index": 77,
+    "label": "V3",
+    "name": "woman",
+    "x": -128.0,
+    "z": -1608.0
+  },
+  {
+    "stage": "subway_a",
+    "order": 1,
+    "entity_index": 421,
+    "label": "V1",
+    "name": "Victim1",
+    "x": 1180.0,
+    "z": -1452.0
+  },
+  {
+    "stage": "subway_a",
+    "order": 2,
+    "entity_index": 423,
+    "label": "V2",
+    "name": "Victim2",
+    "x": -1777.0,
+    "z": 1549.0
+  },
+  {
+    "stage": "subway_a",
+    "order": 3,
+    "entity_index": 424,
+    "label": "V3",
+    "name": "Victim3",
+    "x": 2100.0,
+    "z": -864.0
+  },
+  {
+    "stage": "subway_a",
+    "order": 4,
+    "entity_index": 425,
+    "label": "V4",
+    "name": "Victim4",
+    "x": 2302.0,
+    "z": 105.0
+  },
+  {
+    "stage": "subway_a",
+    "order": 5,
+    "entity_index": 567,
+    "label": "V5",
+    "name": "Victim5",
+    "x": -852.0,
+    "z": 408.0
+  },
+  {
+    "stage": "subway_a",
+    "order": 6,
+    "entity_index": 569,
+    "label": "V6",
+    "name": "Victim7",
+    "x": 2438.0,
+    "z": -3175.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 1,
+    "entity_index": 229,
+    "label": "V1",
+    "name": "Victim1",
+    "x": -2668.0,
+    "z": 868.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 2,
+    "entity_index": 230,
+    "label": "V2",
+    "name": "Victim2",
+    "x": -1376.0,
+    "z": 3392.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 3,
+    "entity_index": 231,
+    "label": "V3",
+    "name": "Victim4",
+    "x": -68.0,
+    "z": -3804.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 4,
+    "entity_index": 232,
+    "label": "V4",
+    "name": "Victim5",
+    "x": 541.0,
+    "z": 4070.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 5,
+    "entity_index": 233,
+    "label": "V5",
+    "name": "Victim6",
+    "x": 38.0,
+    "z": 1804.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 6,
+    "entity_index": 307,
+    "label": "V6",
+    "name": "Victim7",
+    "x": -1.0,
+    "z": 4082.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 7,
+    "entity_index": 310,
+    "label": "V7",
+    "name": "Victim9",
+    "x": -2014.0,
+    "z": -605.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 8,
+    "entity_index": 311,
+    "label": "V8",
+    "name": "Victim10",
+    "x": -742.0,
+    "z": -5269.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 9,
+    "entity_index": 312,
+    "label": "V9",
+    "name": "Victim11",
+    "x": -211.0,
+    "z": -4266.0
+  },
+  {
+    "stage": "subway_b",
+    "order": 10,
+    "entity_index": 313,
+    "label": "V10",
+    "name": "Victim12",
+    "x": 542.0,
+    "z": -4819.0
+  },
+  {
+    "stage": "training",
+    "order": 1,
+    "entity_index": 191,
+    "label": "V1",
+    "name": "victim1",
+    "x": 1104.0,
+    "z": -4976.0
+  },
+  {
+    "stage": "training",
+    "order": 2,
+    "entity_index": 194,
+    "label": "V2",
+    "name": "victim2",
+    "x": 1656.0,
+    "z": -4968.0
+  }
+]

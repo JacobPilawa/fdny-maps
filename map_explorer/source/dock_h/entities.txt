@@ -1,0 +1,907 @@
+NumEntities 63
+
+entity 0
+TextureLib: D:\WIN2K\Temp/textures.txl
+SkyAxis: 1.000000 0.000000 0.000000
+SkyRotation: 0.000000
+SkyDrawScale: 1.000000
+SkyLeft: sky_tropbk
+SkyRight: sky_tropft
+SkyTop: sky_tropup
+SkyBottom: sky_tropdn
+SkyFront: sky_troprt
+SkyBack: sky_troplf
+
+entity 1
+Model: 1
+classname: %Model%
+%name%: fire48
+origin: 2354.264893 559.233887 -298.219727
+
+entity 2
+Model: 2
+classname: %Model%
+%name%: fire49
+origin: 1861.265015 561.467834 -301.892334
+
+entity 3
+Model: 3
+classname: %Model%
+%name%: fire50
+origin: 791.910400 564.467651 -1087.395020
+
+entity 4
+Model: 4
+classname: %Model%
+%name%: fire51
+origin: 795.583008 562.233704 -1580.395020
+
+entity 5
+Model: 5
+classname: %Model%
+%name%: fire52
+origin: 2019.551758 278.000000 1930.902100
+
+entity 6
+Model: 6
+classname: %Model%
+%name%: fire53
+origin: 1854.551758 56.000000 1904.902100
+
+entity 7
+Model: 7
+classname: %Model%
+%name%: fire56
+origin: 792.065918 237.467468 -1088.590820
+
+entity 8
+Model: 8
+classname: %Model%
+%name%: fire57
+origin: 795.738525 235.233521 -1581.590820
+
+entity 9
+Model: 9
+classname: %Model%
+%name%: fire58
+origin: 799.049561 235.233521 -61.786682
+
+entity 10
+Model: 10
+classname: %Model%
+%name%: fire59
+origin: 798.894043 562.233704 -60.590881
+
+entity 11
+Model: 11
+classname: %Model%
+%name%: fire29
+origin: -2267.109619 240.000000 -425.265625
+
+entity 12
+Model: 12
+classname: %Model%
+%name%: fire30
+origin: -2267.109619 240.000000 -840.265625
+
+entity 13
+Model: 13
+classname: %Model%
+%name%: fire35
+origin: -1022.000000 64.233948 -1013.265625
+
+entity 14
+Model: 14
+classname: %Model%
+%name%: fire36
+origin: -1492.109985 88.233948 -1050.265625
+
+entity 15
+Model: 15
+classname: %Model%
+%name%: fire37
+origin: -2028.000000 88.233948 -1045.734375
+
+entity 16
+Model: 16
+classname: %Model%
+%name%: fire38
+origin: -2616.000000 64.233948 -1049.265625
+
+entity 17
+Model: 17
+classname: %Model%
+%name%: fire41
+origin: 1647.090942 526.999878 1209.902100
+
+entity 18
+Model: 18
+classname: %Model%
+%name%: fire42
+origin: 2302.090820 526.999878 1219.902100
+
+entity 19
+Model: 19
+classname: %Model%
+%name%: fire43
+origin: 787.890259 561.467896 -584.265625
+
+entity 20
+Model: 20
+classname: %Model%
+%name%: fire54
+origin: 1512.022705 561.467834 -1082.267090
+
+entity 21
+Model: 21
+classname: %Model%
+%name%: fire55
+origin: 1513.219604 559.233887 -589.267273
+
+entity 22
+Model: 22
+classname: %Model%
+%name%: fire60
+origin: 795.376953 237.467468 431.213318
+
+entity 23
+Model: 23
+classname: %Model%
+%name%: fire61
+origin: 795.221436 564.467651 432.409119
+
+entity 24
+angles: 56.711422 -55.584316 0.000000
+classname: SunLight
+color: 248 198 24
+light: 150
+origin: 192 0 -1511
+style: 0
+%name%: SunLight1
+
+entity 25
+classname: RCS_PlayerHose
+FirstPathPoint: RCS_HosePath49
+location: 1769 168 -536
+spawn_message: 10000
+%name%: RCS_PlayerHose2
+
+entity 26
+A_NextPoint: RCS_HosePath40
+B_LookAtPoint: RCS_HosePath39
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 46 0 -1333
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath38
+
+entity 27
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: -1773 0 -532
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath39
+
+entity 28
+A_NextPoint: RCS_HosePath48
+B_LookAtPoint: RCS_HosePath39
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath41
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 1
+M_MaxPressure: 1
+M_SpotTime: 45
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_FireModel: fire37
+ZF0_SprayTime: 2
+ZF1_FireModel: fire30
+ZF1_SprayTime: 1
+ZF2_FireModel: fire38
+ZF2_SprayTime: 1
+ZF3_FireModel: fire35
+ZF3_SprayTime: 1
+ZF4_FireModel: fire36
+ZF4_SprayTime: 2
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: -1073 0 -1561
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath40
+
+entity 29
+A_NextPoint: RCS_HosePath54
+B_LookAtPoint: RCS_HosePath51
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath52
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 45
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_FireModel: fire56
+ZF0_SprayTime: 1
+ZF1_FireModel: fire50
+ZF1_SprayTime: 1
+ZF2_FireModel: fire43
+ZF2_SprayTime: 2
+ZF3_FireModel: fire51
+ZF3_SprayTime: 2
+ZF4_FireModel: fire57
+ZF4_SprayTime: 2
+ZF5_SprayTime: 2
+ZF6_SprayTime: 1
+ZF7_SprayTime: 1
+ZF8_SprayTime: 2
+ZZ_location: -12 0 -1391
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath41
+
+entity 30
+A_NextPoint: RCS_HosePath43
+B_LookAtPoint: RCS_HosePath44
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1443 0 -545
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath42
+
+entity 31
+A_NextPoint: RCS_HosePath45
+B_LookAtPoint: RCS_HosePath44
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath46
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 40
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_FireModel: fire55
+ZF0_SprayTime: 2
+ZF1_FireModel: fire49
+ZF1_SprayTime: 1
+ZF2_FireModel: fire54
+ZF2_SprayTime: 2
+ZF3_FireModel: fire48
+ZF3_SprayTime: 1
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2324 0 -1526
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath43
+
+entity 32
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1407 0 195
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath44
+
+entity 33
+A_NextPoint: RCS_HosePath46
+B_LookAtPoint: RCS_HosePath47
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath46
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1901 0 -400
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath45
+
+entity 34
+B_LookAtPoint: RCS_HosePath47
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 40
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_FireModel: fire52
+ZF0_SprayTime: 2
+ZF1_FireModel: fire41
+ZF1_SprayTime: 1
+ZF2_FireModel: fire53
+ZF2_SprayTime: 1
+ZF3_FireModel: fire42
+ZF3_SprayTime: 2
+ZF4_SprayTime: 0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1858 0 65
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath46
+
+entity 35
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 2082 0 2430
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath47
+
+entity 36
+A_NextPoint: RCS_HosePath41
+B_LookAtPoint: RCS_HosePath39
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath41
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: -665 0 -1369
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath48
+
+entity 37
+classname: light
+color: 255 255 255
+light: 150
+origin: 387 0 -1629
+style: 0
+%name%: light1
+
+entity 38
+A_NextPoint: RCS_HosePath50
+B_LookAtPoint: RCS_HosePath39
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath40
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1666 0 -536
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath49
+
+entity 39
+A_NextPoint: RCS_HosePath38
+B_LookAtPoint: RCS_HosePath39
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath40
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 490 0 -546
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath50
+
+entity 40
+angles: 0.000000 0.000000 -89.585844
+arc: 60
+classname: spotlight
+color: 255 238 168
+DummyRadius: 150
+light: 1000
+origin: 1802 575 1619
+style: 0
+%name%: spotlight1
+
+entity 41
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 1554 0 -881
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath51
+
+entity 42
+A_NextPoint: RCS_HosePath53
+B_LookAtPoint: RCS_HosePath44
+C_IsAHotSpot: 1
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath43
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 40
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_FireModel: fire60
+ZF0_SprayTime: 2
+ZF1_FireModel: fire59
+ZF1_SprayTime: 2
+ZF2_FireModel: fire61
+ZF2_SprayTime: 1
+ZF3_FireModel: fire58
+ZF3_SprayTime: 3
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: -49 0 61
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath52
+
+entity 43
+A_NextPoint: RCS_HosePath42
+B_LookAtPoint: RCS_HosePath42
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath43
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 566 0 -487
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath53
+
+entity 44
+A_NextPoint: RCS_HosePath52
+B_LookAtPoint: RCS_HosePath52
+C_IsAHotSpot: 0
+classname: RCS_HosePath
+D_NextHotSpot: RCS_HosePath52
+E_NextHotSpotPathDir: 1
+M_IsFirstHotSpot: 0
+M_MaxPressure: 1
+M_SpotTime: 30.0
+N_PitchSpread: 45.0
+Q_NumCycles: 2
+ZF0_SprayTime: 0.0
+ZF1_SprayTime: 0.0
+ZF2_SprayTime: 0.0
+ZF3_SprayTime: 0.0
+ZF4_SprayTime: 0.0
+ZF5_SprayTime: 0.0
+ZF6_SprayTime: 0.0
+ZF7_SprayTime: 0.0
+ZF8_SprayTime: 0.0
+ZZ_location: 369 0 -543
+ZZ_spawn_message: 10000
+%name%: RCS_HosePath54
+
+entity 45
+classname: %typedef%
+%typename%: RCS_VictimAltSpot
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Victim: RCS_VictimRescue
+B_Heading: float
+
+entity 46
+classname: %typedef%
+%typename%: RCS_VictimRescue
+spawn_message: int
+%defaultvalue%: 
+location: point
+A_Name: string
+D_Type: string
+G_Heading: float
+J_Radius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+
+entity 47
+classname: %typedef%
+%typename%: SunLight
+origin: point
+%defaultvalue%: 
+color: color
+light: int
+angles: point
+style: int
+
+entity 48
+classname: %typedef%
+%typename%: RCS_PropModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Name: string
+D_Model: int
+E_Heading: float
+E_Pitch: float
+F_TouchRadius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+
+entity 49
+classname: %typedef%
+%typename%: RCS_PlayerRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+C_Heading: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 50
+classname: %typedef%
+%typename%: RCS_PathPoint
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 51
+classname: %typedef%
+%typename%: RCS_FireRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+F_FireType: int
+H_Radius: float
+H_Height: float
+K_SprayTime: float
+L_FloorMe: int
+M_Smoking: int
+N_IsAlive: int
+P_NumKeys: int
+P_Key1Size: point
+P_Key1TimeOffset: int
+P_Key2Size: point
+P_Key2TimeOffset: int
+P_Key3Size: point
+P_Key3TimeOffset: int
+P_Key4Size: point
+P_Key4TimeOffset: int
+T_UseHeading: int
+T_Heading: point
+ZZ_location: point
+
+entity 52
+classname: %typedef%
+%typename%: RCS_PlayerHose
+spawn_message: int
+%defaultvalue%: 
+location: point
+FirstPathPoint: RCS_HosePath
+
+entity 53
+classname: %typedef%
+%typename%: RCS_HosePath
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_NextPoint: RCS_HosePath
+B_LookAtPoint: RCS_HosePath
+C_IsAHotSpot: int
+D_NextHotSpot: RCS_HosePath
+E_NextHotSpotPathDir: int
+M_IsFirstHotSpot: int
+M_SpotTime: float
+M_MaxPressure: float
+N_PitchSpread: float
+Q_NumCycles: int
+ZF0_FireModel: model
+ZF0_SprayTime: float
+ZF1_FireModel: model
+ZF1_SprayTime: float
+ZF2_FireModel: model
+ZF2_SprayTime: float
+ZF3_FireModel: model
+ZF3_SprayTime: float
+ZF4_FireModel: model
+ZF4_SprayTime: float
+ZF5_FireModel: model
+ZF5_SprayTime: float
+ZF6_FireModel: model
+ZF6_SprayTime: float
+ZF7_FireModel: model
+ZF7_SprayTime: float
+ZF8_FireModel: model
+ZF8_SprayTime: float
+
+entity 54
+classname: %typedef%
+%typename%: RCS_MiscEmitter
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Type: int
+E_Heading: float
+E_Pitch: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+ZZ_location: point
+
+entity 55
+classname: %typedef%
+%typename%: RCS_EscapeArrow
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+F_Rotation: float
+G_Pitch: float
+ZZ_location: point
+
+entity 56
+classname: %typedef%
+%typename%: RCS_BoundsTrigger
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+E_Reach: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 57
+classname: %typedef%
+%typename%: RCS_BModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_AnimModel0: model
+C_AnimModel1: model
+C_AnimModel2: model
+C_AnimModel3: model
+C_AnimModel4: model
+C_AnimModel5: model
+C_AnimModel6: model
+C_AnimModel7: model
+C_AnimModel8: model
+C_AnimModel9: model
+E_Reach: float
+F_HitPoints: int
+G_Liftable: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 58
+classname: %typedef%
+%typename%: RCS_BlinkLight
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+H_radius: float
+K_HideIfNotVisible: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+Y_color: color
+ZZ_location: point
+
+entity 59
+classname: %typedef%
+%typename%: Camera
+origin: point
+%defaultvalue%: 
+angles: point
+
+entity 60
+classname: %typedef%
+%typename%: ModelOrigin
+origin: point
+%defaultvalue%: 
+
+entity 61
+classname: %typedef%
+%typename%: spotlight
+DummyRadius: int
+%defaultvalue%: 
+light: int
+color: color
+style: int
+origin: point
+angles: point
+arc: int
+
+entity 62
+classname: %typedef%
+%typename%: light
+light: int
+%defaultvalue%: 
+color: color
+style: int
+origin: point

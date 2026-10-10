@@ -1,0 +1,8 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+oil_rig_d,V1,1,0,V1,man,1072.0,864.0,-1464.0,5000.0,0,roam 5000
+oil_rig_d,V1,1,1,A1,RCS_VictimAltSpot15,-130.0,856.0,-1472.0,5000.0,0,roam 5000
+oil_rig_d,V1,1,2,A2,RCS_VictimAltSpot16,-880.0,856.0,-1472.0,5000.0,0,roam 5000
+oil_rig_d,V2,2,0,V2,man1,1072.0,304.0,-1464.0,5000.0,0,roam 5000
+oil_rig_d,V2,2,1,A3,RCS_VictimAltSpot17,338.0,312.0,-1470.0,5000.0,0,roam 5000
+oil_rig_d,V2,2,2,A4,RCS_VictimAltSpot18,-584.0,312.0,-1480.0,5000.0,0,roam 5000
+oil_rig_d,V3,3,0,V3,woman,-128.0,584.0,-1608.0,5000.0,0,roam 5000

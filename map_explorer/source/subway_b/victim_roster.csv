@@ -1,0 +1,15 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+subway_b,V1,1,0,V1,Victim1,-2668.0,-117.0,868.0,,24,
+subway_b,V2,2,0,V2,Victim2,-1376.0,-100.0,3392.0,,24,
+subway_b,V2,2,1,A3,RCS_VictimAltSpot3,-1857.0,-53.0,4118.0,,24,
+subway_b,V3,3,0,V3,Victim4,-68.0,0.0,-3804.0,,24,
+subway_b,V3,3,1,A4,RCS_VictimAltSpot5,584.0,-53.0,-5389.0,,24,
+subway_b,V4,4,0,V4,Victim5,541.0,66.0,4070.0,,24,
+subway_b,V4,4,1,A2,RCS_VictimAltSpot2,178.0,-53.0,3213.0,,24,
+subway_b,V5,5,0,V5,Victim6,38.0,0.0,1804.0,,24,
+subway_b,V5,5,1,A1,RCS_VictimAltSpot1,583.0,-53.0,1868.0,,24,
+subway_b,V6,6,0,V6,Victim7,-1.0,-53.0,4082.0,1000.0,0.0,roam 1000
+subway_b,V7,7,0,V7,Victim9,-2014.0,-82.0,-605.0,1000.0,0.0,roam 1000
+subway_b,V8,8,0,V8,Victim10,-742.0,-53.0,-5269.0,1000.0,0.0,roam 1000
+subway_b,V9,9,0,V9,Victim11,-211.0,-53.0,-4266.0,1000.0,0.0,roam 1000
+subway_b,V10,10,0,V10,Victim12,542.0,37.0,-4819.0,1000.0,0.0,roam 1000

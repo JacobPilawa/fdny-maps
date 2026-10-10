@@ -1,0 +1,13 @@
+exec rescue.evs
+
+action Player (setashdensity 1)
+set DefaultFogParams (0 1000 50 50 50)
+fogenable *DefaultFogParams
+
+set QueExploders (que [tell [exploder1, exploder2, exploder3] [setsize 3, turnon], wait 1, tell [exploder1, exploder2, exploder3] turnoff])
+
+set explosion (touch: once (cmd [tell explodeb open, quake 50 1, playsnd Explodelarge 0, *QueExploders]))
+
+ambientsnd engine2 -176.448 -122.841 658.608
+ambientsnd engine 413.781 -132.478 6617.41
+ambientsnd motor 1131.1 -40.8235 6488.11

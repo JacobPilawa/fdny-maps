@@ -1,0 +1,100 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+S1,START,243,RCS_PlayerRescue,RCS_PlayerRescue1,-85.0,35.0,1948.0,,equip axe
+F1,FIRE,246,RCS_FireRescue,tunnel Fire,2321.0,-572.0,-3545.0,,
+F2,FIRE,253,RCS_FireRescue,RCS_FireRescue2,-2032.0,-302.0,1996.0,,
+F3,FIRE,254,RCS_FireRescue,RCS_FireRescue3,-2580.0,-512.0,1900.0,,
+F4,FIRE,255,RCS_FireRescue,RCS_FireRescue4,-2132.0,-302.0,1792.0,,
+F5,FIRE,256,RCS_FireRescue,tunnel Fire,1605.0,-531.0,-2527.0,,
+F6,FIRE,257,RCS_FireRescue,tunnel Fire,2011.0,-615.0,1785.0,,
+F7,FIRE,258,RCS_FireRescue,tunnel Fire,1706.0,-615.0,1755.0,,
+F8,FIRE,259,RCS_FireRescue,tunnel Fire,1558.0,-544.0,-574.0,,
+F9,FIRE,260,RCS_FireRescue,tunnel Fire,809.0,-540.0,-1301.0,,
+F10,FIRE,261,RCS_FireRescue,tunnel Fire,949.0,-540.0,-1235.0,,
+F11,FIRE,262,RCS_FireRescue,RCS_FireRescue14,-1828.0,-52.0,838.0,,
+F12,FIRE,263,RCS_FireRescue,RCS_FireRescue15,-480.0,-84.0,264.0,,
+F13,FIRE,264,RCS_FireRescue,RCS_FireRescue16,-1575.0,-70.0,1584.0,,
+F14,FIRE,265,RCS_FireRescue,RCS_FireRescue17,-2009.0,-367.0,1873.0,,
+F15,FIRE,267,RCS_FireRescue,RCS_FireRescue18,-1412.0,-68.0,1428.0,,
+F16,FIRE,268,RCS_FireRescue,RCS_FireRescue19,-1540.0,-68.0,1456.0,,
+D1,DOOR,274,RCS_BModel,door9,2206.0,-456.0,-1912.0,,*subdoor
+D2,DOOR,275,RCS_BModel,door11,2537.0,-456.0,-2498.0,,*subdoor
+F17,FIRE,290,RCS_FireRescue,<null>1,-1677.0,-68.0,727.0,,
+D3,DOOR,293,RCS_BModel,door12,1696.0,-456.0,-3136.0,,*subdoor
+D4,DOOR,294,RCS_BModel,door13,1696.0,-456.0,-2572.0,,*subdoor
+D5,DOOR,309,RCS_BModel,door16,1772.0,-449.0,885.0,,*subdoor
+D6,DOOR,310,RCS_BModel,door17,1709.0,-449.0,1449.0,,*subdoor
+D7,DOOR,311,RCS_BModel,door18,2076.0,-449.0,1490.0,,*subdoor
+D8,DOOR,312,RCS_BModel,door19,2138.0,-449.0,926.0,,*subdoor
+D9,DOOR,329,RCS_BModel,door20,1531.0,-437.0,-217.0,,*subdoor
+D10,DOOR,330,RCS_BModel,door21,1581.0,-438.0,342.0,,*subdoor
+D11,DOOR,345,RCS_BModel,door24,1053.0,-439.0,-1305.0,,*subdoor
+D12,DOOR,346,RCS_BModel,door25,1508.0,-439.0,-965.0,,*subdoor
+D13,DOOR,366,RCS_BModel,door28,1979.0,-452.0,-1364.0,,touch: settimescale 4 | touch: open | untouch: close
+D14,DOOR,387,RCS_BModel,door35,2968.0,-528.0,28.0,,*subdoor
+D15,DOOR,405,RCS_BModel,door22,1873.0,-457.0,-3403.0,,*subdoor
+H1,HOSE,407,RCS_PropModel,hose1,-1093.0,-49.0,1371.0,,touch: tell player (touchhose 15)
+W1,VALVE,408,RCS_PropModel,valve1,-1330.0,-64.0,508.0,,makevalve
+W2,VALVE,409,RCS_PropModel,valve2,928.0,-544.0,1392.0,,makevalve
+W3,VALVE,410,RCS_PropModel,valve3,3476.0,-544.0,-1088.0,,makevalve
+D16,DOOR,413,RCS_BModel,door14,1696.0,-456.0,-4244.0,,*subdoor
+D17,DOOR,414,RCS_BModel,door15,1696.0,-456.0,-3680.0,,*subdoor
+D18,DOOR,420,RCS_BModel,door23,1872.0,-456.0,-4512.0,,*subdoor
+V1,VICTIM,421,RCS_VictimRescue,Victim1,1180.0,-532.0,-1452.0,,
+V2,VICTIM,423,RCS_VictimRescue,Victim2,-1777.0,0.0,1549.0,,
+V3,VICTIM,424,RCS_VictimRescue,Victim3,2100.0,-516.0,-864.0,,roam 1200
+V4,VICTIM,425,RCS_VictimRescue,Victim4,2302.0,-441.0,105.0,,roam 1000
+F18,FIRE,426,RCS_FireRescue,tunnel Fire1,874.0,-532.0,-1697.0,,
+F19,FIRE,427,RCS_FireRescue,tunnel Fire3,2053.0,-532.0,-1711.0,,
+F20,FIRE,428,RCS_FireRescue,tunnel Fire4,1902.0,-532.0,-1265.0,,
+F21,FIRE,429,RCS_FireRescue,tunnel Fire7,2115.0,-532.0,-2792.0,,
+F22,FIRE,430,RCS_FireRescue,tunnel Fire8,2639.0,-507.0,-1792.0,,
+F23,FIRE,431,RCS_FireRescue,tunnel Fire10,3439.0,-532.0,-1554.0,,
+F24,FIRE,432,RCS_FireRescue,tunnel Fire13,3364.0,-504.0,-40.0,,
+F25,FIRE,433,RCS_FireRescue,tunnel Fire16,2176.0,-660.0,658.0,,
+F26,FIRE,434,RCS_FireRescue,tunnel Fire17,2258.0,-660.0,587.0,,
+F27,FIRE,435,RCS_FireRescue,tunnel Fire19,1723.0,-550.0,679.0,,
+F28,FIRE,436,RCS_FireRescue,tunnel Fire22,1707.0,-550.0,885.0,,
+F29,FIRE,451,RCS_FireRescue,<null>14,-620.0,-88.0,828.0,,
+F30,FIRE,452,RCS_FireRescue,<null>15,-1136.0,-88.0,774.0,,
+F31,FIRE,453,RCS_FireRescue,<null>16,-1194.0,-88.0,885.0,,
+F32,FIRE,454,RCS_FireRescue,<null>17,-1041.0,-88.0,1045.0,,
+F33,FIRE,464,RCS_FireRescue,tunnel Fire14,2491.0,-536.0,-1502.0,,
+F34,FIRE,465,RCS_FireRescue,tunnel Fire15,2544.0,-532.0,-1246.0,,
+F35,FIRE,466,RCS_FireRescue,tunnel Fire18,2419.0,-536.0,-975.0,,
+F36,FIRE,467,RCS_FireRescue,tunnel Fire20,2547.0,-532.0,-810.0,,
+F37,FIRE,468,RCS_FireRescue,tunnel Fire23,-450.0,-53.0,64.0,,
+F38,FIRE,469,RCS_FireRescue,tunnel Fire24,-580.0,-52.0,-116.0,,
+F39,FIRE,470,RCS_FireRescue,tunnel Fire25,-951.0,-52.0,156.0,,
+F40,FIRE,471,RCS_FireRescue,tunnel Fire26,-928.0,-52.0,-113.0,,
+F41,FIRE,472,RCS_FireRescue,tunnel Fire27,-1015.0,-52.0,48.0,,
+F42,FIRE,473,RCS_FireRescue,tunnel Fire28,-729.0,-52.0,51.0,,
+F43,FIRE,474,RCS_FireRescue,tunnel Fire29,-293.0,-52.0,-147.0,,
+F44,FIRE,475,RCS_FireRescue,tunnel Fire21,1548.0,-498.0,772.0,,
+F45,FIRE,476,RCS_FireRescue,tunnel Fire30,1601.0,-468.0,1026.0,,
+E1,EXIT,477,RCS_EscapeArrow,RCS_EscapeArrow1,1287.0,-455.0,-195.0,,
+E2,EXIT,478,RCS_EscapeArrow,RCS_EscapeArrow2,1750.0,-375.0,332.0,,
+E3,EXIT,479,RCS_EscapeArrow,RCS_EscapeArrow3,1059.0,-439.0,422.0,,
+E4,EXIT,480,RCS_EscapeArrow,RCS_EscapeArrow4,-1443.0,81.0,1143.0,,
+F46,FIRE,481,RCS_FireRescue,tunnel Fire31,3032.0,-539.0,-146.0,,
+W4,VALVE,482,RCS_PropModel,valve4,828.0,-544.0,-2276.0,,makevalve
+F47,FIRE,483,RCS_FireRescue,tunnel Fire32,1872.0,-548.0,-1444.0,,
+E5,EXIT,484,RCS_EscapeArrow,RCS_EscapeArrow5,3068.0,-424.0,-1040.0,,
+E6,EXIT,485,RCS_EscapeArrow,RCS_EscapeArrow6,2480.0,-444.0,-1576.0,,
+E7,EXIT,486,RCS_EscapeArrow,RCS_EscapeArrow7,3084.0,-416.0,-2500.0,,
+E8,EXIT,487,RCS_EscapeArrow,RCS_EscapeArrow8,1104.0,-408.0,-2236.0,,
+F48,FIRE,488,RCS_FireRescue,tunnel Fire33,1672.0,-508.0,1444.0,,
+F49,FIRE,489,RCS_FireRescue,tunnel Fire34,1980.0,-580.0,-444.0,,
+F50,FIRE,490,RCS_FireRescue,tunnel Fire35,2008.0,-652.0,-204.0,,
+W5,VALVE,500,RCS_PropModel,valve5,828.0,-544.0,-392.0,,makevalve
+F51,FIRE,501,RCS_FireRescue,tunnel Fire2,1455.0,-544.0,-121.0,,
+F52,FIRE,502,RCS_FireRescue,tunnel Fire5,1474.0,-544.0,-336.0,,
+D19,DOOR,504,RCS_BModel,door6,-1316.0,4.0,1204.0,,*Door
+D20,DOOR,505,RCS_BModel,door7,-447.0,4.0,683.0,,*Door
+F53,FIRE,510,RCS_FireRescue,Fire1,2432.0,-556.0,-6400.0,,
+F54,FIRE,511,RCS_FireRescue,Fire2,2516.0,-556.0,-6388.0,,
+A1,ALT,565,RCS_VictimAltSpot,RCS_VictimAltSpot1,1844.0,-532.0,-804.0,RCS_VictimRescue2,
+A2,ALT,566,RCS_VictimAltSpot,RCS_VictimAltSpot2,1766.0,-462.0,153.0,RCS_VictimRescue2,
+V5,VICTIM,567,RCS_VictimRescue,Victim5,-852.0,12.0,408.0,,roam 200
+V6,VICTIM,569,RCS_VictimRescue,Victim7,2438.0,-412.0,-3175.0,,roam 800
+F55,FIRE,575,RCS_FireRescue,<null>13,-1531.0,-12.0,785.0,,
+D21,DOOR,579,RCS_BModel,door8,996.0,-496.0,-36.0,,*Door

@@ -1,0 +1,9 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+subway_a,V1,1,0,V1,Victim1,1180.0,-532.0,-1452.0,,0.0,
+subway_a,V1,1,1,A1,RCS_VictimAltSpot1,1844.0,-532.0,-804.0,,0.0,
+subway_a,V1,1,2,A2,RCS_VictimAltSpot2,1766.0,-462.0,153.0,,0.0,
+subway_a,V2,2,0,V2,Victim2,-1777.0,0.0,1549.0,,0.0,
+subway_a,V3,3,0,V3,Victim3,2100.0,-516.0,-864.0,1200.0,0.0,roam 1200
+subway_a,V4,4,0,V4,Victim4,2302.0,-441.0,105.0,1000.0,0.0,roam 1000
+subway_a,V5,5,0,V5,Victim5,-852.0,12.0,408.0,200.0,0.0,roam 200
+subway_a,V6,6,0,V6,Victim7,2438.0,-412.0,-3175.0,800.0,0.0,roam 800

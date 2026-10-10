@@ -1,0 +1,38 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+H1,HOSE,25,RCS_PropModel,coiled hose1,1156.0,812.0,-1444.0,,touch: tell player (touchhose 50)
+F1,FIRE,26,RCS_FireRescue,tall fire14,-56.0,264.0,-1696.0,,
+F2,FIRE,27,RCS_FireRescue,tall fire16,-992.0,264.0,-1792.0,,
+V1,VICTIM,28,RCS_VictimRescue,man,1072.0,864.0,-1464.0,,roam 5000
+F3,FIRE,29,RCS_FireRescue,tall fire18,1080.0,264.0,-1984.0,,
+F4,FIRE,30,RCS_FireRescue,tall fire19,336.0,504.0,-2056.0,,
+P1,PROP,31,RCS_PropModel,extiguisher3,-168.0,832.0,-1912.0,,setscale 0.125 0.125 0.125 | touch: *RefillExt
+F5,FIRE,32,RCS_FireRescue,tall fire20,256.0,256.0,-2200.0,,
+F6,FIRE,33,RCS_FireRescue,tall fire21,816.0,824.0,-1504.0,,
+F7,FIRE,34,RCS_FireRescue,tall fire17,-512.0,504.0,-1952.0,,
+T1,TRIGGER,35,RCS_BoundsTrigger,zone oil rig,1312.0,2744.0,-96.0,,makezone (Offshore Oil Rig)
+T2,TRIGGER,39,RCS_BoundsTrigger,zone operations,1204.0,2744.0,-212.0,,makezone (Operations)
+S1,START,65,RCS_PlayerRescue,RCS_PlayerRescue2,1156.0,812.0,-1476.0,,equip goggles | equip axe | equip extinguisher
+T3,TRIGGER,73,RCS_BoundsTrigger,exit_lifeboat2,-704.0,-8.0,-3104.0,,touch: tell player escape
+D1,DOOR,74,RCS_BModel,garagedoor8,-952.0,128.0,-2612.0,,touch: *DoorOpen | untouch: *DoorClose
+T4,TRIGGER,75,RCS_BoundsTrigger,zone operations1,1168.0,2744.0,-216.0,,makezone (Operations)
+V2,VICTIM,76,RCS_VictimRescue,man1,1072.0,304.0,-1464.0,,roam 5000
+V3,VICTIM,77,RCS_VictimRescue,woman,-128.0,584.0,-1608.0,,roam 5000
+A1,ALT,78,RCS_VictimAltSpot,RCS_VictimAltSpot15,-130.0,856.0,-1472.0,RCS_VictimRescue15,
+A2,ALT,79,RCS_VictimAltSpot,RCS_VictimAltSpot16,-880.0,856.0,-1472.0,RCS_VictimRescue15,
+A3,ALT,80,RCS_VictimAltSpot,RCS_VictimAltSpot17,338.0,312.0,-1470.0,RCS_VictimRescue19,
+A4,ALT,81,RCS_VictimAltSpot,RCS_VictimAltSpot18,-584.0,312.0,-1480.0,RCS_VictimRescue19,
+F8,FIRE,82,RCS_FireRescue,tall fire35,324.0,752.0,-1604.0,,
+F9,FIRE,83,RCS_FireRescue,tall fire36,258.0,752.0,-1552.0,,
+F10,FIRE,84,RCS_FireRescue,tall fire37,-116.0,264.0,-1744.0,,
+F11,FIRE,85,RCS_FireRescue,tall fire38,-904.0,232.0,-2000.0,,
+F12,FIRE,86,RCS_FireRescue,tall fire39,1012.0,264.0,-1906.0,,
+F13,FIRE,87,RCS_FireRescue,tall fire40,-532.0,504.0,-1832.0,,
+F14,FIRE,88,RCS_FireRescue,tall fire41,390.0,504.0,-1966.0,,
+F15,FIRE,89,RCS_FireRescue,tall fire42,758.0,504.0,-1826.0,,
+F16,FIRE,90,RCS_FireRescue,tall fire43,698.0,504.0,-1742.0,,
+E1,EXIT,91,RCS_EscapeArrow,RCS_EscapeArrow14,-682.0,622.0,-1938.0,,
+E2,EXIT,92,RCS_EscapeArrow,<null>23,116.0,622.0,-1574.0,,
+E3,EXIT,93,RCS_EscapeArrow,<null>24,-640.0,424.0,-2044.0,,
+T5,TRIGGER,97,RCS_BoundsTrigger,north smoke area,1140.0,2744.0,-218.0,,touch: fogenable 0 500 0 16 0 | untouch: fogdisable  | touch: tell player oxyon | untouch: tell player oxyoff
+D2,DOOR,98,RCS_BModel,door12,-1038.0,360.0,-2338.0,,*Door
+E4,EXIT,99,RCS_EscapeArrow,<null>25,-576.0,676.0,-2408.0,,

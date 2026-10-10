@@ -1,0 +1,41 @@
+label,category,entity_index,class,name,x,y,z,victim_link,scripts
+S1,START,27,RCS_PlayerRescue,RCS_PlayerRescue1,-132.0,-36.0,140.0,,equip axe
+D1,DOOR,50,RCS_BModel,ladderdoor1,388.0,-220.0,-3812.0,,touch: open | untouch: close
+D2,DOOR,51,RCS_BModel,ladderdoor2,388.0,-220.0,-2854.0,,touch: open | untouch: close
+D3,DOOR,52,RCS_BModel,door11,361.0,-154.0,-68.0,,*Door
+D4,DOOR,55,RCS_BModel,door12,482.0,0.0,-2534.0,,*Door
+D5,DOOR,56,RCS_BModel,door14,542.0,-60.0,-3632.0,,*Door
+D6,DOOR,59,RCS_BModel,door15,1575.0,-189.0,-3889.0,,*Door
+D7,DOOR,68,RCS_BModel,door19,1268.0,-200.0,-6812.0,,*Door
+F1,FIRE,134,RCS_FireRescue,fire1,1532.0,-208.0,-5844.0,,
+F2,FIRE,135,RCS_FireRescue,fire2,1864.0,-208.0,-6264.0,,
+F3,FIRE,142,RCS_FireRescue,fire3,872.0,-192.0,-6548.0,,
+F4,FIRE,143,RCS_FireRescue,fire4,1620.0,-200.0,-6040.0,,
+F5,FIRE,144,RCS_FireRescue,fire5,1776.0,-208.0,-6068.0,,
+F6,FIRE,145,RCS_FireRescue,fire6,1896.0,-208.0,-6004.0,,
+W1,VALVE,148,RCS_PropModel,valve2,1924.0,-164.0,-2696.0,,makevalve
+F7,FIRE,149,RCS_FireRescue,mortarfire1,588.0,-144.0,-2900.0,,
+F8,FIRE,152,RCS_FireRescue,mortarfire2,248.0,-204.0,-2724.0,,
+D8,DOOR,153,RCS_BModel,door6,1732.0,-108.0,-5268.0,,*Door
+F9,FIRE,154,RCS_FireRescue,fire7,1236.0,-328.0,-6764.0,,
+W2,VALVE,157,RCS_PropModel,valve3,888.0,-148.0,-5772.0,,makevalve
+V1,VICTIM,158,RCS_VictimRescue,victim1,348.0,-136.0,-3068.0,,
+V2,VICTIM,160,RCS_VictimRescue,victim3,1796.0,-540.0,-3284.0,,
+V3,VICTIM,161,RCS_VictimRescue,victim4,840.0,-260.0,-4812.0,,roam 1000
+V4,VICTIM,162,RCS_VictimRescue,victim5,1852.0,-112.0,-5732.0,,
+H1,HOSE,169,RCS_PropModel,hose1,1308.0,-104.0,-2460.0,,touch: tell player (touchhose 25)
+E1,EXIT,186,RCS_EscapeArrow,arrow1,316.0,-136.0,-1908.0,,
+E2,EXIT,187,RCS_EscapeArrow,arrow2,348.0,-8.0,-2524.0,,
+E3,EXIT,188,RCS_EscapeArrow,arrow3,1424.0,-52.0,-2792.0,,
+E4,EXIT,189,RCS_EscapeArrow,arrow4,384.0,-80.0,-3620.0,,
+E5,EXIT,190,RCS_EscapeArrow,arrow5,344.0,-472.0,-3296.0,,
+E6,EXIT,191,RCS_EscapeArrow,arrow6,388.0,-500.0,-3812.0,,
+E7,EXIT,192,RCS_EscapeArrow,arrow7,356.0,-80.0,-2848.0,,
+E8,EXIT,193,RCS_EscapeArrow,arrow8,876.0,-196.0,-5008.0,,
+E9,EXIT,194,RCS_EscapeArrow,arrow9,1736.0,-44.0,-5012.0,,
+E10,EXIT,195,RCS_EscapeArrow,arrow10,1256.0,-44.0,-5676.0,,
+E11,EXIT,196,RCS_EscapeArrow,arrow11,880.0,-192.0,-4568.0,,
+V5,VICTIM,197,RCS_VictimRescue,victim10,292.0,-320.0,-1320.0,,roam 500
+F10,FIRE,203,RCS_FireRescue,entrancefire2,716.0,-204.0,20.0,,
+F11,FIRE,204,RCS_FireRescue,entrancefire1,684.0,-208.0,184.0,,
+E12,EXIT,221,RCS_EscapeArrow,arrow12,448.0,-256.0,-1420.0,,

@@ -1,0 +1,7 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+training,V1,1,0,V1,victim1,1104.0,-60.0,-4976.0,,60,pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+training,V1,1,1,A1,RCS_VictimAltSpot1,1300.0,-120.0,-4952.0,,60,pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+training,V1,1,2,A2,RCS_VictimAltSpot2,1472.0,-120.0,-4972.0,,60,pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+training,V2,2,0,V2,victim2,1656.0,-120.0,-4968.0,,60,pickup: if gotvictim 1 (*Cmd3b) | pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+training,V2,2,1,A3,RCS_VictimAltSpot3,1820.0,-120.0,-4960.0,,60,pickup: if gotvictim 1 (*Cmd3b) | pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1
+training,V2,2,2,A4,RCS_VictimAltSpot4,1972.0,-120.0,-4960.0,,60,pickup: if gotvictim 1 (*Cmd3b) | pickup: ifnot gotvictim 1 (*Cmd3c) | pickup: set gotvictim 1

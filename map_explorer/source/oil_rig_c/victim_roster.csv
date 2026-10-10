@@ -1,0 +1,13 @@
+map,victim,bsp_order,spot,label,name,x,y,z,roam_radius,contact_radius,scripts
+oil_rig_c,V1,1,0,V1,<null>4,857.0,1345.0,-320.0,2400.0,40,roam 2400
+oil_rig_c,V1,1,1,A3,RCS_VictimAltSpot11,837.0,1072.0,-296.0,2400.0,40,roam 2400
+oil_rig_c,V1,1,2,A4,RCS_VictimAltSpot12,845.0,1584.0,-344.0,2400.0,40,roam 2400
+oil_rig_c,V2,2,0,V2,<null>5,1073.0,1904.0,-364.0,2400.0,40,roam 2400
+oil_rig_c,V2,2,1,A5,RCS_VictimAltSpot13,885.0,2112.0,-384.0,2400.0,40,roam 2400
+oil_rig_c,V2,2,2,A6,RCS_VictimAltSpot14,885.0,2392.0,-416.0,2400.0,40,roam 2400
+oil_rig_c,V3,3,0,V3,fatman behind rubble,1076.0,-256.0,496.0,2400.0,24,roam 2400
+oil_rig_c,V4,4,0,V4,man on ledge1,1048.0,312.0,-120.0,2400.0,0,roam 2400
+oil_rig_c,V4,4,1,A1,RCS_VictimAltSpot9,624.0,312.0,-1040.0,2400.0,0,roam 2400
+oil_rig_c,V4,4,2,A2,RCS_VictimAltSpot10,456.0,312.0,-104.0,2400.0,0,roam 2400
+oil_rig_c,V5,5,0,V5,woman at console,926.0,40.0,-864.0,700.0,0,roam 700
+oil_rig_c,V6,6,0,V6,other man in A1,508.0,60.0,-1418.0,2400.0,0,roam 2400

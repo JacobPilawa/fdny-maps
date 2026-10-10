@@ -1,0 +1,130 @@
+map,entity,class,name,location,type,radius,victim_link,script1,script2,script3,script4,spawn_message
+bank,334,RCS_PlayerRescue,RCS_PlayerRescue1,-697 160 1196,,,,equip axe,<null>,<null>,<null>,10000
+bank,357,RCS_VictimRescue,betty,1176 0 -672,girl,0.0,,<null>,<null>,<null>,<null>,10000
+bank,359,RCS_VictimRescue,<null>,-331 0 -287,woman,0.0,,roam 1000,<null>,<null>,<null>,10000
+bank,369,RCS_VictimRescue,<null>,735 0 -2184,girl,0.0,,<null>,<null>,<null>,<null>,10000
+bank,395,RCS_VictimRescue,<null>,-768 0 -2160,boy,0.0,,<null>,<null>,<null>,<null>,10000
+bank,456,RCS_VictimRescue,<null>,1128 284 684,man,60,,<null>,<null>,<null>,<null>,10000
+bank,473,RCS_VictimRescue,<null>,-2213 314 699,fatman,60,,roam 500,<null>,<null>,<null>,10000
+bank,495,RCS_VictimAltSpot,RCS_VictimAltSpot1,-2423 -6 -1914,,,RCS_VictimRescue4,,,,,10000
+bank,496,RCS_VictimAltSpot,RCS_VictimAltSpot2,1192 1 -772,,,RCS_VictimRescue1,,,,,10000
+bank,497,RCS_VictimAltSpot,RCS_VictimAltSpot3,1256 312 -1312,,,RCS_VictimRescue5,,,,,10000
+bank,498,RCS_VictimAltSpot,RCS_VictimAltSpot4,-511 172 -578,,,RCS_VictimRescue3,,,,,10000
+bar_r,85,RCS_PlayerRescue,RCS_PlayerRescue1,-304 128 -332,,,,equip axe,,setashdensity 0,<null>,10000
+bar_r,134,RCS_VictimRescue,Victim01,1980 420 -80,fatman,60,,roam 500,<null>,<null>,<null>,10000
+bar_r,135,RCS_VictimRescue,Victim02,96 40 -1700,woman,60,,roam 300,<null>,<null>,<null>,10000
+bar_r,155,RCS_VictimRescue,Victim03,2164 304 -176,man,60,,playanim 1,roam 500,<null>,<null>,10000
+bar_r,156,RCS_VictimRescue,Victim04,516 304 -1756,man,60,,setskin 2,playanim 1,roam 500,<null>,10000
+bar_r,157,RCS_VictimRescue,Victim05,2104 40 -1368,fatman,60,,setskin 2,roam 500,<null>,<null>,10000
+bar_r,158,RCS_VictimRescue,Victim06,1792 40 -324,woman,60,,setskin 2,playanim 1,roam 500,<null>,10000
+bar_r,265,RCS_VictimAltSpot,RCS_VictimAltSpot1,84 92 -536,,,RCS_VictimRescue6,,,,,10000
+bar_r,266,RCS_VictimAltSpot,RCS_VictimAltSpot2,424 92 -1720,,,RCS_VictimRescue2,,,,,10000
+bar_r,267,RCS_VictimAltSpot,RCS_VictimAltSpot3,1736 96 -720,,,RCS_VictimRescue5,,,,,10000
+bar_r,268,RCS_VictimAltSpot,RCS_VictimAltSpot4,2160 140 -1064,,,RCS_VictimRescue5,,,,,10000
+boat_a,104,RCS_PlayerRescue,RCS_PlayerRescue2,-1253 16 121,,,,equip axe,<null>,<null>,<null>,10000
+boat_a,130,RCS_VictimRescue,victimfork,698 -293 2393,boy,0.0,,,<null>,<null>,<null>,10000
+boat_a,145,RCS_VictimRescue,girl,-1551 -72 456,girl,0.0,,,<null>,<null>,<null>,10000
+boat_a,158,RCS_VictimRescue,victim3,1359 105 6149,girl,0.0,,,<null>,<null>,<null>,10000
+boat_a,187,RCS_VictimRescue,boy2,308 -1018 3784,boy,0.0,,roam 700,<null>,<null>,<null>,10000
+boat_a,191,RCS_VictimRescue,fatty,119 -115 6541,fatman,0.0,,<null>,<null>,<null>,<null>,10000
+boat_a,194,RCS_VictimRescue,fatman,551 -280 1632,fatman,0.0,,<null>,<null>,<null>,<null>,10000
+boat_a,195,RCS_VictimRescue,fatman1,451 -52 1344,fatman,0.0,,,<null>,<null>,<null>,10000
+boat_a,200,RCS_VictimRescue,fat,1056 -730 4532,fatman,0.0,,<null>,<null>,<null>,<null>,10000
+boat_a,213,RCS_VictimRescue,girl,-12 -1042 4501,girl,0.0,,roam 200,<null>,<null>,<null>,10000
+boat_a,290,RCS_VictimAltSpot,RCS_VictimAltSpot1,153 -44 463,,,RCS_VictimRescue2,,,,,10000
+boat_a,291,RCS_VictimAltSpot,RCS_VictimAltSpot2,-579 -31 784,,,RCS_VictimRescue7,,,,,10000
+boat_a,292,RCS_VictimAltSpot,RCS_VictimAltSpot3,529 -260 1507,,,RCS_VictimRescue6,,,,,10000
+boat_a,293,RCS_VictimAltSpot,RCS_VictimAltSpot4,-127 -765 2628,,,RCS_VictimRescue1,,,,,10000
+boat_a,294,RCS_VictimAltSpot,RCS_VictimAltSpot5,1468 -994 3346,,,RCS_VictimRescue9,,,,,10000
+boat_a,295,RCS_VictimAltSpot,RCS_VictimAltSpot6,1274 -963 4082,,,RCS_VictimRescue4,,,,,10000
+boat_a,296,RCS_VictimAltSpot,RCS_VictimAltSpot7,1159 -63 5502,,,RCS_VictimRescue3,,,,,10000
+boat_b,31,RCS_VictimRescue,victim3,-271 -788 6405,girl,0.0,,<null>,<null>,<null>,<null>,10000
+boat_b,57,RCS_VictimRescue,boy2,106 -551 3794,boy,0.0,,roam 1000,<null>,<null>,<null>,10000
+boat_b,60,RCS_VictimRescue,fatty,-1151 -578 3462,fatman,0.0,,500,<null>,<null>,<null>,10000
+boat_b,111,RCS_PlayerRescue,RCS_PlayerRescue3,-582 -601 8728,,,,equip axe,,<null>,<null>,10000
+boat_b,124,RCS_VictimRescue,<null>,-783 -291 4517,man,60,,<null>,<null>,<null>,<null>,10000
+boat_b,126,RCS_VictimRescue,erg,-910 -843 7760,woman,60,,roam 1500,<null>,<null>,<null>,10000
+boat_b,139,RCS_VictimAltSpot,RCS_VictimAltSpot2,414 -126 3727,,,RCS_VictimRescue4,,,,,10000
+boat_b,140,RCS_VictimAltSpot,RCS_VictimAltSpot3,-1001 -325 2889,,,RCS_VictimRescue6,,,,,10000
+boat_b,141,RCS_VictimAltSpot,RCS_VictimAltSpot4,-1545 -126 3207,,,RCS_VictimRescue5,,,,,10000
+boat_b,142,RCS_VictimAltSpot,RCS_VictimAltSpot5,-254 -616 7447,,,RCS_VictimRescue7,,,,,10000
+boat_b,143,RCS_VictimAltSpot,RCS_VictimAltSpot6,-1625 -943 6563,,,RCS_VictimRescue3,,,,,10000
+gas_r,240,RCS_PlayerRescue,RCS_PlayerRescue2,-432 -112 -556,,,,equip axe,equip extinguisher,*outside,<null>,10000
+gas_r,278,RCS_VictimRescue,Victim1,1404 -172 24,man,60,,roam 250,<null>,<null>,<null>,10000
+gas_r,282,RCS_VictimRescue,Victim2,1576 -80 512,woman,60,,roam 80,<null>,<null>,<null>,10000
+gas_r,283,RCS_VictimRescue,Victim3,756 -64 648,man,60,,roam 400,<null>,<null>,<null>,10000
+gas_r,284,RCS_VictimRescue,Victim4,1269 -172 1404,man,60,,roam 350,<null>,<null>,<null>,10000
+gas_r,285,RCS_VictimRescue,Victim6,1988 -172 480,woman,60,,roam 350,<null>,<null>,<null>,10000
+gas_r,286,RCS_VictimRescue,Victim7,1972 -172 -204,woman,60,,roam 350,<null>,<null>,<null>,10000
+gas_r,401,RCS_VictimRescue,Victim5,-404 -120 1164,man,40,,100,<null>,<null>,<null>,10000
+mbase,27,RCS_PlayerRescue,RCS_PlayerRescue1,-132 -36 140,,,,equip axe,<null>,<null>,<null>,10000
+mbase,158,RCS_VictimRescue,victim1,348 -136 -3068,man,20,,<null>,<null>,<null>,<null>,10000
+mbase,160,RCS_VictimRescue,victim3,1796 -540 -3284,man,20,,<null>,<null>,<null>,<null>,10000
+mbase,161,RCS_VictimRescue,victim4,840 -260 -4812,man,20,,roam 1000,<null>,<null>,<null>,10000
+mbase,162,RCS_VictimRescue,victim5,1852 -112 -5732,man,20,,<null>,<null>,<null>,<null>,10000
+mbase,197,RCS_VictimRescue,victim10,292 -320 -1320,man,60,,roam 500,<null>,<null>,<null>,10000
+oil_rig_A,20,RCS_VictimRescue,<null>,-236 590 -262,woman,40,,,<null>,<null>,<null>,10000
+oil_rig_A,33,RCS_VictimRescue,<null>17,-228 590 -508,girl,40,,,<null>,<null>,<null>,10000
+oil_rig_A,34,RCS_VictimRescue,<null>18,-742 608 -762,man,40,,,<null>,<null>,<null>,10000
+oil_rig_A,59,RCS_VictimAltSpot,RCS_VictimAltSpot5,-744 612 -648,,,RCS_VictimRescue17,,,,,10000
+oil_rig_A,60,RCS_VictimAltSpot,RCS_VictimAltSpot6,-746 612 -874,,,RCS_VictimRescue17,,,,,10000
+oil_rig_A,61,RCS_VictimAltSpot,RCS_VictimAltSpot7,-600 612 -852,,,RCS_VictimRescue16,,,,,10000
+oil_rig_A,62,RCS_VictimAltSpot,RCS_VictimAltSpot8,-1076 612 -260,,,RCS_VictimRescue1,,,,,10000
+oil_rig_A,63,RCS_PlayerRescue,RCS_PlayerRescue2,-632 952 -620,,,,equip goggles,equip axe,<null>,<null>,10000
+oil_rig_B,65,RCS_VictimRescue,<null>2,1144 496 628,man,40,,,<null>,<null>,<null>,10000
+oil_rig_B,66,RCS_VictimRescue,<null>3,876 832 416,dog,40,,,<null>,<null>,<null>,10000
+oil_rig_B,88,RCS_VictimAltSpot,RCS_VictimAltSpot1,802 776 1046,,,RCS_VictimRescue3,,,,,10000
+oil_rig_B,89,RCS_VictimRescue,woman,1080 288 1032,woman,40,,roam 2400,<null>,<null>,<null>,10000
+oil_rig_B,91,RCS_PlayerRescue,RCS_PlayerRescue2,-752 844 412,,,,equip goggles,equip axe,equip extinguisher,<null>,10000
+oil_rig_C,221,RCS_VictimRescue,<null>4,857 1345 -320,fatman,40,,roam 2400,<null>,<null>,<null>,10000
+oil_rig_C,222,RCS_VictimRescue,<null>5,1073 1904 -364,man,40,,roam 2400,<null>,<null>,<null>,10000
+oil_rig_C,238,RCS_VictimRescue,fatman behind rubble,1076 -256 496,fatman,24,,roam 2400,<null>,<null>,<null>,10000
+oil_rig_C,239,RCS_VictimRescue,man on ledge1,1048 312 -120,man,0,,roam 2400,<null>,<null>,<null>,10000
+oil_rig_C,240,RCS_VictimRescue,woman at console,926 40 -864,woman,0,,roam 700,<null>,<null>,<null>,10000
+oil_rig_C,241,RCS_VictimRescue,other man in A1,508 60 -1418,man,0,,roam 2400,<null>,<null>,<null>,10000
+oil_rig_C,337,RCS_VictimAltSpot,RCS_VictimAltSpot9,624 312 -1040,,,RCS_VictimRescue9,,,,,10000
+oil_rig_C,338,RCS_VictimAltSpot,RCS_VictimAltSpot10,456 312 -104,,,RCS_VictimRescue9,,,,,10000
+oil_rig_C,340,RCS_VictimAltSpot,RCS_VictimAltSpot11,837 1072 -296,,,RCS_VictimRescue4,,,,,10000
+oil_rig_C,341,RCS_VictimAltSpot,RCS_VictimAltSpot12,845 1584 -344,,,RCS_VictimRescue4,,,,,10000
+oil_rig_C,342,RCS_VictimAltSpot,RCS_VictimAltSpot13,885 2112 -384,,,RCS_VictimRescue5,,,,,10000
+oil_rig_C,343,RCS_VictimAltSpot,RCS_VictimAltSpot14,885 2392 -416,,,RCS_VictimRescue5,,,,,10000
+oil_rig_C,351,RCS_PlayerRescue,RCS_PlayerRescue2,476 848 276,,,,equip goggles,equip axe,equip extinguisher,,10000
+oil_rig_D,28,RCS_VictimRescue,man,1072 864 -1464,man,0,,roam 5000,<null>,<null>,<null>,10000
+oil_rig_D,65,RCS_PlayerRescue,RCS_PlayerRescue2,1156 812 -1476,,,,equip goggles,equip axe,equip extinguisher,,10000
+oil_rig_D,76,RCS_VictimRescue,man1,1072 304 -1464,man,0,,roam 5000,<null>,<null>,<null>,10000
+oil_rig_D,77,RCS_VictimRescue,woman,-128 584 -1608,woman,0,,roam 5000,<null>,<null>,<null>,10000
+oil_rig_D,78,RCS_VictimAltSpot,RCS_VictimAltSpot15,-130 856 -1472,,,RCS_VictimRescue15,,,,,10000
+oil_rig_D,79,RCS_VictimAltSpot,RCS_VictimAltSpot16,-880 856 -1472,,,RCS_VictimRescue15,,,,,10000
+oil_rig_D,80,RCS_VictimAltSpot,RCS_VictimAltSpot17,338 312 -1470,,,RCS_VictimRescue19,,,,,10000
+oil_rig_D,81,RCS_VictimAltSpot,RCS_VictimAltSpot18,-584 312 -1480,,,RCS_VictimRescue19,,,,,10000
+subway_a,243,RCS_PlayerRescue,RCS_PlayerRescue1,-85 35 1948,,,,equip axe,<null>,<null>,<null>,10000
+subway_a,421,RCS_VictimRescue,Victim1,1180 -532 -1452,fatman,0.0,,<null>,<null>,<null>,<null>,10000
+subway_a,423,RCS_VictimRescue,Victim2,-1777 0 1549,man,0.0,,,<null>,<null>,<null>,10000
+subway_a,424,RCS_VictimRescue,Victim3,2100 -516 -864,woman,0.0,,roam 1200,<null>,<null>,<null>,10000
+subway_a,425,RCS_VictimRescue,Victim4,2302 -441 105,woman,0.0,,roam 1000,<null>,<null>,<null>,10000
+subway_a,565,RCS_VictimAltSpot,RCS_VictimAltSpot1,1844 -532 -804,,,RCS_VictimRescue2,,,,,10000
+subway_a,566,RCS_VictimAltSpot,RCS_VictimAltSpot2,1766 -462 153,,,RCS_VictimRescue2,,,,,10000
+subway_a,567,RCS_VictimRescue,Victim5,-852 12 408,man,0.0,,roam 200,<null>,<null>,<null>,10000
+subway_a,569,RCS_VictimRescue,Victim7,2438 -412 -3175,man,0.0,,roam 800,<null>,<null>,<null>,10000
+subway_b,116,RCS_PlayerRescue,RCS_PlayerRescue1,105 -16 5899,,,,equip axe,<null>,<null>,<null>,10000
+subway_b,229,RCS_VictimRescue,Victim1,-2668 -117 868,fatman,24,,<null>,<null>,<null>,<null>,10000
+subway_b,230,RCS_VictimRescue,Victim2,-1376 -100 3392,fatman,24,,<null>,<null>,<null>,<null>,10000
+subway_b,231,RCS_VictimRescue,Victim4,-68 0 -3804,dog,24,,<null>,<null>,<null>,<null>,10000
+subway_b,232,RCS_VictimRescue,Victim5,541 66 4070,boy1,24,,<null>,<null>,<null>,<null>,10000
+subway_b,233,RCS_VictimRescue,Victim6,38 0 1804,woman,24,,<null>,<null>,<null>,<null>,10000
+subway_b,281,RCS_VictimAltSpot,RCS_VictimAltSpot1,583 -53 1868,,,RCS_VictimRescue6,,,,,10000
+subway_b,282,RCS_VictimAltSpot,RCS_VictimAltSpot2,178 -53 3213,,,RCS_VictimRescue5,,,,,10000
+subway_b,283,RCS_VictimAltSpot,RCS_VictimAltSpot3,-1857 -53 4118,,,RCS_VictimRescue2,,,,,10000
+subway_b,284,RCS_VictimAltSpot,RCS_VictimAltSpot5,584 -53 -5389,,,RCS_VictimRescue4,,,,,10000
+subway_b,307,RCS_VictimRescue,Victim7,-1 -53 4082,woman,0.0,,roam 1000,<null>,<null>,<null>,10000
+subway_b,310,RCS_VictimRescue,Victim9,-2014 -82 -605,woman,0.0,,roam 1000,<null>,<null>,<null>,10000
+subway_b,311,RCS_VictimRescue,Victim10,-742 -53 -5269,man,0.0,,roam 1000,<null>,<null>,<null>,10000
+subway_b,312,RCS_VictimRescue,Victim11,-211 -53 -4266,woman,0.0,,roam 1000,<null>,<null>,<null>,10000
+subway_b,313,RCS_VictimRescue,Victim12,542 37 -4819,man,0.0,,roam 1000,<null>,<null>,<null>,10000
+training,115,RCS_PlayerRescue,RCS_PlayerRescue2,-1268 -172 4692,,,,equip axe,exec doors.evs,setashdensity 0,setrescuebot 0,10000
+training,191,RCS_VictimRescue,victim1,1104 -60 -4976,man,60,,pickup: ifnot gotvictim 1 (*Cmd3c),,pickup: set gotvictim 1,<null>,10000
+training,192,RCS_VictimAltSpot,RCS_VictimAltSpot1,1300 -120 -4952,,,RCS_VictimRescue1,,,,,10000
+training,193,RCS_VictimAltSpot,RCS_VictimAltSpot2,1472 -120 -4972,,,RCS_VictimRescue1,,,,,10000
+training,194,RCS_VictimRescue,victim2,1656 -120 -4968,man,60,,pickup: if gotvictim 1 (*Cmd3b),pickup: ifnot gotvictim 1 (*Cmd3c),pickup: set gotvictim 1,<null>,10000
+training,195,RCS_VictimAltSpot,RCS_VictimAltSpot3,1820 -120 -4960,,,RCS_VictimRescue2,,,,,10000
+training,196,RCS_VictimAltSpot,RCS_VictimAltSpot4,1972 -120 -4960,,,RCS_VictimRescue2,,,,,10000

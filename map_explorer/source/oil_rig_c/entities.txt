@@ -1,0 +1,4414 @@
+NumEntities 382
+
+entity 0
+TextureLib: D:\WIN2K\Temp/textures.txl
+SkyAxis: 1.000000 0.000000 0.000000
+SkyRotation: 0.000000
+SkyDrawScale: 1.000000
+SkyLeft: sky_tropbk
+SkyRight: sky_tropft
+SkyTop: sky_tropup
+SkyBottom: sky_tropdn
+SkyFront: sky_troprt
+SkyBack: sky_troplf
+
+entity 1
+Model: 1
+classname: %Model%
+%name%: exit_trigger
+origin: 1136.000000 775.999878 -1471.999878
+
+entity 2
+Model: 2
+classname: %Model%
+%name%: zone operations
+origin: 102.000244 608.000000 -1928.000000
+
+entity 3
+Model: 3
+classname: %Model%
+%name%: ladder2
+origin: 639.993713 1732.925659 -736.880920
+
+entity 4
+Model: 4
+classname: %Model%
+%name%: ladder5
+origin: 1022.666687 1732.925659 -442.353088
+
+entity 5
+Model: 5
+classname: %Model%
+%name%: door18
+origin: 552.000000 560.000000 -720.000000
+
+entity 6
+Model: 6
+classname: %Model%
+%name%: door19
+origin: 968.000000 560.000000 -303.000000
+
+entity 7
+Model: 7
+classname: %Model%
+%name%: door31
+origin: 969.999512 560.000000 -863.999695
+
+entity 8
+Model: 8
+classname: %Model%
+%name%: door32
+origin: 696.000061 560.000000 -864.000916
+
+entity 9
+Model: 9
+classname: %Model%
+%name%: door33
+origin: 1112.036865 560.000000 -722.037964
+
+entity 10
+Model: 10
+classname: %Model%
+%name%: door34
+origin: 1112.036133 560.000000 -446.038513
+
+entity 11
+Model: 11
+classname: %Model%
+%name%: door11
+origin: 696.000000 560.000000 -304.000000
+
+entity 12
+Model: 12
+classname: %Model%
+%name%: trapdoor
+origin: 380.000549 732.000000 -833.000427
+
+entity 13
+Model: 13
+classname: %Model%
+%name%: exit_lifeboat1
+origin: 1849.058105 -55.999969 -159.999817
+
+entity 14
+Model: 14
+classname: %Model%
+%name%: door39
+origin: 1400.146606 52.000000 -252.395996
+
+entity 15
+Model: 15
+classname: %Model%
+%name%: vertical shaft 01
+origin: 1240.000000 40.000031 -2392.000000
+
+entity 16
+Model: 16
+classname: %Model%
+%name%: obj_liftable_woodbox13
+origin: 421.000000 -256.000000 -1029.999878
+
+entity 17
+Model: 17
+classname: %Model%
+%name%: obj_liftable_woodbox2
+origin: 503.000000 -256.000000 -1042.000000
+
+entity 18
+Model: 18
+classname: %Model%
+%name%: obj_liftable_woodbox14
+origin: 446.000000 -175.000000 -1050.999878
+
+entity 19
+Model: 19
+classname: %Model%
+%name%: air vent 02
+origin: 400.000000 -88.000000 -1000.000000
+
+entity 20
+Model: 20
+classname: %Model%
+%name%: air vent 01
+origin: 1200.000000 816.000000 -1476.000000
+
+entity 21
+Model: 21
+classname: %Model%
+%name%: rubble - slab 01
+origin: 1067.000244 -223.474838 351.994568
+
+entity 22
+Model: 22
+classname: %Model%
+%name%: rubble - girder 01
+origin: 1112.001831 -207.499985 297.455505
+
+entity 23
+Model: 23
+classname: %Model%
+%name%: rubble - slab 02
+origin: 1248.269897 -239.774826 294.524109
+
+entity 24
+Model: 24
+classname: %Model%
+%name%: rubble - girder 2
+origin: 1223.000000 -226.000000 385.000000
+
+entity 25
+Model: 25
+classname: %Model%
+%name%: obj_breakable_table10
+origin: 848.999756 33.999969 -1034.000000
+
+entity 26
+Model: 26
+classname: %Model%
+%name%: obj_breakable_table8
+origin: 848.999939 -25.999985 -1010.000000
+
+entity 27
+Model: 27
+classname: %Model%
+%name%: obj_breakable_table7
+origin: 848.999878 -30.000000 -1010.000000
+
+entity 28
+Model: 28
+classname: %Model%
+%name%: obj_breakable_table1
+origin: 848.999695 33.999985 -970.000000
+
+entity 29
+Model: 29
+classname: %Model%
+%name%: obj_breakable_table2
+origin: 848.999817 33.999985 -986.000000
+
+entity 30
+Model: 30
+classname: %Model%
+%name%: obj_breakable_table3
+origin: 848.999817 33.999985 -1002.000000
+
+entity 31
+Model: 31
+classname: %Model%
+%name%: obj_breakable_table4
+origin: 848.999817 33.999985 -1018.000000
+
+entity 32
+Model: 32
+classname: %Model%
+%name%: obj_breakable_table5
+origin: 848.999695 33.999985 -1034.000000
+
+entity 33
+Model: 33
+classname: %Model%
+%name%: obj_breakable_table6
+origin: 848.999817 33.999985 -1050.000000
+
+entity 34
+Model: 34
+classname: %Model%
+%name%: obj_breakable_table11
+origin: 741.999756 33.999969 -852.000000
+
+entity 35
+Model: 35
+classname: %Model%
+%name%: obj_breakable_table13
+origin: 741.999939 -25.999985 -828.000000
+
+entity 36
+Model: 36
+classname: %Model%
+%name%: obj_breakable_table14
+origin: 741.999878 -30.000000 -828.000000
+
+entity 37
+Model: 37
+classname: %Model%
+%name%: obj_breakable_table15
+origin: 741.999695 33.999985 -788.000000
+
+entity 38
+Model: 38
+classname: %Model%
+%name%: obj_breakable_table16
+origin: 741.999817 33.999985 -804.000000
+
+entity 39
+Model: 39
+classname: %Model%
+%name%: obj_breakable_table17
+origin: 741.999817 33.999985 -820.000000
+
+entity 40
+Model: 40
+classname: %Model%
+%name%: obj_breakable_table18
+origin: 741.999817 33.999985 -836.000000
+
+entity 41
+Model: 41
+classname: %Model%
+%name%: obj_breakable_chair18
+origin: 741.020386 -13.546204 -988.854065
+
+entity 42
+Model: 42
+classname: %Model%
+%name%: obj_breakable_chair19
+origin: 721.247742 8.441757 -1008.692810
+
+entity 43
+Model: 43
+classname: %Model%
+%name%: obj_breakable_chair20
+origin: 731.127319 -11.552216 -998.761108
+
+entity 44
+Model: 44
+classname: %Model%
+%name%: obj_breakable_chair21
+origin: 760.829163 -13.996124 -1008.643311
+
+entity 45
+Model: 45
+classname: %Model%
+%name%: obj_breakable_chair22
+origin: 750.936035 -11.594086 -1018.550415
+
+entity 46
+Model: 46
+classname: %Model%
+%name%: obj_breakable_chair23
+origin: 741.056396 8.399811 -1028.481934
+
+entity 47
+Model: 47
+classname: %Model%
+%name%: obj_breakable_chair24
+origin: 741.386047 5.031082 -1008.336914
+
+entity 48
+Model: 48
+classname: %Model%
+%name%: obj_breakable_chair25
+origin: 730.229919 33.580338 -1019.560425
+
+entity 49
+Model: 49
+classname: %Model%
+%name%: obj_breakable_chair10
+origin: 802.242981 -13.546204 -894.604065
+
+entity 50
+Model: 50
+classname: %Model%
+%name%: obj_breakable_chair11
+origin: 795.038696 8.441757 -921.671265
+
+entity 51
+Model: 51
+classname: %Model%
+%name%: obj_breakable_chair12
+origin: 808.251343 33.580338 -926.591797
+
+entity 52
+Model: 52
+classname: %Model%
+%name%: obj_breakable_chair13
+origin: 798.628845 -11.552216 -908.130371
+
+entity 53
+Model: 53
+classname: %Model%
+%name%: obj_breakable_chair14
+origin: 829.292480 -13.996124 -901.837646
+
+entity 54
+Model: 54
+classname: %Model%
+%name%: obj_breakable_chair15
+origin: 825.678345 -11.594086 -915.364075
+
+entity 55
+Model: 55
+classname: %Model%
+%name%: obj_breakable_chair16
+origin: 822.088135 8.399811 -928.904846
+
+entity 56
+Model: 56
+classname: %Model%
+%name%: obj_breakable_chair17
+origin: 812.301086 5.031082 -911.293884
+
+entity 57
+Model: 57
+classname: %Model%
+%name%: obj_breakable_chair26
+origin: 842.753235 -13.546204 -822.156921
+
+entity 58
+Model: 58
+classname: %Model%
+%name%: obj_breakable_chair27
+origin: 852.289246 8.441757 -795.820618
+
+entity 59
+Model: 59
+classname: %Model%
+%name%: obj_breakable_chair28
+origin: 847.532471 -11.552216 -808.997070
+
+entity 60
+Model: 60
+classname: %Model%
+%name%: obj_breakable_chair29
+origin: 816.437195 -13.996124 -812.593384
+
+entity 61
+Model: 61
+classname: %Model%
+%name%: obj_breakable_chair30
+origin: 821.216431 -11.594086 -799.433350
+
+entity 62
+Model: 62
+classname: %Model%
+%name%: obj_breakable_chair31
+origin: 825.973267 8.399811 -786.257080
+
+entity 63
+Model: 63
+classname: %Model%
+%name%: obj_breakable_chair32
+origin: 834.188049 5.031082 -804.653992
+
+entity 64
+Model: 64
+classname: %Model%
+%name%: obj_breakable_chair33
+origin: 839.555664 33.580338 -789.767212
+
+entity 65
+Model: 65
+classname: %Model%
+%name%: obj_breakable_chair34
+origin: 628.986145 -13.546204 -814.108887
+
+entity 66
+Model: 66
+classname: %Model%
+%name%: obj_breakable_chair35
+origin: 651.956909 8.441757 -830.136230
+
+entity 67
+Model: 67
+classname: %Model%
+%name%: obj_breakable_chair36
+origin: 640.460571 -11.552216 -822.131348
+
+entity 68
+Model: 68
+classname: %Model%
+%name%: obj_breakable_chair37
+origin: 645.034973 -13.996124 -791.164734
+
+entity 69
+Model: 69
+classname: %Model%
+%name%: obj_breakable_chair38
+origin: 656.509521 -11.594086 -799.187195
+
+entity 70
+Model: 70
+classname: %Model%
+%name%: obj_breakable_chair39
+origin: 668.005737 8.399811 -807.192078
+
+entity 71
+Model: 71
+classname: %Model%
+%name%: obj_breakable_chair40
+origin: 648.109497 5.031082 -810.365662
+
+entity 72
+Model: 72
+classname: %Model%
+%name%: obj_breakable_chair41
+origin: 661.099731 33.580338 -819.403381
+
+entity 73
+Model: 73
+classname: %Model%
+%name%: big fan
+origin: 1167.000000 856.000000 -1928.000000
+
+entity 74
+Model: 74
+classname: %Model%
+%name%: big fan 02
+origin: 1167.000000 856.000000 -2216.000000
+
+entity 75
+Model: 75
+classname: %Model%
+%name%: big fan 03
+origin: 1167.257324 856.500000 -1639.890259
+
+entity 76
+Model: 76
+classname: %Model%
+%name%: obj_breakable_table19
+origin: 741.999695 33.999985 -852.000000
+
+entity 77
+Model: 77
+classname: %Model%
+%name%: obj_breakable_table20
+origin: 741.999817 33.999985 -868.000000
+
+entity 78
+Model: 78
+classname: %Model%
+%name%: ladder14
+origin: 519.000000 847.000000 -81.439819
+
+entity 79
+Model: 79
+classname: %Model%
+%name%: ladder15
+origin: 1282.000000 847.000000 -437.439819
+
+entity 80
+Model: 80
+classname: %Model%
+%name%: ladder16
+origin: 378.000000 847.000000 -735.439819
+
+entity 81
+Model: 81
+classname: %Model%
+%name%: zone tower
+origin: 836.000000 1796.000122 -592.000122
+
+entity 82
+Model: 82
+classname: %Model%
+%name%: zone tower complex
+origin: 832.000122 224.000031 -592.000122
+
+entity 83
+Model: 83
+classname: %Model%
+%name%: zone tower complex 01
+origin: 580.000305 -35.999908 -580.000000
+
+entity 84
+Model: 84
+classname: %Model%
+%name%: zone warehouse
+origin: 231.999756 608.000000 804.000061
+
+entity 85
+Model: 85
+classname: %Model%
+%name%: zone oil rig
+origin: -616.000244 911.999756 -563.999756
+
+entity 86
+Model: 86
+classname: %Model%
+%name%: smoke area
+origin: 1162.500000 -154.999969 691.499817
+
+entity 87
+Model: 87
+classname: %Model%
+%name%: door12
+origin: 552.000000 560.000000 -446.000000
+
+entity 88
+Model: 88
+classname: %Model%
+%name%: door35
+origin: 696.000061 -208.000000 -864.000000
+
+entity 89
+Model: 89
+classname: %Model%
+%name%: door36
+origin: 968.000000 -208.000000 -207.999954
+
+entity 90
+Model: 90
+classname: %Model%
+%name%: door37
+origin: 695.999939 48.000000 -84.000046
+
+entity 91
+Model: 91
+classname: %Model%
+%name%: door38
+origin: -51.999950 48.000000 -2202.000000
+
+entity 92
+Model: 92
+classname: %Model%
+%name%: obj_breakable_table12
+origin: 812.999756 33.999969 -346.000000
+
+entity 93
+Model: 93
+classname: %Model%
+%name%: obj_breakable_table9
+origin: 812.999939 -25.999985 -322.000000
+
+entity 94
+Model: 94
+classname: %Model%
+%name%: obj_breakable_table21
+origin: 812.999878 -30.000000 -322.000000
+
+entity 95
+Model: 95
+classname: %Model%
+%name%: obj_breakable_table22
+origin: 812.999695 33.999985 -282.000000
+
+entity 96
+Model: 96
+classname: %Model%
+%name%: obj_breakable_table23
+origin: 812.999817 33.999985 -298.000000
+
+entity 97
+Model: 97
+classname: %Model%
+%name%: obj_breakable_table24
+origin: 812.999817 33.999985 -314.000000
+
+entity 98
+Model: 98
+classname: %Model%
+%name%: obj_breakable_table25
+origin: 812.999817 33.999985 -330.000000
+
+entity 99
+Model: 99
+classname: %Model%
+%name%: obj_breakable_table26
+origin: 812.999695 33.999985 -346.000000
+
+entity 100
+Model: 100
+classname: %Model%
+%name%: obj_breakable_table27
+origin: 812.999817 33.999985 -362.000000
+
+entity 101
+Model: 101
+classname: %Model%
+%name%: obj_breakable_chair42
+origin: 785.020386 -13.546204 -384.854065
+
+entity 102
+Model: 102
+classname: %Model%
+%name%: obj_breakable_chair43
+origin: 765.247742 8.441757 -404.692810
+
+entity 103
+Model: 103
+classname: %Model%
+%name%: obj_breakable_chair44
+origin: 775.127319 -11.552216 -394.761108
+
+entity 104
+Model: 104
+classname: %Model%
+%name%: obj_breakable_chair45
+origin: 804.829163 -13.996124 -404.643311
+
+entity 105
+Model: 105
+classname: %Model%
+%name%: obj_breakable_chair46
+origin: 794.936035 -11.594086 -414.550415
+
+entity 106
+Model: 106
+classname: %Model%
+%name%: obj_breakable_chair47
+origin: 785.056396 8.399811 -424.481934
+
+entity 107
+Model: 107
+classname: %Model%
+%name%: obj_breakable_chair48
+origin: 785.386047 5.031082 -404.336914
+
+entity 108
+Model: 108
+classname: %Model%
+%name%: obj_breakable_chair49
+origin: 774.229919 33.580338 -415.560425
+
+entity 109
+Model: 109
+classname: %Model%
+%name%: obj_breakable_chair50
+origin: 766.242981 -13.546204 -206.604065
+
+entity 110
+Model: 110
+classname: %Model%
+%name%: obj_breakable_chair51
+origin: 759.038696 8.441757 -233.671265
+
+entity 111
+Model: 111
+classname: %Model%
+%name%: obj_breakable_chair52
+origin: 762.628845 -11.552216 -220.130371
+
+entity 112
+Model: 112
+classname: %Model%
+%name%: obj_breakable_chair53
+origin: 793.292480 -13.996124 -213.837646
+
+entity 113
+Model: 113
+classname: %Model%
+%name%: obj_breakable_chair54
+origin: 789.678345 -11.594086 -227.364075
+
+entity 114
+Model: 114
+classname: %Model%
+%name%: obj_breakable_chair55
+origin: 786.088135 8.399811 -240.904846
+
+entity 115
+Model: 115
+classname: %Model%
+%name%: obj_breakable_chair56
+origin: 776.301086 5.031082 -223.293884
+
+entity 116
+Model: 116
+classname: %Model%
+%name%: obj_breakable_chair57
+origin: 772.251343 33.580338 -238.591797
+
+entity 117
+Model: 117
+classname: %Model%
+%name%: box_clip2
+origin: 252.394836 -248.000015 -1862.743896
+
+entity 118
+Model: 118
+classname: %Model%
+%name%: box_side_d2
+origin: 216.394836 -244.000031 -1878.743896
+
+entity 119
+Model: 119
+classname: %Model%
+%name%: box_side_e2
+origin: 232.394836 -244.000031 -1898.743896
+
+entity 120
+Model: 120
+classname: %Model%
+%name%: box_side_h2
+origin: 288.394897 -244.000000 -1846.743896
+
+entity 121
+Model: 121
+classname: %Model%
+%name%: box_side_a2
+origin: 272.394775 -243.999985 -1826.743896
+
+entity 122
+Model: 122
+classname: %Model%
+%name%: box_side_c2
+origin: 216.394836 -244.000031 -1846.744141
+
+entity 123
+Model: 123
+classname: %Model%
+%name%: box_top2
+origin: 252.394836 -212.000000 -1862.743896
+
+entity 124
+Model: 124
+classname: %Model%
+%name%: box_side_g2
+origin: 288.394897 -244.000000 -1878.743896
+
+entity 125
+Model: 125
+classname: %Model%
+%name%: box_side_b2
+origin: 232.394836 -244.000000 -1826.743896
+
+entity 126
+Model: 126
+classname: %Model%
+%name%: box_side_f2
+origin: 272.394836 -244.000031 -1898.743896
+
+entity 127
+Model: 127
+classname: %Model%
+%name%: box_clip4
+origin: 187.162354 -248.000015 -2086.875977
+
+entity 128
+Model: 128
+classname: %Model%
+%name%: box_side_d4
+origin: 163.939957 -244.000031 -2118.699463
+
+entity 129
+Model: 129
+classname: %Model%
+%name%: box_side_e4
+origin: 187.783051 -244.000031 -2128.053711
+
+entity 130
+Model: 130
+classname: %Model%
+%name%: box_side_h4
+origin: 210.384735 -244.000000 -2055.052734
+
+entity 131
+Model: 131
+classname: %Model%
+%name%: box_side_a4
+origin: 186.541565 -243.999985 -2045.698120
+
+entity 132
+Model: 132
+classname: %Model%
+%name%: box_side_c4
+origin: 147.979660 -244.000031 -2090.963867
+
+entity 133
+Model: 133
+classname: %Model%
+%name%: box_top4
+origin: 187.162354 -212.000000 -2086.875977
+
+entity 134
+Model: 134
+classname: %Model%
+%name%: box_side_g4
+origin: 226.345154 -244.000000 -2082.788330
+
+entity 135
+Model: 135
+classname: %Model%
+%name%: box_side_b4
+origin: 151.872116 -244.000000 -2065.648682
+
+entity 136
+Model: 136
+classname: %Model%
+%name%: box_side_f4
+origin: 222.452591 -244.000031 -2108.103271
+
+entity 137
+Model: 137
+classname: %Model%
+%name%: box_clip5
+origin: 151.162247 -248.000015 -2205.457275
+
+entity 138
+Model: 138
+classname: %Model%
+%name%: box_side_d5
+origin: 111.846741 -244.000031 -2202.948975
+
+entity 139
+Model: 139
+classname: %Model%
+%name%: box_side_e5
+origin: 116.754433 -244.000031 -2228.086914
+
+entity 140
+Model: 140
+classname: %Model%
+%name%: box_side_h5
+origin: 190.477798 -244.000000 -2207.965576
+
+entity 141
+Model: 141
+classname: %Model%
+%name%: box_side_a5
+origin: 185.570007 -243.999985 -2182.827393
+
+entity 142
+Model: 142
+classname: %Model%
+%name%: box_side_c5
+origin: 126.678474 -244.000031 -2174.593994
+
+entity 143
+Model: 143
+classname: %Model%
+%name%: box_top5
+origin: 151.162247 -212.000000 -2205.457275
+
+entity 144
+Model: 144
+classname: %Model%
+%name%: box_side_g5
+origin: 175.645966 -244.000000 -2236.320557
+
+entity 145
+Model: 145
+classname: %Model%
+%name%: box_side_b5
+origin: 150.126083 -244.000000 -2164.287842
+
+entity 146
+Model: 146
+classname: %Model%
+%name%: box_side_f5
+origin: 152.198410 -244.000031 -2246.626709
+
+entity 147
+Model: 147
+classname: %Model%
+%name%: box_clip10
+origin: 542.092896 -248.000015 -2239.274414
+
+entity 148
+Model: 148
+classname: %Model%
+%name%: box_side_d10
+origin: 504.517212 -244.000031 -2227.439453
+
+entity 149
+Model: 149
+classname: %Model%
+%name%: box_side_e10
+origin: 503.272675 -244.000031 -2253.021729
+
+entity 150
+Model: 150
+classname: %Model%
+%name%: box_side_h10
+origin: 579.668701 -244.000000 -2251.109375
+
+entity 151
+Model: 151
+classname: %Model%
+%name%: box_side_a10
+origin: 580.913086 -243.999985 -2225.527100
+
+entity 152
+Model: 152
+classname: %Model%
+%name%: box_side_c10
+origin: 525.697815 -244.000031 -2203.452637
+
+entity 153
+Model: 153
+classname: %Model%
+%name%: box_top10
+origin: 542.092896 -212.000000 -2239.274414
+
+entity 154
+Model: 154
+classname: %Model%
+%name%: box_side_g10
+origin: 558.487854 -244.000000 -2275.096191
+
+entity 155
+Model: 155
+classname: %Model%
+%name%: box_side_b10
+origin: 550.929443 -244.000000 -2199.051025
+
+entity 156
+Model: 156
+classname: %Model%
+%name%: box_side_f10
+origin: 533.256348 -244.000031 -2279.497803
+
+entity 157
+Model: 157
+classname: %Model%
+%name%: box_clip11
+origin: 298.963959 -248.000015 -1751.801758
+
+entity 158
+Model: 158
+classname: %Model%
+%name%: box_side_d11
+origin: 264.010895 -244.000031 -1733.627930
+
+entity 159
+Model: 159
+classname: %Model%
+%name%: box_side_e11
+origin: 258.347443 -244.000031 -1758.606445
+
+entity 160
+Model: 160
+classname: %Model%
+%name%: box_side_h11
+origin: 333.916931 -244.000000 -1769.975708
+
+entity 161
+Model: 161
+classname: %Model%
+%name%: box_side_a11
+origin: 339.580414 -243.999985 -1744.997070
+
+entity 162
+Model: 162
+classname: %Model%
+%name%: box_side_c11
+origin: 289.031525 -244.000031 -1713.679077
+
+entity 163
+Model: 163
+classname: %Model%
+%name%: box_top11
+origin: 298.963959 -212.000000 -1751.801758
+
+entity 164
+Model: 164
+classname: %Model%
+%name%: box_side_g11
+origin: 308.896210 -244.000000 -1789.924561
+
+entity 165
+Model: 165
+classname: %Model%
+%name%: box_side_b11
+origin: 314.644165 -244.000000 -1713.721191
+
+entity 166
+Model: 166
+classname: %Model%
+%name%: box_side_f11
+origin: 283.283691 -244.000031 -1789.882446
+
+entity 167
+Model: 167
+classname: %Model%
+%name%: box_clip12
+origin: 215.543671 -248.000015 -1672.127930
+
+entity 168
+Model: 168
+classname: %Model%
+%name%: box_side_d12
+origin: 190.052551 -244.000031 -1702.164673
+
+entity 169
+Model: 169
+classname: %Model%
+%name%: box_side_e12
+origin: 213.146317 -244.000031 -1713.240601
+
+entity 170
+Model: 170
+classname: %Model%
+%name%: box_side_h12
+origin: 241.034851 -244.000000 -1642.091187
+
+entity 171
+Model: 171
+classname: %Model%
+%name%: box_side_a12
+origin: 217.940964 -243.999985 -1631.015259
+
+entity 172
+Model: 172
+classname: %Model%
+%name%: box_side_c12
+origin: 176.166824 -244.000031 -1673.334595
+
+entity 173
+Model: 173
+classname: %Model%
+%name%: box_top12
+origin: 215.543671 -212.000000 -1672.127930
+
+entity 174
+Model: 174
+classname: %Model%
+%name%: box_side_g12
+origin: 254.920685 -244.000000 -1670.921509
+
+entity 175
+Model: 175
+classname: %Model%
+%name%: box_side_b12
+origin: 181.903198 -244.000000 -1648.372559
+
+entity 176
+Model: 176
+classname: %Model%
+%name%: box_side_f12
+origin: 249.184143 -244.000031 -1695.883301
+
+entity 177
+Model: 177
+classname: %Model%
+%name%: box_clip13
+origin: 634.814270 -248.000015 -2157.061035
+
+entity 178
+Model: 178
+classname: %Model%
+%name%: box_side_d13
+origin: 598.814270 -244.000031 -2173.061035
+
+entity 179
+Model: 179
+classname: %Model%
+%name%: box_side_e13
+origin: 614.814270 -244.000031 -2193.061035
+
+entity 180
+Model: 180
+classname: %Model%
+%name%: box_side_h13
+origin: 670.814331 -244.000000 -2141.061035
+
+entity 181
+Model: 181
+classname: %Model%
+%name%: box_side_a13
+origin: 654.814209 -243.999985 -2121.061035
+
+entity 182
+Model: 182
+classname: %Model%
+%name%: box_side_c13
+origin: 598.814270 -244.000031 -2141.061279
+
+entity 183
+Model: 183
+classname: %Model%
+%name%: box_top13
+origin: 634.814270 -212.000000 -2157.061035
+
+entity 184
+Model: 184
+classname: %Model%
+%name%: box_side_g13
+origin: 670.814331 -244.000000 -2173.061035
+
+entity 185
+Model: 185
+classname: %Model%
+%name%: box_side_b13
+origin: 614.814270 -244.000000 -2121.061035
+
+entity 186
+Model: 186
+classname: %Model%
+%name%: box_side_f13
+origin: 654.814270 -244.000031 -2193.061035
+
+entity 187
+Model: 187
+classname: %Model%
+%name%: box_clip15
+origin: 624.250732 -248.000015 -1553.585938
+
+entity 188
+Model: 188
+classname: %Model%
+%name%: box_side_d15
+origin: 589.289490 -244.000031 -1571.743896
+
+entity 189
+Model: 189
+classname: %Model%
+%name%: box_side_e15
+origin: 606.475159 -244.000031 -1590.734741
+
+entity 190
+Model: 190
+classname: %Model%
+%name%: box_side_h15
+origin: 659.212036 -244.000000 -1535.427979
+
+entity 191
+Model: 191
+classname: %Model%
+%name%: box_side_a15
+origin: 642.026245 -243.999985 -1516.437256
+
+entity 192
+Model: 192
+classname: %Model%
+%name%: box_side_c15
+origin: 587.345032 -244.000031 -1539.803223
+
+entity 193
+Model: 193
+classname: %Model%
+%name%: box_top15
+origin: 624.250732 -212.000000 -1553.585938
+
+entity 194
+Model: 194
+classname: %Model%
+%name%: box_side_g15
+origin: 661.156494 -244.000000 -1567.368896
+
+entity 195
+Model: 195
+classname: %Model%
+%name%: box_side_b15
+origin: 602.100220 -244.000000 -1518.867676
+
+entity 196
+Model: 196
+classname: %Model%
+%name%: box_side_f15
+origin: 646.401245 -244.000031 -1588.304199
+
+entity 197
+Model: 197
+classname: %Model%
+%name%: box_clip16
+origin: 627.607849 -248.000015 -1912.896973
+
+entity 198
+Model: 198
+classname: %Model%
+%name%: box_side_d16
+origin: 589.077026 -244.000031 -1921.105225
+
+entity 199
+Model: 199
+classname: %Model%
+%name%: box_side_e16
+origin: 600.594482 -244.000031 -1943.981934
+
+entity 200
+Model: 200
+classname: %Model%
+%name%: box_side_h16
+origin: 666.138733 -244.000000 -1904.688721
+
+entity 201
+Model: 201
+classname: %Model%
+%name%: box_side_a16
+origin: 654.621155 -243.999985 -1881.812012
+
+entity 202
+Model: 202
+classname: %Model%
+%name%: box_side_c16
+origin: 595.695496 -244.000031 -1889.797363
+
+entity 203
+Model: 203
+classname: %Model%
+%name%: box_top16
+origin: 627.607849 -212.000000 -1912.896973
+
+entity 204
+Model: 204
+classname: %Model%
+%name%: box_side_g16
+origin: 659.520264 -244.000000 -1935.996826
+
+entity 205
+Model: 205
+classname: %Model%
+%name%: box_side_b16
+origin: 615.486145 -244.000000 -1873.538818
+
+entity 206
+Model: 206
+classname: %Model%
+%name%: box_side_f16
+origin: 639.729553 -244.000031 -1952.255127
+
+entity 207
+Model: 207
+classname: %Model%
+%name%: air vent 3
+origin: 111.999512 -88.000000 -2223.999756
+
+entity 208
+Model: 208
+classname: %Model%
+%name%: air vent 4
+origin: 1263.999756 -88.000000 -704.000549
+
+entity 209
+Model: 209
+classname: %Model%
+%name%: quake trigger4
+origin: 1506.000000 96.000732 -240.000000
+
+entity 210
+Model: 210
+classname: %Model%
+%name%: TowerStairs01
+origin: 1104.000000 -288.000000 -1040.000000
+
+entity 211
+Model: 211
+classname: %Model%
+%name%: TowerStairs02
+origin: 1280.000000 -168.000000 -976.000000
+
+entity 212
+Model: 212
+classname: %Model%
+%name%: TowerStairs03
+origin: 1216.000000 -32.000000 -792.000000
+
+entity 213
+Model: 213
+classname: %Model%
+%name%: TowerStairs04
+origin: 1032.000000 96.000000 -856.000000
+
+entity 214
+Model: 214
+classname: %Model%
+%name%: TowerStairs05
+origin: 1104.000000 224.000000 -648.000000
+
+entity 215
+Model: 215
+classname: %Model%
+%name%: TowerStairs06
+origin: 1280.000000 344.000000 -968.000000
+
+entity 216
+Model: 216
+classname: %Model%
+%name%: towerstairs_clip
+origin: 1180.000122 -356.000000 -911.999878
+
+entity 217
+Model: 217
+classname: %Model%
+%name%: towerstairs_clip1
+origin: 1180.000122 -446.000000 -911.999878
+
+entity 218
+angles: 0.000000 -113.883957 -148.808517
+classname: SunLight
+color: 255 129 45
+light: 150
+origin: -664 2552 -584
+style: 0
+%name%: SunLight1
+
+entity 219
+A_Name: ladder1
+C_AnimModel0: ladder2
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+S_Script01: touch: action Player (climb 1)
+S_Script02: untouch: action Player unclimb
+ZZ_location: 481 1736 -892
+ZZ_spawn_message: 10000
+%name%: RCS_BModel66
+G_Liftable: 0
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 220
+A_Name: ladder2
+C_AnimModel0: ladder5
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+S_Script01: touch: action Player (climb 1)
+S_Script02: untouch: action Player unclimb
+ZZ_location: 1177 1752 -284
+ZZ_spawn_message: 10000
+%name%: RCS_BModel68
+G_Liftable: 0
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 221
+A_Name: <null>4
+classname: RCS_VictimRescue
+D_Type: fatman
+G_Heading: 10
+J_Radius: 40
+location: 857 1345 -320
+S_Script01: roam 2400
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue4
+
+entity 222
+A_Name: <null>5
+classname: RCS_VictimRescue
+D_Type: man
+G_Heading: 10
+J_Radius: 40
+location: 1073 1904 -364
+S_Script01: roam 2400
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue5
+
+entity 223
+A_Name: trapdoor 01
+C_AnimModel0: trapdoor
+classname: RCS_BModel
+E_Reach: 20
+F_HitPoints: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: *DoorOpen
+S_Script03: untouch: *DoorClose
+ZZ_location: 376 728 -792
+ZZ_spawn_message: 10000
+%name%: RCS_BModel104
+G_Liftable: 0
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 224
+A_Name: tall fire5
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 300
+H_Radius: 300
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 512 -201 -238
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue16
+
+entity 225
+A_Name: tall fire7
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1164 -234 -904
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue18
+
+entity 226
+A_Name: exit_lifeboat1
+C_Model: exit_lifeboat1
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: tell player escape
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1928 -8 0
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger2
+
+entity 227
+A_Name: garagedoor7
+C_AnimModel0: door39
+classname: RCS_BModel
+E_Reach: 200
+F_HitPoints: 0
+G_Liftable: 0
+S_Script01: touch: *DoorOpen
+S_Script02: untouch: *DoorClose
+ZZ_location: 1392 128 -256
+ZZ_spawn_message: 10000
+%name%: RCS_BModel106
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 228
+A_Name: tall fire8
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 736 -20 -1956
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue19
+
+entity 229
+A_Name: tall fire9
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 200
+H_Radius: 300
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 567 -224 -2101
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue20
+
+entity 230
+A_Name: vertical shaft 01
+C_Model: vertical shaft 01
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touching: tell player climb
+S_Script02: untouch: tell player unclimb
+S_Script03: 
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1220 0 -2412
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger3
+
+entity 231
+A_Name: trapdoor 2
+C_AnimModel0: air vent 02
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: ifclear Tower (*DoorOpen)
+S_Script03: touch: ifnotclear Tower (hint 5 (There are still survivors on the Tower.))
+ZZ_location: 396 -88 -1036
+ZZ_spawn_message: 10000
+%name%: RCS_BModel114
+G_Liftable: 0
+S_Script04: untouch: *DoorClose
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 232
+A_Name: trapdoor 3
+C_AnimModel0: air vent 01
+classname: RCS_BModel
+E_Reach: 30
+F_HitPoints: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: ifclear Complex (*DoorOpen)
+S_Script03: untouch: *DoorClose
+ZZ_location: 1200 776 -1472
+ZZ_spawn_message: 10000
+%name%: RCS_BModel115
+G_Liftable: 0
+S_Script04: touch: ifnotclear Complex (hint 5 (There are still survivors in the Complex.))
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 233
+A_Name: rubble - slab 2
+C_AnimModel0: rubble - slab 02
+classname: RCS_BModel
+E_Reach: 24
+F_HitPoints: 0
+G_Liftable: 1
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1244 -260 300
+ZZ_spawn_message: 10000
+%name%: RCS_BModel116
+
+entity 234
+A_Name: rubble - slab 3
+C_AnimModel0: rubble - slab 01
+classname: RCS_BModel
+E_Reach: 24
+F_HitPoints: 0
+G_Liftable: 1
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1036 -244 300
+ZZ_spawn_message: 10000
+%name%: RCS_BModel117
+
+entity 235
+A_Name: rubble - girder 01
+C_AnimModel0: rubble - girder 01
+classname: RCS_BModel
+E_Reach: 24
+F_HitPoints: 0
+G_Liftable: 1
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1116 -248 296
+ZZ_spawn_message: 10000
+%name%: RCS_BModel118
+
+entity 236
+A_Name: rubble - girder 2
+C_AnimModel0: rubble - girder 2
+classname: RCS_BModel
+E_Reach: 24
+F_HitPoints: 0
+G_Liftable: 1
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1220 -248 396
+ZZ_spawn_message: 10000
+%name%: RCS_BModel119
+
+entity 237
+A_Name: tall fire6
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 800
+H_Radius: 800
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1152 -160 1032
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue21
+
+entity 238
+A_Name: fatman behind rubble
+classname: RCS_VictimRescue
+D_Type: fatman
+G_Heading: 0
+J_Radius: 24
+location: 1076 -256 496
+S_Script01: roam 2400
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue6
+
+entity 239
+A_Name: man on ledge1
+classname: RCS_VictimRescue
+D_Type: man
+G_Heading: 0
+J_Radius: 0
+location: 1048 312 -120
+S_Script01: roam 2400
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue9
+
+entity 240
+A_Name: woman at console
+classname: RCS_VictimRescue
+D_Type: woman
+G_Heading: 3
+J_Radius: 0
+location: 926 40 -864
+S_Script01: roam 700
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue11
+
+entity 241
+A_Name: other man in A1
+classname: RCS_VictimRescue
+D_Type: man
+G_Heading: 11
+J_Radius: 0
+location: 508 60 -1418
+S_Script01: roam 2400
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+spawn_message: 10000
+%name%: RCS_VictimRescue13
+
+entity 242
+A_Name: extiguisher1
+classname: RCS_PropModel
+D_Model: 2
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: setscale 0.125 0.125 0.125
+S_Script02: touch: *RefillExt
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 824 72 -92
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel5
+
+entity 243
+A_Name: extiguisher2
+classname: RCS_PropModel
+D_Model: 2
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: setscale 0.125 0.125 0.125
+S_Script02: touch: *RefillExt
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 512 84 -1948
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel6
+
+entity 244
+A_Name: valve2
+classname: RCS_PropModel
+D_Model: 5
+E_Heading: 9
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: makevalve
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 656 -216 -1176
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel7
+
+entity 245
+A_Name: tall fire10
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 300
+H_Radius: 150
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 785 -3 -1000
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue22
+
+entity 246
+A_Name: tall fire11
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 200
+H_Radius: 100
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 673 -8 -794
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue23
+
+entity 247
+A_Name: tall fire12
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 400
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 242 -192 -2122
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue24
+
+entity 248
+A_Name: big fan
+C_AnimModel0: big fan
+classname: RCS_BModel
+E_Reach: 1000
+F_HitPoints: 0
+G_Liftable: 0
+S_Script01: touch: loop
+S_Script02: untouch: close
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1168 856 -1928
+ZZ_spawn_message: 10000
+%name%: RCS_BModel127
+
+entity 249
+A_Name: big fan1
+C_AnimModel0: big fan 02
+classname: RCS_BModel
+E_Reach: 1000
+F_HitPoints: 0
+G_Liftable: 0
+S_Script01: touch: loop
+S_Script02: untouch: close
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1168 856 -2216
+ZZ_spawn_message: 10000
+%name%: RCS_BModel128
+
+entity 250
+A_Name: big fan2
+C_AnimModel0: big fan 03
+classname: RCS_BModel
+E_Reach: 1000
+F_HitPoints: 0
+G_Liftable: 0
+S_Script01: touch: loop
+S_Script02: untouch: close
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1168 856 -1640
+ZZ_spawn_message: 10000
+%name%: RCS_BModel129
+
+entity 251
+classname: light
+color: 255 255 255
+light: 150
+origin: 520 144 -1420
+style: 0
+%name%: light12
+
+entity 252
+classname: light
+color: 255 255 255
+light: 200
+origin: 744 7 -1860
+style: 0
+%name%: light13
+
+entity 253
+classname: light
+color: 255 255 255
+light: 200
+origin: 280 2 -1832
+style: 0
+%name%: light14
+
+entity 254
+classname: light
+color: 255 255 255
+light: 200
+origin: 520 -269 -1512
+style: 0
+%name%: light15
+
+entity 255
+classname: light
+color: 255 255 255
+light: 200
+origin: 280 -228 -2040
+style: 0
+%name%: light16
+
+entity 256
+classname: light
+color: 255 255 255
+light: 50
+origin: 1009 152 -259
+style: 0
+%name%: light17
+
+entity 257
+classname: light
+color: 128 0 0
+light: 400
+origin: 400 312 -152
+style: 0
+%name%: light18
+
+entity 258
+classname: light
+color: 0 128 0
+light: 400
+origin: 1264 304 -152
+style: 0
+%name%: light19
+
+entity 259
+classname: light
+color: 128 128 0
+light: 400
+origin: 392 312 -1016
+style: 0
+%name%: light20
+
+entity 260
+classname: light
+color: 0 0 128
+light: 400
+origin: 1272 328 -1016
+style: 0
+%name%: light21
+
+entity 261
+A_Name: sparks8
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 432 44 -2212
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter21
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 262
+A_Name: sparks9
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 456 44 -2224
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter22
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 263
+A_Name: sparks10
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 468 48 -1192
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter25
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 264
+A_Name: sparks11
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 444 48 -1188
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter26
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 265
+A_Name: sparks12
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 960 48 -2016
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter29
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 266
+A_Name: sparks13
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 960 48 -1992
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter30
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 267
+A_Name: tall fire13
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 200
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 356 80 -1704
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue25
+
+entity 268
+A_Name: <null>
+classname: RCS_EscapeArrow
+F_Rotation: 3
+G_Pitch: -1
+ZZ_location: 368 984 -784
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow4
+
+entity 269
+A_Name: <null>11
+classname: RCS_EscapeArrow
+F_Rotation: 0
+G_Pitch: -1
+ZZ_location: 1296 632 -1048
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow5
+
+entity 270
+A_Name: <null>12
+classname: RCS_EscapeArrow
+F_Rotation: 6
+G_Pitch: 0
+ZZ_location: 1320 152 -640
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow6
+
+entity 271
+A_Name: <null>13
+classname: RCS_EscapeArrow
+F_Rotation: 3
+G_Pitch: 0
+ZZ_location: 1144 152 -104
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow7
+
+entity 272
+A_Name: <null>14
+classname: RCS_EscapeArrow
+F_Rotation: 3
+G_Pitch: 0
+ZZ_location: 496 -72 -920
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow8
+
+entity 273
+A_Name: <null>15
+classname: RCS_EscapeArrow
+F_Rotation: 0
+G_Pitch: 0
+ZZ_location: 1152 -88 -264
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow9
+
+entity 274
+A_Name: coiled hose1
+classname: RCS_PropModel
+D_Model: 4
+E_Heading: 9
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: touch: tell player (touchhose 50)
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 476 848 296
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel8
+
+entity 275
+A_Name: tall fire21
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 816 824 -1504
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue34
+
+entity 276
+A_Name: tall fire15
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 150
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 628 380 -792
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue36
+
+entity 277
+A_Name: tall fire22
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 100
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 376 460 -334
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue37
+
+entity 278
+A_Name: tall fire23
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 150
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1276 460 -140
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue38
+
+entity 279
+A_Name: tall fire24
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 100
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 590 272 -127
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue39
+
+entity 280
+A_Name: tall fire25
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 300
+H_Radius: 350
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1221 -258 -843
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue40
+
+entity 281
+A_Name: tall fire26
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 400
+H_Radius: 300
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 1256 -227 -942
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue41
+
+entity 282
+A_Name: tall fire27
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 400
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 425 -153 -233
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue42
+
+entity 283
+A_Name: tall fire28
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 200
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 488 -224 -160
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue43
+
+entity 284
+A_Name: tall fire29
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 200
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 608 -224 -2051
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue44
+
+entity 285
+A_Name: tall fire30
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 200
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 375 -192 -2048
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue45
+
+entity 286
+A_Name: tall fire31
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 500
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 485 -192 -2034
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue46
+
+entity 287
+A_Name: tall fire32
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 300
+H_Radius: 400
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 824 -24 -1980
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue47
+
+entity 288
+A_Name: tall fire33
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 400
+H_Radius: 200
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 344 -24 -1508
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue48
+
+entity 289
+A_Name: ladder13
+C_AnimModel0: ladder14
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+ZZ_location: 520 400 -80
+ZZ_spawn_message: 10000
+%name%: RCS_BModel136
+G_Liftable: 0
+S_Script01: touch: action Player (climb 1)
+S_Script02: untouch: action Player unclimb
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 290
+A_Name: ladder14
+C_AnimModel0: ladder15
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+ZZ_location: 1288 400 -436
+ZZ_spawn_message: 10000
+%name%: RCS_BModel137
+G_Liftable: 0
+S_Script01: touch: action Player (climb 1)
+S_Script02: untouch: action Player unclimb
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 291
+A_Name: ladder15
+C_AnimModel0: ladder16
+classname: RCS_BModel
+E_Reach: 5
+F_HitPoints: 0
+ZZ_location: 376 400 -736
+ZZ_spawn_message: 10000
+%name%: RCS_BModel138
+G_Liftable: 0
+S_Script01: touch: action Player (climb)
+S_Script02: untouch: action Player unclimb
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 292
+A_Name: zone tower
+C_Model: zone tower
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Tower)
+S_Script02: 
+S_Script03: 
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1288 2744 -160
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger8
+
+entity 293
+A_Name: zone tower complex
+C_Model: zone tower complex
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Complex)
+S_Script02: 
+S_Script03: 
+S_Script04: 
+S_Script05: 
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1264 2744 -232
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger9
+
+entity 294
+A_Name: zone tower complex1
+C_Model: zone tower complex 01
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Complex)
+S_Script02: 
+S_Script03: 
+S_Script04: 
+S_Script05: 
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1264 2744 -200
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger10
+
+entity 295
+A_Name: zone warehouse
+C_Model: zone warehouse
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Warehouse)
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1216 2744 -128
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger11
+
+entity 296
+A_Name: zone oil rig
+C_Model: zone oil rig
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Offshore Oil Rig)
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1312 2744 -96
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger15
+
+entity 297
+A_Name: smoke area 01
+C_Model: smoke area
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: fogenable 0 500 0 16 0
+S_Script02: untouch: fogdisable 
+S_Script03: touch: tell player oxyon
+S_Script04: untouch: tell player oxyoff
+S_Script05: 
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1086 2744 -95
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger16
+
+entity 298
+A_Name: <null>16
+classname: RCS_EscapeArrow
+F_Rotation: 3
+G_Pitch: 0
+ZZ_location: 420 152 -104
+ZZ_spawn_message: 10000
+%name%: RCS_EscapeArrow10
+
+entity 299
+A_Name: door8
+C_AnimModel0: door11
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 664 616 -248
+ZZ_spawn_message: 10000
+%name%: RCS_BModel148
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 300
+A_Name: door9
+C_AnimModel0: door12
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 492 616 -486
+ZZ_spawn_message: 10000
+%name%: RCS_BModel149
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 301
+A_Name: door11
+C_AnimModel0: door18
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 492 616 -760
+ZZ_spawn_message: 10000
+%name%: RCS_BModel150
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 302
+A_Name: door16
+C_AnimModel0: door19
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 932 616 -252
+ZZ_spawn_message: 10000
+%name%: RCS_BModel151
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 303
+A_Name: door17
+C_AnimModel0: door31
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 936 616 -906
+ZZ_spawn_message: 10000
+%name%: RCS_BModel152
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 304
+A_Name: door24
+C_AnimModel0: door32
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 662 616 -908
+ZZ_spawn_message: 10000
+%name%: RCS_BModel153
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 305
+A_Name: door27
+C_AnimModel0: door33
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 1146 616 -764
+ZZ_spawn_message: 10000
+%name%: RCS_BModel154
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 306
+A_Name: door28
+C_AnimModel0: door34
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 1142 616 -488
+ZZ_spawn_message: 10000
+%name%: RCS_BModel155
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 307
+A_Name: door29
+C_AnimModel0: door35
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 662 -154 -908
+ZZ_spawn_message: 10000
+%name%: RCS_BModel156
+G_Liftable: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: *DoorOpen
+S_Script03: untouch: *DoorClose
+S_Script04: 
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 308
+A_Name: door30
+C_AnimModel0: door36
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 934 -154 -252
+ZZ_spawn_message: 10000
+%name%: RCS_BModel157
+G_Liftable: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: *DoorOpen
+S_Script03: untouch: *DoorClose
+S_Script04: 
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 309
+A_Name: door31
+C_AnimModel0: door37
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+ZZ_location: 662 100 -130
+ZZ_spawn_message: 10000
+%name%: RCS_BModel158
+G_Liftable: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: *DoorOpen
+S_Script03: untouch: *DoorClose
+S_Script04: 
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 310
+A_Name: door32
+C_AnimModel0: door38
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+ZZ_location: -14 100 -2196
+ZZ_spawn_message: 10000
+%name%: RCS_BModel159
+G_Liftable: 0
+S_Script01: *Door
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 311
+A_Name: gun
+classname: RCS_PropModel
+D_Model: 56
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: *bonus56
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: -64 -120 -112
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel16
+
+entity 312
+A_Name: docs
+classname: RCS_PropModel
+D_Model: 57
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: *bonus57
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1304 -120 -672
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel17
+
+entity 313
+A_Name: laptop
+classname: RCS_PropModel
+D_Model: 52
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: *bonus52
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1304 -120 674
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel18
+
+entity 314
+A_Name: docs
+classname: RCS_PropModel
+D_Model: 57
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: *bonus57
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 144 -120 -2264
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel19
+
+entity 315
+A_Name: painting
+classname: RCS_PropModel
+D_Model: 55
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: *bonus55
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 72 -288 -2008
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel20
+
+entity 316
+A_Name: flame4
+C_Type: 3
+classname: RCS_MiscEmitter
+E_Heading: 2
+E_Pitch: .5
+ZZ_location: 1284 -114 866
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter35
+S_Script01: 
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 317
+A_Name: breakable_chair1
+C_AnimModel0: obj_breakable_chair12
+C_AnimModel1: obj_breakable_chair11
+C_AnimModel2: obj_breakable_chair16
+C_AnimModel3: obj_breakable_chair17
+C_AnimModel4: obj_breakable_chair10
+C_AnimModel5: obj_breakable_chair14
+C_AnimModel6: obj_breakable_chair13
+C_AnimModel7: obj_breakable_chair15
+C_AnimModel8: obj_breakable_chair10
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 814 27 -909
+ZZ_spawn_message: 10000
+%name%: RCS_BModel163
+
+entity 318
+A_Name: breakable_chair2
+C_AnimModel0: obj_breakable_chair25
+C_AnimModel1: obj_breakable_chair19
+C_AnimModel2: obj_breakable_chair23
+C_AnimModel3: obj_breakable_chair24
+C_AnimModel4: obj_breakable_chair18
+C_AnimModel5: obj_breakable_chair21
+C_AnimModel6: obj_breakable_chair20
+C_AnimModel7: obj_breakable_chair22
+C_AnimModel8: obj_breakable_chair18
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 743 27 -1008
+ZZ_spawn_message: 10000
+%name%: RCS_BModel172
+
+entity 319
+A_Name: breakable_chair3
+C_AnimModel0: obj_breakable_chair33
+C_AnimModel1: obj_breakable_chair27
+C_AnimModel2: obj_breakable_chair31
+C_AnimModel3: obj_breakable_chair32
+C_AnimModel4: obj_breakable_chair26
+C_AnimModel5: obj_breakable_chair29
+C_AnimModel6: obj_breakable_chair28
+C_AnimModel7: obj_breakable_chair30
+C_AnimModel8: obj_breakable_chair26
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 830 27 -806
+ZZ_spawn_message: 10000
+%name%: RCS_BModel173
+
+entity 320
+A_Name: breakable_chair4
+C_AnimModel0: obj_breakable_chair41
+C_AnimModel1: obj_breakable_chair35
+C_AnimModel2: obj_breakable_chair39
+C_AnimModel3: obj_breakable_chair40
+C_AnimModel4: obj_breakable_chair34
+C_AnimModel5: obj_breakable_chair37
+C_AnimModel6: obj_breakable_chair36
+C_AnimModel7: obj_breakable_chair38
+C_AnimModel8: obj_breakable_chair34
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 645 27 -807
+ZZ_spawn_message: 10000
+%name%: RCS_BModel174
+
+entity 321
+A_Name: <null>8
+C_AnimModel0: obj_breakable_table1
+C_AnimModel1: obj_breakable_table2
+C_AnimModel2: obj_breakable_table3
+C_AnimModel3: obj_breakable_table4
+C_AnimModel4: obj_breakable_table5
+C_AnimModel5: obj_breakable_table6
+C_AnimModel6: obj_breakable_table7
+C_AnimModel7: obj_breakable_table8
+C_AnimModel8: obj_breakable_table10
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: 
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 850 52 -1011
+ZZ_spawn_message: 10000
+%name%: RCS_BModel175
+
+entity 322
+A_Name: <null>9
+C_AnimModel0: obj_breakable_table15
+C_AnimModel1: obj_breakable_table16
+C_AnimModel2: obj_breakable_table17
+C_AnimModel3: obj_breakable_table18
+C_AnimModel4: obj_breakable_table19
+C_AnimModel5: obj_breakable_table20
+C_AnimModel6: obj_breakable_table14
+C_AnimModel7: obj_breakable_table13
+C_AnimModel8: obj_breakable_table11
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: 
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 743 52 -829
+ZZ_spawn_message: 10000
+%name%: RCS_BModel176
+
+entity 323
+A_Name: breakable_chair5
+C_AnimModel0: obj_breakable_chair57
+C_AnimModel1: obj_breakable_chair51
+C_AnimModel2: obj_breakable_chair55
+C_AnimModel3: obj_breakable_chair56
+C_AnimModel4: obj_breakable_chair50
+C_AnimModel5: obj_breakable_chair53
+C_AnimModel6: obj_breakable_chair52
+C_AnimModel7: obj_breakable_chair54
+C_AnimModel8: obj_breakable_chair50
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 776 24 -232
+ZZ_spawn_message: 10000
+%name%: RCS_BModel177
+
+entity 324
+A_Name: breakable_chair6
+C_AnimModel0: obj_breakable_chair49
+C_AnimModel1: obj_breakable_chair43
+C_AnimModel2: obj_breakable_chair47
+C_AnimModel3: obj_breakable_chair48
+C_AnimModel4: obj_breakable_chair42
+C_AnimModel5: obj_breakable_chair45
+C_AnimModel6: obj_breakable_chair44
+C_AnimModel7: obj_breakable_chair46
+C_AnimModel8: obj_breakable_chair42
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 784 24 -412
+ZZ_spawn_message: 10000
+%name%: RCS_BModel178
+
+entity 325
+A_Name: <null>10
+C_AnimModel0: obj_breakable_table22
+C_AnimModel1: obj_breakable_table23
+C_AnimModel2: obj_breakable_table24
+C_AnimModel3: obj_breakable_table25
+C_AnimModel4: obj_breakable_table26
+C_AnimModel5: obj_breakable_table27
+C_AnimModel6: obj_breakable_table21
+C_AnimModel7: obj_breakable_table9
+C_AnimModel8: obj_breakable_table12
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: 
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 812 52 -332
+ZZ_spawn_message: 10000
+%name%: RCS_BModel179
+
+entity 326
+A_Name: breakable_box2
+C_AnimModel0: box_clip2
+C_AnimModel1: box_top2
+C_AnimModel2: box_side_a2
+C_AnimModel3: box_side_b2
+C_AnimModel4: box_side_c2
+C_AnimModel5: box_side_d2
+C_AnimModel6: box_side_e2
+C_AnimModel7: box_side_f2
+C_AnimModel8: box_side_g2
+C_AnimModel9: box_side_h2
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 240 -248 -1880
+ZZ_spawn_message: 10000
+%name%: RCS_BModel182
+
+entity 327
+A_Name: breakable_box4
+C_AnimModel0: box_clip4
+C_AnimModel1: box_top4
+C_AnimModel2: box_side_a4
+C_AnimModel3: box_side_b4
+C_AnimModel4: box_side_c4
+C_AnimModel5: box_side_d4
+C_AnimModel6: box_side_e4
+C_AnimModel7: box_side_f4
+C_AnimModel8: box_side_g4
+C_AnimModel9: box_side_h4
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 181 -248 -2100
+ZZ_spawn_message: 10000
+%name%: RCS_BModel184
+
+entity 328
+A_Name: breakable_box5
+C_AnimModel0: box_clip5
+C_AnimModel1: box_top5
+C_AnimModel2: box_side_a5
+C_AnimModel3: box_side_b5
+C_AnimModel4: box_side_c5
+C_AnimModel5: box_side_d5
+C_AnimModel6: box_side_e5
+C_AnimModel7: box_side_f5
+C_AnimModel8: box_side_g5
+C_AnimModel9: box_side_h5
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 136 -248 -2204
+ZZ_spawn_message: 10000
+%name%: RCS_BModel185
+
+entity 329
+A_Name: breakable_box10
+C_AnimModel0: box_clip10
+C_AnimModel1: box_top10
+C_AnimModel2: box_side_a10
+C_AnimModel3: box_side_b10
+C_AnimModel4: box_side_c10
+C_AnimModel5: box_side_d10
+C_AnimModel6: box_side_e10
+C_AnimModel7: box_side_f10
+C_AnimModel8: box_side_g10
+C_AnimModel9: box_side_h10
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 520 -248 -2240
+ZZ_spawn_message: 10000
+%name%: RCS_BModel191
+
+entity 330
+A_Name: breakable_box11
+C_AnimModel0: box_clip11
+C_AnimModel1: box_top11
+C_AnimModel2: box_side_a11
+C_AnimModel3: box_side_b11
+C_AnimModel4: box_side_c11
+C_AnimModel5: box_side_d11
+C_AnimModel6: box_side_e11
+C_AnimModel7: box_side_f11
+C_AnimModel8: box_side_g11
+C_AnimModel9: box_side_h11
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 285 -248 -1746
+ZZ_spawn_message: 10000
+%name%: RCS_BModel192
+
+entity 331
+A_Name: breakable_box12
+C_AnimModel0: box_clip12
+C_AnimModel1: box_top12
+C_AnimModel2: box_side_a12
+C_AnimModel3: box_side_b12
+C_AnimModel4: box_side_c12
+C_AnimModel5: box_side_d12
+C_AnimModel6: box_side_e12
+C_AnimModel7: box_side_f12
+C_AnimModel8: box_side_g12
+C_AnimModel9: box_side_h12
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 204 -248 -1685
+ZZ_spawn_message: 10000
+%name%: RCS_BModel193
+
+entity 332
+A_Name: breakable_box13
+C_AnimModel0: box_clip13
+C_AnimModel1: box_top13
+C_AnimModel2: box_side_a13
+C_AnimModel3: box_side_b13
+C_AnimModel4: box_side_c13
+C_AnimModel5: box_side_d13
+C_AnimModel6: box_side_e13
+C_AnimModel7: box_side_f13
+C_AnimModel8: box_side_g13
+C_AnimModel9: box_side_h13
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 624 -248 -2168
+ZZ_spawn_message: 10000
+%name%: RCS_BModel194
+
+entity 333
+A_Name: breakable_box15
+C_AnimModel0: box_clip15
+C_AnimModel1: box_top15
+C_AnimModel2: box_side_a15
+C_AnimModel3: box_side_b15
+C_AnimModel4: box_side_c15
+C_AnimModel5: box_side_d15
+C_AnimModel6: box_side_e15
+C_AnimModel7: box_side_f15
+C_AnimModel8: box_side_g15
+C_AnimModel9: box_side_h15
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 608 -248 -1560
+ZZ_spawn_message: 10000
+%name%: RCS_BModel196
+
+entity 334
+A_Name: breakable_box16
+C_AnimModel0: box_clip16
+C_AnimModel1: box_top16
+C_AnimModel2: box_side_a16
+C_AnimModel3: box_side_b16
+C_AnimModel4: box_side_c16
+C_AnimModel5: box_side_d16
+C_AnimModel6: box_side_e16
+C_AnimModel7: box_side_f16
+C_AnimModel8: box_side_g16
+C_AnimModel9: box_side_h16
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 2
+G_Liftable: 0
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 608 -248 -1920
+ZZ_spawn_message: 10000
+%name%: RCS_BModel197
+
+entity 335
+A_Name: trapdoor 5
+C_AnimModel0: air vent 4
+classname: RCS_BModel
+E_Reach: 50
+F_HitPoints: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: *DoorOpen
+S_Script03: untouch: *DoorClose
+ZZ_location: 1248 -88 -672
+ZZ_spawn_message: 10000
+%name%: RCS_BModel199
+G_Liftable: 0
+S_Script04: 
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 336
+A_Name: jewels
+classname: RCS_PropModel
+D_Model: 54
+E_Heading: 0
+E_Pitch: 0
+F_TouchRadius: 70
+S_Script01: *bonus54
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1040 -120 -2264
+ZZ_spawn_message: 10000
+%name%: RCS_PropModel21
+
+entity 337
+A_Victim: RCS_VictimRescue9
+B_Heading: 0
+classname: RCS_VictimAltSpot
+ZZ_location: 624 312 -1040
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot9
+
+entity 338
+A_Victim: RCS_VictimRescue9
+B_Heading: 0
+classname: RCS_VictimAltSpot
+ZZ_location: 456 312 -104
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot10
+
+entity 339
+A_Name: tall fire34
+classname: RCS_FireRescue
+F_FireType: 0
+H_Height: 300
+H_Radius: 150
+K_SprayTime: 0
+L_FloorMe: 1
+M_Smoking: 1
+N_IsAlive: 1
+P_Key1Size: 0 0 0
+P_Key1TimeOffset: 0
+P_Key2Size: 0 0 0
+P_Key2TimeOffset: 0
+P_Key3Size: 0 0 0
+P_Key3TimeOffset: 0
+P_Key4Size: 0 0 0
+P_Key4TimeOffset: 0
+P_NumKeys: 0
+T_Heading: 0 0 0
+T_UseHeading: 0
+ZZ_location: 728 -8 -912
+ZZ_spawn_message: 10000
+%name%: RCS_FireRescue64
+
+entity 340
+A_Victim: RCS_VictimRescue4
+B_Heading: 0
+classname: RCS_VictimAltSpot
+ZZ_location: 837 1072 -296
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot11
+
+entity 341
+A_Victim: RCS_VictimRescue4
+B_Heading: 0
+classname: RCS_VictimAltSpot
+ZZ_location: 845 1584 -344
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot12
+
+entity 342
+A_Victim: RCS_VictimRescue5
+B_Heading: 0
+classname: RCS_VictimAltSpot
+ZZ_location: 885 2112 -384
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot13
+
+entity 343
+A_Victim: RCS_VictimRescue5
+B_Heading: 0
+classname: RCS_VictimAltSpot
+ZZ_location: 885 2392 -416
+ZZ_spawn_message: 10000
+%name%: RCS_VictimAltSpot14
+
+entity 344
+A_Name: quake trigger4
+C_Model: quake trigger4
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: *TowerStairs
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1488 64 -256
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger27
+
+entity 345
+A_Name: TowerStairs
+C_AnimModel0: TowerStairs01
+C_AnimModel1: TowerStairs02
+C_AnimModel2: TowerStairs03
+C_AnimModel3: TowerStairs04
+C_AnimModel4: TowerStairs05
+C_AnimModel5: TowerStairs06
+C_AnimModel6: towerstairs_clip
+C_AnimModel7: towerstairs_clip1
+classname: RCS_BModel
+E_Reach: 0
+F_HitPoints: 0
+G_Liftable: 0
+S_Script01: settimescale 2
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1008 344 -1152
+ZZ_spawn_message: 10000
+%name%: RCS_BModel200
+
+entity 346
+A_Name: steam01
+C_Type: 3
+classname: RCS_MiscEmitter
+E_Heading: 5
+E_Pitch: .7
+ZZ_location: 1152 -176 -1008
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter36
+S_Script01: turnoff
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 347
+A_Name: steam02
+C_Type: 3
+classname: RCS_MiscEmitter
+E_Heading: 6
+E_Pitch: .9
+ZZ_location: 1272 -256 -840
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter37
+S_Script01: turnoff
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 348
+A_Name: steam03
+C_Type: 3
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: .7
+ZZ_location: 1064 -200 -808
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter38
+S_Script01: turnoff
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 349
+A_Name: zone operations
+C_Model: zone operations
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: makezone (Operations)
+S_Script02: 
+S_Script03: 
+S_Script04: 
+S_Script05: 
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1204 2744 -212
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger28
+
+entity 350
+classname: light
+color: 255 255 255
+light: 200
+origin: 944 608 -1936
+style: 0
+%name%: light32
+
+entity 351
+C_Heading: 0
+classname: RCS_PlayerRescue
+S_Script01: equip goggles
+ZZ_location: 476 848 276
+ZZ_spawn_message: 10000
+%name%: RCS_PlayerRescue2
+S_Script02: equip axe
+S_Script03: equip extinguisher
+S_Script04: 
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 352
+classname: light
+color: 0 0 255
+light: 150
+origin: 792 600 -2376
+style: 0
+%name%: light35
+
+entity 353
+A_Name: sparks32
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 248 48 -1512
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter63
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 354
+A_Name: sparks33
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 224 48 -1508
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter64
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 355
+A_Name: sparks34
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 824 48 -1620
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter65
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 356
+A_Name: sparks35
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 800 48 -1616
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter66
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 357
+A_Name: sparks36
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 1012 40 -2472
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter67
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 358
+A_Name: sparks37
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 988 40 -2468
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter68
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 359
+A_Name: sparks38
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 96 48 -2496
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter69
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 360
+A_Name: sparks39
+C_Type: 1
+classname: RCS_MiscEmitter
+E_Heading: 9
+E_Pitch: 1
+ZZ_location: 72 48 -2492
+ZZ_spawn_message: 10000
+%name%: RCS_MiscEmitter70
+S_Script01: <null>
+S_Script02: <null>
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+
+entity 361
+classname: light
+color: 255 255 255
+light: 150
+origin: -624 2552 -556
+style: 0
+%name%: light41
+
+entity 362
+A_Name: final_exit
+C_Model: exit_trigger
+classname: RCS_BoundsTrigger
+E_Reach: 0
+S_Script01: touch: tell player (finalexitloadmap oil_rig_D)
+S_Script02: 
+S_Script03: <null>
+S_Script04: <null>
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+ZZ_location: 1164 764 -1472
+ZZ_spawn_message: 10000
+%name%: RCS_BoundsTrigger29
+
+entity 363
+A_Name: trapdoor 4
+C_AnimModel0: air vent 3
+classname: RCS_BModel
+E_Reach: 100
+F_HitPoints: 0
+S_Script01: touch: settimescale 4
+S_Script02: touch: *DoorOpen
+S_Script03: untouch: *DoorClose
+ZZ_location: 152 -88 -2216
+ZZ_spawn_message: 10000
+%name%: RCS_BModel201
+G_Liftable: 0
+S_Script04: 
+S_Script05: <null>
+S_Script06: <null>
+S_Script07: <null>
+S_Script08: <null>
+S_Script09: <null>
+S_Script10: <null>
+
+entity 364
+classname: %typedef%
+%typename%: RCS_VictimAltSpot
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Victim: RCS_VictimRescue
+B_Heading: float
+
+entity 365
+classname: %typedef%
+%typename%: RCS_VictimRescue
+spawn_message: int
+%defaultvalue%: 
+location: point
+A_Name: string
+D_Type: string
+G_Heading: float
+J_Radius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+
+entity 366
+classname: %typedef%
+%typename%: SunLight
+origin: point
+%defaultvalue%: 
+color: color
+light: int
+angles: point
+style: int
+
+entity 367
+classname: %typedef%
+%typename%: RCS_PropModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_Name: string
+D_Model: int
+E_Heading: float
+E_Pitch: float
+F_TouchRadius: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+
+entity 368
+classname: %typedef%
+%typename%: RCS_PlayerRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+C_Heading: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 369
+classname: %typedef%
+%typename%: RCS_PathPoint
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 370
+classname: %typedef%
+%typename%: RCS_FireRescue
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+F_FireType: int
+H_Radius: float
+H_Height: float
+K_SprayTime: float
+L_FloorMe: int
+M_Smoking: int
+N_IsAlive: int
+P_NumKeys: int
+P_Key1Size: point
+P_Key1TimeOffset: int
+P_Key2Size: point
+P_Key2TimeOffset: int
+P_Key3Size: point
+P_Key3TimeOffset: int
+P_Key4Size: point
+P_Key4TimeOffset: int
+T_UseHeading: int
+T_Heading: point
+ZZ_location: point
+
+entity 371
+classname: %typedef%
+%typename%: RCS_PlayerHose
+spawn_message: int
+%defaultvalue%: 
+location: point
+FirstPathPoint: RCS_HosePath
+
+entity 372
+classname: %typedef%
+%typename%: RCS_HosePath
+ZZ_spawn_message: int
+%defaultvalue%: 
+ZZ_location: point
+A_NextPoint: RCS_HosePath
+B_LookAtPoint: RCS_HosePath
+C_IsAHotSpot: int
+D_NextHotSpot: RCS_HosePath
+E_NextHotSpotPathDir: int
+M_IsFirstHotSpot: int
+M_SpotTime: float
+M_MaxPressure: float
+N_PitchSpread: float
+Q_NumCycles: int
+ZF0_FireModel: model
+ZF0_SprayTime: float
+ZF1_FireModel: model
+ZF1_SprayTime: float
+ZF2_FireModel: model
+ZF2_SprayTime: float
+ZF3_FireModel: model
+ZF3_SprayTime: float
+ZF4_FireModel: model
+ZF4_SprayTime: float
+ZF5_FireModel: model
+ZF5_SprayTime: float
+ZF6_FireModel: model
+ZF6_SprayTime: float
+ZF7_FireModel: model
+ZF7_SprayTime: float
+ZF8_FireModel: model
+ZF8_SprayTime: float
+
+entity 373
+classname: %typedef%
+%typename%: RCS_MiscEmitter
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Type: int
+E_Heading: float
+E_Pitch: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+ZZ_location: point
+
+entity 374
+classname: %typedef%
+%typename%: RCS_EscapeArrow
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+F_Rotation: float
+G_Pitch: float
+ZZ_location: point
+
+entity 375
+classname: %typedef%
+%typename%: RCS_BoundsTrigger
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_Model: model
+E_Reach: float
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 376
+classname: %typedef%
+%typename%: RCS_BModel
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+C_AnimModel0: model
+C_AnimModel1: model
+C_AnimModel2: model
+C_AnimModel3: model
+C_AnimModel4: model
+C_AnimModel5: model
+C_AnimModel6: model
+C_AnimModel7: model
+C_AnimModel8: model
+C_AnimModel9: model
+E_Reach: float
+F_HitPoints: int
+G_Liftable: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+S_Script06: string
+S_Script07: string
+S_Script08: string
+S_Script09: string
+S_Script10: string
+ZZ_location: point
+
+entity 377
+classname: %typedef%
+%typename%: RCS_BlinkLight
+ZZ_spawn_message: int
+%defaultvalue%: 
+A_Name: string
+H_radius: float
+K_HideIfNotVisible: int
+S_Script01: string
+S_Script02: string
+S_Script03: string
+S_Script04: string
+S_Script05: string
+Y_color: color
+ZZ_location: point
+
+entity 378
+classname: %typedef%
+%typename%: Camera
+origin: point
+%defaultvalue%: 
+angles: point
+
+entity 379
+classname: %typedef%
+%typename%: ModelOrigin
+origin: point
+%defaultvalue%: 
+
+entity 380
+classname: %typedef%
+%typename%: spotlight
+DummyRadius: int
+%defaultvalue%: 
+light: int
+color: color
+style: int
+origin: point
+angles: point
+arc: int
+
+entity 381
+classname: %typedef%
+%typename%: light
+light: int
+%defaultvalue%: 
+color: color
+style: int
+origin: point

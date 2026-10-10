@@ -1,0 +1,17 @@
+exec rescue.evs
+
+set Welcome1 (hint 5 (Welcome to Firefighter Academy.  These exercises will prepare you to fight fires!))
+set Enter1 (hint 7 (In this section, you will practice basic movement.  Use the mouse to steer while pressing 'W' or 'S' on the keyboard to move forwards or backwards.))
+set Failure1 (hint 7 (Oops, try again!  Practice using the mouse and keyboard simultaneously to steer the player.))
+
+set Welcome2 (hint 5 (This level illustrates the basic procedures for dousing fires.))
+
+touch: if gothose 1 (hint 5 (Now use the hose to put out the big fires and proceed to the next exercise.))
+
+set Cmd2a (hint 5 (Use your extinguisher to get past the small fires to the right, so you can get to the hose!))
+set Cmd2b (hint 5 (Now use the hose to put out the big fires.  Be careful!))
+
+set Cmd3a (hint 5 (Press the LEFT BUTTON to scan with the goggles!  Press '1' when you've spotted a survivor.))
+set Cmd3b (hint 7 (Great job!  Take this person to the exit, and your training will be complete!))
+set Cmd3c (hint 5 (You picked up the survivor!  Now head for the flashing exit.))
+
