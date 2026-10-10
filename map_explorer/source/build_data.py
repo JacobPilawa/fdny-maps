@@ -31,7 +31,7 @@ for m in json.loads((ROOT/'source/manifest.json').read_text()):
  victim_order=0
  for a in markers:
   raw=a['raw'];mod=modelByName.get(raw.get('C_Model')) or modelByName.get(raw.get('C_AnimModel0'))
-  if mod:a['bounds']={'min':mod['mins'],'max':mod['maxs']}
+  if mod:a['bounds']={'min':mod['mins'],'max':mod['maxs'],'model_id':model_ids.get(raw.get('C_Model') or raw.get('C_AnimModel0'))}
   if raw.get('classname')=='RCS_BModel':
    a['brush_bounds']=[{'model':model_name,'model_id':model_ids[model_name],'min':modelByName[model_name]['mins'],'max':modelByName[model_name]['maxs']} for field,model_name in sorted(raw.items()) if field.startswith('C_AnimModel') and model_name in modelByName]
   a['victim_label']=victimById.get(a.get('victim_link'),'')

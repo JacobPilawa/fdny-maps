@@ -83,7 +83,7 @@ def supplement(root,key,stem,entities,models,markers,payload):
  for m in markers:
   e=m['raw'];m['expanded_scripts']=expand(m.get('scripts',''),macros)
   mids=[model_ids[v] for k,v in sorted(e.items()) if k.startswith('C_AnimModel') and v in model_ids]
-  m['models']=mids
+  m['models']=mids or ([model_ids[e['C_Model']]] if e.get('C_Model') in model_ids else [])
   if not mids:continue
   moving=[i for i in mids if str(i) in tracks and any(len({tuple(v) for v in c['values']})>1 for c in tracks[str(i)].values())]
   if not moving:continue
