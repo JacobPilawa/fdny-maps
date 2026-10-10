@@ -33,3 +33,14 @@ npx wrangler deploy --config wrangler.json
 ```
 
 For your own Cloudflare account, change `account_id` and `name` in `map_explorer/wrangler.json` first.
+
+## Cloudflare guides
+
+Start with the first two links to understand and recreate this setup:
+
+- [Workers Static Assets overview](https://developers.cloudflare.com/workers/static-assets/) — how Cloudflare hosts and serves website files.
+- [Get started with Static Assets](https://developers.cloudflare.com/workers/static-assets/get-started/) — setup and deployment walkthrough.
+- [Wrangler deploy command](https://developers.cloudflare.com/workers/wrangler/commands/#deploy) — CLI upload options.
+- [Static asset headers](https://developers.cloudflare.com/workers/static-assets/headers/) — `_headers` files, including our browser-cache settings.
+- [Pricing and billing](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/) — free static requests and storage versus Worker-script usage.
+- [Platform limits](https://developers.cloudflare.com/workers/platform/limits/) — asset counts and maximum file sizes.
