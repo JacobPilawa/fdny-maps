@@ -12,7 +12,7 @@
 
 `CallGraphPath.java` searches direct call edges from a start function to a target function. It reports indirect calls and unresolved direct targets separately; a negative result does not cover computed dispatch.
 
-`InstructionContext.java` prints a small instruction window around an explicit address, including callsites whose containing function is not defined in Ghidra.
+`InstructionContext.java` prints a small address-labeled instruction window around an explicit address, including callsites whose containing function is not defined in Ghidra. The addresses make it easier to recover missing function boundaries and check the exact instruction against decompilation output.
 
 `DataValue.java` prints Ghidra's defined data item and the raw 32-bit integer, float, and byte interpretations at explicit addresses. Use it to verify constants loaded by code rather than inferring their value from a symbol name.
 
@@ -25,6 +25,8 @@ Run it with the Ghidra installation on this machine:
   -process FDNYFirefighter.exe -noanalysis -readOnly \
   -scriptPath decomp/tools/ghidra -postScript AddressXrefs.java 0045C7F0 0045BEA0
 ```
+
+If the preserved project is open in Ghidra or another headless process, a query can fail to acquire its lock even with `-readOnly`. Copy `fdny.gpr` and `fdny.rep/` to a scratch directory under `/private/tmp` and point `analyzeHeadless` at that copy. On this host, headless startup also needs the installed JDK on `PATH` and a writable Java profile, for example `JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home`, `PATH=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin:/usr/bin:/bin`, and `JAVA_TOOL_OPTIONS=-Duser.home=/private/tmp/fdny-ghidra-user-home`. Keep `-noanalysis -readOnly` for query-only scripts; run `DefineAndDecompile.java` only against a separate analysis scratch copy.
 
 For example, direct stores of the value 7 to field offset `0x120` can be listed with `-postScript FieldStoreAudit.java 0x120 7`.
 
