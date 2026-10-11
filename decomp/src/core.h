@@ -75,7 +75,9 @@ struct Collision{
  bool solid(V p,V mn,V mx){std::vector<int> ids;auto models=field(data,"models");for(int m=0;m<count(models);m++){auto model=at(models,m);if(disabled.count(integer(field(model,"index"))))continue;V point=transform(p,vec(field(model,"origin")),integer(field(model,"index")),true);ids.clear();leaves(integer(field(model,"root")),point+mn,point+mx,ids);for(int id:ids){auto leaf=at(field(data,"leafs"),id);int ns=integer(field(leaf,"num_sides"));if(!(integer(field(leaf,"contents"))&integer(field(data,"contents_mask")))||!ns)continue;bool inside=true;for(int s=0;s<ns;s++){auto ls=at(field(data,"leaf_sides"),integer(field(leaf,"first_side"))+s);auto plane=at(field(data,"planes"),integer(field(ls,"plane")));float sign=integer(field(ls,"side"))?-1:1;V n=vec(field(plane,"normal"))*sign;float d=num(field(plane,"distance"))*sign;for(int i=0;i<3;i++)d-=n[i]*(n[i]>0?mn[i]:mx[i]);if(dot(n,point)-d>=0){inside=false;break;}}if(inside)return true;}}return false;}
 };
 struct Player{
- V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false;float cooldown=0;
+ V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false;float cooldown=0,ashDensity=1.f;
+ // Player init 0044D550 seeds Player+0x5b0 to 1; 0044BC90 -> 00446350 clamps [0,1].
+ void setAshDensity(float value){if(value>1.f)value=1.f;if(value<0.f)value=0.f;ashDensity=value;}
  V maxs()const{return {30,crouch?25.f:85.f,30};}
  // PlayerRescue Think -> IntegrateVelocity 0x0049DBC0 -> collision callback 0x0043F810.
  void step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
