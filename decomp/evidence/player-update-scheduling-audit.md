@@ -14,7 +14,7 @@ Read-only Ghidra 12.0.4 inspection of `FDNYFirefighter.exe` (SHA-256 `4b3b4dc1cc
 
 ## Conclusion and limits
 
-The local Player movement call chain is now source-mapped, but the regular caller that invokes Player root slot `+0x14` is not. The verified owner root callback is a no-op, and the inspected app callback list does not identify the movement subobject. Static xrefs do not rule out a computed engine dispatcher or an indirect registration path not identified here. The movement cadence and its order relative to owner callbacks, message drains, Fire Think, and victim child updates therefore remain open. Do not treat the native per-frame call as original scheduling evidence.
+The local Player movement call chain is now source-mapped, but the regular caller that invokes Player root slot `+0x14` is not. The verified owner root callback is a no-op, and the inspected app callback list does not identify the movement subobject. Static xrefs do not rule out a computed engine dispatcher or an indirect registration path not identified here. The movement cadence and its order relative to owner callbacks, message drains, Fire Think, and victim child updates therefore remain open. Do not treat the native per-frame call as original scheduling evidence. The bounded shared ScriptActor search is recorded in [`scriptactor-common-scheduler-audit.md`](scriptactor-common-scheduler-audit.md).
 
 This refines the movement scheduling boundary noted in [`training-ladder-audit.md`](training-ladder-audit.md) and [`item-pose/live-extinguisher/message-components/owner-vtable-indirect-call-inventory.md`](item-pose/live-extinguisher/message-components/owner-vtable-indirect-call-inventory.md).
 

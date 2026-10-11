@@ -12,6 +12,8 @@
 
 `CallGraphPath.java` searches direct call edges from a start function to a target function. It reports indirect calls and unresolved direct targets separately; a negative result does not cover computed dispatch.
 
+`FindIndirectCallSlot.java` scans listed instructions for indirect `CALL`/`JMP` operands containing a literal displacement (for example `+ 0x14`). This is a text-based candidate finder: it does not resolve a receiver's type, detect a displacement assembled through registers, or prove that a call site is reachable.
+
 `InstructionContext.java` prints a small address-labeled instruction window around an explicit address, including callsites whose containing function is not defined in Ghidra. The addresses make it easier to recover missing function boundaries and check the exact instruction against decompilation output.
 
 `DataValue.java` prints Ghidra's defined data item and the raw 32-bit integer, float, and byte interpretations at explicit addresses. Use it to verify constants loaded by code rather than inferring their value from a symbol name.
@@ -39,6 +41,8 @@ If the preserved database does not define a verified function entry, import the 
 Use `-postScript ExportFunctionAssembly.java 0045BF70` to preserve its instruction listing. The script does not change the Ghidra database.
 
 Use `-postScript CallGraphPath.java 0045BF70 00498B30` to look for a direct call path from one function to another.
+
+Use `-postScript FindIndirectCallSlot.java "+ 0x14"` to list fixed-offset indirect CALL/JMP candidates. This is a candidate scan only; inspect the receiver type and call path before assigning behavior.
 
 Use `-postScript InstructionContext.java 0043AFE3 12 12` to inspect an exact callsite and surrounding instructions without exporting the whole function.
 
