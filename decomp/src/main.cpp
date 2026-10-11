@@ -68,6 +68,8 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_pickup.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
+#include "interaction_box.h"
+#include "throw_scalar.h"
 #include "use_manager.h"
 #include "clock.h"
 struct Mesh{int model;std::vector<float> positions,uvs;GLuint texture=0;};
@@ -115,6 +117,39 @@ int checkBModelContact(){
  std::cout<<"Source-mapped BModel contact: "<<cases.size()<<" AABB boundary/NaN cases and "<<reachCases.size()+1<<" reach-gate cases; mismatches="<<mismatches<<"\n";
  return mismatches?48:0;
 }
+int checkThrowScalarOracle(){
+ auto path=assetDirectory()+"/../../evidence/training-liftable-audit/throw-scalar-oracle.json";
+ J fixture=json_object_from_file(path.c_str());if(!fixture)throw std::runtime_error("Missing BModel throw scalar oracle: "+path);
+ auto provenance=field(fixture,"provenance");
+ if(str(field(provenance,"exe_sha256"))!="4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e")throw std::runtime_error("BModel throw fixture executable hash changed");
+ auto readVec=[](J values){return std::array<float,3>{float(num(at(values,0))),float(num(at(values,1))),float(num(at(values,2)))};};
+ auto bits=[](J value){return uint32_t(json_object_get_uint64(value));};
+ auto report=[](int& mismatches,const std::string& where,uint32_t actual,uint32_t expected){if(actual==expected)return;mismatches++;if(mismatches<12)std::cout<<"BModel throw scalar mismatch "<<where<<" actual=0x"<<std::hex<<actual<<" expected=0x"<<expected<<std::dec<<"\n";};
+ int mismatches=0,setupFields=0,updateFields=0;
+ auto setupRows=field(fixture,"setup");
+ for(int i=0;i<count(setupRows);i++){
+  J row=at(setupRows,i);auto result=BModelThrowScalar::setup(readVec(field(row,"start")),readVec(field(row,"end")),uint32_t(json_object_get_uint64(field(row,"tick"))));
+  report(mismatches,"setup["+std::to_string(i)+"].duration",BModelThrowScalar::bits(result.duration),bits(field(row,"duration_bits")));setupFields++;
+  report(mismatches,"setup["+std::to_string(i)+"].acceleration",BModelThrowScalar::bits(result.acceleration),bits(field(row,"acceleration_bits")));setupFields++;
+  report(mismatches,"setup["+std::to_string(i)+"].initial_vertical_velocity",BModelThrowScalar::bits(result.initialVerticalVelocity),bits(field(row,"initial_vertical_velocity_bits")));setupFields++;
+  report(mismatches,"setup["+std::to_string(i)+"].initial_middle",BModelThrowScalar::bits(result.initialMiddle),bits(field(row,"initial_middle_bits")));setupFields++;
+  report(mismatches,"setup["+std::to_string(i)+"].tick",result.tick,uint32_t(json_object_get_uint64(field(row,"tick"))));setupFields++;
+  report(mismatches,"setup["+std::to_string(i)+"].mode",result.mode,uint32_t(integer(field(row,"mode"))));setupFields++;
+ }
+ J updateInput=field(fixture,"update_input");auto start=readVec(field(updateInput,"start")),end=readVec(field(updateInput,"end"));
+ uint32_t baseDurationBits=bits(field(updateInput,"duration_bits"));float acceleration=BModelThrowScalar::fromBits(bits(field(updateInput,"acceleration_bits")));
+ float velocity=BModelThrowScalar::fromBits(bits(field(updateInput,"initial_vertical_velocity_bits")));
+ auto updates=field(fixture,"update");
+ for(int i=0;i<count(updates);i++){
+  J row=at(updates,i),durationValue=field(row,"duration_bits");uint32_t durationBits=durationValue?bits(durationValue):baseDurationBits;
+  uint32_t startTick=uint32_t(json_object_get_uint64(field(row,"start_tick"))),tick=uint32_t(json_object_get_uint64(field(row,"tick")));
+  bool reverse=integer(field(row,"reverse"))!=0;auto actual=BModelThrowScalar::update(start,end,startTick,tick,BModelThrowScalar::fromBits(durationBits),acceleration,velocity,reverse);
+  bool expectedComplete=str(field(row,"branch"))=="completed";report(mismatches,"update["+std::to_string(i)+"].branch",actual.completed,expectedComplete);updateFields++;
+  J expectedPoint=field(row,"point_bits");for(int axis=0;axis<3;axis++){report(mismatches,"update["+std::to_string(i)+"].point["+std::to_string(axis)+"]",BModelThrowScalar::bits(actual.point[axis]),bits(at(expectedPoint,axis)));updateFields++;}
+ }
+ std::cout<<"BModel throw scalar p-code fixture: setup fields="<<setupFields<<", update branch/point fields="<<updateFields<<", mismatches="<<mismatches<<" (no gameplay scheduling or model/event calls)\n";
+ return mismatches?50:0;
+}
 std::map<int,float> trainingBModelReaches(J entities,J motions){
  std::map<std::string,int> modelIdByName;
  for(int i=0;i<count(entities);i++){auto e=at(entities,i);if(str(field(e,"class"))!="%Model%")continue;auto p=field(e,"properties");std::string name=str(field(p,"%name%"));if(!name.empty())modelIdByName[name]=integer(field(p,"Model"));}
@@ -133,6 +168,7 @@ int checkTrainingBModelContactAssets(){auto entities=load("entities.json");auto 
 int main(int argc,char** argv){try{
  if(argc>1&&std::string(argv[1])=="--asset-path"){std::cout<<assetDirectory()<<"\n";return 0;}
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-check")return checkBModelContact();
+ if(argc>1&&std::string(argv[1])=="--throw-scalar-check")return checkThrowScalarOracle();
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-asset-check")return checkTrainingBModelContactAssets();
  auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe",selectedBeforeHose="axe";std::set<std::string> equipment{"axe"};float extinguisherCharge=1;int hoseMode=0,attachedValve=-1;Scripts vm(load("scripts.json"));std::vector<Door> doors;std::vector<TrainingPropModel> propModels;
  auto bmodelReachByEntity=trainingBModelReaches(entities,load("motions.json"));
@@ -670,6 +706,27 @@ int main(int argc,char** argv){try{
   if(badHit||badNear||badFar||badQuery||badPoint||badScore){mismatches++;if(mismatches<6)std::cout<<"Interaction-sphere mismatch sample="<<i<<" flags="<<badHit<<badNear<<badFar<<badQuery<<badPoint<<badScore<<" near="<<bits(nearDistance)<<"/"<<expected(field(sample,"near_bits"))<<" far="<<bits(farDistance)<<"/"<<expected(field(sample,"far_bits"))<<" query="<<query<<"/"<<expected(field(sample,"query_hit"))<<" point="<<bits(point.x)<<","<<bits(point.y)<<","<<bits(point.z)<<" expected="<<expected(at(field(sample,"point_bits"),0))<<","<<expected(at(field(sample,"point_bits"),1))<<","<<expected(at(field(sample,"point_bits"),2))<<" score="<<bits(score)<<"/"<<expected(field(sample,"score_bits"))<<"\n";}
  }
  std::cout<<"PropModel interaction sphere: "<<count(samples)<<" original queries, compared outputs="<<words<<", mismatches="<<mismatches<<"\n";return mismatches?46:0;
+ }
+ if(argc>1&&std::string(argv[1])=="--interaction-box-check"){
+ auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/bmodel-interaction-box-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing BModel interaction-box evidence");auto samples=field(fixture,"samples");int mismatches=0,words=0,comparedSamples=0;std::set<int> excluded;
+ const std::set<int> expectedPcodeArtifacts{16,18,28,38,40,50,60,62,72};
+ auto fromBits=[](J j){uint32_t b=uint32_t(json_object_get_uint64(j));float v;std::memcpy(&v,&b,4);return v;};
+ auto floatFromWord=[](uint32_t b){float v;std::memcpy(&v,&b,4);return v;};
+ auto bits=[](float v){uint32_t b;std::memcpy(&b,&v,4);return b;};
+ auto expected=[](J j){return uint32_t(json_object_get_uint64(j));};
+ for(int i=0;i<count(samples);i++){
+  auto sample=at(samples,i);if(json_object_get_boolean(field(sample,"pcode_signed_zero_artifact"))){excluded.insert(i);std::cout<<"BModel interaction-box p-code exclusion sample="<<i<<" (signed-zero FCOM condition-code artifact; unresolved from this oracle)\n";continue;}comparedSamples++;
+  V start=vec(field(sample,"start")),direction=vec(field(sample,"direction")),minimum=vec(field(sample,"minimum")),maximum=vec(field(sample,"maximum"));
+  float nearDistance=floatFromWord(0x7fc00001),farDistance=floatFromWord(0x7fc00002);
+  bool ray=InteractionBox::ray(start,direction,minimum,maximum,&nearDistance,&farDistance);
+  bool badHit=uint32_t(ray)!=expected(field(sample,"box_hit"));bool badNear=bits(nearDistance)!=expected(field(sample,"near_bits"));bool badFar=bits(farDistance)!=expected(field(sample,"far_bits"));words+=3;
+  V point{fromBits(at(field(sample,"point_bits"),0)),fromBits(at(field(sample,"point_bits"),1)),fromBits(at(field(sample,"point_bits"),2))};float score=fromBits(field(sample,"score_bits"));
+  bool query=InteractionBox::query(start,direction,minimum,maximum,&point,&score);
+  bool badQuery=uint32_t(query)!=expected(field(sample,"query_hit")),badPoint=false;for(int axis=0;axis<3;axis++){badPoint|=bits(point[axis])!=expected(at(field(sample,"point_bits"),axis));words++;}bool badScore=bits(score)!=expected(field(sample,"score_bits"));words++;
+  if(badHit||badNear||badFar||badQuery||badPoint||badScore){mismatches++;if(mismatches<16)std::cout<<"Interaction-box mismatch sample="<<i<<" flags="<<badHit<<badNear<<badFar<<badQuery<<badPoint<<badScore<<" near="<<bits(nearDistance)<<"/"<<expected(field(sample,"near_bits"))<<" far="<<bits(farDistance)<<"/"<<expected(field(sample,"far_bits"))<<" query="<<query<<"/"<<expected(field(sample,"query_hit"))<<" point="<<bits(point.x)<<","<<bits(point.y)<<","<<bits(point.z)<<" expected="<<expected(at(field(sample,"point_bits"),0))<<","<<expected(at(field(sample,"point_bits"),1))<<","<<expected(at(field(sample,"point_bits"),2))<<" score="<<bits(score)<<"/"<<expected(field(sample,"score_bits"))<<"\n";}
+ }
+ if(excluded!=expectedPcodeArtifacts){mismatches++;std::cout<<"BModel interaction-box exclusion metadata differs from audited sample IDs\n";}
+ std::cout<<"BModel interaction box: "<<count(samples)<<" Ghidra p-code queries, compared samples="<<comparedSamples<<", excluded p-code-inconclusive samples="<<excluded.size()<<", compared outputs="<<words<<", mismatches="<<mismatches<<"\n";return mismatches?50:0;
  }
  if(argc>1&&std::string(argv[1])=="--fire-render-state-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/driver-blend-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing driver-state evidence");auto samples=field(fixture,"samples");int mismatches=0;

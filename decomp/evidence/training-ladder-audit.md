@@ -39,7 +39,7 @@ Player state 7 is only partly mapped. `00452570` retains ordinary movement input
 
 ## Remaining verification
 
-- Resolve BModel contact-candidate ownership, overlap queue conversion, and original touch/touching/untouch cadence; compare the full event sequence to the native same-pass latch. The contact predicate and Training reach values are source/data mapped, but frame cadence remains open.
+- BModel contact ownership and local event semantics are source-mapped: the owner's normal `0042AEA0 → 00429520` pass reaches manager `0049BD20`, which invokes active BModel callbacks `0043B620` against the selected type-1 candidate list. Contact generation therefore runs once per normal owner manager pass, with no timer gate seen in that path. The separate ScriptActor updater `0043DC60` caller/order relative to this pass remains unresolved, so producer-to-event latency and rendered-frame cadence are not verified; the native same-pass latch is locally mapped but not cadence/order-verified against the original. Details and Ghidra queries are in `training-bmodel-contact-scheduling-audit.md`.
 - Port and verify Training lift/carry/throw, including the `0043D2B0 → 0044BC40` path, state 7 movement, object trajectory, and exact input threshold/timing.
 - Compare the complete state-5 movement, jump cooldown, collision, and callback order against the original runtime before claiming ladder parity.
 
