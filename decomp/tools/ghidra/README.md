@@ -10,6 +10,10 @@
 
 `CallGraphPath.java` searches direct call edges from a start function to a target function. It reports indirect calls and unresolved direct targets separately; a negative result does not cover computed dispatch.
 
+`InstructionContext.java` prints a small instruction window around an explicit address, including callsites whose containing function is not defined in Ghidra.
+
+`DataValue.java` prints Ghidra's defined data item and the raw 32-bit integer, float, and byte interpretations at explicit addresses. Use it to verify constants loaded by code rather than inferring their value from a symbol name.
+
 `FieldStoreAudit.java` lists direct `MOV` stores whose destination includes a structure-field offset. With an immediate-value argument, it filters to direct constant stores. It does not track values copied through registers, so treat it as a bounded search, not proof that no other write exists.
 
 Run it with the Ghidra installation on this machine:
@@ -27,6 +31,10 @@ Use `-postScript DecompileFunctions.java 0045BF70` to inspect a function not alr
 Use `-postScript ExportFunctionAssembly.java 0045BF70` to preserve its instruction listing. The script does not change the Ghidra database.
 
 Use `-postScript CallGraphPath.java 0045BF70 00498B30` to look for a direct call path from one function to another.
+
+Use `-postScript InstructionContext.java 0043AFE3 12 12` to inspect an exact callsite and surrounding instructions without exporting the whole function.
+
+Use `-postScript DataValue.java 004E0ED4` to inspect a referenced constant's data and raw value.
 
 Use `-postScript FindStringReferences.java moveto stopmove setsize` to locate matching string data and its references.
 

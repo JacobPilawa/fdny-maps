@@ -750,6 +750,32 @@ int main(int argc,char** argv){try{
  }
  if(argc>1&&std::string(argv[1])=="--startup-check"){std::string previous;for(auto e:startup){auto cl=str(field(e,"class"));if(cl!=previous){std::cout<<"\n"<<cl<<":";previous=cl;}std::cout<<" "<<integer(field(e,"index"));}std::cout<<"\nWorld route="<<worldIdentity.route.route<<" generation="<<worldIdentity.route.generation<<"\n";for(auto e:startup)if(str(field(e,"class"))=="RCS_FireRescue"){int id=integer(field(e,"index"));auto& identity=trainingEntities.at(id);if(trainingRoutes.resolve(identity.route.route,identity.route.generation)!=&identity)throw std::runtime_error("Training fire route did not resolve to its startup entity");std::cout<<"Fire entity="<<id<<" route="<<identity.route.route<<" generation="<<identity.route.generation<<" state="<<(identity.fire?"initialized":"missing")<<"\n";}for(auto& victim:victimSpawns){std::cout<<victim.name<<" candidate entities:";for(auto& candidate:victim.candidates)std::cout<<" "<<candidate.entity;std::cout<<" motion="<<victim.initialMotion<<" speed="<<victim.initialMotionSpeed;if(victim.spawnSelected){std::cout<<" selected="<<victim.selectedEntity<<" authored="<<victim.selectedCandidatePosition.x<<","<<victim.selectedCandidatePosition.y<<","<<victim.selectedCandidatePosition.z<<" floor="<<(victim.floorPlacementSucceeded?"hit":"miss")<<" position="<<victim.selectedPosition.x<<","<<victim.selectedPosition.y<<","<<victim.selectedPosition.z<<" heading="<<victim.selectedHeading;}std::cout<<"\n";}return 0;}
  if(argc>1&&std::string(argv[1])=="--script-check"){for(int i=0;i<4;i++)startupTick();std::cout<<"Training startup: "<<vm.bindings.size()<<" scripted entities; "<<vm.variables.size()<<" variables; ash-density="<<std::to_string(player.ashDensity)<<"; rescuebot="<<(player.rescueBotEnabled?(*player.rescueBotEnabled?"on":"off"):"unset")<<"; unsupported="<<vm.reported.size()<<"\n";return vm.reported.empty()?0:5;}
+ if(argc>1&&std::string(argv[1])=="--script-queue-check"){
+  Scripts check(load("scripts.json"));std::vector<std::string> calls;int mismatches=0;
+  check.host=[&](int,std::string command){calls.push_back(command);return true;};
+  check.run("que [first, wait 3, second, third]",700,"queue-check");
+  if(!calls.empty())mismatches++;
+  check.advance(.01f);
+  if(calls!=std::vector<std::string>{"first"})mismatches++;
+  check.advance(.01f);
+  if(calls!=std::vector<std::string>{"first"})mismatches++;
+  check.advance(2.99f);
+  if(calls!=std::vector<std::string>{"first"})mismatches++;
+  check.advance(.02f);
+  if(calls!=std::vector<std::string>{"first","second"})mismatches++;
+  check.advance(.01f);
+  if(calls!=std::vector<std::string>{"first","second","third"})mismatches++;
+  check.run("que [wait 3, discarded]",701,"flush-check");check.advance(.01f);
+  check.run("flush",701,"flush-check");check.advance(.01f);
+  if(calls.size()!=3)mismatches++;
+  check.run("que [wait 3, after-idle]",703,"idle-check");check.advance(.01f);
+  check.run("idle",703,"idle-check");check.advance(.01f);
+  if(calls.size()!=4||calls.back()!="after-idle")mismatches++;
+  size_t before=calls.size();check.run("cmd [immediate-a, immediate-b]",702,"cmd-check");
+  if(calls.size()!=before+2||calls[before]!="immediate-a"||calls[before+1]!="immediate-b")mismatches++;
+  std::cout<<"Script queues: append order, one command per update, 3-second wait, flush, idle, and immediate cmd; mismatches="<<mismatches<<"\n";
+  return mismatches?30:0;
+ }
  if(argc>1&&std::string(argv[1])=="--clock-check"){auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/clock-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing clock oracle");auto samples=field(fixture,"samples");int mismatches=0;for(int i=0;i<count(samples);i++){auto sample=at(samples,i);auto before=field(sample,"before"),expected=field(sample,"after");auto value=[&](J array,int n){return uint32_t(json_object_get_uint64(at(array,n)));};auto asFloat=[&](uint32_t bits){float result;std::memcpy(&result,&bits,4);return result;};auto bits=[&](float n){uint32_t result;std::memcpy(&result,&n,4);return result;};GameClock clock;clock.previous=value(before,0);clock.current=value(before,1);clock.origin=value(before,2);clock.reserved=value(before,3);clock.dt=asFloat(value(before,4));clock.fps=asFloat(value(before,5));clock.filteredFps=asFloat(value(before,6));clock.paused=value(before,7)!=0;uint32_t now=uint32_t(json_object_get_uint64(field(sample,"now")));int sleeps=0;while(!clock.tick(now)&&!clock.paused){now++;sleeps++;if(sleeps>100)throw std::runtime_error("Clock wait runaway");}uint32_t actual[]={clock.previous,clock.current,clock.origin,clock.reserved,bits(clock.dt),bits(clock.fps),bits(clock.filteredFps),uint32_t(clock.paused)};for(int k=0;k<8;k++)if(actual[k]!=value(expected,k)){mismatches++;if(mismatches<8)std::cout<<"Clock mismatch sample="<<i<<" field="<<k<<" actual="<<actual[k]<<" expected="<<value(expected,k)<<"\n";}if(sleeps!=integer(field(sample,"sleep_calls"))||now!=uint32_t(json_object_get_uint64(field(sample,"end_now"))))mismatches++;}std::cout<<"Clock: "<<count(samples)<<" original updates, mismatches="<<mismatches<<"\n";return mismatches?7:0;}
  if(argc>1&&std::string(argv[1])=="--victim-sound-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/victim-sound-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing victim sound oracle");auto samples=field(fixture,"samples");int mismatches=0;Random random(0);VictimSoundChoices sounds;
