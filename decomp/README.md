@@ -28,7 +28,7 @@ WASD moves, the mouse looks, right mouse or Space jumps, C or either Ctrl key to
 
 - Original Training geometry and textures.
 - Authored spawn and recovered walking, jumping, crouching, step-up and sliding behavior.
-- Twenty approach doors, opening away from the player, with collision following their rotation.
+- A playable approximation of twenty approach doors, opening away from the player with collision following rotation; original BModel keyframe and callback timing remain open.
 - Invisible, non-solid trigger volumes.
 - Original direct tutorial hints and named hint macros.
 - Original class order and batch dispatcher for script startup, with an early definitions pass and a full script pass after four updates.
