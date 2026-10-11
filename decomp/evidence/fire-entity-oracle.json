@@ -1,0 +1,1109 @@
+{
+  "provenance": {
+    "entry": "00448D60",
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "method": "Original placed-fire initializer and effect constructors; fixture string/registration, paused sound setup, array allocation and floor callback. Floor callback leaves transform unchanged."
+  },
+  "samples": [
+    {
+      "seed": 0,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 0,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 1,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4357,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 2002,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 0,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 150,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 2,
+      "divider": 1,
+      "spray_bits": 1075553001,
+      "key_bits": [
+        1122041856,
+        1115291648,
+        1122041856
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 500,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 2,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1136361472,
+        1128792064,
+        1136361472
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 350,
+      "height": 800,
+      "spray": 4,
+      "named": 1,
+      "draws": 10,
+      "choice": 2,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1132675072,
+        1128792064,
+        1132675072
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 24,
+      "height": 250,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 2,
+      "divider": 1,
+      "spray_bits": 1065353216,
+      "key_bits": [
+        1099956224,
+        1115291648,
+        1099956224
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 0,
+      "draws": 9,
+      "choice": -1,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    },
+    {
+      "seed": 4294967295,
+      "radius": 288,
+      "height": 800,
+      "spray": 0,
+      "named": 1,
+      "draws": 10,
+      "choice": 2,
+      "divider": 1,
+      "spray_bits": 1082130432,
+      "key_bits": [
+        1129840640,
+        1128792064,
+        1129840640
+      ],
+      "position_bits": [
+        1145962496,
+        3269984256,
+        3305291776
+      ],
+      "strength_bits": 1065353216
+    }
+  ]
+}

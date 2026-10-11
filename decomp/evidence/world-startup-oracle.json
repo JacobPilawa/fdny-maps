@@ -1,0 +1,833 @@
+{
+  "provenance": {
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "entry": "0049E2C0",
+    "method": "Original world countdown/state update; script-loading host callback records filename and mode"
+  },
+  "samples": [
+    {
+      "initial_remaining": 0,
+      "initial_complete": 0,
+      "steps": [
+        {
+          "remaining": 4294967295,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967294,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967293,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967292,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967291,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967290,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967289,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967288,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967287,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967286,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 0,
+      "initial_complete": 1,
+      "steps": [
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 1,
+      "initial_complete": 0,
+      "steps": [
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        }
+      ],
+      "calls": [
+        {
+          "filename_pointer": 805308672,
+          "mode": 0
+        }
+      ]
+    },
+    {
+      "initial_remaining": 1,
+      "initial_complete": 1,
+      "steps": [
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 2,
+      "initial_complete": 0,
+      "steps": [
+        {
+          "remaining": 1,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        }
+      ],
+      "calls": [
+        {
+          "filename_pointer": 805308672,
+          "mode": 0
+        }
+      ]
+    },
+    {
+      "initial_remaining": 2,
+      "initial_complete": 1,
+      "steps": [
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 4,
+      "initial_complete": 0,
+      "steps": [
+        {
+          "remaining": 3,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        }
+      ],
+      "calls": [
+        {
+          "filename_pointer": 805308672,
+          "mode": 0
+        }
+      ]
+    },
+    {
+      "initial_remaining": 4,
+      "initial_complete": 1,
+      "steps": [
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 8,
+      "initial_complete": 0,
+      "steps": [
+        {
+          "remaining": 7,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 6,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 5,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 3,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 2,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 1,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        },
+        {
+          "remaining": 0,
+          "complete": 1,
+          "main_state": 3,
+          "script_calls": 1
+        }
+      ],
+      "calls": [
+        {
+          "filename_pointer": 805308672,
+          "mode": 0
+        }
+      ]
+    },
+    {
+      "initial_remaining": 8,
+      "initial_complete": 1,
+      "steps": [
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 8,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 4294967295,
+      "initial_complete": 0,
+      "steps": [
+        {
+          "remaining": 4294967294,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967293,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967292,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967291,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967290,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967289,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967288,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967287,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967286,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967285,
+          "complete": 0,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    },
+    {
+      "initial_remaining": 4294967295,
+      "initial_complete": 1,
+      "steps": [
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        },
+        {
+          "remaining": 4294967295,
+          "complete": 1,
+          "main_state": 2,
+          "script_calls": 0
+        }
+      ],
+      "calls": []
+    }
+  ]
+}

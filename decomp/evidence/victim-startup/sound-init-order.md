@@ -1,0 +1,5 @@
+# Victim sound initialization draw order
+
+The native first pass now stores each Training victim's initial sound deadline before its first actor-motion choice. `0045B690` calls `0048E330` with the victim position at `+0x4c`, then selects the first motion through `00404B30(3)` for the six-motion ACT. `0048E330` constructs the sound controller with `0048E080`; that constructor draws a float in `[0,5000]`, truncates it to milliseconds, and initializes the previous sound index to zero. The preserved initializer and component comparison are `evidence/startup-initializers/0045b690_FUN_0045b690.c`, `evidence/rng-startup/0048e330_FUN_0048e330.c`, `evidence/rng-callers/0048e080_FUN_0048e080.c`, and `evidence/victim-sound-init-oracle.json`.
+
+`src/main.cpp` retains the resulting `VictimSoundChoices` by victim entity and then consumes the already recovered motion-selection draw. This does not integrate beckoning updates or playback; their later sound-choice draws remain absent. Other startup consumers are still missing, so whole-run RNG parity is not implied.

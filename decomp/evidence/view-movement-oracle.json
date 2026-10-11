@@ -1,0 +1,773 @@
+{
+  "provenance": {
+    "entry": "0044F340 called from 00452570 at 00453860",
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "method": "Original x86 movement view update with ordinary caller flags, full interpolation fractions, zero transition endpoints, state 3 or crouch state 4, and the player follower settings written by 0044D550. The 00491140 head routine executes in the selected mode with zeroed initial amplitudes; tool callbacks and global list services are fixtures. Frame and follower captures do not establish whole-caller or Training parity."
+  },
+  "samples": [
+    {
+      "input": {
+        "name": "standing_idle",
+        "mode": 3,
+        "active": 1,
+        "moving": 0,
+        "fraction": 1.0,
+        "rotation_fraction": 1.0,
+        "position_fraction": 1.0,
+        "angle": 0.0,
+        "frame_dt": 0.017,
+        "player_position": [
+          -1220,
+          -160,
+          4580
+        ],
+        "player_basis": [
+          0.7960838079452515,
+          0,
+          0.605186402797699,
+          0,
+          1,
+          0,
+          -0.605186402797699,
+          0,
+          0.7960838079452515
+        ],
+        "tool_offset": [
+          0,
+          0,
+          0
+        ],
+        "tool_rotation": [
+          0,
+          0,
+          0
+        ],
+        "position_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "target_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "actions": 0,
+        "follower_flags": 46,
+        "follower_held": 1,
+        "follower_allow": 0,
+        "follower_resume": 0,
+        "follower_thresholds": [
+          20,
+          1000,
+          20
+        ],
+        "follower_settling": [
+          0.05,
+          0,
+          0.05
+        ],
+        "follower_smoothing": [
+          0,
+          0.05,
+          0
+        ]
+      },
+      "result": {
+        "args": [
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0
+        ],
+        "head_motion_mode": 0,
+        "matrix_bits": [
+          5110832,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          1116471296,
+          0,
+          1065353216,
+          1065353216,
+          1065353216
+        ],
+        "follower_position_bits": [
+          3298328576,
+          3266576384,
+          1167007744
+        ],
+        "follower_basis_bits": [
+          1061932070,
+          0,
+          1058729343,
+          0,
+          1065353216,
+          0,
+          3206212991,
+          0,
+          1061932070
+        ],
+        "head_offset_bits": [
+          0,
+          1116471296,
+          0
+        ],
+        "follower_state": [
+          1,
+          0,
+          0
+        ],
+        "head_motion_bits": [
+          0,
+          0,
+          0
+        ],
+        "orientation_stages": [
+          {
+            "address": 4809232,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809568,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4811600,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809904,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "name": "standing_moving",
+        "mode": 3,
+        "active": 1,
+        "moving": 1,
+        "fraction": 1.0,
+        "rotation_fraction": 1.0,
+        "position_fraction": 1.0,
+        "angle": 0.0,
+        "frame_dt": 0.017,
+        "player_position": [
+          -1183,
+          -155,
+          4519
+        ],
+        "player_basis": [
+          0.9800665974617004,
+          0,
+          0.19866932928562164,
+          0,
+          1,
+          0,
+          -0.19866932928562164,
+          0,
+          0.9800665974617004
+        ],
+        "tool_offset": [
+          0,
+          0,
+          0
+        ],
+        "tool_rotation": [
+          0,
+          0,
+          0
+        ],
+        "position_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "target_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "actions": 0,
+        "follower_flags": 46,
+        "follower_held": 1,
+        "follower_allow": 0,
+        "follower_resume": 0,
+        "follower_thresholds": [
+          20,
+          1000,
+          20
+        ],
+        "follower_settling": [
+          0.05,
+          0,
+          0.05
+        ],
+        "follower_smoothing": [
+          0,
+          0.05,
+          0
+        ]
+      },
+      "result": {
+        "args": [
+          1,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0
+        ],
+        "head_motion_mode": 1,
+        "matrix_bits": [
+          5110832,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          1116471296,
+          0,
+          1065353216,
+          1065353216,
+          1065353216
+        ],
+        "follower_position_bits": [
+          3298025472,
+          3265921024,
+          1166882816
+        ],
+        "follower_basis_bits": [
+          1065018789,
+          0,
+          1045131257,
+          0,
+          1065353216,
+          0,
+          3192614905,
+          0,
+          1065018789
+        ],
+        "head_offset_bits": [
+          0,
+          1116471296,
+          0
+        ],
+        "follower_state": [
+          1,
+          0,
+          0
+        ],
+        "head_motion_bits": [
+          0,
+          0,
+          0
+        ],
+        "orientation_stages": [
+          {
+            "address": 4809232,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809568,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4811600,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809904,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "name": "crouching_moving",
+        "mode": 4,
+        "active": 1,
+        "moving": 1,
+        "fraction": 1.0,
+        "rotation_fraction": 1.0,
+        "position_fraction": 1.0,
+        "angle": 0.0,
+        "frame_dt": 0.017,
+        "player_position": [
+          -1146,
+          -150,
+          4458
+        ],
+        "player_basis": [
+          0.939372718334198,
+          0,
+          -0.34289780259132385,
+          0,
+          1,
+          0,
+          0.34289780259132385,
+          0,
+          0.939372718334198
+        ],
+        "tool_offset": [
+          0,
+          0,
+          0
+        ],
+        "tool_rotation": [
+          0,
+          0,
+          0
+        ],
+        "position_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "target_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "actions": 0,
+        "follower_flags": 46,
+        "follower_held": 1,
+        "follower_allow": 0,
+        "follower_resume": 0,
+        "follower_thresholds": [
+          20,
+          1000,
+          20
+        ],
+        "follower_settling": [
+          0.05,
+          0,
+          0.05
+        ],
+        "follower_smoothing": [
+          0,
+          0.05,
+          0
+        ]
+      },
+      "result": {
+        "args": [
+          1,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0
+        ],
+        "head_motion_mode": 3,
+        "matrix_bits": [
+          5110832,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          1092616192,
+          0,
+          1065353216,
+          1065353216,
+          1065353216
+        ],
+        "follower_position_bits": [
+          3297722368,
+          3272927412,
+          1166757888
+        ],
+        "follower_basis_bits": [
+          1064336059,
+          0,
+          3199176781,
+          0,
+          1065353216,
+          0,
+          1051693133,
+          0,
+          1064336059
+        ],
+        "head_offset_bits": [
+          0,
+          1092616192,
+          0
+        ],
+        "follower_state": [
+          0,
+          1,
+          0
+        ],
+        "head_motion_bits": [
+          0,
+          0,
+          0
+        ],
+        "orientation_stages": [
+          {
+            "address": 4809232,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809568,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4811600,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809904,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "name": "inactive_moving",
+        "mode": 3,
+        "active": 0,
+        "moving": 1,
+        "fraction": 1.0,
+        "rotation_fraction": 1.0,
+        "position_fraction": 1.0,
+        "angle": 0.0,
+        "frame_dt": 0.017,
+        "player_position": [
+          -1109,
+          -145,
+          4397
+        ],
+        "player_basis": [
+          0.6967067122459412,
+          0,
+          -0.7173560857772827,
+          0,
+          1,
+          0,
+          0.7173560857772827,
+          0,
+          0.6967067122459412
+        ],
+        "tool_offset": [
+          0,
+          0,
+          0
+        ],
+        "tool_rotation": [
+          0,
+          0,
+          0
+        ],
+        "position_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "target_endpoint": [
+          0,
+          0,
+          0
+        ],
+        "actions": 0,
+        "follower_flags": 46,
+        "follower_held": 1,
+        "follower_allow": 0,
+        "follower_resume": 0,
+        "follower_thresholds": [
+          20,
+          1000,
+          20
+        ],
+        "follower_settling": [
+          0.05,
+          0,
+          0.05
+        ],
+        "follower_smoothing": [
+          0,
+          0.05,
+          0
+        ]
+      },
+      "result": {
+        "args": [
+          1,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0
+        ],
+        "head_motion_mode": 2,
+        "matrix_bits": [
+          5110832,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          0,
+          0,
+          1065353216,
+          0,
+          1116471296,
+          0,
+          1065353216,
+          1065353216,
+          1065353216
+        ],
+        "follower_position_bits": [
+          3297419264,
+          3264610304,
+          1166632960
+        ],
+        "follower_basis_bits": [
+          1060264799,
+          0,
+          3208094886,
+          0,
+          1065353216,
+          0,
+          1060611238,
+          0,
+          1060264799
+        ],
+        "head_offset_bits": [
+          0,
+          1116471296,
+          0
+        ],
+        "follower_state": [
+          1,
+          0,
+          0
+        ],
+        "head_motion_bits": [
+          0,
+          0,
+          0
+        ],
+        "orientation_stages": [
+          {
+            "address": 4809232,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809568,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4811600,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          },
+          {
+            "address": 4809904,
+            "basis": [
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "provenance": {
+    "entries": [
+      "004632D0",
+      "00463300"
+    ],
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "method": "Direct original x86 callback execution. Only audio service entries 004A11D0 and 004A1080 are stubbed; callback byte/deadline writes and helper-call conditions are observed. No RNG call occurs in the callbacks."
+  },
+  "samples": [
+    {
+      "input": {
+        "action": "begin",
+        "active": false,
+        "deadline": 0,
+        "now": 1000
+      },
+      "result": {
+        "active": 1,
+        "deadline": 1100,
+        "audio_calls": [
+          "004a11d0"
+        ],
+        "rng_draws": 0
+      }
+    },
+    {
+      "input": {
+        "action": "begin",
+        "active": true,
+        "deadline": 4294967280,
+        "now": 4294967280
+      },
+      "result": {
+        "active": 1,
+        "deadline": 84,
+        "audio_calls": [
+          "004a11d0"
+        ],
+        "rng_draws": 0
+      }
+    },
+    {
+      "input": {
+        "action": "end",
+        "active": true,
+        "deadline": 1100,
+        "now": 1150
+      },
+      "result": {
+        "active": 0,
+        "deadline": 1100,
+        "audio_calls": [
+          "004a1080"
+        ],
+        "rng_draws": 0
+      }
+    },
+    {
+      "input": {
+        "action": "end",
+        "active": false,
+        "deadline": 3735928559,
+        "now": 2147483648
+      },
+      "result": {
+        "active": 0,
+        "deadline": 3735928559,
+        "audio_calls": [],
+        "rng_draws": 0
+      }
+    },
+    {
+      "input": {
+        "action": "end",
+        "active": true,
+        "deadline": 4294967295,
+        "now": 0
+      },
+      "result": {
+        "active": 0,
+        "deadline": 4294967295,
+        "audio_calls": [
+          "004a1080"
+        ],
+        "rng_draws": 0
+      }
+    }
+  ]
+}

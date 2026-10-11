@@ -6,6 +6,10 @@ Interactive 2D/3D maps with entity labels, triggers, collision overlays, and ori
 
 **Local:** run `./map_explorer/start.sh`, then open http://127.0.0.1:4180.
 
+## Native Training reconstruction
+
+The C++ Training reconstruction and its progress viewer are in [`decomp/`](decomp/README.md). Its public mirror preserves native source, analysis tools, authored findings and numeric comparison fixtures; local retail files, extracted game assets, Ghidra databases and raw instruction exports remain in the working copy.
+
 ## How hosting works
 
 The live site's files and map data are **stored on Cloudflare**. GitHub holds the source and a copy of the data; visitors do not load files from GitHub.

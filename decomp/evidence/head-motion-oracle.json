@@ -1,0 +1,7843 @@
+{
+  "provenance": {
+    "entry": "00491140",
+    "constructor": "00491460",
+    "constructor_caller": "00453D50",
+    "shake_start": "00490E60",
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "method": "Original x86 head-motion update and shake start executed. The five mode records and initial phases are initialized from the exact 00491460 constructor stores (including 0042D280 input (8,15,4)); a one-slot history buffer is a fixture because 0048D6B0 only records outputs and does not feed phase/output calculation. No RNG calls occur in this component."
+  },
+  "sequences": [
+    {
+      "name": "constructor-to-mode-0",
+      "frames": [
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1067461263,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1097892626,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1067461263,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1066575230,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1097961832,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1066575230,
+              1067461263,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1066547709,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1097963929,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1066547709,
+              1066575230,
+              1067461263
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1061888428,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098173644,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1061888428,
+              1066547709,
+              1066575230
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3191617859,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098697932,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3191617859,
+              1061888428,
+              1066547709
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3191617859,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098697932,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3191617859,
+              3191617859,
+              1061888428
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3195887548,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098731486,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3195887548,
+              3191617859,
+              3191617859
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3200347488,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098800692,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3200347488,
+              3195887548,
+              3191617859
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3200479255,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098802789,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3200479255,
+              3200347488,
+              3195887548
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3208879790,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1098960076,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3208879790,
+              3200479255,
+              3200347488
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3217506821,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099222220,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217506821,
+              3208879790,
+              3200479255
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3217506821,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099222220,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217506821,
+              3217506821,
+              3208879790
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3217837137,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099238997,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217837137,
+              3217506821,
+              3217506821
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3218474765,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099273600,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3218474765,
+              3217837137,
+              3217506821
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3218493154,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099274649,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3218493154,
+              3218474765,
+              3217837137
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3220036368,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099379507,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3220036368,
+              3218493154,
+              3218474765
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3221102318,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099641651,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221102318,
+              3220036368,
+              3218493154
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3221102318,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099641651,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221102318,
+              3221102318,
+              3220036368
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3221028873,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099658428,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221028873,
+              3221102318,
+              3221102318
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3220823878,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099693031,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3220823878,
+              3221028873,
+              3221102318
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3220816544,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099694080,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3220816544,
+              3220823878,
+              3221028873
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3219758844,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1099798938,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3219758844,
+              3220816544,
+              3220823878
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3214595657,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100061082,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3214595657,
+              3219758844,
+              3220816544
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3214595657,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100061082,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3214595657,
+              3214595657,
+              3219758844
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3214163002,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100077859,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3214163002,
+              3214595657,
+              3214595657
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3213239731,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100112462,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3213239731,
+              3214163002,
+              3214595657
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3213211124,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100113511,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3213211124,
+              3213239731,
+              3214163002
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3207551330,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100218369,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3207551330,
+              3213211124,
+              3213239731
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1050245608,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100480513,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1050245608,
+              3207551330,
+              3213211124
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1050245608,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100480513,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1050245608,
+              1050245608,
+              3207551330
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1052363295,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100497290,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1052363295,
+              1050245608,
+              1050245608
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1056689297,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100531893,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1056689297,
+              1052363295,
+              1050245608
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1056819413,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100532942,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1056819413,
+              1056689297,
+              1052363295
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1063184530,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100637800,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1063184530,
+              1056819413,
+              1056689297
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1070615818,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100899944,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1070615818,
+              1063184530,
+              1056819413
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1070615818,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100899944,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1070615818,
+              1070615818,
+              1063184530
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1070920865,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100916721,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1070920865,
+              1070615818,
+              1070615818
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1071504571,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100951324,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1071504571,
+              1070920865,
+              1070615818
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1071521289,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1100952373,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1071521289,
+              1071504571,
+              1070920865
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1072888298,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101057231,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1072888298,
+              1071521289,
+              1071504571
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1073471811,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101319375,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073471811,
+              1072888298,
+              1071521289
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1073471811,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101319375,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073471811,
+              1073471811,
+              1072888298
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1073367445,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101336152,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073367445,
+              1073471811,
+              1073471811
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1073099287,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101370755,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073099287,
+              1073367445,
+              1073471811
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1073090054,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101371804,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073090054,
+              1073099287,
+              1073367445
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1071848600,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101476662,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1071848600,
+              1073090054,
+              1073099287
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1066314729,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101738806,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1066314729,
+              1071848600,
+              1073090054
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1066314729,
+              0
+            ],
+            "phase_bits": [
+              1090519040,
+              1101738806,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1066314729,
+              1066314729,
+              1071848600
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "constructor-to-mode-1",
+      "frames": [
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1063230314,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076634339,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1063230314,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3023813934,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3023813934,
+              1063230314,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3032202542,
+              3035278458,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3035278458,
+              3023813934,
+              1063230314
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3233260711,
+              3231706761,
+              0
+            ],
+            "phase_bits": [
+              1075297057,
+              1083685665,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231706761,
+              3035278458,
+              3023813934
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224077205,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1082908048,
+              1091296656,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1086980449,
+              3231706761,
+              3035278458
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224077205,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1082908048,
+              1091296656,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1086980449,
+              1086980449,
+              3231706761
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3218673497,
+              1082430562,
+              0
+            ],
+            "phase_bits": [
+              1083176483,
+              1091565091,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082430562,
+              1086980449,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1053712674,
+              3204502212,
+              0
+            ],
+            "phase_bits": [
+              1083730131,
+              1092118739,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3204502212,
+              1082430562,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1055856947,
+              3205836420,
+              0
+            ],
+            "phase_bits": [
+              1083746908,
+              1092135516,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3205836420,
+              3204502212,
+              1082430562
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1086438859,
+              3231599646,
+              0
+            ],
+            "phase_bits": [
+              1085424630,
+              1093813238,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231599646,
+              3205836420,
+              3204502212
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1074728854,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1089618934,
+              1098007542,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1084994585,
+              3231599646,
+              3205836420
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1074728854,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1089618934,
+              1098007542,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1084994585,
+              1084994585,
+              3231599646
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1067337203,
+              1078163148,
+              0
+            ],
+            "phase_bits": [
+              1089887369,
+              1098275977,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1078163148,
+              1084994585,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3210635625,
+              3213504361,
+              0
+            ],
+            "phase_bits": [
+              1090441017,
+              1098829625,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3213504361,
+              1078163148,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3211702525,
+              3214158425,
+              0
+            ],
+            "phase_bits": [
+              1090457794,
+              1098846402,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3214158425,
+              3213504361,
+              1078163148
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3234541004,
+              3231351130,
+              0
+            ],
+            "phase_bits": [
+              1091327278,
+              1099715886,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231351130,
+              3214158425,
+              3213504361
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3219406178,
+              1082855345,
+              0
+            ],
+            "phase_bits": [
+              1093424430,
+              1101813038,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1082855345,
+              3231351130,
+              3214158425
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3219406178,
+              1082855345,
+              0
+            ],
+            "phase_bits": [
+              1093424430,
+              1101813038,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082855345,
+              1082855345,
+              3231351130
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3209028732,
+              1073100104,
+              0
+            ],
+            "phase_bits": [
+              1093558648,
+              1101947256,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073100104,
+              1082855345,
+              1082855345
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1068134441,
+              3218215787,
+              0
+            ],
+            "phase_bits": [
+              1093835472,
+              1102224080,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3218215787,
+              1073100104,
+              1082855345
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1068663485,
+              3218847933,
+              0
+            ],
+            "phase_bits": [
+              1093843861,
+              1102232469,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3218847933,
+              3218215787,
+              1073100104
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1087630450,
+              3230964594,
+              0
+            ],
+            "phase_bits": [
+              1094682722,
+              1103071330,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3230964594,
+              3218847933,
+              3218215787
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1068078099,
+              1079053266,
+              0
+            ],
+            "phase_bits": [
+              1096779874,
+              1105168482,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1079053266,
+              3230964594,
+              3218847933
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1068078099,
+              1079053266,
+              0
+            ],
+            "phase_bits": [
+              1096779874,
+              1105168482,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1079053266,
+              1079053266,
+              3230964594
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1050484759,
+              1061438235,
+              0
+            ],
+            "phase_bits": [
+              1096914092,
+              1105302700,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1061438235,
+              1079053266,
+              1079053266
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3219461870,
+              3221982533,
+              0
+            ],
+            "phase_bits": [
+              1097190916,
+              1105579524,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221982533,
+              1061438235,
+              1079053266
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3219984672,
+              3222283319,
+              0
+            ],
+            "phase_bits": [
+              1097199305,
+              1105587913,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3222283319,
+              3221982533,
+              1061438235
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3235639824,
+              3230445308,
+              0
+            ],
+            "phase_bits": [
+              1098038166,
+              1106426774,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3230445308,
+              3222283319,
+              3221982533
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3210521962,
+              1074339535,
+              0
+            ],
+            "phase_bits": [
+              1099521483,
+              1107910091,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1074339535,
+              3230445308,
+              3222283319
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3210521962,
+              1074339535,
+              0
+            ],
+            "phase_bits": [
+              1099521483,
+              1107910091,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1074339535,
+              1074339535,
+              3230445308
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1042555890,
+              3192726115,
+              0
+            ],
+            "phase_bits": [
+              1099588592,
+              1107977200,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3192726115,
+              1074339535,
+              1074339535
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1074756311,
+              3224119776,
+              0
+            ],
+            "phase_bits": [
+              1099727004,
+              1108115612,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3224119776,
+              3192726115,
+              1074339535
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1075013669,
+              3224401142,
+              0
+            ],
+            "phase_bits": [
+              1099731198,
+              1108119806,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3224401142,
+              3224119776,
+              3192726115
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1088632727,
+              3229800374,
+              0
+            ],
+            "phase_bits": [
+              1100150628,
+              1108539236,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3229800374,
+              3224401142,
+              3224119776
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1053484547,
+              1065177039,
+              0
+            ],
+            "phase_bits": [
+              1101199204,
+              1109587812,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1065177039,
+              3229800374,
+              3224401142
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1053484547,
+              1065177039,
+              0
+            ],
+            "phase_bits": [
+              1101199204,
+              1109587812,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1065177039,
+              1065177039,
+              3229800374
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3206577458,
+              3209166480,
+              0
+            ],
+            "phase_bits": [
+              1101266313,
+              1109654921,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3209166480,
+              1065177039,
+              1065177039
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224104118,
+              3226103165,
+              0
+            ],
+            "phase_bits": [
+              1101404725,
+              1109793333,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3226103165,
+              3209166480,
+              1065177039
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224356586,
+              3226361313,
+              0
+            ],
+            "phase_bits": [
+              1101408919,
+              1109797527,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3226361313,
+              3226103165,
+              3209166480
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3236542143,
+              3228463055,
+              0
+            ],
+            "phase_bits": [
+              1101828349,
+              1110216957,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3228463055,
+              3226361313,
+              3226103165
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1032912836,
+              3182771684,
+              0
+            ],
+            "phase_bits": [
+              1102876925,
+              1111265533,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              3182771684,
+              3228463055,
+              3226361313
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1032912836,
+              3182771684,
+              0
+            ],
+            "phase_bits": [
+              1102876925,
+              1111265533,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3182771684,
+              3182771684,
+              3228463055
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1066119845,
+              3215785307,
+              0
+            ],
+            "phase_bits": [
+              1102944034,
+              1111332642,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3215785307,
+              3182771684,
+              3182771684
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1078446203,
+              3227905739,
+              0
+            ],
+            "phase_bits": [
+              1103082446,
+              1111471054,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3227905739,
+              3215785307,
+              3182771684
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1078692920,
+              3228137150,
+              0
+            ],
+            "phase_bits": [
+              1103086640,
+              1111475248,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3228137150,
+              3227905739,
+              3215785307
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1089432028,
+              3226726462,
+              0
+            ],
+            "phase_bits": [
+              1103506070,
+              1111894678,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              3226726462,
+              3228137150,
+              3227905739
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3205079840,
+              3207309396,
+              0
+            ],
+            "phase_bits": [
+              1104554646,
+              1112943254,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3207309396,
+              3226726462,
+              3228137150
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3205079840,
+              3207309396,
+              0
+            ],
+            "phase_bits": [
+              1104554646,
+              1112943254,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3207309396,
+              3207309396,
+              3226726462
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "constructor-to-mode-2",
+      "frames": [
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1065704695,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076231686,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1065704695,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1054699122,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1077615806,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1054699122,
+              1065704695,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1054043197,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1077657749,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1054043197,
+              1054699122,
+              1065704695
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3023813934,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3023813934,
+              1054043197,
+              1054699122
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              2147483648,
+              3023813934,
+              1054043197
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              3023813934
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "constructor-to-mode-3",
+      "frames": [
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1063230314,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076634339,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1063230314,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3023813934,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3023813934,
+              1063230314,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3035278458,
+              3035278458,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3035278458,
+              3023813934,
+              1063230314
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239387218,
+              3231706761,
+              0
+            ],
+            "phase_bits": [
+              1076974778,
+              1083685665,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231706761,
+              3035278458,
+              3023813934
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1091269566,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1085844061,
+              1091296656,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1086980449,
+              3231706761,
+              3035278458
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1091269566,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1085844061,
+              1091296656,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1086980449,
+              1086980449,
+              3231706761
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092082603,
+              1082430562,
+              0
+            ],
+            "phase_bits": [
+              1086246714,
+              1091565091,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082430562,
+              1086980449,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092586233,
+              3204502212,
+              0
+            ],
+            "phase_bits": [
+              1087077186,
+              1092118739,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3204502212,
+              1082430562,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092575975,
+              3205836420,
+              0
+            ],
+            "phase_bits": [
+              1087102352,
+              1092135516,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3205836420,
+              3204502212,
+              1082430562
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1077072764,
+              3231599646,
+              0
+            ],
+            "phase_bits": [
+              1089618934,
+              1093813238,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231599646,
+              3205836420,
+              3204502212
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3229868229,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1093214715,
+              1098007542,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1084994585,
+              3231599646,
+              3205836420
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3229868229,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1093214715,
+              1098007542,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1084994585,
+              1084994585,
+              3231599646
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3222512342,
+              1078163148,
+              0
+            ],
+            "phase_bits": [
+              1093416042,
+              1098275977,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1078163148,
+              1084994585,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1070595949,
+              3213504361,
+              0
+            ],
+            "phase_bits": [
+              1093831278,
+              1098829625,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3213504361,
+              1078163148,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1071588204,
+              3214158425,
+              0
+            ],
+            "phase_bits": [
+              1093843861,
+              1098846402,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3214158425,
+              3213504361,
+              1078163148
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092416294,
+              3231351130,
+              0
+            ],
+            "phase_bits": [
+              1095102152,
+              1099715886,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231351130,
+              3214158425,
+              3213504361
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239509446,
+              1082855345,
+              0
+            ],
+            "phase_bits": [
+              1098247880,
+              1101813038,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1082855345,
+              3231351130,
+              3214158425
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239509446,
+              1082855345,
+              0
+            ],
+            "phase_bits": [
+              1098247880,
+              1101813038,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082855345,
+              1082855345,
+              3231351130
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239989549,
+              1073100104,
+              0
+            ],
+            "phase_bits": [
+              1098449207,
+              1101947256,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073100104,
+              1082855345,
+              1082855345
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239771698,
+              3218215787,
+              0
+            ],
+            "phase_bits": [
+              1098864443,
+              1102224080,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3218215787,
+              1073100104,
+              1082855345
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239739735,
+              3218847933,
+              0
+            ],
+            "phase_bits": [
+              1098877026,
+              1102232469,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3218847933,
+              3218215787,
+              1073100104
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3213487202,
+              3230964594,
+              0
+            ],
+            "phase_bits": [
+              1099521483,
+              1103071330,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3230964594,
+              3218847933,
+              3218215787
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1075712001,
+              1079053266,
+              0
+            ],
+            "phase_bits": [
+              1101094347,
+              1105168482,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1079053266,
+              3230964594,
+              3218847933
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1075712001,
+              1079053266,
+              0
+            ],
+            "phase_bits": [
+              1101094347,
+              1105168482,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1079053266,
+              1079053266,
+              3230964594
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1058226874,
+              1061438235,
+              0
+            ],
+            "phase_bits": [
+              1101195010,
+              1105302700,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1061438235,
+              1079053266,
+              1079053266
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3226762800,
+              3221982533,
+              0
+            ],
+            "phase_bits": [
+              1101402628,
+              1105579524,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221982533,
+              1061438235,
+              1079053266
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3227236516,
+              3222283319,
+              0
+            ],
+            "phase_bits": [
+              1101408919,
+              1105587913,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3222283319,
+              3221982533,
+              1061438235
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3240097668,
+              3230445308,
+              0
+            ],
+            "phase_bits": [
+              1102038065,
+              1106426774,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3230445308,
+              3222283319,
+              3221982533
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092478992,
+              1074339535,
+              0
+            ],
+            "phase_bits": [
+              1103610929,
+              1107910091,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1074339535,
+              3230445308,
+              3222283319
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092478992,
+              1074339535,
+              0
+            ],
+            "phase_bits": [
+              1103610929,
+              1107910091,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1074339535,
+              1074339535,
+              3230445308
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092611457,
+              3192726115,
+              0
+            ],
+            "phase_bits": [
+              1103711592,
+              1107977200,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3192726115,
+              1074339535,
+              1074339535
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1091678800,
+              3224119776,
+              0
+            ],
+            "phase_bits": [
+              1103919210,
+              1108115612,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3224119776,
+              3192726115,
+              1074339535
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1091626115,
+              3224401142,
+              0
+            ],
+            "phase_bits": [
+              1103925501,
+              1108119806,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3224401142,
+              3224119776,
+              3192726115
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3207335207,
+              3229800374,
+              0
+            ],
+            "phase_bits": [
+              1104554647,
+              1108539236,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3229800374,
+              3224401142,
+              3224119776
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3208519407,
+              1065177039,
+              0
+            ],
+            "phase_bits": [
+              1106127511,
+              1109587812,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1065177039,
+              3229800374,
+              3224401142
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3208519407,
+              1065177039,
+              0
+            ],
+            "phase_bits": [
+              1106127511,
+              1109587812,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1065177039,
+              1065177039,
+              3229800374
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1066812307,
+              3209166480,
+              0
+            ],
+            "phase_bits": [
+              1106228174,
+              1109654921,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3209166480,
+              1065177039,
+              1065177039
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1084046653,
+              3226103165,
+              0
+            ],
+            "phase_bits": [
+              1106435792,
+              1109793333,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3226103165,
+              3209166480,
+              1065177039
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1084265072,
+              3226361313,
+              0
+            ],
+            "phase_bits": [
+              1106442083,
+              1109797527,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3226361313,
+              3226103165,
+              3209166480
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1092490697,
+              3228463055,
+              0
+            ],
+            "phase_bits": [
+              1107071229,
+              1110216957,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3228463055,
+              3226361313,
+              3226103165
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3240098916,
+              3182771684,
+              0
+            ],
+            "phase_bits": [
+              1107970174,
+              1111265533,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              3182771684,
+              3228463055,
+              3226361313
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3240098916,
+              3182771684,
+              0
+            ],
+            "phase_bits": [
+              1107970174,
+              1111265533,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3182771684,
+              3182771684,
+              3228463055
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239879690,
+              3215785307,
+              0
+            ],
+            "phase_bits": [
+              1108020506,
+              1111332642,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3215785307,
+              3182771684,
+              3182771684
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3238260794,
+              3227905739,
+              0
+            ],
+            "phase_bits": [
+              1108124315,
+              1111471054,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3227905739,
+              3215785307,
+              3182771684
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3238188986,
+              3228137150,
+              0
+            ],
+            "phase_bits": [
+              1108127461,
+              1111475248,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3228137150,
+              3227905739,
+              3215785307
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1075424221,
+              3226726462,
+              0
+            ],
+            "phase_bits": [
+              1108442034,
+              1111894678,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              3226726462,
+              3228137150,
+              3227905739
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3212897008,
+              3207309396,
+              0
+            ],
+            "phase_bits": [
+              1109228466,
+              1112943254,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3207309396,
+              3226726462,
+              3228137150
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3212897008,
+              3207309396,
+              0
+            ],
+            "phase_bits": [
+              1109228466,
+              1112943254,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3207309396,
+              3207309396,
+              3226726462
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "constructor-to-mode-4",
+      "frames": [
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1066602710,
+              0
+            ],
+            "phase_bits": [
+              1070560987,
+              1075963250,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1066602710,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1062072974,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076793722,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1062072974,
+              1066602710,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              1061888409,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076818888,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1061888409,
+              1062072974,
+              1066602710
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3023813934,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3023813934,
+              1061888409,
+              1062072974
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3023813934,
+              3030664585,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3030664585,
+              3023813934,
+              1061888409
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3023813934,
+              3030664585,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3030664585,
+              3030664585,
+              3023813934
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3204626150,
+              3210017613,
+              0
+            ],
+            "phase_bits": [
+              1071215145,
+              1079536644,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3210017613,
+              3030664585,
+              3030664585
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3217267310,
+              3222681126,
+              0
+            ],
+            "phase_bits": [
+              1073429738,
+              1081612824,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3222681126,
+              3210017613,
+              3030664585
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3217514972,
+              3222843366,
+              0
+            ],
+            "phase_bits": [
+              1073496847,
+              1081675739,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3222843366,
+              3222681126,
+              3210017613
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3228473886,
+              3224259025,
+              0
+            ],
+            "phase_bits": [
+              1076974779,
+              1085048814,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3224259025,
+              3222843366,
+              3222681126
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1047468594,
+              1073371939,
+              0
+            ],
+            "phase_bits": [
+              1083746910,
+              1091716087,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1073371939,
+              3224259025,
+              3222843366
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1047468594,
+              1073371939,
+              0
+            ],
+            "phase_bits": [
+              1083746910,
+              1091716087,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073371939,
+              1073371939,
+              3224259025
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1061013280,
+              1050327626,
+              0
+            ],
+            "phase_bits": [
+              1084015345,
+              1091967745,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1050327626,
+              1073371939,
+              1073371939
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1071571941,
+              3217266854,
+              0
+            ],
+            "phase_bits": [
+              1084568993,
+              1092486790,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217266854,
+              1050327626,
+              1073371939
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1071813132,
+              3217661616,
+              0
+            ],
+            "phase_bits": [
+              1084585770,
+              1092502519,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217661616,
+              3217266854,
+              1050327626
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1081318451,
+              3226380751,
+              0
+            ],
+            "phase_bits": [
+              1086263492,
+              1094075383,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3226380751,
+              3217661616,
+              3217266854
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3203314044,
+              1081107057,
+              0
+            ],
+            "phase_bits": [
+              1090457796,
+              1098007543,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1081107057,
+              3226380751,
+              3217661616
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3203314044,
+              1081107057,
+              0
+            ],
+            "phase_bits": [
+              1090457796,
+              1098007543,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1081107057,
+              1081107057,
+              3226380751
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3212325296,
+              1074766286,
+              0
+            ],
+            "phase_bits": [
+              1090622636,
+              1098259201,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1074766286,
+              1081107057,
+              1081107057
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3220794057,
+              3205914746,
+              0
+            ],
+            "phase_bits": [
+              1090899460,
+              1098778246,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3205914746,
+              1074766286,
+              1081107057
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3221027973,
+              3206781935,
+              0
+            ],
+            "phase_bits": [
+              1090907849,
+              1098793975,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3206781935,
+              3205914746,
+              1074766286
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3229075866,
+              3227423577,
+              0
+            ],
+            "phase_bits": [
+              1091746710,
+              1099637244,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3227423577,
+              3206781935,
+              3205914746
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1060274940,
+              1084766352,
+              0
+            ],
+            "phase_bits": [
+              1093843862,
+              1101603324,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1084766352,
+              3227423577,
+              3206781935
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1060274940,
+              1084766352,
+              0
+            ],
+            "phase_bits": [
+              1093843862,
+              1101603324,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1084766352,
+              1084766352,
+              3227423577
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1066983895,
+              1082146198,
+              0
+            ],
+            "phase_bits": [
+              1093978080,
+              1101729153,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082146198,
+              1084766352,
+              1084766352
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1074367484,
+              1061999880,
+              0
+            ],
+            "phase_bits": [
+              1094254904,
+              1101988676,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1061999880,
+              1082146198,
+              1084766352
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1074480398,
+              1060248445,
+              0
+            ],
+            "phase_bits": [
+              1094263293,
+              1101996540,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1060248445,
+              1061999880,
+              1082146198
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1081810601,
+              3227304439,
+              0
+            ],
+            "phase_bits": [
+              1095102154,
+              1102782972,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3227304439,
+              1060248445,
+              1061999880
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3211596126,
+              1087035764,
+              0
+            ],
+            "phase_bits": [
+              1097199306,
+              1104749052,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1087035764,
+              3227304439,
+              1060248445
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3211596126,
+              1087035764,
+              0
+            ],
+            "phase_bits": [
+              1097199306,
+              1104749052,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1087035764,
+              1087035764,
+              3227304439
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3216319835,
+              1085174563,
+              0
+            ],
+            "phase_bits": [
+              1097333524,
+              1104874881,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1085174563,
+              1087035764,
+              1087035764
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3222661756,
+              1076725425,
+              0
+            ],
+            "phase_bits": [
+              1097610348,
+              1105134404,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1076725425,
+              1085174563,
+              1087035764
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3222770241,
+              1076318154,
+              0
+            ],
+            "phase_bits": [
+              1097618737,
+              1105142268,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1076318154,
+              1076725425,
+              1085174563
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3229456503,
+              3226032822,
+              0
+            ],
+            "phase_bits": [
+              1098457598,
+              1105928700,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3226032822,
+              1076318154,
+              1076725425
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1066625122,
+              1088246189,
+              0
+            ],
+            "phase_bits": [
+              1099731199,
+              1107595518,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1088246189,
+              3226032822,
+              1076318154
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1066625122,
+              1088246189,
+              0
+            ],
+            "phase_bits": [
+              1099731199,
+              1107595518,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1088246189,
+              1088246189,
+              3226032822
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1070647990,
+              1087292191,
+              0
+            ],
+            "phase_bits": [
+              1099798308,
+              1107658433,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1087292191,
+              1088246189,
+              1088246189
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1075955223,
+              1082983097,
+              0
+            ],
+            "phase_bits": [
+              1099936720,
+              1107788194,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082983097,
+              1087292191,
+              1088246189
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1076058898,
+              1082810976,
+              0
+            ],
+            "phase_bits": [
+              1099940914,
+              1107792126,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082810976,
+              1082983097,
+              1087292191
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1082078426,
+              3223710023,
+              0
+            ],
+            "phase_bits": [
+              1100360344,
+              1108185342,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3223710023,
+              1082810976,
+              1082983097
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3215968038,
+              1088301203,
+              0
+            ],
+            "phase_bits": [
+              1101408920,
+              1109168382,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1088301203,
+              3223710023,
+              1082810976
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3215968038,
+              1088301203,
+              0
+            ],
+            "phase_bits": [
+              1101408920,
+              1109168382,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1088301203,
+              1088301203,
+              3223710023
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3219896716,
+              1088330423,
+              0
+            ],
+            "phase_bits": [
+              1101476029,
+              1109231297,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1088330423,
+              1088301203,
+              1088301203
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224179805,
+              1085802110,
+              0
+            ],
+            "phase_bits": [
+              1101614441,
+              1109361058,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1085802110,
+              1088330423,
+              1088301203
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224278327,
+              1085675216,
+              0
+            ],
+            "phase_bits": [
+              1101618635,
+              1109364990,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1085675216,
+              1085802110,
+              1088330423
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3229610606,
+              3219816677,
+              0
+            ],
+            "phase_bits": [
+              1102038065,
+              1109758206,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3219816677,
+              1085675216,
+              1085802110
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1070304371,
+              1087196426,
+              0
+            ],
+            "phase_bits": [
+              1103086641,
+              1110741246,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1087196426,
+              3219816677,
+              1085675216
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1070304371,
+              1087196426,
+              0
+            ],
+            "phase_bits": [
+              1103086641,
+              1110741246,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1087196426,
+              1087196426,
+              3219816677
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "mode-switches-and-shake",
+      "frames": [
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": 1101004800,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3221382394,
+              0
+            ],
+            "phase_bits": [
+              1070560987,
+              1075963250,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 1,
+            "shake_phase_bits": 1042536203,
+            "trend": 0,
+            "previous_y_bits": [
+              3221382394,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3238640260,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076793722,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 1,
+            "shake_phase_bits": 1056629064,
+            "trend": 0,
+            "previous_y_bits": [
+              3238640260,
+              3221382394,
+              0
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3238836337,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1076818888,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 1,
+            "shake_phase_bits": 1056964608,
+            "trend": 0,
+            "previous_y_bits": [
+              3238836337,
+              3238640260,
+              3221382394
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3248462181,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 1,
+            "shake_phase_bits": 1069547520,
+            "trend": 0,
+            "previous_y_bits": [
+              3248462181,
+              3238836337,
+              3238640260
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3023813934,
+              1081224513,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 1,
+            "shake_phase_bits": 1082130432,
+            "trend": 1,
+            "previous_y_bits": [
+              1081224513,
+              3248462181,
+              3238836337
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3023813934,
+              1081224513,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 1,
+            "shake_phase_bits": 1082130432,
+            "trend": 0,
+            "previous_y_bits": [
+              1081224513,
+              1081224513,
+              3248462181
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3204626150,
+              1079716220,
+              0
+            ],
+            "phase_bits": [
+              1071215145,
+              1079536644,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 1,
+            "shake_phase_bits": 1082465976,
+            "trend": 0,
+            "previous_y_bits": [
+              1079716220,
+              1081224513,
+              1081224513
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3217267310,
+              1075964014,
+              0
+            ],
+            "phase_bits": [
+              1073429738,
+              1081612824,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 1,
+            "shake_phase_bits": 1083158036,
+            "trend": 0,
+            "previous_y_bits": [
+              1075964014,
+              1079716220,
+              1081224513
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3217514972,
+              1075847006,
+              0
+            ],
+            "phase_bits": [
+              1073496847,
+              1081675739,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 1,
+            "shake_phase_bits": 1083179008,
+            "trend": 0,
+            "previous_y_bits": [
+              1075847006,
+              1075964014,
+              1079716220
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3228473886,
+              1062072368,
+              0
+            ],
+            "phase_bits": [
+              1076974779,
+              1085048814,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 1,
+            "shake_phase_bits": 1085276160,
+            "trend": 0,
+            "previous_y_bits": [
+              1062072368,
+              1075847006,
+              1075964014
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1047468594,
+              1073371939,
+              0
+            ],
+            "phase_bits": [
+              1083746910,
+              1091716087,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1073371939,
+              1062072368,
+              1075847006
+            ]
+          }
+        },
+        {
+          "mode": 4,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1047468594,
+              1073371939,
+              0
+            ],
+            "phase_bits": [
+              1083746910,
+              1091716087,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1073371939,
+              1073371939,
+              1062072368
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              860675630,
+              1044567634,
+              0
+            ],
+            "phase_bits": [
+              1083624420,
+              1078415989,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1044567634,
+              1073371939,
+              1073371939
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              860675630,
+              3030664585,
+              0
+            ],
+            "phase_bits": [
+              1083624420,
+              1078530011,
+              1082130432
+            ],
+            "mode": 4,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3030664585,
+              1044567634,
+              1073371939
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              869064238,
+              3035278458,
+              0
+            ],
+            "phase_bits": [
+              1083624420,
+              1078530011,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3035278458,
+              3030664585,
+              1044567634
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1085777064,
+              3231706761,
+              0
+            ],
+            "phase_bits": [
+              1085302142,
+              1083685665,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231706761,
+              3035278458,
+              3030664585
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1076593547,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1089496446,
+              1091296656,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1086980449,
+              3231706761,
+              3035278458
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1076593547,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1089496446,
+              1091296656,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1086980449,
+              1086980449,
+              3231706761
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1071189827,
+              1082430562,
+              0
+            ],
+            "phase_bits": [
+              1089764881,
+              1091565091,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082430562,
+              1086980449,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3201196409,
+              3204502212,
+              0
+            ],
+            "phase_bits": [
+              1090318529,
+              1092118739,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3204502212,
+              1082430562,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3203340682,
+              3205836420,
+              0
+            ],
+            "phase_bits": [
+              1090335306,
+              1092135516,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3205836420,
+              3204502212,
+              1082430562
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3233922511,
+              3231599646,
+              0
+            ],
+            "phase_bits": [
+              1091266034,
+              1093813238,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231599646,
+              3205836420,
+              3204502212
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3222212492,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1093363186,
+              1098007542,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1084994585,
+              3231599646,
+              3205836420
+            ]
+          }
+        },
+        {
+          "mode": 1,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3222212492,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1093363186,
+              1098007542,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1084994585,
+              1084994585,
+              3231599646
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3193875700,
+              1078163133,
+              0
+            ],
+            "phase_bits": [
+              1083567408,
+              1077228219,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1078163133,
+              1084994585,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              869064238,
+              3035278458,
+              0
+            ],
+            "phase_bits": [
+              1083624420,
+              1078530011,
+              1082130432
+            ],
+            "mode": 1,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3035278458,
+              1078163133,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              872418013,
+              3035278458,
+              0
+            ],
+            "phase_bits": [
+              1083624420,
+              1078530011,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3035278458,
+              3035278458,
+              1078163133
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1091903569,
+              3231706761,
+              0
+            ],
+            "phase_bits": [
+              1086141002,
+              1083685665,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231706761,
+              3035278458,
+              3035278458
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3238753213,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1091475749,
+              1091296656,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1086980449,
+              3231706761,
+              3035278458
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3238753213,
+              1086980449,
+              0
+            ],
+            "phase_bits": [
+              1091475749,
+              1091296656,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1086980449,
+              1086980449,
+              3231706761
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3239566252,
+              1082430562,
+              0
+            ],
+            "phase_bits": [
+              1091677076,
+              1091565091,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1082430562,
+              1086980449,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3240069881,
+              3204502212,
+              0
+            ],
+            "phase_bits": [
+              1092092312,
+              1092118739,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3204502212,
+              1082430562,
+              1086980449
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3240059623,
+              3205836420,
+              0
+            ],
+            "phase_bits": [
+              1092104895,
+              1092135516,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3205836420,
+              3204502212,
+              1082430562
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3224556399,
+              3231599646,
+              0
+            ],
+            "phase_bits": [
+              1093363186,
+              1093813238,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3231599646,
+              3205836420,
+              3204502212
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1082384575,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1096508914,
+              1098007542,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              1084994585,
+              3231599646,
+              3205836420
+            ]
+          }
+        },
+        {
+          "mode": 3,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1082384575,
+              1084994585,
+              0
+            ],
+            "phase_bits": [
+              1096508914,
+              1098007542,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1084994585,
+              1084994585,
+              3231599646
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              1076329499,
+              1081932407,
+              0
+            ],
+            "phase_bits": [
+              1067920284,
+              1076825566,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1081932407,
+              1084994585,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3035278458,
+              1061376533,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078209686,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1061376533,
+              1081932407,
+              1084994585
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3035278458,
+              1059703092,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078251629,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              1059703092,
+              1061376533,
+              1081932407
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              3035278458,
+              3035278458,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 3,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3035278458,
+              1059703092,
+              1061376533
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 1,
+            "previous_y_bits": [
+              2147483648,
+              3035278458,
+              1059703092
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              3035278458
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 2,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              2147483648,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 2,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              2147483648,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3023813934,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078530011,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3023813934,
+              2147483648,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3188134382,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078806835,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3188134382,
+              3023813934,
+              2147483648
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3188402228,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1078815224,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3188402228,
+              3188134382,
+              3023813934
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3204944981,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1079654085,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3204944981,
+              3188402228,
+              3188134382
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3216103357,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1081751237,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3216103357,
+              3204944981,
+              3188402228
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3216103357,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1081751237,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3216103357,
+              3216103357,
+              3204944981
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1015222895,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3216483497,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1081885455,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3216483497,
+              3216103357,
+              3216103357
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1023879938,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3217228197,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1082146356,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217228197,
+              3216483497,
+              3216103357
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 981668463,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3217249909,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1082150550,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3217249909,
+              3217228197,
+              3216483497
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1036831949,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3219149100,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1082569980,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3219149100,
+              3217249909,
+              3217228197
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 1048576000,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3221225406,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1083618556,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221225406,
+              3219149100,
+              3217249909
+            ]
+          }
+        },
+        {
+          "mode": 0,
+          "dt_bits": 0,
+          "shake_bits": null,
+          "result": {
+            "output_bits": [
+              2147483648,
+              3221225406,
+              0
+            ],
+            "phase_bits": [
+              1070141403,
+              1083618556,
+              1082130432
+            ],
+            "mode": 0,
+            "shake_active": 0,
+            "shake_phase_bits": 0,
+            "trend": 0,
+            "previous_y_bits": [
+              3221225406,
+              3221225406,
+              3219149100
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "draws": 0
+}

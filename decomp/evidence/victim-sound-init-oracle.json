@@ -1,0 +1,808 @@
+{
+  "provenance": {
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "entry": "0048E080",
+    "stop_before": "0048E0EF",
+    "method": "Original sound constructor through timer store, with original TSound initialization and RNG; resource-loading remainder not executed"
+  },
+  "samples": [
+    {
+      "seed": 0,
+      "advance": 0,
+      "deadline": 2696,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 0,
+      "advance": 623,
+      "deadline": 2939,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 0,
+      "advance": 624,
+      "deadline": 602,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 1,
+      "advance": 0,
+      "deadline": 2696,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 1,
+      "advance": 623,
+      "deadline": 2939,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 1,
+      "advance": 624,
+      "deadline": 602,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 4357,
+      "advance": 0,
+      "deadline": 2364,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 4357,
+      "advance": 623,
+      "deadline": 639,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 4357,
+      "advance": 624,
+      "deadline": 4485,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 2002,
+      "advance": 0,
+      "deadline": 1228,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 2002,
+      "advance": 623,
+      "deadline": 936,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 2002,
+      "advance": 624,
+      "deadline": 151,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 4294967295,
+      "advance": 0,
+      "deadline": 3649,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 4294967295,
+      "advance": 623,
+      "deadline": 4106,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 4294967295,
+      "advance": 624,
+      "deadline": 1741,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 305419896,
+      "advance": 0,
+      "deadline": 2131,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 305419896,
+      "advance": 623,
+      "deadline": 2726,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 305419896,
+      "advance": 624,
+      "deadline": 4790,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 0,
+      "advance": 0,
+      "deadline": 2696,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 0,
+      "advance": 623,
+      "deadline": 2939,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 0,
+      "advance": 624,
+      "deadline": 602,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 16843009,
+      "advance": 0,
+      "deadline": 2156,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 16843009,
+      "advance": 623,
+      "deadline": 2268,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 16843009,
+      "advance": 624,
+      "deadline": 4476,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 33686018,
+      "advance": 0,
+      "deadline": 3790,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 33686018,
+      "advance": 623,
+      "deadline": 3329,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 33686018,
+      "advance": 624,
+      "deadline": 3755,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 50529027,
+      "advance": 0,
+      "deadline": 4745,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 50529027,
+      "advance": 623,
+      "deadline": 4658,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 50529027,
+      "advance": 624,
+      "deadline": 3774,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 67372036,
+      "advance": 0,
+      "deadline": 371,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 67372036,
+      "advance": 623,
+      "deadline": 4128,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 67372036,
+      "advance": 624,
+      "deadline": 3402,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 84215045,
+      "advance": 0,
+      "deadline": 2135,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 84215045,
+      "advance": 623,
+      "deadline": 3839,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 84215045,
+      "advance": 624,
+      "deadline": 4146,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 101058054,
+      "advance": 0,
+      "deadline": 3875,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 101058054,
+      "advance": 623,
+      "deadline": 1062,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 101058054,
+      "advance": 624,
+      "deadline": 2443,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 117901063,
+      "advance": 0,
+      "deadline": 1415,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 117901063,
+      "advance": 623,
+      "deadline": 1677,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 117901063,
+      "advance": 624,
+      "deadline": 1839,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 134744072,
+      "advance": 0,
+      "deadline": 2480,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 134744072,
+      "advance": 623,
+      "deadline": 1827,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 134744072,
+      "advance": 624,
+      "deadline": 1603,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 151587081,
+      "advance": 0,
+      "deadline": 2553,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 151587081,
+      "advance": 623,
+      "deadline": 1236,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 151587081,
+      "advance": 624,
+      "deadline": 4768,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 168430090,
+      "advance": 0,
+      "deadline": 4482,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 168430090,
+      "advance": 623,
+      "deadline": 943,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 168430090,
+      "advance": 624,
+      "deadline": 332,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 185273099,
+      "advance": 0,
+      "deadline": 2353,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 185273099,
+      "advance": 623,
+      "deadline": 784,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 185273099,
+      "advance": 624,
+      "deadline": 1170,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 202116108,
+      "advance": 0,
+      "deadline": 2113,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 202116108,
+      "advance": 623,
+      "deadline": 4357,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 202116108,
+      "advance": 624,
+      "deadline": 4398,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 218959117,
+      "advance": 0,
+      "deadline": 797,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 218959117,
+      "advance": 623,
+      "deadline": 156,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 218959117,
+      "advance": 624,
+      "deadline": 1028,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 235802126,
+      "advance": 0,
+      "deadline": 3264,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 235802126,
+      "advance": 623,
+      "deadline": 4757,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 235802126,
+      "advance": 624,
+      "deadline": 1202,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 252645135,
+      "advance": 0,
+      "deadline": 3028,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 252645135,
+      "advance": 623,
+      "deadline": 1292,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 252645135,
+      "advance": 624,
+      "deadline": 438,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 269488144,
+      "advance": 0,
+      "deadline": 4512,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 269488144,
+      "advance": 623,
+      "deadline": 1598,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 269488144,
+      "advance": 624,
+      "deadline": 337,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 286331153,
+      "advance": 0,
+      "deadline": 4061,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 286331153,
+      "advance": 623,
+      "deadline": 4752,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 286331153,
+      "advance": 624,
+      "deadline": 2740,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 303174162,
+      "advance": 0,
+      "deadline": 3184,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 303174162,
+      "advance": 623,
+      "deadline": 2011,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 303174162,
+      "advance": 624,
+      "deadline": 3406,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 320017171,
+      "advance": 0,
+      "deadline": 1980,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 320017171,
+      "advance": 623,
+      "deadline": 1026,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 320017171,
+      "advance": 624,
+      "deadline": 3365,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 336860180,
+      "advance": 0,
+      "deadline": 64,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 336860180,
+      "advance": 623,
+      "deadline": 1265,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 336860180,
+      "advance": 624,
+      "deadline": 4208,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 353703189,
+      "advance": 0,
+      "deadline": 3543,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 353703189,
+      "advance": 623,
+      "deadline": 4966,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 353703189,
+      "advance": 624,
+      "deadline": 4362,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 370546198,
+      "advance": 0,
+      "deadline": 3806,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 370546198,
+      "advance": 623,
+      "deadline": 876,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 370546198,
+      "advance": 624,
+      "deadline": 4461,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 387389207,
+      "advance": 0,
+      "deadline": 1798,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 387389207,
+      "advance": 623,
+      "deadline": 4468,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 387389207,
+      "advance": 624,
+      "deadline": 3915,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 404232216,
+      "advance": 0,
+      "deadline": 3160,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 404232216,
+      "advance": 623,
+      "deadline": 1253,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 404232216,
+      "advance": 624,
+      "deadline": 2632,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 421075225,
+      "advance": 0,
+      "deadline": 1654,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 421075225,
+      "advance": 623,
+      "deadline": 4225,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 421075225,
+      "advance": 624,
+      "deadline": 4801,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 437918234,
+      "advance": 0,
+      "deadline": 2118,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 437918234,
+      "advance": 623,
+      "deadline": 4612,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 437918234,
+      "advance": 624,
+      "deadline": 4687,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 454761243,
+      "advance": 0,
+      "deadline": 369,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 454761243,
+      "advance": 623,
+      "deadline": 3832,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 454761243,
+      "advance": 624,
+      "deadline": 1241,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 471604252,
+      "advance": 0,
+      "deadline": 2059,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 471604252,
+      "advance": 623,
+      "deadline": 4630,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 471604252,
+      "advance": 624,
+      "deadline": 4656,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 488447261,
+      "advance": 0,
+      "deadline": 8,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 488447261,
+      "advance": 623,
+      "deadline": 4725,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 488447261,
+      "advance": 624,
+      "deadline": 1967,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 505290270,
+      "advance": 0,
+      "deadline": 2822,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 505290270,
+      "advance": 623,
+      "deadline": 3290,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 505290270,
+      "advance": 624,
+      "deadline": 4499,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 522133279,
+      "advance": 0,
+      "deadline": 3262,
+      "draws": 1,
+      "remaining": 623
+    },
+    {
+      "seed": 522133279,
+      "advance": 623,
+      "deadline": 780,
+      "draws": 1,
+      "remaining": 0
+    },
+    {
+      "seed": 522133279,
+      "advance": 624,
+      "deadline": 1488,
+      "draws": 1,
+      "remaining": 623
+    }
+  ]
+}
