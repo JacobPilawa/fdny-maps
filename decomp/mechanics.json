@@ -46,7 +46,7 @@
     },
     {
       "name": "Player controls, movement, collision",
-      "status": "partial; ladder state 3↔5 source-mapped and wired; inclusive BModel E_Reach bounds plus Training's conditional 48-unit hitpoint/motion reach override source-mapped and wired; Training path to held-object state 7/+0x3440 source-mapped; original touch-queue cadence and native carry/throw remain open; static fresh collision fixtures pass",
+      "status": "partial; ladder state 3↔5 source-mapped and wired; inclusive BModel E_Reach bounds plus Training's conditional 48-unit hitpoint/motion reach override source-mapped and wired; Training path to held-object state 7/+0x3440 source-mapped; BModel contacts run once per normal owner manager pass, while producer-to-script-event latency remains unresolved; native BModel USE/carry/throw remain open; static fresh collision fixtures pass",
       "original_entries": [
         "00452570",
         "0049dbc0",

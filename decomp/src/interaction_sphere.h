@@ -42,9 +42,11 @@ struct InteractionSphere {
   float magnitude=length.asFloat();
   // 00459B80 leaves vectors shorter than 1e-28 untouched.
   if(magnitude<1e-28f)return direction;
-  float reciprocal=(E::from(1.f)/E::from(magnitude)).asFloat();
+  // 00459B80 keeps the reciprocal in x87 extended precision through the
+  // component multiplies; it does not store the reciprocal as a float first.
+  E reciprocal=E::from(1.f)/E::from(magnitude);
   V result;
-  for(int axis=0;axis<3;axis++)result[axis]=(E::from(reciprocal)*E::from(direction[axis])).asFloat();
+  for(int axis=0;axis<3;axis++)result[axis]=(reciprocal*E::from(direction[axis])).asFloat();
   return result;
  }
  static bool ray(V start,V direction,V center,float radius,float& nearDistance,float& farDistance){

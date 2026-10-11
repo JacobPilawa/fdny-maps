@@ -1,0 +1,28 @@
+{
+  "provenance":{"program":"FDNYFirefighter.exe","exe_sha256":"4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e","engine":"Ghidra EmulatorHelper x86 p-code","x87_control_word":"0x037f","scope":"0043B580 full routine; 0043D330 stopped before 0043BAA0 at active path 0043D522 or completion path 0043D46D; no renderer/event service execution"},
+  "setup":[
+    {"start":[0.0,0.0,0.0],"end":[444.0,120.0,0.0],"tick":305419896,"duration_bits":1056263127,"acceleration_bits":3284140032,"initial_vertical_velocity_bits":1138309360,"initial_middle_bits":0,"mode":2} ,
+    {"start":[-12.5,25.0,7.25],"end":[311.75,-83.5,22.125],"tick":305419897,"duration_bits":1052149719,"acceleration_bits":3284140032,"initial_vertical_velocity_bits":3274142219,"initial_middle_bits":1103626240,"mode":2} ,
+    {"start":[2.0,600.0,-4.0],"end":[2.0,-300.0,4.0],"tick":305419898,"duration_bits":1064305262,"acceleration_bits":3284140032,"initial_vertical_velocity_bits":3289775273,"initial_middle_bits":1142292480,"mode":2} ,
+    {"start":[0.0,0.0,0.0],"end":[480.0,0.0,0.0],"tick":305419899,"duration_bits":1056964608,"acceleration_bits":3284140032,"initial_vertical_velocity_bits":1128267777,"initial_middle_bits":0,"mode":2}
+  ],
+  "update_input":{"setup_case":3,"start":[0.0,0.0,0.0],"end":[480.0,0.0,0.0],"start_tick":1000,"duration_bits":1056964608,"acceleration_bits":3284140032,"initial_vertical_velocity_bits":1128267777},
+  "update":[
+    {"start_tick":1000,"tick":1000,"reverse":0,"elapsed_ms":0,"duration_bits":1056964608,"branch":"active","point_bits":[0,0,0]} ,
+    {"start_tick":1000,"tick":1001,"reverse":0,"elapsed_ms":1,"duration_bits":1056964608,"branch":"active","point_bits":[1064682128,1044657917,0]} ,
+    {"start_tick":1000,"tick":1499,"reverse":0,"elapsed_ms":499,"duration_bits":1056964608,"branch":"active","point_bits":[1139770655,1044658427,0]} ,
+    {"start_tick":1000,"tick":1500,"reverse":0,"elapsed_ms":500,"duration_bits":1056964608,"branch":"completed","point_bits":[1139802112,0,0]} ,
+    {"start_tick":1000,"tick":1501,"reverse":0,"elapsed_ms":501,"duration_bits":1056964608,"branch":"completed","point_bits":[1139802112,0,0]} ,
+    {"start_tick":1000,"tick":1502,"reverse":0,"elapsed_ms":502,"duration_bits":1056964608,"branch":"completed","point_bits":[1139802112,0,0]} ,
+    {"start_tick":1000,"tick":1000,"reverse":1,"elapsed_ms":0,"duration_bits":1056964608,"branch":"active","point_bits":[1139802112,922746880,0]} ,
+    {"start_tick":1000,"tick":1001,"reverse":1,"elapsed_ms":1,"duration_bits":1056964608,"branch":"active","point_bits":[1139770655,1044658427,0]} ,
+    {"start_tick":1000,"tick":1499,"reverse":1,"elapsed_ms":499,"duration_bits":1056964608,"branch":"active","point_bits":[1064682128,1044657917,0]} ,
+    {"start_tick":1000,"tick":1500,"reverse":1,"elapsed_ms":500,"duration_bits":1056964608,"branch":"completed","point_bits":[0,0,0]} ,
+    {"start_tick":1000,"tick":1501,"reverse":1,"elapsed_ms":501,"duration_bits":1056964608,"branch":"completed","point_bits":[0,0,0]} ,
+    {"start_tick":1000,"tick":1502,"reverse":1,"elapsed_ms":502,"duration_bits":1056964608,"branch":"completed","point_bits":[0,0,0]}
+   ,{"start_tick":4294967280,"tick":24,"reverse":0,"elapsed_ms":40,"branch":"active","point_bits":[1108973977,1088559462,0]}
+   ,{"start_tick":1000,"tick":1500,"elapsed_ms":500,"duration_bits":1056964608,"branch":"completed","point_bits":[1139802112,0,0]}
+   ,{"start_tick":1000,"tick":1500,"elapsed_ms":500,"duration_bits":1056964609,"branch":"active","point_bits":[1139802110,922746880,0]}
+   ,{"start_tick":1000,"tick":1501,"elapsed_ms":501,"duration_bits":1056964609,"branch":"completed","point_bits":[1139802112,0,0]}
+  ]
+}
