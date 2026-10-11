@@ -755,21 +755,21 @@ int main(int argc,char** argv){try{
   check.host=[&](int,std::string command){calls.push_back(command);return true;};
   check.run("que [first, wait 3, second, third]",700,"queue-check");
   if(!calls.empty())mismatches++;
-  check.advance(.01f);
+  check.advance(10);
   if(calls!=std::vector<std::string>{"first"})mismatches++;
-  check.advance(.01f);
+  check.advance(20);
   if(calls!=std::vector<std::string>{"first"})mismatches++;
-  check.advance(2.99f);
+  check.advance(3010);
   if(calls!=std::vector<std::string>{"first"})mismatches++;
-  check.advance(.02f);
+  check.advance(3021);
   if(calls!=std::vector<std::string>{"first","second"})mismatches++;
-  check.advance(.01f);
+  check.advance(3030);
   if(calls!=std::vector<std::string>{"first","second","third"})mismatches++;
-  check.run("que [wait 3, discarded]",701,"flush-check");check.advance(.01f);
-  check.run("flush",701,"flush-check");check.advance(.01f);
+  check.run("que [wait 3, discarded]",701,"flush-check");check.advance(3040);
+  check.run("flush",701,"flush-check");check.advance(3050);
   if(calls.size()!=3)mismatches++;
-  check.run("que [wait 3, after-idle]",703,"idle-check");check.advance(.01f);
-  check.run("idle",703,"idle-check");check.advance(.01f);
+  check.run("que [wait 3, after-idle]",703,"idle-check");check.advance(3060);
+  check.run("idle",703,"idle-check");check.advance(3070);
   if(calls.size()!=4||calls.back()!="after-idle")mismatches++;
   size_t before=calls.size();check.run("cmd [immediate-a, immediate-b]",702,"cmd-check");
   if(calls.size()!=before+2||calls[before]!="immediate-a"||calls[before+1]!="immediate-b")mismatches++;
@@ -839,7 +839,7 @@ int main(int argc,char** argv){try{
  // A fresh TPlayerInfo defaults to DifficultyLevel 1, selecting the source's
  // 40-degree pitch cap. SDL relative-Y units are not calibrated to the old backend.
  while(running){SDL_Event event;while(SDL_PollEvent(&event)){if(event.type==SDL_QUIT)running=false;if(event.type==SDL_KEYDOWN&&!event.key.repeat){auto key=event.key.keysym.sym;if(key==SDLK_ESCAPE){captured=!captured;SDL_SetRelativeMouseMode(captured?SDL_TRUE:SDL_FALSE);}if(key==SDLK_SPACE)jumpEdge=true;if(key==SDLK_SPACE||key==SDLK_LSHIFT||key==SDLK_RSHIFT)usePressed=true;if(key==SDLK_c||key==SDLK_LCTRL||key==SDLK_RCTRL)crouchEdge=true;if((key==SDLK_1||key==SDLK_KP_1)&&equipment.count("axe"))selected="axe";if((key==SDLK_2||key==SDLK_KP_2)&&equipment.count("extinguisher"))selected="extinguisher";}if(event.type==SDL_MOUSEBUTTONDOWN){if(event.button.button==SDL_BUTTON_RIGHT)jumpEdge=true;if(event.button.button==SDL_BUTTON_LEFT&&!actionHeld){actionHeld=true;actionPressed=true;}}if(event.type==SDL_MOUSEBUTTONUP&&event.button.button==SDL_BUTTON_LEFT&&actionHeld){actionHeld=false;actionReleased=true;}if(event.type==SDL_MOUSEMOTION&&captured){yaw-=event.motion.xrel*.0025f;pitch-=event.motion.yrel*(0.1f*0.01745329251994329577f);pitch=std::clamp(pitch,-40.f*0.01745329251994329577f,40.f*0.01745329251994329577f);}}
- if(!clock.tick(SDL_GetTicks())){SDL_Delay(1);continue;}float dt=clock.dt;startupTick();auto keys=SDL_GetKeyboardState(nullptr);float moveForward=captured?float(keys[SDL_SCANCODE_W]-keys[SDL_SCANCODE_S]):0.f;float moveSide=captured?.75f*float(keys[SDL_SCANCODE_D]-keys[SDL_SCANCODE_A]):0.f;for(auto& door:doors)door.update(player.p,dt,collision);if(captured)player.step(dt,moveForward,moveSide,yaw,keys[SDL_SCANCODE_SPACE]||(SDL_GetMouseState(nullptr,nullptr)&SDL_BUTTON(SDL_BUTTON_RIGHT)),jumpEdge,crouchEdge,collision,pitch);jumpEdge=crouchEdge=false;vm.advance(dt);
+ if(!clock.tick(SDL_GetTicks())){SDL_Delay(1);continue;}float dt=clock.dt;startupTick();auto keys=SDL_GetKeyboardState(nullptr);float moveForward=captured?float(keys[SDL_SCANCODE_W]-keys[SDL_SCANCODE_S]):0.f;float moveSide=captured?.75f*float(keys[SDL_SCANCODE_D]-keys[SDL_SCANCODE_A]):0.f;for(auto& door:doors)door.update(player.p,dt,collision);if(captured)player.step(dt,moveForward,moveSide,yaw,keys[SDL_SCANCODE_SPACE]||(SDL_GetMouseState(nullptr,nullptr)&SDL_BUTTON(SDL_BUTTON_RIGHT)),jumpEdge,crouchEdge,collision,pitch);jumpEdge=crouchEdge=false;vm.advance(clock.current);
  // 00452570 tests the movement vector against 1e-7. 0044F340 then chooses
  // the 00491140 mode from that flag, player state, and active-view byte.
  bool moving=std::sqrt(moveForward*moveForward+moveSide*moveSide)>1e-7f;int playerState=player.crouch?4:3;int requestedHeadMode=HeadMotion::viewMode(playerState,true,moving);auto headOffset=headMotion.update(requestedHeadMode,dt);

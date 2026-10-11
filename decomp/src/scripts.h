@@ -8,9 +8,9 @@ inline std::vector<std::string> splitList(std::string s){std::vector<std::string
 inline std::pair<std::string,std::string> token(std::string s){s=trim(s);size_t i=0;if(!s.empty()&&(s[0]=='('||s[0]=='[')){int depth=0;for(;i<s.size();i++){if(s[i]=='('||s[i]=='[')depth++;if(s[i]==')'||s[i]==']')depth--;if(!depth){i++;break;}}}else{i=s.find_first_of(" \t\r\n");if(i==std::string::npos)i=s.size();}return {s.substr(0,i),trim(s.substr(i))};}
 struct Scripts{
  struct Queued{int entity;std::string command,source;bool startup=false;};
- struct ActorQueue{std::deque<Queued> commands;double waitUntil=0;bool waiting=false;};
+ struct ActorQueue{std::deque<Queued> commands;uint32_t waitUntil=0;bool waiting=false;};
  struct Binding{std::string event,command,source;};
- double time=0;bool definitionsOnly=false;std::map<std::string,std::string> variables;std::map<std::string,std::string> files;std::map<int,std::vector<Binding>> bindings;std::map<int,ActorQueue> actorQueues;std::set<std::string> once,reported;
+ uint32_t timeMs=0;bool definitionsOnly=false;std::map<std::string,std::string> variables;std::map<std::string,std::string> files;std::map<int,std::vector<Binding>> bindings;std::map<int,ActorQueue> actorQueues;std::set<std::string> once,reported;
  std::function<void(std::string,float)> hint;
  std::function<bool(int,std::string)> host;
  std::function<int(std::string)> findEntity;
@@ -29,7 +29,7 @@ struct Scripts{
  if(verb=="once"){auto key=std::to_string(entity)+":"+source;if(once.insert(key).second)run(args,entity,source+"/once",depth+1,startup);return;}
  if(verb=="cmd"){int index=0;for(auto part:splitList(unwrap(args))){auto origin=source+"/"+std::to_string(index++);run(part,entity,origin,depth+1,startup);}return;}
  if(verb=="que"){int index=0;auto& queue=actorQueues[entity];for(auto part:splitList(unwrap(args))){auto origin=source+"/"+std::to_string(index++);queue.commands.push_back({entity,part,origin,startup});}return;}
- if(verb=="wait"){auto [seconds,rest]=token(args);(void)rest;actorQueues[entity].waitUntil=time+std::stod(seconds);actorQueues[entity].waiting=true;return;}
+ if(verb=="wait"){auto [seconds,rest]=token(args);(void)rest;auto milliseconds=uint32_t(std::stof(seconds)*1000.f);actorQueues[entity].waitUntil=timeMs+milliseconds;actorQueues[entity].waiting=true;return;}
  if(verb=="idle"){actorQueues[entity].waiting=false;return;}
  if(verb=="flush"){auto& queue=actorQueues[entity];queue.commands.clear();queue.waiting=false;return;}
  if(verb=="hint"){auto [seconds,text]=token(args);hint(unwrap(text),std::stof(seconds));return;}
@@ -43,5 +43,5 @@ struct Scripts{
  // command per ScriptActor update. This host schedules one such update per
  // entity here; its position/order versus the original world callbacks is not
  // yet verified.
- void advance(float dt){time+=dt;for(auto& [entity,queue]:actorQueues){if(queue.waiting){if(queue.waitUntil>time)continue;queue.waiting=false;}if(queue.commands.empty())continue;auto item=std::move(queue.commands.front());queue.commands.pop_front();run(item.command,item.entity,item.source,0,item.startup);}}
+ void advance(uint32_t currentTimeMs){timeMs=currentTimeMs;std::vector<int> scheduled;for(const auto& [entity,queue]:actorQueues)scheduled.push_back(entity);for(int entity:scheduled){auto& queue=actorQueues.at(entity);if(queue.waiting){if(queue.waitUntil>timeMs)continue;queue.waiting=false;}if(queue.commands.empty())continue;auto item=std::move(queue.commands.front());queue.commands.pop_front();run(item.command,item.entity,item.source,0,item.startup);}}
 };
