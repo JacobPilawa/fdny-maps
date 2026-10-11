@@ -1,6 +1,7 @@
 #pragma once
 struct Q{float w=1,x=0,y=0,z=0;};
 inline Q qkey(J key){return {num(at(key,1)),num(at(key,2)),num(at(key,3)),num(at(key,4))};}
+inline Q normalizeQuaternion(Q q){float length=std::sqrt(q.w*q.w+q.x*q.x+q.y*q.y+q.z*q.z);if(length!=0){q.w/=length;q.x/=length;q.y/=length;q.z/=length;}return q;}
 inline Q slerp(Q a,Q b,float t){
  // Genesis geQuaternion_SlerpNotShortest. No shortest-path sign flip.
  float cosine=a.w*b.w+a.x*b.x+a.y*b.y+a.z*b.z,scale0,scale1;

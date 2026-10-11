@@ -28,6 +28,8 @@ Run it with the Ghidra installation on this machine:
 
 If the preserved project is open in Ghidra or another headless process, a query can fail to acquire its lock even with `-readOnly`. Copy `fdny.gpr` and `fdny.rep/` to a scratch directory under `/private/tmp` and point `analyzeHeadless` at that copy. On this host, headless startup also needs the installed JDK on `PATH` and a writable Java profile, for example `JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home`, `PATH=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin:/usr/bin:/bin`, and `JAVA_TOOL_OPTIONS=-Duser.home=/private/tmp/fdny-ghidra-user-home`. Keep `-noanalysis -readOnly` for query-only scripts; run `DefineAndDecompile.java` only against a separate analysis scratch copy.
 
+Observed on the current Ghidra 12.0.4 installation: preserved-project queries work with JDK 21, while importing and analyzing a fresh executable or DLL project needs JDK 25 because one analyzer dependency uses Java class-file version 69. If fresh analysis reports `UnsupportedClassVersionError`, switch only that scratch analysis to the installed JDK 25; keep the preserved database query-only. This avoids spending time retrying a JDK mismatch and keeps the reference project unchanged.
+
 For example, direct stores of the value 7 to field offset `0x120` can be listed with `-postScript FieldStoreAudit.java 0x120 7`.
 
 Use `-postScript DecompileFunctions.java 0045BF70` to inspect a function not already exported into the evidence tree.

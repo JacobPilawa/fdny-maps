@@ -98,9 +98,16 @@ struct Player{
  }
 };
 struct Door{
- int model;V lo,hi,pivot;float reach=100,fraction=0,direction=1;bool touching=false;
+ int model;V lo,hi,pivot,openAwayLo,openAwayHi;float reach=100,fraction=0;Q pathEndRotation{};bool touching=false;
+ void openAway(V player){
+  // RCS_BModel::openaway (0043D6A0). Training door keyframe 0 is identity,
+  // so the source transform keyframe0^T * keyframe1 is pathEndRotation.
+  V p0{openAwayLo.x,0,openAwayLo.z},p1{openAwayHi.x,0,openAwayHi.z};V d0=p0-pivot,d1=p1-pivot;
+  V direction=length(d0)<=length(d1)?p1-p0:p0-p1;float span=length(direction);if(span!=0)direction=direction*(1/span);
+  V transformed=rotateQ(direction,pathEndRotation);if(dot(transformed,player-pivot)>=0)pathEndRotation=normalizeQuaternion({pathEndRotation.w,-pathEndRotation.x,-pathEndRotation.y,-pathEndRotation.z});
+ }
  void update(V p,float dt,Collision& c){float dist=0;for(int i=0;i<3;i++){float d=p[i]-std::clamp(p[i],lo[i],hi[i]);dist+=d*d;}bool wants=dist<=reach*reach;
- if(wants&&!touching&&fraction==0){V center=(lo+hi)*.5f;direction=(center.z-pivot.z)*(p.x-pivot.x)-(center.x-pivot.x)*(p.z-pivot.z)>0?-1:1;}touching=wants;fraction=std::clamp(fraction+(wants?1:-1)*dt*3,0.f,1.f);
- float omega=std::acos(.707107f),scale0=std::sin((1-fraction)*omega)/std::sin(omega),scale1=std::sin(fraction*omega)/std::sin(omega);float qw=scale0+scale1*.707107f,qy=scale1*.707107f*direction;c.angles[model]=2*std::atan2(qy,qw);
+ if(wants&&!touching&&fraction==0)openAway(p);touching=wants;fraction=std::clamp(fraction+(wants?1:-1)*dt*3,0.f,1.f);
+ Q rotation=slerp(Q{},pathEndRotation,fraction);c.angles[model]=2*std::atan2(rotation.y,rotation.w);
  }
 };
