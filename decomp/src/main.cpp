@@ -10,6 +10,7 @@
 #include <cstring>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <set>
 #include <map>
 #include <regex>
@@ -27,6 +28,7 @@ std::string str(J j){return j?json_object_get_string(j):"";}
 #include "assets.h"
 J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_from_file(p.c_str());if(!j)throw std::runtime_error("Cannot load "+p);return j;}
 #include "core.h"
+#include "bmodel_contact.h"
 #include "scripts.h"
 #include "random.h"
 #include "startup.h"
@@ -73,9 +75,67 @@ struct TrainingPropModel{int entity=0;std::string name;V center{};float radius=0
 struct TrainingEntityIdentity{
  int sourceId=0;J source=nullptr;std::string className;EntityIdRegistry::Handle route{};FireEntity* fire=nullptr;
 };
+int checkBModelContact(){
+ struct Case{const char* name;V actorMin,actorMax;bool expected;bool nanModelMin=false;};
+ constexpr V modelMin{10,20,30},modelMax{20,30,40};
+ const float nan=std::numeric_limits<float>::quiet_NaN();
+ const std::array<Case,13> cases{{
+  {"interior",{12,22,32},{18,28,38},true},
+  {"x-low-inclusive",{0,22,32},{5,28,38},true},
+  {"x-high-inclusive",{25,22,32},{30,28,38},true},
+  {"y-low-inclusive",{12,10,32},{18,15,38},true},
+  {"y-high-inclusive",{12,35,32},{18,40,38},true},
+  {"z-low-inclusive",{12,22,20},{18,28,25},true},
+  {"z-high-inclusive",{12,22,45},{18,28,50},true},
+  {"x-outside",{0,22,32},{4.99f,28,38},false},
+  {"y-outside",{12,10,32},{18,14.99f,38},false},
+  {"z-outside",{12,22,20},{18,28,24.99f},false},
+  {"x-actor-max-nan",{12,22,32},{nan,28,38},false},
+  {"y-actor-min-nan",{12,nan,32},{18,28,38},false},
+  {"z-model-bound-nan",{12,22,32},{18,28,38},false,true}
+ }};
+ int mismatches=0;
+ for(const auto& sample:cases){V lo=modelMin,hi=modelMax;if(sample.nanModelMin)lo.z=nan;bool actual=BModelContact::overlapsExpanded(lo,hi,sample.actorMin,sample.actorMax,5.f);if(actual!=sample.expected){mismatches++;std::cout<<"BModel contact mismatch: "<<sample.name<<"\n";}}
+ struct ReachCase{const char* name;float authored;int hp,liftable;float motionEnd,expected;};
+ const float eps=1.0e-28f;
+ const std::array<ReachCase,10> reachCases{{
+  {"no-hitpoints",0,0,0,.5f,0},
+  {"liftable",20,2,1,1.f,20},
+  {"zero-motion-end",20,2,0,0.f,20},
+  {"inside-zero-tolerance",0,2,0,1.0e-29f,0},
+  {"positive-motion-end",20,2,0,.5f,48},
+  {"negative-motion-end",0,2,0,-.5f,48},
+  {"positive-tolerance-edge",0,2,0,eps,48},
+  {"negative-tolerance-edge",0,2,0,-eps,48},
+  {"reach-equals-48",48,2,0,.5f,48},
+  {"reach-above-48",50,2,0,.5f,50}
+ }};
+ for(const auto& sample:reachCases){float actual=BModelContact::effectiveReach(sample.authored,sample.hp,sample.liftable,sample.motionEnd);if(actual!=sample.expected){mismatches++;std::cout<<"BModel reach mismatch: "<<sample.name<<" actual="<<actual<<" expected="<<sample.expected<<"\n";}}
+ float nanGate=BModelContact::effectiveReach(0,2,0,nan);if(nanGate!=48.f){mismatches++;std::cout<<"BModel reach mismatch: unordered motion end\n";}
+ std::cout<<"Source-mapped BModel contact: "<<cases.size()<<" AABB boundary/NaN cases and "<<reachCases.size()+1<<" reach-gate cases; mismatches="<<mismatches<<"\n";
+ return mismatches?48:0;
+}
+std::map<int,float> trainingBModelReaches(J entities,J motions){
+ std::map<std::string,int> modelIdByName;
+ for(int i=0;i<count(entities);i++){auto e=at(entities,i);if(str(field(e,"class"))!="%Model%")continue;auto p=field(e,"properties");std::string name=str(field(p,"%name%"));if(!name.empty())modelIdByName[name]=integer(field(p,"Model"));}
+ std::map<int,float> knownMotionEnds;std::set<int> unknownMotionEnds;
+ for(int i=0;i<count(motions);i++){auto motion=at(motions,i);int modelId=integer(field(motion,"model"));for(const char* channelName:{"translation","rotation"}){auto channel=field(motion,channelName);auto keys=field(channel,"keys");int keyCount=integer(field(channel,"keyCount"));if(keys&&json_object_get_type(keys)==json_type_array&&count(keys)>0){for(int k=0;k<count(keys);k++)knownMotionEnds[modelId]=std::max(knownMotionEnds[modelId],num(at(at(keys,k),0)));}else if(keyCount>0)unknownMotionEnds.insert(modelId);}}
+ std::map<int,float> reaches;
+ for(int i=0;i<count(entities);i++){auto e=at(entities,i);if(str(field(e,"class"))!="RCS_BModel")continue;auto p=field(e,"properties");auto parseFloat=[&](const char* name){const std::string value=str(field(p,name));char* end=nullptr;float parsed=std::strtof(value.c_str(),&end);return end==value.c_str()?0.f:parsed;};float authoredReach=parseFloat("E_Reach");int hitPoints=int(parseFloat("F_HitPoints")),liftable=int(parseFloat("G_Liftable"));float motionEnd=0;bool unknownEnd=false;
+  if(hitPoints!=0&&liftable==0&&authoredReach<48.f){json_object_object_foreach(p,key,value){if(std::strncmp(key,"C_AnimModel",11)!=0)continue;std::string modelName=str(value);if(modelName.empty()||modelName=="<null>")continue;auto model=modelIdByName.find(modelName);if(model==modelIdByName.end())throw std::runtime_error("Cannot resolve Training BModel child model "+modelName);auto known=knownMotionEnds.find(model->second);if(known!=knownMotionEnds.end())motionEnd=std::max(motionEnd,known->second);if(unknownMotionEnds.count(model->second))unknownEnd=true;}
+   if(motionEnd<1.0e-28f&&unknownEnd)throw std::runtime_error("Training BModel contact reach needs an unextracted child motion extent for entity "+std::to_string(integer(field(e,"index"))));
+  }
+  reaches[integer(field(e,"index"))]=BModelContact::effectiveReach(authoredReach,hitPoints,liftable,motionEnd);
+ }
+ return reaches;
+}
+int checkTrainingBModelContactAssets(){auto entities=load("entities.json");auto motions=load("motions.json");auto reaches=trainingBModelReaches(entities,motions);const std::map<int,float> expected{{112,50.f},{113,48.f},{212,48.f},{213,48.f}};int mismatches=0;for(const auto& item:expected){float actual=reaches.at(item.first);if(actual!=item.second){mismatches++;std::cout<<"Training BModel reach mismatch: entity="<<item.first<<" actual="<<actual<<" expected="<<item.second<<"\n";}else std::cout<<"Training BModel entity "<<item.first<<" effective reach="<<actual<<"\n";}return mismatches?49:0;}
 int main(int argc,char** argv){try{
  if(argc>1&&std::string(argv[1])=="--asset-path"){std::cout<<assetDirectory()<<"\n";return 0;}
+ if(argc>1&&std::string(argv[1])=="--bmodel-contact-check")return checkBModelContact();
+ if(argc>1&&std::string(argv[1])=="--bmodel-contact-asset-check")return checkTrainingBModelContactAssets();
  auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe",selectedBeforeHose="axe";std::set<std::string> equipment{"axe"};float extinguisherCharge=1;int hoseMode=0,attachedValve=-1;Scripts vm(load("scripts.json"));std::vector<Door> doors;std::vector<TrainingPropModel> propModels;
+ auto bmodelReachByEntity=trainingBModelReaches(entities,load("motions.json"));
  for(int i=0;i<count(entities);i++){auto e=at(entities,i);auto props=field(e,"properties");if(str(field(e,"class"))=="RCS_BModel"&&str(field(props,"S_Script01"))=="*Door"){
  int mi=integer(field(e,"model"));V pivot{};auto models=field(collision.data,"models");for(int k=0;k<count(models);k++)if(integer(field(at(models,k),"index"))==mi)pivot=vec(field(at(models,k),"origin"));auto b=field(e,"bounds");doors.push_back({mi,vec(field(b,"mins")),vec(field(b,"maxs")),pivot,float(std::stof(str(field(props,"E_Reach"))))});}
  if(str(field(e,"class"))=="RCS_BoundsTrigger")collision.disabled.insert(integer(field(e,"model")));if(str(field(e,"class"))=="RCS_PlayerRescue"){playerId=integer(field(e,"index"));std::string pos=str(field(props,"ZZ_location"));sscanf(pos.c_str(),"%f %f %f",&player.p.x,&player.p.y,&player.p.z);}}
@@ -912,8 +972,8 @@ int main(int argc,char** argv){try{
  // recovered world basis and position as the renderer's inverse view transform.
  V cameraPosition=playerViewFollower.position;
  hintRemaining=std::max(0.f,hintRemaining-dt);
- for(int i=0;i<count(entities);i++){auto e=at(entities,i);auto bounds=field(e,"bounds");if(!bounds)continue;V lo=vec(field(bounds,"mins")),hi=vec(field(bounds,"maxs"));bool inside=true;V mn=player.p+V{-30,-30,-30},mx=player.p+player.maxs();for(int axis=0;axis<3;axis++)if(mx[axis]<lo[axis]||mn[axis]>hi[axis])inside=false;
- int id=integer(field(e,"index"));if(inside&&!touching[i])vm.dispatch(id,"touch");if(inside)vm.dispatch(id,"touching");if(!inside&&touching[i])vm.dispatch(id,"untouch");
+ for(int i=0;i<count(entities);i++){auto e=at(entities,i);auto bounds=field(e,"bounds");if(!bounds)continue;V lo=vec(field(bounds,"mins")),hi=vec(field(bounds,"maxs"));int id=integer(field(e,"index"));float reach=0;if(str(field(e,"class"))=="RCS_BModel"){auto sourceReach=bmodelReachByEntity.find(id);if(sourceReach==bmodelReachByEntity.end())throw std::runtime_error("Missing source-mapped Training BModel reach for entity "+std::to_string(id));reach=sourceReach->second;}V mn=player.p+V{-30,-30,-30},mx=player.p+player.maxs();bool inside=BModelContact::overlapsExpanded(lo,hi,mn,mx,reach);
+ if(inside&&!touching[i])vm.dispatch(id,"touch");if(inside)vm.dispatch(id,"touching");if(!inside&&touching[i])vm.dispatch(id,"untouch");
  touching[i]=inside;
  }
  // RCS_PropModel's authored touch sphere uses the same location/radius copied

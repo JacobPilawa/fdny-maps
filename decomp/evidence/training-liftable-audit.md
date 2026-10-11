@@ -1,0 +1,36 @@
+# Training liftable objects and BModel USE route
+
+This audit combines read-only Ghidra queries on `FDNYFirefighter.exe` with the serialized Training BSP typedef, extracted Training entities, and model motions. No live gameplay capture was used. Function names are provisional; claims below identify addresses and the fields/branches observed.
+
+## Authored objects and motion data
+
+The raw BSP typedef is preserved in `evidence/bsp-typedefs/training-bmodel.json` (source SHA-256 `32986212fa875764ca3d5c1630e54ad6315abaea70983203601192cec603a963`). It contains 26 fields and 112 bytes. In particular `E_Reach` is float at `+0x30`, `F_HitPoints` is int at `+0x34`, and `G_Liftable` is int at `+0x38`. Re-running `tools/extract_gbsp_typedefs.py` against the supplied retail `training.bsp` reproduced this JSON byte-for-byte.
+
+| BSP entity | Name | Model | `G_Liftable` | `E_Reach` | Location | Bounds | Script hint |
+|---:|---|---:|---:|---:|---|---|---|
+| 109 | `obj_liftable_metalbox` | 7 | 1 | 50 | `(-300,-200,-220)` | `(-334,-256,-251)` to `(-270,-192,-187)` | `touch: hint 2 (Press SPACE to clear this object from your path.)` |
+| 111 | `obj_liftable_metalbox1` | 8 | 1 | 20 | `(148,-204,-884)` | `(114,-256,-915)` to `(178,-192,-851)` | none |
+
+`assets/training/motions.json` records models 7 and 8 with two translation keys at times 0 and 1, `(0,0,0)` to `(444,0,0)`, and two rotation keys at the same times. This matches the shape checked by Ghidra routine `0043BE00`.
+
+## BModel lift state and Player pointer
+
+The BModel constructor `0043F340` installs the secondary vtable at root `+0xA0`; Ghidra data words at `004E0DE4/004E0DE8` identify its first two slots as `0043DB40` and `0043D2B0`. The constructor also creates a separate axis-box interface at root `+0x260` with vtable `004E0CBC`.
+
+Initialization sets BModel `+0x258` to 2, checks UserData `+0x38`, and invokes `0043BE00` when nonzero. That routine obtains model motion path 0, requires exactly two keyframes, and validates times 0 and 1 through `0043B120`. On success it stores the two endpoint vectors and writes 1 to BModel `+0x258`. The Training typedef proves UserData `+0x38` is `G_Liftable`; entities 109 and 111 set it to 1. The meaning of the intermediate value 2 is unknown.
+
+The vtable slot-0 method `0043DB40` reads the BModel status at receiver `+0x1B8` (root `+0x258`). Status zero logs an invalid `TE_BModel::useMode` and returns zero. For a nonzero status it supplies the axis-box interface at root `+0x260`; status 1 asks Player method `0044C520` for an action code, while other nonzero values return code 1000.
+
+`0044C520` offers action code `0x3EC` (1004) only when its selected-item conditions pass, Player byte `+0x12C` is nonzero, Player held-object pointer `+0x3440` is null, and the BModel object state at `+0x25C` is zero. This identifies the 1004 action branch, but the `+0x12C` byte and complete selected-item semantics remain unnamed. The BModel's slot-1 handler `0043D2B0` reacts to status 1 by calling `0044BC40(player, BModel root)`, then forwards a `use` event to the BModel script component at root `+0x24`. `0044BC40` stores the object at Player `+0x3440`, sets BModel `+0x25C` to 1, and enters Player state 7. The Player updater `00452570` uses this pointer for held-object positioning and later release; details and unresolved threshold semantics are recorded in `training-ladder-audit.md`.
+
+## Candidate selection and geometric query
+
+Player routine `00459350` scans its candidate array, calls each candidate's vtable slot 0 for an action code, and when a geometric-query interface is returned calls its vtable slot `+0x14`. It accepts a hit within the squared 200-unit limit and replaces an equal-scoring current candidate, so later candidates win ties. `00458FA0` dispatches the selected candidate's vtable slot `+4` with the stored action code.
+
+For BModels, the returned root `+0x260` axis-box interface has its query method at vtable address `004E0CD0`, which points to `00489D80`. That method calls `00482B90` with the query ray and axis-box bounds at interface offsets `+0x18/+0x24`; it returns a hit point and score `1.0` on success. The generic BModel vtable values and these function targets were read from the preserved Ghidra project. The saved project lacked function boundaries at `0043DB40` and `00489D80`; those entries were defined and decompiled only in a temporary copy under `/private/tmp`, leaving the user-open Ghidra project unchanged.
+
+## Native status and remaining verification
+
+The native BModel touch path now applies the source-derived conditional 48-unit override. The exact predicate and Training outcomes are recorded in `training-bmodel-contact-audit.md`: entities 113, 212, and 213 use 48; entity 112 retains authored reach 50 because the source requires a strict reach below 48. This does not complete contact scheduling or event parity. Native BModel candidates in USE selection, state 7 carry/throw, and original candidate array order remain unimplemented. The generic axis-box ray query, exact selected-item conditions, Player `+0x12C` meaning, full throw timing/trajectory, and live input-to-event schedule still need porting and comparison. The 1004 handler route is source-backed; its Training execution has not been observed live.
+
+Ghidra queries: `DecompileFunctions.java 00459350 00458FA0 0043F340 0044C520 0043BE00 0043D2B0 0044BC40 00489D80 00482B90`; `DataValue.java 004E0DE4 004E0DE8 004E0CBC 004E0CD0`; temporary-copy `DefineAndDecompile.java 0043DB40 00489D80`. All preserved-project queries used `-noanalysis -readOnly`.

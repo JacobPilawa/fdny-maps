@@ -28,7 +28,7 @@ WASD moves, the mouse looks, right mouse or Space jumps, C or either Ctrl key to
 
 - Original Training geometry and textures.
 - Authored spawn and recovered walking, jumping, crouching, step-up and sliding behavior.
-- Source-mapped ladder `climb`/`unclimb` commands and Player state 3↔5 movement path; climb clears velocity, state 5 uses view-directed movement, and jump exits the state. Exact contact bounds/cadence and the Player `+0x3440` gate remain unverified.
+- Source-mapped ladder `climb`/`unclimb` commands and Player state 3↔5 movement path; ladder touch bounds expand by authored `E_Reach` with inclusive edges. Native BModel touch bounds now use the Ghidra-verified conditional radius: Training entities 113, 212, and 213 use 48 units; entity 112 keeps 50. Ghidra and Training BSP data establish the BModel USE path to Player state 7 and held-object pointer `+0x3440`; native BModel candidate selection, carry/throw, and original touch-list advancement remain open. See `evidence/training-ladder-audit.md`, `evidence/training-liftable-audit.md`, and `evidence/training-bmodel-contact-audit.md`.
 - A playable approximation of twenty approach doors, opening away from the player with collision following rotation; original BModel keyframe and callback timing remain open.
 - Invisible, non-solid trigger volumes.
 - Original direct tutorial hints and named hint macros.
@@ -39,7 +39,7 @@ WASD moves, the mouse looks, right mouse or Space jumps, C or either Ctrl key to
 - Player `setashdensity` stores the source-clamped `[0,1]` value (initialized to `1.0`; Training sets it to `0`, and two touch triggers set `0.5` then `0`). Ghidra maps the field to a 100-slot particle scan limit; the native pool, conditional RNG/update path and presentation remain open.
 - Partial Hose Spray attach selection and ACTION active/deadline state; the original post-view stream/suppression update remains unported.
 
-Still being implemented: the complete script interpreter and startup sequence, exact ladder contact bounds/cadence and `+0x3440` gate parity, obstacle lifting/chopping, axe/tool animation, particle pool/rendering, scheduled Fire Think and visible fire recovery/dousing, Hose Spray transforms/stream/suppression, damage, victim AI/pickup, goggles, exits and mission completion. Victim hull placement is wired through the native BSP collision port, but its six exact Training results have not been compared to the original DLL. The victim draw path uses the source-traced outer transform and initial pose; the final Genesis body-render/scaling path is not compared. The source-backed extinguisher contact-effect timer and conditional emitter-offset draws use the shared stream; global RNG order remains incomplete. Contact→queue delivery currently uses same-pass host ordering; its position relative to the original owner drain is unresolved. The goal remains a complete 1-to-1 Training reproduction, including shared RNG and all reachable gameplay mechanics.
+Still being implemented: the complete script interpreter and startup sequence, original BModel touch-queue cadence, lift/carry/throw and axe behavior, axe/tool animation, particle pool/rendering, scheduled Fire Think and visible fire recovery/dousing, Hose Spray transforms/stream/suppression, damage, victim AI/pickup, goggles, exits and mission completion. Victim hull placement is wired through the native BSP collision port, but its six exact Training results have not been compared to the original DLL. The victim draw path uses the source-traced outer transform and initial pose; the final Genesis body-render/scaling path is not compared. The source-backed extinguisher contact-effect timer and conditional emitter-offset draws use the shared stream; global RNG order remains incomplete. Contact→queue delivery currently uses same-pass host ordering; its position relative to the original owner drain is unresolved. The goal remains a complete 1-to-1 Training reproduction, including shared RNG and all reachable gameplay mechanics.
 
 ## Matching the original RNG
 
@@ -72,6 +72,7 @@ The C++ collision port matches all 611 recorded fresh contacts from the shipped 
 ./run.sh --rng-check
 ./run.sh --clock-check
 ./run.sh --fire-effects-check
+./run.sh --fire-entity-check
 ./run.sh --fire-suppression-check
 ./run.sh --victim-sound-check
 ./run.sh --victim-sound-init-check
