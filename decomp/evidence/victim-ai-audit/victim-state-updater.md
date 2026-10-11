@@ -34,6 +34,8 @@ This routine stores its argument at victim `+0x224`, sets state 7, copies curren
 
 Ghidra shows a script-command route into this helper: victim event handler `0045CDB0` recognizes `roam`, parses its numeric argument, and calls `0045C7F0(victim, argument)` at `0045D116`. This establishes a general victim-script entry path, but not Training reachability. The preserved Training inputs are `evidence/original/training.evs` (which executes `rescue.evs`), the five sources listed in `assets/training/scripts.json`, and entity records in `assets/training/entities.json`. None contains `roam`, `playanim`, `forcespawnspot`, or `norescuebot`; Training victim entities 191 and 194 only define `pickup` script commands. Therefore state-7 behavior is source-mapped but has not been shown reachable in Training.
 
+Training's known victim state path is state 4 at actor initialization (`0045B690`), state 5 when pickup begins (`0045BEF0`), then state 6 when rescue releases the victim (`0045C000`). No preserved Training input or identified code path enters state 7. Keep the state-7 routines documented for full-game work, but do not treat that movement branch as required Training behavior unless another entry path is found. The actor updater's schedule still matters for animation and the post-release state-6 timer.
+
 ## Open items
 
 - Identify who calls or registers child updater `0045BEA0` and when relative to `0045A070`, Player movement and the owner message drain.
