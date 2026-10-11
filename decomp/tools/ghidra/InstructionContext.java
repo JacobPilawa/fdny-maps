@@ -40,13 +40,15 @@ public class InstructionContext extends GhidraScript {
             previous.add(0, instruction);
             cursor = instruction.getAddress();
         }
-        for (Instruction instruction : previous) println("  " + instruction);
-        println("> " + centerInstruction);
+        for (Instruction instruction : previous) {
+            println("  " + instruction.getAddress() + " " + instruction);
+        }
+        println("> " + center + " " + centerInstruction);
         cursor = centerInstruction.getAddress();
         for (int i = 0; i < afterCount; i++) {
             Instruction instruction = listing.getInstructionAfter(cursor);
             if (instruction == null) break;
-            println("  " + instruction);
+            println("  " + instruction.getAddress() + " " + instruction);
             cursor = instruction.getAddress();
         }
     }
