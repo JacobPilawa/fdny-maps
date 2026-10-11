@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 struct V{float x=0,y=0,z=0;float& operator[](int i){return i==0?x:i==1?y:z;} float operator[](int i)const{return i==0?x:i==1?y:z;}};
 V vec(J j){return {num(at(j,0)),num(at(j,1)),num(at(j,2))};}
 V operator+(V a,V b){return {a.x+b.x,a.y+b.y,a.z+b.z};} V operator-(V a,V b){return {a.x-b.x,a.y-b.y,a.z-b.z};} V operator*(V a,float f){return {a.x*f,a.y*f,a.z*f};}
@@ -76,6 +77,9 @@ struct Collision{
 };
 struct Player{
  V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false;float cooldown=0,ashDensity=1.f;
+ // 00451870 stores setrescuebot at Player+0x32e4; unset is retained until
+ // the authored command runs, so an unrecovered constructor default is not assumed.
+ std::optional<bool> rescueBotEnabled;
  // Player init 0044D550 seeds Player+0x5b0 to 1; 0044BC90 -> 00446350 clamps [0,1].
  void setAshDensity(float value){if(value>1.f)value=1.f;if(value<0.f)value=0.f;ashDensity=value;}
  V maxs()const{return {30,crouch?25.f:85.f,30};}

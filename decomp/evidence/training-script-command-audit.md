@@ -1,0 +1,27 @@
+# Training script command audit
+
+Static command audit recorded 2026-10-11 against the read-only Ghidra 12.0.4 project for `FDNYFirefighter.exe` (SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`). The authored entity/script inputs are `assets/training/entities.json` and `assets/training/scripts.json`. No live gameplay capture was used.
+
+## Commands currently accepted as host no-ops
+
+| Command | Training input and original evidence | Native status and limit |
+|---|---|---|
+| `makezone` | Five `RCS_BoundsTrigger` entities (114, 135, 158, 190, 234) carry named `makezone` commands. String `004E107C` has no code xrefs in the current Ghidra database. The generic script handler `0047A1F0` implements `ifclear`/`ifnotclear` via `004772C0`, but this does not establish what `makezone` creates or how it connects. | Host currently accepts it without state. Keep unresolved; command name alone is insufficient to infer zone behavior. |
+| `makevalve` | PropModel handler `004444B0` writes `1` to its instance flag at `+0xEC`. Training PropModels 159 and 164 use it; the source query path `004442B0 → 0044C780` uses the valve instance state to offer attach/detach actions. | The native `TrainingPropModel::makeValve` and valve-candidate list are already derived from the exact authored `S_Script01=makevalve` property, so the Training use gate is represented outside the host callback. The native callback itself remains a no-op. |
+| `setscale` | PropModel handler `004444B0` parses three floats and calls `004437C0`; that routine composes the scale through `0042D280` into the PropModel transform. Training entity 161 (`ext1`) authors `0.2 0.2 0.2`. | Native PropModel transforms/presentation are not implemented, so storing this value alone would have no visible effect. |
+| `settimescale` | BModel handler `0043E680` parses a float and writes the motion timescale at `+0x1B8`. The shared `Door` macro uses `3.0`; its use is bound on Training's authored doors. (`settimescale 500` also appears in the reusable `GrabAxe` definition, which no Training entity references.) | Native approach doors hard-code the authored value 3 in their update. General BModel motion/time scheduling is not ported or compared. |
+| `sethitpoints` | `0043E680` parses an integer and writes it to the BModel's embedded `+0x34` field. Training's shared `Door` macro sets it to 0. | Native door state does not model BModel hitpoints. The command's source store is known; its Training gameplay consequence has not been independently compared. |
+| `openaway` | `0043E680` calls `0043D6A0` for each BModel. The routine may call its `open` event when state `+0x70` is 4; otherwise it derives a direction from the authored motion keys and player position, modifies the keyframe, and writes state 3. Training's `DoorOpen` macro invokes it. | Native `Door::update` approximates proximity opening and direction, but original EVS event timing and exact model-motion composition are not verified. |
+| `close` | `0043E680` calls `0043DA70`. That routine writes state 4, with a queued `close` event when the prior state was 3. Training's `DoorClose` macro invokes it. | Native doors reverse their local fraction when the player leaves; the original state/queue path is not implemented or compared. |
+| `flush` | Handler `0046F9D0` calls `0043B6E0` on the subobject at `this+0x30` when field `+0x34` is nonzero, then writes zero to `+0x4C`. Training's `DoorOpen` macro runs it before `openaway`. | The helper's storage semantics and object mapping are not yet verified, and native `Door` has no equivalent script subobject/state to update. |
+| `setrescuebot` | Player command handler `00451870` parses with `0040CD50` (`sscanf` `%i`) and stores the nonzero result at Player `+0x32E4`. Training Player entity 115 authors `setrescuebot 0`; native first-pass script dispatch is ordered through the verified startup queue. | Implemented as an optional source-backed Player setting; Training resolves it to `off`. No RescueBot behavior is being inferred or connected. |
+
+## Other reachable gaps
+
+- Training exit triggers issue `tell player escape`. The source path is `00451870 → 004513A0 → 00451160`, and victim pickup/release helpers are traced in `evidence/victim-ai-audit/training-pickup-flow.md`. The native host does not implement `escape`; carry state and victim updater schedule are also unresolved, so it is not safe to wire an apparent rescue based only on trigger proximity.
+- Training authors breakable furniture and axe hints in the chopping exercise. The loaded `GrabAxe` macro is defined in `Scripts/tools.evs`, but no Training entity references it; keep that generic break handler as a full-game lead. The native host does not provide the original sound service or axe mechanics.
+- The Player handler also contains `finalexit` and `finalexitloadmap`, but no such command appears in the extracted Training input. They remain whole-game leads rather than Training requirements.
+
+## Verification limits
+
+The command stores and call edges above were checked in Ghidra. No focused runtime oracle exists for these script-level actions. The previous WineDbg attempts did not produce gameplay events, and this audit did not retry live capture. Door motion and mission-zone timing therefore remain open. The only gameplay-model change from this audit is the explicit `setrescuebot` setting write; `--script-check` now reports its resolved value. Training's value is statically known to be false.
