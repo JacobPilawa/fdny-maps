@@ -12,7 +12,7 @@ Read-only Ghidra 12.0.4 audit of `FDNYFirefighter.exe` (SHA-256 `4b3b4dc1cc0b05b
 
 ## Limits and unresolved item
 
-The preserved incoming-reference query for `0045BEA0` reports only the vtable data word `004E25B0`. This does not establish that the updater never runs: computed dispatch, runtime registration outside the inspected paths, or engine enumeration could call it. Static evidence now separates the known normal paths (owner callback `0045A070`, staged actor/spawn setup, ScriptEngine event registration) from the child updater, but still does not show who schedules `0045BEA0`, its cadence, or its order relative to Player updates and owner message drains. Those timing facts require a verified dynamic trace or a further positively identified dispatcher.
+The preserved incoming-reference query for `0045BEA0` reports only the vtable data word `004E25B0`. This does not establish that the updater never runs: computed dispatch, runtime registration outside the inspected paths, or engine enumeration could call it. Static evidence now separates the known normal paths (owner callback `0045A070`, staged actor/spawn setup, ScriptEngine event registration) from the child updater, but still does not show who schedules `0045BEA0`, its cadence, or its order relative to Player updates and owner message drains. Those timing facts require a verified dynamic trace or a further positively identified dispatcher. The broader shared-actor search is in [`../scriptactor-common-scheduler-audit.md`](../scriptactor-common-scheduler-audit.md).
 
 ## Ghidra query scope
 
