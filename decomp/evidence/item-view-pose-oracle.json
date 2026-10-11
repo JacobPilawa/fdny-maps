@@ -1,0 +1,493 @@
+{
+  "provenance": {
+    "entry": "0045FEC0",
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "method": "Original x86 0045FEC0 and 00447710 execute. 0045FB90 is stubbed to preserve its current/previous time writes; 0047F1A0 returns scratch bone records whose vectors are copied but do not feed the view/aim offset calculation. This captures time and offset arithmetic, not actor animation or live tool state transitions."
+  },
+  "samples": [
+    {
+      "input": {
+        "initial_time_bits": 0,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1015759766,
+        "previous_time_bits": 0,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1066948098,
+          3231208962,
+          0
+        ],
+        "view_offset_bits": [
+          1058559490,
+          3199651228,
+          1056160976
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1008981770,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1021128475,
+        "previous_time_bits": 1008981770,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1072588472,
+          3236849336,
+          0
+        ],
+        "view_offset_bits": [
+          1064199864,
+          3205433966,
+          1061075091
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1034147594,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1036429296,
+        "previous_time_bits": 1034147594,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1084019626,
+          3248280490,
+          0
+        ],
+        "view_offset_bits": [
+          1075631018,
+          3216781618,
+          1073409090
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1041865114,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1043005965,
+        "previous_time_bits": 1041865114,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1080112272,
+          3244373136,
+          0
+        ],
+        "view_offset_bits": [
+          1071723664,
+          3213303690,
+          1068771853
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1046562734,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1047703585,
+        "previous_time_bits": 1046562734,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          3232099181,
+          1101392749,
+          2147483648
+        ],
+        "view_offset_bits": [
+          3223710573,
+          1070013059,
+          3221535832
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1050253722,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1050824147,
+        "previous_time_bits": 1050253722,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          3250762012,
+          1120055580,
+          2147483648
+        ],
+        "view_offset_bits": [
+          3242373404,
+          1089053013,
+          3239821539
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1052602532,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1053172957,
+        "previous_time_bits": 1052602532,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          3247515039,
+          1116808607,
+          2147483648
+        ],
+        "view_offset_bits": [
+          3239126431,
+          1085156645,
+          3236445233
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1055286886,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1055857311,
+        "previous_time_bits": 1055286886,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1070113542,
+          3234374406,
+          0
+        ],
+        "view_offset_bits": [
+          1061724934,
+          3203449761,
+          1059095148
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1057300152,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1057585365,
+        "previous_time_bits": 1057300152,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1083868868,
+          3248129732,
+          0
+        ],
+        "view_offset_bits": [
+          1075480260,
+          3216600708,
+          1073167878
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1058642330,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1058927543,
+        "previous_time_bits": 1058642330,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1078897819,
+          3243158683,
+          0
+        ],
+        "view_offset_bits": [
+          1070509211,
+          3212313172,
+          1067800290
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1059648963,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1059934176,
+        "previous_time_bits": 1059648963,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1061158912,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1061444125,
+        "previous_time_bits": 1061158912,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1063675494,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1063960707,
+        "previous_time_bits": 1063675494,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1065068003,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 1065353216,
+        "previous_time_bits": 1065068003,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1065185444,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 0,
+        "previous_time_bits": 1065185444,
+        "animation_flag": 0,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1065353216,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 0,
+        "previous_time_bits": 1065353216,
+        "animation_flag": 0,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1065361605,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 0,
+        "previous_time_bits": 1065361605,
+        "animation_flag": 0,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1065185444,
+        "frame_dt_bits": 1015759766,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 0,
+        "previous_time_bits": 1065185444,
+        "animation_flag": 0,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1061158912,
+        "frame_dt_bits": 1056964608,
+        "advance_bits": 1056964608
+      },
+      "result": {
+        "current_time_bits": 1065353216,
+        "previous_time_bits": 1061158912,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1048576000,
+        "frame_dt_bits": 1056964608,
+        "advance_bits": 1073741824
+      },
+      "result": {
+        "current_time_bits": 0,
+        "previous_time_bits": 1048576000,
+        "animation_flag": 0,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 0,
+        "frame_dt_bits": 0,
+        "advance_bits": 1065353216
+      },
+      "result": {
+        "current_time_bits": 0,
+        "previous_time_bits": 0,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          0,
+          2147483648,
+          0
+        ],
+        "view_offset_bits": [
+          0,
+          2147483648,
+          0
+        ]
+      }
+    },
+    {
+      "input": {
+        "initial_time_bits": 1056964608,
+        "frame_dt_bits": 1036831949,
+        "advance_bits": 0
+      },
+      "result": {
+        "current_time_bits": 1056964608,
+        "previous_time_bits": 1056964608,
+        "animation_flag": 7,
+        "aim_offset_bits": [
+          1080182319,
+          3244443183,
+          0
+        ],
+        "view_offset_bits": [
+          1071793711,
+          3213345718,
+          1068827890
+        ]
+      }
+    }
+  ]
+}

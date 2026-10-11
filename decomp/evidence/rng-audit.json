@@ -1,0 +1,780 @@
+{
+  "program": "FDNYFirefighter.exe",
+  "references": [
+    {
+      "target": "00404930",
+      "site": "0040497c",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00404960",
+      "instruction": "CALL 0x00404930"
+    },
+    {
+      "target": "00404960",
+      "site": "00404ac9",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00404ac0",
+      "instruction": "CALL 0x00404960"
+    },
+    {
+      "target": "00404960",
+      "site": "00404a78",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00404a70",
+      "instruction": "JMP 0x00404960"
+    },
+    {
+      "target": "00404a70",
+      "site": "00404b3d",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00404b30",
+      "instruction": "CALL 0x00404a70"
+    },
+    {
+      "target": "00404ac0",
+      "site": "004a0d21",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004a0be0",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "00498b30",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00498b30",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "0045aee6",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045ae50",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "004697be",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004696a0",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "004697d7",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004696a0",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "0046ae62",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046a390",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "00464320",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004640f0",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "00498b60",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00498b50",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404ac0",
+      "site": "00498b71",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00498b50",
+      "instruction": "CALL 0x00404ac0"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045489b",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00454750",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "00454b19",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00454750",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "004544e5",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00454490",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0048e487",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0048e450",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "00454bd7",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00454ba0",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "004551fe",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00454ba0",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045425c",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004541a0",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "004542e0",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004541a0",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045c1cc",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045c1a0",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045c1eb",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045c1a0",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "00459a7d",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00459a50",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "00459aad",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00459a50",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "00459ac7",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00459a50",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045ba44",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045b690",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045bd5d",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045b690",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045bd7c",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045b690",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "0045b07f",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045ae50",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "004557ab",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00455580",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b30",
+      "site": "00454115",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00454100",
+      "instruction": "CALL 0x00404b30"
+    },
+    {
+      "target": "00404b50",
+      "site": "0042c935",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0042c800",
+      "instruction": "CALL 0x00404b50"
+    },
+    {
+      "target": "00498b30",
+      "site": "00435ab0",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00435a10",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00435ad3",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00435a10",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00488d5c",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00488d40",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00488d77",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00488d40",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004800ed",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00480112",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00480123",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00480134",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004801df",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004801f5",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00480220",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00480090",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0049ceb6",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0049cd80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0049cec3",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0049cd80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447b04",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447b90",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447bb9",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447d48",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447d77",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447da2",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447efb",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00447f46",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00447a90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0048e0dc",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0048e080",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0045aed3",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045ae50",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0048d90f",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0048d8f0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0048d94f",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0048d8f0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0048d96a",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0048d8f0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0045d5e8",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0045d5b0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00462899",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00462730",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046cd3e",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046cdf6",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046ce3a",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046ce51",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046ce68",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046cead",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046cec3",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046cee0",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0046c5a0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00465acd",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00465a20",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0043fe66",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0043fdd0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0043fe87",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0043fdd0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00451782",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00451640",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00445f1b",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00445f00",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00445f31",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00445f00",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00445f47",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00445f00",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00445f6d",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00445f00",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00448e45",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00448d60",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044b311",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0044b270",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044b3bb",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0044b270",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044b3dc",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0044b270",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044b48c",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0044b270",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044b4ad",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0044b270",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044691b",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004467e0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044692e",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "004467e0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004464a5",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446470",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004464bb",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446470",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004464df",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446470",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00446548",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446510",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00446564",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446510",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044657c",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446510",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004465a7",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00446510",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0044eaea",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "0044ea90",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00461fdd",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00461f80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004622d4",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00461f80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00462343",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00461f80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00462359",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00461f80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046236f",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00461f80",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00463ffb",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00463ef0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00464067",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00463ef0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "0046407d",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00463ef0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00464093",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00463ef0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00468dbb",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00468ac0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00468e75",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00468ac0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "00468e9e",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00468ac0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b30",
+      "site": "004691a8",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00468ac0",
+      "instruction": "CALL 0x00498b30"
+    },
+    {
+      "target": "00498b50",
+      "site": "00498c00",
+      "type": "UNCONDITIONAL_CALL",
+      "function": "00498c00",
+      "instruction": "CALL 0x00498b50"
+    }
+  ],
+  "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+  "byte_scan": {
+    "method": "All executable PE sections; direct x86 CALL/JMP relative destinations, cross-checked against disassembled instruction references",
+    "matches": 108,
+    "ghidra_missing_references": [
+      {
+        "site": "00404b20",
+        "target": "00404ac0"
+      }
+    ],
+    "unresolved_references": [],
+    "unattributed_references": 0,
+    "targets_without_references": [
+      "00404b20",
+      "00498c00"
+    ]
+  },
+  "raw_references": [
+    {
+      "site": "00404b20",
+      "target": "00404ac0",
+      "function": "00404b20",
+      "source": "evidence/rng-gaussian/00404b20_thunk_FUN_00404ac0.c",
+      "method": "Executable relative CALL/JMP bytes and exported function entry"
+    }
+  ]
+}

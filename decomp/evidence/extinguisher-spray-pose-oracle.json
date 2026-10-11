@@ -1,0 +1,217 @@
+{
+  "provenance": {
+    "entry": "00461F80 active pose-phase branch through 004977B0 call site",
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "method": "Original x86 routine with 0045F600 follower update and 00482430 animation-record update return-stubbed. Original 00498B30/shared RNG and x87 phase, FSIN, FCOS, and vector writes execute. Capture stops before 004977B0. Each captured update consumes only the range draw observed in this prefix."
+  },
+  "samples": [
+    {
+      "input": {
+        "seed": 0,
+        "dt": 0.0,
+        "initial_phase": 0.0,
+        "position_offset": [
+          -20.0,
+          -20.0,
+          30.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 0,
+        "direction_bits": [
+          1065353216,
+          3221225472,
+          1090519040
+        ],
+        "position_bits": [
+          3247964160,
+          3248488448,
+          1106771968
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 1,
+        "dt": 0.0010000000474974513,
+        "initial_phase": 0.12345670163631439,
+        "position_offset": [
+          -20.25,
+          -19.5,
+          31.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 1040558863,
+        "direction_bits": [
+          1065317494,
+          3220679521,
+          1090519040
+        ],
+        "position_bits": [
+          3248096348,
+          3248192182,
+          1107295140
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 4357,
+        "dt": 0.01666666753590107,
+        "initial_phase": 1.0,
+        "position_offset": [
+          -20.5,
+          -19.0,
+          32.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 1066324335,
+        "direction_bits": [
+          1062809415,
+          3217457947,
+          1090519040
+        ],
+        "position_bits": [
+          3248305798,
+          3247728690,
+          1107518653
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 2002,
+        "dt": 0.03333330154418945,
+        "initial_phase": 3.1415927410125732,
+        "position_offset": [
+          -20.75,
+          -18.5,
+          33.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 1079437561,
+        "direction_bits": [
+          3185386313,
+          3221675714,
+          1090519040
+        ],
+        "position_bits": [
+          3248938275,
+          3247758296,
+          1107530094
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 305419896,
+        "dt": 0.10000000149011612,
+        "initial_phase": 9.75,
+        "position_offset": [
+          -21.0,
+          -18.0,
+          34.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 1093072604,
+        "direction_bits": [
+          1056428478,
+          3223001954,
+          1090519040
+        ],
+        "position_bits": [
+          3248758969,
+          3247661932,
+          1107947427
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 91,
+        "dt": 0.01600000075995922,
+        "initial_phase": 20.0,
+        "position_offset": [
+          -21.25,
+          -17.5,
+          35.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 1101071082,
+        "direction_bits": [
+          3209532262,
+          3217211050,
+          1090519040
+        ],
+        "position_bits": [
+          3249564827,
+          3246926827,
+          1107872178
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 1001,
+        "dt": 0.25,
+        "initial_phase": -2.5,
+        "position_offset": [
+          -21.5,
+          -17.0,
+          36.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 3207424274,
+        "direction_bits": [
+          1064400102,
+          3222539877,
+          1090519040
+        ],
+        "position_bits": [
+          3248780377,
+          3247079885,
+          1108592084
+        ]
+      }
+    },
+    {
+      "input": {
+        "seed": 2309737967,
+        "dt": 1.25,
+        "initial_phase": 123.75,
+        "position_offset": [
+          -21.75,
+          -16.5,
+          37.0
+        ]
+      },
+      "result": {
+        "draws": 1,
+        "phase_bits": 1124312866,
+        "direction_bits": [
+          3212655884,
+          3221833251,
+          1090519040
+        ],
+        "position_bits": [
+          3249924584,
+          3246729412,
+          1108347660
+        ]
+      }
+    }
+  ]
+}

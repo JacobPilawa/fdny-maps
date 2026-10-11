@@ -1,0 +1,312 @@
+{
+  "target": "1-to-1 original Training reproduction",
+  "systems": [
+    {
+      "name": "Assets and resources",
+      "status": "decoded; visual parity pending",
+      "original_entries": []
+    },
+    {
+      "name": "Startup and entity ordering",
+      "status": "class order and victim candidates recovered; batch dispatcher matches 4 original scenarios / 72 event-count comparisons; early set/exec pass and delayed full script pass wired; world countdown matches 120 original updates; complete entity initialization and loading-state integration pending",
+      "original_entries": [
+        "004297e0",
+        "0049f160",
+        "0049e4d0",
+        "0049c670",
+        "00459840",
+        "0045ddd0",
+        "0045d5b0",
+        "0049e240",
+        "0049e2c0",
+        "00471310",
+        "004799e0"
+      ]
+    },
+    {
+      "name": "Shared RNG and all draw ordering",
+      "status": "core and sound choice match 43,000 original comparisons; save/restore matches 88 original captures / 66,176 state-output comparisons; deferred sound queue matches 24 original replays; full gameplay integration and draw ordering pending",
+      "original_entries": [
+        "00404930",
+        "00404960",
+        "00404a70",
+        "00404ac0",
+        "00404b30",
+        "00404b50",
+        "00498b30",
+        "00488d40"
+      ]
+    },
+    {
+      "name": "Clock and scheduling",
+      "status": "clock port wired into playable loop; all stored bits match 3,000 original updates; full entity scheduling pending",
+      "original_entries": [
+        "0042bf70"
+      ]
+    },
+    {
+      "name": "Player controls, movement, collision",
+      "status": "partial; static fresh collision fixtures pass",
+      "original_entries": [
+        "00452570",
+        "0049dbc0",
+        "0049e0a0",
+        "0043f810"
+      ]
+    },
+    {
+      "name": "Doors and authored brush motion",
+      "status": "partial",
+      "original_entries": [
+        "0043d660"
+      ]
+    },
+    {
+      "name": "Script interpreter and message queues",
+      "status": "partial; Training startup syntax passes; native ID pool matches all 512 original routes, generations, release and FIFO reuse at generation 513; the mapped fire-message queue matches a four-request original fixture through FIFO delivery and generation-based receiver resolution; all 16 Training factory callbacks and World route-registration calls are mapped and the native startup now allocates stable route identities in that order; current fire routes 159–165 / generations 60–66 are source-derived rather than a captured original Training run; live scheduler/contact integration pending",
+      "original_entries": [
+        "0049b4c0",
+        "0049b610",
+        "0049b7e0",
+        "0049d4e0",
+        "0049b9e0",
+        "0049b810",
+        "0049b780",
+        "0049d450"
+      ]
+    },
+    {
+      "name": "Axe and destructible objects",
+      "status": "in progress",
+      "original_entries": [
+        "00460b90",
+        "0043e2a0"
+      ]
+    },
+    {
+      "name": "Liftable objects and use selection",
+      "status": "in progress",
+      "original_entries": [
+        "00458fa0",
+        "0043be00"
+      ]
+    },
+    {
+      "name": "Extinguisher spray, charge and refill",
+      "status": "in progress; contact sampling records and bounded queue calls match original fixtures; composed mapped delivery and fire suppression match four requests, including stale-generation rejection; native action/tool/contact/obstruction integration pending",
+      "original_entries": [
+        "00461f80",
+        "00461830",
+        "00481a50",
+        "00481a60",
+        "00449a40",
+        "00448970"
+      ]
+    },
+    {
+      "name": "Hose pickup, connection, length and spray",
+      "status": "source target/action path mapped; native Training prop centers/radii, partial Space/Shift USE selection and local attach/detach modes wired; ray/sphere component matches 548 original queries / 3,836 words; composed view selection, touch geometry/schedule, candidate-order capture, full item/frame state, hose actor/stream/effects pending",
+      "original_entries": [
+        "00451870",
+        "0044cab0",
+        "00463ef0",
+        "00452570",
+        "00459350",
+        "00458fa0",
+        "00459630",
+        "00459050",
+        "00459000",
+        "00489ce0",
+        "004834a0",
+        "004395c0",
+        "004442b0",
+        "0044c780",
+        "00444120",
+        "0044c840",
+        "004444b0"
+      ]
+    },
+    {
+      "name": "Fire growth, suppression, spreading and cleanup",
+      "status": "in progress",
+      "original_entries": [
+        "00448970",
+        "0044a7a0",
+        "00447a90"
+      ]
+    },
+    {
+      "name": "Player fire damage, air and passing out",
+      "status": "pending",
+      "original_entries": [
+        "0044d550"
+      ]
+    },
+    {
+      "name": "Victim startup candidates, AI and collision",
+      "status": "authored three-candidate lists recovered for both Training victims; selection conversion verified; runtime model/AI pending; model-floor wrapper matches 84 original calls; live actor integration pending",
+      "original_entries": [
+        "0045d5b0",
+        "0045c7f0"
+      ]
+    },
+    {
+      "name": "Victim pickup, carrying, rescue and exits",
+      "status": "pending",
+      "original_entries": [
+        "004513a0",
+        "004504c0"
+      ]
+    },
+    {
+      "name": "Goggles and visibility",
+      "status": "pending",
+      "original_entries": []
+    },
+    {
+      "name": "Actor poses, weapon placement and animations",
+      "status": "pending",
+      "original_entries": []
+    },
+    {
+      "name": "Lighting, particles, smoke and audio",
+      "status": "pending",
+      "original_entries": []
+    },
+    {
+      "name": "HUD, failure, restart, statistics and mission completion",
+      "status": "pending",
+      "original_entries": []
+    },
+    {
+      "name": "Fire visual initialization RNG",
+      "status": "C++ port matches 1140 original initializations including draw counts; runtime integration pending",
+      "original_entries": [
+        "0044b270",
+        "0047f850",
+        "0047d370",
+        "00458e40"
+      ]
+    },
+    {
+      "name": "Victim sound timing and RNG",
+      "status": "C++ matches 9,000 original updates and 114 initial timer-store captures; initial deadline and previous-sound initialization recovered; runtime integration pending",
+      "original_entries": [
+        "0048d8f0",
+        "0048e080"
+      ]
+    },
+    {
+      "name": "Actor animation timing",
+      "status": "selection and looping pose-time arithmetic ported; original-code comparison covers 54 selections and 432 updates; live actor integration pending",
+      "original_entries": [
+        "00480ea0",
+        "00480d50"
+      ]
+    },
+    {
+      "name": "Actor bone poses",
+      "status": "original tracks sampled; transform primitives compared directly against 641 shipped DLL calls / 4,029 result words; full hierarchy native comparison and live rendering pending",
+      "original_entries": []
+    },
+    {
+      "name": "Fire spray suppression and final douse",
+      "status": "C++ matches 2,160 original arithmetic/state/callback calls; live tool contact generation and fire integration pending",
+      "original_entries": [
+        "00448970"
+      ]
+    },
+    {
+      "name": "Fire Think recovery and update gating",
+      "status": "1350 original calls match core strength/gating/presentation and host size/path call counts; visual/audio/path services supplied by fixture; live entity integration pending",
+      "original_entries": [
+        "00449FE0"
+      ],
+      "implementation": "src/fire_update.h",
+      "comparison": "--fire-update-check"
+    },
+    {
+      "name": "Player fire exposure and damage",
+      "status": "Source trace maps FireRescue +0x48 to up to four queued 0x7531 exposure records between per-fire +0xB8 resets in Think. Player 00451640 draws once through 00498B30 only after current clock [0x00502AFC] exceeds +0x390, then stores truncating conversion of current clock plus the draw as the next pain deadline; raw x87 instructions expose the addition omitted by Ghidra pseudocode. Native generation/handling, direct original fixture and live scheduling pending",
+      "original_entries": [
+        "004483A0",
+        "00453A70",
+        "00451640",
+        "00450FB0"
+      ]
+    },
+    {
+      "name": "Fire size keys and interpolation",
+      "status": "156 original interpolation updates and 39 original queue/update transitions match; live fire integration pending",
+      "original_entries": [
+        "0044B620",
+        "0044AE80",
+        "0044B510"
+      ],
+      "implementation": "src/fire_size.h",
+      "comparison": "--fire-size-check"
+    },
+    {
+      "name": "Flame and glow placement",
+      "status": "56 original calls / 3136 output words match exactly; original point-transform rounding and below-origin adjustment preserved; live rendering pending",
+      "original_entries": [
+        "0044A840",
+        "00495D20",
+        "00495EB0",
+        "0047F1A0"
+      ],
+      "implementation": "src/fire_placement.h",
+      "comparison": "--fire-placement-check"
+    },
+    {
+      "name": "Sprite frame timing and looping",
+      "status": "5760 original frame-update comparisons match; frame descriptor loading and live fire rendering pending",
+      "original_entries": [
+        "0047D660",
+        "0047D2B0"
+      ],
+      "implementation": "src/sprite_animation.h",
+      "comparison": "--sprite-animation-check"
+    },
+    {
+      "name": "Combined fire visual component",
+      "status": "Recovered effect, size, placement and sprite components assembled; initializer matches 1140 original comparisons; live world drawing/smoke/entity scheduling pending",
+      "original_entries": [
+        "0044B270",
+        "0044B060",
+        "0045DFF0"
+      ],
+      "implementation": "src/fire_visual.h"
+    },
+    {
+      "name": "Assembled placed-fire entity",
+      "status": "50 original initializations match draw counts, sound choice and key/origin/strength/spray-time/divider outputs; assembled Think/suppression components; floor, headed/model-bound variants, authored initial size-key lists and live integration pending",
+      "original_entries": [
+        "00448D60"
+      ],
+      "implementation": "src/fire_entity.h",
+      "comparison": "--fire-entity-check"
+    },
+    {
+      "name": "Fire floor alignment",
+      "status": "24 original successful-contact comparisons match trace requests and all output transform bits; live point-trace world adapter and failed-contact logging pending",
+      "original_entries": [
+        "00448630",
+        "004476B0"
+      ],
+      "implementation": "src/fire_floor.h",
+      "comparison": "--fire-floor-check"
+    }
+  ],
+  "completion_requires": [
+    "Same original RNG state at the comparison boundary",
+    "Same inputs and frame timing",
+    "Every shared RNG draw matched in order",
+    "Victim and fire outcomes matched",
+    "Original sound/effect draws and queue ordering implemented",
+    "Complete playable Training run verified"
+  ],
+  "long_term_target": "Full game decompilation, preserving evidence and reusable shared systems",
+  "priority": "Complete 1-to-1 playable Training before expanding playable level scope",
+  "preservation": "Retain raw exports, assembly, original assets, comparison fixtures and conflicting variants; evidence/function-index.json indexes native exports without deleting them"
+}

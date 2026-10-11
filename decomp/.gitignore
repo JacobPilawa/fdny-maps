@@ -1,0 +1,38 @@
+# Local build and machine caches
+/build/
+/tools/runtime-deps/
+/tools/__pycache__/
+*.py[cod]
+*.lock
+*.lock~
+.DS_Store
+
+# Original retail inputs and local analysis databases stay in this workspace.
+/assets/training/
+/evidence/original/
+/evidence/ghidra/
+/evidence/live/
+/evidence/genesis-actor-source/
+
+# Raw disassembly/decompiler exports are retained locally; the GitHub mirror
+# keeps native code, authored summaries and numeric oracle fixtures.
+/evidence/**/*.c
+/evidence/**/*.txt
+/evidence/**/*.asm
+/evidence/**/*.tsv
+/evidence/**/*.rrf
+/evidence/**/*.evs
+/evidence/**/*.prp
+/evidence/**/*.dat
+/evidence/**/*.bin
+/evidence/**/*.exe
+/evidence/**/*.dll
+/evidence/**/*.bsp
+/evidence/**/*.act
+/evidence/**/*.bmp
+/evidence/**/*.png
+/evidence/**/*.dylib
+/evidence/**/*.a
+/evidence/clock-assembly
+/evidence/rng-assembly
+/evidence/rng-gaussian-assembly

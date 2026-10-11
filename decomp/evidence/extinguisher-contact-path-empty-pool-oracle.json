@@ -1,0 +1,312 @@
+{
+  "provenance": {
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "entries": [
+      "00461F80",
+      "0044A7A0",
+      "00481A50",
+      "00481A60",
+      "0049D350",
+      "0049D4E0",
+      "0049B4C0",
+      "0049B610",
+      "0049B7E0",
+      "00449A40",
+      "00448970",
+      "0047FF30",
+      "00498B30",
+      "004B9400",
+      "00404AC0"
+    ],
+    "method": "Original x86 00461F80 runs with a supplied active item pose. The iterator factory at 00481C00 supplies three controlled candidates (types 5, 6 and 7); iterator cursor cleanup, item follower/frame-record transforms (0045F600, 00482430, 00480090, 004612B0) are stubbed. Original fire contact geometry, contact collector, route registration, mapped FIFO queue, generation lookup, FireRescue handler and suppression execute. The original pool constructor/setup creates an empty pool with limit -1; its one-frame fixture descriptor has count 1 and flags 0. A fixture heap backs original operator new and preallocates the emitter array. The original 0049B610 drain is then called after 00461F80 as a sequential capture; this does not establish live ordering against tool/fire Think callbacks. The fire actor extents, alpha, strength, state, model divisor, frame delta, pose and seed are supplied controlled values.",
+    "seed": 4357,
+    "rng_draws": 2,
+    "draw_sites": [
+      {
+        "index": 0,
+        "return_address": 4819765
+      },
+      {
+        "index": 1,
+        "return_address": 4819765
+      }
+    ],
+    "range_calls": [
+      {
+        "index": 0,
+        "min_bits": 1086324736,
+        "max_bits": 1090519040
+      },
+      {
+        "index": 1,
+        "min_bits": 1092616192,
+        "max_bits": 1132068864
+      }
+    ],
+    "pool_returns": [
+      {
+        "return_address": 4596502,
+        "eax_values": [
+          0
+        ]
+      }
+    ],
+    "pool_entry_states": [
+      {
+        "pool_offset": 968,
+        "world": 0,
+        "config": -805306368,
+        "limit": 0,
+        "array_offset": -805306368,
+        "entries": 0,
+        "capacity": 0
+      }
+    ],
+    "operator_allocations": []
+  },
+  "input": {
+    "frame_dt_bits": 1015580809,
+    "game_time": 1000,
+    "item_origin": [
+      0,
+      0,
+      0
+    ],
+    "item_basis_bits": [
+      1065353216,
+      0,
+      0,
+      0,
+      1065353216,
+      0,
+      0,
+      0,
+      1065353216
+    ],
+    "candidate_types": [
+      5,
+      6,
+      7
+    ],
+    "fire": {
+      "route": 100,
+      "generation": 1,
+      "strength_bits_before": 1063843267,
+      "visual_center_bits": [
+        0,
+        3270508544,
+        1092616192
+      ],
+      "visual_extents_bits": [
+        1131413504,
+        1131413504,
+        1131413504
+      ],
+      "sprite_alpha_bits": 1065353216,
+      "model_divisor_bits": 1094713344
+    },
+    "effect_pool": {
+      "setup": "original 00480260 + 0047FE70; fixture descriptor count=1 flags=0",
+      "initial_entries": 0,
+      "limit": -1,
+      "entries_after_contact": 0,
+      "emitters_after_contact": []
+    }
+  },
+  "generated_points_bits": [
+    [
+      0,
+      3253731328,
+      1092616192
+    ],
+    [
+      0,
+      3266576384,
+      1092616193
+    ],
+    [
+      0,
+      3272998912,
+      1092616194
+    ],
+    [
+      0,
+      3276931072,
+      1092616194
+    ]
+  ],
+  "contacts": {
+    "count": 4,
+    "records_bits": [
+      [
+        0,
+        3253731328,
+        1092616192,
+        1061997773
+      ],
+      [
+        0,
+        3266576384,
+        1092616193,
+        1070386381
+      ],
+      [
+        0,
+        3272998912,
+        1092616194,
+        1070386381
+      ],
+      [
+        0,
+        3276931072,
+        1092616194,
+        1061997773
+      ]
+    ],
+    "queue_calls": [
+      {
+        "receiver_offset": 65536,
+        "route0": 100,
+        "route1": 1,
+        "message": 30000,
+        "payload_offset": 4,
+        "payload_bits": [
+          0,
+          3253731328,
+          1092616192,
+          1061997773
+        ]
+      },
+      {
+        "receiver_offset": 65536,
+        "route0": 100,
+        "route1": 1,
+        "message": 30000,
+        "payload_offset": 20,
+        "payload_bits": [
+          0,
+          3266576384,
+          1092616193,
+          1070386381
+        ]
+      },
+      {
+        "receiver_offset": 65536,
+        "route0": 100,
+        "route1": 1,
+        "message": 30000,
+        "payload_offset": 36,
+        "payload_bits": [
+          0,
+          3272998912,
+          1092616194,
+          1070386381
+        ]
+      },
+      {
+        "receiver_offset": 65536,
+        "route0": 100,
+        "route1": 1,
+        "message": 30000,
+        "payload_offset": 52,
+        "payload_bits": [
+          0,
+          3276931072,
+          1092616194,
+          1061997773
+        ]
+      }
+    ]
+  },
+  "queue": {
+    "pending_before_drain": 4,
+    "mapping_high_water_before_drain": 3,
+    "active_before_drain": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "handler_calls": [
+      {
+        "receiver_offset": 65536,
+        "message": 30000,
+        "payload_offset": 4,
+        "payload_bits": [
+          0,
+          3253731328,
+          1092616192,
+          1061997773
+        ]
+      },
+      {
+        "receiver_offset": 65536,
+        "message": 30000,
+        "payload_offset": 20,
+        "payload_bits": [
+          0,
+          3266576384,
+          1092616193,
+          1070386381
+        ]
+      },
+      {
+        "receiver_offset": 65536,
+        "message": 30000,
+        "payload_offset": 36,
+        "payload_bits": [
+          0,
+          3272998912,
+          1092616194,
+          1070386381
+        ]
+      },
+      {
+        "receiver_offset": 65536,
+        "message": 30000,
+        "payload_offset": 52,
+        "payload_bits": [
+          0,
+          3276931072,
+          1092616194,
+          1061997773
+        ]
+      }
+    ],
+    "drain_steps": [
+      {
+        "record_slot": 0,
+        "record_active_before_clear": 1,
+        "queued_count_after_pop": 3,
+        "fire_strength_bits": 1063820897,
+        "sprayed": 1
+      },
+      {
+        "record_slot": 1,
+        "record_active_before_clear": 1,
+        "queued_count_after_pop": 2,
+        "fire_strength_bits": 1063805984,
+        "sprayed": 1
+      },
+      {
+        "record_slot": 2,
+        "record_active_before_clear": 1,
+        "queued_count_after_pop": 1,
+        "fire_strength_bits": 1063791071,
+        "sprayed": 1
+      },
+      {
+        "record_slot": 3,
+        "record_active_before_clear": 1,
+        "queued_count_after_pop": 0,
+        "fire_strength_bits": 1063768701,
+        "sprayed": 1
+      }
+    ],
+    "pending_after_drain": 0,
+    "fire_strength_bits_before_drain": 1063843267,
+    "fire_strength_bits_after_drain": 1063768701,
+    "fire_sprayed_after_drain": 1,
+    "effect_timer_after_contact": 1134
+  }
+}

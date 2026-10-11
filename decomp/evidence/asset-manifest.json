@@ -1,0 +1,642 @@
+[
+  {
+    "path": "assets/training/actors/axe.json",
+    "bytes": 89367,
+    "sha256": "96f4b2047d583e51ffad034f9b30d3c3ce389e9523b4370522bc88a09512e959"
+  },
+  {
+    "path": "assets/training/actors/axe.obj",
+    "bytes": 5077,
+    "sha256": "a7729b60ba8020781a2998b41deee2871298b9831ddc24f89f1259ea174d0e33"
+  },
+  {
+    "path": "assets/training/actors/axe_0.png",
+    "bytes": 15319,
+    "sha256": "ed3ef17383a38fb07b8e42aa46cec8355ab6458b2ec491a519488b4e04199563"
+  },
+  {
+    "path": "assets/training/actors/vic_man.json",
+    "bytes": 979648,
+    "sha256": "988a4e9b450ff5f26b25b1d207667ec59b2eaaeb9eb80539e9c321427ebd0399"
+  },
+  {
+    "path": "assets/training/actors/vic_man.obj",
+    "bytes": 26496,
+    "sha256": "4bbcffb3ab38b458e72f58c13538de74bddc84d2848fc0be7d9b5cf99a1e5289"
+  },
+  {
+    "path": "assets/training/actors/vic_man_0.png",
+    "bytes": 63841,
+    "sha256": "37f9a17fb9379581c1458d8e62fbf4c2634b2dd1216408a9dd8a6dc08010b87b"
+  },
+  {
+    "path": "assets/training/actors/vic_man_1.png",
+    "bytes": 59060,
+    "sha256": "e5f6ac2dba9c781e1c4e0eaee548f9db83ecea87dd4261acc0420d1120815b09"
+  },
+  {
+    "path": "assets/training/actors/vic_man_2.png",
+    "bytes": 49168,
+    "sha256": "cd2de885cd5c7e3bc0fb2801b695b1ff2fc170fb37fc72bbb819337802ac3f52"
+  },
+  {
+    "path": "assets/training/collision.json",
+    "bytes": 1245476,
+    "sha256": "a0913fa80e8beb24f65e15c6dd898ba0f3714bbd845781098b8e4f52ce269490"
+  },
+  {
+    "path": "assets/training/entities.json",
+    "bytes": 121616,
+    "sha256": "f4bb9740af5811d3ec71472c6ecc92bf5b207e7540e5f068520d4ad81ecb6d4e"
+  },
+  {
+    "path": "assets/training/fire-sprites/bsmoke.bmp",
+    "bytes": 2096,
+    "sha256": "b56e9426aa51e99703cfde744a62669d74650d97046d8e5202be9dbabffe8b9d"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0000.bmp",
+    "bytes": 17462,
+    "sha256": "f32bd43a62d8a675b32a290e7f23b3ed8650556826cb1b7bae52e851d29a8763"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0001.bmp",
+    "bytes": 17462,
+    "sha256": "a74a2ecf4d7c2c0391bbde44100767b43e651c704a77e72d74e80e0ae2559530"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0002.bmp",
+    "bytes": 17462,
+    "sha256": "2d6044158cdae5d94245ccc691f88ec0999b312258dedf11a76e761324815c79"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0003.bmp",
+    "bytes": 17462,
+    "sha256": "87b9a1f46a5085ca2210eca5fbf3d49404ed816dda62799a373f903cca0a9d6d"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0004.bmp",
+    "bytes": 17462,
+    "sha256": "4df24fec86d332e141231117223eab0e252f2e1036a6976925e3ac895990b8a0"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0005.bmp",
+    "bytes": 17462,
+    "sha256": "d129cb161c6a7043643b6301a3bfd827b96f6ff76ba28594db3de964bc4ced09"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0006.bmp",
+    "bytes": 17462,
+    "sha256": "0b1178b9660cbcbf25a52fc9aed362ebecd7ae438564bfa6995c244dbf306e35"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0007.bmp",
+    "bytes": 17462,
+    "sha256": "f6084dabf71bfd1c1578ab3a117fed99bfad29434bdc39cfb8ee48700e5c39d5"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0008.bmp",
+    "bytes": 17462,
+    "sha256": "b9e9a96fadce40060daa82652a362817f8e0f46b92085499c31a23dbc03f37a4"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0009.bmp",
+    "bytes": 17462,
+    "sha256": "9f4b8b453b5a1befcf6725a57edfd942a5dc21f10670b9b2d47f44e1371bfdb2"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0010.bmp",
+    "bytes": 17462,
+    "sha256": "adf5dbaa68fdc16370c83deb393181b331490fecef0d251af0fcc3ee1865d3e2"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0011.bmp",
+    "bytes": 17462,
+    "sha256": "7e651209bd97ed28cb6b25d9315e26b4eb46b377314e1233c5be90c111d4476f"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0012.bmp",
+    "bytes": 17462,
+    "sha256": "d293dcbf7bdf01f18567a7465085dccccb733424885267fecc5051ae8cc0c439"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0013.bmp",
+    "bytes": 17462,
+    "sha256": "6ee4c619a3a06dd6cd8b6b32332d9bd92746a679a25a5d3c53b05c281491f4d0"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0014.bmp",
+    "bytes": 17462,
+    "sha256": "625757c105f015a37d39f6341f24793c71d385d05715ce5c99030bfd583748d5"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0015.bmp",
+    "bytes": 17462,
+    "sha256": "21038e45ffdee09e99598c5da4c6df40674a947fbfbf253a9de83e331b7e2c80"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0016.bmp",
+    "bytes": 17462,
+    "sha256": "d66561bfb4135063a23b44a839a1549c8e029ab7ea815df6f927f61e678c951d"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0017.bmp",
+    "bytes": 17462,
+    "sha256": "00203094bd57a43517544abdb10e0f63c62df6a25f74d666ae826031d620eeb8"
+  },
+  {
+    "path": "assets/training/fire-sprites/fflame0018.bmp",
+    "bytes": 17462,
+    "sha256": "f32bd43a62d8a675b32a290e7f23b3ed8650556826cb1b7bae52e851d29a8763"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-00.bmp",
+    "bytes": 17464,
+    "sha256": "677af30e416eb09bc26724d1bed997f96c85ef6f2c9b46207035ca4d4522a398"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-01.bmp",
+    "bytes": 17464,
+    "sha256": "d18c10b6e7308c09ef48604cf00be9e39cca4a4c23f6d09e5a06dc5c8355fe50"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-02.bmp",
+    "bytes": 17464,
+    "sha256": "6b49dee8043cecc1598feb00c6d589163d075d90d060530296e47a503e363d5e"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-03.bmp",
+    "bytes": 17464,
+    "sha256": "665f4e923c1f368e1b7abb7f8a1d8415eaaf951cdcf208ec0f75badd66f5b80f"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-04.bmp",
+    "bytes": 17464,
+    "sha256": "c62c014e4a58273603bb8f3ea234676b7cc0a9101b9b2c0ec7736f3426697231"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-05.bmp",
+    "bytes": 17464,
+    "sha256": "643a4cb2301e53d5b3b62b30ed3decbdb1f731dba7d529c92e2d46bd4fb09f18"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-06.bmp",
+    "bytes": 17464,
+    "sha256": "7392b1bd217efafa6fbd3b1fa9ebc443e59ad45cd397da893fe9c2fb8c783f3d"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-07.bmp",
+    "bytes": 17464,
+    "sha256": "c8c999e54b1b26907e57dacea7834aef22c016523d0dfe1d10fdc9358eceec55"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-08.bmp",
+    "bytes": 17464,
+    "sha256": "5e86a81310f19a439f6aca36da37cc616f14039d253d7bf2b48a971bdfdefa3a"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-09.bmp",
+    "bytes": 17464,
+    "sha256": "5360ce0303525b15d712625aa441efdd70fe8724e0f31a0e517410bcf4f0828f"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-10.bmp",
+    "bytes": 17464,
+    "sha256": "9bded598f8b0d3cd77fa610535cc76933d05743876973cebd5df0b431ed3c37c"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-11.bmp",
+    "bytes": 17464,
+    "sha256": "0e72ff0db055190dce85ce6e2b938996027182c39d0f8c8e50c46f96b882b5b5"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-12.bmp",
+    "bytes": 17464,
+    "sha256": "cda3d2a90e60dd74e0bbf4609b55040908a138ed22dc84713f64fb26ae584c6f"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-13.bmp",
+    "bytes": 17464,
+    "sha256": "bbcc19dff309a56b794cd9b3ddcef440d8804513b18d1368cf10d81be762cfe7"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-14.bmp",
+    "bytes": 17464,
+    "sha256": "60e3c2b8e418f9f982b08f5b9a6bfdc6d7e470fe78b81767892ed2cc41b0f9e7"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-15.bmp",
+    "bytes": 17464,
+    "sha256": "6e01d49cdfbdfd32ea287e56f3b3396ef94b2fbe25f8e1bbe62375b4dc3f5d08"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-16.bmp",
+    "bytes": 17464,
+    "sha256": "4a97512a261cd96ede7c6610dab15f3db79150f8bbd1ede487a698870ac702c3"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-17.bmp",
+    "bytes": 17464,
+    "sha256": "c18562cd4150e281732b7815b022d94f219e4097d0a2bcf32ef6e1160ff926e7"
+  },
+  {
+    "path": "assets/training/fire-sprites/lflame-18.bmp",
+    "bytes": 17464,
+    "sha256": "02112ac855cb21cb7bee6c8604276a5cb8b2ba6094b0c2d8ba78ce640ffcb7b4"
+  },
+  {
+    "path": "assets/training/fire-sprites/sm_alpha.bmp",
+    "bytes": 2104,
+    "sha256": "2a6a376f7f878726823c767657767efa9194ff52594feac7259899be6f2af03e"
+  },
+  {
+    "path": "assets/training/fire-sprites/smoke.bmp",
+    "bytes": 2104,
+    "sha256": "b43245d3670cdca95e4b2480ed9222bdce9c6c32370f44999cea6513f25553e9"
+  },
+  {
+    "path": "assets/training/motions.json",
+    "bytes": 18191,
+    "sha256": "12e096e4ba173595e9138bd1d55668fcffbbb19db36bed69bbc258914c61b6d4"
+  },
+  {
+    "path": "assets/training/report.json",
+    "bytes": 45772,
+    "sha256": "ab53ef786ee9499ab9ee5f0f430c2e6a72ede661eabb9c6ac9622921c51b5ae8"
+  },
+  {
+    "path": "assets/training/scripts.json",
+    "bytes": 4360,
+    "sha256": "55ee33a211d2f59cf96b7d5f1119a00ef1c3da398d4fc15fa5cdd36998418c6a"
+  },
+  {
+    "path": "assets/training/textures/asr_BRONZE2.bmp",
+    "bytes": 49206,
+    "sha256": "3af405f8462b4ff2d27648a17b67ea2b54e59c88054cbc2a43e6fa7e929658d2"
+  },
+  {
+    "path": "assets/training/textures/asr_BRONZE2.png",
+    "bytes": 20009,
+    "sha256": "c274b34bad72297b0091d5e9406701f4f75a8d7d43c65b2e4ea340a0ead1a0a4"
+  },
+  {
+    "path": "assets/training/textures/asr_GRYCON1.bmp",
+    "bytes": 49206,
+    "sha256": "9cb7b43daaf857cdf399244df47570ee9206ce5c4f856d563826c8fda1680b2f"
+  },
+  {
+    "path": "assets/training/textures/asr_GRYCON1.png",
+    "bytes": 20173,
+    "sha256": "329bb0f53d8e1600d45dd7f4619d6555017516b975acc5f6b44c0435866ac298"
+  },
+  {
+    "path": "assets/training/textures/asr_STEEL1.bmp",
+    "bytes": 49206,
+    "sha256": "7bcc79305fa37d8c71afd962924daf7803825094ec255654c3ca8646bddbd967"
+  },
+  {
+    "path": "assets/training/textures/asr_STEEL1.png",
+    "bytes": 13544,
+    "sha256": "24cdbfb84dd72636a3879161975f1fea600c46648328998f0ec1e865db1adf54"
+  },
+  {
+    "path": "assets/training/textures/asr_STEEL4.bmp",
+    "bytes": 49206,
+    "sha256": "63889da9463da78f1a93a95289a9dc1a5bcdfb69224aa6f3d5d020c8319aa2fb"
+  },
+  {
+    "path": "assets/training/textures/asr_STEEL4.png",
+    "bytes": 14707,
+    "sha256": "bc77ffda64d05d5c6b87b208163aff5d5d2e594d1576151213c24a1de131ddf5"
+  },
+  {
+    "path": "assets/training/textures/asr_aluminum2.bmp",
+    "bytes": 196662,
+    "sha256": "7b29cd921b530644c63fbb8719589699d91ad096deedeaf9c1971f70b9c62740"
+  },
+  {
+    "path": "assets/training/textures/asr_aluminum2.png",
+    "bytes": 67680,
+    "sha256": "ab68d72dbad71f713f972ca890c74cb002fa70113ff7c51191b337bbe76cc449"
+  },
+  {
+    "path": "assets/training/textures/asr_bigrete.bmp",
+    "bytes": 49206,
+    "sha256": "e6e4e20f166a4095d436308c9f89cf5e42ab7a69853694a6f1337559296a82f1"
+  },
+  {
+    "path": "assets/training/textures/asr_bigrete.png",
+    "bytes": 22231,
+    "sha256": "30fd9dc9f797daf773b9907657e591460aa4bb6b1098978e29bcbb9c02bbb57f"
+  },
+  {
+    "path": "assets/training/textures/asr_cemclean.bmp",
+    "bytes": 49206,
+    "sha256": "25fd4b5f0f27be791ce243f5c11a05c7a6c4875135d3339f74ad6c89a8f112e8"
+  },
+  {
+    "path": "assets/training/textures/asr_cemclean.png",
+    "bytes": 21921,
+    "sha256": "907dbb757477fe09446e7bb36a7ca46be24a5a52223c3640e6528527cd6838b6"
+  },
+  {
+    "path": "assets/training/textures/asr_concpanels.bmp",
+    "bytes": 49206,
+    "sha256": "61b71ee476a40c60bac674d8fa17cd07c58b63e8b517a5fb580c8b8bb69bc6fc"
+  },
+  {
+    "path": "assets/training/textures/asr_concpanels.png",
+    "bytes": 23203,
+    "sha256": "69737c42f4f796728f8c84fbb26f74ee59e1c362f6889ee43f0950bccd7c6981"
+  },
+  {
+    "path": "assets/training/textures/asr_indcorr.bmp",
+    "bytes": 49206,
+    "sha256": "5cde489fe11573e057b8692956d4c28f7dcb6c2e6c89abef7579722cb20c17f1"
+  },
+  {
+    "path": "assets/training/textures/asr_indcorr.png",
+    "bytes": 20142,
+    "sha256": "1c105d69dacd180e953351cb9f7826f735a2b00de9d6742f4f7b191ec658eeac"
+  },
+  {
+    "path": "assets/training/textures/asr_old-metal3.bmp",
+    "bytes": 49206,
+    "sha256": "75752f22cdbd6690df69459c04ea5869032a2de304f27885c1a6ad7d96c368e8"
+  },
+  {
+    "path": "assets/training/textures/asr_old-metal3.png",
+    "bytes": 20217,
+    "sha256": "d0899fb4e635aa94fb0e1b85b5a8dbd1f18b8799335f3c0275fc1dffce7a1075"
+  },
+  {
+    "path": "assets/training/textures/asr_pitrows.bmp",
+    "bytes": 49206,
+    "sha256": "10683a91a8882f7f89dd59a292bd734a160f6b3c747ef66880b212378d1a1054"
+  },
+  {
+    "path": "assets/training/textures/asr_pitrows.png",
+    "bytes": 23431,
+    "sha256": "fd14076bd0af6eab5a45013db3483328b2d3aff0423fe84d691612b896ff4737"
+  },
+  {
+    "path": "assets/training/textures/asr_redmetal.bmp",
+    "bytes": 49206,
+    "sha256": "96634f9641e2e9d5ef76a04540f4fc4d5e2ef6ac1f9cdbe96027eb7046e27457"
+  },
+  {
+    "path": "assets/training/textures/asr_redmetal.png",
+    "bytes": 24245,
+    "sha256": "f621083d5d4a9718bbb8cd790d0e98335df6efa5f0d2d560c2c4450b7d19356e"
+  },
+  {
+    "path": "assets/training/textures/asr_wd_teak.bmp",
+    "bytes": 49206,
+    "sha256": "8f7ad8ca2e7b2ec6b00a83f074be7d3fcbf797f03d7194fe11822e6a583bbbe3"
+  },
+  {
+    "path": "assets/training/textures/asr_wd_teak.png",
+    "bytes": 24940,
+    "sha256": "5eea0e57bd7b481cd3609c6d65827bb4d802bd44652a95b67885989b15dea115"
+  },
+  {
+    "path": "assets/training/textures/cei_big-123.bmp",
+    "bytes": 49206,
+    "sha256": "83428ebd4daa2fc75c4548e19073b80b68f190ee3393143f9f7d6aac5a2f5548"
+  },
+  {
+    "path": "assets/training/textures/cei_big-123.png",
+    "bytes": 17525,
+    "sha256": "2ae7d6599d5cea1d14c8dd837e655e8aadd3ad4d7f723825ed748525ebe98295"
+  },
+  {
+    "path": "assets/training/textures/cei_plstr_ceil0.bmp",
+    "bytes": 49206,
+    "sha256": "f7d64ba88e90d07319f2afc735c0874127a67b0e23f6aabba9c649d671567774"
+  },
+  {
+    "path": "assets/training/textures/cei_plstr_ceil0.png",
+    "bytes": 15011,
+    "sha256": "a91858d75fb5a09af47a93243983fd4ad8f9b50cdb93f60be754005ec1d59ef5"
+  },
+  {
+    "path": "assets/training/textures/col_black.bmp",
+    "bytes": 822,
+    "sha256": "5f4dac2376a9411f29396471b76d9e091caf163c23fd2997dbbd457290bcc126"
+  },
+  {
+    "path": "assets/training/textures/col_black.png",
+    "bytes": 73,
+    "sha256": "f953fefc62ac75b9c15631c5ffbe4e234fc4e36d3bc98b972a971fb8fb1b5875"
+  },
+  {
+    "path": "assets/training/textures/col_red.bmp",
+    "bytes": 822,
+    "sha256": "43102f2d0e618a7f23451e4f516abd9f0c85da83eff22180edca1d1d1a30ee2c"
+  },
+  {
+    "path": "assets/training/textures/col_red.png",
+    "bytes": 79,
+    "sha256": "3311fd387ea50b1dc72b893543d9f55588bf3a5f3f1374ca377d4f8302aa8603"
+  },
+  {
+    "path": "assets/training/textures/dor_door01.bmp",
+    "bytes": 196662,
+    "sha256": "58ba3244898f8d230e251789875059a1566a2c271d75908c8d93083a3af27ad4"
+  },
+  {
+    "path": "assets/training/textures/dor_door01.png",
+    "bytes": 58717,
+    "sha256": "c14aa05b55192e9aa54f6d486fe4d1a085c02a3936c84f82f1f7bb53c02e9c05"
+  },
+  {
+    "path": "assets/training/textures/dor_door04.bmp",
+    "bytes": 196662,
+    "sha256": "12738611456a8fc2a87b14f46f316021919181ef2ff3b9a9005c5e6cba5fd689"
+  },
+  {
+    "path": "assets/training/textures/dor_door04.png",
+    "bytes": 42329,
+    "sha256": "e5df6ed99e8755105d0ec9209427d977224c1c2ed81f2e1048e790faf6139f3a"
+  },
+  {
+    "path": "assets/training/textures/flo_step.bmp",
+    "bytes": 49206,
+    "sha256": "6ec3f770d34ef0a7e0eaa017dc8ec2c9aee19022d9076c7ffdbc2981b29bd2ac"
+  },
+  {
+    "path": "assets/training/textures/flo_step.png",
+    "bytes": 19222,
+    "sha256": "11c217196e12e14d8ba18e56a0225f25aa9222a7ad50d1b6e6f7d2f76c30956a"
+  },
+  {
+    "path": "assets/training/textures/obj_exits.bmp",
+    "bytes": 49206,
+    "sha256": "cfe65f6e6ab4a79a97cbeb1d6c6e61954babffc5b951e6c6a03fa4a8a818772f"
+  },
+  {
+    "path": "assets/training/textures/obj_exits.png",
+    "bytes": 10998,
+    "sha256": "0dc41b51a9f45932a840ca550fe9023657e4807a53642523fce063651c412f13"
+  },
+  {
+    "path": "assets/training/textures/obj_smoe_crate2.bmp",
+    "bytes": 49206,
+    "sha256": "f2f6709d79abc03088c12409f2d0f7cc4d4d83180b1f594e9e3e95e963c0cc20"
+  },
+  {
+    "path": "assets/training/textures/obj_smoe_crate2.png",
+    "bytes": 25670,
+    "sha256": "995042e2b81d3d60ab1435fa1cc00852b99a0a21cf46b678ac891d4a7df8c7e8"
+  },
+  {
+    "path": "assets/training/textures/obj_woodlad.bmp",
+    "bytes": 49206,
+    "sha256": "f28c3fdadcc7c3c457f563a9ef164ef5c3f9123faa384fbecbf0513e4f849fbb"
+  },
+  {
+    "path": "assets/training/textures/obj_woodlad.png",
+    "bytes": 11568,
+    "sha256": "6c96037697a5d334183b3133a3f91201d23694c19be937df2f61588e8154bd6b"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_bk.bmp",
+    "bytes": 196662,
+    "sha256": "4ffe09ab3cbedf47b339f7ca25ee861e81277989dfdaeacfbaa033986e1f217a"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_bk.png",
+    "bytes": 54915,
+    "sha256": "c3cd5d07d458f8f5cc2211444cdb1c86dfd03590adb609843f14ed8b8f0686dd"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_ft.bmp",
+    "bytes": 196662,
+    "sha256": "e3fde8ed5e69135ed7acff458ef0e32488f672a5362054db5865cca48c421133"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_ft.png",
+    "bytes": 49647,
+    "sha256": "2fe606b86af0e05428559b8ab1867e50af9b2ef5b435d4542f37ed0122b01166"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_lf.bmp",
+    "bytes": 196662,
+    "sha256": "37ebc4eedca4c8414aa0ba49351ae324ec4537f909b6239a81ae98d873edd360"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_lf.png",
+    "bytes": 51479,
+    "sha256": "12aa4378abeb8df77b85ae319af6c80dfa32b45599941def2ddee5e936db228f"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_rt.bmp",
+    "bytes": 196662,
+    "sha256": "6b30af325d0e253b74211571a6911819e88c80dccc96f37d8593f947d98c6e08"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_rt.png",
+    "bytes": 44392,
+    "sha256": "1c06535f812be5c5befaccc79ce54e7d96b2de15b9d121102095000baded9234"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_up.bmp",
+    "bytes": 196662,
+    "sha256": "17c8dbc7461ad33b2ad646279fd7d7969e671a5a31940ee220e3163cdb6f86bd"
+  },
+  {
+    "path": "assets/training/textures/sky_trueblue_up.png",
+    "bytes": 46527,
+    "sha256": "a0f245092f286d882420c5b1453295daaa0bcc072f9e9d74e4ee3e4e21e294a0"
+  },
+  {
+    "path": "assets/training/textures/wal_bricktan.bmp",
+    "bytes": 49206,
+    "sha256": "c84ed6e81bff1c5ec408f802fd5ee72ff944e548ee49e5ed659d50704b9af9bf"
+  },
+  {
+    "path": "assets/training/textures/wal_bricktan.png",
+    "bytes": 23727,
+    "sha256": "7235cf1c6fac5ca4ba67d6f721253fbe648e16659c8f2a91763dd7cbaf88b5f5"
+  },
+  {
+    "path": "assets/training/world.obj",
+    "bytes": 356897,
+    "sha256": "66706b2752cefd4870c03a31b7be89a83e6185db5d4f25493b4d6677093e9bec"
+  },
+  {
+    "path": "assets/training/world_mesh.json",
+    "bytes": 2219690,
+    "sha256": "711b07e6857e3e2f850ede84144f03d3605ba8165b900638f5796f6bccc06b8b"
+  },
+  {
+    "path": "evidence/original/FDNYFirefighter.exe",
+    "bytes": 1060864,
+    "sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e"
+  },
+  {
+    "path": "evidence/original/Genesis.dll",
+    "bytes": 729088,
+    "sha256": "5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643"
+  },
+  {
+    "path": "evidence/original/RFC.rrf",
+    "bytes": 250,
+    "sha256": "9addc9ee8ae0c3e71edf4696ec8f779114d580912d5a6a1cfb69b29beb352c66"
+  },
+  {
+    "path": "evidence/original/bonusitems.evs",
+    "bytes": 1818,
+    "sha256": "6615a42fd7e21bd60d54c9b06b51dc31d2c3dcc8fe0c21f9c8c63902338964e6"
+  },
+  {
+    "path": "evidence/original/doors.evs",
+    "bytes": 200,
+    "sha256": "da3ae922fe93f5e8290f8ce26f1570ea93ff416101d16c85e044c19fa7d15600"
+  },
+  {
+    "path": "evidence/original/hose.rrf",
+    "bytes": 4264,
+    "sha256": "93a1b2dae7d755fdd66fabaee89514de8e420cfb62f2f96132b341c0cce6fe45"
+  },
+  {
+    "path": "evidence/original/input.rrf",
+    "bytes": 550,
+    "sha256": "7008a0ef1b0d10ec729e5028536be6492f5d0b904de429379c2659ecbe8faceb"
+  },
+  {
+    "path": "evidence/original/rescue.evs",
+    "bytes": 158,
+    "sha256": "4b6d986fb9eb04f593956d7dcf3b8290ada0858a777dfaa29e204f1f4c0195c7"
+  },
+  {
+    "path": "evidence/original/rescue.rrf",
+    "bytes": 8507,
+    "sha256": "8ab12b7c148c4d984a912525e432967556c9267af5a1b0ea86451ed1ee123f33"
+  },
+  {
+    "path": "evidence/original/sound.rrf",
+    "bytes": 7948,
+    "sha256": "433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333"
+  },
+  {
+    "path": "evidence/original/tools.evs",
+    "bytes": 262,
+    "sha256": "7c0c5d3e50c9c62a63695737c70b37f7cdb8f9f7038ea9e0c2738605c2f34656"
+  },
+  {
+    "path": "evidence/original/training.bsp",
+    "bytes": 2865498,
+    "sha256": "32986212fa875764ca3d5c1630e54ad6315abaea70983203601192cec603a963"
+  },
+  {
+    "path": "evidence/original/training.evs",
+    "bytes": 1108,
+    "sha256": "0c01a1f8d88ef7a994be382d223fd5302bd29301496362613fe963332b336061"
+  },
+  {
+    "path": "evidence/original/victims.srf",
+    "bytes": 1535,
+    "sha256": "c8138b5c2a5a9307fd322f15bcc5e88762690819e539a132363903f5452e6924"
+  }
+]

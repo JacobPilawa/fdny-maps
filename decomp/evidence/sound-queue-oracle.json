@@ -1,0 +1,2246 @@
+{
+  "provenance": {
+    "exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "entries": [
+      "004A0B60",
+      "004A0BE0",
+      "004A0D60",
+      "0049F2D0"
+    ],
+    "method": "Original queue/container/playback/phase instructions; fixture heap, resource lookup and FMOD DLL bindings; repeated requests retained"
+  },
+  "samples": [
+    {
+      "seed": 0,
+      "sample_length": 1,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "sample_length": 7,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 3
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 4
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 6
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 6
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "sample_length": 48000,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 25887
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 28627
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 42349
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 5449
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 45797
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "sample_length": 1234567,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 665829
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 736301
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 1089238
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 140172
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 1177911
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "sample_length": 1,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "sample_length": 7,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 3
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 4
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 6
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 6
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "sample_length": 48000,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 25887
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 28627
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 42349
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 5449
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 45797
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "sample_length": 1234567,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 665829
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 736301
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 1089238
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 140172
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 1177911
+        }
+      ]
+    },
+    {
+      "seed": 4357,
+      "sample_length": 1,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 4357,
+      "sample_length": 7,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 3
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 3
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 2
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 2
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 4357,
+      "sample_length": 48000,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 22703
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 24920
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 14469
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 16552
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 6392
+        }
+      ]
+    },
+    {
+      "seed": 4357,
+      "sample_length": 1234567,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 583938
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 640963
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 372146
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 425740
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 164407
+        }
+      ]
+    },
+    {
+      "seed": 2002,
+      "sample_length": 1,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 2002,
+      "sample_length": 7,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 1
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 1
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 4
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 4
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 3
+        }
+      ]
+    },
+    {
+      "seed": 2002,
+      "sample_length": 48000,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 11791
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 9842
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 31315
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 27590
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 27124
+        }
+      ]
+    },
+    {
+      "seed": 2002,
+      "sample_length": 1234567,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 303275
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 253157
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 805451
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 709625
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 697656
+        }
+      ]
+    },
+    {
+      "seed": 4294967295,
+      "sample_length": 1,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 4294967295,
+      "sample_length": 7,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 5
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 2
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 5
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 5
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 5
+        }
+      ]
+    },
+    {
+      "seed": 4294967295,
+      "sample_length": 48000,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 35030
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 19989
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 36307
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 35015
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 34454
+        }
+      ]
+    },
+    {
+      "seed": 4294967295,
+      "sample_length": 1234567,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 900989
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 514125
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 933841
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 900593
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 886164
+        }
+      ]
+    },
+    {
+      "seed": 305419896,
+      "sample_length": 1,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 0
+        }
+      ]
+    },
+    {
+      "seed": 305419896,
+      "sample_length": 7,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 2
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 5
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 0
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 1
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 4
+        }
+      ]
+    },
+    {
+      "seed": 305419896,
+      "sample_length": 48000,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 20464
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 38107
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 1219
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 7295
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 29613
+        }
+      ]
+    },
+    {
+      "seed": 305419896,
+      "sample_length": 1234567,
+      "requests": [
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 1,
+          "loop": 0
+        },
+        {
+          "id": 2,
+          "loop": 1
+        },
+        {
+          "id": 0,
+          "loop": 1
+        },
+        {
+          "id": 3,
+          "loop": 0
+        },
+        {
+          "id": 1,
+          "loop": 1
+        },
+        {
+          "id": 4,
+          "loop": 1
+        }
+      ],
+      "queued": 7,
+      "loading_draws": 0,
+      "resume_draws": 5,
+      "after_queue_size": 0,
+      "events": [
+        {
+          "kind": "play",
+          "channel": 1
+        },
+        {
+          "kind": "phase",
+          "channel": 1,
+          "position": 526348
+        },
+        {
+          "kind": "play",
+          "channel": 2
+        },
+        {
+          "kind": "play",
+          "channel": 3
+        },
+        {
+          "kind": "phase",
+          "channel": 3,
+          "position": 980124
+        },
+        {
+          "kind": "play",
+          "channel": 4
+        },
+        {
+          "kind": "phase",
+          "channel": 4,
+          "position": 31368
+        },
+        {
+          "kind": "play",
+          "channel": 5
+        },
+        {
+          "kind": "play",
+          "channel": 6
+        },
+        {
+          "kind": "phase",
+          "channel": 6,
+          "position": 187647
+        },
+        {
+          "kind": "play",
+          "channel": 7
+        },
+        {
+          "kind": "phase",
+          "channel": 7,
+          "position": 761663
+        }
+      ]
+    }
+  ]
+}
