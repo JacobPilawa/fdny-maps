@@ -36,6 +36,12 @@ Ghidra shows a script-command route into this helper: victim event handler `0045
 
 Training's known victim state path is state 4 at actor initialization (`0045B690`), state 5 when pickup begins (`0045BEF0`), then state 6 when rescue releases the victim (`0045C000`). No preserved Training input or identified code path enters state 7. Keep the state-7 routines documented for full-game work, but do not treat that movement branch as required Training behavior unless another entry path is found. The actor updater's schedule still matters for animation and the post-release state-6 timer.
 
+## RescueBot's alternate state-6 route
+
+Ghidra's direct field-store audit found the state-7 constant write at `0045C820` inside `0045C7F0`; this was the only direct `MOV [object+0x120], 7` found by `FieldStoreAudit.java 0x120 7`. The full offset scan also found register-fed stores, so this bounded direct-write search is not proof that no other indirect write exists.
+
+There is a separate non-Training state-6 path to preserve. `0045BF70` writes state 6, dispatches actor event `botrescue` through the child subobject, writes `UINT32_MAX` to victim `+0x1f0`, resets actor animation, and calls `00481140(..., false)`. Ghidra's only direct code caller is `00454750`, whose embedded source path is `rescue\\RescueBot.cpp`; it selects a victim with one bounded shared-RNG draw, calls this helper, and schedules the bot's next action with `bounded(4000)` plus 4,000 ms and the current game time. The authored Training player entity 115 contains `setrescuebot 0`. Handler `00451870` parses that decimal integer via `0040CD50` (`sscanf` format `%i`) and stores its nonzero test at Player `+0x32e4`, so the authored value is false. This records the intended Training setting; the exact startup callback timing remains unverified.
+
 ## Open items
 
 - Identify who calls or registers child updater `0045BEA0` and when relative to `0045A070`, Player movement and the owner message drain.
