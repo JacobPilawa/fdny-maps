@@ -1,0 +1,207 @@
+{
+  "format": "fdny-gbsp-typedefs-v1",
+  "source_file": "training.bsp",
+  "source_sha256": "32986212fa875764ca3d5c1630e54ad6315abaea70983203601192cec603a963",
+  "source_entity_count": 262,
+  "typedef_count": 1,
+  "known_field_sizes_bytes": {
+    "int": 4,
+    "float": 4,
+    "string": 4,
+    "model": 4,
+    "point": 12
+  },
+  "typedefs": [
+    {
+      "entity_index": 256,
+      "name": "RCS_BModel",
+      "field_count": 26,
+      "layout_size": 112,
+      "layout_offsets_complete": true,
+      "fields": [
+        {
+          "name": "ZZ_spawn_message",
+          "type": "int",
+          "byte_offset": 0,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "A_Name",
+          "type": "string",
+          "byte_offset": 4,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel0",
+          "type": "model",
+          "byte_offset": 8,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel1",
+          "type": "model",
+          "byte_offset": 12,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel2",
+          "type": "model",
+          "byte_offset": 16,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel3",
+          "type": "model",
+          "byte_offset": 20,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel4",
+          "type": "model",
+          "byte_offset": 24,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel5",
+          "type": "model",
+          "byte_offset": 28,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel6",
+          "type": "model",
+          "byte_offset": 32,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel7",
+          "type": "model",
+          "byte_offset": 36,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel8",
+          "type": "model",
+          "byte_offset": 40,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_AnimModel9",
+          "type": "model",
+          "byte_offset": 44,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "E_Reach",
+          "type": "float",
+          "byte_offset": 48,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "F_HitPoints",
+          "type": "int",
+          "byte_offset": 52,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "G_Liftable",
+          "type": "int",
+          "byte_offset": 56,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script01",
+          "type": "string",
+          "byte_offset": 60,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script02",
+          "type": "string",
+          "byte_offset": 64,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script03",
+          "type": "string",
+          "byte_offset": 68,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script04",
+          "type": "string",
+          "byte_offset": 72,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script05",
+          "type": "string",
+          "byte_offset": 76,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script06",
+          "type": "string",
+          "byte_offset": 80,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script07",
+          "type": "string",
+          "byte_offset": 84,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script08",
+          "type": "string",
+          "byte_offset": 88,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script09",
+          "type": "string",
+          "byte_offset": 92,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "S_Script10",
+          "type": "string",
+          "byte_offset": 96,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "ZZ_location",
+          "type": "point",
+          "byte_offset": 100,
+          "byte_size": 12,
+          "default_value": ""
+        }
+      ]
+    }
+  ]
+}
