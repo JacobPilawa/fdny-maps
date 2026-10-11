@@ -1,10 +1,11 @@
 # Training victim pickup and exit flow
 
-Read-only Ghidra exports are preserved alongside this note. Static owner/message order is partly established; player movement's order and a complete native gameplay match are not.
+Read-only Ghidra exports are preserved alongside this note. Static owner/message order is partly established; player movement's order and a complete native gameplay match are not. Exact player box bounds and the victim callback's inclusive AABB predicate are recorded in `player-pickup-bounds.md`.
 
 ## Source-backed path
 
 - Victim proximity callback `0045A070` rejects victim states 5 and 6, considers another entity with type 1, checks an AABB overlap using a value derived from victim `+0x150+0x1c` (fallback 60 when the helper result is below 1), then queues message `0x7532` to the player with the victim pointer. See `runtime-callbacks/0045a070_FUN_0045a070.c`.
+- Player bounds from `0044D550`, crouch/uncrouch height changes from `0044BCB0`/`0044BCE0`, and the world-origin callback at `0049DB90 → 0049D790` are now mapped. Training's two victims author radius 60. Native code has the isolated source-derived predicate and boundary/gate harness; it is not connected to an unverified update loop. See `player-pickup-bounds.md`.
 - The victim's primary vtable is `004E25B8`; its `+0x48` entry is `0045A070`. Owner manager `0049BD20` invokes object `+0x48` callbacks during its category passes. In owner update `00429520`, those passes precede staged-entity admission and message drain `0049B610`, so this callback can enqueue `0x7532` for delivery in the same owner update.
 - Player message handler `00453A70` routes `0x7532` to `00450440`. If the carry field at player `+0x3534` is empty, `00450440` stores the victim pointer and calls `0045BEF0` before its UI/state work. The victim state setter and message handler exports are under `rescue-flow/`.
 - Training entities 191 and 194 bind `pickup` to the authored `Cmd3b`/`Cmd3c` hints and set the shared `gotvictim` variable. `training.evs` defines those hints as directions to the exit.
@@ -15,3 +16,7 @@ Read-only Ghidra exports are preserved alongside this note. Static owner/message
 ## Native gap and limit
 
 `src/main.cpp` currently dispatches bounds-trigger and PropModel touch events, but has no victim `pickup` dispatch or player `escape` host command. Player `00452570` is vtable slot 0, not the `+0x48` callback used by `0049BD20`; its direct xrefs show no code caller. The app's separate registered-list pass uses Player slot `+0x70` (`00453CF0`), but list membership is unmapped, so player movement's order relative to victim proximity remains unknown. Victim constructor `0045DDD0` installs updater `0045BEA0` at slot 0 of child subobject vtable `004E25B0` at `+0xD4`, and calls base initializer `004799B0`; its `0049D330(this,1)` membership registration applies to the parent victim. The xref scan finds `0045BEA0` only as a word in that child vtable, and the owner `+0x3C4` callback queue has no proven insertion for the child. A dynamic registration not found by these scans remains possible, so the updater schedule is unresolved. The actor flag `0x400` meaning is also unknown. Preserve these gaps when connecting gameplay.
+
+## Additional state path retained for full-run work
+
+Ghidra maps player passout/lost-victim helper `0045C1A0`, called by `0044FF10` from player state/damage paths. It sets victim state 4, chooses a recovery animation with `00404B30` (`bounded(3)` at speed 1 when actor motion count at `+0x180` is 6; otherwise `bounded(count)` at speed 0.2), rebuilds victim frame fields from the player's frame, places the victim with `0049DA00`, enables the actor subobject through `00481140`, and dispatches actor event `passout`. Preserve this path and its conditional RNG draw for Training failure behavior and later levels; its event/update scheduling and runtime reachability have not been captured. Raw function export: `../collision-audit/0045c1a0_FUN_0045c1a0.c`.
