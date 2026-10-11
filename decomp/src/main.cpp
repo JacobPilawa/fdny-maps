@@ -45,6 +45,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "fire_placement.h"
 #include "sprite_animation.h"
 #include "extended.h"
+#include "zones.h"
 #include "item_view_pose.h"
 #include "head_motion.h"
 #include "extinguisher_frame_record.h"
@@ -201,7 +202,7 @@ int main(int argc,char** argv){try{
  if(argc>1&&std::string(argv[1])=="--throw-scalar-check")return checkThrowScalarOracle();
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-asset-check")return checkTrainingBModelContactAssets();
  if(argc>1&&std::string(argv[1])=="--door-asset-check")return checkTrainingDoorAssets();
- auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe",selectedBeforeHose="axe";std::set<std::string> equipment{"axe"};float extinguisherCharge=1;int hoseMode=0,attachedValve=-1;Scripts vm(load("scripts.json"));std::vector<Door> doors;std::vector<TrainingPropModel> propModels;auto trainingMotions=load("motions.json");auto modelIds=trainingModelIds(entities);
+ auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe",selectedBeforeHose="axe";std::set<std::string> equipment{"axe"};float extinguisherCharge=1;int hoseMode=0,attachedValve=-1;Scripts vm(load("scripts.json"));TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);std::vector<Door> doors;std::vector<TrainingPropModel> propModels;auto trainingMotions=load("motions.json");auto modelIds=trainingModelIds(entities);
  auto bmodelReachByEntity=trainingBModelReaches(entities,trainingMotions);
  // Genesis 1003BBA0 copies serialized GFX_Model origin (+0x20) into the
  // WorldModel rotational center (+0xA4), read by geWorld_GetModelRotationalCenter.
@@ -212,7 +213,13 @@ int main(int argc,char** argv){try{
  vm.findEntity=[&](std::string name){if(name=="player"||name=="Player")return playerId;for(int i=0;i<count(entities);i++){auto e=at(entities,i);if(str(field(field(e,"properties"),"A_Name"))==name)return integer(field(e,"index"));}return -1;};
  vm.host=[&](int id,std::string command){auto [verb,args]=token(command);
  if(id==playerId){if(verb=="equip"){equipment.insert(args);return true;}if(verb=="select"){if(equipment.count(args))selected=args;return true;}if(verb=="touchhose"&&args=="25"){hoseMode=2;equipment.insert("hose");return true;}if(command=="toolcmd extinguisher refill"){extinguisherCharge=1;return true;}if(verb=="climb"){if(!player.climbing){player.climbing=true;player.v={};}return true;}if(verb=="unclimb"){player.climbing=false;return true;}if(verb=="setashdensity"){char* end=nullptr;float value=std::strtof(args.c_str(),&end);if(end!=args.c_str())player.setAshDensity(value);return true;}if(verb=="setrescuebot"){int value;if(std::sscanf(args.c_str(),"%i",&value)==1)player.rescueBotEnabled=value!=0;return true;}}
- if(verb=="makezone"||verb=="makevalve"||verb=="setscale"||verb=="settimescale"||verb=="sethitpoints"||verb=="openaway"||verb=="close"||verb=="flush")return true;
+ if(verb=="makezone"){
+  J trigger=nullptr;for(int i=0;i<count(entities);i++){J candidate=at(entities,i);if(integer(field(candidate,"index"))==id){trigger=candidate;break;}}
+  if(!trigger||str(field(trigger,"class"))!="RCS_BoundsTrigger")throw std::runtime_error("makezone source is not a Training BoundsTrigger: "+std::to_string(id));
+  J bounds=field(trigger,"bounds");if(!field(bounds,"mins")||!field(bounds,"maxs"))throw std::runtime_error("Training BoundsTrigger has no extracted bounds: "+std::to_string(id));
+  zones.addTrigger(unwrap(args),id,vec(field(bounds,"mins")),vec(field(bounds,"maxs")));return true;
+ }
+ if(verb=="makevalve"||verb=="setscale"||verb=="settimescale"||verb=="sethitpoints"||verb=="openaway"||verb=="close"||verb=="flush")return true;
  return false;
  };
  auto startup=originalStartupOrder(entities);auto victimSpawns=originalVictimCandidates(startup);std::map<int,VictimSpawn*> victimByEntity;std::map<int,VictimSoundChoices> victimSounds;
@@ -257,6 +264,32 @@ int main(int argc,char** argv){try{
  int& nextAppearance=victimAppearanceCounters[spawn.modelId];spawn.appearanceIndex=nextAppearance<trainingManMaterialCount?nextAppearance:0;nextAppearance=spawn.appearanceIndex+1;};
  for(auto e:startup){int id=integer(field(e,"index"));startupEntities[id]=e;trainingEntities.emplace(id,TrainingEntityIdentity{id,e,str(field(e,"class"))});startupQueue.enqueue([id]{return id;});}
  startupQueue.drain();
+ if(argc>1&&std::string(argv[1])=="--training-zone-check"){
+  struct ExpectedZone{int entity;const char* label;V mins,maxs;};
+  const std::array<ExpectedZone,5> expected{{
+   {114,"Chopping and Throwing Exercise",{-476,-580,-1096},{760,348,848}},
+   {135,"Jumping and Navigation Exercise",{-1140,-580,868},{96,348,2812}},
+   {158,"Fire Extinguishing Exercise",{264,-580,-3060},{1500,348,-1116}},
+   {190,"Survivor Extraction Exercise",{904,-580,-5024},{2140,348,-3076}},
+   {234,"Crouching and Jumping Exercise",{-1652,-580,2832},{-416,348,4776}}
+  }};
+  int mismatches=0;if(zones.groups.size()!=expected.size()){mismatches++;std::cout<<"zone count mismatch: "<<zones.groups.size()<<"\n";}
+  for(const auto& row:expected){auto zone=zones.find(row.label);if(!zone){mismatches++;std::cout<<"missing zone: "<<row.label<<"\n";continue;}if(zone->boxes.size()!=1||zone->boxes[0].entity!=row.entity||zone->boxes[0].mins.x!=row.mins.x||zone->boxes[0].mins.y!=row.mins.y||zone->boxes[0].mins.z!=row.mins.z||zone->boxes[0].maxs.x!=row.maxs.x||zone->boxes[0].maxs.y!=row.maxs.y||zone->boxes[0].maxs.z!=row.maxs.z){mismatches++;std::cout<<"zone box mismatch: "<<row.label<<"\n";continue;}float expectedVolume=row.entity==190?2234371584.f:2229783552.f;if(Extended::from(zone->summedVolume).m!=Extended::from(expectedVolume).m||Extended::from(zone->summedVolume).e!=Extended::from(expectedVolume).e){mismatches++;std::cout<<"zone volume mismatch: "<<row.label<<" actual="<<zone->summedVolume<<"\n";continue;}
+   V center=(row.mins+row.maxs)*.5f;if(zones.lookup(center)!=zone){mismatches++;std::cout<<"zone center lookup mismatch: "<<row.label<<"\n";}if(zones.lookup(row.mins)!=zone){mismatches++;std::cout<<"zone min-edge lookup mismatch: "<<row.label<<"\n";}if(zones.lookup(row.maxs)!=zone){mismatches++;std::cout<<"zone max-edge lookup mismatch: "<<row.label<<"\n";}
+   V outside{row.mins.x-1.f,(row.mins.y+row.maxs.y)*.5f,(row.mins.z+row.maxs.z)*.5f};if(zones.lookup(outside)){mismatches++;std::cout<<"outside lookup unexpectedly matched: "<<row.label<<"\n";}
+  }
+  TrainingZones probe(TrainingZones::LabelMode::CaseSensitive);
+  probe.addTrigger("Z",1,{-10,-10,-10},{10,10,10});
+  probe.addTrigger("A",2,{-2,-2,-2},{2,2,2});
+  probe.addTrigger("A",3,{10,10,10},{11,11,11});
+  auto grouped=probe.find("A");if(probe.groups.size()!=2||!grouped||grouped->boxes.size()!=2||probe.lookup({0,0,0})!=grouped){mismatches++;std::cout<<"synthetic grouping/smallest-volume lookup mismatch\n";}
+  TrainingZones caseProbe(TrainingZones::LabelMode::CaseSensitive);caseProbe.addTrigger("area",4,{-1,-1,-1},{1,1,1});caseProbe.addTrigger("Area",5,{-1,-1,-1},{1,1,1});
+  if(caseProbe.groups.size()!=2||caseProbe.find("area")==caseProbe.find("Area")){mismatches++;std::cout<<"synthetic case-sensitive label mismatch\n";}
+  TrainingZones tieProbe(TrainingZones::LabelMode::CaseSensitive);tieProbe.addTrigger("TieB",6,{-1,-1,-1},{1,1,1});tieProbe.addTrigger("TieA",7,{-1,-1,-1},{1,1,1});
+  auto tied=tieProbe.lookup({1,1,1});if(!tied||tied->label!="TieB"){mismatches++;std::cout<<"synthetic in-order equal-volume tie mismatch\n";}
+  std::cout<<"Training named zones: groups="<<zones.groups.size()<<", source boxes="<<expected.size()<<", inclusive bounds and point lookup checked; mismatches="<<mismatches<<"\n";
+  return mismatches?54:0;
+ }
  if(argc>1&&std::string(argv[1])=="--training-fire-floor-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/genesis-point-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing point collision evidence");auto samples=field(fixture,"samples");Collision original(collision.data);int mismatches=0;
  for(int i=0;i<7;i++){auto s=at(samples,i),e=field(s,"expected");FireVisual visual;visual.position=vec(field(s,"start"));visual.position.y-=50;bool hit=FireFloor::alignInWorld(visual,original);if(!hit||visual.position.y!=num(at(field(e,"point"),1))+3||visual.position.x!=num(at(field(s,"start"),0))||visual.position.z!=num(at(field(s,"start"),2)))mismatches++;}
