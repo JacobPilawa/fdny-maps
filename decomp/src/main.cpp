@@ -692,11 +692,13 @@ int main(int argc,char** argv){try{
  Player player;VictimPickupBox standing=victimPickupBox(player,{});player.crouch=true;VictimPickupBox crouched=victimPickupBox(player,{});
  struct Case{const char* name;int state,type;bool available;VictimPickupBox box;V center;float radius;bool expected;};
  const Case cases[]={
-  {"x-min-equality",0,1,true,standing,{90,42.5f,0},60,true},
-  {"x-max-equality",0,1,true,standing,{-90,42.5f,0},60,true},
+  {"x-player-max-face-equality",0,1,true,standing,{90,42.5f,0},60,true},
+  {"x-player-min-face-equality",0,1,true,standing,{-90,42.5f,0},60,true},
   {"x-outside",0,1,true,standing,{90.01f,42.5f,0},60,false},
-  {"z-min-equality",0,1,true,standing,{0,42.5f,90},60,true},
-  {"y-min-equality",0,1,true,standing,{0,-90,0},60,true},
+  {"z-player-max-face-equality",0,1,true,standing,{0,42.5f,90},60,true},
+  {"z-player-min-face-equality",0,1,true,standing,{0,42.5f,-90},60,true},
+  {"y-player-min-face-equality",0,1,true,standing,{0,-90,0},60,true},
+  {"standing-y-max-equality",0,1,true,standing,{0,145,0},60,true},
   {"crouch-y-max-equality",0,1,true,crouched,{0,85,0},60,true},
   {"crouch-y-outside",0,1,true,crouched,{0,85.01f,0},60,false},
   {"standing-y-over-crouch",0,1,true,standing,{0,85.01f,0},60,true},
