@@ -20,6 +20,8 @@
 
 `FieldStoreAudit.java` lists direct `MOV` stores whose destination includes a structure-field offset. With an immediate-value argument, it filters to direct constant stores. It does not track values copied through registers, so treat it as a bounded search, not proof that no other write exists.
 
+`VictimFloorCollisionPcodeOracle.java` runs the original Genesis.dll PE32 hull-collision path in Ghidra's software P-code emulator for the six authored Training victim candidates. It validates the entry and hull contact-commit instruction, uses fresh emulator state per sample, and writes a hash-provenanced JSON fixture. Pair it with `../victim_floor_pcode_inputs.py` to build the local BSP state and candidate list. The static contacts are compared with the native implementation in [`../../evidence/victim-startup/victim-floor-ghidra-pcode-oracle.md`](../../evidence/victim-startup/victim-floor-ghidra-pcode-oracle.md); this does not capture live scheduling or actor behavior.
+
 Run it with the Ghidra installation on this machine:
 
 ```sh

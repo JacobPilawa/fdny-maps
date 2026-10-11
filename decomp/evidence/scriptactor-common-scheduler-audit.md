@@ -22,6 +22,10 @@ This pass did not identify a shared recurring dispatcher for Player root `+0x14 
 
 `FindIndirectCallSlot.java` performed a whole-listing scan for fixed textual `CALL`/`JMP` operands containing `+ 0x14`; it returned 53 candidates. The full candidate output is preserved in [`scriptactor-common-scheduler-audit/fixed-offset-call-candidates.md`](scriptactor-common-scheduler-audit/fixed-offset-call-candidates.md). The known main-frame call at `0042AED4` and Player use-candidate geometry query at `00459519` were inspected. This syntax scan does not find indirect calls whose slot displacement is assembled in registers or otherwise computed, and it does not establish receiver types or reachability. No negative conclusion is drawn from the scan alone.
 
+## Follow-up of candidate `0046269D`
+
+In the preserved listing this site had no containing function. A scratch copy was used to define and decompile the verified instruction entry `00462660`; the function has an incoming data reference at `004E2974`, in a table-like run of function pointers (`004E2960` through `004E2978`). Its setup is `this` in ECX and a stack flag (`char` in Ghidra's decompilation). If the flag is nonzero, it calls `this->vtable[+0x14]` with ECX still set to `this` and no argument pushed, then returns. If the flag is zero, it loops over the array at `this+0x5c0` (count at `this+0x5d8`) and calls `0047DC90` on each child pointer plus `4`; the `+0x14` call is outside that loop. This narrows the candidate to conditional self-vtable dispatch, not a recurring list call. No constructor, runtime caller, or type evidence tied this receiver to ScriptActor or to shared updater `00470740`; the relationship remains unresolved.
+
 ## Ghidra query provenance
 
 - All preserved-project commands used Ghidra 12.0.4, JDK 21, `-noanalysis -readOnly`.
@@ -29,3 +33,4 @@ This pass did not identify a shared recurring dispatcher for Player root `+0x14 
 - `AddressXrefs.java 00470740 0046E320 00470DD0 0049D160 0049D330 0049BD20 0049BD30 00502FB0 00503A78 00439330 004E0B58`.
 - `DataValue.java 004E0B44 004E0B58`; `InstructionContext.java 0042AED4 6 6`, `0042BC66 10 20`, and the `00470740` incoming-call contexts listed above.
 - `FindIndirectCallSlot.java + 0x14` was run against the preserved instruction listing. The script is retained in [`../tools/ghidra/FindIndirectCallSlot.java`](../tools/ghidra/FindIndirectCallSlot.java).
+- Follow-up candidate query: copied the preserved `fdny` project to `/private/tmp/scriptactor-462660-audit`, then ran `DefineAndDecompile.java 00462660`, `AddressXrefs.java 00462660`, `ExportFunctionAssembly.java 00462660`, `DataValue.java 004E2950` through `004E2998`, and `AddressXrefs.java 004E2950 004E2960 004E2974` against that scratch copy. The original project was not modified.

@@ -83,10 +83,10 @@ class GenesisCollisionOracle:
             descriptor += 20
 
     def _hook(self, uc, address, size, _):
-        # This is the shipped IntersectLeafSides_r branch that commits a new
-        # GlobalI/GlobalPlane contact. LeafHit can also be true without taking
-        # it, in which case Genesis returns retained global contact data.
-        if address == 0x10036633:
+        # Both shipped contact paths have separate commit writes. The null-hull
+        # point path commits at 0x10036633; the box/hull leaf path commits at
+        # 0x100371B3. A hit return alone may retain earlier global contact data.
+        if address in (0x10036633, 0x100371b3):
             self.recorded_contact = True
         if address in self.imports:
             raise RuntimeError(f'Unexpected imported call: {self.imports[address]}')
