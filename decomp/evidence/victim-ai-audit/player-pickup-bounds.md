@@ -26,4 +26,4 @@ When all tests pass, `0045A070` queues message `0x7532` with the victim pointer 
 
 ## Native boundary
 
-`src/victim_pickup.h` now contains the source-backed box dimensions and isolated overlap/gate predicate. The `--victim-pickup-geometry-check` command exercises inclusive boundaries, the crouch/standing height difference, and the state/type/box gates. This is a component check only. No victim pickup message, carry state, callback schedule, or exit path has been wired into the Training loop.
+`src/victim_pickup.h` now contains the source-backed box dimensions and isolated overlap/gate predicate. The `--victim-pickup-geometry-check` command exercises all six player box faces, the crouch/standing height difference, and the state/type/box gates (14 total source-derived cases). This is a component check only. No victim pickup message, carry state, callback schedule, or exit path has been wired into the Training loop.
