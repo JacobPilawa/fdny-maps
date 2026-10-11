@@ -62,6 +62,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "hose_spray_action.h"
 #include "extinguisher_effects.h"
 #include "victim_sound.h"
+#include "victim_pickup.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
 #include "use_manager.h"
@@ -686,6 +687,27 @@ int main(int argc,char** argv){try{
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/victim-sound-init-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing victim initial sound evidence");auto samples=field(fixture,"samples");int mismatches=0;
  for(int i=0;i<count(samples);i++){auto sample=at(samples,i);Random random(uint32_t(json_object_get_uint64(field(sample,"seed"))));for(int k=0;k<integer(field(sample,"advance"));k++)random.nextWord();auto before=random.drawCount;VictimSoundChoices choices;choices.initialize(random);if(choices.deadline!=uint32_t(json_object_get_uint64(field(sample,"deadline")))||random.drawCount-before!=uint64_t(integer(field(sample,"draws")))||624-random.index!=size_t(integer(field(sample,"remaining")))||choices.previous!=0)mismatches++;}
  std::cout<<"Victim initial sound: "<<count(samples)<<" original timer-store captures; mismatches="<<mismatches<<"\n";return mismatches?15:0;
+ }
+ if(argc>1&&std::string(argv[1])=="--victim-pickup-geometry-check"){
+ Player player;VictimPickupBox standing=victimPickupBox(player,{});player.crouch=true;VictimPickupBox crouched=victimPickupBox(player,{});
+ struct Case{const char* name;int state,type;bool available;VictimPickupBox box;V center;float radius;bool expected;};
+ const Case cases[]={
+  {"x-min-equality",0,1,true,standing,{90,42.5f,0},60,true},
+  {"x-max-equality",0,1,true,standing,{-90,42.5f,0},60,true},
+  {"x-outside",0,1,true,standing,{90.01f,42.5f,0},60,false},
+  {"z-min-equality",0,1,true,standing,{0,42.5f,90},60,true},
+  {"y-min-equality",0,1,true,standing,{0,-90,0},60,true},
+  {"crouch-y-max-equality",0,1,true,crouched,{0,85,0},60,true},
+  {"crouch-y-outside",0,1,true,crouched,{0,85.01f,0},60,false},
+  {"standing-y-over-crouch",0,1,true,standing,{0,85.01f,0},60,true},
+  {"state-5-rejected",5,1,true,standing,{},60,false},
+  {"state-6-rejected",6,1,true,standing,{},60,false},
+  {"other-type-rejected",0,2,true,standing,{},60,false},
+  {"missing-world-box-rejected",0,1,false,standing,{},60,false}
+ };
+ int mismatches=0;
+ for(const auto& sample:cases){bool actual=sourceVictimPickupCandidate(sample.state,sample.type,sample.available,sample.box,sample.center,sample.radius);if(actual!=sample.expected){mismatches++;std::cout<<"Mismatch: "<<sample.name<<" expected="<<sample.expected<<" actual="<<actual<<"\n";}}
+ std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
  }
  if(argc>1&&std::string(argv[1])=="--world-startup-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/world-startup-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing world startup evidence");auto samples=field(fixture,"samples");int updates=0,mismatches=0;
