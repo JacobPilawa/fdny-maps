@@ -25,7 +25,8 @@ h2{font-size:15px;font-weight:620;margin:0 0 4px}.caption{color:var(--muted);fon
 <nav class="top" aria-label="Project"><a class="brand" href="README.md">FDNY Decomp</a><span>/</span><span>Projects</span><span>/</span><strong>FDNY Firefighter</strong><span>/</span><strong>Training</strong><span class="right">Local, evidence-linked project view</span></nav>
 <header class="project"><div class="project-head"><div><div class="eyebrow">Native C++ reconstruction · playable slice</div><h1>FDNY Firefighter · Training</h1><p>Files and original code units are broken out below; the overall estimate covers the full Training goal.</p></div><div class="project-stamp">view: evidence-linked<br>scope: Training</div></div>
 <div class="overall" aria-label="Overall Training reconstruction progress"><div class="overall-head"><span>Overall Training reconstruction</span><strong>~20%</strong></div><div class="overall-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20" aria-label="Rough weighted progress estimate"><i style="width:20%"></i></div><small>Rough weighted estimate of playable mechanics, shared RNG parity, original comparisons and a shareable native build.</small></div>
-<div class="metrics"><div class="metric"><b id="file-count">—</b><span>source files represented</span></div><div class="metric"><b id="unit-count">—</b><span>original units tracked</span></div><div class="metric"><b id="verified-count">—</b><span>component comparisons</span></div><div class="metric"><b id="connected-count">—</b><span>connected native units</span></div></div>
+<div class="metrics"><div class="metric"><b id="file-count">—</b><span>source files represented</span></div><div class="metric"><b id="unit-count">—</b><span>original units tracked</span></div><div class="metric"><b id="verified-count">—</b><span>verified units</span></div><div class="metric"><b id="connected-count">—</b><span>connected units</span></div><div class="metric"><b id="partial-count">—</b><span>partial units</span></div><div class="metric"><b id="open-count">—</b><span>open units</span></div></div>
+<p class="caption">Status counts use count / listed units; they describe tracked units, not overall Training completion.</p>
 </header>
 <div class="filters" role="group" aria-label="Filter code units"><span class="label">Units</span></div>
 <div class="legend" aria-label="Unit status"><span><i class="swatch" style="background:var(--green)"></i>Compared component</span><span><i class="swatch" style="background:var(--blue)"></i>Connected in native build</span><span><i class="swatch" style="background:var(--amber)"></i>Traced or partly connected</span><span><i class="swatch" style="background:var(--gray)"></i>Open</span></div>
@@ -73,12 +74,10 @@ const files = [
 const groups=["All","Core","Startup","Fire","Tools","Victims","Mission"];
 const statusName={verified:"Compared component",connected:"Connected in native build",partial:"Traced or partly connected",open:"Open"};
 const allUnits=files.flatMap(f=>f.units.map(u=>({file:f,...{address:u[0],name:u[1],status:u[2],note:u[3],evidence:u[4]||f.evidence}})));
-const verified=allUnits.filter(u=>u.status==="verified").length;
-const connected=allUnits.filter(u=>u.status==="connected").length;
+const statusCounts=Object.fromEntries(["verified","connected","partial","open"].map(status=>[status,allUnits.filter(u=>u.status===status).length]));
 document.getElementById("file-count").textContent=files.filter(f=>f.path.startsWith("src/")).length;
 document.getElementById("unit-count").textContent=allUnits.length;
-document.getElementById("verified-count").textContent=verified;
-document.getElementById("connected-count").textContent=connected;
+for(const status of Object.keys(statusCounts))document.getElementById(`${status}-count`).textContent=`${statusCounts[status]} / ${allUnits.length}`;
 let selectedButton=null;
 function evidenceLink(path){const a=document.createElement("a");a.href=path;a.textContent=path;return a}
 const graph=document.getElementById("graph"),tree=document.getElementById("file-tree");
