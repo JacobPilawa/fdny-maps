@@ -49,4 +49,15 @@ There is a separate non-Training state-6 path to preserve. `0045BF70` writes sta
 - Recover meanings of the route, visibility, candidate and timing fields without relying on Ghidra's provisional variable names.
 - Port/compare state-7 geometry and conditional RNG against a controlled original run before wiring it into native updates.
 
+## Child-updater scheduler audit (2026-10-11)
+
+A separate read-only Ghidra audit searched references and registration paths for `0045BEA0`. Its only incoming reference is the child-vtable word `004E25B0`; the constructor `0045DDD0` installs that vptr at victim `+0xD4` and initializes the child through `004799B0`.
+
+- Owner category pass `0049BD20` visits parent entities with the relevant membership bit and invokes the primary callback at victim `+0x48`. The victim's bit 0 is set by `0049D330(this,1)`, and its primary callback is `0045A070`. This is the proximity/message path, not the child updater.
+- Owner callback queue `+0x3C4` drains through `0049C820` and can dispatch callback slots 0/`+0x2C`; no evidence shows the victim child was inserted into that queue. The audit found no child insertion among the scanned `+4` append callsites.
+- Staged registration `0049C670` calls primary slots `+0x20` and `+0x24`, which resolve for victims to `0045B690` and `0045D5B0`. These initialize the actor and alternate spawn data but do not establish a recurring `0045BEA0` update.
+- The bounded executable scan for displacement `0xD4` found victim references at constructor/initializer, pickup/release, and updater-adjacent code; other matches were stack or unrelated fields. It did not identify a recurring scheduler call.
+
+The supported conclusion remains that the owner category pass schedules victim primary proximity `0045A070`, while the recurring child updater `0045BEA0` has no identified caller or owner-queue insertion. Dynamic engine enumeration or another indirect path remains possible; this audit is not proof that the updater never runs. Exact victim animation, post-release timer, and AI cadence stay unresolved. The work used read-only `AddressXrefs.java`, `DecompileFunctions.java`, and a temporary displacement scan; no native behavior was added.
+
 The detailed Ghidra function exports and refs are retained locally under `evidence/victim-ai-audit/runtime-flow/` and `runtime-flow-refs.tsv`; raw decompiler exports are excluded from Git by `decomp/.gitignore`.

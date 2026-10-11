@@ -6,6 +6,8 @@
 
 `DecompileFunctions.java` prints Ghidra C output for explicit function entry addresses.
 
+`DefineAndDecompile.java` creates a function at a supplied entry when the program does not currently define one, then prints its decompilation. Function creation changes the analysis database: use this only in a temporary Ghidra project after verifying the entry from a vtable, direct branch or other source.
+
 `ExportFunctionAssembly.java` prints the original instruction listing for explicit function entry addresses.
 
 `CallGraphPath.java` searches direct call edges from a start function to a target function. It reports indirect calls and unresolved direct targets separately; a negative result does not cover computed dispatch.
@@ -27,6 +29,8 @@ Run it with the Ghidra installation on this machine:
 For example, direct stores of the value 7 to field offset `0x120` can be listed with `-postScript FieldStoreAudit.java 0x120 7`.
 
 Use `-postScript DecompileFunctions.java 0045BF70` to inspect a function not already exported into the evidence tree.
+
+If the preserved database does not define a verified function entry, import the matching executable into a temporary Ghidra project, run analysis, then use `-postScript DefineAndDecompile.java 00448D60`. Do not use that script with the preserved read-only project; it is intentionally separate from the non-mutating query helpers.
 
 Use `-postScript ExportFunctionAssembly.java 0045BF70` to preserve its instruction listing. The script does not change the Ghidra database.
 
