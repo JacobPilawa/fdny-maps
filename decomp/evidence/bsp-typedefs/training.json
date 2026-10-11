@@ -1,0 +1,179 @@
+{
+  "format": "fdny-gbsp-typedefs-v1",
+  "source_file": "training.bsp",
+  "source_sha256": "32986212fa875764ca3d5c1630e54ad6315abaea70983203601192cec603a963",
+  "source_entity_count": 262,
+  "typedef_count": 1,
+  "known_field_sizes_bytes": {
+    "int": 4,
+    "float": 4,
+    "string": 4,
+    "model": 4,
+    "point": 12
+  },
+  "typedefs": [
+    {
+      "entity_index": 250,
+      "name": "RCS_FireRescue",
+      "field_count": 22,
+      "layout_size": 136,
+      "layout_offsets_complete": true,
+      "fields": [
+        {
+          "name": "ZZ_spawn_message",
+          "type": "int",
+          "byte_offset": 0,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "A_Name",
+          "type": "string",
+          "byte_offset": 4,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "C_Model",
+          "type": "model",
+          "byte_offset": 8,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "F_FireType",
+          "type": "int",
+          "byte_offset": 12,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "H_Radius",
+          "type": "float",
+          "byte_offset": 16,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "H_Height",
+          "type": "float",
+          "byte_offset": 20,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "K_SprayTime",
+          "type": "float",
+          "byte_offset": 24,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "L_FloorMe",
+          "type": "int",
+          "byte_offset": 28,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "M_Smoking",
+          "type": "int",
+          "byte_offset": 32,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "N_IsAlive",
+          "type": "int",
+          "byte_offset": 36,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "P_NumKeys",
+          "type": "int",
+          "byte_offset": 40,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key1Size",
+          "type": "point",
+          "byte_offset": 44,
+          "byte_size": 12,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key1TimeOffset",
+          "type": "int",
+          "byte_offset": 56,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key2Size",
+          "type": "point",
+          "byte_offset": 60,
+          "byte_size": 12,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key2TimeOffset",
+          "type": "int",
+          "byte_offset": 72,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key3Size",
+          "type": "point",
+          "byte_offset": 76,
+          "byte_size": 12,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key3TimeOffset",
+          "type": "int",
+          "byte_offset": 88,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key4Size",
+          "type": "point",
+          "byte_offset": 92,
+          "byte_size": 12,
+          "default_value": ""
+        },
+        {
+          "name": "P_Key4TimeOffset",
+          "type": "int",
+          "byte_offset": 104,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "T_UseHeading",
+          "type": "int",
+          "byte_offset": 108,
+          "byte_size": 4,
+          "default_value": ""
+        },
+        {
+          "name": "T_Heading",
+          "type": "point",
+          "byte_offset": 112,
+          "byte_size": 12,
+          "default_value": ""
+        },
+        {
+          "name": "ZZ_location",
+          "type": "point",
+          "byte_offset": 124,
+          "byte_size": 12,
+          "default_value": ""
+        }
+      ]
+    }
+  ]
+}

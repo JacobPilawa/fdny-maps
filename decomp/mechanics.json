@@ -46,7 +46,7 @@
     },
     {
       "name": "Player controls, movement, collision",
-      "status": "partial; static fresh collision fixtures pass",
+      "status": "partial; ladder command/state path source-mapped and wired; exact contact cadence and +0x3440 gate remain open; static fresh collision fixtures pass",
       "original_entries": [
         "00452570",
         "0049dbc0",
@@ -128,7 +128,7 @@
     },
     {
       "name": "Fire growth, suppression, spreading and cleanup",
-      "status": "in progress",
+      "status": "initializer and Think branches source-mapped; Training A_Name at UserData +0x04 confirms one conditional FireBurn RNG draw per fire after effect init; recurring Think schedule, visible lifecycle and audio remain open",
       "original_entries": [
         "00448970",
         "0044a7a0",
