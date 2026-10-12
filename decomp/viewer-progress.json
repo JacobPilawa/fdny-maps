@@ -1312,7 +1312,7 @@
     {
       "path": "src/player_ash_pool.h",
       "group": "Effects",
-      "summary": "100-slot ash pool with source-mapped descriptors, direct update/activation writes, finite animation order and player-relative spawn. Original P-code cases match update, activation, spawn, and four cached vertex triplets; Player scheduling and visible rendering remain open.",
+      "summary": "100-slot ash pool with source-mapped descriptors, direct update/activation writes, finite animation order and player-relative spawn. Original P-code cases match update, activation, spawn and cached geometry with a null parent; Player scheduling and visible rendering remain open.",
       "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
       "units": [
         [
@@ -1326,7 +1326,7 @@
           "004467E0",
           "Pool tick / density scan",
           "partial",
-          "Every slot now receives direct update, finite animation, then remaining presentation before the density-sized prefix scan; the Player caller cadence remains unresolved.",
+          "Every slot receives 00446510 then 0047F960 before the density-sized spawn scan; transform parent +0x74 is null on the mapped Player path, but recurring Player root-slot cadence remains unresolved.",
           "evidence/scripts/training-setashdensity/audit.md"
         ],
         [
@@ -1368,7 +1368,7 @@
           "0047F5A0 / 00495D20",
           "Cached quad positions",
           "partial",
-          "Five original P-code affine frames match all four cached position triplets; local XY template and x87 store order recovered. Generic parent-chain resolution is separately compared across four original cases; runtime parent mutation and polygon submission remain open.",
+          "Five original P-code affine frames match cached geometry through the real resolver with parent +0x74 null. Generic non-null parent chains are separately compared across four cases; hidden writes, non-null parent+geometry and polygon submission remain open.",
           "evidence/scripts/training-setashdensity/ash-geometry-pcode-oracle.json"
         ],
         [
@@ -1400,14 +1400,14 @@
     {
       "path": "src/player_ash_transform.h",
       "group": "Effects",
-      "summary": "Genesis parent-chain affine resolver with source-ordered binary32 rounding; constructor-parent mutation and combined geometry/render integration remain open.",
+      "summary": "Genesis parent-chain affine resolver with source-ordered binary32 rounding; the mapped Player path is null-parent, while non-null parent+geometry/render integration remains open.",
       "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
       "units": [
         [
           "004977B0 / 00497300",
           "Ash transform chain",
           "partial",
-          "Four hash-pinned original P-code cases compare all resolved basis, origin, scale, and parent-pointer fields through two parent levels; no Training runtime parent was captured.",
+          "Four hash-pinned original P-code cases compare resolved basis, origin, scale and parent-pointer fields through two levels. Player ash uses a null parent through cached geometry; non-null parent+geometry runtime behavior remains open.",
           "evidence/scripts/training-setashdensity/ash-transform-chain-pcode-oracle.json"
         ]
       ],
