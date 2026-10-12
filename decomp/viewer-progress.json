@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "9be64e8",
-  "tests": 35,
+  "commit": "e5f6144",
+  "tests": 36,
   "scope": "Training",
   "files": [
     {
@@ -555,7 +555,7 @@
     {
       "path": "src/hose_valve_callback.h",
       "group": "Tools",
-      "summary": "Exact 00444120 attach/detach callback order; owner frame commit remains incomplete.",
+      "summary": "Exact 00444120 attach/detach callback order; native owner frame integration remains incomplete.",
       "evidence": "evidence/hose-spray/valve-callback-pcode-audit.md",
       "units": [
         [
@@ -570,20 +570,20 @@
     {
       "path": "src/hose_item_selection.h",
       "group": "Tools",
-      "summary": "Training indexed owner selection and rescan match original P-code; Axe gate/activation and Hose attachment frame commit are source-mapped.",
+      "summary": "Training indexed owner selection/rescan match original P-code; Axe gates and attachment commit are source-mapped, while runtime integration remains open.",
       "evidence": "evidence/hose-spray/item-selection-pcode-audit.md",
       "units": [
         [
           "0044C840",
           "Hose attach/detach selection",
           "partial",
-          "Eight owner executions compare slot writes, mode and 20 ordered item/UI service events; attachment stops before 004977B0 frame construction."
+          "Eight owner executions compare slot writes, mode and 20 ordered item/UI calls. This selection-only fixture stops before frame construction; see the separate owner-frame oracle."
         ],
         [
           "0044C2A0",
           "Item activation gate and setter",
           "partial",
-          "The original selection branch is compared with vtable +0x38/+0x3C as controlled callbacks; Axe's runtime gate state and callback body remain open."
+          "Axe idle gate initialization and +0x3C activation dispatch are source-mapped; busy-state cadence and full callback effects remain open."
         ],
         [
           "0044C360",
@@ -1587,6 +1587,21 @@
         ]
       ],
       "bytes": 2348
+    },
+    {
+      "path": "src/hose_attachment_frame.h",
+      "group": "Tools",
+      "summary": "Controlled-input model of Hose owner frame commit; original owner P-code matches through first stream-pose position write.",
+      "evidence": "evidence/hose-spray/item-selection-pcode-audit.md",
+      "units": [
+        [
+          "0044C840 / 004977B0",
+          "Hose attachment frame commit",
+          "partial",
+          "Four controlled frame trees compare 36 vector words, mode, saved identities and ordered HUD/hide events with zero mismatches; real Training frame/getter construction and runtime integration remain open."
+        ]
+      ],
+      "bytes": 2065
     }
   ]
 }
