@@ -5,11 +5,11 @@ the old C++ reconstruction with the locally generated Training scene data so
 the first Mac build can load the actual Training level and exercise the
 reconstructed player, fire, victim, door, and tool paths.
 
-This is an early partial reconstruction scoped to Training. It does not
-reproduce the original menu, sound, movies, other levels, or the complete
-Genesis3D renderer. It is not the main port target or the first playable
-acceptance milestone. Reuse individual components only after reviewing their
-evidence and removing Training-specific assumptions.
+This executable remains a partial Training reconstruction. The port itself
+must cover every rescue mission, every other selectable map, and the game
+systems needed to run them. Training is a validation fixture and a source of
+reusable gameplay code. Promote that behavior behind a shared scene/runtime
+contract, while retaining evidence for each component and its data assumptions.
 
 ## Build and launch on this Mac
 

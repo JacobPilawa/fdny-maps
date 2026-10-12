@@ -42,3 +42,16 @@ Keep the workbench executable and its generated Training fixtures as a separate 
 This is a relevance-based triage, not a line-by-line re-review of every archived pseudocode export. The root `decomp/` archive remains intact. `tracker/legacy_crosswalk.csv` is the index from the earlier address catalog into the pinned revised function inventory; duplicate reports for one address are not treated as independent confirmation. Before redoing an active target, search that crosswalk and the linked archive paths, then verify any reused claim against the pinned binary and its current evidence.
 
 The prior GBSP entity reader was copied into [`tools/extract_gbsp_typedefs.py`](../tools/extract_gbsp_typedefs.py) and reused by [`tools/inventory_level_assets.py`](../tools/inventory_level_assets.py). It extracts the BSP entity epairs and schema records without depending on the Training renderer. That reuse produced the 17-map entity counts in [`level_map_inventory.csv`](../tracker/level_map_inventory.csv) and the first rescue map packet in [`MBASE_RESCUE_SLICE.md`](MBASE_RESCUE_SLICE.md). This parser does not decode world geometry or materials.
+
+The old work also contains `decomp/tools/extract_act.py` and
+`map_explorer/source/build_actor_assets.py`. The parser was copied to
+[`tools/extract_act.py`](../tools/extract_act.py); a new project-local batch
+driver resolves every `Victim:` resource and produces local decoded actor
+review files from the hash-pinned ACT inputs. This reuses the parser instead
+of copying old generated meshes/textures or depending on the archived folder
+at runtime. The resulting coverage and remaining `boy1` lookup gap are
+recorded in [`ACTOR_RESOURCE_MAP.md`](ACTOR_RESOURCE_MAP.md) and
+[`actor_asset_inventory.csv`](../tracker/actor_asset_inventory.csv).
+The copied parser is SHA-256
+`28e91021e34c0cb663aaaeae4a2533fa20b83d53eb06a8207568a724d19e21cc`; it is
+the fuller of two archived copies and preserves serialized `bitmapId` values.
