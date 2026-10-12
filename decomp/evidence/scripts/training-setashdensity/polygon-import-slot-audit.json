@@ -1,0 +1,44 @@
+{
+  "provenance": {
+    "executable_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "dependency_sha256": "5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643",
+    "ghidra_version": "12.0.4",
+    "method": "Read-only Ghidra xrefs plus PE32 import/IAT and Genesis.dll export-table inspection."
+  },
+  "executable_import": {
+    "library": "Genesis.dll",
+    "lookup_table_rva": "0x000FCD20",
+    "iat_base_rva": "0x000DC028",
+    "entry_index": 42,
+    "iat_entry_rva": "0x000DC0D0",
+    "iat_entry_preferred_va": "0x004DC0D0",
+    "symbol": "geWorld_AddPolyOnce",
+    "import_hint": 501,
+    "import_by_name_rva": "0x000FD69E",
+    "on_disk_iat_word": "0x000FD69E",
+    "loader_behavior": "The on-disk IAT word points to the import-by-name record; the Windows loader resolves the named import into a function pointer."
+  },
+  "dependency_export": {
+    "symbol": "geWorld_AddPolyOnce",
+    "ordinal": 502,
+    "rva": "0x00039A10",
+    "preferred_image_base": "0x10000000",
+    "preferred_va": "0x10039A10",
+    "calls": {
+      "symbol": "geWorld_AddPoly",
+      "ordinal": 501,
+      "rva": "0x00039940"
+    },
+    "behavior": "Allocates/inserts the per-world polygon record and copies nine 32-bit words per vertex; wrapper links returned records through world+0xBC4 and polygon+0xB8."
+  },
+  "executable_callsites": [
+    "0x0047FCF9",
+    "0x0047FE58",
+    "0x0049314E",
+    "0x004698CD"
+  ],
+  "limits": [
+    "No live process capture was made.",
+    "Runtime resource-table contents, world-list contents and visible ash parity remain unverified."
+  ]
+}

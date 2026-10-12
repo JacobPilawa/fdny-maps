@@ -41,17 +41,22 @@ The renderer path consumes more of each descriptor than its animation timing:
   by particle `+0x20` before its final byte conversion. Training's `+8` words
   are `1,1,1,1,0` as float bit patterns; this path does not consult shared RNG.
 
-The submission path has a dynamically dispatched call at `0047FCF9` and the
-same call at `0047FE58` for the optional second frame. Ghidra names the target
-`geWorld_AddPolyOnce`, but the instruction is `CALL dword ptr [0x004DC0D0]`;
-that cell contains `0x000FD69E` in the static image and its loaded runtime
-value is not present in this static Ghidra query. The same slot is read at
-`0049314E` and `004698CD` in two other sprite/render paths; no code writes to
-the cell appear in the bounded static xref result. The preserved dependency
+The submission path calls through the Genesis.dll import-address-table (IAT)
+entry at `004DC0D0` from both `0047FCF9` and `0047FE58` (the optional second
+frame). The PE import directory identifies IAT RVA `0xDC0D0`, import hint 501,
+and symbol `Genesis.dll!geWorld_AddPolyOnce`; Ghidra's outgoing reference marks
+the slot as an external import. The PE32 addresses and hashes are recorded in
+`polygon-import-slot-audit.json`. The on-disk dword `0x000FD69E`
+is the RVA of the import-by-name record, not a callable address. At runtime the
+Windows loader replaces the IAT entry with the imported function address, so
+the call identity is resolved even though no process capture was taken. The
+same IAT slot is read at `0049314E` and `004698CD` in two other sprite/render
+paths; no code writes to the cell appear in the bounded static xref result.
+The preserved dependency
 `evidence/original/Genesis.dll` (SHA-256
 `5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643`)
 contains the named wrapper at `0x10039A10`, matching Ghidra's
-`geWorld_AddPolyOnce` symbol.
+`geWorld_AddPolyOnce` symbol (export ordinal 502, RVA `0x39A10`).
 
 The wrapper at `0x10039A10` calls `geWorld_AddPoly` at `0x10039940`; if a poly
 is returned, it links the prior world-list head through poly `+0xB8` and
@@ -61,9 +66,10 @@ fields, and copies nine 32-bit words (36 bytes) per vertex from the supplied
 vertex buffer before its poly init helper. This matches the ash record stride
 `+0x24`, so the native renderer
 must retain all nine words per vertex, not only the XYZ triplet. The preserved
-instruction evidence is `evidence/sprite-render/add-poly-assembly.txt` and
-`add-poly-once-assembly.txt`. This maps the dependency implementation; it
-does not prove the runtime-loaded value in the executable's data cell.
+local instruction exports are `evidence/sprite-render/add-poly-assembly.txt`
+and `add-poly-once-assembly.txt`; those raw `.txt` exports are ignored by the
+source mirror, so this note and the SHA-pinned local DLL record the durable
+findings.
 
 The recovered first-call operands in decompilation are the selected
 world/render context, particle vertex buffer (`this + 0xd8`), state from
@@ -74,8 +80,10 @@ operands, using the next-frame helpers `0047D560` and `0047D960`.
 This closes a concrete descriptor-to-render-data path: record ID selects a
 renderer resource object, its trailing triplet supplies interpolated vertex
 color, and `+0x0c` supplies the final alpha factor. It does not identify the
-resource object's runtime table state, establish the loaded function-slot value,
-or establish live Training vertex positions/visibility. The preserved
+resource object's runtime table state or establish live Training vertex
+positions/visibility. The imported submission API and its list insertion are
+resolved, but actual Training list contents and visible output have not been
+captured. The preserved
 `evidence/original/rescue.rrf` resolves the authored names: ID 200 is
 `data\sprites\ash1.bmp` (line 60), and ID 201 is `data\sprites\ash2.bmp`
 (line 61). Both original 16×16, 8-bit BMPs were found in the installed game's
