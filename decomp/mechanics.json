@@ -232,7 +232,7 @@
     },
     {
       "name": "Fire Think recovery and update gating",
-      "status": "1350 original calls match core strength/gating/presentation and host size/path call counts; visual/audio/path services supplied by fixture; Ghidra has not identified a recurring 00449FE0 dispatcher; live entity integration pending",
+      "status": "1350 original calls match core strength/gating/presentation and host size/path call counts; visual/audio/path services supplied by fixture. FireRescue root +0x14 locally reaches visual Think 00449FE0 through 0043AFE0/00470740; inspected fixed-offset candidates resolve to hit-testing, input, forwarding, subobject, or transform calls, while recurring caller and live entity integration remain open",
       "original_entries": [
         "00449FE0"
       ],
@@ -352,6 +352,8 @@
     "defined_function_entries": 5807,
     "classified_entries": 0,
     "scope": "Current Ghidra-defined functions only; not proof every routine has a function boundary or a completion percentage.",
-    "generator": "tools/ghidra/ExportFunctionInventory.java (-noanalysis -readOnly)"
+    "generator": "tools/ghidra/ExportFunctionInventory.java (-noanalysis -readOnly)",
+    "reconciliation": "evidence/function-inventory-reconciliation.json",
+    "reconcile_command": "python3 tools/reconcile_function_inventory.py"
   }
 }

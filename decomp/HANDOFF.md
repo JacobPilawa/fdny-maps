@@ -5,9 +5,9 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 ## Workspace and navigation
 
 - Workspace: `.`; source: `decomp/`; branch: `main`.
-- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Last pushed staging/catalog/tail milestone: `7b96618`; live-cleanup continuation follows it.
+- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Latest pushed milestone: `e30fbec` (passout composition and original-function inventory).
 - Leave unrelated untracked `fire_spread/` untouched. Stage only decomp work. Retail assets/binaries, raw Ghidra exports and build/runtime products stay local under existing exclusions.
-- Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is the file-map snapshot; `evidence/original-function-inventory.json` is a provisional 5,807-entry index of current Ghidra function definitions, not proof of binary-wide completeness. `evidence/RE_DECOMP_WORKFLOW.md` records the recommended comparison workflow. Detailed evidence and CHECKLIST.md remain authoritative.
+- Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is the file-map snapshot; `evidence/original-function-inventory.json` is a provisional 5,807-entry index of current Ghidra function definitions, not proof of binary-wide completeness. `evidence/function-inventory-reconciliation.json` exact-joins it against the preserved export index and mechanics ledger; it is a record-link report, not a completion metric. `evidence/RE_DECOMP_WORKFLOW.md` records the recommended comparison workflow. Detailed evidence and CHECKLIST.md remain authoritative.
 
 ## Current verified victim work
 
@@ -35,9 +35,9 @@ Eighteen CTest checks pass. Existing pickup message/14-case geometry checks pass
 
 Next work:
 
-1. Bind the passout/drop animation, status, spawn, statistic-name and UI services into the scene. The composed check does not establish recurring callback order or live-game behavior.
-2. Prioritize the missing recurring caller for BModel updater `0043DC60` and verify its owner/cadence/order; this gates Training pickup and carry interactions. Then resolve Player/victim update scheduling and continuous carry. Existing local root-slot paths do not establish recurring cadence.
-3. Resolve recurring Fire Think `00449FE0` dispatch and relative frame order, then integrate recovery/spread/douse/particles and their RNG consumers. Bounded static audits have not identified its dispatcher.
+1. Continue scheduler recovery from concrete root wrappers and their class/vtable registration paths. The inspected `+0x14` sites are UI hit-testing (`00436091`), byte-stream reading (`00408414`), a generic forwarder without a FireRescue vtable reference (`0042BDDA`), subobject slot-5 calls (`0049EE0D/0049EECE`), and a transform call on `this+0x130` (`004649CC`). Repeating the literal scan is unlikely to help; see the search pivot in `evidence/fire-update/root-slot-think-route-followup.md`.
+2. Establish the recurring root-slot caller, owner/cadence/order for BModel updater `0043DC60` and Fire Think `00449FE0`. FireRescue root `+0x14 → 0043AFE0 → 00470740 → secondary slot 0` proves the local Think route, but not its recurring caller. See `evidence/fire-update/root-slot-think-route-followup.md`.
+3. Bind passout/drop animation, status, spawn, statistic-name and UI services into the scene, then connect verified schedules and continuous carry. The composed check does not establish live-game behavior.
 4. Complete scripts, BModel carry/throw/axe, hose, damage, goggles, sounds, mission completion and full Training replay parity. Never insert guessed RNG draws to compensate for missing consumers.
 
 ## Reverse-engineering and user constraints
@@ -48,7 +48,7 @@ Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d
 
 No live game capture succeeded. Earlier WineDbg attaches froze/crashed; do not attach or ask the user to enter Training without a safe bounded capture/recovery method. Continue static/oracle work meanwhile.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. The latest usage observation was 3% five-hour used and 65% weekly used.
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 3% five-hour used and 66% weekly used.
 
 ## Proximity and deadline input continuation
 
@@ -67,6 +67,14 @@ Catalog source `thegame.lev` is now preserved locally under original exclusions;
 Passout composition review: preserve cached Player+4C, checkpoint+3400 and frame translation as distinct sources; their synchronization is not proved. Herodown cleanup now reads state/count through live Ops getters after spawn/stat/log, including the two separate +357C loads. Regression check mutates both during spawn and verifies later diagnostic/transition. See `evidence/victim-ai-audit/passout-composition-review.md`.
 
 Passout composition update: caller `0044FF73` rereads the live carried pointer after reset and uses that receiver's frame for X correction. `VictimTransactions::passout` resolves the receiver at that point. The composed check changes carry during reset and verifies the alternate frame receives the correction; this is an adapter-boundary regression, not evidence that a real Training callback changes carry. See `passout-composed-transaction.md`.
+
+## Whole-game function inventory continuation
+
+The current `original-function-inventory.json` contains 5,807 Ghidra-defined addresses, all unclassified. `python3 tools/reconcile_function_inventory.py` produces `evidence/function-inventory-reconciliation.json`: exact address joins currently match 737/840 preserved export addresses and 91/104 unique mechanics-ledger addresses. Unmatched addresses need boundary/provenance review; these counts are not an implementation or completeness percentage.
+
+## Fire Think local dispatch continuation
+
+FireRescue primary vtable slot `+0x14` points to thunk `0043AFE0`; its `this+0x24` adjustment and shared `00470740` dispatch can reach visual-subobject slot 0 / Think `00449FE0`. The root-slot caller and recurrence remain unknown. The reviewed fixed-offset sites resolve to unrelated UI, input, forwarding, subobject, and transform operations; `004649CC` calls the transform at `this+0x130`. Continue from root-wrapper vtable installation/registration and the owning update list instead of another textual scan. See `evidence/fire-update/root-slot-think-route-followup.md`.
 
 ## Viewer update (2026-10-11)
 
