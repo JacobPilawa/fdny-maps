@@ -11,7 +11,7 @@ This note captures the source-backed lifecycle boundary after Player receives pi
 
 ## Native gap
 
-`src/victim_rescue.h` currently models only the received-pickup transaction: carry pointer, victim state 5, flags 0, `pickup` event and a Player post-event hook. It has no source-mapped carry pose update, Training escape release, or passout/drop transaction. The next concrete native increment is the Training escape/release branch in source order, including the verified release transform and timer/event writes; keep the passout route separate because it uses a different animation/RNG/position sequence. Do not connect either helper to a recurring frame schedule until the original caller order is verified.
+`src/victim_rescue.h` models the received-pickup transaction. `src/victim_pickup_effects.h` now supplies its ordered post-event boundary; `src/victim_release.h` now supplies the Training escape/release transaction ordering, state/flag/timer writes, and explicit frame/engine callbacks. See [training-release-component.md](training-release-component.md) for its limited scope. Native frame math, helper internals, continuous carry and passout remain open. No recurring frame schedule is inferred from these local transactions.
 
 ## Limits
 

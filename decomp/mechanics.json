@@ -152,7 +152,7 @@
     },
     {
       "name": "Victim pickup, carrying, rescue and exits",
-      "status": "read-only Ghidra maps the delivered 0x7532 pickup handler, ordered Player post-effects, Training escape release 00451160→0045C000, and separate passout/drop 0044FF10→0045C1A0; isolated native pickup transaction tracks Training actor flags 0x400→0 and passes its gate/order check; scheduling, post-effects, carry transform, native release/passout, rescue and exits remain open",
+      "status": "source-ordered isolated pickup, post-effects boundary and escape/release transactions implemented; release reuses pickup state, samples clock after rescue event, preserves timer wrap and callback order; normal actor render gate wired to per-entity flags; CTest boundary/order checks pass; release frame math, engine/status/zone adapters, scheduling, continuous carry, passout, rescue and exit gameplay integration remain open",
       "original_entries": [
         "00453a70",
         "00450440",

@@ -17,7 +17,7 @@ This order is local to the already-delivered message handler. It does not identi
 
 ## Native boundary
 
-`src/victim_rescue.h` preserves the earlier handler transaction through the synchronous event and exposes one post-event callback. The actions above are not implemented by that callback yet. Keeping it explicit avoids treating an event-order stub as a completed carrying, UI, trigger, or zone system. The Training victim raw actor flags are initialized to `0x400` and set to zero on pickup; actor construction evidence is in [`actor-render-flags.md`](actor-render-flags.md).
+`src/victim_rescue.h` preserves the earlier handler transaction through the synchronous event and exposes one post-event callback. `src/victim_pickup_effects.h` now implements the ordered storage/callback boundary; entity/status/zone helper internals remain adapters. See [pickup-effects-component.md](pickup-effects-component.md). Keeping it explicit avoids treating an event-order stub as a completed carrying, UI, trigger, or zone system. The Training victim raw actor flags are initialized to `0x400` and set to zero on pickup; actor construction evidence is in [`actor-render-flags.md`](actor-render-flags.md).
 
 ## Ghidra query provenance
 
