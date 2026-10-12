@@ -75,6 +75,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_transactions.h"
 #include "victim_status.h"
 #include "carry_entity_mode.h"
+#include "victim_proximity.h"
 #include "actor_render_flags.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
@@ -941,12 +942,22 @@ int main(int argc,char** argv){try{
  services.updateVictimStatus=[&](int action){trainingVictimStatusAction(status,action,statusOps);};
  services.addStatistic=[&](const char* name,uint32_t value){addSourceStatistic(&stats.at(name),value);};services.updateStatistic=[&](const char* name,uint32_t value){updateSourceStatistic(&stats.at(name),value);};
  services.setRescueStatisticTotal=[&](uint32_t value){statusOps.setRescueStatisticTotal(value);};services.reportUnzonedVictim=[&](int){failures++;};services.reportUnzonedExit=[&](int){failures++;};services.enableExitTrigger=[&](int){failures++;};services.refreshSelectedItem=[&]{events.push_back("item-refresh");};
+ FireMessageQueue messages;
  VictimTransactions runtime{victimRuntime,services,zones,sharedRandom};statusOps.refresh=[&]{runtime.refreshMembership();};
  runtime.refreshMembership();auto membershipCount=[&]{size_t total=0;for(const auto& zone:victimRuntime.membership.actorsByZone)total+=zone.second.size();return total;};
  if(membershipCount()!=2)failures++;
  for(size_t n=0;n<victimSpawns.size();n++){
   int entity=victimSpawns[n].entity;uint64_t before=sharedRandom.drawCount;now=100+uint32_t(n)*1000;
-  if(runtime.pickup(entity)!=VictimPickupMessageResult::accepted)failures++;
+  auto& actor=victimRuntime.actors.at(entity);
+  auto publication=publishVictimProximity(actor.state,1,&actor,messages,
+   [&]()->std::optional<VictimPickupBox>{return victimPickupBox(player,actor.frame.position);},
+   [&]{float radius=std::stof(str(field(field(startupEntities.at(entity),"properties"),"J_Radius")));if(radius!=60)throw std::runtime_error("Training radius resolver needs source review");return radius;},
+   [&]{return actor.frame.position;},[&]{return trainingEntities.at(playerId).route;},[&]{failures++;});
+  if(publication!=VictimProximityResult::queued||victimRuntime.player.carriedVictimEntity)failures++;
+  messages.drain([&](uint32_t route,uint32_t generation)->FireMessageQueue::Receiver{
+   auto* identity=static_cast<TrainingEntityIdentity*>(trainingRoutes.resolve(route,generation));if(!identity||identity->sourceId!=playerId)return {};
+   return [&](uint32_t message,const void* payload){if(message!=0x7532||runtime.receivePickupPayload(payload)!=VictimPickupMessageResult::accepted)failures++;};
+  },[&](const FireMessageQueue::Delivery& delivery){if(!delivery.resolved)failures++;});
   if(victimRuntime.pickupEffects.value!=20||victimRuntime.pickupEffects.pickupClock!=now||victimRuntime.actors.at(entity).state!=5||vm.variables["gotvictim"]!="1"||membershipCount()!=1-n)failures++;
   if(runtime.pickup(entity)!=VictimPickupMessageResult::playerAlreadyCarrying||sharedRandom.drawCount!=before)failures++;
   now+=300;
@@ -956,7 +967,12 @@ int main(int argc,char** argv){try{
  }
  if(victimRuntime.exits.total!=2||victimRuntime.exits.rescues!=2||stats.at("Rescues").value!=2||victimRuntime.exits.messageGate!=1||runtime.pickup(victimSpawns[0].entity)!=VictimPickupMessageResult::playerMessageGateClosed)failures++;
  if(std::count(events.begin(),events.end(),"one-survivor")!=1||std::count(events.begin(),events.end(),"item-refresh")!=1)failures++;
- std::cout<<"Training victim transactions: shared actor/render state, actual EVS pickup events, native BSP releases, status/membership/exit and one source RNG draw per rescue; failures="<<failures<<" (UI services supplied; producer schedule unconnected)\n";return failures?54:0;
+ std::cout<<"Training victim transactions: source proximity/route queue, shared actor/render state, actual EVS pickup events, native BSP releases, status/membership/exit and one source RNG draw per rescue; failures="<<failures<<" (UI services supplied; producer schedule unconnected)\n";return failures?54:0;
+ }
+ if(argc>1&&std::string(argv[1])=="--player-deadline-input-check"){
+ auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/player-deadline-input-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing deadline input evidence");auto samples=field(fixture,"samples");int mismatches=0;
+ for(int i=0;i<count(samples);i++){auto sample=at(samples,i);auto value=field(sample,"level_value");std::optional<float> input;if(value&&!json_object_is_type(value,json_type_null))input=num(value);float result=initializePlayerDeadlineInput(input,integer(field(sample,"mode")));uint32_t bits;std::memcpy(&bits,&result,4);if(bits!=uint32_t(json_object_get_uint64(field(sample,"bits"))))mismatches++;}
+ std::cout<<"Player deadline input: "<<count(samples)<<" original initialization fragments; mismatches="<<mismatches<<" (supplied level field and mode)\n";return mismatches?55:0;
  }
  if(argc>1&&std::string(argv[1])=="--player-rescue-deadline-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/player-rescue-deadline-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing Player rescue deadline evidence");

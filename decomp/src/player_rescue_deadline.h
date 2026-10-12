@@ -1,8 +1,17 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include <optional>
 #include "random.h"
 #include "extended.h"
+
+// Player initializer 0044D550, fragment 0044DE07..0044DE90. The authored
+// meaning of the level word is still unknown; null follows the source fallback.
+inline float initializePlayerDeadlineInput(std::optional<float> levelField10,int mode){
+ float value=levelField10.value_or(600.0f);
+ double multiplier=(mode==0||mode==1)?1.5:1.0;
+ return (Extended::from(value)*Extended::from(multiplier)).asFloat();
+}
 
 // 004541A0, reached by escape via thunk 00454300 after status call 2.
 // Storage target is (Player+0x340C)+0x14 = Player+0x3420.

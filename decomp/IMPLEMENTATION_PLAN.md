@@ -36,3 +36,5 @@ For subsequent milestones: rerun affected original fixtures, compare integrated 
 ## Current execution point
 
 V1/V2/V3 now have source-derived isolated components and a composed delivered-transaction check. The scene uses the same runtime actor frame/animation/flags. V5 still requires source proximity/route scheduling and actual engine/UI services; composition is not a captured gameplay schedule. Keep S1/S2 as integration gates and continue V4/runtime service recovery in parallel.
+
+Continuation: V5 has a source proximity publisher and real queued-delivery composed check; S1 still blocks automatic cadence. Deadline input arithmetic is verified against 15 original fragments. Next bounded S1 task: trace staged Player callback registration into 0049C670, separating initialization from recurring update.

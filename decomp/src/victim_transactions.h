@@ -80,6 +80,13 @@ struct VictimTransactions {
    });
  }
 
+ // Decoder for the stable victim pointer payload of source message 0x7532.
+ // Handler gates precede payload access, matching the original Player route.
+ VictimPickupMessageResult receivePickupPayload(const void* payload){
+  if(state.exits.messageGate)return VictimPickupMessageResult::playerMessageGateClosed;
+  if(state.player.carriedVictimEntity)return VictimPickupMessageResult::playerAlreadyCarrying;
+  return pickup(static_cast<const VictimRuntimeActor*>(payload)->entity);
+ }
  struct StatisticOps {
   VictimTransactions& runtime;
   uint32_t readPickupClock(){return runtime.state.pickupEffects.pickupClock;}

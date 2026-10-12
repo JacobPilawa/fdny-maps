@@ -46,7 +46,7 @@
     },
     {
       "name": "Player controls, movement, collision",
-      "status": "partial; ladder state 3↔5 source-mapped and wired; inclusive BModel E_Reach bounds plus Training's conditional 48-unit hitpoint/motion reach override source-mapped and wired; Training path to held-object state 7/+0x3440 source-mapped; BModel contacts run once per normal owner manager pass, while producer-to-script-event latency remains unresolved; native BModel USE/carry/throw remain open; static fresh collision fixtures pass",
+      "status": "partial; ladder state 3\u21945 source-mapped and wired; inclusive BModel E_Reach bounds plus Training's conditional 48-unit hitpoint/motion reach override source-mapped and wired; Training path to held-object state 7/+0x3440 source-mapped; BModel contacts run once per normal owner manager pass, while producer-to-script-event latency remains unresolved; native BModel USE/carry/throw remain open; static fresh collision fixtures pass",
       "original_entries": [
         "00452570",
         "0049dbc0",
@@ -63,7 +63,7 @@
     },
     {
       "name": "Script interpreter and message queues",
-      "status": "partial; Training startup syntax passes; native ID pool matches all 512 original routes, generations, release and FIFO reuse at generation 513; the mapped fire-message queue matches a four-request original fixture through FIFO delivery and generation-based receiver resolution; all 16 Training factory callbacks and World route-registration calls are mapped and the native startup now allocates stable route identities in that order; current fire routes 159–165 / generations 60–66 are source-derived rather than a captured original Training run; live scheduler/contact integration pending",
+      "status": "partial; Training startup syntax passes; native ID pool matches all 512 original routes, generations, release and FIFO reuse at generation 513; the mapped fire-message queue matches a four-request original fixture through FIFO delivery and generation-based receiver resolution; all 16 Training factory callbacks and World route-registration calls are mapped and the native startup now allocates stable route identities in that order; current fire routes 159\u2013165 / generations 60\u201366 are source-derived rather than a captured original Training run; live scheduler/contact integration pending",
       "original_entries": [
         "0049b4c0",
         "0049b610",
@@ -322,5 +322,11 @@
   ],
   "long_term_target": "Full game decompilation, preserving evidence and reusable shared systems",
   "priority": "Complete 1-to-1 playable Training before expanding playable level scope",
-  "preservation": "Retain raw exports, assembly, original assets, comparison fixtures and conflicting variants; evidence/function-index.json indexes native exports without deleting them"
+  "preservation": "Retain raw exports, assembly, original assets, comparison fixtures and conflicting variants; evidence/function-index.json indexes native exports without deleting them",
+  "proximity_deadline_input_continuation": {
+    "proximity": "Source producer and generation-aware queue delivery composed in Training check; scene cadence unconnected",
+    "deadline_input": "Player+343C = float(level+10 or 600) times 1.5 for modes 0/1, otherwise 1.0; 15 original P-code fragments match",
+    "staging": "Player initializer primary vtable entry index 8, byte +0x20; staging callback conditional on Player queue participation",
+    "validation": "17 CTest checks pass; complete Training parity remains unverified"
+  }
 }

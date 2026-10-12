@@ -4,7 +4,7 @@ Ghidra source used for this trace: `ghidra-refresh/rescue-flow-20261011/0044d550
 
 ## Recovered bounds
 
-- Player primary vtable `004E1C48`, slot `+8`, enters constructor `0044D550`. It initializes local minimum `(-30,-30,-30)` at player `+0x78..+0x80` and maximum `(30, DAT_004E181C, 30)` at `+0x84..+0x8c`. Ghidra's scalar word at `004E181C` is `0x42AA0000`, or `85.0f`.
+- Player primary vtable `004E1C48`, entry index 8 (byte offset `+0x20`), enters initializer `0044D550`. It initializes local minimum `(-30,-30,-30)` at player `+0x78..+0x80` and maximum `(30, DAT_004E181C, 30)` at `+0x84..+0x8c`. Ghidra's scalar word at `004E181C` is `0x42AA0000`, or `85.0f`.
 - Player primary vtable slot `+0x0c` is thunk `0049DB90` to `0049D790`. That routine transforms the origin of the frame at player `+0x24` into world coordinates and stores it at `+0x68..+0x70`. This is the origin returned to victim callback `0045A070`.
 - Crouch setter `0044BCB0` changes max Y at `+0x88` to scalar `004E1820` (`0x41C80000`, `25.0f`) and state `+0x18c` to 4, provided the prior state is not 4 and byte `+0x12c` is nonzero. Uncrouch `0044BCE0` tests a proposed max Y of 85 through collision routine `00492DF0`; only on a clear result does it restore max Y to 85 and state to 3. The overlap therefore uses the current box height, not a fixed standing height.
 
