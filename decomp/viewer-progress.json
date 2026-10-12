@@ -1311,18 +1311,34 @@
     {
       "path": "src/player_fire_exposure.h",
       "group": "Player",
-      "summary": "Stores source-ordered x87 exposure into binary32, then tests the still-live extended sum for strict passout. Three original suffix cases compare in a fixture-driven check; scheduler and live passout service remain open.",
+      "summary": "Stores source-ordered x87 exposure into binary32, then tests the still-live extended sum for strict passout. The whole 00451640 message now composes the pain, exposure and passout components; producer cadence and host services remain open.",
       "evidence": "evidence/fire-update/player-exposure-accumulation-audit.md",
       "units": [
         [
           "00451640",
           "Exposure accumulation",
           "partial",
-          "Three representative original P-code suffix cases are compared; the sub-ULP edge, passout service and live dispatch remain open.",
+          "Three representative original suffix cases run through the composed message handler; sub-ULP source edge, real passout services and live dispatch remain open.",
           "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
         ]
       ],
       "bytes": 1160
+    },
+    {
+      "path": "src/player_fire_message.h",
+      "group": "Player",
+      "summary": "Composes the 00451640 state guard, facing/service boundaries, pain deadline, x87 exposure, and passout dispatch in source order.",
+      "evidence": "evidence/fire-update/player-exposure-timer-followup/player-fire-message-transaction.md",
+      "units": [
+        [
+          "00451640",
+          "Player 0x7531 message transaction",
+          "partial",
+          "Three original suffix cases, callback order and failed-state no-op pass; facing, service bindings, producer and cadence remain open.",
+          "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
+        ]
+      ],
+      "bytes": 1672
     },
     {
       "path": "src/player_pain_deadline.h",
