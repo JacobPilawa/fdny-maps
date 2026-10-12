@@ -22,6 +22,9 @@ int main(int argc,char** argv){
    state.selected=integer(field(row,"selected_before"));state.hoseMode=integer(field(row,"hose_mode_before"));
    J slots=field(row,"input_slots"),can=field(row,"can_deactivate");
    for(int slot=0;slot<5;slot++){int marker=integer(json_object_array_get_idx(slots,slot));state.slots[size_t(slot)].present=marker>=0;state.slots[size_t(slot)].canDeactivate=boolean(json_object_array_get_idx(can,slot));}
+   state.axeGate.primaryChildEnabled=integer(field(row,"axe_primary_enabled"))!=0;
+   state.axeGate.primaryChildState=uint32_t(integer(field(row,"axe_primary_state")));
+   state.axeGate.secondaryChildState=uint32_t(integer(field(row,"axe_secondary_state")));
    auto result=integer(field(row,"action"))==1002?HoseItemSelection::detach(state):HoseItemSelection::attach(state);
    const std::string name=string(field(row,"name"));
    auto report=[&](const std::string& label,bool matched){if(!matched){mismatches++;if(mismatches<20)std::cerr<<name<<" mismatch: "<<label<<"\n";}};

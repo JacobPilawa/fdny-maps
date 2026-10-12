@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -13,8 +14,23 @@ struct Item {
  bool canDeactivate=true; // Result of the item's vtable +0x38 service.
 };
 
+// Training Axe vtable +0x38 (0045F930) delegates to the two child gates.
+// The first child is queried only while Axe+0x1FC is nonzero; the second is
+// always queried. Each child gate (0045FA50) permits switching only when its
+// child +0x368 word is zero.
+struct AxeSwitchGate {
+ bool primaryChildEnabled=false; // Axe +0x1FC
+ uint32_t primaryChildState=0;   // Axe +0x568
+ uint32_t secondaryChildState=0; // Axe +0x9B0
+
+ bool canDeactivate()const{
+  return (!primaryChildEnabled||primaryChildState==0)&&secondaryChildState==0;
+ }
+};
+
 struct State {
  std::array<Item,5> slots{};
+ AxeSwitchGate axeGate{}; // Training slot 1, initialized by 00460A50/00460250.
  int count=5;
  int selected=0; // Player +0x357C, zero-based.
  int hoseMode=0; // Hose Spray +0xC68.
@@ -40,6 +56,12 @@ inline std::string hideEvent(int receiverOffset,int parameter){
  return std::string("hide:")+std::to_string(receiverOffset)+":"+std::to_string(parameter);
 }
 
+inline bool canDeactivate(const State& state,int index){
+ if(index<0||index>=5||!state.slots[size_t(index)].present)return false;
+ if(index==1)return state.axeGate.canDeactivate();
+ return state.slots[size_t(index)].canDeactivate;
+}
+
 inline void setMode(State& state,int mode,Result& result){
  const int old=state.hoseMode;
  if(old==mode)return;
@@ -61,7 +83,7 @@ inline bool selectSlot(State& state,int index,bool force,Result& result){
  }else{
   const int old=state.selected;
   if(!force){
-   const bool can=old>=0&&old<5&&state.slots[size_t(old)].present&&state.slots[size_t(old)].canDeactivate;
+   const bool can=canDeactivate(state,old);
    result.events.push_back(indexedEvent("can",old,can?1:0));
    if(!can)return false;
   }
@@ -83,7 +105,7 @@ inline Result attach(State& state){
    state.selected=4;result.events.push_back(indexedEvent("active",4,1));
   }else{
    const int old=state.selected;
-   const bool can=old>=0&&old<5&&state.slots[size_t(old)].present&&state.slots[size_t(old)].canDeactivate;
+   const bool can=canDeactivate(state,old);
    result.events.push_back(indexedEvent("can",old,can?1:0));
    if(!can){result.events.push_back(hideEvent(0x508,0));result.returned=true;return result;}
    result.events.push_back(indexedEvent("active",old,0));state.selected=4;result.events.push_back(indexedEvent("active",4,1));

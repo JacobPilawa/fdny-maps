@@ -95,6 +95,21 @@ int main(int argc, char** argv) {
         int activeValve = -1;
 
         const auto candidates = TrainingHoseInteraction::candidates(valves);
+        // Axe vtable +0x38 blocks switching while child +0x368 is nonzero
+        // (for example, updater 0045FAD0 stores 3 after an active hit path).
+        inventory.axeGate.secondaryChildState = 3;
+        auto blockedAttach = TrainingHoseInteraction::use(valves[0], 1001,
+                                                           inventory, poseList,
+                                                           attachmentFrame, activeValve);
+        require(blockedAttach.ownerCalled && blockedAttach.forwardUseEvent &&
+                blockedAttach.orderedOwnerEvents == std::vector<std::string>{
+                    "can:1:0", "hide:1288:0"},
+                "Busy Axe gate should block the Hose switch at the source callback boundary");
+        require(inventory.selected == 1 && inventory.hoseMode == 2 && activeValve == -1 &&
+                poseList.current == poseList.head,
+                "Blocked Axe gate must leave the Training Hose detached and its pose list untouched");
+        inventory.axeGate.secondaryChildState = 0;
+
         auto target = UseManager::select(rayStart(candidates[0]), kRayDirection,
                                          candidates, inventory.hoseMode, activeValve);
         require(target.index == 0 && target.action == 1001,

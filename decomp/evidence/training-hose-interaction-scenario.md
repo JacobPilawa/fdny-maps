@@ -20,12 +20,15 @@ The frame input comes from Training's `D_Model=5`, authored heading and location
 `tools/training_hose_interaction_check.cpp` reads the preserved `assets/training/entities.json` and uses its two `makevalve` entries in order (Valve3 entity 159, Valve5 entity 164). It initializes the authored Axe and Hose Spray slots and the `touchhose 25` list, then checks:
 
 - Valve3 target selection, attach action, inventory switch and mode 3.
+- A source-gated busy Axe (`Axe+0x9B0=3`) prevents the Hose selection/frame commit; after the Axe gate returns to zero, the same Valve3 attach succeeds.
 - Saved valve identity, exact authored valve position in Hose and pose-list head, and resolved axis offset within the documented approximate frame basis.
 - Suppression of a different-valve target while attached.
 - Same-valve detach, mode 2, Axe reselection and no forwarded detach `use` event.
 - Valve5 selection and second attach, with its own authored position and resolved frame offset.
 
 This is a native composition regression scenario. It does not compare live target ordering, update cadence, or script latency with an original Training run; nor does it render the attached inventory item as a hose follower or implement the separate `RCS_PlayerHose` actor/stream.
+
+The Axe switch check uses the original gate inputs, not the old generic boolean: `0045F930` conditionally checks Axe `+0x568` when byte `+0x1FC` is set and always checks `+0x9B0`; `0045FA50` permits the switch only for zero. The owner oracle uses an explicitly source-mapped gate adapter; it does not execute these two leaf bodies. Its original owner P-code comparison checks callback order and selection behavior around the supplied gate result. The native scenario supplies the source-written busy value 3 to exercise the composed refusal, then returns to the constructor-established idle state. Axe hit/update scheduling that produces the value is still unimplemented.
 
 ## Verification
 

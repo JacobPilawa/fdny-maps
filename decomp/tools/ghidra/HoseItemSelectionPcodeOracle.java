@@ -17,7 +17,8 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
 
  private static final class Sample {
   final String name;final int action,selected,mode;final int[] present;final boolean[] canDeactivate;
-  Sample(String n,int action,int selected,int mode,int[] present,boolean[] can){this.name=n;this.action=action;this.selected=selected;this.mode=mode;this.present=present;this.canDeactivate=can;}
+  final int axePrimaryEnabled,axePrimaryState,axeSecondaryState;
+  Sample(String n,int action,int selected,int mode,int[] present,boolean[] can,int primaryEnabled,int primaryState,int secondaryState){this.name=n;this.action=action;this.selected=selected;this.mode=mode;this.present=present;this.canDeactivate=can;this.axePrimaryEnabled=primaryEnabled;this.axePrimaryState=primaryState;this.axeSecondaryState=secondaryState;}
  }
 
  @Override public void run() throws Exception {
@@ -26,16 +27,20 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
   if(!hash.toString().equalsIgnoreCase(currentProgram.getExecutableSHA256()))throw new IllegalStateException("Executable hash mismatch");
   int[] standard={-1,1,-1,-1,4};boolean[] can={true,true,true,true,true};
   List<Sample> cases=List.of(
-   new Sample("attach_from_slot0",1001,0,2,standard,can),
-   new Sample("attach_blocked_current_item",1001,1,2,standard,new boolean[]{true,false,true,true,true}),
-   new Sample("attach_switch_current_item",1001,1,2,standard,can),
-   new Sample("attach_already_selected",1001,4,2,standard,can),
-   new Sample("attach_hose_missing",1001,0,2,new int[]{0,-1,-1,-1,-1},can),
-   new Sample("detach_first_slot",1002,4,3,standard,new boolean[]{false,true,true,true,true}),
-   new Sample("detach_first_candidate_is_selected",1002,1,3,new int[]{-1,1,-1,-1,4},can),
-   new Sample("detach_mode_already2",1002,4,2,standard,can));
+   new Sample("attach_from_slot0",1001,0,2,standard,can,0,0,0),
+   new Sample("attach_blocked_current_item",1001,1,2,standard,new boolean[]{true,false,true,true,true},0,0,3),
+   new Sample("attach_switch_current_item",1001,1,2,standard,can,0,0,0),
+   new Sample("axe_idle_gate",1001,1,2,standard,can,0,0,0),
+   new Sample("axe_secondary_busy_gate",1001,1,2,standard,can,0,0,3),
+   new Sample("axe_primary_disabled_busy_gate",1001,1,2,standard,can,0,3,0),
+   new Sample("axe_enabled_primary_busy_gate",1001,1,2,standard,can,1,3,0),
+   new Sample("attach_already_selected",1001,4,2,standard,can,0,0,0),
+   new Sample("attach_hose_missing",1001,0,2,new int[]{0,-1,-1,-1,-1},can,0,0,0),
+   new Sample("detach_first_slot",1002,4,3,standard,new boolean[]{false,true,true,true,true},0,0,0),
+   new Sample("detach_first_candidate_is_selected",1002,1,3,new int[]{-1,1,-1,-1,4},can,0,0,0),
+   new Sample("detach_mode_already2",1002,4,2,standard,can,0,0,0));
   List<String> rows=new ArrayList<>();for(Sample c:cases)rows.add(capture(c));String emptyReselect=captureEmptyReselect();
-  Files.writeString(Path.of(args[0]),"{\"exe_sha256\":\""+hash+"\",\"engine\":\"Ghidra EmulatorHelper original x86 PE32 P-code\",\"entries\":[\"0044C840\",\"0044C360\",\"0044C2A0\",\"00463370\"],\"scope\":\"Owner inventory-selection transaction. Real array helpers, mode setter, scan order and item callback callsites execute. Item +0x38/+0x3C, HUD 004571A0 and hide 004A11A0 are recorded service boundaries. Attach samples stop at 004977B0 before valve/frame computation. No live inventory capture.\",\"samples\":["+String.join(",",rows)+"],\"helper_samples\":["+emptyReselect+"]}\n");
+  Files.writeString(Path.of(args[0]),"{\"exe_sha256\":\""+hash+"\",\"engine\":\"Ghidra EmulatorHelper original x86 PE32 P-code with source-mapped Axe service boundary\",\"entries\":[\"0044C840\",\"0044C360\",\"0044C2A0\",\"00463370\"],\"scope\":\"Owner inventory-selection transaction. Real owner, array helpers, mode setter, scan order and non-Axe item callback callsites execute. Axe slot 1 +0x38 is a source-mapped service boundary (not executed P-code): 0045F930 gates the primary child +0x38 call on Axe+0x1FC, then calls the secondary child +0x38; each source-mapped child 0045FA50 returns state-at-child+0x368 == 0. The fixture applies (!primaryEnabled || primaryState==0) && secondaryState==0. Other item +0x38/+0x3C, HUD 004571A0 and hide 004A11A0 remain controlled service boundaries. Attach samples stop at 004977B0 before valve/frame computation. No live inventory capture.\",\"samples\":["+String.join(",",rows)+"],\"helper_samples\":["+emptyReselect+"]}\n");
   println("Captured "+rows.size()+" original hose item-selection transactions");
  }
 
@@ -71,7 +76,8 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
     if(pc==HIDE){long sp=emu.readRegister("ESP").longValue();long receiver=emu.readRegister("ECX").longValue();int parameter=r(sp+4);String event="hide:"+(receiver-PLAYER)+":"+parameter;uiEvents.add(event);orderedEvents.add(event);ret(4,0);continue;}
     if(pc==STUB+0x100||isSlotStub(pc,0x100,0x20)){
      long receiver=emu.readRegister("ECX").longValue();int slot=slotFor(receiver,objects);
-     int allow=r(pc);String event="can:"+slot+":"+allow;itemEvents.add(event);orderedEvents.add(event);ret(0,allow);continue;
+     int allow=slot==1?((c.axePrimaryEnabled==0||c.axePrimaryState==0)&&c.axeSecondaryState==0?1:0):r(pc);
+     String event="can:"+slot+":"+allow;itemEvents.add(event);orderedEvents.add(event);ret(0,allow);continue;
     }
     int activeSlot=slotStub(pc,0x108,0x20);
     if(activeSlot>=0){long sp=emu.readRegister("ESP").longValue();long receiver=emu.readRegister("ECX").longValue();int arg=r(sp+4);String event="active:"+slotFor(receiver,objects)+":"+arg;itemEvents.add(event);orderedEvents.add(event);ret(4,0);continue;}
@@ -79,10 +85,12 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
    }
    if(!frameBoundary&&!returned)throw new IllegalStateException("Owner transaction instruction limit at "+emu.getExecutionAddress());
    int[] slotValues=new int[5];for(int i=0;i<5;i++)slotValues[i]=r(ITEMS+i*4)==0?-1:slotFor(Integer.toUnsignedLong(r(ITEMS+i*4)),objects);
+   boolean[] expectedCan=c.canDeactivate.clone();expectedCan[1]=(c.axePrimaryEnabled==0||c.axePrimaryState==0)&&c.axeSecondaryState==0;
    return "{\"name\":\""+c.name+"\",\"action\":"+c.action+",\"selected_before\":"+c.selected+",\"selected_after\":"+r(PLAYER+0x357c)+
    ",\"hose_present\":"+(objects[4]!=0)+",\"hose_mode_before\":"+c.mode+",\"hose_mode_after\":"+(objects[4]==0?0:r(HOSE+0xc68))+
     ",\"hose_valve_pointer_is_root\":"+(objects[4]!=0&&r(HOSE+0xc6c)==(int)VALVE)+",\"stopped_at_frame_transform\":"+frameBoundary+",\"returned\":"+returned+
-    ",\"input_slots\":["+ints(c.present)+"],\"can_deactivate\":["+booleans(c.canDeactivate)+"],\"slots\":["+ints(slotValues)+"],\"item_events\":["+quoted(itemEvents)+"],\"ui_events\":["+quoted(uiEvents)+"],\"ordered_events\":["+quoted(orderedEvents)+"]}";
+    ",\"input_slots\":["+ints(c.present)+"],\"axe_primary_enabled\":"+c.axePrimaryEnabled+",\"axe_primary_state\":"+c.axePrimaryState+",\"axe_secondary_state\":"+c.axeSecondaryState+
+    ",\"can_deactivate\":["+booleans(expectedCan)+"],\"slots\":["+ints(slotValues)+"],\"item_events\":["+quoted(itemEvents)+"],\"ui_events\":["+quoted(uiEvents)+"],\"ordered_events\":["+quoted(orderedEvents)+"]}";
   }finally{emu.dispose();}
  }
  private String captureEmptyReselect()throws Exception{

@@ -21,7 +21,7 @@ Focused result on 2026-10-12: `player_fire_pcode-check` reported four original s
 - FireRescue influence production and delivery (`004483A0 → 00453A70`), reset of its four-entry exposure-record buffer, and message cadence are not connected to this native transaction. Static evidence does not establish recurring BModel or FireRescue update order.
 - The facing-vector transforms and `0044BB00` effects remain injected and lack direct native comparison.
 - Training `RC_Pain` set lookup, media playback, possible one/two shared sound draws, and actual `Serious Burns` storage remain unbound. The P-code comparison uses a no-draw pain stub; the injected C++ callback must receive the shared `Random` when assets/services are recovered.
-- `RC_PassOut` chatter, selected-tool release/audio behavior during live passout, and full player state/render effects remain outside the stitched check, although the dispatcher order and selected-item virtual slot are source-backed.
+- `RC_PassOut` chatter, selected-tool release/audio behavior during live passout, and full player state/render effects remain outside the stitched check, although the dispatcher order and selected-item virtual slot are source-backed. Training's Axe is slot 1 and its `+0x1C` release body is still unmapped, so the native host cannot yet bind a complete selected-item release table (`player-passout-transaction.md`).
 - No normal-speed game capture established when `0x7531` is delivered or how often; do not connect the handler to the native frame loop until that producer schedule is recovered.
 
 ## Primary references

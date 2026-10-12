@@ -577,7 +577,7 @@
           "0044C840",
           "Hose attach/detach selection",
           "partial",
-          "Eight owner executions compare slot writes, mode and 20 ordered item/UI calls. This selection-only fixture stops before frame construction; see the separate owner-frame oracle."
+          "Twelve owner executions compare slot writes, mode and ordered item/UI calls. Four explicitly source-mapped Axe gate inputs cover idle, secondary-busy, disabled-primary-busy and enabled-primary-busy behavior; the leaf gate is a controlled boundary, not executed P-code. This selection-only fixture stops before frame construction; see the separate owner-frame oracle."
         ],
         [
           "0044C2A0",
