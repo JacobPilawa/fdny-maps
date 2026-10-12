@@ -3,9 +3,9 @@
 </style></head><body><main><header><div><h1>FDNY Firefighter · Decompilation map</h1><div class="sub">Training: component recovery in progress</div><p>Original routines mapped to native C++ files, with evidence and remaining work.</p></div><a class="button" href="https://github.com/JacobPilawa/fdny-maps/tree/main/decomp">Repository ↗</a></header>
 <h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
 const data={
-  "snapshot": "2026-10-11",
+  "snapshot": "2026-10-12",
   "commit": "a97c101",
-  "tests": 22,
+  "tests": 23,
   "scope": "Training",
   "files": [
     {
@@ -1312,6 +1312,43 @@ const data={
         ]
       ],
       "bytes": 1331
+    },
+    {
+      "path": "src/player_ash_pool.h",
+      "group": "Effects",
+      "summary": "Source-mapped 100-slot ash pool metadata, known constructor state, direct update vector writes, and conditional RNG order. Engine services and runtime parity remain open.",
+      "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
+      "units": [
+        [
+          "004465D0",
+          "Pool construction",
+          "partial",
+          "Five descriptor records per container, constructor subset, and initial density are source-mapped; opaque constructor services remain.",
+          "evidence/scripts/training-setashdensity/ghidra-helper-recovery.md"
+        ],
+        [
+          "004467E0",
+          "Pool tick / density scan",
+          "partial",
+          "All entries update and present before the density-sized prefix scan; scene callback and schedule are unresolved.",
+          "evidence/scripts/training-setashdensity/audit.md"
+        ],
+        [
+          "00446510",
+          "Due particle update",
+          "partial",
+          "Four conditional draws and their source-ordered vector writes are mapped; presentation can alter active slots.",
+          "evidence/scripts/training-setashdensity/native-pool-component.md"
+        ],
+        [
+          "00446470",
+          "Inactive-slot activation",
+          "partial",
+          "Five conditional draws and direct state stores are mapped; scene transform and animation reset are services.",
+          "evidence/scripts/training-setashdensity/native-pool-component.md"
+        ]
+      ],
+      "bytes": 6818
     }
   ]
 };

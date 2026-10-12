@@ -1,0 +1,23 @@
+# Training goggles flow audit
+
+## Finding
+
+Native Training does not currently select, update, or scan with goggles. The original control and goggles item exist in the preserved source, but the authored Training scripts do not grant the Player goggles, and no Training-side scan behavior is mapped by this evidence.
+
+## What the evidence proves
+
+- Training entity 115 (RCS_PlayerRescue) authors equip axe, then loads doors.evs, sets ash density to 0, and disables RescueBot. It has no equip goggles command. The full decoded properties are in assets/training/entities.json; the authored scripts are in evidence/original/training.evs.
+- The shared rescue.evs explicitly runs tell player (equip goggles) only under ifnot LEVEL training and difficulty [0, 1]. Thus that shared startup grant is excluded on Training. This proves the condition in the script, not whether another untraced runtime path grants goggles.
+- The original Player-controls constructor 004395c0 registers a SELECT_GOGGLES control, then binds it with 00437410(..., 4). This is a distinct selection input from ACTION and from SELECT_AXE/SELECT_EXT. input.rrf defines fire, selectaxe, and selectext (including keypad aliases), but contains no selectgoggles binding. The actual default device/key behavior for code 4 in Training is therefore not established by this config alone.
+- Original function 00462a60 creates item-like descriptor records with identifier 0x2bf and registers a UI/resource named Goggles at object offset +0x5dc. This supports the existence of a goggles object/resource; it does not by itself establish scan semantics.
+- Original Player update 0044f340 iterates registered item objects and dispatches per-item virtual methods. The preserved decompilation shows the generic ACTION pressed/held/released dispatch to item slots +0x14, +0x18, and +0x1c; it does not show that the goggles item is equipped or selected in Training, nor identify a survivor scan callback.
+
+## Native status
+
+In src/main.cpp, native Training starts with equipment{"axe"} and selected = "axe". The script host's equip verb only inserts the named item into the equipment set, while select changes selection only if the item is already equipped. The live key handling maps 1 to axe and 2 to extinguisher; there is no goggles input, goggles item state/update, or scan action. The native host therefore cannot currently perform the scripted goggles tutorial.
+
+No behavior was implemented from this static evidence: the Training grant, goggles selection binding/default, scan target rules, successful scan result, and consequences of pressing 1 after spotting a survivor are unresolved. In particular, the hint text in training.evs is not sufficient evidence for a scan algorithm or for granting the item.
+
+## Next evidence needed
+
+A controlled original Training trace should record (1) whether goggles are present in Player equipment at startup, (2) which input activates SELECT_GOGGLES, (3) item selection and virtual callback addresses, and (4) the left-button callback and resulting survivor/HUD/message state while looking at and away from a survivor. Static Ghidra follow-up should identify the goggles object's vtable and its ACTION methods before implementing native behavior.
