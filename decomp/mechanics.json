@@ -328,5 +328,11 @@
     "deadline_input": "Player+343C = float(level+10 or 600) times 1.5 for modes 0/1, otherwise 1.0; 15 original P-code fragments match",
     "staging": "Player initializer primary vtable entry index 8, byte +0x20; staging callback conditional on Player queue participation",
     "validation": "17 CTest checks pass; complete Training parity remains unverified"
+  },
+  "staging_herodown_continuation": {
+    "staging": "Successful-load Player factory/World request/later batch/primary+20 initialization proved; recurring root scheduling unresolved",
+    "training_deadline_input": "catalog time500 \u00d760 = level+10 30000; Player modes0/1 scale1.5; consumer clamps7200",
+    "herodown": "Mode2/argument0 type2 name/state count; staged POFighter signed(passoutCount-1), then wrapped total/stat; conditional cleanup and unconditional reset/status adapters",
+    "validation": "18 CTest checks; input/deadline oracles expanded to21/60 original calls; full Training unverified"
   }
 }

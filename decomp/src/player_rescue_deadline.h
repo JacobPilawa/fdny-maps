@@ -5,8 +5,8 @@
 #include "random.h"
 #include "extended.h"
 
-// Player initializer 0044D550, fragment 0044DE07..0044DE90. The authored
-// meaning of the level word is still unknown; null follows the source fallback.
+// Player initializer 0044D550, fragment 0044DE07..0044DE90. The level word is catalog time: token times 60 (00423160).
+// Null follows the source fallback; the record constructor default is separate.
 inline float initializePlayerDeadlineInput(std::optional<float> levelField10,int mode){
  float value=levelField10.value_or(600.0f);
  double multiplier=(mode==0||mode==1)?1.5:1.0;
@@ -15,7 +15,7 @@ inline float initializePlayerDeadlineInput(std::optional<float> levelField10,int
 
 // 004541A0, reached by escape via thunk 00454300 after status call 2.
 // Storage target is (Player+0x340C)+0x14 = Player+0x3420.
-// The producer/meaning of Player+0x343C is not assigned here.
+// Player+0x343C is initialized from the catalog field by 0044D550.
 struct PlayerRescueDeadlineResult {
  uint32_t threshold=0,base=0,bound=0;
  bool beforeThreshold=false;

@@ -1,0 +1,9 @@
+{
+  "catalog_sha256": "ee6819873cd540e67613774d848506561e2861442b37ef301e27273805d558c6",
+  "level": "training",
+  "time_token": 500,
+  "parser_multiplier": 60,
+  "level_field10": 30000,
+  "record_default": 1200,
+  "evidence": "victim-ai-audit/level-deadline-authoring.md"
+}

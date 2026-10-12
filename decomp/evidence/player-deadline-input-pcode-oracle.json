@@ -10,6 +10,12 @@
 {"level_value":600.0,"mode":0,"bits":1147207680},
 {"level_value":600.0,"mode":1,"bits":1147207680},
 {"level_value":600.0,"mode":2,"bits":1142292480},
+{"level_value":1200.0,"mode":0,"bits":1155596288},
+{"level_value":1200.0,"mode":1,"bits":1155596288},
+{"level_value":1200.0,"mode":2,"bits":1150681088},
 {"level_value":7200.0,"mode":0,"bits":1177075712},
 {"level_value":7200.0,"mode":1,"bits":1177075712},
-{"level_value":7200.0,"mode":2,"bits":1172373504}]}
+{"level_value":7200.0,"mode":2,"bits":1172373504},
+{"level_value":30000.0,"mode":0,"bits":1194313728},
+{"level_value":30000.0,"mode":1,"bits":1194313728},
+{"level_value":30000.0,"mode":2,"bits":1189765120}]}

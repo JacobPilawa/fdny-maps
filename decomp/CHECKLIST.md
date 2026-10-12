@@ -184,3 +184,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] Player+343C initialization arithmetic matches 15 original P-code fragments. Conditional staging target and vtable byte/index distinction are documented.
 - [x] All 17 CTest checks pass; existing view parity failures remain unresolved.
 - [ ] Prove Player staging participation and recurring actor/frame scheduling; connect actual services and producer cadence. Recover level+10 authoring meaning and remaining passout tail.
+
+## Staging / herodown continuation (2026-10-11)
+
+- [x] Normal successful-load Player factory→World request→later staged batch→primary +0x20 initializer chain verified with fresh raw vtable/instruction evidence. Recurring update cadence remains open.
+- [x] Independent herodown tail core supplies count/spawn/update/cleanup ordering, production shared counter and wrap behavior, and nonthrowing diagnostic continuation; opaque services remain adapters.
+- [ ] Compose passout prefix/tail with shared runtime and exact spawn/UI/clock services. Resolve recurring dispatch and preserve original draw/event order.
+
+- [x] Installed `thegame.lev` Training `time:500` traced through parser00423160 ×60 store+10, level loader and Player initializer. Record default1200 is distinct from null fallback600. Composed rescue check now uses actual authored input with supplied mode0; 21 initialization / 60 deadline original executions are covered. All 18 CTest checks pass with the expanded fixtures and authored-input composed check.
