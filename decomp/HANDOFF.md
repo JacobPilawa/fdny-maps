@@ -48,3 +48,9 @@ Read `IMPLEMENTATION_PLAN.md` for the dependency map. Two GPT-6 Luna agents impl
 The release component still delegates all frame calculations and neighboring engine work. The post-effects component still delegates entity-mode internals, status and zone reconstruction. No recurring schedule is inferred. Next useful work: recover and implement the release frame transform using the existing exact arithmetic/frame components, then verify against original execution before runtime wiring.
 
 Milestone validation: native build and all three CTest checks passed; existing pickup message/14-case geometry, actor animation (54 selections/432 updates), actor pose consistency (303 vertices/18 frames), and startup checks passed. A two-frame render check required macOS display access outside the sandbox and then drew 90 textured mesh groups with OpenGL error 0. Final Training parity is unverified.
+
+## Release transform continuation
+
+`victim_release_frame.h` now ports the pre-floor transform; eight original P-code cases match 120 words, including signed zero after a shared `Extended` fix. `victim_passout.h` ports the isolated carried-drop boundary and motion RNG. Original assembly proves its 30-unit corrections are X, correcting the old Y interpretation. Six CTest checks cover the components. Broad checks found no new regressions: two known view comparisons fail identically with old/new arithmetic, and fourteen other selected checks pass. See `evidence/victim-ai-audit/release-frame-component.md` and `passout-component.md`.
+
+The pure release helper remains unconnected to transaction/frame/floor adapters. Next: connect source frame math to those adapters; recover passout frame prefix and remaining caller tail, then statistics/status and escape integration. Scheduling, Fire Think dispatch and full Training/RNG parity remain open. Latest usage check: 21% five-hour used, 53% weekly used.

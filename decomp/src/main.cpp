@@ -68,6 +68,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_sound.h"
 #include "victim_pickup.h"
 #include "victim_rescue.h"
+#include "victim_release_frame.h"
 #include "actor_render_flags.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
@@ -896,6 +897,17 @@ int main(int argc,char** argv){try{
  int mismatches=0;
  for(const auto& sample:cases){bool actual=sourceVictimPickupCandidate(sample.state,sample.type,sample.available,sample.box,sample.center,sample.radius);if(actual!=sample.expected){mismatches++;std::cout<<"Mismatch: "<<sample.name<<" expected="<<sample.expected<<" actual="<<actual<<"\n";}}
  std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
+ }
+ if(argc>1&&std::string(argv[1])=="--victim-release-frame-check"){
+ auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/victim-release-frame-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing victim release frame evidence");
+ int mismatches=0,comparisons=0;auto samples=field(fixture,"samples");
+ for(int i=0;i<count(samples);i++){
+  auto sample=at(samples,i);auto input=field(sample,"input");FrameTransform source,victim;victim.scale={2,3,4};
+  for(int k=0;k<3;k++){source.axis[0][k]=num(at(input,k));source.axis[2][k]=num(at(input,k+3));source.position[k]=num(at(input,k+6));}
+  auto result=sourceVictimReleaseFrame(source,victim).words();auto expected=field(sample,"expected_words");
+  for(int k=0;k<15;k++){comparisons++;uint32_t word=uint32_t(json_object_get_uint64(at(expected,k)));if(result[k+1]!=word){mismatches++;std::cout<<"Release frame mismatch sample="<<i<<" word="<<k<<" expected="<<word<<" native="<<result[k+1]<<"\n";}}
+ }
+ std::cout<<"Victim release frame: "<<count(samples)<<" prefix cases, "<<comparisons<<" word comparisons; mismatches="<<mismatches<<" (P-code oracle, no floor/schedule claim)\n";return mismatches?51:0;
  }
  if(argc>1&&std::string(argv[1])=="--victim-pickup-message-check"){
  int mismatches=0;

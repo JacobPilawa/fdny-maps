@@ -152,7 +152,7 @@
     },
     {
       "name": "Victim pickup, carrying, rescue and exits",
-      "status": "source-ordered isolated pickup, post-effects boundary and escape/release transactions implemented; release reuses pickup state, samples clock after rescue event, preserves timer wrap and callback order; normal actor render gate wired to per-entity flags; CTest boundary/order checks pass; release frame math, engine/status/zone adapters, scheduling, continuous carry, passout, rescue and exit gameplay integration remain open",
+      "status": "isolated pickup/post-effects, escape/release and carried-passout boundaries implemented; release pre-floor transform matches 8 original P-code cases / 120 words; normal actor flags gate wired; passout motion RNG and X corrections source-backed; frame/floor/engine/status/statistics adapters, herodown tail, scheduling, continuous carry and connected rescue/exits remain open",
       "original_entries": [
         "00453a70",
         "00450440",

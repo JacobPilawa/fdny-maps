@@ -144,3 +144,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] CMake/CTest builds three standalone component checks, covering render mask boundaries, pickup post-effects and pickup→release state/visibility/order/timer transitions. Assertions remain enabled in Release builds.
 - [ ] Supply source-verified release transforms, statistics/status/zone adapters, resolve scheduling, then connect delivered pickup/escape transactions. Complete carry/passout and mission exits.
 - Detailed task/dependency plan: `IMPLEMENTATION_PLAN.md`. Evidence: `evidence/victim-ai-audit/pickup-effects-component.md`, `training-release-component.md`, `actor-render-gate-implementation.md`. These static-source checks are distinct from original machine-code fixtures and full Training parity.
+
+## Release transform and passout milestone (2026-10-11)
+
+- [x] `src/victim_release_frame.h`: original prefix reverses Player X/Z, sets world-up, multiplies offset separately by 5 then 24, and subtracts from the Player frame position. Eight original P-code prefix cases match all 120 output words; floor/engine/schedule integration remains open.
+- [x] `Extended` signed-zero input/add/subtract/multiply/divide semantics corrected; dedicated sign-combination checks pass. Broad affected fixtures retain their prior results.
+- [x] Luna supplied `src/victim_passout.h` with source preamble, conditional bounded motion draw, actor event/flags boundary, and separate correction writes. Lead review corrected old Y claims: assembly proves Player and victim-frame **X** corrections of 30 units. The independent `herodown` tail remains unported.
+- [x] Six CTest checks cover new transaction/zero/frame work. Fourteen of sixteen broader regression checks pass; two existing view checks remain red with identical results in a build using the pre-change arithmetic. See `evidence/victim-ai-audit/release-frame-component.md`.
+- [ ] Connect release frame helper and native floor placement to transaction adapters, port passout frame math and remaining caller tail, verify statistics/status helpers, then wire source-ordered gameplay once callback timing is established.
