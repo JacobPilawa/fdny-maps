@@ -7,7 +7,7 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 - Workspace: `/Users/jacobpilawa/Documents/ChatGPT/FDNY_trackdown`; source: `decomp/`; branch: `main`.
 - Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Last pushed staging/catalog/tail milestone: `7b96618`; live-cleanup continuation follows it.
 - Leave unrelated untracked `fire_spread/` untouched. Stage only decomp work. Retail assets/binaries, raw Ghidra exports and build/runtime products stay local under existing exclusions.
-- Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is stale and is not authoritative.
+- Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is the file-map snapshot; detailed evidence and CHECKLIST.md remain authoritative.
 
 ## Current verified victim work
 
@@ -67,3 +67,7 @@ Catalog source `thegame.lev` is now preserved locally under original exclusions;
 Passout composition review: preserve cached Player+4C, checkpoint+3400 and frame translation as distinct sources; their synchronization is not proved. Herodown cleanup now reads state/count through live Ops getters after spawn/stat/log, including the two separate +357C loads. Regression check mutates both during spawn and verifies later diagnostic/transition. See `evidence/victim-ai-audit/passout-composition-review.md`.
 
 Next passout fix: caller0044FF73 rereads live carried pointer after passout/reset callbacks, then gets that receiver's frame for X correction. Existing frame adapter binds the initial frame, so shared wrapper needs a later live receiver resolver; current component checks cover stable carry only. Exact addresses and limits are in `passout-composition-review.md`.
+
+## Viewer update (2026-10-11)
+
+Replaced the ledger-style HTML with a decomp.dev-inspired searchable file treemap, subsystem filters, status distribution, file/routine details and evidence links. Inventories all 66 current native source files, includes recent victim/staging/catalog work, and labels unclassified entries. Rectangle area uses tracked entry count, not original byte size; displayed comparison coverage is not whole-game completion. `viewer-progress.json` maintains the snapshot; run `python3 tools/refresh_progress_viewer.py` from decomp (or use its full path) after editing it to re-embed data and refresh file sizes. The standalone HTML opens without a server. Larger reverse engineering remains paused at the user's request.
