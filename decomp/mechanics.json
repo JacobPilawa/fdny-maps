@@ -334,5 +334,14 @@
     "training_deadline_input": "catalog time500 \u00d760 = level+10 30000; Player modes0/1 scale1.5; consumer clamps7200",
     "herodown": "Mode2/argument0 type2 name/state count; staged POFighter signed(passoutCount-1), then wrapped total/stat; conditional cleanup and unconditional reset/status adapters",
     "validation": "18 CTest checks; input/deadline oracles expanded to21/60 original calls; full Training unverified"
+  },
+  "progress_viewer": {
+    "updated": "2026-10-11",
+    "path": "training-progress.html",
+    "data": "viewer-progress.json",
+    "inventory": "66 native files plus tracked missing subsystems",
+    "metric": "Tracked entry statuses; not measured original bytes or whole-game completion",
+    "refresh": "tools/refresh_progress_viewer.py",
+    "validation": "Browser search and file drill-down verified; JavaScript syntax valid"
   }
 }

@@ -194,3 +194,7 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] Installed `thegame.lev` Training `time:500` traced through parser00423160 ×60 store+10, level loader and Player initializer. Record default1200 is distinct from null fallback600. Composed rescue check now uses actual authored input with supplied mode0; 21 initialization / 60 deadline original executions are covered. All 18 CTest checks pass with the expanded fixtures and authored-input composed check.
 
 - [x] Passout composition review preserves cached/frame position distinction and live post-event inputs. Fixed herodown cleanup snapshots to source-ordered getters; spawn mutation regression passes. Shared passout wrapper and recurring scheduling remain unfinished.
+
+## Viewer update (2026-10-11)
+
+Replaced the ledger-style HTML with a decomp.dev-inspired searchable file treemap, subsystem filters, status distribution, file/routine details and evidence links. Inventories all 66 current native source files, includes recent victim/staging/catalog work, and labels unclassified entries. Rectangle area uses tracked entry count, not original byte size; displayed comparison coverage is not whole-game completion. `viewer-progress.json` maintains the snapshot; run `python3 tools/refresh_progress_viewer.py` from decomp (or use its full path) after editing it to re-embed data and refresh file sizes. The standalone HTML opens without a server. Larger reverse engineering remains paused at the user's request.

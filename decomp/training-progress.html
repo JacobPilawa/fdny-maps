@@ -1,94 +1,1282 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FDNY Training · Progress Report</title>
-<style>
-:root{color-scheme:light;--bg:#fff;--ink:#242824;--muted:#707770;--line:#dfe3df;--soft:#f5f7f5;--green:#55a76a;--blue:#5796c9;--amber:#d5a43e;--gray:#c5cbc6;--purple:#9182b6}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#286da5;text-decoration:none}a:hover{text-decoration:underline}code,.mono,.file-path,.unit{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-.shell{max-width:1500px;margin:auto;padding:20px 28px 42px}.top{display:flex;align-items:center;gap:9px;padding-bottom:13px;border-bottom:1px solid var(--line);font-size:13px}.brand{font-weight:650;letter-spacing:-.02em}.top .right{margin-left:auto;color:var(--muted);font-size:12px}.top strong{font-weight:550;color:var(--ink)}
-.project{padding:24px 0 16px}.eyebrow{font-size:11px;color:var(--muted);letter-spacing:.055em;text-transform:uppercase}.project-head{display:flex;align-items:end;justify-content:space-between;gap:20px}.project h1{font-size:26px;line-height:1.2;margin:4px 0 3px;font-weight:620;letter-spacing:-.025em}.project p{margin:4px 0;color:var(--muted);font-size:13px;max-width:760px}.project-stamp{color:var(--muted);font:12px ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;white-space:nowrap}
-.metrics{display:flex;align-items:stretch;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:15px 0 0}.metric{min-width:145px;padding:10px 18px 10px 0}.metric+.metric{padding-left:18px;border-left:1px solid var(--line)}.metric b{display:block;font-size:18px;font-weight:620}.metric span{font-size:11px;color:var(--muted)}
-.overall{max-width:760px;margin:15px 0 4px}.overall-head{display:flex;align-items:baseline;gap:10px}.overall-head span{font-size:12px;color:var(--muted)}.overall-head strong{font-size:21px;font-weight:650}.overall-track{height:7px;margin-top:6px;background:var(--soft);border:1px solid var(--line);border-radius:2px;overflow:hidden}.overall-track i{display:block;height:100%;background:var(--green)}.overall small{display:block;margin-top:5px;color:var(--muted);font-size:10px}
-.filters{display:flex;align-items:center;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:12px 0}.filters .label{font-size:12px;color:var(--muted);margin-right:8px}.filters button{font:inherit;font-size:12px;background:transparent;border:1px solid transparent;color:#59615b;border-radius:3px;padding:5px 9px;cursor:pointer}.filters button:hover{background:var(--soft)}.filters button[aria-pressed=true]{border-color:#b9c0ba;background:var(--soft);color:var(--ink)}
-h2{font-size:15px;font-weight:620;margin:0 0 4px}.caption{color:var(--muted);font-size:11px;margin:0 0 12px}.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:12px 0}.legend span{display:flex;align-items:center;gap:6px}.swatch{width:10px;height:10px;border-radius:1px;display:inline-block}.verified{--tone:var(--green)}.connected{--tone:var(--blue)}.partial{--tone:var(--amber)}.open{--tone:var(--gray)}
-.browser{display:grid;grid-template-columns:224px minmax(0,1fr);gap:20px;align-items:start}.filetree{border:1px solid var(--line);background:#fff}.tree-title{display:flex;justify-content:space-between;padding:9px 10px;border-bottom:1px solid var(--line);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.tree-list{max-height:72vh;overflow:auto;padding:4px}.tree-group{padding:8px 7px 4px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em}.tree-file{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:5px 7px;border:0;border-radius:2px;background:transparent;text-align:left;color:var(--ink);font:11px ui-monospace,SFMono-Regular,Menlo,monospace;cursor:pointer}.tree-file:hover,.tree-file[aria-current=true]{background:var(--soft)}.tree-file[aria-current=true]{box-shadow:inset 2px 0 var(--blue)}.tree-file span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tree-file small{color:var(--muted);font:10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.graph{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:8px}.filebox{border:1px solid var(--line);min-height:91px;padding:8px 9px;background:white;overflow:hidden;scroll-margin-top:12px}.filebox.active{border-color:#99a69a;box-shadow:0 0 0 1px #99a69a}.filehead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.filehead a,.filehead .file-path{font-size:11px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.filehead small{color:var(--muted);font-size:10px;white-space:nowrap}.file-summary{font-size:10px;line-height:1.35;color:var(--muted);margin:-2px 0 7px;min-height:27px}.blocks{display:flex;flex-wrap:wrap;gap:4px}.unit{position:relative;display:grid;place-items:center;border:0;border-radius:2px;min-width:37px;height:26px;padding:0 4px;color:#fff;background:var(--tone);font-size:9px;line-height:1;cursor:pointer}.unit.partial,.unit.open{color:#333}.unit:hover,.unit[aria-pressed=true]{outline:2px solid var(--ink);outline-offset:1px;z-index:1}.unit:focus-visible{outline:2px solid #111;outline-offset:2px}.graph.filtered .filebox[hidden],.tree-file[hidden]{display:none}.file-meter{height:3px;background:var(--soft);display:flex;margin:0 0 7px}.file-meter i{display:block;height:3px}.file-meter .verified{background:var(--green)}.file-meter .connected{background:var(--blue)}.file-meter .partial{background:var(--amber)}.file-meter .open{background:var(--gray)}
-.right-pane{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}.graph-panel{min-width:0}.detail{position:sticky;top:12px;padding:12px 13px;background:var(--soft);border-top:2px solid #cbd2cc;min-height:142px}.detail h3{font-size:14px;margin:0 0 7px;font-weight:620}.detail p{margin:6px 0;font-size:11px;overflow-wrap:anywhere}.detail .meta{color:var(--muted)}.detail .status{font-weight:600}.detail .status::before{content:"";display:inline-block;background:var(--tone);width:9px;height:9px;margin-right:7px}.no-selection{color:var(--muted)}.legend .swatch{flex:none}.footer{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:10px}
-@media(max-width:1050px){.right-pane{grid-template-columns:1fr}.detail{position:static;min-height:0}.tree-list{max-height:54vh}}
-@media(max-width:700px){.shell{padding:15px 12px 28px}.project-head{align-items:start;flex-direction:column}.project-stamp{text-align:left}.browser{grid-template-columns:1fr;gap:12px}.tree-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:250px}.tree-group{grid-column:1/-1}.tree-title{position:sticky;top:0;background:white;z-index:1}.right-pane{grid-template-columns:1fr}.graph{grid-template-columns:repeat(auto-fill,minmax(185px,1fr))}.metrics{flex-wrap:wrap}.metric{min-width:120px}.metric+.metric{padding-left:12px}.top .right{display:none}}
-</style>
-</head>
-<body>
-<main class="shell">
-<nav class="top" aria-label="Project"><a class="brand" href="README.md">FDNY Decomp</a><span>/</span><span>Projects</span><span>/</span><strong>FDNY Firefighter</strong><span>/</span><strong>Training</strong><span class="right">Local, evidence-linked project view</span></nav>
-<header class="project"><div class="project-head"><div><div class="eyebrow">Native C++ reconstruction · playable slice</div><h1>FDNY Firefighter · Training</h1><p>Files and original code units are broken out below; the overall estimate covers the full Training goal.</p></div><div class="project-stamp">view: evidence-linked<br>scope: Training</div></div>
-<div class="overall" aria-label="Overall Training reconstruction progress"><div class="overall-head"><span>Overall Training reconstruction</span><strong>~20%</strong></div><div class="overall-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20" aria-label="Rough weighted progress estimate"><i style="width:20%"></i></div><small>Rough weighted estimate of playable mechanics, shared RNG parity, original comparisons and a shareable native build.</small></div>
-<div class="metrics"><div class="metric"><b id="file-count">—</b><span>source files represented</span></div><div class="metric"><b id="unit-count">—</b><span>original units tracked</span></div><div class="metric"><b id="verified-count">—</b><span>verified units</span></div><div class="metric"><b id="connected-count">—</b><span>connected units</span></div><div class="metric"><b id="partial-count">—</b><span>partial units</span></div><div class="metric"><b id="open-count">—</b><span>open units</span></div></div>
-<p class="caption">Status counts use count / listed units; they describe tracked units, not overall Training completion.</p>
-</header>
-<div class="filters" role="group" aria-label="Filter code units"><span class="label">Units</span></div>
-<div class="legend" aria-label="Unit status"><span><i class="swatch" style="background:var(--green)"></i>Compared component</span><span><i class="swatch" style="background:var(--blue)"></i>Connected in native build</span><span><i class="swatch" style="background:var(--amber)"></i>Traced or partly connected</span><span><i class="swatch" style="background:var(--gray)"></i>Open</span></div>
-<div class="browser"><aside class="filetree" aria-label="Native source files"><div class="tree-title"><span>Files</span><span id="visible-files">—</span></div><div class="tree-list" id="file-tree"></div></aside>
-<section class="right-pane"><div class="graph-panel"><h2>Progress graph</h2><p class="caption">Each labeled block is one original function or tracked code unit. Select a block to inspect its status and evidence.</p><div class="graph" id="graph"></div></div>
-<section class="detail" aria-live="polite" aria-atomic="true"><h3 id="detail-title">Select a code unit</h3><p class="status" id="detail-status"></p><p id="detail-text" class="no-selection">Choose a block in the graph.</p><p class="meta" id="detail-meta"></p><p id="detail-evidence"></p></section></section></div>
-<p class="footer">Statuses describe each listed unit only. Component comparisons do not establish full Training or shared RNG parity. See <a href="CHECKLIST.md">CHECKLIST.md</a> for the task ledger and <a href="mechanics.json">mechanics.json</a> for system-level status.</p>
-</main>
-<script>
-const files = [
- {path:"src/random.h",group:"Core",summary:"Shared generator and conversion routines; complete Training draw order remains open.",evidence:"evidence/rng-oracle.json",units:[
-  ["00404930","RNG helper","verified","Core random routines are compared against original execution."],["00404960","RNG helper","verified","Core random routines are compared against original execution."],["00404A70","RNG helper","verified","Core random routines are compared against original execution."],["00404AC0","Random draw","verified","The generator and draw outputs match original execution."],["00404B30","Bounded draw","verified","Victim index conversion and sound choices have direct comparisons."],["00404B50","Seed / state","verified","Generator state and reload comparisons are preserved."],["00498B30","Random conversion","verified","The mapped conversion path is component-tested; live consumer order remains open."],["00488D40","Sound choice","verified","Sound choice including repeat avoidance matches original execution."]]},
- {path:"src/clock.h",group:"Core",summary:"Original clock update is wired into the playable loop; entity scheduling is incomplete.",evidence:"evidence/clock-oracle.json",units:[["0042BF70","Clock update","verified","3,000 original updates match stored clock bits, including pause and wrap cases."]]},
- {path:"src/core.h",group:"Core",summary:"BSP and movement support used by the Training scene; moving-model and full live parity remain open.",evidence:"evidence/retail-genesis-collision-oracle.json",units:[["00492CE0","BSP box trace","verified","611 fresh original box contacts match for the recorded player-hull cases."],["0049DBC0","Step / movement support","partial","The movement path is ported; remaining movement and ladder comparisons are open."]]},
- {path:"src/main.cpp",group:"Core",summary:"Playable loop connects movement, doors, view updates, tools, and selected startup state.",evidence:"CHECKLIST.md",units:[["00452570","Player update","connected","Movement and ordinary player/view work run in the native Training loop; full behavior is incomplete."],["0043F810","Player movement helper","partial","Walking, jumping, crouching, sliding and step-up are present; full parity remains open."],["0043D660","Door motion","connected","Twenty authored approach doors animate and update collision. Current proximity interpolation is a playable approximation to original BModel state/keyframe behavior.","evidence/training-door-motion-audit.md"]]},
- {path:"src/startup.h",group:"Startup",summary:"Training startup records, class ordering and victim choices are wired; full constructors remain incomplete.",evidence:"evidence/victim-startup/native-runtime-integration.md",units:[["00459840","Startup class order","connected","Class ordering and batch passes are represented in native startup."],["0045B690","Victim first pass","partial","The initial motion draw is wired; actor and material construction are not."],["0045D5B0","Victim spawn pass","partial","Candidate selection and provisional native hull placement are wired; six DLL contacts remain unverified."]]},
- {path:"src/spawn_queue.h",group:"Startup",summary:"Batch additions and route identities are ported; complete Training scheduling is still open.",evidence:"evidence/spawn-queue-oracle.json",units:[["0049C670","Entity init passes","connected","The native startup follows whole-batch construction and two initialization passes."],["0049B4C0","Route identity pool","verified","Native route IDs, generations, release and FIFO reuse match 512 original cases."]]},
- {path:"src/scripts.h",group:"Startup",summary:"Training startup and ScriptActor queue semantics are represented; original callback order and the full command set remain open.",evidence:"evidence/training-script-queue-audit.md",units:[["004799E0","Script dispatch","partial","Ghidra-backed cmd/que, wait, flush and idle behavior is modeled. Wait deadlines use the absolute game millisecond clock; native callback cadence/order is unverified."],["0049D4E0","Message routing","partial","The queue component is compared on a controlled fixture; live callback order remains unresolved."]]},
- {path:"src/world_startup.h",group:"Startup",summary:"Four-update world countdown and delayed script transition are source-backed and compared.",evidence:"evidence/world-startup-oracle.json",units:[["0049E2C0","World countdown","verified","120 original update comparisons match the countdown and state transition."],["00471310","Level script entry","connected","The delayed full Training script pass is connected after the countdown."]]},
- {path:"src/fire_effects.h",group:"Fire",summary:"Fire effect initialization matches original draws; Training ash-pool construction is source-mapped, while native lifecycle and presentation remain open.",evidence:"evidence/fire-effects-oracle.json",units:[["0044B270","Fire effect initializer","verified","1,140 original initializations match, including draw counts."],["0047F850","Effect setup","verified","The initializer's associated setup outputs are covered by the saved comparison."],["0047D370","Sprite/effect setup","verified","Covered by the recovered initialization fixture; live emitter presentation is open."],["004465D0","Ash pool construction","partial","Ghidra maps two five-record templates and 100 alternating entries; native lifecycle and callback order remain open.","evidence/scripts/training-setashdensity/audit.md"]]},
- {path:"src/fire_entity.h",group:"Fire",summary:"Placed-fire initialization is assembled; recurring live Think scheduling is unresolved.",evidence:"evidence/fire-entity-oracle.json",units:[["00448D60","Placed-fire initialization","verified","50 original initializations match key state, sound choice and draw counts."]]},
- {path:"src/fire_update.h",group:"Fire",summary:"Fire Think gating and recovery component is compared; a recurring caller is not connected.",evidence:"evidence/fire-update-oracle.json",units:[["00449FE0","Fire Think","verified","1,350 original calls match core state and presentation calculations with fixtures."],["00449340","Recovery helper","partial","The component path is recovered; live scheduling and surrounding services remain open."]]},
- {path:"src/fire_size.h",group:"Fire",summary:"Size-key queue and interpolation routines match original component captures.",evidence:"evidence/fire-size-oracle.json",units:[["0044B620","Size-key queue","verified","39 original queue/update transitions match."],["0044AE80","Size interpolation","verified","156 original interpolation updates match."],["0044B510","Size-key update","verified","Expired keys, replacement and pool reuse are covered by the comparison."]]},
- {path:"src/fire_suppression.h",group:"Fire",summary:"Suppression arithmetic is compared; live dousing and terminal lifecycle remain incomplete.",evidence:"evidence/fire-suppression-oracle.json",units:[["00448970","Spray / douse calculation","verified","2,160 original arithmetic and state calls match; complete live lifecycle is open."]]},
- {path:"src/fire_floor.h",group:"Fire",summary:"Floor-alignment helper is compared for successful contacts; world adapter edge cases remain.",evidence:"evidence/fire-floor-oracle.json",units:[["00448630","Fire floor alignment","verified","24 original successful-contact outputs match."],["004476B0","Floor trace helper","verified","Trace request and transform outputs match in the saved fixture."]]},
- {path:"src/fire_placement.h",group:"Fire",summary:"Flame planes and glow placement match the original geometry routine.",evidence:"evidence/fire-placement-oracle.json",units:[["0044A840","Flame / glow placement","verified","56 original calls and 3,136 output words match."],["00495D20","Point transform","verified","Original intermediate rounding is preserved in the composed placement."],["00495EB0","Point transform","verified","Original intermediate rounding is preserved in the composed placement."]]},
- {path:"src/sprite_animation.h",group:"Fire",summary:"Sprite timing matches original calls; scene visibility and all consumers remain open.",evidence:"evidence/sprite-animation-oracle.json",units:[["0047D660","Sprite frame update","verified","5,760 original frame updates match."],["0047D2B0","Sprite loop update","verified","One-frame, looping and timer-wrap cases are included."]]},
- {path:"src/fire_visual.h",group:"Fire",summary:"Recovered fire components are assembled; all seven Training visuals are drawn natively.",evidence:"evidence/fire-entity-oracle.json",units:[["0045DFF0","Sprite descriptor","partial","Frame descriptors are decoded; full resource/visibility parity remains open."],["0044B060","Fire visual setup","connected","Recovered components feed the native Training fire visuals; Think scheduling is open."]]},
- {path:"No native fire-update module yet",group:"Fire",summary:"Training FireRescue Think behavior is traced; recurring scheduling and native lifecycle are still open.",evidence:"evidence/fire-update/training-think-behavior-audit.md",units:[["00449FE0","Fire Think callback","partial","Divider, state-4 route branch, strength/alpha updates and the absence of a direct shared-RNG draw are traced. Its recurring caller/order and native lifecycle wiring remain unresolved."]]},
- {path:"src/fire_renderer.h",group:"Fire",summary:"Native renderer draws Training FireRescue's four sprite records with recovered geometry, UV and opacity; full parity and the shared ash-pool caller remain open.",evidence:"evidence/sprite-render/index.tsv",units:[["0047F960","Fire visual draw","connected","FireRescue's four records use the recovered geometry, UV and opacity path. The Training ash-pool caller shares this original routine, but its pool and descriptor state are not connected."]]},
- {path:"src/fire_message_queue.h",group:"Fire",summary:"Generation-checked FIFO delivery is connected for extinguisher messages; original callback timing is unknown.",evidence:"evidence/fire-message-oracle.json",units:[["0049B9E0","Queued message delivery","partial","Controlled queue delivery is compared; live player/owner ordering is unresolved."]]},
- {path:"src/extinguisher_contacts.h",group:"Tools",summary:"Live extinguisher pose samples Training fire candidates and appends accepted contacts.",evidence:"evidence/item-pose/live-extinguisher/",units:[["00481A50","Contact sampling","partial","The live path samples contacts; owner scheduling and full gameplay parity remain open."],["00481A60","Contact record append","partial","Saved fixtures cover bounded records and accepted-contact behavior."]]},
- {path:"src/extinguisher_pose.h",group:"Tools",summary:"Player view and active extinguisher path are connected; charge drain and refill are source-backed.",evidence:"evidence/player-tool-pose/",units:[["0044F340","View / follower update","verified","Four ordinary player-path captures match all 108 words."],["00461F80","Extinguisher action update","partial","The native path samples fire candidates and drains charge after contacts; callback order versus the original owner is unresolved."]]},
- {path:"src/extinguisher_effects.h",group:"Tools",summary:"Accepted contacts consume source-backed effect timer and offset draws; particle rendering remains open.",evidence:"evidence/item-pose/live-extinguisher/",units:[["00449A40","Nonterminal suppression dispatch","partial","Contacts reach message 30000 and nonterminal suppression in the native loop."],["0044D080","Extinguisher factory","verified","The active-tool offset is sourced from the factory and item initializer call chain."]]},
- {path:"src/interaction_sphere.h",group:"Tools",summary:"Ray/sphere selection math compares against original execution; candidate order is unresolved.",evidence:"evidence/hose-spray/prop-model/use-manager/",units:[["004834A0","Ray / sphere query","verified","548 original queries and 3,836 words match."],["00489CE0","PropModel interaction","verified","The mapped PropModel callback math is directly compared."]]},
- {path:"src/use_manager.h",group:"Tools",summary:"Training valve selection and local Hose Spray attach state are partially connected.",evidence:"evidence/hose-spray/prop-model/use-manager/",units:[["00459350","Use candidate scan","partial","Reach and source-derived Training valve candidates are wired; full order is unverified."],["00458FA0","Use action dispatch","partial","Mapped action codes and local attach/detach state are connected."],["00444120","Hose attach action","partial","The state path is traced; original item/frame integration remains unfinished."]]},
- {path:"src/tool_follow.h",group:"Tools",summary:"Tool follower core and subdivision compare against original machine code.",evidence:"evidence/player-tool-pose/",units:[["00483030","Tool-follow core","verified","Captured core calls match the native port."],["00483140","Tool-follow subdivision","verified","Captured subdivision calls match the native port."]]},
- {path:"src/follower.h",group:"Tools",summary:"Follower target and settling state compare against original captures.",evidence:"evidence/player-tool-pose/",units:[["00483720","Follower update","verified","400 captured follower states match the native port."]]},
- {path:"src/model_floor.h",group:"Victims",summary:"Model-floor wrapper is compared for controlled successful contacts; six map contacts remain provisional.",evidence:"evidence/model-floor-oracle.json",units:[["0049DA00","Model hull floor placement","verified","84 original wrapper calls match arguments and result bits; actual six Training BSP contacts still need Genesis DLL comparison."]]},
- {path:"src/actor_animation.h",group:"Victims",summary:"Motion selection and pose-time arithmetic are compared and drive the selected initial poses in the scene.",evidence:"evidence/actor-animation-oracle.json",units:[["00480EA0","Actor motion selection","verified","54 original motion selections match."],["00480D50","Actor pose-time update","verified","432 original animation updates match; loops start at the native scene clock epoch."]]},
- {path:"src/actor_pose.h",group:"Victims",summary:"ACT hierarchy composition is ported; full hierarchy and animated-vertex output are not compared.",evidence:"evidence/genesis-transform-oracle.json",units:[["POSE","Bone hierarchy pose","partial","Transform primitives are compared; the complete animated model pose is not."]]},
- {path:"src/actor_renderer.h",group:"Victims",summary:"Both selected Training victims now draw with their initial poses and source-traced outer transforms.",evidence:"evidence/victim-render/root-transform.md",units:[["ACT","Victim mesh draw path","partial","The native scene binds each recovered appearance material and submits its ACT triangles. The parent-first wrapper transform is source-traced; final skinned-vertex/render parity and the original loading-time animation epoch remain open."]]},
- {path:"src/victim_sound.h",group:"Victims",summary:"The initial deadline draw is connected in startup; beckoning and playback remain open.",evidence:"evidence/victim-startup/sound-init-order.md",units:[["0048D8F0","Victim beckon update","verified","9,000 original updates match, including repeat avoidance."],["0048E080","Initial sound deadline","connected","Each victim retains its source-backed 0–5,000 ms initialization deadline before its motion draw."]]},
- {path:"No native module yet",group:"Mission",summary:"Original behavior has source evidence, but the native implementation is still open.",evidence:"evidence/victim-render/appearance-trace.md",units:[["0045A3D0","Victim model setup","partial","Original setup is traced: model root scale 2, Y adjustment −25, and 90-degree basis rotation. Visible native actor rendering is connected; final body-render parity remains open."],["0045AA10","Appearance lookup","partial","Looks up the per-model appearance counter; its selected value now chooses the slot-0 victim texture."],["0045D450","Appearance counter update","partial","Selects sequential material indices by model ID, resets at material-count limit, and consumes no RNG; appearance values now reach the renderer."],["004513A0","Escape verb wrapper","open","The source wrapper optionally saves checkpoint position and facing, then calls 00451160. Native carry/delivery behavior is not implemented.","evidence/rng/004513a0_FUN_004513a0.c"],["004504C0","Rescue / exit activation","partial","The raw source traces the lazy counter gate and class-8 exit activation. Native mission counters, zones and completion flow are still open.","evidence/mechanics-decompiled/004504c0_FUN_004504c0.c"],["00451640","Player fire exposure","partial","The source trace is preserved; native message handling and live scheduling remain open.","evidence/startup-factories/00451640_FUN_00451640.c"],["00450FB0","Damage / passing out","open","Native exposure, air, damage and failure behavior remain unimplemented.","evidence/startup-factories/00450fb0_FUN_00450fb0.c"]]}
-];
-const groups=["All","Core","Startup","Fire","Tools","Victims","Mission"];
-const statusName={verified:"Compared component",connected:"Connected in native build",partial:"Traced or partly connected",open:"Open"};
-const allUnits=files.flatMap(f=>f.units.map(u=>({file:f,...{address:u[0],name:u[1],status:u[2],note:u[3],evidence:u[4]||f.evidence}})));
-const statusCounts=Object.fromEntries(["verified","connected","partial","open"].map(status=>[status,allUnits.filter(u=>u.status===status).length]));
-document.getElementById("file-count").textContent=files.filter(f=>f.path.startsWith("src/")).length;
-document.getElementById("unit-count").textContent=allUnits.length;
-for(const status of Object.keys(statusCounts))document.getElementById(`${status}-count`).textContent=`${statusCounts[status]} / ${allUnits.length}`;
-let selectedButton=null;
-function evidenceLink(path){const a=document.createElement("a");a.href=path;a.textContent=path;return a}
-const graph=document.getElementById("graph"),tree=document.getElementById("file-tree");
-function choose(u,button){if(selectedButton)selectedButton.setAttribute("aria-pressed","false");selectedButton=button;button.setAttribute("aria-pressed","true");document.querySelectorAll(".filebox.active").forEach(x=>x.classList.remove("active"));button.closest(".filebox").classList.add("active");document.getElementById("detail-title").textContent=`${u.address} · ${u.name}`;const status=document.getElementById("detail-status");status.className=`status ${u.status}`;status.textContent=statusName[u.status];document.getElementById("detail-text").textContent=u.note;document.getElementById("detail-text").className="";document.getElementById("detail-meta").textContent=`Native source: ${u.file.path} · Group: ${u.file.group}`;const ev=document.getElementById("detail-evidence");ev.replaceChildren(document.createTextNode("Evidence: "),evidenceLink(u.evidence||u.file.evidence));}
-function makeTile(f,d){const u={file:f,address:d[0],name:d[1],status:d[2],note:d[3],evidence:d[4]||f.evidence},b=document.createElement("button");b.className=`unit ${u.status}`;b.type="button";b.textContent=u.address==="POSE"?"POSE":u.address.slice(-4);b.title=`${u.address} · ${u.name} · ${statusName[u.status]}`;b.setAttribute("aria-label",b.title);b.setAttribute("aria-pressed","false");b.addEventListener("click",()=>choose(u,b));return b}
-function setVisibleCount(){document.getElementById("visible-files").textContent=`${[...document.querySelectorAll(".filebox")].filter(x=>!x.hidden).length} shown`}
-for(const g of groups.slice(1)){const heading=document.createElement("div");heading.className="tree-group";heading.textContent=g;tree.append(heading);for(const f of files.filter(x=>x.group===g)){const button=document.createElement("button");button.className="tree-file";button.type="button";button.dataset.group=f.group;button.dataset.file=f.path;const label=document.createElement("span");label.textContent=f.path;const n=document.createElement("small");n.textContent=f.units.length;button.append(label,n);button.addEventListener("click",()=>{const card=document.getElementById(`file-${files.indexOf(f)}`);card.scrollIntoView({behavior:"smooth",block:"center"});document.querySelectorAll(".tree-file").forEach(x=>x.removeAttribute("aria-current"));button.setAttribute("aria-current","true");document.querySelectorAll(".filebox.active").forEach(x=>x.classList.remove("active"));card.classList.add("active")});tree.append(button)}}
-for(let fileIndex=0;fileIndex<files.length;fileIndex++){const f=files[fileIndex],box=document.createElement("article");box.className="filebox";box.dataset.group=f.group;box.id=`file-${fileIndex}`;const head=document.createElement("div");head.className="filehead";const src=f.path.startsWith("src/")?evidenceLink(f.path):document.createElement("span");src.className=f.path.startsWith("src/")?"":"file-path";src.textContent=f.path;const count=document.createElement("small");count.textContent=`${f.units.length} unit${f.units.length===1?"":"s"}`;head.append(src,count);box.append(head);const meter=document.createElement("div");meter.className="file-meter";for(const s of ["verified","connected","partial","open"]){const amount=f.units.filter(u=>u[2]===s).length;if(amount){const part=document.createElement("i");part.className=s;part.style.width=`${100*amount/f.units.length}%`;meter.append(part)}}box.append(meter);const summary=document.createElement("p");summary.className="file-summary";summary.textContent=f.summary;box.append(summary);const blocks=document.createElement("div");blocks.className="blocks";for(const d of f.units)blocks.append(makeTile(f,d));box.append(blocks);graph.append(box)}
-const filters=document.querySelector(".filters");for(const g of groups){const b=document.createElement("button");b.type="button";b.textContent=g;b.setAttribute("aria-pressed",g==="All"?"true":"false");b.addEventListener("click",()=>{filters.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");for(const el of document.querySelectorAll(".filebox,.tree-file,.tree-group"))el.hidden=g!=="All"&&el.dataset.group!==g;if(g!=="All")document.querySelectorAll(".tree-group").forEach(x=>x.hidden=x.textContent!==g);setVisibleCount()});filters.append(b)}
-setVisibleCount();const first=graph.querySelector(".unit");if(first)first.click();
-</script>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FDNY · Decompilation map</title><style>
+:root{--ink:#283344;--muted:#657083;--line:#d5dce7;--green:#00ba81;--blue:#509bd4;--amber:#e6af49;--gray:#c4ccd8}*{box-sizing:border-box}body{margin:0;background:#fbfcfe;color:var(--ink);font:15px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:42px 32px}h1{font-size:29px;margin:0 0 8px}h2{font-size:18px;margin:22px 0 8px}p{margin:8px 0;color:var(--muted)}a{color:#3970a4}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.button{border:1px solid #889bb9;border-radius:5px;padding:10px 18px;text-decoration:none;white-space:nowrap;background:white}.sub{font-size:19px;font-weight:600}.bar{height:27px;background:#e9edf4;display:flex;border-radius:4px;overflow:hidden}.bar i{height:100%}.metrics{display:flex;gap:22px;flex-wrap:wrap;margin:20px 0}.metrics b{font-size:22px;display:block}.metrics span{font-size:12px;color:var(--muted)}.legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0;font-size:12px}.legend i{width:12px;height:12px;display:inline-block;margin-right:6px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 12px}select,input{padding:13px;border:1px solid var(--line);border-radius:4px;background:white;font:inherit;width:100%}.map{height:470px;position:relative;background:#e8edf4;border:1px solid var(--line);overflow:hidden}.tile{position:absolute;border:1px solid #ffffffaa;overflow:hidden;padding:5px;background:var(--gray);color:#172c26;text-align:left;font:12px/1.3 system-ui;cursor:pointer;transition:filter .15s}.tile:hover,.tile:focus-visible,.tile[aria-pressed=true]{filter:brightness(1.1);outline:3px solid #233852;outline-offset:-3px;z-index:1}.tile small{display:block;font-size:10px}.detail{margin-top:16px;border:1px solid var(--line);border-radius:5px;background:white;padding:18px}.detail h2{margin:0;font-size:18px;overflow-wrap:anywhere}.detail ul{padding-left:20px}.detail li{margin:8px 0}.filelist{max-height:300px;overflow:auto;border:1px solid var(--line);background:white}.row{width:100%;border:0;border-bottom:1px solid #edf0f5;padding:10px 14px;background:white;display:flex;justify-content:space-between;gap:12px;text-align:left;cursor:pointer;font:13px system-ui}.row:hover{background:#f2f5fa}.row span{overflow-wrap:anywhere}.row small{color:var(--muted);white-space:nowrap}.footer{font-size:12px;margin-top:24px}.empty{padding:30px}code{font-size:12px} @media(max-width:650px){main{padding:22px 16px}header{display:block}.button{display:inline-block;margin-top:12px}.controls{grid-template-columns:1fr}.map{height:400px}h1{font-size:24px}}
+</style></head><body><main><header><div><h1>FDNY Firefighter · Decompilation map</h1><div class="sub">Training: component recovery in progress</div><p>Original routines mapped to native C++ files, with evidence and remaining work.</p></div><a class="button" href="https://github.com/JacobPilawa/fdny-maps/tree/main/decomp">Repository ↗</a></header>
+<h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
+const data={
+  "snapshot": "2026-10-11",
+  "commit": "081d6eb",
+  "tests": 18,
+  "scope": "Training",
+  "files": [
+    {
+      "path": "src/random.h",
+      "group": "Core",
+      "summary": "Shared generator and conversion routines; complete Training draw order remains open.",
+      "evidence": "evidence/rng-oracle.json",
+      "units": [
+        [
+          "00404930",
+          "RNG helper",
+          "verified",
+          "Core random routines are compared against original execution."
+        ],
+        [
+          "00404960",
+          "RNG helper",
+          "verified",
+          "Core random routines are compared against original execution."
+        ],
+        [
+          "00404A70",
+          "RNG helper",
+          "verified",
+          "Core random routines are compared against original execution."
+        ],
+        [
+          "00404AC0",
+          "Random draw",
+          "verified",
+          "The generator and draw outputs match original execution."
+        ],
+        [
+          "00404B30",
+          "Bounded draw",
+          "verified",
+          "Victim index conversion and sound choices have direct comparisons."
+        ],
+        [
+          "00404B50",
+          "Seed / state",
+          "verified",
+          "Generator state and reload comparisons are preserved."
+        ],
+        [
+          "00498B30",
+          "Random conversion",
+          "verified",
+          "The mapped conversion path is component-tested; live consumer order remains open."
+        ],
+        [
+          "00488D40",
+          "Sound choice",
+          "verified",
+          "Sound choice including repeat avoidance matches original execution."
+        ]
+      ],
+      "bytes": 2507
+    },
+    {
+      "path": "src/clock.h",
+      "group": "Core",
+      "summary": "Original clock update is wired into the playable loop; entity scheduling is incomplete.",
+      "evidence": "evidence/clock-oracle.json",
+      "units": [
+        [
+          "0042BF70",
+          "Clock update",
+          "verified",
+          "3,000 original updates match stored clock bits, including pause and wrap cases."
+        ]
+      ],
+      "bytes": 2417
+    },
+    {
+      "path": "src/core.h",
+      "group": "Core",
+      "summary": "BSP and movement support used by the Training scene; moving-model and full live parity remain open.",
+      "evidence": "evidence/retail-genesis-collision-oracle.json",
+      "units": [
+        [
+          "00492CE0",
+          "BSP box trace",
+          "verified",
+          "611 fresh original box contacts match for the recorded player-hull cases."
+        ],
+        [
+          "0049DBC0",
+          "Step / movement support",
+          "partial",
+          "The movement path is ported; remaining movement and ladder comparisons are open."
+        ]
+      ],
+      "bytes": 12639
+    },
+    {
+      "path": "src/main.cpp",
+      "group": "Core",
+      "summary": "Playable loop connects movement, doors, view updates, tools, and selected startup state.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "00452570",
+          "Player update",
+          "connected",
+          "Movement and ordinary player/view work run in the native Training loop; full behavior is incomplete."
+        ],
+        [
+          "0043F810",
+          "Player movement helper",
+          "partial",
+          "Walking, jumping, crouching, sliding and step-up are present; full parity remains open."
+        ],
+        [
+          "0043D660",
+          "Door motion",
+          "connected",
+          "Twenty authored approach doors animate and update collision. Current proximity interpolation is a playable approximation to original BModel state/keyframe behavior.",
+          "evidence/training-door-motion-audit.md"
+        ]
+      ],
+      "bytes": 175401
+    },
+    {
+      "path": "src/startup.h",
+      "group": "Startup",
+      "summary": "Factory order, two initialization passes, victim motion/selection/floor placement and shared actor state are connected; full constructors and frame order remain incomplete.",
+      "evidence": "evidence/victim-startup/native-runtime-integration.md",
+      "units": [
+        [
+          "00459840",
+          "Startup class order",
+          "connected",
+          "Class ordering and batch passes are represented in native startup."
+        ],
+        [
+          "0045B690",
+          "Victim first pass",
+          "partial",
+          "Initial sound/motion selection and actor state are represented; complete constructor parity remains open."
+        ],
+        [
+          "0045D5B0",
+          "Victim spawn pass",
+          "partial",
+          "Source candidate selection and native floor placement are connected; six original DLL floor contacts are compared."
+        ]
+      ],
+      "bytes": 4156
+    },
+    {
+      "path": "src/spawn_queue.h",
+      "group": "Startup",
+      "summary": "Batch additions and route identities are ported; complete Training scheduling is still open.",
+      "evidence": "evidence/spawn-queue-oracle.json",
+      "units": [
+        [
+          "0049C670",
+          "Entity init passes",
+          "connected",
+          "The native startup follows whole-batch construction and two initialization passes."
+        ],
+        [
+          "0049B4C0",
+          "Route identity pool",
+          "verified",
+          "Native route IDs, generations, release and FIFO reuse match 512 original cases."
+        ]
+      ],
+      "bytes": 840
+    },
+    {
+      "path": "src/scripts.h",
+      "group": "Startup",
+      "summary": "Training startup and ScriptActor queue semantics are represented; original callback order and the full command set remain open.",
+      "evidence": "evidence/training-script-queue-audit.md",
+      "units": [
+        [
+          "004799E0",
+          "Script dispatch",
+          "partial",
+          "Ghidra-backed cmd/que, wait, flush and idle behavior is modeled. Wait deadlines use the absolute game millisecond clock; native callback cadence/order is unverified."
+        ],
+        [
+          "0049D4E0",
+          "Message routing",
+          "partial",
+          "The queue component is compared on a controlled fixture; live callback order remains unresolved."
+        ]
+      ],
+      "bytes": 6773
+    },
+    {
+      "path": "src/world_startup.h",
+      "group": "Startup",
+      "summary": "Four-update world countdown and delayed script transition are source-backed and compared.",
+      "evidence": "evidence/world-startup-oracle.json",
+      "units": [
+        [
+          "0049E2C0",
+          "World countdown",
+          "verified",
+          "120 original update comparisons match the countdown and state transition."
+        ],
+        [
+          "00471310",
+          "Level script entry",
+          "connected",
+          "The delayed full Training script pass is connected after the countdown."
+        ]
+      ],
+      "bytes": 502
+    },
+    {
+      "path": "src/fire_effects.h",
+      "group": "Fire",
+      "summary": "Fire effect initialization matches original draws; Training ash-pool construction is source-mapped, while native lifecycle and presentation remain open.",
+      "evidence": "evidence/fire-effects-oracle.json",
+      "units": [
+        [
+          "0044B270",
+          "Fire effect initializer",
+          "verified",
+          "1,140 original initializations match, including draw counts."
+        ],
+        [
+          "0047F850",
+          "Effect setup",
+          "verified",
+          "The initializer's associated setup outputs are covered by the saved comparison."
+        ],
+        [
+          "0047D370",
+          "Sprite/effect setup",
+          "verified",
+          "Covered by the recovered initialization fixture; live emitter presentation is open."
+        ],
+        [
+          "004465D0",
+          "Ash pool construction",
+          "partial",
+          "Ghidra maps two five-record templates and 100 alternating entries; native lifecycle and callback order remain open.",
+          "evidence/scripts/training-setashdensity/audit.md"
+        ]
+      ],
+      "bytes": 956
+    },
+    {
+      "path": "src/fire_entity.h",
+      "group": "Fire",
+      "summary": "Placed-fire initialization is assembled; recurring live Think scheduling is unresolved.",
+      "evidence": "evidence/fire-entity-oracle.json",
+      "units": [
+        [
+          "00448D60",
+          "Placed-fire initialization",
+          "verified",
+          "50 original initializations match key state, sound choice and draw counts."
+        ]
+      ],
+      "bytes": 2031
+    },
+    {
+      "path": "src/fire_update.h",
+      "group": "Fire",
+      "summary": "Fire Think gating and recovery component is compared; a recurring caller is not connected.",
+      "evidence": "evidence/fire-update-oracle.json",
+      "units": [
+        [
+          "00449FE0",
+          "Fire Think",
+          "verified",
+          "1,350 original calls match core state and presentation calculations with fixtures."
+        ],
+        [
+          "00449340",
+          "Recovery helper",
+          "partial",
+          "The component path is recovered; live scheduling and surrounding services remain open."
+        ]
+      ],
+      "bytes": 1247
+    },
+    {
+      "path": "src/fire_size.h",
+      "group": "Fire",
+      "summary": "Size-key queue and interpolation routines match original component captures.",
+      "evidence": "evidence/fire-size-oracle.json",
+      "units": [
+        [
+          "0044B620",
+          "Size-key queue",
+          "verified",
+          "39 original queue/update transitions match."
+        ],
+        [
+          "0044AE80",
+          "Size interpolation",
+          "verified",
+          "156 original interpolation updates match."
+        ],
+        [
+          "0044B510",
+          "Size-key update",
+          "verified",
+          "Expired keys, replacement and pool reuse are covered by the comparison."
+        ]
+      ],
+      "bytes": 1794
+    },
+    {
+      "path": "src/fire_suppression.h",
+      "group": "Fire",
+      "summary": "Suppression arithmetic is compared; live dousing and terminal lifecycle remain incomplete.",
+      "evidence": "evidence/fire-suppression-oracle.json",
+      "units": [
+        [
+          "00448970",
+          "Spray / douse calculation",
+          "verified",
+          "2,160 original arithmetic and state calls match; complete live lifecycle is open."
+        ]
+      ],
+      "bytes": 815
+    },
+    {
+      "path": "src/fire_floor.h",
+      "group": "Fire",
+      "summary": "Floor-alignment helper is compared for successful contacts; world adapter edge cases remain.",
+      "evidence": "evidence/fire-floor-oracle.json",
+      "units": [
+        [
+          "00448630",
+          "Fire floor alignment",
+          "verified",
+          "24 original successful-contact outputs match."
+        ],
+        [
+          "004476B0",
+          "Floor trace helper",
+          "verified",
+          "Trace request and transform outputs match in the saved fixture."
+        ]
+      ],
+      "bytes": 1197
+    },
+    {
+      "path": "src/fire_placement.h",
+      "group": "Fire",
+      "summary": "Flame planes and glow placement match the original geometry routine.",
+      "evidence": "evidence/fire-placement-oracle.json",
+      "units": [
+        [
+          "0044A840",
+          "Flame / glow placement",
+          "verified",
+          "56 original calls and 3,136 output words match."
+        ],
+        [
+          "00495D20",
+          "Point transform",
+          "verified",
+          "Original intermediate rounding is preserved in the composed placement."
+        ],
+        [
+          "00495EB0",
+          "Point transform",
+          "verified",
+          "Original intermediate rounding is preserved in the composed placement."
+        ]
+      ],
+      "bytes": 1919
+    },
+    {
+      "path": "src/sprite_animation.h",
+      "group": "Fire",
+      "summary": "Sprite timing matches original calls; scene visibility and all consumers remain open.",
+      "evidence": "evidence/sprite-animation-oracle.json",
+      "units": [
+        [
+          "0047D660",
+          "Sprite frame update",
+          "verified",
+          "5,760 original frame updates match."
+        ],
+        [
+          "0047D2B0",
+          "Sprite loop update",
+          "verified",
+          "One-frame, looping and timer-wrap cases are included."
+        ]
+      ],
+      "bytes": 804
+    },
+    {
+      "path": "src/fire_visual.h",
+      "group": "Fire",
+      "summary": "Recovered fire components are assembled; all seven Training visuals are drawn natively.",
+      "evidence": "evidence/fire-entity-oracle.json",
+      "units": [
+        [
+          "0045DFF0",
+          "Sprite descriptor",
+          "partial",
+          "Frame descriptors are decoded; full resource/visibility parity remains open."
+        ],
+        [
+          "0044B060",
+          "Fire visual setup",
+          "connected",
+          "Recovered components feed the native Training fire visuals; Think scheduling is open."
+        ]
+      ],
+      "bytes": 2582
+    },
+    {
+      "path": "src/fire_renderer.h",
+      "group": "Fire",
+      "summary": "Native renderer draws Training FireRescue's four sprite records with recovered geometry, UV and opacity; full parity and the shared ash-pool caller remain open.",
+      "evidence": "evidence/sprite-render/index.tsv",
+      "units": [
+        [
+          "0047F960",
+          "Fire visual draw",
+          "connected",
+          "FireRescue's four records use the recovered geometry, UV and opacity path. The Training ash-pool caller shares this original routine, but its pool and descriptor state are not connected."
+        ]
+      ],
+      "bytes": 2181
+    },
+    {
+      "path": "src/fire_message_queue.h",
+      "group": "Fire",
+      "summary": "Generation-checked FIFO delivery is connected for extinguisher messages; original callback timing is unknown.",
+      "evidence": "evidence/fire-message-oracle.json",
+      "units": [
+        [
+          "0049B9E0",
+          "Queued message delivery",
+          "partial",
+          "Controlled queue delivery is compared; live player/owner ordering is unresolved."
+        ]
+      ],
+      "bytes": 1706
+    },
+    {
+      "path": "src/extinguisher_contacts.h",
+      "group": "Tools",
+      "summary": "Live extinguisher pose samples Training fire candidates and appends accepted contacts.",
+      "evidence": "evidence/item-pose/live-extinguisher/",
+      "units": [
+        [
+          "00481A50",
+          "Contact sampling",
+          "partial",
+          "The live path samples contacts; owner scheduling and full gameplay parity remain open."
+        ],
+        [
+          "00481A60",
+          "Contact record append",
+          "partial",
+          "Saved fixtures cover bounded records and accepted-contact behavior."
+        ]
+      ],
+      "bytes": 1246
+    },
+    {
+      "path": "src/extinguisher_pose.h",
+      "group": "Tools",
+      "summary": "Player view and active extinguisher path are connected; charge drain and refill are source-backed.",
+      "evidence": "evidence/player-tool-pose/",
+      "units": [
+        [
+          "0044F340",
+          "View / follower update",
+          "verified",
+          "Four ordinary player-path captures match all 108 words."
+        ],
+        [
+          "00461F80",
+          "Extinguisher action update",
+          "partial",
+          "The native path samples fire candidates and drains charge after contacts; callback order versus the original owner is unresolved."
+        ]
+      ],
+      "bytes": 5521
+    },
+    {
+      "path": "src/extinguisher_effects.h",
+      "group": "Tools",
+      "summary": "Accepted contacts consume source-backed effect timer and offset draws; particle rendering remains open.",
+      "evidence": "evidence/item-pose/live-extinguisher/",
+      "units": [
+        [
+          "00449A40",
+          "Nonterminal suppression dispatch",
+          "partial",
+          "Contacts reach message 30000 and nonterminal suppression in the native loop."
+        ],
+        [
+          "0044D080",
+          "Extinguisher factory",
+          "verified",
+          "The active-tool offset is sourced from the factory and item initializer call chain."
+        ]
+      ],
+      "bytes": 1380
+    },
+    {
+      "path": "src/interaction_sphere.h",
+      "group": "Tools",
+      "summary": "Ray/sphere selection math compares against original execution; candidate order is unresolved.",
+      "evidence": "evidence/hose-spray/prop-model/use-manager/",
+      "units": [
+        [
+          "004834A0",
+          "Ray / sphere query",
+          "verified",
+          "548 original queries and 3,836 words match."
+        ],
+        [
+          "00489CE0",
+          "PropModel interaction",
+          "verified",
+          "The mapped PropModel callback math is directly compared."
+        ]
+      ],
+      "bytes": 3230
+    },
+    {
+      "path": "src/use_manager.h",
+      "group": "Tools",
+      "summary": "Training valve selection and local Hose Spray attach state are partially connected.",
+      "evidence": "evidence/hose-spray/prop-model/use-manager/",
+      "units": [
+        [
+          "00459350",
+          "Use candidate scan",
+          "partial",
+          "Reach and source-derived Training valve candidates are wired; full order is unverified."
+        ],
+        [
+          "00458FA0",
+          "Use action dispatch",
+          "partial",
+          "Mapped action codes and local attach/detach state are connected."
+        ],
+        [
+          "00444120",
+          "Hose attach action",
+          "partial",
+          "The state path is traced; original item/frame integration remains unfinished."
+        ]
+      ],
+      "bytes": 2566
+    },
+    {
+      "path": "src/tool_follow.h",
+      "group": "Tools",
+      "summary": "Tool follower core and subdivision compare against original machine code.",
+      "evidence": "evidence/player-tool-pose/",
+      "units": [
+        [
+          "00483030",
+          "Tool-follow core",
+          "verified",
+          "Captured core calls match the native port."
+        ],
+        [
+          "00483140",
+          "Tool-follow subdivision",
+          "verified",
+          "Captured subdivision calls match the native port."
+        ]
+      ],
+      "bytes": 2197
+    },
+    {
+      "path": "src/follower.h",
+      "group": "Tools",
+      "summary": "Follower target and settling state compare against original captures.",
+      "evidence": "evidence/player-tool-pose/",
+      "units": [
+        [
+          "00483720",
+          "Follower update",
+          "verified",
+          "400 captured follower states match the native port."
+        ]
+      ],
+      "bytes": 1154
+    },
+    {
+      "path": "src/model_floor.h",
+      "group": "Victims",
+      "summary": "Model-floor wrapper is compared for controlled successful contacts; six map contacts remain provisional.",
+      "evidence": "evidence/model-floor-oracle.json",
+      "units": [
+        [
+          "0049DA00",
+          "Model hull floor placement",
+          "verified",
+          "84 original wrapper calls match arguments and result bits; actual six Training BSP contacts still need Genesis DLL comparison."
+        ]
+      ],
+      "bytes": 681
+    },
+    {
+      "path": "src/actor_animation.h",
+      "group": "Victims",
+      "summary": "Motion selection and pose-time arithmetic are compared and drive the selected initial poses in the scene.",
+      "evidence": "evidence/actor-animation-oracle.json",
+      "units": [
+        [
+          "00480EA0",
+          "Actor motion selection",
+          "verified",
+          "54 original motion selections match."
+        ],
+        [
+          "00480D50",
+          "Actor pose-time update",
+          "verified",
+          "432 original animation updates match; loops start at the native scene clock epoch."
+        ]
+      ],
+      "bytes": 785
+    },
+    {
+      "path": "src/actor_pose.h",
+      "group": "Victims",
+      "summary": "ACT hierarchy composition is ported; full hierarchy and animated-vertex output are not compared.",
+      "evidence": "evidence/genesis-transform-oracle.json",
+      "units": [
+        [
+          "POSE",
+          "Bone hierarchy pose",
+          "partial",
+          "Transform primitives are compared; the complete animated model pose is not."
+        ]
+      ],
+      "bytes": 7051
+    },
+    {
+      "path": "src/actor_renderer.h",
+      "group": "Victims",
+      "summary": "Both selected Training victims now draw with their initial poses and source-traced outer transforms.",
+      "evidence": "evidence/victim-render/root-transform.md",
+      "units": [
+        [
+          "ACT",
+          "Victim mesh draw path",
+          "partial",
+          "The native scene binds each recovered appearance material and submits its ACT triangles. The parent-first wrapper transform is source-traced; final skinned-vertex/render parity and the original loading-time animation epoch remain open."
+        ]
+      ],
+      "bytes": 3265
+    },
+    {
+      "path": "src/victim_sound.h",
+      "group": "Victims",
+      "summary": "The initial deadline draw is connected in startup; beckoning and playback remain open.",
+      "evidence": "evidence/victim-startup/sound-init-order.md",
+      "units": [
+        [
+          "0048D8F0",
+          "Victim beckon update",
+          "verified",
+          "9,000 original updates match, including repeat avoidance."
+        ],
+        [
+          "0048E080",
+          "Initial sound deadline",
+          "connected",
+          "Each victim retains its source-backed 0\u20135,000 ms initialization deadline before its motion draw."
+        ]
+      ],
+      "bytes": 814
+    },
+    {
+      "path": "src/victim_rescue.h",
+      "group": "Victims",
+      "summary": "Delivered pickup gates, carry pointer, state and flags; synchronous event precedes post-effects.",
+      "evidence": "evidence/victim-ai-audit/pickup-effects-component.md",
+      "units": [
+        [
+          "00450440",
+          "victim_rescue",
+          "partial",
+          "Delivered pickup gates, carry pointer, state and flags; synchronous event precedes post-effects."
+        ]
+      ],
+      "bytes": 2278
+    },
+    {
+      "path": "src/victim_pickup_effects.h",
+      "group": "Victims",
+      "summary": "Ordered live field read, status, membership and final clock adapters.",
+      "evidence": "evidence/victim-ai-audit/pickup-effects-component.md",
+      "units": [
+        [
+          "00450440",
+          "victim_pickup_effects",
+          "partial",
+          "Ordered live field read, status, membership and final clock adapters."
+        ]
+      ],
+      "bytes": 1766
+    },
+    {
+      "path": "src/victim_release.h",
+      "group": "Victims",
+      "summary": "Escape release sequence composed with shared state; automatic scene scheduling remains open.",
+      "evidence": "evidence/victim-ai-audit/training-release-component.md",
+      "units": [
+        [
+          "0045C000",
+          "victim_release",
+          "partial",
+          "Escape release sequence composed with shared state; automatic scene scheduling remains open."
+        ]
+      ],
+      "bytes": 2772
+    },
+    {
+      "path": "src/victim_release_frame.h",
+      "group": "Victims",
+      "summary": "Eight original release cases match 120 words; passout basis recovered.",
+      "evidence": "evidence/victim-ai-audit/release-frame-component.md",
+      "units": [
+        [
+          "0045C000",
+          "victim_release_frame",
+          "verified",
+          "Eight original release cases match 120 words; passout basis recovered."
+        ]
+      ],
+      "bytes": 1482
+    },
+    {
+      "path": "src/victim_passout.h",
+      "group": "Victims",
+      "summary": "Drop prefix, motion RNG and separate Player/frame X corrections; live correction receiver integration remains open.",
+      "evidence": "evidence/victim-ai-audit/passout-composition-review.md",
+      "units": [
+        [
+          "0044FF10",
+          "victim_passout",
+          "partial",
+          "Drop prefix, motion RNG and separate Player/frame X corrections; live correction receiver integration remains open."
+        ]
+      ],
+      "bytes": 2666
+    },
+    {
+      "path": "src/victim_frame_ops.h",
+      "group": "Victims",
+      "summary": "618 frame/floor words match including native Training BSP; live correction receiver remains open.",
+      "evidence": "evidence/victim-ai-audit/victim-frame-ops.md",
+      "units": [
+        [
+          "0045C1A0",
+          "victim_frame_ops",
+          "partial",
+          "618 frame/floor words match including native Training BSP; live correction receiver remains open."
+        ]
+      ],
+      "bytes": 2975
+    },
+    {
+      "path": "src/victim_rescue_statistics.h",
+      "group": "Victims",
+      "summary": "Ordered timestamp/clock reads and wrapping statistics core; named store adapter remains open.",
+      "evidence": "evidence/victim-ai-audit/rescue-statistics-component.md",
+      "units": [
+        [
+          "00451160",
+          "victim_rescue_statistics",
+          "partial",
+          "Ordered timestamp/clock reads and wrapping statistics core; named store adapter remains open."
+        ]
+      ],
+      "bytes": 2113
+    },
+    {
+      "path": "src/victim_exit.h",
+      "group": "Mission",
+      "summary": "Lazy count, exit zones and empty-zone branch; full mission outro remains open.",
+      "evidence": "evidence/victim-ai-audit/rescue-deadline-exit-component.md",
+      "units": [
+        [
+          "004504C0",
+          "victim_exit",
+          "partial",
+          "Lazy count, exit zones and empty-zone branch; full mission outro remains open."
+        ]
+      ],
+      "bytes": 2489
+    },
+    {
+      "path": "src/zone_membership.h",
+      "group": "Mission",
+      "summary": "Source order and type/state filtering; frame and zone inputs are supplied.",
+      "evidence": "evidence/victim-ai-audit/rescue-deadline-exit-component.md",
+      "units": [
+        [
+          "0044FBA0",
+          "zone_membership",
+          "partial",
+          "Source order and type/state filtering; frame and zone inputs are supplied."
+        ]
+      ],
+      "bytes": 1580
+    },
+    {
+      "path": "src/player_rescue_deadline.h",
+      "group": "Victims",
+      "summary": "21 initialization fragments and 60 original deadline/RNG calls match. Training catalog 500 \u00d760 feeds level input30000.",
+      "evidence": "evidence/victim-ai-audit/level-deadline-authoring.md",
+      "units": [
+        [
+          "004541A0",
+          "player_rescue_deadline",
+          "verified",
+          "21 initialization fragments and 60 original deadline/RNG calls match. Training catalog 500 \u00d760 feeds level input30000."
+        ]
+      ],
+      "bytes": 1709
+    },
+    {
+      "path": "src/player_herodown_tail.h",
+      "group": "Victims",
+      "summary": "Recovered spawn/count/cleanup tail; cleanup getters run after callbacks. Spawn/UI services remain explicit.",
+      "evidence": "evidence/victim-ai-audit/herodown-tail-component.md",
+      "units": [
+        [
+          "0044FF10",
+          "player_herodown_tail",
+          "partial",
+          "Recovered spawn/count/cleanup tail; cleanup getters run after callbacks. Spawn/UI services remain explicit."
+        ]
+      ],
+      "bytes": 4800
+    },
+    {
+      "path": "src/victim_proximity.h",
+      "group": "Victims",
+      "summary": "Source overlap publisher and generation-aware queue compose into both Training pickup scripts; cadence unresolved.",
+      "evidence": "evidence/victim-ai-audit/proximity-producer-component.md",
+      "units": [
+        [
+          "0045A070",
+          "victim_proximity",
+          "partial",
+          "Source overlap publisher and generation-aware queue compose into both Training pickup scripts; cadence unresolved."
+        ]
+      ],
+      "bytes": 2362
+    },
+    {
+      "path": "src/victim_transactions.h",
+      "group": "Victims",
+      "summary": "Shared pickup/escape runtime uses actual Training scripts and BSP release. Passout and automatic cadence remain unfinished.",
+      "evidence": "evidence/victim-ai-audit/composed-transactions.md",
+      "units": [
+        [
+          "COMPOSE",
+          "victim_transactions",
+          "partial",
+          "Shared pickup/escape runtime uses actual Training scripts and BSP release. Passout and automatic cadence remain unfinished."
+        ]
+      ],
+      "bytes": 6327
+    },
+    {
+      "path": "src/carry_entity_mode.h",
+      "group": "Victims",
+      "summary": "Recovered carry-mode flags and engine boundary; resource services supplied.",
+      "evidence": "evidence/victim-ai-audit/composed-transactions.md",
+      "units": [
+        [
+          "0044FCE0",
+          "carry_entity_mode",
+          "partial",
+          "Recovered carry-mode flags and engine boundary; resource services supplied."
+        ]
+      ],
+      "bytes": 1665
+    },
+    {
+      "path": "src/victim_status.h",
+      "group": "Victims",
+      "summary": "Status action1/2 ordering; actual UI services remain adapters.",
+      "evidence": "evidence/victim-ai-audit/composed-transactions.md",
+      "units": [
+        [
+          "STATUS",
+          "victim_status",
+          "partial",
+          "Status action1/2 ordering; actual UI services remain adapters."
+        ]
+      ],
+      "bytes": 2814
+    },
+    {
+      "path": "src/actor_render_flags.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "actor_render_flags.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 417
+    },
+    {
+      "path": "src/assets.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "assets.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 1098
+    },
+    {
+      "path": "src/bmodel_contact.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "bmodel_contact.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 1148
+    },
+    {
+      "path": "src/entity_id_registry.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "entity_id_registry.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 1847
+    },
+    {
+      "path": "src/extended.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "extended.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 2819
+    },
+    {
+      "path": "src/extinguisher_frame_record.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "extinguisher_frame_record.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 5505
+    },
+    {
+      "path": "src/extinguisher_samples.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "extinguisher_samples.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 896
+    },
+    {
+      "path": "src/fire_contact.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "fire_contact.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 551
+    },
+    {
+      "path": "src/fire_render_state.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "fire_render_state.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 610
+    },
+    {
+      "path": "src/head_motion.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "head_motion.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 6077
+    },
+    {
+      "path": "src/hose_spray_action.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "hose_spray_action.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 432
+    },
+    {
+      "path": "src/interaction_box.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "interaction_box.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 2247
+    },
+    {
+      "path": "src/item_view_pose.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "item_view_pose.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 1953
+    },
+    {
+      "path": "src/motion.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "motion.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 3005
+    },
+    {
+      "path": "src/sound_queue.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "sound_queue.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 1018
+    },
+    {
+      "path": "src/throw_scalar.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "throw_scalar.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 4286
+    },
+    {
+      "path": "src/ui.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "ui.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 2786
+    },
+    {
+      "path": "src/victim_pickup.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "victim_pickup.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 2237
+    },
+    {
+      "path": "src/view_update.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "view_update.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 7131
+    },
+    {
+      "path": "src/zones.h",
+      "group": "Inventory",
+      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "zones.h",
+          "open",
+          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+        ]
+      ],
+      "bytes": 3364
+    },
+    {
+      "path": "No native module yet",
+      "group": "Mission",
+      "summary": "Original behavior has source evidence, but the native implementation is still open.",
+      "evidence": "evidence/victim-render/appearance-trace.md",
+      "units": [
+        [
+          "0045A3D0",
+          "Victim model setup",
+          "partial",
+          "Original setup is traced: model root scale 2, Y adjustment \u221225, and 90-degree basis rotation. Visible native actor rendering is connected; final body-render parity remains open."
+        ],
+        [
+          "0045AA10",
+          "Appearance lookup",
+          "partial",
+          "Looks up the per-model appearance counter; its selected value now chooses the slot-0 victim texture."
+        ],
+        [
+          "0045D450",
+          "Appearance counter update",
+          "partial",
+          "Selects sequential material indices by model ID, resets at material-count limit, and consumes no RNG; appearance values now reach the renderer."
+        ],
+        [
+          "004513A0",
+          "Escape verb wrapper",
+          "open",
+          "The source wrapper optionally saves checkpoint position and facing, then calls 00451160. Native carry/delivery behavior is not implemented.",
+          "evidence/rng/004513a0_FUN_004513a0.c"
+        ],
+        [
+          "004504C0",
+          "Rescue / exit activation",
+          "partial",
+          "The raw source traces the lazy counter gate and class-8 exit activation. Native mission counters, zones and completion flow are still open.",
+          "evidence/mechanics-decompiled/004504c0_FUN_004504c0.c"
+        ],
+        [
+          "00451640",
+          "Player fire exposure",
+          "partial",
+          "The source trace is preserved; native message handling and live scheduling remain open.",
+          "evidence/startup-factories/00451640_FUN_00451640.c"
+        ],
+        [
+          "00450FB0",
+          "Damage / passing out",
+          "open",
+          "Native exposure, air, damage and failure behavior remain unimplemented.",
+          "evidence/startup-factories/00450fb0_FUN_00450fb0.c"
+        ]
+      ],
+      "bytes": 0
+    }
+  ]
+};
+const names={verified:'Compared component',connected:'Native connection',partial:'Partial / traced',open:'Open / unclassified'}, colors={verified:'#00ba81',connected:'#509bd4',partial:'#e6af49',open:'#c4ccd8'};
+const $=id=>document.getElementById(id), all=data.files.flatMap(f=>f.units), counts=Object.fromEntries(Object.keys(names).map(s=>[s,all.filter(u=>u[2]===s).length]));
+for(const s in names){const i=document.createElement('i');i.style.width=100*counts[s]/all.length+'%';i.style.background=colors[s];$('bar').append(i);const label=document.createElement('span');const swatch=document.createElement('i');swatch.style.background=colors[s];label.append(swatch,document.createTextNode(`${names[s]} · ${counts[s]}`));$('legend').append(label)}
+$('coverage').textContent=`${counts.verified} / ${all.length} tracked entries have component comparisons (${(100*counts.verified/all.length).toFixed(1)}% of this inventory). Counts include overlapping routine mappings and unclassified entries.`;
+for(const [n,label] of [[data.files.filter(f=>f.path.startsWith('src/')).length,'native files inventoried'],[all.length,'tracked entries'],[data.tests,'CTest checks passing']]){const box=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span');b.textContent=n;span.textContent=label;box.append(b,span);$('metrics').append(box)}
+$('snapshot').textContent=`Evidence snapshot ${data.snapshot} · decompile milestone ${data.commit} · scope: ${data.scope}. Viewer updates do not change game completion.`;
+for(const g of ['All',...new Set(data.files.map(f=>f.group))]){const o=document.createElement('option');o.textContent=g;$('group').append(o)}
+function link(path,label){const a=document.createElement('a');a.href=path;a.textContent=label;return a}
+function inspect(f){$('detail').replaceChildren();const h=document.createElement('h2');h.textContent=f.path;const p=document.createElement('p');p.textContent=f.summary;const links=document.createElement('p');if(f.path.startsWith('src/'))links.append(link(f.path,'Open native source'),document.createTextNode(' · '));links.append(link(f.evidence,'Open evidence'));const ul=document.createElement('ul');for(const u of f.units){const li=document.createElement('li'),b=document.createElement('b');b.textContent=`${u[0]} · ${u[1]} — ${names[u[2]]}`;const note=document.createElement('div');note.textContent=u[3];li.append(b,note);if(u[4])li.append(link(u[4],'Routine evidence'));ul.append(li)}$('detail').append(h,p,links,ul);document.querySelectorAll('.tile').forEach(t=>t.setAttribute('aria-pressed',t.dataset.path===f.path?'true':'false'))}
+function partition(items,x,y,w,h,out){if(items.length===1){out.push({f:items[0],x,y,w,h});return}const total=items.reduce((a,f)=>a+f.units.length,0);let at=1,sum=items[0].units.length;while(at<items.length-1&&sum<total/2){sum+=items[at++].units.length}const ratio=sum/total;if(w>=h){partition(items.slice(0,at),x,y,w*ratio,h,out);partition(items.slice(at),x+w*ratio,y,w*(1-ratio),h,out)}else{partition(items.slice(0,at),x,y,w,h*ratio,out);partition(items.slice(at),x,y+h*ratio,w,h*(1-ratio),out)}}
+function render(){const query=$('search').value.toLowerCase(),group=$('group').value;const visible=data.files.filter(f=>(group==='All'||f.group===group)&&JSON.stringify(f).toLowerCase().includes(query)).sort((a,b)=>b.units.length-a.units.length||a.path.localeCompare(b.path));$('map').replaceChildren();$('filelist').replaceChildren();if(!visible.length){const p=document.createElement('p');p.className='empty';p.textContent='No matching files or routines.';$('map').append(p);return}const rectangles=[];partition(visible,0,0,$('map').clientWidth,$('map').clientHeight,rectangles);for(const r of rectangles){const f=r.f,b=document.createElement('button');b.className='tile';b.dataset.path=f.path;b.type='button';b.setAttribute('aria-pressed','false');Object.assign(b.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});let start=0,stops=[];for(const s in names){const n=f.units.filter(u=>u[2]===s).length;if(n){let end=start+100*n/f.units.length;stops.push(`${colors[s]} ${start}% ${end}%`);start=end}}b.style.background=`linear-gradient(135deg,${stops.join(',')})`;const summary=Object.keys(names).filter(s=>f.units.some(u=>u[2]===s)).map(s=>names[s]).join(', ');b.title=`${f.path} · ${f.units.length} entries · ${summary}`;b.setAttribute('aria-label',b.title);if(r.w>90&&r.h>35){b.textContent=f.path.replace('src/','');if(r.h>60){const n=document.createElement('small');n.textContent=f.units.length+' tracked entries';b.append(n)}}b.onclick=()=>inspect(f);$('map').append(b)}for(const f of visible){const b=document.createElement('button');b.className='row';const label=document.createElement('span');label.textContent=f.path;const small=document.createElement('small');small.textContent=`${f.units.length} entries${f.bytes?' · '+(f.bytes/1024).toFixed(1)+' KB native':''}`;b.append(label,small);b.onclick=()=>inspect(f);$('filelist').append(b)}}
+$('group').onchange=render;$('search').oninput=render;new ResizeObserver(render).observe($('map'));render();inspect(data.files.find(f=>f.path==='src/victim_transactions.h')||data.files[0]);
+</script></body></html>
