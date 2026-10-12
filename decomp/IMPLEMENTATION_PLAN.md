@@ -13,7 +13,7 @@ Keep recovered transactions in small C++ components with original addresses. Use
 | V1 | Port escape/release `00451160→0045C000`; verify state, transform operations, flags, event, timer wrap and ordered Player cleanup as isolated transactions. | Existing lifecycle/frame evidence |
 | V2 | Port pickup post-effects `00450440`: entity mode, `00490E60` storage, status callback, zone refresh, final clock sample. Validate field-4 branch, event ordering and carried-victim zone exclusion. | Existing pickup component |
 | V3 | Apply Genesis normal render flag gate at native actor submission using per-entity actor state. Validate both mask bits and pickup/release visibility transitions. | Existing actor flags evidence |
-| V4 | Recover continuous carry positioning and passout/drop, including exact motion RNG and separate Player/frame X corrections; make separate components and original-code fixtures. | V1/V2; source trace |
+| V4 | Compose passout/drop with the herodown tail, preserve separate Player/frame positions and late live receiver reads; then recover continuous carry. | Existing victim components; source trace |
 | S1 | Establish root secondary-slot dispatcher for Player, victims and BModels. Trace computed receivers and engine callback registration; record ruled-out paths and limits. | Existing scheduling audits |
 | S2 | Establish FireRescue visual Think dispatcher, timing, and order relative to proximity, messages and tool action. | Existing fire dispatch audits |
 | V5 | Connect proximity producer, generation-aware delivery, pickup effects, escape release and exits in verified order. Compare original event transcript and actor flags. | V1–V4, S1 |
@@ -25,7 +25,7 @@ Keep recovered transactions in small C++ components with original addresses. Use
 | R1 | Integrate queued sound playback and every RNG consumer in original order; record a startup and complete Training trace from equal saved RNG state and input/frame timing. | All reachable gameplay systems |
 | P1 | Compare final animation/skinned vertices, scene output, restart persistence; package runnable assets/dependencies and later platform port. | Runtime parity; own retail inputs |
 
-V1 and V3 are delegated to GPT-6 Luna in this pass; V2, source verification, integration, review and the ledger remain with the lead. Source discovery may proceed in parallel on disjoint files. Shared main.cpp, trackers and commits have one integration owner. Do not mark a transaction complete at whole-level scope merely because isolated tests pass.
+V1–V3 and the isolated V4 components are complete. The passout/herodown composition now has a controlled integration check. Keep source tracing, integration, review and trackers coordinated; preserve isolated, composed and whole-level completion as separate claims.
 
 ## Milestone validation and delivery
 
@@ -35,10 +35,10 @@ For subsequent milestones: rerun affected original fixtures, compare integrated 
 
 ## Current execution point
 
-V1/V2/V3 now have source-derived isolated components and a composed delivered-transaction check. The scene uses the same runtime actor frame/animation/flags. V5 still requires source proximity/route scheduling and actual engine/UI services; composition is not a captured gameplay schedule. Keep S1/S2 as integration gates and continue V4/runtime service recovery in parallel.
+V1–V3 have source-derived components, and V4 now composes drop and herodown cleanup over the shared victim runtime. Its check covers source order and late carry re-resolution; this is not a captured run. V5 still requires automatic proximity/route scheduling and real engine/UI bindings.
 
 Continuation: V5 has a source proximity publisher and real queued-delivery composed check; S1 still blocks automatic cadence. Deadline input arithmetic is verified against 15 original fragments. The staged Player registration task is now complete for successful loading; recurring dispatch remains separate.
 
-Player staging follow-up closes the successful-load factory/queue participation gap (see `evidence/victim-ai-audit/player-staging-chain.md`). S1 now specifically concerns recurring dispatch, not whether Player reaches its staged initializer. The herodown tail core exists with explicit spawn/UI services; compose it with the shared passout wrapper next.
+Player staging is proved through the successful-load factory/queue path (see `evidence/victim-ai-audit/player-staging-chain.md`). S1 concerns recurring dispatch, not whether Player reaches its initializer. Passout now composes with the herodown tail; actual spawn/UI adapters and recurring scheduling remain open.
 
-Passout integration constraint: cached Player position and frame translation require separate bindings. Acquire tail mode/entities after the passout event; cleanup fields are now live getters after spawn/stat/log. Compose the shared wrapper with those boundaries rather than precomputing a tail snapshot.
+Passout integration constraint: cached Player position, source position `+0x3400`, and frame translation remain separate. The wrapper writes Player position at source points, reads mode before gated entity enumeration, and uses live cleanup getters after callbacks. See `evidence/victim-ai-audit/passout-composed-transaction.md`.

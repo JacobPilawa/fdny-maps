@@ -1,6 +1,6 @@
 {
   "snapshot": "2026-10-11",
-  "commit": "081d6eb",
+  "commit": "f7e0e4f",
   "tests": 18,
   "scope": "Training",
   "files": [
@@ -123,7 +123,7 @@
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 175401
+      "bytes": 179339
     },
     {
       "path": "src/startup.h",
@@ -744,17 +744,17 @@
     {
       "path": "src/victim_passout.h",
       "group": "Victims",
-      "summary": "Drop prefix, motion RNG and separate Player/frame X corrections; live correction receiver integration remains open.",
+      "summary": "Source passout prefix is composed into shared runtime; cached Player writes stay source-timed and caller rereads carry before frame-X correction.",
       "evidence": "evidence/victim-ai-audit/passout-composition-review.md",
       "units": [
         [
           "0044FF10",
           "victim_passout",
           "partial",
-          "Drop prefix, motion RNG and separate Player/frame X corrections; live correction receiver integration remains open."
+          "Source passout prefix is composed into shared runtime; cached Player writes stay source-timed and caller rereads carry before frame-X correction."
         ]
       ],
-      "bytes": 2666
+      "bytes": 2838
     },
     {
       "path": "src/victim_frame_ops.h",
@@ -834,14 +834,14 @@
     {
       "path": "src/player_herodown_tail.h",
       "group": "Victims",
-      "summary": "Recovered spawn/count/cleanup tail; cleanup getters run after callbacks. Spawn/UI services remain explicit.",
+      "summary": "Count/spawn/cleanup tail now follows composed passout in source order; engine spawn/UI services and automatic scheduling remain explicit.",
       "evidence": "evidence/victim-ai-audit/herodown-tail-component.md",
       "units": [
         [
           "0044FF10",
           "player_herodown_tail",
           "partial",
-          "Recovered spawn/count/cleanup tail; cleanup getters run after callbacks. Spawn/UI services remain explicit."
+          "Count/spawn/cleanup tail now follows composed passout in source order; engine spawn/UI services and automatic scheduling remain explicit."
         ]
       ],
       "bytes": 4800
@@ -864,17 +864,17 @@
     {
       "path": "src/victim_transactions.h",
       "group": "Victims",
-      "summary": "Shared pickup/escape runtime uses actual Training scripts and BSP release. Passout and automatic cadence remain unfinished.",
+      "summary": "Shared pickup/escape/drop runtime uses Training scripts, BSP floor adapters, one RNG stream and a live carry reread; automatic cadence remains open.",
       "evidence": "evidence/victim-ai-audit/composed-transactions.md",
       "units": [
         [
           "COMPOSE",
           "victim_transactions",
           "partial",
-          "Shared pickup/escape runtime uses actual Training scripts and BSP release. Passout and automatic cadence remain unfinished."
+          "Shared pickup/escape/drop runtime uses Training scripts, BSP floor adapters, one RNG stream and a live carry reread; automatic cadence remains open."
         ]
       ],
-      "bytes": 6327
+      "bytes": 11873
     },
     {
       "path": "src/carry_entity_mode.h",

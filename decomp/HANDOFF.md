@@ -7,7 +7,7 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 - Workspace: `.`; source: `decomp/`; branch: `main`.
 - Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Last pushed staging/catalog/tail milestone: `7b96618`; live-cleanup continuation follows it.
 - Leave unrelated untracked `fire_spread/` untouched. Stage only decomp work. Retail assets/binaries, raw Ghidra exports and build/runtime products stay local under existing exclusions.
-- Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is the file-map snapshot; detailed evidence and CHECKLIST.md remain authoritative.
+- Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is the file-map snapshot; `evidence/original-function-inventory.json` is a provisional 5,807-entry index of current Ghidra function definitions, not proof of binary-wide completeness. `evidence/RE_DECOMP_WORKFLOW.md` records the recommended comparison workflow. Detailed evidence and CHECKLIST.md remain authoritative.
 
 ## Current verified victim work
 
@@ -15,7 +15,7 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 - `victim_pickup_effects.h`: source storage and ordered entity/status/zone adapters; final clock sample. Engine adapter internals remain unfinished.
 - `victim_release.h`: ordered escape/release transaction, state 6, flags restore, rescue event, then sampled clock/timer writes and Player cleanup boundaries.
 - `victim_release_frame.h`: negated Player X/Z, up-axis rebuild, separately stored ×5 then ×24 offset, Player-position subtraction. Eight original P-code release cases match 120 words. Passout copies Player position directly after the same basis work.
-- `victim_passout.h`: caller counter/position preamble, conditional bounded motion draw/speed, passout event, separate Player-X +30 and victim-frame-X −30 corrections. Old Y notes were corrected against assembly. The independent herodown caller tail is still unported.
+- `victim_passout.h`: caller counter/position preamble, conditional bounded motion draw/speed, passout event, separate Player-X +30 and victim-frame-X −30 corrections. `VictimTransactions::passout` now composes this with the herodown tail, writes Player position at both source points, and rereads the live carry receiver after callbacks. Host animation/spawn/UI services and recurring scheduling remain open.
 - `victim_frame_ops.h`: concrete frame/floor adapters use one external frame, three distinct Player getter calls and ±24 hull placement. Dropped-frame correction mutates the external frame; there is no mirrored coordinate in passout state.
 - Passout prefix oracle executes original RNG and frame instructions: 32 cases / 576 values match. Adapter checks compare 40 frame cases and six native Training BSP floor cases: 618 words match. Failed-placement fallback is tested.
 - `victim_rescue_statistics.h`: counter and ordered live pickup-timestamp/clock reads; record update core uses configured mode and signed int32 comparisons; addition wraps at 32 bits. Name lookup/loading/configuration remain adapter work.
@@ -26,8 +26,8 @@ Evidence: also see `evidence/victim-ai-audit/rescue-deadline-exit-component.md`.
 - `player_rescue_deadline.h`: recovered the previously unported escape post-effect `00454300→004541A0`; 60 complete original P-code calls match deadline/draw count. Source draws one bounded 30000/60000 value after status action 2, before carry clear. Player+343C initializer is now recovered: level+10 or null fallback 600, multiplied by 1.5 for modes 0/1 or 1.0 otherwise, stored as float. Catalog time: token times 60 is now proved; Training uses 500→30000. Normal successful-load staged initialization is proved.
 - `zone_membership.h` and `victim_exit.h`: concrete membership rebuilding and exit bookkeeping now exist; binding/bounds and engine callbacks remain inputs. Training has no authored finalexit candidates. Empty-zone gate/item refresh is source behavior, not a proven complete outro.
 
-- `victim_transactions.h` now composes delivered pickup/escape with one shared carried pointer, counters, timestamps, actor/frame/animation and original deadline draw. `carry_entity_mode.h` and `victim_status.h` supply source engine/UI boundaries. Required services are explicit; actual scene producer scheduling is still absent.
-- The scene renderer now consumes `VictimRuntimeActor` frame/animation/flags. `--victim-transactions-check` runs both actual Training pickup scripts and native BSP release, status/membership/counter/exit cores with controlled UI services. See `evidence/victim-ai-audit/composed-transactions.md`.
+- `victim_transactions.h` composes delivered pickup/escape/drop with one shared carried pointer, counters, timestamps, actor/frame/animation, deadline RNG and the herodown tail. The passout callback check deliberately changes carry during reset to verify the later source dereference is live. `carry_entity_mode.h` and `victim_status.h` supply source engine/UI boundaries. Required services are explicit; actual scene producer scheduling is still absent.
+- The scene renderer now consumes `VictimRuntimeActor` frame/animation/flags. `--victim-transactions-check` runs both actual Training pickup scripts, native BSP releases, and the composed passout/herodown transaction with controlled engine/UI services. See `evidence/victim-ai-audit/composed-transactions.md`.
 
 ## Validation and remaining gaps
 
@@ -35,8 +35,8 @@ Eighteen CTest checks pass. Existing pickup message/14-case geometry checks pass
 
 Next work:
 
-1. Bind the composed delivered transactions to actual engine/status/statistic-name/item services and remaining engine/UI services and passout tail; do not redo completed frame recovery.
-2. Resolve Player/victim/BModel root callback scheduling and continuous carry. Source local call chains do not establish recurring cadence. Pickup proximity is before owner message drain, but its order relative to movement remains unresolved.
+1. Bind the passout/drop animation, status, spawn, statistic-name and UI services into the scene. The composed check does not establish recurring callback order or live-game behavior.
+2. Prioritize the missing recurring caller for BModel updater `0043DC60` and verify its owner/cadence/order; this gates Training pickup and carry interactions. Then resolve Player/victim update scheduling and continuous carry. Existing local root-slot paths do not establish recurring cadence.
 3. Resolve recurring Fire Think `00449FE0` dispatch and relative frame order, then integrate recovery/spread/douse/particles and their RNG consumers. Bounded static audits have not identified its dispatcher.
 4. Complete scripts, BModel carry/throw/axe, hose, damage, goggles, sounds, mission completion and full Training replay parity. Never insert guessed RNG draws to compensate for missing consumers.
 
@@ -48,7 +48,7 @@ Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d
 
 No live game capture succeeded. Earlier WineDbg attaches froze/crashed; do not attach or ask the user to enter Training without a safe bounded capture/recovery method. Continue static/oracle work meanwhile.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation during staging/tail continuation: 93% five-hour used, 64% weekly used.
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. The latest usage observation was 3% five-hour used and 65% weekly used.
 
 ## Proximity and deadline input continuation
 
@@ -60,14 +60,14 @@ The user requested GPT-6 Luna implementation delegation, lead ownership of compl
 
 The Player factory registration, World-generated request and primary returned receiver now close the normal successful-load staged initialization chain. Request+0x0C is a factory pointer, correcting an earlier subobject interpretation. The World enqueues BSP requests during initialization, so they enter a later drain.
 
-`player_herodown_tail.h` recovers mode/argument-gated counting/spawn and wrapped rescue-total update plus conditional cleanup and unconditional reset/status callbacks. Spawn/UI internals remain explicit services. Assembly review is authoritative for formatter varargs omitted by decompilation; see `herodown-tail-component.md`. Automatic passout integration still needs the shared wrapper and source schedule.
+`player_herodown_tail.h` recovers mode/argument-gated counting/spawn and wrapped rescue-total update plus conditional cleanup and unconditional reset/status callbacks. Spawn/UI internals remain explicit services. Assembly review is authoritative for formatter varargs omitted by decompilation; see `herodown-tail-component.md`. The shared passout/herodown wrapper is now composed; actual host-service bindings and source scheduling remain open.
 
 Catalog source `thegame.lev` is now preserved locally under original exclusions; numeric `training-level-deadline.json` records its hash and Training conversion. The composed queued rescue check now uses actual authored input 30000→45000 for supplied mode 0, instead of placeholder 180. Input and deadline oracles cover 21 and 60 original executions respectively.
 
 Passout composition review: preserve cached Player+4C, checkpoint+3400 and frame translation as distinct sources; their synchronization is not proved. Herodown cleanup now reads state/count through live Ops getters after spawn/stat/log, including the two separate +357C loads. Regression check mutates both during spawn and verifies later diagnostic/transition. See `evidence/victim-ai-audit/passout-composition-review.md`.
 
-Next passout fix: caller0044FF73 rereads live carried pointer after passout/reset callbacks, then gets that receiver's frame for X correction. Existing frame adapter binds the initial frame, so shared wrapper needs a later live receiver resolver; current component checks cover stable carry only. Exact addresses and limits are in `passout-composition-review.md`.
+Passout composition update: caller `0044FF73` rereads the live carried pointer after reset and uses that receiver's frame for X correction. `VictimTransactions::passout` resolves the receiver at that point. The composed check changes carry during reset and verifies the alternate frame receives the correction; this is an adapter-boundary regression, not evidence that a real Training callback changes carry. See `passout-composed-transaction.md`.
 
 ## Viewer update (2026-10-11)
 
-Replaced the ledger-style HTML with a decomp.dev-inspired searchable file treemap, subsystem filters, status distribution, file/routine details and evidence links. Inventories all 66 current native source files, includes recent victim/staging/catalog work, and labels unclassified entries. Rectangle area uses tracked entry count, not original byte size; displayed comparison coverage is not whole-game completion. `viewer-progress.json` maintains the snapshot; run `python3 tools/refresh_progress_viewer.py` from decomp (or use its full path) after editing it to re-embed data and refresh file sizes. The standalone HTML opens without a server. Larger reverse engineering remains paused at the user's request.
+Replaced the ledger-style HTML with a decomp.dev-inspired searchable file treemap, subsystem filters, status distribution, file/routine details and evidence links. Inventories all 67 current native source files, includes recent victim/staging/catalog work, and labels unclassified entries. Rectangle area uses tracked entry count, not original byte size; displayed comparison coverage is not whole-game completion. `viewer-progress.json` maintains the snapshot; run `python3 tools/refresh_progress_viewer.py` from decomp (or use its full path) after editing it to re-embed data and refresh file sizes. The standalone HTML opens without a server. The user resumed the full decompilation goal on 2026-10-11.

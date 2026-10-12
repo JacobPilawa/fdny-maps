@@ -4,37 +4,40 @@
 #include <cassert>
 #include <cstdint>
 #include "random.h"
-#include "victim_rescue.h"
+#include "victim_release.h"
 
 // State shared with pickup. passoutPosition is Player +0x3400..+0x3408;
 // position is Player +0x4c..+0x54. The counter is Player +0x3428.
-struct VictimPassoutPlayerState : VictimPickupPlayerState {
+struct VictimPassoutPlayerState : TrainingVictimReleaseState {
     uint32_t passoutCount = 0;
     std::array<float, 3> position{};
     std::array<float, 3> passoutPosition{};
 };
 
-struct VictimPassoutActorState : VictimPickupActorState {
+struct VictimPassoutActorState : TrainingVictimReleaseActor {
     uint32_t motionCount = 0; // victim +0x180
 };
 
 enum class VictimPassoutResult { noCarriedVictim, dropped };
 
-// Models the carried-victim transaction in 0044FF10 -> 0045C1A0. The
-// independent mode-gated herodown spawn and later Player cleanup branches
-// remain outside this component. Required Ops callbacks:
+// Models the carried-victim prefix in 0044FF10 -> 0045C1A0.
+// VictimTransactions::passout composes this helper with the later mode-gated
+// herodown spawn and Player cleanup tail. Required Ops callbacks:
 //   setMotion(victim, boundedDraw, speed), copyFirstPlayerFrameAxis,
 //   copySecondPlayerFrameAxis, rebuildVictimFrameBasis, copyPlayerFramePosition,
 //   placeOnFloor, setWorldActorFlags(victim, true), dispatchPassout,
-//   resetPlayerRescue(), readPassoutCorrection(), correctDroppedFrameX(value).
+//   writePlayerPosition(position), resetPlayerRescue(),
+//   readPassoutCorrection(), writePlayerPositionX(value),
+//   correctDroppedFrameX(value).
 // Frame and engine internals remain delegated. The two reads of the source
 // correction value stay in caller order around distinct Player/frame X writes.
-template<class Ops>
+template<class Actor, class Ops>
 VictimPassoutResult applyVictimPassout(VictimPassoutPlayerState& player,
-                                       VictimPassoutActorState& victim,
+                                       Actor& victim,
                                        Random& random, Ops&& ops) {
     ++player.passoutCount;
     player.position = player.passoutPosition;
+    ops.writePlayerPosition(player.position);
     if (!player.carriedVictimEntity) return VictimPassoutResult::noCarriedVictim;
     // Integration invariant: caller resolves Player +0x3534 to this actor.
     assert(*player.carriedVictimEntity == victim.entity);
@@ -56,6 +59,7 @@ VictimPassoutResult applyVictimPassout(VictimPassoutPlayerState& player,
 
     ops.resetPlayerRescue(); // 0044FCE0(0)
     player.position[0] += ops.readPassoutCorrection();
+    ops.writePlayerPositionX(player.position[0]);
     ops.correctDroppedFrameX(ops.readPassoutCorrection());
     player.carriedVictimEntity.reset();
     return VictimPassoutResult::dropped;
