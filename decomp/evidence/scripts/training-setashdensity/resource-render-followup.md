@@ -97,3 +97,8 @@ captured. The preserved
 `evidence/asset-manifest.json`; the proprietary bitmaps themselves are not
 staged for the public source mirror. This resolves asset availability, but no
 pixel match or exact visual reproduction is claimed.
+
+The generic loader route and conditional table layouts are source-mapped in
+`ash-resource-registration-audit.md`. This narrows the remaining runtime question
+to the active receiver/mode and actual entries for IDs 200/201; it does not
+change the lack of a live bitmap handle or world-list capture.

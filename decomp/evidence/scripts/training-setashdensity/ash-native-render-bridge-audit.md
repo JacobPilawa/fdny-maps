@@ -30,12 +30,14 @@ EXE and Genesis.dll hashes, query scope, and import details are recorded in
 
 ## Why an exact native bridge is not yet derivable
 
-The full vertex payload can now be compared at the callback boundary, but the
-runtime render resource and world-list state remain unknown. `0047D820` resolves
-a resource key through `00493D00`/`00493650`, which selects one of two tables
-based on context byte `+0x160`. The oracle supplies an explicit fake context,
-resource table, and world pointer, then intercepts the imported call; it does
-not establish the live Training table contents or render-list behavior.
+The full vertex payload can now be compared at the callback boundary. The
+RRF-to-renderer registration route, the `+0x160` lookup subcontext choices, and
+two conditional asset-entry layouts are source-mapped in
+`ash-resource-registration-audit.md`; the receiver identity, loader receiver's
+`+0x78` backend field, and runtime resource/world-list state remain unknown.
+The oracle supplies an explicit fake context, resource table, and world
+pointer, then intercepts the imported call; it does not establish live
+Training table contents or render-list behavior.
 
 ## Callback payload comparison
 
@@ -67,12 +69,14 @@ world-list, bitmap sampling, or visible parity.
 
 ## Best next addresses
 
-1. Trace the actual caller of `0047F960` and the runtime value supplied as
-   `param_1`, including context `+0x160`, selected resource table, and world
-   pointer at `+0x78` of the selected subcontext.
-2. Inspect `0047D820` and its callers alongside the resource-table population
-   path for IDs 200/201; establish the runtime object and any texture/material
-   fields consumed by Genesis.
+1. Trace the actual caller of `0047F960` and runtime value supplied as
+   `param_1`, including context `+0x160`, selected lookup subcontext, and its
+   world pointer at `+0x78`.
+2. Capture the `00495040` registration receiver and `0047D820` lookup receiver
+   while IDs 200/201 load and draw. Establish whether they are the same
+   subcontext, which loader receiver `+0x78` backend is active, and which
+   bitmap handles/material fields Genesis receives. Preserve both registration
+   layouts.
 3. Compare one live Training submission and resulting world-list record
    against the Genesis wrapper's copy. This needs a bounded runtime capture;
    static callback fixtures do not expose active world/list state.
