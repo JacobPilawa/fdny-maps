@@ -101,3 +101,5 @@ If headless execution reports `Failed to get OSGi bundle containing script`, com
 CP=$(find /Applications/ghidra/Ghidra -name '*.jar' -print | tr '\n' ':')
 javac -Xdiags:verbose -cp "$CP" -d /private/tmp/fdny-ghidra-javac decomp/tools/ghidra/*.java
 ```
+
+`BModelUsePcodeOracle.java <output.json> <original.exe>` executes Player method `0044C520` with controlled Hose Spray slot 4, Player byte `+0x12C`, held-object pointer and BModel-state inputs. It also executes `0044BC40` while intercepting `004571A0` at its call boundary. It verifies the executable hash and does not capture live Training field values or exercise candidate/event scheduling.
