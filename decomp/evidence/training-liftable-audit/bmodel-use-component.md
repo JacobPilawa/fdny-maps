@@ -15,10 +15,13 @@ for `0043DB40`, `0044C520`, `0043D2B0` and `0044BC40`.
 - Other nonzero modes return literal 1000. Its intended meaning is unknown.
 - Byte `Player+0x12C` remains unnamed, but its reset default is now traced:
   `0044CD10` writes root bytes `+0x12C = 1` and `+0x12D = 1`, called by the
-  Player constructor and HeroDown path. The similarly numbered stores in
-  `00459630` are on the interaction-selection object at Player root `+0x3254`,
-  so they touch Player `+0x3380`, not the root gate. Other same-offset store
-  candidates have unresolved receiver identity.
+  Player constructor and HeroDown path. Receiver tracing classifies the
+  suspicious `00446FC9` and `00447440` stores as EscapeArrow and type-3 actor
+  fields, not Player-root writes; `00459630` writes the interaction-selection
+  object at Player root `+0x3254`, so its byte is root `+0x3380`. `0044CD10`
+  is the only direct `+0x12C` store currently proven to target the Player root.
+  Alias/computed-pointer writes and the byte's live Training value remain
+  unresolved.
 
 ## Mode-1 use transition
 
@@ -56,10 +59,12 @@ The component and controlled P-code checks do not prove native selection,
 input reachability, carry transforms, callback effects beyond the recorded
 boundary, recurring scheduling, or Training parity.
 
-Still open: the meaning and intervening-write lifecycle of root `+0x12C`, mode
-2/action 1000, axis-box query composition, exact type-1 contact candidates,
-live registration order, event delivery and latency, held-object positioning/
-release integration, and the caller cadence. `00459050/00459090` and BModel
+Still open: the name and live Training value of root `+0x12C` (direct
+displacement stores have been scanned; alias/computed-pointer writes are not
+ruled out), mode 2/action 1000, axis-box query composition, exact type-1
+contact candidates, live registration order, event delivery and latency,
+held-object positioning/release integration, and caller cadence.
+`00459050/00459090` and BModel
 updater `0043DC60` now explain the touch/untouch-driven registration path for
 nonzero `useMode`; Training's two liftables qualify with mode 1 and source
 reaches 50/20. The relation between their contact dispatch and Player update
