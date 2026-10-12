@@ -7,8 +7,18 @@ Read-only queries against the preserved Ghidra 12.0.4 project for
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`.
 `DecompileFunctions.java` and `ExportFunctionAssembly.java` were run with
 `-noanalysis -readOnly`; the preserved database was not modified. Queried
-entries: `0047f500`, `0047d330`, `0047d300`, `0042d280`, `0047f1a0`,
-`0047f1b0`, `0047f1c0`, `0047d660`, `0047d2b0`, and `004463f0`.
+entries: `0047f500`, `0047d330`, `0047d300`, `0042d280`, `0042d2d0`,
+`0047f1a0`, `0047f1b0`, `0047f1c0`, `0047f1d0`, `0047d660`, `0047d2b0`,
+`004463f0`, `0047f850`, `0047f5a0`, `0047db10`, and `0047d370`.
+
+The constructor extension (2026-10-12) also queried `0047f850`, `0047f500`,
+`0047f1d0`, `0042d2d0`, `0047f2a0`, `0047db10`, `0047f5a0`, `0047d330`,
+`0047d370`, `0047d660`, and `0047d820` with `DecompileFunctions.java` on the
+scratch copy `/private/tmp/fdny-ash-presentation-audit`, using
+`-noanalysis -readOnly`. No Ghidra project was modified. This extension found
+that the base transform constructor zeros `+0x5c..+0x64`, and that
+`004463f0`'s final `0047f1d0` call sets dirty byte `+0xa0` after
+`0047f500` initially clears it.
 
 ## Confirmed writes
 
@@ -16,18 +26,24 @@ entries: `0047f500`, `0047d330`, `0047d300`, `0042d280`, `0047f1a0`,
   `(1,1,1)` to vector `+0xb4`, zeros vectors `+0x7c`, `+0x88`, and `+0x94`,
   clears `+0xa0`, `+0xa4`, `+0xcc`, and `+0xd4`, then sets bytes `+0x30`,
   `+0xad`, and `+0x78` to 1.
-- `0047f850` calls `0047d370`, zeroes vectors `+0x7c..+0x9c` and
-  `+0xb4..+0xc8`, calls `0047f500`, and initializes additional animation and
-  render fields. `0047d370` records the descriptor pointer/byte and clears
-  `+0x24..+0x2c`; neither function has a preserved store to spawn vector
-  `+0x5c`.
+- `0047f850` calls `0047d370`, initializes the transform subobject at `+0x34`
+  through `0042d2d0`, zeroes vectors `+0x7c..+0x9c` and `+0xb4..+0xc8`, then
+  calls `0047f500`. The transform initializer writes the translation at
+  `+0x5c..+0x64` to zero, so a newly constructed particle's position is the
+  origin. The constructor also zeros state `+0xb0`, sets fields `+0x108`,
+  `+0x12c`, `+0x130`, and `+0x154` to raw float bits `0x3f7d70a4`, clears
+  `+0xe4`, `+0xe8`, `+0x10c`, and `+0x150`, and clears culling byte `+0xac`.
+  Those render-field meanings are not inferred from the constants alone.
+  `0047d370` records the descriptor pointer/byte and clears `+0x24..+0x2c`.
 - The `0047d330` assembly stores descriptor flags from `[this+0x0c]+0x18` to
   `+0x18`, resets/validates animation indices through `0047d2b0`, stores global
   time at `+0x14`, sets `+0x1c=1.0`, byte `+0x30=1`, and `+0x20=1.0`. This
   confirms the initial activation scale used by `00446470` is 1.0.
 - `004463f0` calls `0047f850` with the descriptor, then stores deadline
-  `+0x168=0`; it calls `0047f1d0` and zeros that returned vector through
-  `0042d280`.
+  `+0x168=0`; it calls `0047f1d0`, which sets dirty byte `+0xa0=1` and returns
+  vector `+0x94`, then zeros that returned vector through `0042d280`. Thus the
+  final constructed object's dirty byte is 1, even though `0047f500` first
+  cleared it; vector `+0x94` is zero.
 - `0042d280` stores its three scalar arguments at vector X/Y/Z offsets `0/4/8`
   and copies them to the optional output buffer.
 - `0047f1a0` sets byte `+0x78=1` and returns `this+0x34` (spawn vector at

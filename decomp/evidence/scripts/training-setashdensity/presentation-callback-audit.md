@@ -91,10 +91,10 @@ Rendering cannot yet be claimed exact: the ash descriptor flags, five frame
 durations, and collection-to-particle binding are now recovered in
 `descriptor-lifetime-followup.md`; `resource-render-followup.md` maps IDs
 200/201 to the authored `ash1.bmp`/`ash2.bmp` names and resolves descriptor
-color/alpha operands. The bitmap copies are absent from the current extracted
-assets, and vertex data, runtime resource-table objects, computed render-context
-APIs, global step-time setup, and the indirect closure remain unresolved. There
-is no live Training capture in this evidence.
+color/alpha operands. Exact bitmap copies are now present in the ignored local
+asset extraction; vertex data, runtime resource-table objects, computed
+render-context APIs, global step-time setup, and the indirect closure remain
+unresolved. There is no live Training capture in this evidence.
 Do not replace these gaps with placeholder geometry, material choices, or
 callback defaults in a parity claim.
 

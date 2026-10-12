@@ -48,12 +48,11 @@ int main(int argc,char** argv){
                 bits(p.activationScale)!=uint32_t(integer(field(sample,"activation_scale_after")))||
                 bits(p.opacityScale)!=uint32_t(integer(field(sample,"opacity_after")))||
                 p.deadline!=uint32_t(integer(field(sample,"deadline_after")))||
-                !p.spawnPosition.has_value()||
                 rng.drawCount!=integer(field(sample,"range_calls"));
             for(int j=0;j<3;j++){
                 uint32_t expectedPosition=uint32_t(integer(json_object_array_get_idx(field(sample,"spawn_position_after"),j)));
                 uint32_t expectedVector=uint32_t(integer(json_object_array_get_idx(field(sample,"vector7c_after"),j)));
-                if(p.spawnPosition&&bits((*p.spawnPosition)[size_t(j)])!=expectedPosition)mismatch=true;
+                if(bits(p.spawnPosition[size_t(j)])!=expectedPosition)mismatch=true;
                 if(bits(p.vector7c[size_t(j)])!=expectedVector)mismatch=true;
             }
             if(mismatch){

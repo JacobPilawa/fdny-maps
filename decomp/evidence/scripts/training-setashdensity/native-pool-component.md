@@ -13,12 +13,15 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
 - Descriptor containers 0 and 1 receive the same five six-word records, with
   IDs 200 and 201. Their flags are `0x35` while records are added and `0x3c`
   afterward. Entry `i` is constructed with container `i & 1`.
-- `0047f500` establishes active `+0x30 = 1`, animation-enabled `+0xad = 1`,
-  position-initialized `+0x78 = 1`, vector-dirty `+0xa0 = 0`, opacity
-  `+0xa8 = 1`, and zero vectors at `+0x7c`, `+0x88`, and `+0x94`. Its call to
-  `0047d330` sets activation scale `+0x1c = 1`. The object constructor sets
-  deadline `+0x168 = 0`. The spawn-position vector at `+0x5c` is not initialized
-  by these stores, so the component represents it as unknown until spawning.
+- `0047f850` initializes the transform subobject through `0042d2d0`, including
+  zero position at `+0x5c..+0x64`. `0047f500` establishes active `+0x30 = 1`,
+  animation-enabled `+0xad = 1`, position-initialized `+0x78 = 1`, opacity
+  `+0xa8 = 1`, and zero vectors at `+0x7c`, `+0x88`, and `+0x94`. It writes
+  `(1,1,1)` at `+0xb4` and calls `0047d330` to set activation scale
+  `+0x1c = 1`. Afterward, `004463f0` calls `0047f1d0`, setting vector-dirty
+  `+0xa0 = 1` and zeroing `+0x94`; deadline `+0x168` is also zero. The focused
+  model now starts with origin position, dirty vectors, zero `+0x94`, and unit
+  `+0xb4`.
 - Initialization and tick require explicit engine-service callbacks. Opaque
   constructor, scene transform, and presentation work cannot silently default
   to no-ops. These receive the shared `Random` where indirect RNG use could
