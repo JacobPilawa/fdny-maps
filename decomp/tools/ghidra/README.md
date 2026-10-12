@@ -40,6 +40,8 @@ Observed on the current Ghidra 12.0.4 installation: preserved-project queries wo
 
 For example, direct stores of the value 7 to field offset `0x120` can be listed with `-postScript FieldStoreAudit.java 0x120 7`.
 
+`FieldOffsetReferences.java <field-offset>` lists instructions whose explicit memory operand includes a displacement such as `[ESI + 0x3114]`. This is a candidate finder for object-layout tracing; it does not resolve aliases, registers computed earlier, or prove the receiver type. Run it read-only when narrowing constructor and updater paths for a field.
+
 Use `-postScript DecompileFunctions.java 0045BF70` to inspect a function not already exported into the evidence tree.
 
 If the preserved database does not define a verified function entry, import the matching executable into a temporary Ghidra project, run analysis, then use `-postScript DefineAndDecompile.java 00448D60`. Do not use that script with the preserved read-only project; it is intentionally separate from the non-mutating query helpers.
