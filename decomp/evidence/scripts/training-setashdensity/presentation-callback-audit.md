@@ -81,9 +81,11 @@ shared RNG through `004B9400`; the four direct RNG draws in the active-particle
 update `00446510` and five direct draws in activation `00446470` remain distinct
 and are not canceled by a renderer draw. This does not close the 130 computed
 call sites in the older direct-call closure: dynamic engine callbacks and any
-other computed dispatch remain unproven. The ash render path itself calls
-computed engine targets at `0047FCF9` and `0047FE58`; they should be resolved
-before claiming whole-frame RNG parity.
+other computed dispatch remain unproven. The ash render path calls through data
+cell `004DC0D0` at `0047FCF9` and `0047FE58`. Its named `Genesis.dll` wrapper
+and polygon-list effects are now mapped in `resource-render-followup.md`; the
+loaded cell value and all other computed callsites remain open, so whole-frame
+RNG parity is still unproven.
 
 `00502B04` is zero in the static data snapshot but is read by `0047F2A0` and
 other engine update routines; its runtime value is not established here.
