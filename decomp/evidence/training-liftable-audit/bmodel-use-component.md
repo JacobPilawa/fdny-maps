@@ -16,9 +16,9 @@ for `0043DB40`, `0044C520`, `0043D2B0` and `0044BC40`.
 - Byte `Player+0x12C` remains unnamed, but its reset default is now traced:
   `0044CD10` writes root bytes `+0x12C = 1` and `+0x12D = 1`, called by the
   Player constructor and HeroDown path. The similarly numbered stores in
-  `00459630` are on its `Player+0x3114` receiver, so they touch Player
-  `+0x3240`, not the root gate. Other same-offset store candidates have
-  unresolved receiver identity.
+  `00459630` are on the interaction-selection object at Player root `+0x3254`,
+  so they touch Player `+0x3380`, not the root gate. Other same-offset store
+  candidates have unresolved receiver identity.
 
 ## Mode-1 use transition
 
@@ -45,8 +45,10 @@ The source mapping and Training object/motion prerequisites are recorded in
 `../training-liftable-audit/throw-path-ghidra-audit.md`. The read-only
 preserved-project decompilation covered `0043DB40`, `0044C520`, `0043D2B0`,
 `0044BC40`, `004571A0`, `0044CAB0`, and `00459630`; the caller context at
-`0045386B` shows why `00459630`'s receiver-relative field is distinct from
-Player root `+0x12C`. Follow-up source ordering and reset evidence are in
+`0045386B`, together with the temporary-copy boundary at `00452570`, proves
+`00459630` receives the constructor-initialized object at Player root `+0x3254`.
+Its `+0x12C` field is root `+0x3380`, distinct from Player root `+0x12C`.
+Follow-up source ordering and reset evidence are in
 `bmodel-selection-pass-audit.md`. P-code output is pinned to the executable
 hash in the fixture.
 
@@ -55,7 +57,10 @@ input reachability, carry transforms, callback effects beyond the recorded
 boundary, recurring scheduling, or Training parity.
 
 Still open: the meaning and intervening-write lifecycle of root `+0x12C`, mode
-2/action 1000, axis-box query composition, candidate-list production/order,
-event delivery and latency, held-object positioning/release integration, and
-the caller cadence. The Player update block dispatches its cached selection
-before refreshing it, but that local order does not prove a frame schedule.
+2/action 1000, axis-box query composition, Training list membership and runtime
+registration order, event delivery and latency, held-object positioning/
+release integration, and the caller cadence. `00459050/00459090` and BModel
+updater `0043DC60` now explain one conditional registration path; the exact
+Training conditions and schedule remain open. The Player update block
+dispatches its cached selection before refreshing it, but that local order
+does not prove a frame schedule.
