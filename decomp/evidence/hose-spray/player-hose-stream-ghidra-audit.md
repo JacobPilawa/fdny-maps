@@ -33,6 +33,20 @@ At the first hotspot transition, `004677D0` submits the string `RC_HoseLvlStart`
 
 These two helpers show stream history, world collision, and presentation effects. They contain no direct FireRescue iteration or fire-suppression call. Do not equate this actor's collision/splash path with the separate Hose Spray item's fire-contact path.
 
+## Inventory Hose Spray pose-list construction
+
+This is a separate object from `RCS_PlayerHose`. Read-only Ghidra decompilation of `00482850`, `00482780`, `00485D20`, `00485980`, `00485A80`, `00485AA0`, `00485C40`, and `00485CA0` establishes the Hose Spray inventory item's linked pose-list layout and writes:
+
+- The pose object begins at Hose Spray `+0xC70`. Its head/tail/count/current-node fields are at object offsets `+0x48/+0x4C/+0x50/+0x60`, equivalent to Hose offsets `+0xCB8/+0xCBC/+0xCC0/+0xCD0`.
+- Base constructor `00486650` initializes pose origin `+0x00..+0x08` to zero. `00482850` separately writes `(0,-5000,0)` at pose object `+0x24..+0x2C` via `00485AC0`, sets scale at `+0x3C` to `1`, and creates the default 12-node list (`240/20`). Training's `touchhose 25` initialization reaches `00482780`, converts the scaled value to an integer with `004B9400`, and passes it to `00485D20`; the source-derived Training result is `25*24/20 = 30` nodes.
+- `00485D20` returns without touching the list when the requested count already matches. Otherwise it frees the old list via `00485980`, allocates exactly that many `0x30`-byte nodes, copies the pose object's current position into each node `+0x08`, zeros the two three-float vectors at `+0x14` and `+0x20`, and links next/previous pointers at `+0/+4`. It resets the current-node cache to the new head. The final dword at node `+0x2C` is not initialized by this routine and remains explicitly unknown.
+- `00485A80` and `00485AA0` write the pose object's position triplet and following orientation triplet. `00485C40` reads the cached current node's position (falling back to the head, then zero); `00485CA0` reads the cached node's successor position (falling back to the head's successor, then zero).
+- Owner attach `0044C840` writes the valve getter position into the Hose pose object's position, saves the valve root and switches mode, then caches the list head and writes the same position to that node's `+0x08` triplet. These allocation and attach operations contain no RNG draw.
+
+Native `src/hose_spray_pose_list.h` models the known links, node vectors, list resize/reset behavior, and attachment write. Training `touchhose 25` constructs 12 nodes then rebuilds to 30; their initial positions are `(0,0,0)`, copied from the zeroed pose origin. The separate `(0,-5000,0)` vector is at pose object `+0x24`, not the list-node position. Successful valve attach updates the pose origin and first node. `hose_spray_pose_list` is a focused source-derived state check; it is not a P-code or live-game allocation comparison. The four unknown bytes at node `+0x2C` are deliberately not represented. Exact valve basis residuals still inherit the unresolved x87 `FCOS`/`FSIN` result, and post-view stream interpolation, follower parenting, action/audio, fire suppression, and callback cadence remain separate work.
+
+The retail resource was verified in the installed `~/Desktop/FireFighter American Hero/Data/Acts/valve.act`: its SHA-256 matches the preserved resource copy. The executable and valve asset in the sibling `test/FDNY Firefighter 1.0`, `fdny_codex/FDNY Firefighter 1.0`, and `fdny_reverse_engineer` copies also match the expected hashes; no modified executable variant was found among those copies.
+
 ## Unresolved items
 
 - The Ghidra xref query shows a data reference at `004E2B40` to factory `00468230`, but no direct code caller. Indirect factory selection/registration and whether Training constructs this actor are not established.
