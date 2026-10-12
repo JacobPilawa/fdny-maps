@@ -8,6 +8,12 @@ I also checked the app callback-list route. Idle update `00499410` calls the cur
 
 This rules out the inspected app callback-list registration path as evidence for FireRescue Think scheduling. It does not establish that no other engine-side or dynamic dispatch exists. The recurring caller, cadence, and order of `00449FE0` remain unresolved; see `training-think-behavior-audit.md` and `subobject-init-followup/scheduler-registration-audit.md`.
 
+## Entity-route registry follow-up
+
+A separate read-only Ghidra pass checked whether the FireRescue entity-route registry also dispatched visual callbacks. Constructor `0044A330` calls `0049D310` to copy root relation fields and `0049D330` to set category bit 1 at `+0x20`; neither call reaches visual slot 0. `0049D450 → 0049B810` allocates/stores a two-word route ID and generation, while destructor-side `0049D510 → 0049B780` releases the ID and clears the handle. These functions manage message identity/lifetime; they provide no recurring invocation of `00449FE0`.
+
+Ghidra 12.0.4 queried the preserved executable in `/private/tmp/fdny-ghidra-ro-20261011/fdny` with `-noanalysis -readOnly`: decompilation of `0044A290, 0044A330, 0049D310, 0049D330, 0049D420, 0049D450, 0049D510, 0049B780, 0049B810`, plus incoming references to `0049D310, 0049D330, 0049D420, 0049D450, 0049D510`. Logs are `/private/tmp/fire-recheck-registration.log`, `fire-recheck-idreg.log`, and `fire-recheck-routes.log`. This narrows one more candidate path; recurring caller, cadence and order remain unresolved.
+
 ## Whole-list slot-zero candidate check
 
 A read-only `FindSlotZeroCalls.java` scan of the executable listing found 91 literal indirect calls through a vtable's first slot. One superficially relevant site is `00448173`; it is inside the unclaimed method beginning `00448110`, whose only incoming reference in the preserved database is vtable word `004E16AC`. Its instructions iterate an array at receiver `+0x24` with count `+0x28`, invoke each non-null element's slot 0 with argument `1`, then call `0043B6E0` to clear that array. The receiver's class and any runtime call schedule remain unidentified, and this code does not establish a FireRescue receiver or a call to `00449FE0`. It is therefore a generic slot-zero candidate, not positive Fire Think dispatch evidence.

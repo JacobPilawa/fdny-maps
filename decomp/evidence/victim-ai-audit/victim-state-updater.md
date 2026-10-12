@@ -1,6 +1,6 @@
 # Victim child updater and state-7 movement
 
-This note records the source-backed work reached from the victim child subobject. It does not claim the subobject's runtime schedule: the constructor places its vptr at victim `+0xd4`, but the recurring caller/insertion path for `0045BEA0` is still unidentified.
+This note records the source-backed work reached from the victim child subobject. The local root `+0x14 → 00459990 → 00470740 → child slot 0 → 0045BEA0` route is verified in [`victim-child-update-scheduling-audit.md`](victim-child-update-scheduling-audit.md); its recurring root-slot caller and cadence remain unidentified.
 
 The read-only Ghidra project analyzes `FDNYFirefighter.exe` SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` with Ghidra 12.0.4. Ghidra's function names and inferred types remain provisional; the offsets, branches and calls below are the evidence being preserved.
 
@@ -44,20 +44,20 @@ There is a separate non-Training state-6 path to preserve. `0045BF70` writes sta
 
 ## Open items
 
-- Identify who calls or registers child updater `0045BEA0` and when relative to `0045A070`, Player movement and the owner message drain.
+- Identify who recurringly invokes victim root slot `+0x14` (thunk `00459990`) and when relative to `0045A070`, Player movement and the owner message drain. The thunk and child dispatch are mapped; the caller/cadence are not.
 - Determine whether a non-authored or runtime-generated Training path enters the generic `roam` command; no preserved Training script/entity currently references it.
 - Recover meanings of the route, visibility, candidate and timing fields without relying on Ghidra's provisional variable names.
 - Port/compare state-7 geometry and conditional RNG against a controlled original run before wiring it into native updates.
 
 ## Child-updater scheduler audit (2026-10-11)
 
-A separate read-only Ghidra audit searched references and registration paths for `0045BEA0`. Its only incoming reference is the child-vtable word `004E25B0`; the constructor `0045DDD0` installs that vptr at victim `+0xD4` and initializes the child through `004799B0`.
+A separate read-only Ghidra audit searched references and registration paths for `0045BEA0`. Its only incoming reference is the child-vtable word `004E25B0`; the constructor `0045DDD0` installs that vptr at victim `+0xD4` and initializes the child through `004799B0`. A later follow-up verified root slot `+0x14 → 00459990`, which advances to the child and tail-jumps through `00470740`; it closes the local route but not the recurring root-slot caller.
 
 - Owner category pass `0049BD20` visits parent entities with the relevant membership bit and invokes the primary callback at victim `+0x48`. The victim's bit 0 is set by `0049D330(this,1)`, and its primary callback is `0045A070`. This is the proximity/message path, not the child updater.
 - Owner callback queue `+0x3C4` drains through `0049C820` and can dispatch callback slots 0/`+0x2C`; no evidence shows the victim child was inserted into that queue. The audit found no child insertion among the scanned `+4` append callsites.
 - Staged registration `0049C670` calls primary slots `+0x20` and `+0x24`, which resolve for victims to `0045B690` and `0045D5B0`. These initialize the actor and alternate spawn data but do not establish a recurring `0045BEA0` update.
 - The bounded executable scan for displacement `0xD4` found victim references at constructor/initializer, pickup/release, and updater-adjacent code; other matches were stack or unrelated fields. It did not identify a recurring scheduler call.
 
-The supported conclusion remains that the owner category pass schedules victim primary proximity `0045A070`, while the recurring child updater `0045BEA0` has no identified caller or owner-queue insertion. Dynamic engine enumeration or another indirect path remains possible; this audit is not proof that the updater never runs. Exact victim animation, post-release timer, and AI cadence stay unresolved. A focused follow-up separates the known staging, owner callback, and ScriptEngine event routes from the child slot-0 updater; see [`victim-child-update-scheduling-audit.md`](victim-child-update-scheduling-audit.md). The work used read-only Ghidra queries and a temporary displacement scan; no native behavior was added.
+The supported conclusion remains that the owner category pass schedules victim primary proximity `0045A070`; separately, root slot `+0x14` reaches child updater `0045BEA0` through the verified thunk and shared updater. The recurring caller for that root slot and its owner-queue insertion, cadence, and order remain unidentified. Dynamic engine enumeration or another indirect path remains possible; this audit is not proof that the updater never runs. Exact victim animation, post-release timer, and AI cadence stay unresolved. See [`victim-child-update-scheduling-audit.md`](victim-child-update-scheduling-audit.md). The work used read-only Ghidra queries and a temporary displacement scan; no native behavior was added.
 
 The detailed Ghidra function exports and refs are retained locally under `evidence/victim-ai-audit/runtime-flow/` and `runtime-flow-refs.tsv`; raw decompiler exports are excluded from Git by `decomp/.gitignore`.
