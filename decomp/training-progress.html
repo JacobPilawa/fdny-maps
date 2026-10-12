@@ -4,7 +4,7 @@
 <h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
 const data={
   "snapshot": "2026-10-11",
-  "commit": "081d6eb",
+  "commit": "f7e0e4f",
   "tests": 18,
   "scope": "Training",
   "files": [
@@ -127,7 +127,7 @@ const data={
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 175401
+      "bytes": 179339
     },
     {
       "path": "src/startup.h",
@@ -748,17 +748,17 @@ const data={
     {
       "path": "src/victim_passout.h",
       "group": "Victims",
-      "summary": "Drop prefix, motion RNG and separate Player/frame X corrections; live correction receiver integration remains open.",
+      "summary": "Source passout prefix is composed into shared runtime; cached Player writes stay source-timed and caller rereads carry before frame-X correction.",
       "evidence": "evidence/victim-ai-audit/passout-composition-review.md",
       "units": [
         [
           "0044FF10",
           "victim_passout",
           "partial",
-          "Drop prefix, motion RNG and separate Player/frame X corrections; live correction receiver integration remains open."
+          "Source passout prefix is composed into shared runtime; cached Player writes stay source-timed and caller rereads carry before frame-X correction."
         ]
       ],
-      "bytes": 2666
+      "bytes": 2838
     },
     {
       "path": "src/victim_frame_ops.h",
@@ -838,14 +838,14 @@ const data={
     {
       "path": "src/player_herodown_tail.h",
       "group": "Victims",
-      "summary": "Recovered spawn/count/cleanup tail; cleanup getters run after callbacks. Spawn/UI services remain explicit.",
+      "summary": "Count/spawn/cleanup tail now follows composed passout in source order; engine spawn/UI services and automatic scheduling remain explicit.",
       "evidence": "evidence/victim-ai-audit/herodown-tail-component.md",
       "units": [
         [
           "0044FF10",
           "player_herodown_tail",
           "partial",
-          "Recovered spawn/count/cleanup tail; cleanup getters run after callbacks. Spawn/UI services remain explicit."
+          "Count/spawn/cleanup tail now follows composed passout in source order; engine spawn/UI services and automatic scheduling remain explicit."
         ]
       ],
       "bytes": 4800
@@ -868,17 +868,17 @@ const data={
     {
       "path": "src/victim_transactions.h",
       "group": "Victims",
-      "summary": "Shared pickup/escape runtime uses actual Training scripts and BSP release. Passout and automatic cadence remain unfinished.",
+      "summary": "Shared pickup/escape/drop runtime uses Training scripts, BSP floor adapters, one RNG stream and a live carry reread; automatic cadence remains open.",
       "evidence": "evidence/victim-ai-audit/composed-transactions.md",
       "units": [
         [
           "COMPOSE",
           "victim_transactions",
           "partial",
-          "Shared pickup/escape runtime uses actual Training scripts and BSP release. Passout and automatic cadence remain unfinished."
+          "Shared pickup/escape/drop runtime uses Training scripts, BSP floor adapters, one RNG stream and a live carry reread; automatic cadence remains open."
         ]
       ],
-      "bytes": 6327
+      "bytes": 11873
     },
     {
       "path": "src/carry_entity_mode.h",
@@ -1272,7 +1272,7 @@ const $=id=>document.getElementById(id), all=data.files.flatMap(f=>f.units), cou
 for(const s in names){const i=document.createElement('i');i.style.width=100*counts[s]/all.length+'%';i.style.background=colors[s];$('bar').append(i);const label=document.createElement('span');const swatch=document.createElement('i');swatch.style.background=colors[s];label.append(swatch,document.createTextNode(`${names[s]} · ${counts[s]}`));$('legend').append(label)}
 $('coverage').textContent=`${counts.verified} / ${all.length} tracked entries have component comparisons (${(100*counts.verified/all.length).toFixed(1)}% of this inventory). Counts include overlapping routine mappings and unclassified entries.`;
 for(const [n,label] of [[data.files.filter(f=>f.path.startsWith('src/')).length,'native files inventoried'],[all.length,'tracked entries'],[data.tests,'CTest checks passing']]){const box=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span');b.textContent=n;span.textContent=label;box.append(b,span);$('metrics').append(box)}
-$('snapshot').textContent=`Evidence snapshot ${data.snapshot} · decompile milestone ${data.commit} · scope: ${data.scope}. Viewer updates do not change game completion.`;
+$('snapshot').textContent=`Evidence snapshot ${data.snapshot} · based on ${data.commit} · scope: ${data.scope}. Viewer updates do not change game completion.`;
 for(const g of ['All',...new Set(data.files.map(f=>f.group))]){const o=document.createElement('option');o.textContent=g;$('group').append(o)}
 function link(path,label){const a=document.createElement('a');a.href=path;a.textContent=label;return a}
 function inspect(f){$('detail').replaceChildren();const h=document.createElement('h2');h.textContent=f.path;const p=document.createElement('p');p.textContent=f.summary;const links=document.createElement('p');if(f.path.startsWith('src/'))links.append(link(f.path,'Open native source'),document.createTextNode(' · '));links.append(link(f.evidence,'Open evidence'));const ul=document.createElement('ul');for(const u of f.units){const li=document.createElement('li'),b=document.createElement('b');b.textContent=`${u[0]} · ${u[1]} — ${names[u[2]]}`;const note=document.createElement('div');note.textContent=u[3];li.append(b,note);if(u[4])li.append(link(u[4],'Routine evidence'));ul.append(li)}$('detail').append(h,p,links,ul);document.querySelectorAll('.tile').forEach(t=>t.setAttribute('aria-pressed',t.dataset.path===f.path?'true':'false'))}

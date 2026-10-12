@@ -332,16 +332,26 @@
   "staging_herodown_continuation": {
     "staging": "Successful-load Player factory/World request/later batch/primary+20 initialization proved; recurring root scheduling unresolved",
     "training_deadline_input": "catalog time500 \u00d760 = level+10 30000; Player modes0/1 scale1.5; consumer clamps7200",
-    "herodown": "Mode2/argument0 type2 name/state count; staged POFighter signed(passoutCount-1), then wrapped total/stat; conditional cleanup and unconditional reset/status adapters",
-    "validation": "18 CTest checks; input/deadline oracles expanded to21/60 original calls; full Training unverified"
+    "herodown": "Mode2/argument0 entity count and staged POFighter signed(passoutCount-1); passout/drop and tail now compose with source-timed Player position writes and live carry-frame reread; host spawn/UI services and automatic scheduling remain open",
+    "validation": "18 CTest checks pass; composed check covers source-order passout/herodown and live receiver reread; full Training remains unverified"
   },
   "progress_viewer": {
     "updated": "2026-10-11",
     "path": "training-progress.html",
     "data": "viewer-progress.json",
-    "inventory": "66 native files plus tracked missing subsystems",
+    "inventory": "67 native source files plus tracked missing subsystems",
     "metric": "Tracked entry statuses; not measured original bytes or whole-game completion",
     "refresh": "tools/refresh_progress_viewer.py",
     "validation": "Browser search and file drill-down verified; JavaScript syntax valid"
+  },
+  "original_function_inventory": {
+    "path": "evidence/original-function-inventory.json",
+    "program": "FDNYFirefighter.exe",
+    "executable_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "ghidra_version": "12.0.4",
+    "defined_function_entries": 5807,
+    "classified_entries": 0,
+    "scope": "Current Ghidra-defined functions only; not proof every routine has a function boundary or a completion percentage.",
+    "generator": "tools/ghidra/ExportFunctionInventory.java (-noanalysis -readOnly)"
   }
 }

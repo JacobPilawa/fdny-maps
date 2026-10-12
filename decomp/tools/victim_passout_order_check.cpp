@@ -26,7 +26,13 @@ struct RecordingOps {
         assert(enabled && actor.worldActorFlags == 0x400); calls.push_back("flags-true");
     }
     void dispatchPassout(VictimPassoutActorState&) { calls.push_back("passout-event"); }
+    void writePlayerPosition(const std::array<float,3>& value) {
+        assert(player && player->position==value); calls.push_back("player-position-copy");
+    }
     void resetPlayerRescue() { calls.push_back("player-reset-0044fce0-0"); }
+    void writePlayerPositionX(float value) {
+        assert(player && value==player->position[0]); calls.push_back("player-x-write");
+    }
     void correctDroppedFrameX(float value){frameTranslationX-=value;calls.push_back("frame-correction");}
     float readPassoutCorrection() {
         if (correctionReads++ == 0) {
@@ -44,9 +50,9 @@ struct RecordingOps {
 
 int main() {
     const std::vector<std::string> expected = {
-        "motion", "axis-a", "axis-b", "basis", "position", "floor",
+        "player-position-copy", "motion", "axis-a", "axis-b", "basis", "position", "floor",
         "flags-true", "passout-event", "player-reset-0044fce0-0",
-        "player-correction-read", "victim-correction-read", "frame-correction"
+        "player-correction-read", "player-x-write", "victim-correction-read", "frame-correction"
     };
 
     VictimPassoutPlayerState player;
@@ -79,8 +85,8 @@ int main() {
     // The helper's preamble still runs without a carried victim; no drop RNG or callbacks run.
     VictimPassoutPlayerState empty; empty.position = {0, 0, 0}; empty.passoutPosition = {7, 8, 9};
     VictimPassoutActorState untouched;
-    Random emptyRandom(1); RecordingOps emptyOps;
+    Random emptyRandom(1); RecordingOps emptyOps; emptyOps.player = &empty;
     assert(applyVictimPassout(empty, untouched, emptyRandom, emptyOps) == VictimPassoutResult::noCarriedVictim);
     assert(empty.passoutCount == 1 && empty.position[0] == 7);
-    assert(emptyRandom.drawCount == 0 && emptyOps.calls.empty());
+    assert(emptyRandom.drawCount == 0 && emptyOps.calls==std::vector<std::string>{"player-position-copy"});
 }

@@ -236,6 +236,7 @@ int main(int argc,char** argv){try{
  for(auto& victim:victimSpawns){victimByEntity.emplace(victim.entity,&victim);VictimRuntimeActor actor;actor.entity=victim.entity;victimActorStates.emplace(victim.entity,std::move(actor));}
  J trainingManAsset=load("actors/vic_man.json");int trainingManMotionCount=count(field(trainingManAsset,"motions"));
  if(trainingManMotionCount!=6)throw std::runtime_error("Training victim ACT motion count changed; review the original spawn branch");
+ for(auto& [entity,actor]:victimActorStates)actor.motionCount=uint32_t(trainingManMotionCount);
  // PropModel instance fields are reconstructed from the saved Training BSP
  // entities in their original factory/class order. makevalve is the source
  // switch that enables the valve action query; Hose1 remains a touch prop.
@@ -912,7 +913,7 @@ int main(int argc,char** argv){try{
  std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
  }
  if(argc>1&&std::string(argv[1])=="--victim-transactions-check"){
- int failures=0;uint32_t now=100,field18C=3;FrameTransform playerFrame;playerFrame.position={1472,-230.9f,-5092};std::vector<std::string> events;std::map<std::string,SourceStatisticRecord> stats{{"Rescues",{0,0}},{"Longest Rescue Time",{2,0}},{"Shortest Rescue Time",{1,0x7fffffffu}}};
+ int failures=0,passoutFloorFailures=0;bool expectPassoutFloorFallback=false;uint32_t now=100,field18C=3;FrameTransform playerFrame;playerFrame.position={1472,-230.9f,-5092};std::vector<std::string> events;std::map<std::string,SourceStatisticRecord> stats{{"Rescues",{0,0}},{"Longest Rescue Time",{2,0}},{"Shortest Rescue Time",{1,0x7fffffffu}}};
  for(const auto& spawn:victimSpawns){auto oldRoot=victimActorRoot(spawn),liveRoot=victimActorRoot(victimActorStates.at(spawn.entity).frame);for(int k=0;k<9;k++)if(oldRoot.r[k]!=liveRoot.r[k])failures++;for(int k=0;k<3;k++)if(oldRoot.t[k]!=liveRoot.t[k])failures++;victimActorStates.at(spawn.entity).animation.playing=true;}
  TrainingVictimStatusState status{victimRuntime.exits};
  struct StatusOps {
@@ -934,17 +935,28 @@ int main(int argc,char** argv){try{
  } statusOps{victimRuntime,now,events,{}};
  VictimTransactionServices services;
  services.playerFrame=[&]()->const FrameTransform&{return playerFrame;};
- services.traceFloor=[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;};services.reportFloorFailure=[&]{failures++;};
+ services.traceFloor=[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;};services.reportFloorFailure=[&]{if(expectPassoutFloorFallback)passoutFloorFailures++;else failures++;};
  services.readClock=[&]{return now;};services.readPlayerField18C=[&]{return int(field18C);};services.readGlobalMode=[]{return 0;};
  auto levelMetadata=json_object_from_file((assetDirectory()+"/../../evidence/training-level-deadline.json").c_str());if(!levelMetadata)throw std::runtime_error("Missing Training level deadline metadata");
  float deadlineInput=initializePlayerDeadlineInput(num(field(levelMetadata,"level_field10")),0);if(deadlineInput!=45000.0f)failures++;
  services.readPlayerField343C=[&]{return deadlineInput;};
- services.setActorFlags=[&](int entity,uint32_t flags){if(victimRuntime.actors.at(entity).worldActorFlags!=flags)failures++;events.push_back("flags:"+std::to_string(flags));};
+ services.setActorFlags=[&](int entity,uint32_t flags){if(victimRuntime.actors.at(entity).worldActorFlags!=flags){std::cout<<"actor flag callback mismatch\n";failures++;}events.push_back("flags:"+std::to_string(flags));};
  services.dispatchVictimEvent=[&](int entity,const char* event){events.push_back(std::string(event)+":"+std::to_string(entity));vm.dispatch(entity,event);};
- services.setEntityCarryMode=[&](bool mode){events.push_back(mode?"carry-on":"carry-off");field18C=mode?4:3;};
+ bool redirectPassoutCorrection=false;
+ services.setEntityCarryMode=[&](bool mode){events.push_back(mode?"carry-on":"carry-off");field18C=mode?4:3;if(!mode&&redirectPassoutCorrection)victimRuntime.player.carriedVictimEntity=victimSpawns.back().entity;};
  services.updateVictimStatus=[&](int action){trainingVictimStatusAction(status,action,statusOps);};
  services.addStatistic=[&](const char* name,uint32_t value){addSourceStatistic(&stats.at(name),value);};services.updateStatistic=[&](const char* name,uint32_t value){updateSourceStatistic(&stats.at(name),value);};
  services.setRescueStatisticTotal=[&](uint32_t value){statusOps.setRescueStatisticTotal(value);};services.reportUnzonedVictim=[&](int){failures++;};services.reportUnzonedExit=[&](int){failures++;};services.enableExitTrigger=[&](int){failures++;};services.refreshSelectedItem=[&]{events.push_back("item-refresh");};
+ V playerPosition3400{20,5,6},cachedPlayerPosition{};int liveEntityReads=0;
+ services.passout.readPlayerPosition3400=[&]{events.push_back("passout-position-read");return playerPosition3400;};
+ services.passout.writePlayerPosition4c=[&](V value){cachedPlayerPosition=value;events.push_back("passout-position-write");};
+ services.passout.setVictimMotion=[&](int entity,uint32_t motion,float speed){if(!victimActorStates.count(entity)||motion>=uint32_t(trainingManMotionCount)||speed!=1.0f){std::cout<<"passout motion callback mismatch\n";failures++;}events.push_back("passout-motion");};
+ services.passout.readCurrentEntities=[&]{liveEntityReads++;return std::vector<PlayerHeroDownEntity>{};};
+ services.passout.spawnHeroDown=[&](const PlayerHeroDownSpawn&){failures++;};services.passout.logFirefightersDown=[&](int){failures++;};
+ services.passout.readCleanupState=[]{return uint32_t(0);};services.passout.readCleanupCollectionCount=[]{return uint32_t(0);};
+ services.passout.reportCleanupArrayBounds=[&]{failures++;};services.passout.cleanupSubobjectMode=[]{return 0;};
+ services.passout.transitionCleanupSubobjectTo2=[&]{failures++;};services.passout.refreshSelection=[&]{events.push_back("passout-selection-refresh");};
+ services.passout.resetPlayerView=[&]{events.push_back("passout-view-reset");};services.passout.finishRescueStatus=[&]{events.push_back("passout-status-finish");};
  FireMessageQueue messages;
  VictimTransactions runtime{victimRuntime,services,zones,sharedRandom};statusOps.refresh=[&]{runtime.refreshMembership();};
  runtime.refreshMembership();auto membershipCount=[&]{size_t total=0;for(const auto& zone:victimRuntime.membership.actorsByZone)total+=zone.second.size();return total;};
@@ -970,7 +982,25 @@ int main(int argc,char** argv){try{
  }
  if(victimRuntime.exits.total!=2||victimRuntime.exits.rescues!=2||stats.at("Rescues").value!=2||victimRuntime.exits.messageGate!=1||runtime.pickup(victimSpawns[0].entity)!=VictimPickupMessageResult::playerMessageGateClosed)failures++;
  if(std::count(events.begin(),events.end(),"one-survivor")!=1||std::count(events.begin(),events.end(),"item-refresh")!=1)failures++;
- std::cout<<"Training victim transactions: source proximity/route queue, shared actor/render state, actual EVS pickup events, native BSP releases, status/membership/exit and one source RNG draw per rescue; failures="<<failures<<" (UI services supplied; producer schedule unconnected)\n";return failures?54:0;
+ // Exercise the integrated passout wrapper. The rescue-reset callback changes
+ // Player+0x3534 so the caller correction must resolve its receiver live.
+ victimRuntime.exits.messageGate=0;victimRuntime.player.carriedVictimEntity=victimSpawns.front().entity;
+ const int correctionReceiver=victimSpawns.back().entity;
+ const float receiverXBefore=victimActorStates.at(correctionReceiver).frame.position.x;
+ const uint64_t drawsBeforePassout=sharedRandom.drawCount;redirectPassoutCorrection=true;expectPassoutFloorFallback=true;
+ if(runtime.passout(0)!=VictimPassoutResult::dropped){std::cout<<"passout result mismatch\n";failures++;}
+ redirectPassoutCorrection=false;expectPassoutFloorFallback=false;
+ const float receiverXAfter=victimActorStates.at(correctionReceiver).frame.position.x;
+ if(sharedRandom.drawCount!=drawsBeforePassout+1){std::cout<<"passout RNG mismatch "<<sharedRandom.drawCount-drawsBeforePassout<<"\n";failures++;}
+ if(victimRuntime.player.passoutCount!=1||victimRuntime.player.carriedVictimEntity){std::cout<<"passout Player state mismatch\n";failures++;}
+ if(victimActorStates.at(victimSpawns.front().entity).state!=4||victimActorStates.at(victimSpawns.front().entity).worldActorFlags!=0x400){std::cout<<"passout actor state mismatch\n";failures++;}
+ if(cachedPlayerPosition.x!=50||cachedPlayerPosition.y!=5||cachedPlayerPosition.z!=6){std::cout<<"passout position mismatch "<<cachedPlayerPosition.x<<","<<cachedPlayerPosition.y<<","<<cachedPlayerPosition.z<<"\n";failures++;}
+ if(receiverXAfter!=float(double(receiverXBefore)-30.0)){std::cout<<"passout live frame receiver mismatch "<<receiverXBefore<<" -> "<<receiverXAfter<<"\n";failures++;}
+ const V passoutFallback=victimActorStates.at(victimSpawns.front().entity).frame.position;
+ if(passoutFloorFailures!=1||passoutFallback.x!=0||passoutFallback.y!=1||passoutFallback.z!=0){std::cout<<"passout floor fallback mismatch\n";failures++;}
+ if(liveEntityReads!=0){std::cout<<"passout mode gate read entity list\n";failures++;}
+ if(std::count(events.begin(),events.end(),"passout-view-reset")!=1||std::count(events.begin(),events.end(),"passout-status-finish")!=1){std::cout<<"passout tail order mismatch\n";failures++;}
+ std::cout<<"Training victim transactions: source proximity/route queue, pickup/rescue, shared RNG and composed passout/herodown tail with live carry reread; failures="<<failures<<" (engine services supplied; producer schedule unconnected)\n";return failures?54:0;
  }
  if(argc>1&&std::string(argv[1])=="--player-deadline-input-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/player-deadline-input-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing deadline input evidence");auto samples=field(fixture,"samples");int mismatches=0;
