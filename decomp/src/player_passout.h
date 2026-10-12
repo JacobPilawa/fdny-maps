@@ -11,8 +11,9 @@ enum class PlayerPassoutResult { enteredFailureState, delegatedToHeroDown };
 
 // Source-ordered core of 00450FB0. `playPassoutMotion` receives the animator
 // subobject offset (Player+0x454 for parameter 0; +0x430 for parameter 1).
-// Chatter, clock, active-object lookup, and the object's vtable +0x1C callback
-// remain host boundaries. Parameter 2 takes the original early HeroDown path.
+// Chatter, clock, selected-item lookup, and the selected item's vtable +0x1C
+// ACTION-release callback remain host boundaries. Parameter 2 takes the
+// original early HeroDown path.
 template<class Ops>
 PlayerPassoutResult applyPlayerPassout(
     PlayerPassoutState& player, int parameter, Ops&& ops) {
@@ -28,10 +29,10 @@ PlayerPassoutResult applyPlayerPassout(
     }
 
     const uint32_t now = ops.readClock();
-    const uint32_t activeObjectIndex = ops.readActiveObjectIndex();
+    const uint32_t selectedItemIndex = ops.readSelectedItemIndex();
     player.failedAt = now;
     player.state = 6;
-    if (activeObjectIndex != 0)
-        ops.invokeActiveObjectSlot1C(activeObjectIndex);
+    if (selectedItemIndex != 0)
+        ops.releaseSelectedItem(selectedItemIndex);
     return PlayerPassoutResult::enteredFailureState;
 }
