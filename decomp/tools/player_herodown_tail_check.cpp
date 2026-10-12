@@ -20,9 +20,13 @@ struct Ops {
     RescueExitState* shared=nullptr;
     uint32_t countSeenAtSpawn=0,countSeenAtStatistic=0;
     int boundsReports=0;
-    void spawnHeroDown(const PlayerHeroDownSpawn& s){calls.push_back("spawn");staged=s;countSeenAtSpawn=shared->total;}
+    int cleanupState=0,cleanupCollectionCount=0;
+    bool mutateCleanupOnSpawn=false;
+    void spawnHeroDown(const PlayerHeroDownSpawn& s){calls.push_back("spawn");staged=s;countSeenAtSpawn=shared->total;if(mutateCleanupOnSpawn){cleanupState=4;cleanupCollectionCount=4;}}
     void setRescueStatisticTotal(uint32_t n){calls.push_back("stat");statistic=n;countSeenAtStatistic=shared->total;assert(n==shared->total);}
     void logFirefightersDown(int n){calls.push_back("log");assert(n>=0);}
+    int readCleanupState(){calls.push_back("read-cleanup-state");return cleanupState;}
+    int readCleanupCollectionCount(){calls.push_back("read-cleanup-count");return cleanupCollectionCount;}
     void reportCleanupArrayBounds(){calls.push_back("bounds-diagnostic");boundsReports++;}
     int cleanupSubobjectMode(){calls.push_back("cleanup-mode");return cleanupMode;}
     void transitionCleanupSubobjectTo2(){calls.push_back("transition-2");}
@@ -37,7 +41,8 @@ int main(){
     std::vector<PlayerHeroDownEntity> entities={
       {2,"HeroDown",4},{2,"herodown",7},{2,"HERODOWN",3},
       {1,"herodown",4},{2,"other",4}};
-    auto result=continuePlayerHeroDownTail(player,rescue,2,0,entities,4,5,ops);
+    ops.mutateCleanupOnSpawn=true;
+    auto result=continuePlayerHeroDownTail(player,rescue,2,0,entities,ops);
     assert(result.countBranchEntered&&result.spawned&&result.firefightersDown==3);
     assert(rescue.total==3&&ops.statistic==3);
     assert(ops.countSeenAtSpawn==2&&ops.countSeenAtStatistic==3);
@@ -49,38 +54,42 @@ int main(){
     assert(std::string(ops.staged.scriptName)=="herodown"&&ops.staged.word6==0);
     assert(ops.staged.word7==20.0f&&std::string(ops.staged.entityClass)=="RCS_VictimRescue");
     assert(ops.staged.classLookupArgument==100);
-    assert((ops.calls==std::vector<std::string>{"spawn","stat","log","cleanup-mode","transition-2","refresh-selection","reset-view","finish-status"}));
+    assert(ops.boundsReports==1);
+    assert((ops.calls==std::vector<std::string>{"spawn","stat","log","read-cleanup-state","read-cleanup-state","read-cleanup-count","bounds-diagnostic","cleanup-mode","transition-2","refresh-selection","reset-view","finish-status"}));
 
     RescueExitState atLimit;atLimit.total=10;Ops noSpawn;noSpawn.shared=&atLimit;
     std::vector<PlayerHeroDownEntity> three={{2,"herodown",4},{2,"herodown",7},{2,"herodown",4}};
-    auto limit=continuePlayerHeroDownTail(player,atLimit,2,0,three,1,0,noSpawn);
+    noSpawn.cleanupState=1;
+    auto limit=continuePlayerHeroDownTail(player,atLimit,2,0,three,noSpawn);
     assert(limit.countBranchEntered&&!limit.spawned&&limit.firefightersDown==3);
     assert(atLimit.total==10&&noSpawn.calls[0]=="log");
-    assert((noSpawn.calls==std::vector<std::string>{"log","refresh-selection","reset-view","finish-status"}));
+    assert((noSpawn.calls==std::vector<std::string>{"log","read-cleanup-state","read-cleanup-state","refresh-selection","reset-view","finish-status"}));
 
     RescueExitState gated;Ops gateOps;gateOps.shared=&gated;
-    auto skippedMode=continuePlayerHeroDownTail(player,gated,1,0,{},0,0,gateOps);
+    auto skippedMode=continuePlayerHeroDownTail(player,gated,1,0,{},gateOps);
     assert(!skippedMode.countBranchEntered&&skippedMode.firefightersDown==-1);
-    assert((gateOps.calls==std::vector<std::string>{"reset-view","finish-status"}));
+    assert((gateOps.calls==std::vector<std::string>{"read-cleanup-state","reset-view","finish-status"}));
     gateOps.calls.clear();
-    auto skippedArgument=continuePlayerHeroDownTail(player,gated,2,1,{},0,0,gateOps);
-    assert(!skippedArgument.countBranchEntered&&gateOps.calls.size()==2);
+    auto skippedArgument=continuePlayerHeroDownTail(player,gated,2,1,{},gateOps);
+    assert(!skippedArgument.countBranchEntered&&gateOps.calls.size()==3);
 
     Ops cleanupOnly;cleanupOnly.cleanupMode=2;
-    continuePlayerHeroDownTail(player,gated,0,0,{},4,5,cleanupOnly);
-    assert((cleanupOnly.calls==std::vector<std::string>{"cleanup-mode","refresh-selection","reset-view","finish-status"}));
+    cleanupOnly.cleanupState=4;cleanupOnly.cleanupCollectionCount=5;
+    continuePlayerHeroDownTail(player,gated,0,0,{},cleanupOnly);
+    assert((cleanupOnly.calls==std::vector<std::string>{"read-cleanup-state","read-cleanup-state","read-cleanup-count","cleanup-mode","refresh-selection","reset-view","finish-status"}));
 
     RescueExitState wrap;wrap.total=0xffffffffu;Ops wrapOps;wrapOps.shared=&wrap;
     player.passoutCount=0;
-    auto wrapped=continuePlayerHeroDownTail(player,wrap,2,0,{{2,"herodown",4},{2,"herodown",7}},0,0,wrapOps);
+    auto wrapped=continuePlayerHeroDownTail(player,wrap,2,0,{{2,"herodown",4},{2,"herodown",7}},wrapOps);
     assert(wrapped.spawned&&wrap.total==0&&wrapOps.statistic==0);
     assert(wrapOps.countSeenAtSpawn==0xffffffffu&&wrapOps.countSeenAtStatistic==0);
     assert(wrapOps.staged.countMinusOneBits==0xffffffffu&&wrapOps.staged.countMinusOne==-1);
     assert(wrapOps.staged.formattedSuffix=="-1"&&wrapOps.staged.generatedName=="POFighter-1");
-    assert((wrapOps.calls==std::vector<std::string>{"spawn","stat","log","reset-view","finish-status"}));
+    assert((wrapOps.calls==std::vector<std::string>{"spawn","stat","log","read-cleanup-state","reset-view","finish-status"}));
 
     Ops shortCollection;shortCollection.cleanupMode=3;
-    continuePlayerHeroDownTail(player,gated,0,1,{},4,4,shortCollection);
+    shortCollection.cleanupState=4;shortCollection.cleanupCollectionCount=4;
+    continuePlayerHeroDownTail(player,gated,0,1,{},shortCollection);
     assert(shortCollection.boundsReports==1);
-    assert((shortCollection.calls==std::vector<std::string>{"bounds-diagnostic","cleanup-mode","transition-2","refresh-selection","reset-view","finish-status"}));
+    assert((shortCollection.calls==std::vector<std::string>{"read-cleanup-state","read-cleanup-state","read-cleanup-count","bounds-diagnostic","cleanup-mode","transition-2","refresh-selection","reset-view","finish-status"}));
 }
