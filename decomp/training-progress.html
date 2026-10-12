@@ -9,20 +9,20 @@
 </head>
 <body><main>
 <header><div><h1>FDNY Training · file progress</h1><div class="lede">Which native files are completed, in progress, or not started?</div><p id="snapshot"></p></div><a class="toplink" href="https://github.com/JacobPilawa/fdny-maps/tree/main/decomp">Open decomp in GitHub ↗</a></header>
-<div class="callout"><strong>How to read “completed”:</strong> every Ghidra routine currently indexed for that native file has verified component evidence. It does not mean the file contains no untracked original routines, or that Training / the full game is finished. Each tracked routine links to its native C++ and the matching Ghidra C-like decompilation.</div>
+<div class="callout"><strong>How to read “completed”:</strong> every routine currently tracked for that native file has verified component evidence. It does not mean the file contains no untracked original routines, or that Training / the full game is finished. Each tracked routine links to its native C++ and the matching Ghidra C-like decompilation.</div>
 <div class="metrics" id="metrics"></div>
 <p class="callout"><strong>Work priority:</strong> finish an already listed in-progress file to verified before opening another partial source file. Add code only when it closes that file or is required by its acceptance check.</p>
-<h2>Files completed over time</h2><p>This is the count of native files whose currently tracked Ghidra routine entries were all verified at each saved progress snapshot. The chart uses the committed history of <code>viewer-progress.json</code>; the first snapshot already had 15 completed files, so earlier completion history is unavailable in this ledger. Labels show the snapshot commit time in Pacific Time.</p>
+<h2>Files completed over time</h2><p>This is the count of native files whose currently tracked routine entries were all verified at each saved progress snapshot. The chart uses the committed history of <code>viewer-progress.json</code>; the first snapshot already had 15 completed files, so earlier completion history is unavailable in this ledger. Labels show the snapshot commit time in Pacific Time.</p>
 <section class="activity" aria-label="Completed native files over saved progress snapshots"><div id="completion-chart"></div><p class="chart-note" id="completion-history"></p></section>
 <h2>Files by status</h2><p>Completed means every currently tracked routine entry in the file has status <code>verified</code>.</p><section class="buckets"><div class="bucket completed"><header><h3>Completed <span class="count" id="completed-count"></span></h3></header><div class="bucket-body" id="completed"></div></div><div class="bucket in-progress"><header><h3>In progress <span class="count" id="progress-count"></span></h3></header><div class="bucket-body" id="progress"></div></div><div class="bucket not-started"><header><h3>Not started <span class="count" id="not-started-count"></span></h3></header><div class="bucket-body" id="not-started"></div></div></section>
 <h2>Reference and validation</h2><p id="validation"></p><div class="links"><a href="evidence/original-function-inventory.json">Original Ghidra function inventory</a><a href="evidence/ghidra-original-c/README.md">Ghidra C export provenance</a><a href="evidence/ghidra-original-c/index.json">Ghidra address index</a><a href="CHECKLIST.md">Checklist</a><a href="HANDOFF.md">Handoff</a><a href="TRAINING_MODULE_ROADMAP.md">Training module roadmap</a><a href="mechanics.json">Mechanics record</a><a href="viewer-progress.json">Viewer data</a></div>
-<footer class="foot">Ghidra’s output is a C-like interpretation of the preserved executable, not the original source text. The export covers only indexed addresses. 93 exported addresses were existing Ghidra function entries; 11 boundaries were defined in a scratch copy and are labeled as such. The saved Ghidra project was left unchanged. Viewer snapshot and counts are frozen here as requested; source/evidence work can continue without refreshing this page.</footer>
+<footer class="foot">Ghidra’s output is a C-like interpretation of the preserved executable, not the original source text. The export covers only indexed addresses. The canonical Ghidra index contains 104 addresses: 93 existing function entries and 11 scratch-defined boundaries. Additional preserved Ghidra snapshots are linked from relevant file cards but are outside that index. The saved Ghidra project was left unchanged. This viewer was refreshed on request and is frozen until requested again.</footer>
 </main>
 <script>
 const data={
   "snapshot": "2026-10-12",
-  "commit": "working tree based on 3ec239a",
-  "tests": 40,
+  "commit": "working tree based on b51371a",
+  "tests": 48,
   "scope": "Training",
   "files": [
     {
@@ -144,7 +144,7 @@ const data={
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 187619
+      "bytes": 187399
     },
     {
       "path": "src/startup.h",
@@ -513,14 +513,14 @@ const data={
     {
       "path": "src/extinguisher_effects.h",
       "group": "Tools",
-      "summary": "Accepted contacts consume source-backed effect timer and offset draws; particle rendering remains open.",
+      "summary": "Message-30000 delivery and accepted-contact timer/offset draws match source-backed captures; particle rendering remains open.",
       "evidence": "evidence/item-pose/live-extinguisher/",
       "units": [
         [
           "00449A40",
           "Nonterminal suppression dispatch",
-          "partial",
-          "Contacts reach message 30000 and nonterminal suppression in the native loop."
+          "verified",
+          "The shared native handler accepts message 30000 and applies terminal=false; both fire-message and 135-value contact-path original-capture checks pass with zero mismatches."
         ],
         [
           "0044D080",
@@ -529,7 +529,7 @@ const data={
           "The active-tool offset is sourced from the factory and item initializer call chain."
         ]
       ],
-      "bytes": 1380
+      "bytes": 2025
     },
     {
       "path": "src/interaction_sphere.h",
@@ -591,20 +591,26 @@ const data={
     {
       "path": "src/hose_item_selection.h",
       "group": "Tools",
-      "summary": "Training indexed owner selection/rescan match original P-code; Axe gates and attachment commit are source-mapped, while runtime integration remains open.",
+      "summary": "Training indexed owner selection/rescan and Axe +0x3C callbacks compare with original P-code; Axe +0x38 gate and attachment commit remain source-mapped.",
       "evidence": "evidence/hose-spray/item-selection-pcode-audit.md",
       "units": [
         [
           "0044C840",
           "Hose attach/detach selection",
           "partial",
-          "Eight owner executions compare slot writes, mode and 20 ordered item/UI calls. This selection-only fixture stops before frame construction; see the separate owner-frame oracle."
+          "Twelve owner executions compare slot writes, mode and ordered item/UI calls. Four explicitly source-mapped Axe gate inputs cover idle, secondary-busy, disabled-primary-busy and enabled-primary-busy behavior; the leaf gate is a controlled boundary, not executed P-code. This selection-only fixture stops before frame construction; see the separate owner-frame oracle."
         ],
         [
           "0044C2A0",
           "Item activation gate and setter",
           "partial",
-          "Axe idle gate initialization and +0x3C activation dispatch are source-mapped; busy-state cadence and full callback effects remain open."
+          "Selection order and setter are compared in the owner fixture. Axe +0x38 switchability still uses a source-mapped gate adapter; busy-state cadence remains open."
+        ],
+        [
+          "0045F9B0",
+          "Axe activation/deactivation callback",
+          "verified",
+          "Four hash-pinned P-code cases execute 0045F9B0/0045F620 and both 0045FA30 child routes; only animation and follower-reparent services are stubbed."
         ],
         [
           "0044C360",
@@ -613,7 +619,7 @@ const data={
           "Populated-slot order and empty-list selected-index clear match original P-code."
         ]
       ],
-      "bytes": 4045
+      "bytes": 6865
     },
     {
       "path": "src/tool_follow.h",
@@ -1370,14 +1376,14 @@ const data={
     {
       "path": "src/player_fire_exposure.h",
       "group": "Player",
-      "summary": "Stores source-ordered x87 exposure into binary32, then tests the still-live extended sum for strict passout. The whole 00451640 message now composes the pain, exposure and passout components; producer cadence and host services remain open.",
+      "summary": "The 00451640 exposure accumulator matches original x87 store/compare behavior through the sub-ULP edge; surrounding services and live scheduling remain open.",
       "evidence": "evidence/fire-update/player-exposure-accumulation-audit.md",
       "units": [
         [
           "00451640",
           "Exposure accumulation",
-          "partial",
-          "Three representative original suffix cases run through the composed message handler; sub-ULP source edge, real passout services and live dispatch remain open.",
+          "verified",
+          "Four original suffix captures, including a sub-ULP increment that stores 1.0f but takes the original strict passout branch, match the native accumulator/composition; live host services and scheduling remain outside this helper.",
           "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
         ]
       ],
@@ -1393,7 +1399,7 @@ const data={
           "00451640",
           "Player 0x7531 message transaction",
           "partial",
-          "Three original suffix cases, callback order and failed-state no-op pass; facing, service bindings, producer and cadence remain open.",
+          "Four original suffix cases, callback order, passout composition and failed-state no-op pass; facing/service bindings, producer and cadence remain open.",
           "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
         ]
       ],
@@ -1717,9 +1723,126 @@ const data={
         ]
       ],
       "bytes": 7415
+    },
+    {
+      "path": "src/axe_action_callbacks.h",
+      "group": "Axe",
+      "summary": "Press and held callback slices are compared against original P-code; the child callback and collision services remain explicit boundaries.",
+      "evidence": "evidence/hose-spray/axe-action-root-pcode-oracle.json",
+      "units": [
+        [
+          "0045F8F0",
+          "Axe press callback",
+          "verified",
+          "Original press-handler P-code cases match the native slice; the child +0x18 service is stubbed in the oracle."
+        ],
+        [
+          "0045FAD0",
+          "Axe held callback",
+          "verified",
+          "Original held-handler P-code cases match the native slice; strike behavior is covered by separate modules."
+        ]
+      ],
+      "bytes": 2423
+    },
+    {
+      "path": "src/axe_child_action_update.h",
+      "group": "Axe",
+      "summary": "Bounded child action-update slice is compared to original P-code; engine-side action services are isolated.",
+      "evidence": "evidence/hose-spray/axe-child-action-update-pcode-oracle.json",
+      "units": [
+        [
+          "00460920",
+          "Child action update",
+          "verified",
+          "11 original P-code cases match this source-comparable update slice."
+        ]
+      ],
+      "bytes": 2592
+    },
+    {
+      "path": "src/axe_child_think.h",
+      "group": "Axe",
+      "summary": "Bounded child think slice is compared to original P-code; unrelated child behavior remains open.",
+      "evidence": "evidence/hose-spray/axe-child-think-pcode-oracle.json",
+      "units": [
+        [
+          "004610E0",
+          "Child think",
+          "verified",
+          "7 original P-code cases match this source-comparable think slice."
+        ]
+      ],
+      "bytes": 3669
+    },
+    {
+      "path": "src/axe_strike_pose.h",
+      "group": "Axe",
+      "summary": "Pre-collision strike pose and swept-query construction are reproduced; collision service results remain a separate boundary.",
+      "evidence": "evidence/hose-spray/axe-strike-pcode-oracle.json",
+      "units": [
+        [
+          "00460B90",
+          "Strike pose and query",
+          "verified",
+          "Three captured original query snapshots match by raw float bits; no collision outcome is claimed here."
+        ]
+      ],
+      "bytes": 3836
+    },
+    {
+      "path": "src/axe_world_collision.h",
+      "group": "Axe",
+      "summary": "World-selection and hit-output wrapper is compared; the Genesis geWorld_Collision implementation remains injected.",
+      "evidence": "evidence/hose-spray/axe-world-collision-pcode-oracle.json",
+      "units": [
+        [
+          "00492CE0",
+          "World collision wrapper",
+          "verified",
+          "Three original wrapper cases match, including selected world, arguments, and conditional output writes."
+        ]
+      ],
+      "bytes": 2695
+    },
+    {
+      "path": "src/bmodel_axe_hit.h",
+      "group": "Axe",
+      "summary": "BModel Axe hit transaction slice is compared; destroy and script-engine services remain explicit boundaries.",
+      "evidence": "evidence/hose-spray/bmodel-axe-hit-pcode-oracle.json",
+      "units": [
+        [
+          "0043E2A0",
+          "BModel Axe hit transaction",
+          "verified",
+          "10 original P-code cases match the bounded transaction slice."
+        ]
+      ],
+      "bytes": 2750
+    },
+    {
+      "path": "src/bmodel_candidate_iterator.h",
+      "group": "Axe",
+      "summary": "The caller cursor constructor and list-link traversal slice are source-derived; live Axe candidate membership/order is still unknown.",
+      "evidence": "evidence/hose-spray/bmodel-candidate-iterator-pcode-oracle.json",
+      "units": [
+        [
+          "00481C00",
+          "Caller cursor construction",
+          "verified",
+          "Original outer P-code confirms cursor zeroing and the nested iterator call; live candidate list membership is unresolved."
+        ],
+        [
+          "00481BA0",
+          "Candidate link traversal",
+          "verified",
+          "Controlled layouts exercise the source-derived link loop; real registration at 00481B00 is an injected boundary."
+        ]
+      ],
+      "bytes": 1995
     }
   ],
-  "test_status": "Recorded full CTest: 40/40 passed before training_liftable_sequence.h was added. Since then, its header passes a standalone C++17 syntax check, and focused acceptance passed: victim_frame_ops + victim_transactions 2/2; hose_valve_callback_pcode 1/1. The liftable header is not live-connected or covered by CTest.",
+  "test_status": "Current CTest inventory: 48 tests. The last recorded full suite was 40/40 before later tests were added; no 48-test full run is recorded. Recent focused Axe acceptance passed: BModel hit 10 cases, strike pose 3, world collision 3, and candidate cursor 4, each with zero mismatches.",
   "modules": [
     {
       "name": "Runtime, startup, and actor schedule",
@@ -2592,6 +2715,54 @@ const data={
       "boundary": "existing-entry",
       "entry_address": "0049E2C0",
       "function_name": "FUN_0049e2c0"
+    },
+    "0043E2A0": {
+      "address": "0043E2A0",
+      "file": "evidence/ghidra-original-c/0043E2A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043E2A0",
+      "function_name": "FUN_0043e2a0",
+      "source_kind": "preserved-snapshot"
+    },
+    "00460B90": {
+      "address": "00460B90",
+      "file": "evidence/ghidra-original-c/00460B90.c",
+      "boundary": "existing-entry",
+      "entry_address": "00460B90",
+      "function_name": "FUN_00460b90",
+      "source_kind": "preserved-snapshot"
+    },
+    "00460920": {
+      "address": "00460920",
+      "file": "evidence/item-pose/live-extinguisher/00460920_FUN_00460920.c",
+      "boundary": "existing-entry",
+      "entry_address": "00460920",
+      "function_name": "FUN_00460920",
+      "source_kind": "preserved-snapshot"
+    },
+    "004610E0": {
+      "address": "004610E0",
+      "file": "evidence/item-pose/live-extinguisher/004610e0_FUN_004610e0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004610E0",
+      "function_name": "FUN_004610e0",
+      "source_kind": "preserved-snapshot"
+    },
+    "00481C00": {
+      "address": "00481C00",
+      "file": "evidence/extinguisher-contact/00481c00_FUN_00481c00.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481C00",
+      "function_name": "FUN_00481c00",
+      "source_kind": "preserved-snapshot"
+    },
+    "00481BA0": {
+      "address": "00481BA0",
+      "file": "evidence/item-pose/live-extinguisher/contact-dispatch/00481ba0_FUN_00481ba0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481BA0",
+      "function_name": "FUN_00481ba0",
+      "source_kind": "preserved-snapshot"
     }
   },
   "ghidra_source_provenance": {
@@ -2604,19 +2775,19 @@ const data={
       "existing-entry": 93,
       "scratch-defined": 11
     },
-    "note": "Exports use the preserved database copied to scratch; 11 missing boundaries were created only in that scratch copy."
+    "note": "Exports use the preserved database copied to scratch; 11 missing boundaries were created only in that scratch copy. Additional preserved Ghidra snapshots are linked from file entries but remain outside the canonical 104-address index."
   }
 };
 const names=[];
-const completionSnapshots=[{label:'Oct 11 · 7:50 PM',completed:15,commit:'f7e0e4f',event:'earliest saved ledger'},{label:'Oct 12 · 3:14 AM',completed:16,commit:'fdad11f',event:'src/view_update.h completed'},{label:'Oct 12 · 4:53 AM',completed:17,commit:'01a5c45',event:'src/throw_scalar.h completed'},{label:'Current tracker',completed:19,commit:'working tree',event:'victim_frame_ops.h and hose_valve_callback.h verified'}];
+const completionSnapshots=[{label:'Oct 11 · 7:50 PM',completed:15,commit:'f7e0e4f',event:'earliest saved ledger'},{label:'Oct 12 · 3:14 AM',completed:16,commit:'fdad11f',event:'src/view_update.h completed'},{label:'Oct 12 · 4:53 AM',completed:17,commit:'01a5c45',event:'src/throw_scalar.h completed'},{label:'Earlier tracker',completed:19,commit:'working tree',event:'previous chart point'},{label:'Oct 12 · 10:27 AM',completed:21,commit:'pre-Axe ledger',event:'current count from all verified file entries'},{label:'Oct 12 · 11:44 AM',completed:28,commit:'working tree · b51371a',event:'seven bounded Axe files added'}];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const bucketFor=f=>{const a=f.units.map(u=>u[2]);if(a.length&&a.every(s=>s==='verified'))return'completed';if(a.some(s=>['verified','connected','partial'].includes(s)))return'progress';return'not-started'};
 const totalUnits=data.files.reduce((n,f)=>n+f.units.length,0);
 const counts={completed:0,progress:0,'not-started':0};data.files.forEach(f=>counts[bucketFor(f)]++);
-const ghidraCount=Object.keys(data.ghidra_sources||{}).length;
+const ghidraCount=data.ghidra_source_provenance.address_count;
 document.getElementById('snapshot').textContent=`Snapshot ${data.snapshot} · base ${data.commit} · ${data.scope} scope`;
 document.getElementById('metrics').innerHTML=`<div class="metric"><strong>${data.files.length}</strong><span>indexed native files</span></div><div class="metric"><strong>${totalUnits}</strong><span>tracked routine entries</span></div><div class="metric"><strong>${ghidraCount}</strong><span>unique Ghidra address exports</span></div><div class="metric"><strong>${counts.completed} / ${data.files.length}</strong><span>files completed in tracked scope</span></div>`;
-for(const [key,id] of [['completed','completed'],['progress','progress'],['not-started','not-started']]){document.getElementById(id+'-count').textContent=counts[key];const target=document.getElementById(id);const files=data.files.filter(f=>bucketFor(f)===key).sort((a,b)=>a.path.localeCompare(b.path));if(!files.length){target.innerHTML='<div class="empty">No files in this group.</div>';continue}target.innerHTML=files.map(f=>{const unitHtml=f.units.map(u=>{const addr=/^[0-9a-fA-F]{8}$/.test(u[0])?u[0].toUpperCase():null;const original=addr&&(data.ghidra_sources||{})[addr];const ev=u[4]||f.evidence;const status=u[2];const gLink=original?`<a href="${esc(original.file)}">Ghidra C · ${esc(original.function_name)} · ${original.boundary==='scratch-defined'?'scratch boundary':original.boundary==='inside-function'?'inside function':'function entry'}</a>`:'<span class="boundary">No address-matched Ghidra function in the current index</span>';return `<div class="unit"><div class="unit-title"><strong>${esc(u[1])}${addr?` <span class="small">${addr}</span>`:''}</strong><span class="status ${esc(status)}">${esc(status)}</span></div><div class="routine-links">${gLink}${ev?`<a href="${esc(ev)}">Evidence</a>`:''}</div><p class="note">${esc(u[3])}</p></div>`}).join('');return `<details class="file"><summary><span class="path">${esc(f.path)}</span><span class="small">${f.units.length} routine${f.units.length===1?'':'s'}</span></summary><div class="file-content"><div class="file-meta"><span class="tag">${esc(f.group)}</span><a class="source-link small" href="${esc(f.path)}">Open native file</a></div><p class="summary-text">${esc(f.summary)}</p>${unitHtml}</div></details>`}).join('')}
-function drawCompletedChart(){const W=980,H=350,L=82,R=930,T=35,B=245,MIN=14,MAX=20,xs=completionSnapshots.map((_,i)=>L+20+i*((R-L-40)/(completionSnapshots.length-1))),y=v=>B-(v-MIN)/(MAX-MIN)*(B-T);let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="complete-title complete-desc"><title id="complete-title">Completed native files across saved progress snapshots</title><desc id="complete-desc">The count starts at 15 on October 11, rises to 16 when view_update.h is completed, rises to 17 when throw_scalar.h is completed, and is 19 in the current tracker after victim_frame_ops.h and hose_valve_callback.h are verified.</desc><text x="${L}" y="18" font-size="12" fill="#586779">native files fully verified in the tracked scope</text>`;for(let v=MIN;v<=MAX;v++){const yy=y(v);svg+=`<line x1="${L}" x2="${R}" y1="${yy}" y2="${yy}" stroke="#e5eaf1"/><text x="${L-12}" y="${yy+4}" text-anchor="end" font-size="11" fill="#718096">${v}</text>`}let d=`M ${xs[0]} ${y(completionSnapshots[0].completed)}`;for(let i=1;i<completionSnapshots.length;i++)d+=` H ${xs[i]} V ${y(completionSnapshots[i].completed)}`;svg+=`<path d="${d}" fill="none" stroke="#2774a8" stroke-width="3" stroke-linejoin="round"/>`;completionSnapshots.forEach((p,i)=>{const x=xs[i],yy=y(p.completed);svg+=`<circle cx="${x}" cy="${yy}" r="6" fill="#2774a8" stroke="white" stroke-width="2"/><text x="${x}" y="${yy-12}" text-anchor="middle" font-size="13" font-weight="700" fill="#245e99">${p.completed}</text><text x="${x}" y="${B+24}" text-anchor="middle" font-size="11" fill="#445368">${esc(p.label)}</text><text x="${x}" y="${B+42}" text-anchor="middle" font-size="10" fill="#718096">${esc(p.commit)}</text>`});svg+=`</svg>`;document.getElementById('completion-chart').innerHTML=svg}drawCompletedChart();document.getElementById('completion-history').textContent='40 committed progress snapshots are available. Two files reached completed after the first snapshot: src/view_update.h and src/throw_scalar.h. The current tracker adds src/victim_frame_ops.h and src/hose_valve_callback.h after their existing acceptance checks passed. Current count: 19 completed of 84 indexed files; the latest point is a working-tree snapshot.';document.getElementById('validation').textContent=`${data.test_status} Ghidra export provenance: ${data.ghidra_source_provenance.boundary_counts['existing-entry']} existing function entries and ${data.ghidra_source_provenance.boundary_counts['scratch-defined']} scratch-defined boundaries. See each routine’s links for source and evidence.`;
+for(const [key,id] of [['completed','completed'],['progress','progress'],['not-started','not-started']]){document.getElementById(id+'-count').textContent=counts[key];const target=document.getElementById(id);const files=data.files.filter(f=>bucketFor(f)===key).sort((a,b)=>a.path.localeCompare(b.path));if(!files.length){target.innerHTML='<div class="empty">No files in this group.</div>';continue}target.innerHTML=files.map(f=>{const unitHtml=f.units.map(u=>{const addr=/^[0-9a-fA-F]{8}$/.test(u[0])?u[0].toUpperCase():null;const original=addr&&(data.ghidra_sources||{})[addr];const ev=u[4]||f.evidence;const status=u[2];const gLink=original?`<a href="${esc(original.file)}">${original.source_kind==='preserved-snapshot'?'Preserved Ghidra C':'Ghidra C'} · ${esc(original.function_name)} · ${original.boundary==='scratch-defined'?'scratch boundary':original.boundary==='inside-function'?'inside function':'function entry'}</a>`:'<span class="boundary">No address-matched Ghidra function in the current index</span>';return `<div class="unit"><div class="unit-title"><strong>${esc(u[1])}${addr?` <span class="small">${addr}</span>`:''}</strong><span class="status ${esc(status)}">${esc(status)}</span></div><div class="routine-links">${gLink}${ev?`<a href="${esc(ev)}">Evidence</a>`:''}</div><p class="note">${esc(u[3])}</p></div>`}).join('');return `<details class="file"><summary><span class="path">${esc(f.path)}</span><span class="small">${f.units.length} routine${f.units.length===1?'':'s'}</span></summary><div class="file-content"><div class="file-meta"><span class="tag">${esc(f.group)}</span><a class="source-link small" href="${esc(f.path)}">Open native file</a></div><p class="summary-text">${esc(f.summary)}</p>${unitHtml}</div></details>`}).join('')}
+function drawCompletedChart(){const W=980,H=350,L=82,R=930,T=35,B=245,MIN=14,MAX=30,xs=completionSnapshots.map((_,i)=>L+20+i*((R-L-40)/(completionSnapshots.length-1))),y=v=>B-(v-MIN)/(MAX-MIN)*(B-T);let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="complete-title complete-desc"><title id="complete-title">Completed native files across saved progress snapshots</title><desc id="complete-desc">The saved ledger rises from 15 to 17 completed files, then to 19 and 21; the current working tree records 28 of 91 files, including seven bounded Axe modules.</desc><text x="${L}" y="18" font-size="12" fill="#586779">native files fully verified in the tracked scope</text>`;for(let v=MIN;v<=MAX;v++){const yy=y(v);svg+=`<line x1="${L}" x2="${R}" y1="${yy}" y2="${yy}" stroke="#e5eaf1"/><text x="${L-12}" y="${yy+4}" text-anchor="end" font-size="11" fill="#718096">${v}</text>`}let d=`M ${xs[0]} ${y(completionSnapshots[0].completed)}`;for(let i=1;i<completionSnapshots.length;i++)d+=` H ${xs[i]} V ${y(completionSnapshots[i].completed)}`;svg+=`<path d="${d}" fill="none" stroke="#2774a8" stroke-width="3" stroke-linejoin="round"/>`;completionSnapshots.forEach((p,i)=>{const x=xs[i],yy=y(p.completed);svg+=`<circle cx="${x}" cy="${yy}" r="6" fill="#2774a8" stroke="white" stroke-width="2"/><text x="${x}" y="${yy-12}" text-anchor="middle" font-size="13" font-weight="700" fill="#245e99">${p.completed}</text><text x="${x}" y="${B+24}" text-anchor="middle" font-size="11" fill="#445368">${esc(p.label)}</text><text x="${x}" y="${B+42}" text-anchor="middle" font-size="10" fill="#718096">${esc(p.commit)}</text>`});svg+=`</svg>`;document.getElementById('completion-chart').innerHTML=svg}drawCompletedChart();document.getElementById('completion-history').textContent='The prior file ledger already had 21 of 84 files completed; its chart was stale at 19. This update records seven verified, bounded Axe module files, bringing the current viewer to 28 of 91 native files. Completion is limited to the routines shown on each card and their documented service boundaries.';document.getElementById('validation').textContent=`${data.test_status} Ghidra export provenance: ${data.ghidra_source_provenance.boundary_counts['existing-entry']} existing function entries and ${data.ghidra_source_provenance.boundary_counts['scratch-defined']} scratch-defined boundaries. See each routine’s links for source and evidence.`;
 </script>
 </body></html>

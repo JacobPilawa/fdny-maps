@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "working tree based on 3ec239a",
-  "tests": 41,
+  "commit": "working tree based on b51371a",
+  "tests": 48,
   "scope": "Training",
   "files": [
     {
@@ -1702,9 +1702,126 @@
         ]
       ],
       "bytes": 7415
+    },
+    {
+      "path": "src/axe_action_callbacks.h",
+      "group": "Axe",
+      "summary": "Press and held callback slices are compared against original P-code; the child callback and collision services remain explicit boundaries.",
+      "evidence": "evidence/hose-spray/axe-action-root-pcode-oracle.json",
+      "units": [
+        [
+          "0045F8F0",
+          "Axe press callback",
+          "verified",
+          "Original press-handler P-code cases match the native slice; the child +0x18 service is stubbed in the oracle."
+        ],
+        [
+          "0045FAD0",
+          "Axe held callback",
+          "verified",
+          "Original held-handler P-code cases match the native slice; strike behavior is covered by separate modules."
+        ]
+      ],
+      "bytes": 2423
+    },
+    {
+      "path": "src/axe_child_action_update.h",
+      "group": "Axe",
+      "summary": "Bounded child action-update slice is compared to original P-code; engine-side action services are isolated.",
+      "evidence": "evidence/hose-spray/axe-child-action-update-pcode-oracle.json",
+      "units": [
+        [
+          "00460920",
+          "Child action update",
+          "verified",
+          "11 original P-code cases match this source-comparable update slice."
+        ]
+      ],
+      "bytes": 2592
+    },
+    {
+      "path": "src/axe_child_think.h",
+      "group": "Axe",
+      "summary": "Bounded child think slice is compared to original P-code; unrelated child behavior remains open.",
+      "evidence": "evidence/hose-spray/axe-child-think-pcode-oracle.json",
+      "units": [
+        [
+          "004610E0",
+          "Child think",
+          "verified",
+          "7 original P-code cases match this source-comparable think slice."
+        ]
+      ],
+      "bytes": 3669
+    },
+    {
+      "path": "src/axe_strike_pose.h",
+      "group": "Axe",
+      "summary": "Pre-collision strike pose and swept-query construction are reproduced; collision service results remain a separate boundary.",
+      "evidence": "evidence/hose-spray/axe-strike-pcode-oracle.json",
+      "units": [
+        [
+          "00460B90",
+          "Strike pose and query",
+          "verified",
+          "Three captured original query snapshots match by raw float bits; no collision outcome is claimed here."
+        ]
+      ],
+      "bytes": 3836
+    },
+    {
+      "path": "src/axe_world_collision.h",
+      "group": "Axe",
+      "summary": "World-selection and hit-output wrapper is compared; the Genesis geWorld_Collision implementation remains injected.",
+      "evidence": "evidence/hose-spray/axe-world-collision-pcode-oracle.json",
+      "units": [
+        [
+          "00492CE0",
+          "World collision wrapper",
+          "verified",
+          "Three original wrapper cases match, including selected world, arguments, and conditional output writes."
+        ]
+      ],
+      "bytes": 2695
+    },
+    {
+      "path": "src/bmodel_axe_hit.h",
+      "group": "Axe",
+      "summary": "BModel Axe hit transaction slice is compared; destroy and script-engine services remain explicit boundaries.",
+      "evidence": "evidence/hose-spray/bmodel-axe-hit-pcode-oracle.json",
+      "units": [
+        [
+          "0043E2A0",
+          "BModel Axe hit transaction",
+          "verified",
+          "10 original P-code cases match the bounded transaction slice."
+        ]
+      ],
+      "bytes": 2750
+    },
+    {
+      "path": "src/bmodel_candidate_iterator.h",
+      "group": "Axe",
+      "summary": "The caller cursor constructor and list-link traversal slice are source-derived; live Axe candidate membership/order is still unknown.",
+      "evidence": "evidence/hose-spray/bmodel-candidate-iterator-pcode-oracle.json",
+      "units": [
+        [
+          "00481C00",
+          "Caller cursor construction",
+          "verified",
+          "Original outer P-code confirms cursor zeroing and the nested iterator call; live candidate list membership is unresolved."
+        ],
+        [
+          "00481BA0",
+          "Candidate link traversal",
+          "verified",
+          "Controlled layouts exercise the source-derived link loop; real registration at 00481B00 is an injected boundary."
+        ]
+      ],
+      "bytes": 1995
     }
   ],
-  "test_status": "Recorded full CTest: 40/40 passed before training_liftable_sequence.h was added. Since then, its header passes a standalone C++17 syntax check, and focused acceptance passed: victim_frame_ops + victim_transactions 2/2; hose_valve_callback_pcode 1/1. The liftable header is not live-connected or covered by CTest. Latest extinguisher acceptance: ./run.sh --fire-message-check built fdny-training and passed the original message/registry oracle with zero mismatches; ./build/fdny-training --extinguisher-contact-path-check compared 135 values with zero mismatches. This is focused validation, not a new full CTest run. Latest Player exposure closure: read-only Ghidra captured the hash-matched sub-ULP original x87 branch; player_fire_exposure and player_fire_pcode CTests passed 2/2. No full-suite rerun.",
+  "test_status": "Current CTest inventory: 48 tests. The last recorded full suite was 40/40 before later tests were added; no 48-test full run is recorded. Recent focused Axe acceptance passed: BModel hit 10 cases, strike pose 3, world collision 3, and candidate cursor 4, each with zero mismatches.",
   "modules": [
     {
       "name": "Runtime, startup, and actor schedule",
@@ -2577,6 +2694,54 @@
       "boundary": "existing-entry",
       "entry_address": "0049E2C0",
       "function_name": "FUN_0049e2c0"
+    },
+    "0043E2A0": {
+      "address": "0043E2A0",
+      "file": "evidence/ghidra-original-c/0043E2A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043E2A0",
+      "function_name": "FUN_0043e2a0",
+      "source_kind": "preserved-snapshot"
+    },
+    "00460B90": {
+      "address": "00460B90",
+      "file": "evidence/ghidra-original-c/00460B90.c",
+      "boundary": "existing-entry",
+      "entry_address": "00460B90",
+      "function_name": "FUN_00460b90",
+      "source_kind": "preserved-snapshot"
+    },
+    "00460920": {
+      "address": "00460920",
+      "file": "evidence/item-pose/live-extinguisher/00460920_FUN_00460920.c",
+      "boundary": "existing-entry",
+      "entry_address": "00460920",
+      "function_name": "FUN_00460920",
+      "source_kind": "preserved-snapshot"
+    },
+    "004610E0": {
+      "address": "004610E0",
+      "file": "evidence/item-pose/live-extinguisher/004610e0_FUN_004610e0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004610E0",
+      "function_name": "FUN_004610e0",
+      "source_kind": "preserved-snapshot"
+    },
+    "00481C00": {
+      "address": "00481C00",
+      "file": "evidence/extinguisher-contact/00481c00_FUN_00481c00.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481C00",
+      "function_name": "FUN_00481c00",
+      "source_kind": "preserved-snapshot"
+    },
+    "00481BA0": {
+      "address": "00481BA0",
+      "file": "evidence/item-pose/live-extinguisher/contact-dispatch/00481ba0_FUN_00481ba0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481BA0",
+      "function_name": "FUN_00481ba0",
+      "source_kind": "preserved-snapshot"
     }
   },
   "ghidra_source_provenance": {
@@ -2589,6 +2754,6 @@
       "existing-entry": 93,
       "scratch-defined": 11
     },
-    "note": "Exports use the preserved database copied to scratch; 11 missing boundaries were created only in that scratch copy."
+    "note": "Exports use the preserved database copied to scratch; 11 missing boundaries were created only in that scratch copy. Additional preserved Ghidra snapshots are linked from file entries but remain outside the canonical 104-address index."
   }
 }

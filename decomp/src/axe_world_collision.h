@@ -11,7 +11,7 @@ namespace AxeWorldCollision {
 using Vec3 = std::array<float, 3>;
 
 struct State {
-    uint32_t receiver{};       // __thiscall ECX, Axe/entity-like object
+    uint32_t receiver{};       // __thiscall ECX; carries world-selector fields, not the selected world pointer
     uint32_t worldAtPlus8{};   // *(receiver + 0x8 + 0x78), inactive mode
     uint32_t worldAtPlusB4{};  // *(receiver + 0xb4 + 0x78), active mode
     uint8_t useB4{};           // *(uint8_t *)(receiver + 0x160)
