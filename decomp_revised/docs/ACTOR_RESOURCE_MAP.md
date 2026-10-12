@@ -57,6 +57,15 @@ not yet an original-runtime parity result. The material records retain opaque
 selection still needs to be confirmed. The compact inventory records each
 material slot, bitmap ID, and numbered embedded bitmap entry for follow-up.
 
+Victim sound cues are also joined from `victims.srf` through `sound.rrf`. The
+seven actor definitions reference 20 unique WAV paths. They were missing from
+both Desktop game copies, but are present in the supplied InstallShield disc.
+All 127 WAV/MP3 files under the disc's `Main/Data/Snd/` were extracted into the
+ignored local `inputs/original/Data/Snd/` tree; the five preexisting audio files
+matched byte-for-byte. The 20 referenced victim voice paths now resolve. The
+versioned input manifest records every extracted file's size and SHA-256; the
+retail audio is not checked in.
+
 One authored type remains unresolved: `subway_b` contains a victim whose
 `D_Type` is `boy1`, absent from `victims.srf`; the exporter records this as
 unresolved rather than substituting `boy`. Preserve `D_Type` and the unresolved

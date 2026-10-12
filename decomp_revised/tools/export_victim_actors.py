@@ -20,17 +20,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import extract_act as act  # noqa: E402
 
 
-def parse_victim_definitions(path: Path) -> dict[str, int]:
-    result: dict[str, int] = {}
-    current: str | None = None
+def parse_victim_definitions(path: Path) -> dict[str, dict[str, str]]:
+    result: dict[str, dict[str, str]] = {}
+    current: dict[str, str] | None = None
     for line in path.read_text(errors="replace").splitlines():
         victim = re.match(r"\s*Victim:\s*(\S+)\s*$", line, re.IGNORECASE)
-        model = re.match(r"\s*Model:\s*(\d+)\s*$", line, re.IGNORECASE)
         if victim:
-            current = victim.group(1).lower()
-        elif model and current:
-            result[current] = int(model.group(1))
-            current = None
+            if current:
+                result[current["victim"].lower()] = current
+            current = {"victim": victim.group(1)}
+        elif current and ":" in line:
+            key, value = line.split(":", 1)
+            current[key.strip().lower()] = value.strip()
+    if current:
+        result[current["victim"].lower()] = current
     return result
 
 
@@ -39,6 +42,17 @@ def parse_model_resources(path: Path) -> dict[int, str]:
         int(model): resource.replace("\\", "/")
         for model, resource in re.findall(
             r'ROC_MODEL\s+(\d+)\s+"([^"]+\.act)"',
+            path.read_text(errors="replace"),
+            re.IGNORECASE,
+        )
+    }
+
+
+def parse_sound_resources(path: Path) -> dict[str, str]:
+    return {
+        sound_id.lower(): resource.replace("\\", "/")
+        for sound_id, resource in re.findall(
+            r'ROC_SOUND_\w+\s+(\S+)\s+\d+\s+\d+\s+"([^"]+\.wav)"',
             path.read_text(errors="replace"),
             re.IGNORECASE,
         )
@@ -73,6 +87,8 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     columns = [
         "victim_type", "model_id", "resource_act_path", "source_sha256",
         "source_file_exists", "map_entity_count", "map_file_count", "used_maps",
+        "beckon_sound_ids", "rescue_sound_id", "beckon_delay_min", "beckon_delay_max",
+        "speech_names", "referenced_sound_paths", "missing_sound_paths",
         "geometry_vertices", "lod_count", "texture_count", "motion_count",
         "material_slots", "bitmap_entry_names", "motion_names", "translation_interpolation_modes",
         "rotation_interpolation_modes", "unsupported_native_actor_pose_modes",
@@ -96,15 +112,26 @@ def main() -> int:
     data = args.inputs / "Data"
     victim_defs = parse_victim_definitions(data / "ResDefs/victims.srf")
     model_resources = parse_model_resources(data / "ResDefs/rescue.rrf")
+    sound_resources = parse_sound_resources(data / "ResDefs/sound.rrf")
     with (ROOT / "tracker/victim_resource_crosswalk.csv").open(newline="") as stream:
         crosswalk = {row["victim_type"].lower(): row for row in csv.DictReader(stream)}
 
     args.output.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, str]] = []
     for victim_type, cross in sorted(crosswalk.items()):
-        model_id = victim_defs.get(victim_type)
+        victim_definition = victim_defs.get(victim_type, {})
+        model_id = int(victim_definition["model"]) if victim_definition.get("model", "").isdigit() else None
         resource_path = model_resources.get(model_id) if model_id is not None else None
         source = resolve_case_insensitive(args.inputs, resource_path or "")
+        beckon_ids = [part.strip() for part in victim_definition.get("beckon", "").split(",") if part.strip()]
+        rescue_id = victim_definition.get("rescue", "")
+        referenced_sound_ids = list(dict.fromkeys(beckon_ids + ([rescue_id] if rescue_id else [])))
+        referenced_sound_paths = [sound_resources[name.lower()] for name in referenced_sound_ids if name.lower() in sound_resources]
+        missing_sound_paths = [
+            path.replace("\\", "/")
+            for path in referenced_sound_paths
+            if resolve_case_insensitive(args.inputs, path) is None
+        ]
         row = {
             "victim_type": victim_type,
             "model_id": str(model_id) if model_id is not None else "",
@@ -114,6 +141,13 @@ def main() -> int:
             "map_entity_count": cross["map_entity_count"],
             "map_file_count": cross["map_file_count"],
             "used_maps": cross["map_keys"],
+            "beckon_sound_ids": ";".join(beckon_ids),
+            "rescue_sound_id": rescue_id,
+            "beckon_delay_min": victim_definition.get("minbeckondelay", ""),
+            "beckon_delay_max": victim_definition.get("maxbeckondelay", ""),
+            "speech_names": victim_definition.get("speechnames", ""),
+            "referenced_sound_paths": ";".join(referenced_sound_paths),
+            "missing_sound_paths": ";".join(missing_sound_paths),
             "geometry_vertices": "",
             "lod_count": "",
             "texture_count": "",

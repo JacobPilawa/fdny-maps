@@ -34,6 +34,10 @@ Checked 2026-10-12. The requested `decomp.dev/projects` page blocked automated r
 
 The fresh FDNY executable imports 116 Genesis symbols. `Genesis.dll` exports 536 names; `D3DDrv.dll` exports `DriverHook` and imports DirectDraw. Raw callsite analysis now maps Genesis' five-candidate dynamic driver scan, interface checks, and first table-method invocation. It does not establish a source-to-binary match or that an existing modernized engine is a drop-in for FDNY.
 
+## Retail asset containers
+
+- [Unshield](https://github.com/twogood/unshield) — upstream MIT-licensed tool/library used locally to list and extract the InstallShield cabinets on the user-provided CD image. Its source commit and version are recorded in the reverse-engineering log; the utility was built under `/private/tmp`, not installed globally or copied into this repository.
+
 ## LLM-assisted decompilation
 
 - [Teaching an LLM to Decompile the Nintendo 64](https://huggingface.co/blog/MatthewReingold/n64-decomp-dev-blog) — a recent project write-up that sets an evaluation target first, filters on exact-match training examples, and stresses original compiler/flags in recompilation. It is useful for workflow lessons; it is not evidence that an LLM can automatically reconstruct this game's behavior.
