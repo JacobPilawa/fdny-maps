@@ -3,7 +3,7 @@
 
 int main() {
     PlayerAshPool pool;
-    int descriptors=0, constructions=0, presents=0, spawns=0, resets=0;
+    int descriptors=0, constructions=0, presents=0, spawns=0;
     Random rng(1);
     PlayerAshPoolServices services;
     services.addDescriptor=[&](size_t c,uint32_t flags,size_t,
@@ -23,7 +23,6 @@ int main() {
     services.spawnPoint=[&](float angle,float distance,Random&) {
         ++spawns; return std::array<float,3>{angle,distance,0.0f};
     };
-    services.resetAnimation=[&](PlayerAshParticle&,Random&) { ++resets; };
     pool.initialize(services,rng);
     pool.initialize(services,rng);
     assert(descriptors==10 && constructions==100 && pool.density==1.0f);
@@ -45,11 +44,12 @@ int main() {
     presents=0;
     pool.tick(1,rng,services);
     assert(rng.drawCount==650 && presents==100);
-    assert(spawns==50 && resets==50);
+    assert(spawns==50);
     for(size_t i=0;i<pool.particles.size();i++) assert(pool.particles[i].active==(i<50));
     for(size_t i=0;i<50;i++) {
         assert(pool.particles[i].deadline==0);
         assert(pool.particles[i].opacityScale>=0.5f && pool.particles[i].opacityScale<=1.5f);
+        assert(pool.particles[i].animationIndex==0 && pool.particles[i].nextAnimationIndex==1 && pool.particles[i].animationTimestamp==1);
         assert(pool.particles[i].spawnPosition.has_value());
         assert(pool.particles[i].vector7c[0]==0.0f && pool.particles[i].vector7c[2]==0.0f);
     }

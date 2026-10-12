@@ -20,9 +20,9 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   deadline `+0x168 = 0`. The spawn-position vector at `+0x5c` is not initialized
   by these stores, so the component represents it as unknown until spawning.
 - Initialization and tick require explicit engine-service callbacks. Opaque
-  constructor, scene transform, animation reset, and presentation work cannot
-  silently default to no-ops. Each receives the shared `Random` where indirect
-  RNG use could affect parity.
+  constructor, scene transform, and presentation work cannot silently default
+  to no-ops. These receive the shared `Random` where indirect RNG use could
+  affect parity. The direct animation reset in `0047D300` is now modeled.
 
 ## Update and activation order
 
@@ -37,9 +37,10 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   X. The fourth becomes `vector88.y`. The wrappers set dirty flag `+0xa0`.
 - An inactive entry in the scanned prefix draws angle `(0,6.2831855)` and
   distance `(10,400)`, then uses the player/camera transform chain to form its
-  spawn point. `00446470` stores that point at `+0x5c`, calls animation reset,
-  draws `(0.5,1.5)` into `+0x1c`, sets active, draws `(0.5,1.5)` into `+0xa8`,
-  clears deadline, then draws `(-80,-10)` into `vector7c.y` with X/Z set to 0.
+  spawn point. `00446470` stores that point at `+0x5c`, selects animation
+  indices 0 and 1 and timestamps them through `0047D300`, draws `(0.5,1.5)`
+  into `+0x1c`, sets active, draws `(0.5,1.5)` into `+0xa8`, clears deadline,
+  then draws `(-80,-10)` into `vector7c.y` with X/Z set to 0.
 
 ## Limits
 
@@ -54,5 +55,22 @@ ash rendering, validate Training cadence, or establish complete RNG parity.
 The focused check verifies descriptor words/flags, initial modeled fields,
 the 400 direct draws for 100 due entries under no-draw callbacks, and 50
 controlled half-density activations (250 draws). Callback no-ops are test
-stubs, not claims about the original engine. No original-process or P-code
-oracle comparison has been performed for this component.
+stubs, not claims about the original engine.
+
+The original-P-code update oracle at
+`evidence/scripts/training-setashdensity/ash-update-pcode-oracle.json` executes
+`00446510` after seeding the real game RNG and exercises its real calls to
+`0047F1B0`, `0047F1C0`, `0042D280`, and `00498B30`. Five hash-pinned cases cover
+due zero/nonzero vectors, not-yet-due, inactive, signed/unsigned deadline
+comparison across wrap, and unsigned clock wrap. The
+native check compares active state, deadline, dirty flag, output vector words,
+and bounded draw count; all six cases match. This proves the isolated update
+component only. It does not prove animation/presentation ordering, scene
+callbacks, pool scheduling, or whole-Training RNG parity.
+
+The activation oracle in `ash-activate-pcode-oracle.json` executes original
+`00446470` with the real `0047D300`/`0047D2B0` animation-index reset and real
+bounded RNG. Three hash-pinned seeds compare activation flags, animation
+indices/timestamp, spawn position, activation/opacity scales, deadline, velocity
+vector words, and call count; all cases match. The caller's angle/distance draws
+and scene transform are outside this routine-level comparison.
