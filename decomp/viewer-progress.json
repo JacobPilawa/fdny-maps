@@ -1347,7 +1347,7 @@
           "0047F960",
           "Particle presentation",
           "partial",
-          "Finite animation is now advanced in the pool component; state gates, culling, geometry/color writes and polygon submission are mapped, while render services and 130 computed calls remain open.",
+          "Finite animation, state gates, culling, geometry/color writes and polygon calls are mapped; the shared Genesis wrapper is recovered, while loaded resources and 130 other computed calls remain open.",
           "evidence/scripts/training-setashdensity/presentation-callback-audit.md"
         ],
         [
