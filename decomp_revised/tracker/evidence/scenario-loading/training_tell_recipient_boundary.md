@@ -19,8 +19,16 @@ Player handler `00451870` recognizes `escape` and reaches rescue completion thro
 ## Evidence and next work
 
 - Fresh same-hash dispatcher decompilation: [`0047a1f0_script_command_dispatch.c`](0047a1f0_script_command_dispatch.c).
-- Previous-work same-hash exports: [`004752A0`](../../../reference/previous-work/decomp/evidence/ghidra-refresh/console-audit-20261011/004752a0_FUN_004752a0.c) and [`00477740`](../../../reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-routing/00477740_FUN_00477740.c).
-- Training command audit: [`training-script-command-audit.md`](../../../reference/previous-work/decomp/evidence/training-script-command-audit.md).
+- The saved same-hash exports for `004752A0` and `00477740` are retained in the local previous-work reference but are not mirrored into the revised folder; their limited role and the missing edge are summarized above.
+- The archived [Training command audit](https://github.com/JacobPilawa/fdny-maps/blob/main/decomp/evidence/training-script-command-audit.md) provides prior context for the parser route.
 - The active trigger contact-to-event map is [`training_touch_dispatch_boundary.md`](training_touch_dispatch_boundary.md).
 
 Next, inspect the consumers and callees of `00472270`'s parsed output and determine whether its recipient name resolves through the registered ScriptActor list, then trace the resulting Player virtual command handler. Keep this as a distinct open edge until that dataflow is proven.
+
+## Focused raw-instruction follow-up (2026-10-12)
+
+A fresh raw disassembly of the pinned EXE confirms the exact argument path at the branch already identified: in `0047A1F0`, instruction `0047A301` loads the parsed value from the stack into `ECX`, and `0047A305` calls `004752A0`. The same-hash saved body for `004752A0` passes the address of its local argument to `00472270` and then returns success. Thus this call is a per-value parser/helper step; these instructions do not themselves establish recipient resolution.
+
+The body range `00472270–004727C7` was checked again against raw x86 disassembly. Its calls are direct calls to string/container, formatting/logging, allocation, and cleanup helpers; it has no direct call to `00470C50` (actor-name lookup), `00451870` (Player command handler), or any indirect call instruction. In particular, its call at `004725CA` to `00432A60` is the remaining candidate for materializing parsed data, but the destination and subsequent consumer of that data have not been tied to recipient dispatch. This is a bounded negative result: a helper called by `00472270`, or a later consumer of data it writes, could still resolve and dispatch the recipient.
+
+**Conclusion:** static evidence still does not prove that Training's `tell player escape` reaches the Player handler. Do not infer that it does (or that it cannot) from the command text, handler's matching `escape` branch, or absence of a direct call in this parser. The next focused static query is to inspect `00432A60`'s writes/return value at the `004725CA` call site, then find the consumer of that returned/appended object and follow any recipient lookup or virtual dispatch. If the materialized value escapes without a statically resolvable consumer, an original-runtime trace of this exact Training event is the evidence needed to close the edge.
