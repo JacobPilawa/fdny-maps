@@ -26,6 +26,7 @@ Workflow check (2026-10-12): OpenRAC's [function-matching workflow](https://gith
 | S2 | Establish FireRescue visual Think dispatcher, timing, and order relative to proximity, messages and tool action. Its local root `+0x14 → 0043AFE0 → 00470740 → visual slot 0` route is now known; caller remains open. | Existing fire dispatch audits |
 | V5 | Connect proximity producer, generation-aware delivery, pickup effects, escape release and exits in verified order. Compare original event transcript and actor flags. | V1–V4, S1 |
 | F1 | Connect Think recovery, size keys, terminal douse and spread using established schedule; compare fire state/size and message traces. | S2; verified fire components |
+| D1 | Recover the `00452570` burn-cooling sub-block from raw x86/original P-code; model four directional flags, `+0x3538 -= 0.1*dt`, zero clamp, flag clearing and its boundary to state-6 `00451080`. Compare native edge cases, but keep frame integration behind S1. | `evidence/player-update/00452570_FUN_00452570.c`; original EXE hash `4b3b4dc1…`; Player exposure component |
 | F2 | Port particles, conditional RNG, smoke, sound and lighting; compare pool occupancy, draws and lifetime boundaries. | F1; emitter/particle traces |
 | B1 | Connect BModel selection/lift/carry/throw and axe/destruction; compare interaction ties, transforms, contact/event queue latency. | S1; scalar throw and box fixtures |
 | H1 | Port hose attachment frames, post-view stream, suppression and detach lifecycle. Compare transforms, contacts, charge/audio and draws. | S1/S2; hose evidence |
@@ -34,6 +35,8 @@ Workflow check (2026-10-12): OpenRAC's [function-matching workflow](https://gith
 | P1 | Compare final animation/skinned vertices, scene output, restart persistence; package runnable assets/dependencies and later platform port. | Runtime parity; own retail inputs |
 
 V1–V3 and the isolated V4 components are complete. The passout/herodown composition now has a controlled integration check. Keep source tracing, integration, review and trackers coordinated; preserve isolated, composed and whole-level completion as separate claims.
+
+Current Player damage priority: finish D1 before claiming fire-burn recovery parity. The copied Ghidra export is from the same hash-pinned executable, but exact arithmetic/branch behavior should be checked from raw instructions; the separate `fire_spread/` audit's full raw evidence is not in the tracked decomp repository.
 
 ## Milestone validation and delivery
 
