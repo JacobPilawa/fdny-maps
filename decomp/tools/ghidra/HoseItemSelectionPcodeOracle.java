@@ -12,6 +12,8 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
  private static final long PLAYER=0x20010000L,ITEMS=0x20015000L,HOSE=0x20016000L,VALVE=0x20000000L;
  private static final long STACK=0x20fff000L,RETURN=0x70000000L,FRAME=0x20017000L;
  private static final long STUB=0x60000000L,HUD=0x004571a0L,HIDE=0x004a11a0L,MODE=0x00463370L,TRANSFORM=0x004977b0L;
+ private static final long AXE_GATE=0x0045f930L,AXE_CHILD_GATE=0x0045fa50L;
+ private static final long AXE_PRIMARY_VTABLE=0x2001e000L,AXE_SECONDARY_VTABLE=0x2001e100L;
  private EmulatorHelper emu;
  private final List<String> itemEvents=new ArrayList<>(),uiEvents=new ArrayList<>(),orderedEvents=new ArrayList<>();
 
@@ -30,7 +32,7 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
    new Sample("attach_from_slot0",1001,0,2,standard,can,0,0,0),
    new Sample("attach_blocked_current_item",1001,1,2,standard,new boolean[]{true,false,true,true,true},0,0,3),
    new Sample("attach_switch_current_item",1001,1,2,standard,can,0,0,0),
-   new Sample("axe_idle_gate",1001,1,2,standard,can,0,0,0),
+   new Sample("axe_idle_gate",1001,1,2,standard,can,1,0,0),
    new Sample("axe_secondary_busy_gate",1001,1,2,standard,can,0,0,3),
    new Sample("axe_primary_disabled_busy_gate",1001,1,2,standard,can,0,3,0),
    new Sample("axe_enabled_primary_busy_gate",1001,1,2,standard,can,1,3,0),
@@ -40,7 +42,7 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
    new Sample("detach_first_candidate_is_selected",1002,1,3,new int[]{-1,1,-1,-1,4},can,0,0,0),
    new Sample("detach_mode_already2",1002,4,2,standard,can,0,0,0));
   List<String> rows=new ArrayList<>();for(Sample c:cases)rows.add(capture(c));String emptyReselect=captureEmptyReselect();
-  Files.writeString(Path.of(args[0]),"{\"exe_sha256\":\""+hash+"\",\"engine\":\"Ghidra EmulatorHelper original x86 PE32 P-code with source-mapped Axe service boundary\",\"entries\":[\"0044C840\",\"0044C360\",\"0044C2A0\",\"00463370\"],\"scope\":\"Owner inventory-selection transaction. Real owner, array helpers, mode setter, scan order and non-Axe item callback callsites execute. Axe slot 1 +0x38 is a source-mapped service boundary (not executed P-code): 0045F930 gates the primary child +0x38 call on Axe+0x1FC, then calls the secondary child +0x38; each source-mapped child 0045FA50 returns state-at-child+0x368 == 0. The fixture applies (!primaryEnabled || primaryState==0) && secondaryState==0. Other item +0x38/+0x3C, HUD 004571A0 and hide 004A11A0 remain controlled service boundaries. Attach samples stop at 004977B0 before valve/frame computation. No live inventory capture.\",\"samples\":["+String.join(",",rows)+"],\"helper_samples\":["+emptyReselect+"]}\n");
+  Files.writeString(Path.of(args[0]),"{\"exe_sha256\":\""+hash+"\",\"engine\":\"Ghidra EmulatorHelper original x86 PE32 P-code\",\"entries\":[\"0044C840\",\"0044C360\",\"0044C2A0\",\"00463370\",\"0045F930\",\"0045FA50\"],\"scope\":\"Owner inventory-selection transaction. Real owner, array helpers, mode setter, scan order, Training Axe root +0x38 gate 0045F930 and both child +0x38 leaf gates 0045FA50 execute as original P-code. The Axe primary child call is conditional on Axe+0x1FC; the secondary child runs only if the primary is disabled or accepts. The child leaves read Axe+0x568 and Axe+0x9B0 through child+0x368. Other item +0x38/+0x3C, HUD 004571A0 and hide 004A11A0 remain controlled service boundaries. Attach samples stop at 004977B0 before valve/frame computation. No live inventory capture.\",\"samples\":["+String.join(",",rows)+"],\"helper_samples\":["+emptyReselect+"]}\n");
   println("Captured "+rows.size()+" original hose item-selection transactions");
  }
 
@@ -58,10 +60,17 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
    for(int i=0;i<5;i++){
     if(c.present[i]<0)continue;
     objects[i]=i==4?HOSE:0x20018000L+i*0x1000L;vtables[i]=(int)(0x2001d000L+i*0x100L);
-    emu.writeMemory(a(objects[i]),new byte[i==4?0xd60:0x100]);w(objects[i],vtables[i]);
+    emu.writeMemory(a(objects[i]),new byte[i==4?0xd60:(i==1?0xa94:0x100)]);w(objects[i],vtables[i]);
     w(ITEMS+i*4,(int)objects[i]);
     w(Integer.toUnsignedLong(vtables[i])+0x38,(int)(STUB+0x100+i*0x20));
     w(Integer.toUnsignedLong(vtables[i])+0x3c,(int)(STUB+0x108+i*0x20));
+   }
+   int axeRootCalls=0,axePrimaryCalls=0,axeSecondaryCalls=0;long axeGateReturn=-1;
+   if(objects[1]!=0){
+    long axe=objects[1];w(Integer.toUnsignedLong(vtables[1])+0x38,(int)AXE_GATE);
+    w(axe+0x1fc,c.axePrimaryEnabled);w(axe+0x568,c.axePrimaryState);w(axe+0x9b0,c.axeSecondaryState);
+    w(axe+0x200,(int)AXE_PRIMARY_VTABLE);w(axe+0x648,(int)AXE_SECONDARY_VTABLE);
+    w(AXE_PRIMARY_VTABLE+0x38,(int)AXE_CHILD_GATE);w(AXE_SECONDARY_VTABLE+0x38,(int)AXE_CHILD_GATE);
    }
    // Restore the Hose Spray mode after its backing item was initialized.
    if(objects[4]!=0)w(HOSE+0xc68,c.mode);
@@ -71,12 +80,15 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
    boolean frameBoundary=false,returned=false;
    for(int steps=0;steps<100000;steps++){
     long pc=emu.getExecutionAddress().getOffset();if(pc==RETURN){returned=true;break;}
+    if(axeGateReturn==pc){int allow=(int)(emu.readRegister("EAX").longValue()&0xff);String event="can:1:"+allow;itemEvents.add(event);orderedEvents.add(event);axeGateReturn=-1;}
+    if(pc==AXE_GATE){axeRootCalls++;axeGateReturn=Integer.toUnsignedLong(r(emu.readRegister("ESP").longValue()));}
+    if(pc==AXE_CHILD_GATE){long receiver=emu.readRegister("ECX").longValue();if(objects[1]!=0&&receiver==objects[1]+0x200)axePrimaryCalls++;else if(objects[1]!=0&&receiver==objects[1]+0x648)axeSecondaryCalls++;else throw new IllegalStateException("Axe child gate received unexpected object 0x"+Long.toHexString(receiver));}
     if(pc==TRANSFORM){frameBoundary=true;break;}
     if(pc==HUD){long sp=emu.readRegister("ESP").longValue();long receiver=emu.readRegister("ECX").longValue();int code=r(sp+4),parameter=r(sp+8);String event="hud:"+(receiver-PLAYER)+":"+code+":"+parameter;uiEvents.add(event);orderedEvents.add(event);ret(8,0);continue;}
     if(pc==HIDE){long sp=emu.readRegister("ESP").longValue();long receiver=emu.readRegister("ECX").longValue();int parameter=r(sp+4);String event="hide:"+(receiver-PLAYER)+":"+parameter;uiEvents.add(event);orderedEvents.add(event);ret(4,0);continue;}
     if(pc==STUB+0x100||isSlotStub(pc,0x100,0x20)){
      long receiver=emu.readRegister("ECX").longValue();int slot=slotFor(receiver,objects);
-     int allow=slot==1?((c.axePrimaryEnabled==0||c.axePrimaryState==0)&&c.axeSecondaryState==0?1:0):r(pc);
+     int allow=r(pc);
      String event="can:"+slot+":"+allow;itemEvents.add(event);orderedEvents.add(event);ret(0,allow);continue;
     }
     int activeSlot=slotStub(pc,0x108,0x20);
@@ -90,6 +102,7 @@ public class HoseItemSelectionPcodeOracle extends GhidraScript {
    ",\"hose_present\":"+(objects[4]!=0)+",\"hose_mode_before\":"+c.mode+",\"hose_mode_after\":"+(objects[4]==0?0:r(HOSE+0xc68))+
     ",\"hose_valve_pointer_is_root\":"+(objects[4]!=0&&r(HOSE+0xc6c)==(int)VALVE)+",\"stopped_at_frame_transform\":"+frameBoundary+",\"returned\":"+returned+
     ",\"input_slots\":["+ints(c.present)+"],\"axe_primary_enabled\":"+c.axePrimaryEnabled+",\"axe_primary_state\":"+c.axePrimaryState+",\"axe_secondary_state\":"+c.axeSecondaryState+
+    ",\"axe_root_gate_calls\":"+axeRootCalls+",\"axe_primary_child_gate_calls\":"+axePrimaryCalls+",\"axe_secondary_child_gate_calls\":"+axeSecondaryCalls+
     ",\"can_deactivate\":["+booleans(expectedCan)+"],\"slots\":["+ints(slotValues)+"],\"item_events\":["+quoted(itemEvents)+"],\"ui_events\":["+quoted(uiEvents)+"],\"ordered_events\":["+quoted(orderedEvents)+"]}";
   }finally{emu.dispose();}
  }

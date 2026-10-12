@@ -33,6 +33,14 @@ int main(int argc,char** argv){
    if(result.hosePresent)report("hose mode",state.hoseMode==integer(field(row,"hose_mode_after")));
    report("stopped before frame transform",result.reachedFrameTransform==boolean(field(row,"stopped_at_frame_transform")));
    report("returned from owner",result.returned==boolean(field(row,"returned")));
+   const bool callsAxeGate=integer(field(row,"action"))==1001&&integer(field(row,"selected_before"))==1&&
+     json_object_get_int(json_object_array_get_idx(slots,1))>=0&&boolean(field(row,"hose_present"));
+   const int expectedRoot=callsAxeGate?1:0;
+   const int expectedPrimary=expectedRoot&&integer(field(row,"axe_primary_enabled"))!=0?1:0;
+   const int expectedSecondary=expectedRoot&&(integer(field(row,"axe_primary_enabled"))==0||integer(field(row,"axe_primary_state"))==0)?1:0;
+   report("real Axe root gate execution",integer(field(row,"axe_root_gate_calls"))==expectedRoot);
+   report("real Axe primary child gate short-circuit",integer(field(row,"axe_primary_child_gate_calls"))==expectedPrimary);
+   report("real Axe secondary child gate execution",integer(field(row,"axe_secondary_child_gate_calls"))==expectedSecondary);
    report("saved valve pointer unchanged",!boolean(field(row,"hose_valve_pointer_is_root")));
    J outputSlots=field(row,"slots");for(int slot=0;slot<5;slot++)report("inventory slot "+std::to_string(slot),integer(json_object_array_get_idx(outputSlots,slot))==integer(json_object_array_get_idx(slots,slot)));
    J itemEvents=field(row,"item_events"),uiEvents=field(row,"ui_events"),ordered=field(row,"ordered_events");
