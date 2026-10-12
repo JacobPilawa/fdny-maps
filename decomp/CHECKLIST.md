@@ -206,6 +206,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] Passout composition review preserves cached/frame position distinction and live post-event inputs. Herodown cleanup uses source-ordered live getters; passout composes with the tail and resolves the correction receiver after reset. The composed check and 18 CTest checks pass.
 - [ ] Automatic Player/victim scheduling, real engine/UI adapters and whole-run parity remain unfinished.
 
+## Hose valve callback continuation (2026-10-12)
+
+- [x] Ghidra EmulatorHelper ran hash-pinned original 00444120 for five PropModel state/action pairs. Active valves call 0044C840 with the Player receiver and PropModel-root argument; action 1002 returns before the use string/event path, while attach 1001 forwards it. The native Space/Shift integration now follows that branch order (src/hose_valve_callback.h, tools/ghidra/HoseValveCallbackPcodeOracle.java, evidence/hose-spray/valve-callback-pcode-oracle.json). The owner routine and string/script services are controlled stubs here; Hose Spray item-array selection, full frame parenting, UI hiding, dispatch-before-refresh scheduling, and live stream behavior remain open (evidence/hose-spray/valve-callback-pcode-audit.md).
+- [x] Reconfigured and rebuilt the native app and new callback checker; all 34 configured CTest checks pass.
+
 ## Ash pool and goggles audit (2026-10-12)
 
 - [x] Original ash BMPs were found under the installed game's `Data/sprites/`, copied to the ignored local `assets/training/fire-sprites/`, and added to the hash manifest; no proprietary image bytes are staged. The `0047F850→0042D2D0` transform establishes initial `+0x5c..+0x64=0`; `004463F0→0047F1D0` leaves dirty `+0xa0=1` after zeroing `+0x94`. Native state and focused checks now preserve these constructor results (`resource-render-followup.md`, `ghidra-helper-recovery.md`).

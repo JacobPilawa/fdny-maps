@@ -4,8 +4,8 @@
 <h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
 const data={
   "snapshot": "2026-10-12",
-  "commit": "01a5c45",
-  "tests": 32,
+  "commit": "86dd149",
+  "tests": 34,
   "scope": "Training",
   "files": [
     {
@@ -127,7 +127,7 @@ const data={
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 179339
+      "bytes": 179490
     },
     {
       "path": "src/startup.h",
@@ -552,15 +552,24 @@ const data={
           "Use action dispatch",
           "partial",
           "Mapped action codes and local attach/detach state are connected; the original update block dispatches cached selection before refreshing it."
-        ],
-        [
-          "00444120",
-          "Hose attach action",
-          "partial",
-          "The state path is traced; original item/frame integration remains unfinished."
         ]
       ],
       "bytes": 2566
+    },
+    {
+      "path": "src/hose_valve_callback.h",
+      "group": "Tools",
+      "summary": "Exact callback branch in 00444120; the owner item-array/frame mutation remains a separate incomplete component.",
+      "evidence": "evidence/hose-spray/valve-callback-pcode-audit.md",
+      "units": [
+        [
+          "00444120",
+          "Valve callback forwarding",
+          "partial",
+          "Five hash-pinned original P-code cases compare the 0044C840 call boundary and prove detach 1002 skips the use script event; owner, string, and script services are intercepted."
+        ]
+      ],
+      "bytes": 573
     },
     {
       "path": "src/tool_follow.h",

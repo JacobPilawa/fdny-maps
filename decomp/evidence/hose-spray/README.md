@@ -1,5 +1,7 @@
 # Hose Spray suppression path
 
+Callback continuation (2026-10-12): five hash-pinned Ghidra P-code executions of 00444120 confirm the owner-action receiver and valve-root argument, plus the event order. A state-1 valve calls 0044C840; action 1002 returns before constructing or dispatching the use event, while action 1001 dispatches it after the owner routine. The native Space/Shift path now follows this branch. The oracle stubs 0044C840, string construction, and script dispatch, so item selection/frame/UI mutations remain outside the comparison. See valve-callback-pcode-audit.md and valve-callback-pcode-oracle.json.
+
 The Training `touchhose` command reaches player handler `0044CAB0`. It allocates a `0xD54` item with constructor `004634F0`, then invokes virtual slot `+8` (`00463700`) with the player. The constructor installs primary vtable `004E2998` and secondary vtable `004E2988`; primary slot 9 (`+0x24`) is `004640F0`. The table metadata decodes to `hose` / `Hose Spray`. `004640F0` calls `00463EF0` while the spray action is active.
 
 The same primary vtable maps action start `+0x14` to `004632D0` and release `+0x1C` to `00463300`. Start sets active byte `+0xC58`, starts the `HoseSpray` sound, and sets the effect timer to current time plus 100; release stops the sound and clears the byte. The player input dispatcher uses those same action slots for the equipped item. Native left-button edges now port the selected Hose Spray action byte and deadline; the sound side effect is not wired.

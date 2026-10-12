@@ -105,7 +105,7 @@
     },
     {
       "name": "Hose pickup, connection, length and spray",
-      "status": "source target/action path mapped; native Training prop centers/radii, partial Space/Shift USE selection and local attach/detach modes wired; ray/sphere component matches 548 original queries / 3,836 words; composed view selection, touch geometry/schedule, candidate-order capture, full item/frame state, hose actor/stream/effects pending",
+      "status": "source target/action path mapped; native Training prop centers/radii, partial Space/Shift USE selection and local attach/detach modes wired; ray/sphere component matches 548 original queries / 3,836 words; five hash-pinned 00444120 P-code cases now confirm attach-event forwarding and the detach early return; composed view selection, touch geometry/schedule, candidate-order capture, original item inventory/frame/UI state, hose actor/stream/effects pending",
       "original_entries": [
         "00451870",
         "0044cab0",

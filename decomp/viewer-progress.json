@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "01a5c45",
-  "tests": 32,
+  "commit": "86dd149",
+  "tests": 34,
   "scope": "Training",
   "files": [
     {
@@ -123,7 +123,7 @@
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 179339
+      "bytes": 179490
     },
     {
       "path": "src/startup.h",
@@ -548,15 +548,24 @@
           "Use action dispatch",
           "partial",
           "Mapped action codes and local attach/detach state are connected; the original update block dispatches cached selection before refreshing it."
-        ],
-        [
-          "00444120",
-          "Hose attach action",
-          "partial",
-          "The state path is traced; original item/frame integration remains unfinished."
         ]
       ],
       "bytes": 2566
+    },
+    {
+      "path": "src/hose_valve_callback.h",
+      "group": "Tools",
+      "summary": "Exact callback branch in 00444120; the owner item-array/frame mutation remains a separate incomplete component.",
+      "evidence": "evidence/hose-spray/valve-callback-pcode-audit.md",
+      "units": [
+        [
+          "00444120",
+          "Valve callback forwarding",
+          "partial",
+          "Five hash-pinned original P-code cases compare the 0044C840 call boundary and prove detach 1002 skips the use script event; owner, string, and script services are intercepted."
+        ]
+      ],
+      "bytes": 573
     },
     {
       "path": "src/tool_follow.h",

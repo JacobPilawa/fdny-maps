@@ -82,6 +82,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "interaction_box.h"
 #include "throw_scalar.h"
 #include "use_manager.h"
+#include "hose_valve_callback.h"
 #include "clock.h"
 struct Mesh{int model;std::vector<float> positions,uvs;GLuint texture=0;};
 struct TrainingPropModel{int entity=0;std::string name;V center{};float radius=0;bool makeValve=false;};
@@ -1271,7 +1272,7 @@ int main(int argc,char** argv){try{
  actionPressed=actionReleased=false;
  V headPosition{headOffset.x,headOffset.y,headOffset.z};auto viewResult=ViewUpdate::transition(playerFrame,headPosition,itemViewOffset,itemAimOffset,{0,0,0},{0,0,0},viewHeight,1.f,viewAngle,dt,playerViewFollower,playerState==4);playerViewFollower=viewResult.follower;
  auto useTarget=UseManager::select(playerViewFollower.position,playerViewFollower.basis[2],valveCandidates,hoseMode,attachedValve);
- if(usePressed){usePressed=false;if(useTarget.index>=0){const auto& prop=valveCandidates[size_t(useTarget.index)];if(useTarget.action==1001){selectedBeforeHose=selected;hoseMode=3;attachedValve=prop.entity;selected="hose";}else if(useTarget.action==1002){hoseMode=2;attachedValve=-1;selected=equipment.count("axe")?"axe":(equipment.count("extinguisher")?"extinguisher":selectedBeforeHose);}vm.dispatch(prop.entity,"use");}}
+ if(usePressed){usePressed=false;if(useTarget.index>=0){const auto& prop=valveCandidates[size_t(useTarget.index)];auto callback=HoseValveCallback::invoke(1,useTarget.action);if(callback.callOwnerAction){if(useTarget.action==1001){selectedBeforeHose=selected;hoseMode=3;attachedValve=prop.entity;selected="hose";}else if(useTarget.action==1002){hoseMode=2;attachedValve=-1;selected=equipment.count("axe")?"axe":(equipment.count("extinguisher")?"extinguisher":selectedBeforeHose);}}if(callback.forwardUseEvent)vm.dispatch(prop.entity,"use");}}
  auto extinguisherIt=itemFollowers.find("extinguisher");bool extinguisherEquipped=selected=="extinguisher";
  if(extinguisherIt!=itemFollowers.end()&&extinguisherEquipped){
   auto& extTool=extinguisherIt->second;extTool.follower.update(playerViewFollower.position,dt);extTool.follower.basis=playerViewFollower.basis;
