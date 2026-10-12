@@ -183,3 +183,5 @@ Victim startup slice (2026-10-11): Training's two `man` victims now consume thei
 After configuring/building, `ctest --test-dir build --output-on-failure` runs the source-derived actor flags, pickup post-effects and escape/release ordering checks. Release frame/engine helpers remain callback adapters. Native victim draw submission uses per-entity flags; proximity/message scheduling and complete pickup/carry/rescue gameplay remain unfinished. See the checklist milestone for the precise boundary.
 
 The task/dependency roadmap is [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+
+Release transform comparison: `./run.sh --victim-release-frame-check` executes the native helper against eight original Ghidra P-code prefix captures (120 matching words). It excludes floor placement, events and schedule. CTest now includes six checks, with passout order and signed-zero coverage. Existing timed-transition and item-offset/view-chain parity gaps are recorded in `evidence/victim-ai-audit/release-frame-component.md`.

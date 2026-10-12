@@ -6,7 +6,7 @@ struct Extended {
  uint64_t m=0;int e=0;bool negative=false; // value = signed m * 2^e
  static int width(U n){int w=0;while(n){n>>=1;w++;}return w;}
  static Extended pack(U n,int exponent,bool sign=false){
-  if(!n)return {};int shift=width(n)-64;
+  if(!n)return {0,0,sign};int shift=width(n)-64;
   if(shift>0){U q=n>>shift,mask=(U(1)<<shift)-1,r=n&mask,half=U(1)<<(shift-1);if(r>half||(r==half&&(q&1)))q++;n=q;exponent+=shift;if(width(n)>64){n>>=1;exponent++;}}
   else if(shift<0){n<<=-shift;exponent+=shift;}
   return {uint64_t(n),exponent,sign};
@@ -19,16 +19,18 @@ struct Extended {
  static Extended integer(uint32_t n){return pack(n,0);}
  static U sticky(U n,int shift){if(shift<=0)return n;if(shift>=128)return n?1:0;U mask=(U(1)<<shift)-1;return (n>>shift)|bool(n&mask);}
  Extended operator+(Extended b)const{
+  if(!m&&!b.m)return {0,0,negative&&b.negative};
   if(!m)return b;if(!b.m)return *this;Extended a=*this;if(a.e<b.e)std::swap(a,b);
   U x=U(a.m)<<3,y=sticky(U(b.m)<<3,a.e-b.e);bool sign=a.negative;U n;
   if(a.negative==b.negative)n=x+y;else if(x>=y)n=x-y;else{n=y-x;sign=b.negative;}
-  return pack(n,a.e-3,sign);
+  // Exact cancellation is +0 under the source round-to-nearest mode.
+  return pack(n,a.e-3,n?sign:false);
  }
  Extended operator-()const{Extended n=*this;n.negative=!negative;return n;}
  Extended operator-(Extended b)const{return *this+-b;}
  Extended operator*(Extended b)const{return pack(U(m)*b.m,e+b.e,negative!=b.negative);}
  Extended operator/(Extended b)const{
-  if(!b.m)throw std::runtime_error("Extended division by zero");if(!m)return {};
+  if(!b.m)throw std::runtime_error("Extended division by zero");if(!m)return {0,0,negative!=b.negative};
   int shift=m<b.m?64:63;U numerator=U(m)<<shift,q=numerator/b.m,r=numerator%b.m;
   if(r*2>b.m||(r*2==b.m&&(q&1)))q++;
   return pack(q,e-b.e-shift,negative!=b.negative);

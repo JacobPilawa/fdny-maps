@@ -18,7 +18,11 @@ This trace records the helper identities and exact field writes without assignin
 
 ## `0044FF10`: caller behavior
 
-Player helper `0044FF10` first increments Player `+0x3428` and copies the three words at `+0x3400..+0x3408` to Player position `+0x4c..+0x54`. If carried-victim pointer `+0x3534` is non-null, it calls `0045C1A0`, calls `0044FCE0(0)`, raises Player position Y by the value at `004E1698`, subtracts that value from the dropped victim frame's Y translation (`victim frame slot +0x18`, frame field `+0x28`), then clears Player `+0x3534`.
+Player helper `0044FF10` first increments Player `+0x3428` and copies the three words at `+0x3400..+0x3408` to Player position `+0x4c..+0x54`. If carried-victim pointer `+0x3534` is non-null, it calls `0045C1A0`, calls `0044FCE0(0)`, adds the value at `004E1698` to Player position X (`+0x4c`), subtracts that value from the dropped victim frame's X translation (victim frame slot `+0x18`, first position float at `+0x28`), then clears Player `+0x3534`.
+
+### Coordinate correction
+
+Earlier wording in this note incorrectly called these Y corrections. The original instruction listing for `0044FF10` shows `ESI = this + 0x4c`, then `FLD [ESI]`, `FADD [004E1698]`, and `FSTP [ESI]`, so the Player write targets the first position component. The victim path loads the frame pointer from virtual slot `+0x18`, reads/subtracts the constant at frame `+0x28`, and stores back to that same address. `FrameTransform` stores its translation as X, Y, Z at offsets `+0x28`, `+0x2c`, `+0x30`; `+0x28` is X. The previous interpretation mistook a field offset for the second coordinate. Ghidra's `ExportFunctionAssembly.java 0044FF10` output at `0044ff6b..0044ff8e` is the raw instruction evidence.
 
 After the drop, another branch runs only when global mode at `DAT_00502AAC+0x6e4`, field `+0x2c`, is 2 and the helper argument is zero. It walks entities of type 2, compares their script name with `herodown`, counts states 4 or 7, and when the count is below 3 constructs a `POFighter` `RCS_VictimRescue` at Player position with script name `herodown`, increments Player `+0x3528`, and updates the `Rescues` statistic. The constructor/spawn side effects are separate from the carried-victim bounded draw.
 

@@ -14,9 +14,10 @@ target_compile_definitions(fdny-training PRIVATE FDNY_ASSETS="${CMAKE_CURRENT_SO
 
 include(CTest)
 if(BUILD_TESTING)
- foreach(check actor_render_flags victim_pickup_effects victim_release_order)
+ foreach(check actor_render_flags victim_pickup_effects victim_release_order victim_passout_order extended_zero)
   add_executable(${check}-check tools/${check}_check.cpp)
   target_compile_options(${check}-check PRIVATE -ffp-contract=off -UNDEBUG)
   add_test(NAME ${check} COMMAND ${check}-check)
  endforeach()
+ add_test(NAME victim_release_frame COMMAND fdny-training --victim-release-frame-check)
 endif()
