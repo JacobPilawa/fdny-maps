@@ -1535,6 +1535,22 @@
         ]
       ],
       "bytes": 2328
+    },
+    {
+      "path": "src/player_burn_cooling.h",
+      "group": "Player",
+      "summary": "Indicator-gated x87 burn cooling, strict binary64 side threshold, original three-word helper copy, negative clamp and flag/status resets.",
+      "evidence": "evidence/player-update/fire-damage-cooling-and-cross-task-leads.md",
+      "units": [
+        [
+          "00452570",
+          "Burn accumulator cooling",
+          "partial",
+          "Twelve original P-code cases match the bounded update slice; status service, state-6 dispatch and recurring update cadence remain open.",
+          "evidence/player-update/burn-cooling-pcode-oracle.json"
+        ]
+      ],
+      "bytes": 2348
     }
   ]
 }
