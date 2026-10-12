@@ -27,4 +27,18 @@ The main script and startup notes identify relevant functions and authored Train
 
 ## Carry-over decision
 
-For the current level-to-EVS mapping batch, the active project contains curated, fresh Ghidra outputs for the level path helper, level selection/start, EVS loader, mode wrappers, parser, command dispatcher, and delayed callback. The rest of the old notes remain searchable in the root `decomp/` archive. The partial native implementation can be audited later as a candidate source of component boundaries after the original function map and cross-platform service choices are clearer.
+For the current level-to-EVS mapping batch, the active project contains curated, fresh Ghidra outputs for the level path helper, level selection/start, EVS loader, mode wrappers, parser, command dispatcher, and delayed callback. The rest of the old notes remain searchable in the root `decomp/` archive.
+
+## Native Training workbench audit
+
+The prior C++ source was copied to [`port/spikes/training-native-prototype/`](../port/spikes/training-native-prototype/README.md) with its generated Training scene data. Its Mac build compiles with the installed CMake/SDL2/json-c toolchain, and the asset resolver points inside the copied folder. Launching its SDL renderer from the current shell fails with “The video driver did not add any displays,” so it is not yet a verified running build.
+
+The source separates useful mechanics such as player movement, collision queries, actor animation, fire, victims, and equipment into headers. Its `main.cpp` still hard-codes Training startup, entity data, player ID 115, Training scripts, and Training-specific interactions. Its UI uses CoreText/CoreGraphics. The workbench is therefore a source of candidate components and asset-format examples, not a cross-platform game shell. Its only generated world/actor data is Training; it does not provide a campaign asset converter.
+
+Keep the workbench executable and its generated Training fixtures as a separate reference. Promote mechanics into the shared runtime when their call order, platform dependencies, and data contract are supported beyond the Training scene.
+
+## First-pass archive assessment
+
+This is a relevance-based triage, not a line-by-line re-review of every archived pseudocode export. The root `decomp/` archive remains intact. `tracker/legacy_crosswalk.csv` is the index from the earlier address catalog into the pinned revised function inventory; duplicate reports for one address are not treated as independent confirmation. Before redoing an active target, search that crosswalk and the linked archive paths, then verify any reused claim against the pinned binary and its current evidence.
+
+The prior GBSP entity reader was copied into [`tools/extract_gbsp_typedefs.py`](../tools/extract_gbsp_typedefs.py) and reused by [`tools/inventory_level_assets.py`](../tools/inventory_level_assets.py). It extracts the BSP entity epairs and schema records without depending on the Training renderer. That reuse produced the 17-map entity counts in [`level_map_inventory.csv`](../tracker/level_map_inventory.csv) and the first rescue map packet in [`MBASE_RESCUE_SLICE.md`](MBASE_RESCUE_SLICE.md). This parser does not decode world geometry or materials.

@@ -1,12 +1,13 @@
 # FDNY Firefighter: American Hero port
 
-This is the clean project workspace for a modern desktop port that preserves the original game's behavior, systems, and presentation as closely as the evidence allows. The first playable build is planned for Windows, macOS, and Linux, with Training as the first complete scenario.
+This is the clean project workspace for a modern desktop port that preserves the original game's behavior, systems, and presentation as closely as the evidence allows. The first native playable slice will target macOS so progress is visible sooner; Windows and Linux remain required targets for the full port. The old Training-only prototype is isolated as a workbench and does not define the first port milestone.
 
 The initial binary inventory milestone is complete: the four hash-pinned PE files have fresh Ghidra function, section, import/export, and prior-analysis crosswalk inventories. The main EXE has 5,807 body-bearing functions. This maps the available code; it does not claim the routines are understood or recovered as source.
 
 ## Start here
 
 - [Project plan and milestones](docs/PROJECT_PLAN.md)
+- [Native port work and isolated prototype](port/README.md)
 - [Reverse-engineering and port workflow](docs/WORKFLOW.md)
 - [Research and references](docs/REFERENCES.md)
 - [Reverse-engineering activity log and parallel work](docs/REVERSE_ENGINEERING_LOG.md)
@@ -16,6 +17,7 @@ The initial binary inventory milestone is complete: the four hash-pinned PE file
 - [EXE-to-Genesis API crosswalk](tracker/genesis_api_crosswalk.csv)
 - [Training catalog and scenario data anchors](tracker/evidence/scenario-loading/README.md)
 - [Level-choice to EVS static trace](tracker/evidence/scenario-loading/level_to_evs_static_trace.md)
+- [Catalog-to-map asset inventory](tracker/level_map_inventory.csv)
 - [Copied original inputs and provenance](inputs/original/README.md)
 - [Raw retail file comparison copy](inputs/reference/raw-copy/README.md)
 - [Wine runtime reference and capture conditions](inputs/runtime-reference/sikarugir/README.md)
@@ -25,7 +27,7 @@ Double-click [Open FDNY Dashboard.command](Open%20FDNY%20Dashboard.command) to s
 
 ## Current phase
 
-**Runtime map and level-to-EVS path.** The four PE files have 7,487 analyzable body functions and 462 external import stubs; the supplied FMOD image is still packed. The review ledger contains 66 EXE functions with address-specific behavior notes. Training selection traces through the shared catalog collection, the registered `World` factory, `data\\maps\\training.bsp`, and the WorldEntity BSP loader. The menu's initial selector ordinal is set by the child activation callback. BoundsTrigger class eligibility and its root `+0x48` contact producer through the owner manager are mapped; its embedded updater reaches `touch`/`touching`/`untouch` dispatch, but its dynamic caller and timing remain open. Training's `tell player escape` reaches parser helper `00472270`; delivery to the Player handler is not established. The WorldEntity's delayed script load is one-shot after four callbacks, with its scheduler still unresolved after a 53-candidate static scan. Genesis code at `FUN_10023950` dynamically loads five renderer DLL candidates, resolves `DriverHook`, checks interface fields `+4 == 101` and `+8 == 1`, and invokes subdriver/mode enumeration through table `+0x14/+0x18`. EXE startup calls `geEngine_SetDriverAndMode` at `0x00499BE2`; its Genesis wrapper calls `FUN_10025E00`, which reloads and initializes the selected renderer, retains its handle, and is followed by an unresolved table `+0xA8` call. No original-game startup capture has been made. The dashboard reads tracker CSVs directly and plots reviewed-function checkpoints over time.
+**Runtime map and level-to-EVS path.** The four PE files have 7,487 analyzable body functions and 462 external import stubs; the supplied FMOD image is still packed. The review ledger contains 66 EXE functions with address-specific behavior notes. Training selection traces through the shared catalog collection, the registered `World` factory, `data\\maps\\training.bsp`, and the WorldEntity BSP loader. The menu's initial selector ordinal is set by the child activation callback. BoundsTrigger class eligibility and its root `+0x48` contact producer through the owner manager are mapped; its embedded updater reaches `touch`/`touching`/`untouch` dispatch, but its dynamic caller and timing remain open. The `tell` branch is traced to ScriptEngine actor lookup and `ScriptActor` dispatch; exact argument roles and delivery to the Player handler remain unproven. The WorldEntity's delayed script load is one-shot after four callbacks, with its scheduler still unresolved after a 53-candidate static scan. Genesis code at `FUN_10023950` dynamically loads five renderer DLL candidates, resolves `DriverHook`, checks interface fields `+4 == 101` and `+8 == 1`, and invokes subdriver/mode enumeration through table `+0x14/+0x18`. EXE startup calls `geEngine_SetDriverAndMode` at `0x00499BE2`; its Genesis wrapper calls `FUN_10025E00`, which reloads and initializes the selected renderer, retains its handle, and configures fog through table `+0xA8`. No original-game startup capture has been made. The dashboard reads tracker CSVs directly and plots reviewed-function checkpoints over time. The level inventory covers 12 catalog entries and all 17 BSP files; `mbase` is the current Mac rescue-slice candidate, with 228 authored BSP entities inventoried and geometry/material extraction still ahead. The [MBase rescue slice note](docs/MBASE_RESCUE_SLICE.md) records the mission-specific loader work.
 
 ## Working rules
 

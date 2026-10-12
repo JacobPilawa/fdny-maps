@@ -1,0 +1,31 @@
+#pragma once
+// 0044B620 / 0044AE80: pooled timed size keys and original interpolation.
+struct FireSize {
+ struct Key{bool active=false;uint32_t time=0;V size;};
+ std::vector<Key> keys;int first=-1,next=-1;V size{},scale{1,1,1};bool changed=false;
+ int available(){for(int i=0;i<int(keys.size());i++)if(!keys[i].active)return i;keys.push_back({});return int(keys.size())-1;}
+ void setKey(int i,V value,uint32_t when){keys[i]={true,when,value};}
+ void add(V value,uint32_t when,uint32_t now){
+  if(first<0){first=available();setKey(first,value,when);return;}
+  int target=first;
+  if(now<=when){
+   if(next<0){next=available();target=next;}
+   else if(int32_t(when)<int32_t(keys[next].time)){setKey(first,size,now);setKey(next,value,when);return;}
+   else target=available();
+  }
+  setKey(target,value,when);
+ }
+ void update(uint32_t now){
+  if(first<0)return;
+  if(next>=0&&keys[next].time<now){keys[first].active=false;first=next;next=-1;
+   for(int i=0;i<int(keys.size());i++)if(keys[i].active&&i!=first&&int32_t(keys[first].time)<int32_t(keys[i].time)&&(next<0||int32_t(keys[i].time)<int32_t(keys[next].time)))next=i;
+  }
+  V value=keys[first].size;
+  if(next>=0){double ratio=double(uint32_t(now-keys[first].time))/double(int32_t(keys[next].time-keys[first].time));float part=float(ratio);if(ratio>1)part=1;else if(part<0)part=0;
+   for(int a=0;a<3;a++){float delta=float(double(keys[next].size[a])-double(value[a]));float product=float(double(delta)*double(part));value[a]=float(double(value[a])+double(product));}
+  }
+  for(int a=0;a<3;a++)value[a]=float(double(value[a])*double(scale[a]));
+  V delta;for(int a=0;a<3;a++)delta[a]=float(double(value[a])-double(size[a]));
+  if(double(delta.x)*delta.x+double(delta.y)*delta.y+double(delta.z)*delta.z>=.0001){changed=true;size=value;}
+ }
+};

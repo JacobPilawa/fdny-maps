@@ -13,6 +13,8 @@ __pycache__/
 /inputs/runtime-reference/sikarugir/wrapper-metadata/
 /tools/ghidra-mcp/vendor/
 /.codex/config.toml
+/port/spikes/training-native-prototype/assets/training/
+/port/spikes/training-native-prototype/build/
 /reference/previous-work/
 /reference/previous-work/decomp/evidence/ghidra/fdny.rep/
 /reference/previous-work/decomp/evidence/ghidra/genesis/
