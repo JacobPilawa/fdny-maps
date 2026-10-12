@@ -13,9 +13,12 @@ for `0043DB40`, `0044C520`, `0043D2B0` and `0044BC40`.
   null, and BModel state `+0x25C` is zero. The fixed `+0x10` item-array
   access is slot 4, used by the Player's Hose Spray path (`0044CAB0`).
 - Other nonzero modes return literal 1000. Its intended meaning is unknown.
-- Byte `+0x12C` remains unnamed. A nearby write at `00459630` is not its
-  writer: that callback receives `Player+0x3114`, so its own `+0x12C` is
-  `Player+0x3240`.
+- Byte `Player+0x12C` remains unnamed, but its reset default is now traced:
+  `0044CD10` writes root bytes `+0x12C = 1` and `+0x12D = 1`, called by the
+  Player constructor and HeroDown path. The similarly numbered stores in
+  `00459630` are on its `Player+0x3114` receiver, so they touch Player
+  `+0x3240`, not the root gate. Other same-offset store candidates have
+  unresolved receiver identity.
 
 ## Mode-1 use transition
 
@@ -43,13 +46,16 @@ The source mapping and Training object/motion prerequisites are recorded in
 preserved-project decompilation covered `0043DB40`, `0044C520`, `0043D2B0`,
 `0044BC40`, `004571A0`, `0044CAB0`, and `00459630`; the caller context at
 `0045386B` shows why `00459630`'s receiver-relative field is distinct from
-Player root `+0x12C`. P-code output is pinned to the executable hash in the
-fixture.
+Player root `+0x12C`. Follow-up source ordering and reset evidence are in
+`bmodel-selection-pass-audit.md`. P-code output is pinned to the executable
+hash in the fixture.
 
 The component and controlled P-code checks do not prove native selection,
 input reachability, carry transforms, callback effects beyond the recorded
 boundary, recurring scheduling, or Training parity.
 
-Still open: the meaning/source lifecycle of `+0x12C`, mode 2/action 1000,
-axis-box query composition, candidate order, event delivery
-and latency, held-object positioning/release integration, and update cadence.
+Still open: the meaning and intervening-write lifecycle of root `+0x12C`, mode
+2/action 1000, axis-box query composition, candidate-list production/order,
+event delivery and latency, held-object positioning/release integration, and
+the caller cadence. The Player update block dispatches its cached selection
+before refreshing it, but that local order does not prove a frame schedule.
