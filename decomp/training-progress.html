@@ -538,14 +538,14 @@ const data={
     {
       "path": "src/use_manager.h",
       "group": "Tools",
-      "summary": "Training valve selection models reach and tie behavior; BModel add/remove registration and first-hole list reuse are source-mapped, but native BModel selection and Training event order remain open.",
+      "summary": "Training valve reach/ties and BModel touch-driven registration are source-mapped; Training liftables qualify against type-1 contact candidates, but native selection order remains open.",
       "evidence": "evidence/hose-spray/prop-model/use-manager/",
       "units": [
         [
           "00459350",
           "Use candidate scan",
           "partial",
-          "The native prop path models the 200-unit reach and later-wins ties; BModel updater 0043DC60 conditionally registers its +0x7C candidate through 00459050/00459090, but Training membership/order and native BModel entries remain open."
+          "The native prop path models the 200-unit reach and later-wins ties; BModel updater 0043DC60 registers candidate root +0xA0 from contact changes, and Training Player is type 1, but native BModel entries and updater order remain open."
         ],
         [
           "00458FA0",
