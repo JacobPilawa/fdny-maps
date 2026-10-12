@@ -14,17 +14,25 @@ struct VictimPickupEffectState {
 // in victim_rescue.h, after the synchronous pickup event. Entity, status,
 // and zone adapters remain explicit until their runtime integration is ready.
 // readClock is evaluated last: earlier callbacks may change the global clock.
-template<class SetEntityMode,class UpdateStatus,class RefreshZones,class ReadClock>
-void applyVictimPickupEffects(int playerField18C,VictimPickupEffectState& state,
+template<class ReadPlayerField,class SetEntityMode,class UpdateStatus,class RefreshZones,class ReadClock>
+void applyVictimPickupEffectsWithFieldReader(ReadPlayerField&& readPlayerField,VictimPickupEffectState& state,
  SetEntityMode&& setEntityMode,UpdateStatus&& updateStatus,
  RefreshZones&& refreshZones,ReadClock&& readClock){
  setEntityMode(true); // 0044FCE0(1)
- state.value=playerField18C==4?20.0f:50.0f;
+ state.value=readPlayerField()==4?20.0f:50.0f;
  state.clearedValue=0;
  state.enabled=1;
  updateStatus(); // 004571A0(Player+0x5F4,1,null)
  refreshZones(); // 00484260 excludes victim states 5 and 6
  state.pickupClock=readClock();
+}
+
+template<class SetEntityMode,class UpdateStatus,class RefreshZones,class ReadClock>
+void applyVictimPickupEffects(int playerField18C,VictimPickupEffectState& state,
+ SetEntityMode&& setEntityMode,UpdateStatus&& updateStatus,
+ RefreshZones&& refreshZones,ReadClock&& readClock){
+ applyVictimPickupEffectsWithFieldReader([&]{return playerField18C;},state,
+  setEntityMode,updateStatus,refreshZones,readClock);
 }
 
 inline bool sourceVictimZoneMember(int entityType,uint32_t victimState){

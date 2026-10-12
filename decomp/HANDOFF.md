@@ -5,7 +5,7 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 ## Workspace and navigation
 
 - Workspace: `/Users/jacobpilawa/Documents/ChatGPT/FDNY_trackdown`; source: `decomp/`; branch: `main`.
-- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Current deadline/exit milestone follows pushed `949c254`.
+- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Current shared-transaction milestone follows pushed `40093a2`.
 - Leave unrelated untracked `fire_spread/` untouched. Stage only decomp work. Retail assets/binaries, raw Ghidra exports and build/runtime products stay local under existing exclusions.
 - Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is stale and is not authoritative.
 
@@ -26,13 +26,16 @@ Evidence: also see `evidence/victim-ai-audit/rescue-deadline-exit-component.md`.
 - `player_rescue_deadline.h`: recovered the previously unported escape post-effect `00454300→004541A0`; 48 complete original P-code calls match deadline/draw count. Source draws one bounded 30000/60000 value after status action 2, before carry clear. Player+343C producer/meaning remain open.
 - `zone_membership.h` and `victim_exit.h`: concrete membership rebuilding and exit bookkeeping now exist; binding/bounds and engine callbacks remain inputs. Training has no authored finalexit candidates. Empty-zone gate/item refresh is source behavior, not a proven complete outro.
 
+- `victim_transactions.h` now composes delivered pickup/escape with one shared carried pointer, counters, timestamps, actor/frame/animation and original deadline draw. `carry_entity_mode.h` and `victim_status.h` supply source engine/UI boundaries. Required services are explicit; actual scene producer scheduling is still absent.
+- The scene renderer now consumes `VictimRuntimeActor` frame/animation/flags. `--victim-transactions-check` runs both actual Training pickup scripts and native BSP release, status/membership/counter/exit cores with controlled UI services. See `evidence/victim-ai-audit/composed-transactions.md`.
+
 ## Validation and remaining gaps
 
-Twelve CTest checks pass. Existing pickup message/14-case geometry checks pass. The prior arithmetic milestone passed fourteen broader selected checks; timed-transition `--view-update-check` and `--view-item-offset-chain-check` remain red with identical old/new arithmetic results. They are existing parity gaps, not passing checks. Details are in `release-frame-component.md`. The prior two-frame native render check drew 90 textured mesh groups with OpenGL error 0 after display-service access.
+Fifteen CTest checks pass. Existing pickup message/14-case geometry checks pass. The prior arithmetic milestone passed fourteen broader selected checks; timed-transition `--view-update-check` and `--view-item-offset-chain-check` remain red with identical old/new arithmetic results. They are existing parity gaps, not passing checks. Details are in `release-frame-component.md`. The prior two-frame native render check drew 90 textured mesh groups with OpenGL error 0 after display-service access.
 
 Next work:
 
-1. Compose these adapters with delivered victim transactions, fill engine/status/statistic-name/item helpers and bind membership/exit inputs and remaining passout tail; do not redo completed frame recovery.
+1. Bind the composed delivered transactions to actual engine/status/statistic-name/item services and source producer/route delivery and remaining passout tail; do not redo completed frame recovery.
 2. Resolve Player/victim/BModel root callback scheduling and continuous carry. Source local call chains do not establish recurring cadence. Pickup proximity is before owner message drain, but its order relative to movement remains unresolved.
 3. Resolve recurring Fire Think `00449FE0` dispatch and relative frame order, then integrate recovery/spread/douse/particles and their RNG consumers. Bounded static audits have not identified its dispatcher.
 4. Complete scripts, BModel carry/throw/axe, hose, damage, goggles, sounds, mission completion and full Training replay parity. Never insert guessed RNG draws to compensate for missing consumers.
@@ -45,4 +48,4 @@ Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d
 
 No live game capture succeeded. Earlier WineDbg attaches froze/crashed; do not attach or ask the user to enter Training without a safe bounded capture/recovery method. Continue static/oracle work meanwhile.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 48% five-hour used, 57% weekly used.
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 61% five-hour used, 59% weekly used.

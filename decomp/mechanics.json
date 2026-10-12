@@ -152,7 +152,7 @@
     },
     {
       "name": "Victim pickup, carrying, rescue and exits",
-      "status": "isolated pickup/release/passout, frame/floor, rescue-statistics, membership and exit bookkeeping implemented; post-rescue deadline 00454300→004541A0 matches 48 original P-code calls and preserves one shared bounded draw; concrete frame/floor matches 618 words; passout matches 576 values; shared runtime/status/item/exit inputs, passout tail, recurring scheduling, continuous carry and full mission integration remain open",
+      "status": "delivered pickup/escape composition uses shared carry/counters/timestamps/actor/frame/animation and scene rendering; actual Training EVS and native BSP release integration check passes; carry-mode and status1/2 source boundaries implemented; recovered deadline draw remains shared; real engine/UI services, producer/route and recurring schedule, continuous carry/passout wiring, and full mission behavior remain open",
       "original_entries": [
         "00453a70",
         "00450440",

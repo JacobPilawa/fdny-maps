@@ -1,4 +1,5 @@
 #pragma once
+#include "view_update.h"
 // Genesis Actor/pose.c: world joint = parent * attachment * motion key.
 // Actor vertices are stored in their owning bone's local coordinates.
 struct ActorTransform {
@@ -26,6 +27,13 @@ inline ActorTransform victimActorRoot(const VictimSpawn& spawn){
  // Actor instance scale is stored separately at +0x34 and composes to 2.
  for(float& axis:result.r)axis*=2.f;
  return result;
+}
+// Dynamic counterpart of the existing Training wrapper: rendering consumes
+// the transaction's live entity frame instead of the immutable spawn record.
+inline ActorTransform victimActorRoot(const FrameTransform& frame){
+ ActorTransform parent;for(int row=0;row<3;row++)for(int col=0;col<3;col++)parent.r[row*3+col]=frame.axis[col][row];parent.t=frame.position;
+ ActorTransform local;local.r[0]=1;local.r[1]=0;local.r[2]=0;local.r[3]=0;local.r[4]=0;local.r[5]=1;local.r[6]=0;local.r[7]=-1;local.r[8]=0;local.t={0,-25,0};
+ ActorTransform result=actorMultiply(parent,local);for(float& axis:result.r)axis*=2.f;return result;
 }
 inline ActorTransform actorAttachment(J bone){ActorTransform result;auto matrix=field(bone,"attachment");if(count(matrix)!=12)throw std::runtime_error("Invalid actor bone attachment");for(int i=0;i<9;i++)result.r[i]=num(at(matrix,i));result.t={num(at(matrix,9)),num(at(matrix,10)),num(at(matrix,11))};return result;}
 inline ActorTransform actorKey(Pose pose){

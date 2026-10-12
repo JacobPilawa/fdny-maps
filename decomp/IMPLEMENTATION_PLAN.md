@@ -32,3 +32,7 @@ V1 and V3 are delegated to GPT-6 Luna in this pass; V2, source verification, int
 For the victim transaction milestone: build the native app; run standalone transaction/order checks, existing pickup geometry/message checks, startup and actor checks; run normal rendering validation when available. Record which checks compare original execution and which assert static-source behavior. Update the checklist, mechanics ledger and handoff, then commit/push decomp-only changes. Leave unrelated fire_spread/ work untouched.
 
 For subsequent milestones: rerun affected original fixtures, compare integrated event and RNG transcripts, and stop at the first unexplained divergence. Never compensate for unknown consumers with discarded draws. Check account usage during extended work and before new delegation; pause when either five-hour or weekly remaining allowance reaches 1%.
+
+## Current execution point
+
+V1/V2/V3 now have source-derived isolated components and a composed delivered-transaction check. The scene uses the same runtime actor frame/animation/flags. V5 still requires source proximity/route scheduling and actual engine/UI services; composition is not a captured gameplay schedule. Keep S1/S2 as integration gates and continue V4/runtime service recovery in parallel.
