@@ -172,6 +172,12 @@ def main():
                     'stack': [f'0x{word:08x}' for word in stack],
                     'registers': regs, 'host_time_ns': time.monotonic_ns(),
                 }
+                if pc in {
+                    0x00449FE0, 0x004483A0, 0x00429520, 0x0049B610,
+                    0x0044F340, 0x00461F80, 0x00453A70, 0x00451640,
+                    0x00450FB0,
+                }:
+                    record['game_clock'] = f'0x{dbg.words(0x00502AFC, 1)[0]:08x}'
                 if pc == 0x00453A70:
                     record['message_id'] = f'0x{stack[1]:08x}'
                     if stack[1] == 0x7531 and stack[2]:
