@@ -2,7 +2,7 @@
 
 ## Provenance
 
-Fresh read-only Ghidra 12.0.4 queries against FDNYFirefighter.exe, SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e, plus the pinned local game data. The full 346-file Data tree and five selected EXE/DLL/config inputs in the supplied raw Desktop installation were compared with the project snapshot; all 351 matched byte-for-byte.
+Fresh read-only Ghidra 12.0.4 queries against FDNYFirefighter.exe, SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e, plus the pinned local game data. The full 346-file Data tree and five selected EXE/DLL/config inputs in the user's FireFighter American Hero 2 folder were compared with the project snapshot; all 351 matched byte-for-byte.
 
 ## Control-flow map
 

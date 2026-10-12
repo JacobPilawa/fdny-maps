@@ -2,7 +2,7 @@
 
 This note records a hash comparison against the raw Desktop folder:
 
-the separately supplied raw Desktop installation
+`<game-install>/`
 
 The four code-bearing files used for analysis are pinned under `inputs/original/`; this note does not duplicate them. SHA-256 comparison shows that all four are byte-identical:
 
@@ -13,7 +13,7 @@ The four code-bearing files used for analysis are pinned under `inputs/original/
 | `fmod.dll` | `52fd7732e5bc9eeb07ecca843ea53ad73340337ce8ca0095994f131ab9b9bc2a` |
 | `Drivers/D3DDrv.dll` | `7727baabe0cc941cf63e4088cf140dbc9389e0d451bd1ac30a053c2e7c9d49e7` |
 
-The same four files inside the Sikarugir/Wine wrapper also match these hashes. On 2026-10-12, the complete 346-file `Data/` tree and these five selected EXE/DLL/config files (351 files total) were compared with the separately supplied raw Desktop installation; there were zero hash differences or missing files. Use the canonical pinned copies under `inputs/original/` for static analysis; no duplicate raw asset copy is needed. `RegSetup.exe` and `unpack.exe` were not copied because they are not needed for the initial EXE/DLL map.
+The same four files inside the Sikarugir/Wine wrapper also match these hashes. On 2026-10-12, the complete 346-file `Data/` tree and these five selected EXE/DLL/config files (351 files total) were compared with `<game-install>/`; there were zero hash differences or missing files. Use the canonical pinned copies under `inputs/original/` for static analysis; no duplicate raw asset copy is needed. `RegSetup.exe` and `unpack.exe` were not copied because they are not needed for the initial EXE/DLL map.
 
 ## Training asset comparison
 

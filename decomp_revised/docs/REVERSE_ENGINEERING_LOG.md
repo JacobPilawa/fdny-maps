@@ -200,3 +200,7 @@ The second Genesis `DriverHook` path is now traced through selected-driver initi
 The fixed-slot lead at `0046269D` was rejected as evidence for the BoundsTrigger scheduler. It is a conditional self-vtable call outside a child-array loop, and no receiver or runtime edge ties it to ScriptActor or BoundsTrigger. The recurring updater caller and its timing are still unresolved. See [`fixed_slot_candidate_0046269d_rejection.md`](../tracker/evidence/scenario-loading/fixed_slot_candidate_0046269d_rejection.md).
 
 No EXE function-review entry was added (66 remains). The dashboard HTML was not updated; no game launch or build was run.
+
+## 2026-10-12 — EXE renderer selection callsite mapped
+
+The EXE calls imported `geEngine_SetDriverAndMode` from `FUN_004998B0` at `0x00499BE2`; the function is reached during startup/window initialization. The import's correct IAT VA is `0x004DC1E4` (the nearby `0x004DC3B8` candidate is USER32 `LoadCursorA`). Genesis export `0x100263E0` calls selected-driver helper `FUN_10025E00`, then conditionally dispatches an unresolved table `+0xA8` slot with five values from engine offsets `+0x38A6C` through `+0x38A7C`. Argument meanings, slot semantics, and runtime renderer choice remain open. The caller/wrapper path is detailed in [`selected_driver_initialization_trace.md`](../tracker/evidence/driver-boundary/selected_driver_initialization_trace.md). The 66-entry review ledger and dashboard HTML are unchanged; no build or game launch was performed.
