@@ -286,7 +286,7 @@
     },
     {
       "name": "Training ash-pool lifecycle",
-      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; five 004467E0 spawn cases match native position/activation bits and draw counts with four real Player getter calls; constructor position/dirty/vector defaults reflect 0042d2d0 and 0047f1d0; source-bound five-frame 3,500-clock-unit animation advances before density scan; render lookup maps IDs 200/201 to rescue.rrf ash1.bmp/ash2.bmp and source-maps color/alpha operands; runtime renderer objects, Player schedule, presentation, all-input trig exactness and full RNG parity remain pending",
+      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; five 004467E0 spawn cases match native position/activation bits and draw counts with four real Player getter calls; five original 0047F5A0 affine cases match all cached vertex bits; constructor vector/cache flags and source-bound five-frame animation are modeled; render lookup maps IDs 200/201 to rescue.rrf ash1.bmp/ash2.bmp and source-maps color/alpha operands; parent composition, runtime renderer objects, Player schedule, presentation, all-input trig exactness and full RNG parity remain pending",
       "original_entries": [
         "004465d0",
         "004463f0",
@@ -309,10 +309,13 @@
         "0047d6d0",
         "0049d760",
         "0049e770",
-        "00446390"
+        "00446390",
+        "0047f5a0",
+        "004977b0",
+        "00495d20"
       ],
       "implementation": "src/player_ash_pool.h",
-      "comparison": "player_ash_pool-check; player_ash_spawn_pcode-check"
+      "comparison": "player_ash_pool-check; ash-update/activate/spawn/geometry-pcode-checks"
     },
     {
       "name": "Combined fire visual component",

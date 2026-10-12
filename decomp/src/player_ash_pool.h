@@ -17,7 +17,7 @@
 struct PlayerAshParticle {
     bool active = true;                    // +0x30, 0047f500
     bool animationEnabled = true;          // +0xad, 0047f500
-    bool positionInitialized = true;       // +0x78, 0047f500
+    bool geometryDirty = true;             // +0x78, 0047f500 / 0047f5a0
     bool vectorsDirty = true;              // +0xa0, 004463f0 -> 0047f1d0
     uint32_t animationFlags = 0;           // +0x18, copied from selected descriptor container
     float activationScale = 1.0f;           // +0x1c, 0047d330
@@ -31,6 +31,8 @@ struct PlayerAshParticle {
     std::array<float,3> vector88{};         // +0x88, 0047f500 / 00446510
     std::array<float,3> vectorB4{1.0f,1.0f,1.0f}; // +0xb4, 0047f500
     std::array<float,3> spawnPosition{};    // +0x5c, identity transform from 0042d2d0
+    // Position triplets at +0xd8,+0xfc,+0x120,+0x144; valid when !geometryDirty.
+    std::array<std::array<float,3>,4> geometryPositions{};
 };
 
 struct PlayerAshDescriptor {
@@ -44,6 +46,14 @@ struct PlayerAshDescriptor {
 struct PlayerAshFrame {
     std::array<float,3> position{};
     std::array<float,3> direction{};
+};
+
+// World transform layout consumed by 00495D20: three basis columns, then
+// translation and scale. The host resolves any parent chain before passing it.
+struct PlayerAshTransform {
+    std::array<std::array<float,3>,3> axis{{{1,0,0},{0,1,0},{0,0,1}}};
+    std::array<float,3> position{};
+    std::array<float,3> scale{1.0f,1.0f,1.0f};
 };
 
 struct PlayerAshPoolServices {
@@ -146,7 +156,7 @@ struct PlayerAshPool {
     static void activate(PlayerAshParticle& p, const std::array<float,3>& position,
                          uint32_t now, Random& rng) {
         p.spawnPosition=position;             // 0047f1a0 destination +0x5c
-        p.positionInitialized=true;
+        p.geometryDirty=true;
         p.animationIndex=0;
         p.nextAnimationIndex=1;
         p.animationTimestamp=now;
@@ -189,6 +199,44 @@ struct PlayerAshPool {
             (E::from(yRaised)+E::from(directionScaled[1])).asFloat(),
             (E::from(zRadial)+E::from(directionScaled[2])).asFloat()
         };
+    }
+
+    // 0047F5A0: build the four cached quad positions through the world
+    // transform. The local template is a unit square in XY; source explicitly
+    // overwrites its Z components with zero. Transform products/sums retain
+    // x87 precision until each vertex component is stored to float. Parent
+    // composition belongs to the caller's transform service.
+    static bool buildCachedGeometry(PlayerAshParticle& p,const PlayerAshTransform& frame) {
+        if (!p.geometryDirty) return false;
+        const float halfX=p.vectorB4[0]*0.5f;
+        const float halfY=p.vectorB4[1]*0.5f;
+        const float negativeHalfX=(-p.vectorB4[0])*0.5f;
+        const float negativeHalfY=(-p.vectorB4[1])*0.5f;
+        const std::array<std::array<float,3>,4> local{{
+            {{halfX*(-1.0f),halfY,0.0f}},
+            {{halfX,halfY,0.0f}},
+            {{negativeHalfX*(-1.0f),negativeHalfY,0.0f}},
+            {{negativeHalfX,negativeHalfY,0.0f}}
+        }};
+        using E=Extended;
+        for(size_t vertex=0;vertex<local.size();vertex++){
+            std::array<E,3> scaled{};
+            for(size_t axis=0;axis<3;axis++)
+                scaled[axis]=E::from(frame.scale[axis])*E::from(local[vertex][axis]);
+            for(size_t component=0;component<3;component++){
+                // 00495D20 schedules the last two matrix products into one
+                // x87 sum before adding the first, spills that linear result
+                // to float, then reloads it to add translation.
+                E first=E::from(frame.axis[0][component])*scaled[0];
+                E second=E::from(frame.axis[1][component])*scaled[1];
+                E third=E::from(frame.axis[2][component])*scaled[2];
+                float linear=(first+(second+third)).asFloat();
+                E value=E::from(linear)+E::from(frame.position[component]);
+                p.geometryPositions[vertex][component]=value.asFloat();
+            }
+        }
+        p.geometryDirty=false;
+        return true;
     }
 
     static const std::vector<float>& animationDurations() {

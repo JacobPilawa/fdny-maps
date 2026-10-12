@@ -46,8 +46,9 @@ that the base transform constructor zeros `+0x5c..+0x64`, and that
   cleared it; vector `+0x94` is zero.
 - `0042d280` stores its three scalar arguments at vector X/Y/Z offsets `0/4/8`
   and copies them to the optional output buffer.
-- `0047f1a0` sets byte `+0x78=1` and returns `this+0x34` (spawn vector at
-  `+0x5c`). `0047f1b0` sets byte `+0xa0=1` and returns `this+0x7c`;
+- `0047f1a0` sets lazy-cache byte `+0x78=1` and returns `this+0x34` (spawn
+  vector at `+0x5c`). `0047f1b0` sets vector-dirty byte `+0xa0=1` and returns
+  `this+0x7c`;
   `0047f1c0` sets the same byte and returns `this+0x88`.
 - `0047d660` advances finite animation state when its deadline is due and can
   clear active byte `+0x30` when the descriptor's bit 3 is set. `0047f960`
@@ -101,3 +102,13 @@ indices and timestamp, all spawn and velocity vector words, both scale values,
 deadline, and three bounded calls. This covers the activation callee with its
 input point supplied; the caller's angle/distance draws and Player/camera scene
 transform remain outside scope.
+
+
+`AshParticleGeometryPcodeOracle.java` separately executes original `0047F5A0`
+with its template guard already initialized and no parent transform. Five
+affine-frame cases compare cached positions at `+0xD8`, `+0xFC`, `+0x120`,
+and `+0x144`, as well as clearing byte `+0x78`. The native component matches
+all vertex words. `0047F5A0` builds an XY square using half of `+0xB4.x/y`
+(Z is zero), and `00495D20` applies the resolved basis/scale and translation
+with an intermediate float spill. The oracle does not establish parent-chain
+composition, resource binding, polygon submission, or live rendering.

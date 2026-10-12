@@ -15,7 +15,7 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   afterward. Entry `i` is constructed with container `i & 1`.
 - `0047f850` initializes the transform subobject through `0042d2d0`, including
   zero position at `+0x5c..+0x64`. `0047f500` establishes active `+0x30 = 1`,
-  animation-enabled `+0xad = 1`, position-initialized `+0x78 = 1`, opacity
+  animation-enabled `+0xad = 1`, lazy-cache byte `+0x78 = 1`, opacity
   `+0xa8 = 1`, and zero vectors at `+0x7c`, `+0x88`, and `+0x94`. It writes
   `(1,1,1)` at `+0xb4` and calls `0047d330` to set activation scale
   `+0x1c = 1`. Afterward, `004463f0` calls `0047f1d0`, setting vector-dirty
@@ -111,3 +111,28 @@ and five bounded RNG calls match bit-for-bit. Ghidra's x86 emulator does not
 implement the `FCOS`/`FSIN` callother operators, so the oracle supplies Java
 `Math` double results at those two instructions; those five cases are an
 integration check, not proof of every x87 trig result for every float input.
+
+## Cached presentation geometry
+
+`+0x78` is a lazy geometry-cache/initialization byte: `0047F5A0` returns when
+it is zero and clears it after building all four cached positions. The state-1
+branch in `0047F960` also clears it without calling `0047F5A0`, so callers must
+preserve the particle-state gate rather than treat this byte as a universal
+“vertices need rebuilding” rule. Activation through `0047F1A0` sets it.
+
+`0047F5A0` forms four local XY corners from half of `+0xB4.x/y`; Z is
+explicitly zero regardless of `+0xB4.z`. Corner order is `(-x,+y)`,
+`(+x,+y)`, `(+x,-y)`, `(-x,-y)`. The original `004977B0` resolves the
+transform parent chain; the isolated native helper takes that resolved world
+transform as input. `00495D20` scales the local coordinates, applies the three
+basis columns, spills the linear result to float, then reloads it to add
+translation and stores each world-space float. Matching the x87 sum order and
+intermediate float spill matters for bit parity.
+
+`AshParticleGeometryPcodeOracle.java` executes original `0047F5A0` through
+`004977B0` and `00495D20` for five hash-pinned affine frames; its local static
+template guard is pre-marked initialized and no parent transform is supplied.
+The native `player_ash_geometry_pcode-check` compares all twelve output words
+per case and dirty-byte clearing; all five cases match exactly. This establishes
+isolated cached vertex parity, not state scheduling, parent composition, render
+resources, polygon API calls, or visible ash output.

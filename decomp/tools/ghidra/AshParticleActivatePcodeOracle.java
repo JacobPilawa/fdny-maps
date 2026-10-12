@@ -70,7 +70,7 @@ public class AshParticleActivatePcodeOracle extends GhidraScript {
                 ",\"now\":"+Integer.toUnsignedString(now)+
                 ",\"position_before\":["+Integer.toUnsignedLong(xBits)+","+Integer.toUnsignedLong(yBits)+","+Integer.toUnsignedLong(zBits)+"]"+
                 ",\"active_after\":"+(byteAt(e,PARTICLE+0x30)!=0)+
-                ",\"position_initialized_after\":"+(byteAt(e,PARTICLE+0x78)!=0)+
+                ",\"geometry_dirty_after\":"+(byteAt(e,PARTICLE+0x78)!=0)+
                 ",\"dirty_after\":"+(byteAt(e,PARTICLE+0xa0)!=0)+
                 ",\"animation_index_after\":"+Integer.toUnsignedLong(r(e,PARTICLE+4))+
                 ",\"next_animation_index_after\":"+Integer.toUnsignedLong(r(e,PARTICLE+8))+
