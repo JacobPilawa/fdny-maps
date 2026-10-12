@@ -151,12 +151,24 @@ gate therefore sees a nonzero reset default unless another root write
 intervenes. This does not name the byte or prove its value when Training
 processes input.
 
-A bounded `FieldStoreAudit.java 0x12c` scan found other stores on untyped
-receivers, including byte stores at `00446FC9` and `00447440` without function
-boundaries. It does not prove those are Player-root stores; aliases and
-computed writes are outside its scope. The two `00459630` stores belong to the
-interaction-selection object at root `+0x3380`, as shown by the corrected
-receiver calculation above.
+A whole-listing `FieldStoreAudit.java 0x12c` scan followed by receiver checks
+classified the two misleading byte stores. `00446FC9` is on the
+`RCS_EscapeArrow` object (class vtable `004E15E4`; its resource name is
+registered at `004E15F4`), and `00447440` is in a separate type-3 actor path
+(constructor `004474C0` sets its root type at `+0x18` and installs vtables
+`004E1620/004E1640`). Neither is a Player-root write. The two stores
+inside `00459630` are also separate: that method receives the
+interaction-selection object at Player root `+0x3254`, so its byte is root
+`+0x3380`.
+
+The Player-root `+0x12C` byte is directly read by `0044C520`, which receives
+the Player singleton as `this` on the BModel candidate path (`0043DC20`). Of
+the direct displacement stores returned by the audit, `0044CD10` is the only
+one currently proven to write this Player-root byte. This narrows the static
+store question but does not rule out writes through an alias, a computed
+pointer, or an indirect service; it also does not establish the byte's name or
+live Training value. A numeric `+0x12C` operand alone is not enough to assign
+an object field: trace each receiver back to its owning root.
 
 ## Reproduction queries
 
@@ -171,10 +183,16 @@ temporary-copy `DefineAndDecompile.java 0043DC60`,
 `AddressXrefs.java 00459000 00459050 00459090`, `InstructionContext.java
 0043DDB8 18 20` and `004440D8 18 20`, `DataValue.java 004E0B7C 004E0B80
 004E0B84 004E0B88 004E0B8C 004E0B90`, `FieldStoreAudit.java 0x12c 0x188
-0x18c`, and separate `FieldOffsetReferences.java 0x3114` and
-`FieldOffsetReferences.java 0x234` queries. All queries against the preserved
-project used `-noanalysis -readOnly`; missing function boundaries were defined
-only in the scratch copy under `/private/tmp`.
+0x18c`, `FieldOffsetReferences.java 0x12c`, `DecompileFunctions.java
+0044CD10 0044D550 0044FF10 00446F00 004474C0`, `AddressXrefs.java 0044CD10
+0044C520 00447440`, `InstructionContext.java 0043DC20 12 10`,
+`InstructionContext.java 00446FC9 10 8`, `InstructionContext.java 00447440
+10 8`, `FindStringReferences.java RCS_EscapeArrow`, and
+`DataValue.java 004E15E4 004E1620 004E1640`, and separate
+`FieldOffsetReferences.java 0x3114` and `FieldOffsetReferences.java 0x234`
+queries. All queries against the preserved project used `-noanalysis
+-readOnly`; missing function boundaries were defined only in the scratch copy
+under `/private/tmp`.
 
 Next source work: enumerate the Training type-1 contact candidates, recover the
 updater's actual call order relative to the owner contact manager, then connect
