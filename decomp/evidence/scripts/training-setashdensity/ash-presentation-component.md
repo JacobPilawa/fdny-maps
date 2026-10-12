@@ -64,9 +64,12 @@ in `tools/ghidra/README.md`. The fixture is
 
 ## Limits and next link
 
-This is a helper-level component, not a complete ash draw port. Later writes to
-`+0x20`, resource-table instances, culling context, vertex records,
-polygon-list state, and callback scheduling are not fully connected. The
+This is a helper-level component, not a complete ash draw port. The bounded
+direct-store scan keeps particle `+0x20` at 1.0 in the constructor/bind path,
+but does not exclude alias or indirect writes
+(`ash-particle-channel-scale-audit.md`). Resource-table instances, culling
+context, vertex records, polygon-list state, and callback scheduling are not
+fully connected. The
 zero-duration alpha case is deliberately not
 claimed: the original alpha helper divides without the color helper's guard,
 and the current finite `Extended` model does not represent its resulting
