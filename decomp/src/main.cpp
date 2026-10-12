@@ -71,6 +71,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_release_frame.h"
 #include "victim_frame_ops.h"
 #include "victim_release.h"
+#include "player_rescue_deadline.h"
 #include "actor_render_flags.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
@@ -899,6 +900,16 @@ int main(int argc,char** argv){try{
  int mismatches=0;
  for(const auto& sample:cases){bool actual=sourceVictimPickupCandidate(sample.state,sample.type,sample.available,sample.box,sample.center,sample.radius);if(actual!=sample.expected){mismatches++;std::cout<<"Mismatch: "<<sample.name<<" expected="<<sample.expected<<" actual="<<actual<<"\n";}}
  std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
+ }
+ if(argc>1&&std::string(argv[1])=="--player-rescue-deadline-check"){
+ auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/player-rescue-deadline-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing Player rescue deadline evidence");
+ auto samples=field(fixture,"samples");int mismatches=0;
+ for(int i=0;i<count(samples);i++){
+  auto sample=at(samples,i);Random random(uint32_t(json_object_get_uint64(field(sample,"seed"))));uint32_t deadline=0;
+  auto result=setPlayerRescueDeadline(deadline,num(field(sample,"field")),integer(field(sample,"mode")),uint32_t(json_object_get_uint64(field(sample,"now"))),random);
+  if(deadline!=uint32_t(json_object_get_uint64(field(sample,"deadline")))||random.drawCount!=uint64_t(json_object_get_uint64(field(sample,"draws")))){mismatches++;std::cout<<"Rescue deadline mismatch sample="<<i<<" native="<<deadline<<" expected="<<json_object_get_uint64(field(sample,"deadline"))<<" threshold="<<result.threshold<<" bound="<<result.bound<<"\n";}
+ }
+ std::cout<<"Player rescue deadline: "<<count(samples)<<" original P-code calls; mismatches="<<mismatches<<"\n";return mismatches?53:0;
  }
  if(argc>1&&std::string(argv[1])=="--victim-frame-ops-check"){
  int mismatches=0,words=0,cases=0;

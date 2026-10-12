@@ -152,7 +152,7 @@
     },
     {
       "name": "Victim pickup, carrying, rescue and exits",
-      "status": "pickup/post-effects, escape/release and carried-passout transactions recovered; concrete frame/floor adapters plus Training BSP traces match 618 original words; passout frame/motion/RNG matches 576 values across 32 P-code cases; rescue-statistics boundary preserves live timestamp/clock reads; normal actor flags gate wired; statistic-store/status/zone/exit helpers, passout tail, recurring scheduling, continuous carry and connected gameplay remain open",
+      "status": "isolated pickup/release/passout, frame/floor, rescue-statistics, membership and exit bookkeeping implemented; post-rescue deadline 00454300→004541A0 matches 48 original P-code calls and preserves one shared bounded draw; concrete frame/floor matches 618 words; passout matches 576 values; shared runtime/status/item/exit inputs, passout tail, recurring scheduling, continuous carry and full mission integration remain open",
       "original_entries": [
         "00453a70",
         "00450440",
@@ -165,7 +165,11 @@
         "004513a0",
         "00451160",
         "004504c0",
-        "0045c000"
+        "0045c000",
+        "00454300",
+        "004541a0",
+        "0044fba0",
+        "0044c360"
       ]
     },
     {
