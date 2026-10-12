@@ -2,6 +2,22 @@
 
 Checked 2026-10-12 against the copied prototype source in [`port/spikes/training-native-prototype/`](../port/spikes/training-native-prototype/README.md) and the active MBase map inventory. The prototype is a substantial gameplay reconstruction, not just a renderer demo: `main.cpp` wires movement, collision, tools, fire contacts/suppression, victims, doors, authored script events, actor drawing, and a frame loop. Its current build compiles that integration as one large translation unit. The user reports having reached gameplay in the prior setup; this shell has verified compilation and local asset resolution, but could not create a display to verify interactive launch.
 
+## Direct answer: preserve this as the port's implementation base
+
+The prior C++ is valuable working code and should not be thrown away or recreated from scratch. It is an implementation reconstructed from the pinned game binary and prior Ghidra work, rather than original source recovered from the game's developers. That distinction matters for parity: code can be carried over, but its source annotations and behavior still need to be checked against the original EXE and runtime evidence.
+
+The efficient path is to keep extending this codebase. Preserve the already-integrated player, fire, victim, equipment, interaction, and animation behavior, and feed those systems scene data from rescue maps. Introduce a shared world/level interface around the current host. The work is mostly in generalizing that host and producing the map/resource inputs it currently expects; it is not a reason to replace the gameplay logic wholesale.
+
+There are three practical reuse levels:
+
+1. **Carry over directly when inputs match.** Small calculations and state transitions can remain as-is when the caller provides the same already-resolved values and the function's evidence supports the behavior. Examples include fire-size/suppression logic, collision-bound calculations, interaction selection, and victim transaction steps.
+2. **Keep the behavior, adapt its services and scene inputs.** Player/world collision, actor animation and pose, fire/victim scheduling, equipment, and script events need a level-neutral world interface, map-resolved actors, and an explicit update order. Several modules already isolate behavior behind callbacks; their Training-specific callers should be replaced without rewriting the underlying recovered sequence.
+3. **Keep as a reference or replace at the boundary.** The present `main.cpp`, `assets.h`, fixed Training IDs and startup factory, Training zone state, Training scripts, and Apple CoreText/CoreGraphics UI are not a reusable game-wide bootstrap. Keep the Training executable as a regression/workbench while the shared host is built around the existing mechanics.
+
+The build setup reinforces this boundary: CMake currently compiles `src/main.cpp` as the only translation unit, and that file includes the gameplay headers and owns input, scene construction, rendering, and the frame loop. So there is a lot of reusable C++ behavior, but not yet a clean, separately linkable game runtime. Extracting modules behind explicit interfaces is the safe way to carry the code forward without losing the behavior that already works.
+
+The other concrete gap is the data pipeline. The legacy GBSP reader is a useful generic partial inspector, and the old level-map tools produce viewer data, but the reviewed old tree did not contain a generic exporter that regenerates the prototype's native `world_mesh.json`, `collision.json`, actor, and motion bundle for arbitrary BSPs. Training assets establish a useful schema/example; MBase still needs a general exporter and resource resolution before this same host can load it. The exporter audit is summarized in [`LEGACY_WORK_REVIEW.md`](LEGACY_WORK_REVIEW.md).
+
 ## Reuse decision
 
 Reuse source-backed mechanics directly where their inputs match. Do not rewrite those behaviors from scratch. Replace or generalize the level bootstrap and data adapters so MBase drives the same components. Keep the existing Training executable as a gameplay reference until the shared runtime can load a rescue map.
