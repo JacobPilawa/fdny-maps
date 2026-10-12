@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-11",
-  "commit": "868bd5a",
-  "tests": 21,
+  "commit": "95c758b",
+  "tests": 22,
   "scope": "Training",
   "files": [
     {
@@ -1292,6 +1292,22 @@
         ]
       ],
       "bytes": 1284
+    },
+    {
+      "path": "src/player_passout.h",
+      "group": "Player",
+      "summary": "Source-ordered 00450FB0 state transition with parameter-specific animation, RC_PassOut, state/timestamp, optional active object and HeroDown boundaries.",
+      "evidence": "evidence/fire-update/player-exposure-timer-followup/player-passout-transaction.md",
+      "units": [
+        [
+          "00450FB0",
+          "Player passout dispatcher",
+          "partial",
+          "Five original P-code cases compare parameter, timestamp/state stores, early HeroDown delegation and optional active-object callback under service stubs.",
+          "evidence/fire-update/player-exposure-timer-followup/player-passout-pcode-oracle.json"
+        ]
+      ],
+      "bytes": 1311
     }
   ]
 }
