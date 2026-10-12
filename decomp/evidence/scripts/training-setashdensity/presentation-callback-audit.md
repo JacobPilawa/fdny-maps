@@ -19,7 +19,7 @@ records. `0047F960` first checks byte `+0xAD` and may call animation update
 active byte `+0x30`; inactive records return without presentation. An active
 record chooses a state from float bits at `+0xB0` (values 0 through 4): state
 0 copies the base position at `+0x5C..+0x64` to `+0xD8..+0xE0`, state 1 clears
-lazy-initialization byte `+0x78` if set, and state 2 lazily initializes cached
+lazy-cache byte `+0x78` if set, and state 2 lazily initializes cached
 geometry through `0047F5A0`. States 3 and 4 preserve the state value for the
 animation/vector path. The source has no default assignment to its local frame
 count for an unrecognized state, so a port must preserve the state invariant
@@ -51,6 +51,16 @@ construction: it transforms four local template vectors with the basis at
 then clears `+0x78`. Its static scratch/template block spans globals
 `0050308C..005030B8`; one-time object construction for that block is guarded
 by `005030BC`.
+
+
+The isolated native component now reproduces the four cached position
+vertices. The template is an XY square with corners `(-halfX,+halfY)`,
+`(+halfX,+halfY)`, `(+halfX,-halfY)`, and `(-halfX,-halfY)`; every local Z is
+zero. The transform scales local components, applies the resolved basis,
+stores the linear result as float, then adds translation. Five original P-code
+cases match every cached position bit and the byte clear. The comparison marks
+the local template guard initialized and supplies no parent transform, so it
+leaves `004977B0` parent-chain composition open.
 
 ## RNG interpretation
 

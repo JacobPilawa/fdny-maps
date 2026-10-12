@@ -31,7 +31,7 @@ int main(int argc,char** argv){
         for(int i=0;i<sampleCount;i++){
             json_object* sample=json_object_array_get_idx(samples,i);
             PlayerAshParticle p;
-            p.active=false;p.positionInitialized=false;p.vectorsDirty=false;
+            p.active=false;p.geometryDirty=false;p.vectorsDirty=false;
             p.animationIndex=9;p.nextAnimationIndex=9;p.animationTimestamp=0x87654321u;
             p.deadline=0x12345678u;
             std::array<float,3> position{};
@@ -40,7 +40,7 @@ int main(int argc,char** argv){
             PlayerAshPool::activate(p,position,uint32_t(integer(field(sample,"now"))),rng);
             bool mismatch=
                 p.active!=bool(json_object_get_boolean(field(sample,"active_after")))||
-                p.positionInitialized!=bool(json_object_get_boolean(field(sample,"position_initialized_after")))||
+                p.geometryDirty!=bool(json_object_get_boolean(field(sample,"geometry_dirty_after")))||
                 p.vectorsDirty!=bool(json_object_get_boolean(field(sample,"dirty_after")))||
                 p.animationIndex!=uint32_t(integer(field(sample,"animation_index_after")))||
                 p.nextAnimationIndex!=uint32_t(integer(field(sample,"next_animation_index_after")))||

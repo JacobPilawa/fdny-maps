@@ -15,7 +15,7 @@ int main() {
         assert(c==(i&1) && p.active && p.animationEnabled && p.activationScale==1.0f);
         assert(p.animationFlags==PlayerAshPool::descriptorFlagsAfterSetup);
         assert(p.animationIndex==0 && p.nextAnimationIndex==1 && p.animationTimestamp==1);
-        assert(p.positionInitialized && p.vectorsDirty);
+        assert(p.geometryDirty && p.vectorsDirty);
         assert(p.opacityScale==1.0f && p.deadline==0);
         assert((p.vector7c==std::array<float,3>{} && p.vector88==std::array<float,3>{}));
         assert((p.vector94==std::array<float,3>{} && p.vectorB4==std::array<float,3>{1.0f,1.0f,1.0f}));

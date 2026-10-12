@@ -1316,7 +1316,7 @@ const data={
     {
       "path": "src/player_ash_pool.h",
       "group": "Effects",
-      "summary": "100-slot ash pool with source-mapped descriptors, direct update/activation writes, and finite animation order. Six update and three activation P-code cases match; Player scheduling and rendering remain open.",
+      "summary": "100-slot ash pool with source-mapped descriptors, direct update/activation writes, finite animation order and player-relative spawn. Original P-code cases match update, activation, spawn, and four cached vertex triplets; Player scheduling and visible rendering remain open.",
       "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
       "units": [
         [
@@ -1367,9 +1367,16 @@ const data={
           "partial",
           "Five descriptor durations total 3,500 clock units at scale 1. The original-compared animation routine now runs before presentation and the density scan; live cadence/rendering remain open.",
           "evidence/scripts/training-setashdensity/descriptor-lifetime-followup.md"
+        ],
+        [
+          "0047F5A0 / 00495D20",
+          "Cached quad positions",
+          "partial",
+          "Five original P-code affine frames match all four cached position triplets; local XY template and x87 store order recovered. Parent-chain composition and polygon submission remain open.",
+          "evidence/scripts/training-setashdensity/ash-geometry-pcode-oracle.json"
         ]
       ],
-      "bytes": 11812
+      "bytes": 14293
     }
   ]
 };
