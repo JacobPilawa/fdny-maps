@@ -11,6 +11,14 @@ Read-only Ghidra 12.0.4 inspection of the preserved `FDNYFirefighter.exe` projec
 - Player constructor `00453D50` sets type `+0x18` to 1. `0043B620` also checks candidate type `+0x18 == 1`, then checks the candidate's virtual callback at `+0x0C` returns non-null before doing the reach-expanded AABB test. The type gate establishes a category of type-1 candidates, not that every such candidate is necessarily a Player.
 - The final manager's registration method `0049BC90` puts an entity into the list selected by its type field and appends it to the active list. `00429490` performs registration. `00429520` runs this manager pass before staged-entity admission at `+0x3C0`, so newly staged entities are not admitted by that earlier pass in the same function call.
 
+## Type-1 contact participants
+
+The contact callback's `type == 1` check is not a Player-only test. A whole-listing direct-store scan (`FieldStoreAudit.java 0x18 1`) finds two non-stack dword initializers at object root `+0x18`: Player constructor `00453D50` and the `RCS_PlayerHose` constructor `00468050` (store `004681F4`). The Player factory is `00454080`, paired with the `RCS_PlayerRescue` class row at `004E1868/004E1870`; its constructor publishes the singleton at `DAT_00503A78+0x30`. The hose-path factory `00468230` is in the row at `004E2B40`, whose name string is `RCS_PlayerHose` at `004E2B48`. Its root vtable is `004E2D10`, with ScriptActor subobject vtable `004DFC30` at root `+0x24`.
+
+Both roots' vtable slot `+0x0C` points to thunk `0049DB90`, which jumps to `0049D790`. That helper resolves the transform at root `+0x24`, stores the resulting world point at root `+0x68`, and returns that point pointer. Thus `RCS_PlayerHose` satisfies both visible preconditions in `0043B620` if it is admitted to the type-1 manager list. The Training entity dump contains the `RCS_PlayerHose` typedef (record 251) but no instance; dynamic script creation has not been ruled out.
+
+Do not equate this class with the Hose Spray inventory object. Player method `0044CAB0` creates that item through the distinct constructor `004634F0`; its base path `0045F7E0 → 0046F930` initializes root type `+0x18` to zero, and the derived constructor does not overwrite it. That equipment object therefore fails `0043B620`'s type-1 check. From authored Training data and the traced constructors, Player is the only currently evidenced type-1 participant; exact manager-list membership/order still needs registration or live-schedule proof. The direct-store scan does not rule out type assignments through aliases or copied base state.
+
 ## Pair and event lifecycle
 
 In the BModel script updater `0043DC60`, call `00470840` at `0043DD74` drains the contact-pair state in this order:
@@ -36,5 +44,6 @@ Queries against the preserved project (all `-noanalysis -readOnly`):
 - `DecompileFunctions.java 0042AEA0 00429520 00429490 0049BF10 0043F340 00453D50 0043DC60 00470840 00490300 00490380 004903A0 00490430 0043AED0 0049D350 004901E0 004901A0 0049D3D0 004705B0 00470B50`
 - `AddressXrefs.java 0049BD20 0049BC90 0043B620 0043DC60 00470840 00490430 0043AED0`
 - `DataValue.java 004E4124 004E0E40`
+- Follow-up receiver/type scan: `FieldStoreAudit.java 0x18 1`; `DecompileFunctions.java 00453D50 00454080 00468050 00468230 0044CAB0 004634F0 0045F7E0 0046F930 00496020`; `AddressXrefs.java 00468050 00468230 0044CAB0 0049DB90`; `FindStringReferences.java RCS_PlayerHose`; `DataValue.java 004E1868 004E1870 004E2B40 004E2B48 004E2D10 004E2D1C 004E1C54`; and `InstructionContext.java 0049DB90 8 8` plus `InstructionContext.java 0049D7BC 2 36`.
 
 The preserved project lacked function boundaries at `0043B620`, `0049BD20`, and `0049BC90`; these were defined/decompiled only in the scratch project with separate invocations, `DefineAndDecompile.java 0043B620`, `DefineAndDecompile.java 0049BD20`, and `DefineAndDecompile.java 0049BC90`. Preserved vtable references/data at `004E4124` and BModel slot address `004E0E40` were used to verify the indirect entries. The exact dynamic caller/order for `0043DC60`, exact owner update cadence, and real-time event latency remain unknown.
