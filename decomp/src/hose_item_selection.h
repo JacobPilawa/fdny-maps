@@ -28,9 +28,19 @@ struct AxeSwitchGate {
  }
 };
 
+// Axe +0x3C activation callback state. Engine-owned animation and frame-parent
+// behavior stays at explicit service boundaries; these are the observed bytes.
+struct AxeActivation {
+ bool rootActive=false; // Axe +0x158
+ bool primaryChildActive=false; // Axe +0x200 child +0x158
+ bool secondaryChildActive=false; // Axe +0x648 child +0x158
+ uint8_t player345c=0; // Player +0x345C
+};
+
 struct State {
  std::array<Item,5> slots{};
  AxeSwitchGate axeGate{}; // Training slot 1, initialized by 00460A50/00460250.
+ AxeActivation axeActivation{}; // Updated only by the Axe +0x3C callback.
  int count=5;
  int selected=0; // Player +0x357C, zero-based.
  int hoseMode=0; // Hose Spray +0xC68.
@@ -42,6 +52,8 @@ struct Result {
  bool reachedFrameTransform=false;
  bool hosePresent=false;
  std::vector<std::string> events;
+ std::vector<std::string> axeCallbackEvents;
+ std::vector<std::string> axeAnimationSnapshots;
 };
 
 inline std::string indexedEvent(const char* name,int index,int argument){
@@ -62,6 +74,30 @@ inline bool canDeactivate(const State& state,int index){
  return state.slots[size_t(index)].canDeactivate;
 }
 
+inline void axeItemActive(State& state,bool active,Result& result){
+ // 0045F9B0 -> 0045F620: root active byte, animation service, then optional
+ // follower reparent on activation. Service events use Axe-relative offsets.
+ state.axeActivation.rootActive=active;
+ result.axeCallbackEvents.push_back(indexedEvent("active-byte",0,active?1:0));
+ result.axeCallbackEvents.push_back(serviceEvent("animation",0x58,active?1:0,0));
+ result.axeAnimationSnapshots.push_back(serviceEvent("animation-state",0x58,state.axeActivation.rootActive?1:0,state.axeActivation.player345c));
+ if(active)result.axeCallbackEvents.push_back(serviceEvent("reparent",0x15c,0x34a4,1));
+ auto child=[&](int objectOffset,bool& childActive){
+  childActive=active;result.axeCallbackEvents.push_back(indexedEvent("active-byte",objectOffset,active?1:0));
+  result.axeCallbackEvents.push_back(serviceEvent("animation",objectOffset+0x58,active?1:0,0));
+  result.axeAnimationSnapshots.push_back(serviceEvent("animation-state",objectOffset+0x58,childActive?1:0,state.axeActivation.player345c));
+  if(active)result.axeCallbackEvents.push_back(serviceEvent("reparent",objectOffset+0x15c,0x34a4,1));
+  else {state.axeActivation.player345c=0;result.axeCallbackEvents.push_back(serviceEvent("player-byte",0x345c,0,0));}
+ };
+ if(state.axeGate.primaryChildEnabled)child(0x200,state.axeActivation.primaryChildActive);
+ child(0x648,state.axeActivation.secondaryChildActive);
+}
+
+inline void activateItem(State& state,int index,bool active,Result& result){
+ result.events.push_back(indexedEvent("active",index,active?1:0));
+ if(index==1)axeItemActive(state,active,result);
+}
+
 inline void setMode(State& state,int mode,Result& result){
  const int old=state.hoseMode;
  if(old==mode)return;
@@ -79,7 +115,7 @@ inline bool selectSlot(State& state,int index,bool force,Result& result){
  if(index==state.selected)return true;
  if(state.selected==0){
   state.selected=index;
-  result.events.push_back(indexedEvent("active",index,1));
+  activateItem(state,index,true,result);
  }else{
   const int old=state.selected;
   if(!force){
@@ -87,9 +123,9 @@ inline bool selectSlot(State& state,int index,bool force,Result& result){
    result.events.push_back(indexedEvent("can",old,can?1:0));
    if(!can)return false;
   }
-  result.events.push_back(indexedEvent("active",old,0));
+  activateItem(state,old,false,result);
   state.selected=index;
-  result.events.push_back(indexedEvent("active",index,1));
+  activateItem(state,index,true,result);
  }
  result.events.push_back(serviceEvent("hud",0x5f4,5,0));
  return true;
@@ -102,13 +138,13 @@ inline Result attach(State& state){
  }
  if(state.selected!=4){
   if(state.selected==0){
-   state.selected=4;result.events.push_back(indexedEvent("active",4,1));
+   state.selected=4;activateItem(state,4,true,result);
   }else{
    const int old=state.selected;
    const bool can=canDeactivate(state,old);
    result.events.push_back(indexedEvent("can",old,can?1:0));
    if(!can){result.events.push_back(hideEvent(0x508,0));result.returned=true;return result;}
-   result.events.push_back(indexedEvent("active",old,0));state.selected=4;result.events.push_back(indexedEvent("active",4,1));
+   activateItem(state,old,false,result);state.selected=4;activateItem(state,4,true,result);
   }
   result.events.push_back(serviceEvent("hud",0x5f4,5,0));
  }

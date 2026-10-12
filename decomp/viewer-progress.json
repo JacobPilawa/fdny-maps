@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
   "commit": "working tree based on 3ec239a",
-  "tests": 40,
+  "tests": 41,
   "scope": "Training",
   "files": [
     {
@@ -570,7 +570,7 @@
     {
       "path": "src/hose_item_selection.h",
       "group": "Tools",
-      "summary": "Training indexed owner selection/rescan match original P-code; Axe gates and attachment commit are source-mapped, while runtime integration remains open.",
+      "summary": "Training indexed owner selection/rescan and Axe +0x3C callbacks compare with original P-code; Axe +0x38 gate and attachment commit remain source-mapped.",
       "evidence": "evidence/hose-spray/item-selection-pcode-audit.md",
       "units": [
         [
@@ -583,7 +583,13 @@
           "0044C2A0",
           "Item activation gate and setter",
           "partial",
-          "Axe idle gate initialization and +0x3C activation dispatch are source-mapped; busy-state cadence and full callback effects remain open."
+          "Selection order and setter are compared in the owner fixture. Axe +0x38 switchability still uses a source-mapped gate adapter; busy-state cadence remains open."
+        ],
+        [
+          "0045F9B0",
+          "Axe activation/deactivation callback",
+          "verified",
+          "Four hash-pinned P-code cases execute 0045F9B0/0045F620 and both 0045FA30 child routes; only animation and follower-reparent services are stubbed."
         ],
         [
           "0044C360",
@@ -592,7 +598,7 @@
           "Populated-slot order and empty-list selected-index clear match original P-code."
         ]
       ],
-      "bytes": 4045
+      "bytes": 6865
     },
     {
       "path": "src/tool_follow.h",
