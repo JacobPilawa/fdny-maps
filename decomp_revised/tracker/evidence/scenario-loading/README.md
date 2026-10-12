@@ -27,7 +27,7 @@ Raw vtable and instruction inspection maps the BoundsTrigger-specific path: root
 
 The selector's initial ordinal is also traced: scene child 2 opens through `0042D3E0`, which invokes selector slot 0 at `0042F600`; that method seeds from the active record or probes for a valid catalog ordinal. Full details are in [selector_initial_ordinal_resolution.md](selector_initial_ordinal_resolution.md).
 
-Player handler `00451870` contains the `escape` branch through `004513A0` to `00451160`, which completes rescue only when the Player carries a victim. The `tell` command reaches `004752A0` and `00472270`, but no recipient lookup or Player-handler edge is established. See [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md); retain this as an open runtime behavior.
+Player handler `00451870` contains the `escape` branch through `004513A0` to `00451160`, which completes rescue only when the Player carries a victim. The `tell` branch reaches `00475560`, which looks up an actor through `00470C50` and dispatches through `00470150` on lookup success. The argument roles and connection to Player handler `00451870` remain open. The separate `004752A0` → `00472270` chain belongs to `help`. See [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md); retain recipient identity and runtime delivery as open behavior.
 
 ## Training data anchors
 
