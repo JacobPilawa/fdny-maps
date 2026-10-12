@@ -59,8 +59,12 @@ vertices. The template is an XY square with corners `(-halfX,+halfY)`,
 zero. The transform scales local components, applies the resolved basis,
 stores the linear result as float, then adds translation. Five original P-code
 cases match every cached position bit and the byte clear. The comparison marks
-the local template guard initialized and supplies no parent transform, so it
-leaves `004977B0` parent-chain composition open.
+the local template guard initialized and supplies no parent transform. A
+separate four-case fixture now matches generic `004977B0` parent-chain
+resolution through two parent levels, but no Training runtime parent has been
+observed and parent resolution plus `0047F5A0` geometry has not yet been
+compared in one original execution. See `native-pool-component.md` and
+`ash-transform-chain-pcode-oracle.json`.
 
 ## RNG interpretation
 
