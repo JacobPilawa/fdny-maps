@@ -9,6 +9,10 @@
 
 ## Genesis selected-driver load
 
+The public Genesis export `geEngine_SetDriverAndMode` is a wrapper around this selected-driver path. At export VA `0x100263E0`, it calls `FUN_10025E00` at `0x100263F0`, forwarding its third stack argument through `EDI`; the helper's selected-DLL load, `DriverHook` resolution, table validation, `+0x20` initialization, and retained handle are described below. The EXE's corresponding IAT entry is VA `0x004DC1E4` (Genesis FirstThunk RVA `0x000DC028`, import index 111), and its only direct caller found is `FUN_004998B0` at call instruction `0x00499BE2`, reached during startup/window initialization from `FUN_0042C800`. The caller supplies values derived from `[ESI+0x74]`, `[[ESI+8]+0x18]`, and `[[ESI+8]+4]`; their meanings are not established.
+
+After the helper returns successfully, the export wrapper conditionally calls an engine-table slot at `+0xA8` (`0x1002644E`) when `[ESI+0x33678]` is non-null. It sets `ECX` from `[engine+0x38A68]` and passes five values from engine offsets `+0x38A6C` through `+0x38A7C`. The slot's purpose and these fields remain unnamed. Later wrapper calls at `0x10023570` and `0x10026D70` are visible but not interpreted by this trace.
+
 At entry to `FUN_10025E00`, the code calls `geEngine_ShutdownDriver` (`0x10025D80`) and aborts if it fails. It then checks `[ESI+0x33668]`; if nonzero, it logs an error and returns failure. The following selected-driver path is visible in raw instructions:
 
 1. At `0x10025EAF–0x10025EC9`, it reads a pointer from `[ESI+0x38904]`, forms another pointer from `[EBX+0x204]`, and calls `FUN_10024880`. On success, the returned handle is stored at `[ESI+0x3366C]`. `FUN_10024880` is also used by enumeration and calls the `LoadLibraryA` import after constructing a DLL path. The exact field names for `[ESI+0x38904]` and `[EBX+0x204]` are not established here.
@@ -45,6 +49,6 @@ This is sufficient to prove that selected initialization invokes the D3DDrv `+0x
 
 ## Limits and follow-up
 
-- Raw disassembly establishes the load, `GetProcAddress`, out-pointer, version checks, callback-slot writes, `+0x20` dispatch, success flags, and retained module handle. It does not establish the full source-level signature or names for `FUN_10025E00`, its structure fields, or the table slots.
+- Raw disassembly establishes the EXE callsite, export wrapper, load, `GetProcAddress`, out-pointer, version checks, callback-slot writes, `+0x20` dispatch, success flags, retained module handle, and a later `+0xA8` table call. It does not establish the full source-level signature or names for `FUN_10025E00`, its arguments, structure fields, or the `+0xA8` slot.
 - The Ghidra-generated D3DDrv function inventory does not list `0x10004C20`, `0x10004DA0`, or `0x10005DD0` as entries in this saved export; the slot targets and their instructions were verified directly in the binary. Use the hash-matched Ghidra program to confirm boundaries and recover prototypes when its tools are available.
 - Next useful static query: trace reads/writes of `[ESI+0x3366C]`, `[ESI+0x33678]`, `[ESI+0x38904]`, `[ESI+0x33668]`, `[ESI+0x389FC]`, then identify the table methods and imported function through xrefs. Do not infer runtime mode selection or renderer parity from this static path alone.
