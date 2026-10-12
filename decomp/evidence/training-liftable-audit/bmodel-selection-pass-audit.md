@@ -48,13 +48,20 @@ normal Training run, and any event-queue latency remain unknown.
 
 The `00459630` receiver is `Player+0x3114`; its own byte `+0x12C` is therefore
 `Player+0x3240`, not the Player-root byte `+0x12C` read by `0044C520`.
-`004590C0` initializes a related interaction/UI structure and clears a list at
-its own `+0x188`. The Player constructor calls it with receiver `Player+0x3254`,
-whereas the selection updater uses receiver `Player+0x3114`; these are distinct
-subobjects, so this does not establish the candidate-list constructor. Bounded
-direct-store scans of offsets `+0x188` and `+0x18C` also cannot identify a
-producer for the `Player+0x3114` list because they find same-offset stores on
-untyped receivers. The code that fills that candidate list remains unknown.
+`004590C0` initializes a nested interaction/UI structure and clears a list at
+its own `+0x188`. The Player constructor calls it with receiver
+`Player+0x3254`, which is `Player+0x3114+0x140`; it is nested under the
+selection subobject but its list begins at `Player+0x33DC`. The scan in
+`00459350` reads a different array at `Player+0x329C` (count at `+0x32A0`).
+Thus `004590C0` does not initialize the array being scanned. Bounded
+direct-store scans of offsets `+0x188` and `+0x18C` find same-offset stores on
+untyped receivers and do not identify the list producer.
+
+`FieldOffsetReferences.java 0x3114` found only the two direct Player-root
+references listed above; a scan of root offset `0x329C` found no explicit
+accesses. These bounded operand scans do not rule out a computed alias or a
+producer that receives the subobject pointer indirectly. The code that fills
+the scanned candidate list remains unknown.
 
 ## Player-root eligibility byte `+0x12C`
 
@@ -77,9 +84,9 @@ at `0045386B`.
 Using `DecompileFunctions.java 0044CD10 0044D550 0044FF10 004590C0
 00459350 00459630 00458FA0`, `AddressXrefs.java 0044CD10 00459350
 00458FA0 0044C520 0043D2B0`, `InstructionContext.java 0045386B 16 16`
-and `InstructionContext.java 004533C2 16 16`, and `FieldStoreAudit.java
-0x12c`, `0x188` and `0x18c`. All preserved-project queries used
-`-noanalysis -readOnly`.
+and `InstructionContext.java 004533C2 16 16`, `FieldStoreAudit.java 0x12c`,
+`0x188` and `0x18c`, and `FieldOffsetReferences.java 0x3114` and `0x329c`.
+All preserved-project queries used `-noanalysis -readOnly`.
 
 Next source work: identify the candidate-list producer and its ordering, then
 connect that list and the already recovered BModel query/action methods without
