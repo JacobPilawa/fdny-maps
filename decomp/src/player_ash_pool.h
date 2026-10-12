@@ -17,6 +17,9 @@ struct PlayerAshParticle {
     bool vectorsDirty = false;             // +0xa0, 0047f500
     float activationScale = 1.0f;           // +0x1c, 0047d330
     float opacityScale = 1.0f;              // +0xa8, 0047f500
+    uint32_t animationIndex = 0;            // +0x04, 0047d300
+    uint32_t nextAnimationIndex = 0;        // +0x08, 0047d300
+    uint32_t animationTimestamp = 0;        // +0x14, 0047d300
     uint32_t deadline = 0;                  // +0x168, 004463f0
     std::array<float,3> vector7c{};         // +0x7c, 0047f500 / 00446510
     std::array<float,3> vector88{};         // +0x88, 0047f500 / 00446510
@@ -36,10 +39,9 @@ struct PlayerAshPoolServices {
                        const PlayerAshDescriptor&,Random&)> addDescriptor;
     std::function<void(size_t particle,size_t descriptorContainer,
                        PlayerAshParticle&,Random&)> constructOpaqueParticle;
-    // These original calls are outside the scalar/vector model. The density
-    // scan can only be source-faithful when all three are supplied.
+    // Scene position and presentation calls are outside the scalar/vector
+    // model. The density scan cannot silently substitute either service.
     std::function<std::array<float,3>(float angle,float distance,Random&)> spawnPoint;
-    std::function<void(PlayerAshParticle&,Random&)> resetAnimation;
     std::function<void(PlayerAshParticle&,Random&)> present;
 };
 
@@ -114,12 +116,31 @@ struct PlayerAshPool {
         p.vector88 = {0.0f,fourth,0.0f};
     }
 
+    // 00446470. Its 0047d300 reset selects entries 0 and 1 and stores the
+    // current clock. Both indices are in range for the known five-entry
+    // Training descriptor, so 0047d2b0 leaves them unchanged.
+    static void activate(PlayerAshParticle& p, const std::array<float,3>& position,
+                         uint32_t now, Random& rng) {
+        p.spawnPosition=position;             // 0047f1a0 destination +0x5c
+        p.positionInitialized=true;
+        p.animationIndex=0;
+        p.nextAnimationIndex=1;
+        p.animationTimestamp=now;
+        p.activationScale=float(rng.range(0.5f,1.5f));
+        p.active=true;
+        p.opacityScale=float(rng.range(0.5f,1.5f));
+        p.deadline=0;
+        float velocityY=float(rng.range(-80.0f,-10.0f));
+        p.vectorsDirty=true;                  // 0047f1b0
+        p.vector7c={0.0f,velocityY,0.0f};
+    }
+
     // 004467e0 updates/presents every slot, then scans int(100*density).
     // Engine presentation and scene transforms are mandatory services so a
     // caller cannot silently replace unknown behavior with a no-op.
     void tick(uint32_t now, Random& rng, const PlayerAshPoolServices& s) {
         if (!initialized) throw std::logic_error("Player ash pool not initialized");
-        if (!s.present || !s.spawnPoint || !s.resetAnimation)
+        if (!s.present || !s.spawnPoint)
             throw std::invalid_argument("ash pool tick requires scene and presentation services");
         for (auto& p : particles) {
             update(p,now,rng);
@@ -133,16 +154,8 @@ struct PlayerAshPool {
             if (p.active) continue;
             float angle=float(rng.range(0.0f,6.2831855f));
             float distance=float(rng.range(10.0f,400.0f));
-            p.spawnPosition=s.spawnPoint(angle,distance,rng);
-            p.positionInitialized=true; // 0047f1a0
-            s.resetAnimation(p,rng); // 0047d300
-            p.activationScale=float(rng.range(0.5f,1.5f));
-            p.active=true;
-            p.opacityScale=float(rng.range(0.5f,1.5f));
-            p.deadline=0;
-            float velocityY=float(rng.range(-80.0f,-10.0f));
-            p.vectorsDirty=true; // 0047f1b0
-            p.vector7c={0.0f,velocityY,0.0f};
+            auto position=s.spawnPoint(angle,distance,rng);
+            activate(p,position,now,rng);
         }
     }
 };

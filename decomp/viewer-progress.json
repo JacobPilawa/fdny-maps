@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "e6c1cc6",
-  "tests": 23,
+  "commit": "b910628",
+  "tests": 25,
   "scope": "Training",
   "files": [
     {
@@ -1312,7 +1312,7 @@
     {
       "path": "src/player_ash_pool.h",
       "group": "Effects",
-      "summary": "Source-mapped 100-slot ash pool metadata, known constructor state, direct update vector writes, and conditional RNG order. Engine services and runtime parity remain open.",
+      "summary": "100-slot ash pool and direct update/activation writes; six due-update and three activation P-code cases match native fields and draws. Constructor services, scheduling and presentation parity remain open.",
       "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
       "units": [
         [
@@ -1332,19 +1332,26 @@
         [
           "00446510",
           "Due particle update",
-          "partial",
-          "Four conditional draws and their source-ordered vector writes are mapped; presentation can alter active slots.",
-          "evidence/scripts/training-setashdensity/native-pool-component.md"
+          "verified",
+          "Six hash-pinned original P-code cases match active/deadline/dirty fields, vector words, and bounded draw counts. Pool lifecycle/scheduling remain separate.",
+          "evidence/scripts/training-setashdensity/ash-update-pcode-oracle.json"
         ],
         [
           "00446470",
           "Inactive-slot activation",
+          "verified",
+          "Three original P-code cases match direct activation/reset state, vector words, scale values, and all three bounded draws; the caller supplies the scene position.",
+          "evidence/scripts/training-setashdensity/ash-activate-pcode-oracle.json"
+        ],
+        [
+          "0047F960",
+          "Particle presentation",
           "partial",
-          "Five conditional draws and direct state stores are mapped; scene transform and animation reset are services.",
-          "evidence/scripts/training-setashdensity/native-pool-component.md"
+          "State gates, culling, geometry/color writes, and polygon submission are mapped; render assets/context and 130 computed callsites remain unresolved.",
+          "evidence/scripts/training-setashdensity/presentation-callback-audit.md"
         ]
       ],
-      "bytes": 6818
+      "bytes": 7411
     }
   ]
 }

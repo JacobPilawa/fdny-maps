@@ -36,10 +36,12 @@ entries: `0047f500`, `0047d330`, `0047d300`, `0042d280`, `0047f1a0`,
 - `0047d660` advances finite animation state when its deadline is due and can
   clear active byte `+0x30` when the descriptor's bit 3 is set. `0047f960`
   calls it when byte `+0xad` is set, before its active-state presentation path.
-- `0047d300` resets and validates animation indices and stores global time, but
-  the C export contains unresolved `this`/`extraout_ECX` temporaries. Its
-  internal dataflow remains an explicit callback in the native component; the
-  Ghidra assembly confirms its two index helper calls and timestamp store.
+- `0047d300` resets and validates animation indices and stores global time,
+  but the C export contains unresolved `this`/`extraout_ECX` temporaries.
+  Assembly confirms it stores indices 0 and 1 through `0047d2b0` and then
+  stores clock `00502AFC` at `+0x14`. For the known five-entry Training
+  descriptor both indices are in range; an original P-code activation fixture
+  verifies the exact behavior.
 
 ## Consequence for Training
 
@@ -52,8 +54,34 @@ finite animation and change which slots are inactive by the subsequent scan.
 Exact callback timing and indirect engine services are still unverified in a
 live Training run.
 
-The component now models the recovered vector writes directly and requires
-explicit callbacks for construction, spawn transforms, animation reset, and
+The component models the recovered vector writes and activation reset directly
+and requires explicit callbacks for construction, spawn transforms, and
 presentation. This avoids substituting default coordinates or no-ops for
 unrecovered engine behavior. Callback placeholders in its focused check are
 test fixtures only.
+
+## Original P-code comparison (2026-10-12)
+
+`AshParticleUpdatePcodeOracle.java` ran against the preserved Ghidra 12.0.4
+project with `-noanalysis -readOnly`. It checked the original executable hash
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`, seeded
+the original RNG through `00404B50`, then executed `00446510` in the Ghidra
+P-code emulator. The fixture also executes original vector wrappers and the
+bounded random helper rather than replacing these with test implementations.
+
+The five fixture rows cover a due update with zero vectors, a due update that
+adds to nonzero prior Y, an active but not due record, an inactive record, and
+unsigned clock wrap. The native `player_ash_pool_pcode-check` compares active
+state, deadline, dirty flag, all output vector words, and the number of
+`00498B30` calls; all five rows match exactly. The update function's local
+branches are now original-P-code checked, while constructor callbacks, pool
+schedule, presentation, rendering, and whole-run RNG order remain unverified.
+
+`AshParticleActivatePcodeOracle.java` separately executes original `00446470`
+with original `0047D300` and `0047D2B0`, after `00404B50` seeds the stream.
+Its three cases vary seed, clock (including unsigned wrap), and input position.
+The native activation component matches active/position/dirty bytes, animation
+indices and timestamp, all spawn and velocity vector words, both scale values,
+deadline, and three bounded calls. This covers the activation callee with its
+input point supplied; the caller's angle/distance draws and Player/camera scene
+transform remain outside scope.

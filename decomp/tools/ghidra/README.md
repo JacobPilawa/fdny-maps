@@ -65,3 +65,14 @@ Use this to check a particular reference edge; a missing static code reference d
 `PlayerPainDeadlinePcodeOracle.java <output.json> <original.exe>` executes the bounded original `00451640` suffix from `00451742`, after its vector-facing turn helper. It records equal/deadline-due behavior, the original seeded delay helper/conversion, exposure store, and strict passout branch with string, RC_Pain, and statistic services stubbed. Its three samples are in `evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json`; its no-draw pain-service pairing and limits are in the adjacent native deadline audit.
 
 `PlayerPassoutPcodeOracle.java <output.json> <original.exe>` executes Player `00450FB0` with controlled animation, string/chatter, list, HeroDown, and selected-item method stubs. Five samples cover parameter 0/1 animation selection, state/timestamp stores, the optional selected-item ACTION-release callback at `+0x1C`, and parameter-2 early HeroDown delegation. The hash-provenanced fixture and explicit limits are in `evidence/fire-update/player-exposure-timer-followup/player-passout-transaction.md`.
+
+`AshParticleUpdatePcodeOracle.java <output.json> <original.exe>` seeds the original RNG and executes `00446510`, including its real vector access/store helpers and `00498B30` draws, for due, inactive, not-due, and wrap-boundary inputs. `AshParticleActivatePcodeOracle.java <output.json> <original.exe>` executes `00446470` and its original animation-index reset for three seeded input vectors. Both verify the program hash; their fixtures and native checks are under `evidence/scripts/training-setashdensity/`.
+
+Use the same `-noanalysis -readOnly` project command above with either oracle script name and its output path plus `decomp/evidence/original/FDNYFirefighter.exe`. Do not execute the oracles against the extracted executable from an unverified path; the script checks that its SHA-256 matches Ghidra's program.
+
+If headless execution reports `Failed to get OSGi bundle containing script`, compile all Java helpers against the installed Ghidra jars first. In this workspace that generic loader message concealed twelve ordinary Java argument errors in a new script; standalone `javac` exposed them immediately. For example:
+
+```sh
+CP=$(find /Applications/ghidra/Ghidra -name '*.jar' -print | tr '\n' ':')
+javac -Xdiags:verbose -cp "$CP" -d /private/tmp/fdny-ghidra-javac decomp/tools/ghidra/*.java
+```
