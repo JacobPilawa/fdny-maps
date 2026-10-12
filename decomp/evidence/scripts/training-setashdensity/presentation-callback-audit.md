@@ -75,15 +75,18 @@ The only `004B9400` xref inside the `0047F960` path is `0047D6D0`,
 `255.0f` (`004E3524`), then calls `004B9400` to convert that x87 value into an
 integer byte. `0047D660` similarly forms a frame deadline from descriptor
 duration, animation scale, `1000.0f` (`004E0ED4`), and deadline `+0x14`, then
-converts it before comparing against clock global `00502AFC`. The helper body
-at `004B9400` only rounds the incoming x87 value; it does not read or advance
-the shared RNG state. The optional call from `0047F960` follows the same
-conversion helper and casts its result to a byte.
+converts it before comparing against clock global `00502AFC`. `004B9400`
+rounds internally, then corrects by the signed fractional residue to implement
+truncation toward zero; it does not read or advance the shared RNG state. The
+optional call from `0047F960` follows the same conversion helper and casts its
+result to a byte.
 
 Therefore these known presentation/animation-helper paths do not consume the
-shared RNG through `004B9400`; the four direct RNG draws in the active-particle
-update `00446510` and five direct draws in activation `00446470` remain distinct
-and are not canceled by a renderer draw. This does not close the 130 computed
+shared RNG through `004B9400`; the helper rounds its x87 input internally,
+corrects by the signed fractional residue, and returns truncation toward zero.
+The four direct RNG draws in the active-particle update `00446510` and five
+direct draws in activation `00446470` remain distinct and are not canceled by a
+renderer draw. This does not close the 130 computed
 call sites in the older direct-call closure: dynamic engine callbacks and any
 other computed dispatch remain unproven. The ash render path calls through the
 Genesis.dll IAT entry at `004DC0D0` from `0047FCF9` and `0047FE58`. The PE
@@ -119,10 +122,10 @@ callback defaults in a parity claim.
 
 ## Best next step
 
-Use the source references (`0047F960` call from `004467E0` at `00446891` and
-the FireRescue four-record loop in `0044B060`) to identify the actual Training
-descriptor/resource setup and flags, then inspect candidate table values and
-texture/material bindings. The polygon submission target is resolved; next
-trace the remaining context/visibility helpers and connect the render payload
-to native world-list state. A live Training capture is still needed to validate
-the first callback timing and actual visible output.
+The descriptor words, resource IDs, helper arithmetic, bitmap files, and
+constructor defaults for particle `+0x20` and `+0xa8` are now source-mapped.
+The latter is randomized on ash activation. Next find any later writes to
+`+0x20` and identify runtime renderer-resource/context instances; then connect
+the source-matched helper outputs to the native `geWorld_AddPolyOnce` record
+and world-list state. A bounded live Training capture is still needed to
+validate callback timing, those runtime fields, visibility, and actual output.

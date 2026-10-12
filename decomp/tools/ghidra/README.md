@@ -83,6 +83,16 @@ finite cases against `tools/player_ash_integrate_pcode_check.cpp`. Source
 behavior and limits are in
 `evidence/scripts/training-setashdensity/ash-integrate-component.md`.
 
+`AshPresentationPcodeOracle.java <output.json> <original.exe>` executes the
+original `0047D420`, `0047D6D0`, and `0047D8A0` ash descriptor helpers, including
+the real vector arithmetic and byte conversion. It supplies a valid Training
+five-record array and stubs only the valid-index `0048D490` check. Its 11
+controlled cases compare RGB cache/direct-pointer results, both output bytes,
+the alpha helper result, and the `0047F960` alpha multiply/spill. The native
+comparison is `tools/player_ash_presentation_pcode_check.cpp`; source behavior
+and unresolved runtime fields are in
+`evidence/scripts/training-setashdensity/ash-presentation-component.md`.
+
 Use the same `-noanalysis -readOnly` project command above with either oracle script name and its output path plus `decomp/evidence/original/FDNYFirefighter.exe`. Do not execute the oracles against the extracted executable from an unverified path; the script checks that its SHA-256 matches Ghidra's program.
 
 If headless execution reports `Failed to get OSGi bundle containing script`, compile all Java helpers against the installed Ghidra jars first. In this workspace that generic loader message concealed twelve ordinary Java argument errors in a new script; standalone `javac` exposed them immediately. For example:
