@@ -1,0 +1,111 @@
+# Initial runtime map
+
+## Scope and provenance
+
+This is an initial static map from the copied EXE at SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`, analyzed in Ghidra 12.0.4. Pseudocode exports live under `tracker/evidence/entrypoints/`. Names at addresses marked `FUN_...` are provisional Ghidra labels. This map does not establish the meaning of an unresolved function or prove a complete call graph.
+
+## Program and entry point
+
+- PE32 x86, image base `0x00400000`, entry VA `0x004BA0CC` (entry RVA `0x000BA0CC`).
+- Ghidra's function manager reports 6,094 EXE functions: 5,807 with bodies plus 287 external import stubs. The 5,807 body count matches the earlier inventory and the fresh `list_functions_enhanced` result.
+- `entry` at `0x004BA0CC` performs CRT startup: records Windows version fields, initializes the heap, command-line/environment state and startup info, then calls `FUN_0042C800` with the executable module handle. It reaches runtime shutdown through `FUN_004B828F`, which calls `FUN_004B81AB(0, 0, 1)`.
+
+## Application startup at `0x0042C800`
+
+The fresh decompiler output shows this order:
+
+1. Initializes a few globals and constructs the string `FDNYFirefighterAmericanHero`; calls `FUN_0042C5D0` before continuing.
+2. Initializes COM and sets the working directory using a path returned through `FUN_0040A230`. If that fails, it shows “Invalid working directory” and returns.
+3. Seeds time-related state, prints a startup record including the embedded build date `Mar 8 2002`, and constructs path/configuration values.
+4. Sets `FX_GLIDE_NO_SPLASH=1`, then repeatedly calls `FUN_00480C20`. When that call reports false, the game displays “Please insert the FDNY Firefighter CD” and waits. The check's implementation and resource inputs are not yet classified.
+5. Creates a window through `FUN_00498E90` with title `FDNY Firefighter`, then calls `FUN_004998B0` for initialization. If global `DAT_00502A78` is zero, it plays `Data\\Movies\\ActiValue.avi` and `Data\\Movies\\Mekada.avi`.
+6. Calls `FUN_00499280`, which allocates `0x40` bytes and calls `FUN_00499C70`; calls `FUN_004992D0`, which allocates two objects and stores them in globals; then calls `FUN_004262E0`. It allocates another object through `FUN_0042BCB0`, dispatches a virtual call at vtable offset `0xA4`, then calls `FUN_00499410`, `FUN_0049FFB0`, `FUN_0049FD80`, and `FUN_0042BDF0` before cleanup and COM shutdown.
+
+`FUN_00499410` is the Windows message and idle loop. It polls with `PeekMessageA`; while idle it calls the app vtable methods at `+0x74` and then `+0xA0`. When messages are pending, it dispatches them. Its focus-change path logs loss/regain, calls `FUN_0042BF20`/`FUN_0042BF40`, and toggles engine activation with `geEngine_Activate`. This establishes the app-level idle ordering, not the scheduling order of Player, Fire, or other gameplay actors. The prior-work audit at `reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/owner-vtable-indirect-call-inventory.md` contains a deeper vtable/queue analysis and explicitly records the remaining scheduler gaps.
+
+Fresh decompiler outputs for these routines are in `tracker/evidence/entrypoints/`. The window, multimedia, and object calls still need caller/callee evidence before assigning subsystem roles.
+
+## Freshly traced app-to-game update path
+
+Read-only Ghidra MCP queries against the same hash-pinned program now establish the idle-cycle order:
+
+1. With no Windows message pending, `FUN_00499410` calls the app callback owner's virtual `+0x74` method (`FUN_0049A310`), then its virtual `+0xA0` method (`FUN_00499E60`).
+2. `FUN_0049A310` walks the registered callback list, calls each active child at vtable `+0x74`, and performs deferred removals. At the end it calls the owner vtable `+0x60`.
+3. The app callback owner's vtable at `0x004DF958` has `0x0042BC60` at `+0x60`. The six-byte thunk at `0x0042BC60` loads the game subsystem pointer from `this+0xB4` and jumps to `FUN_0042AEA0`.
+4. On the ordinary scene path, `FUN_0042AEA0` calls `FUN_00429520` before its message/resource and scene-transition work. `FUN_00429520` dispatches manager methods at owner offsets `+0x08`, `+0x50`, `+0x98`, and `+0xE0`, then visits staged-entity, message, sound, and staged-object services.
+5. `FUN_00499E60`, the second app-list pass, calls each remaining child at vtable `+0x70`.
+
+This gives a concrete pre-callback → game-owner update → post-callback order when the Windows queue is idle. It does **not** show that Player, FireRescue's visual Think, or other gameplay actor callbacks occupy the app list.
+
+The `+0xE0` manager is constructed by `FUN_0049BF10`; its primary vtable points to code at `0x0049BD20`, which has no function object in the fresh Ghidra inventory. The old project contains a manually bounded decompilation of this code. Fresh vtable memory and raw x86 bytes confirm the list-removal/category-dispatch structure: it visits nine category lists and calls member vtable `+0x48` for active objects whose category bit matches. FireRescue's constructor sets category bit 1, and its primary vtable has `FUN_004483A0` at `+0x48`, the known proximity/contact callback. This is a mapped owner/category pass, not FireRescue visual-Think scheduling.
+
+The visual Think routine at `0x00449FE0` is likewise a manually bounded legacy code slice, not a fresh Ghidra function boundary. Fresh vtable memory confirms it is slot 0 of the secondary table at object `+0x24`. The primary-table thunk at `0x0043AFE0` is raw-byte confirmed as `add ecx, 0x24; jmp 0x00470740`; that wrapper gates a virtual call through secondary slot 0. Its recurring caller and frame position remain unresolved. Earlier fixed-offset and candidate audits are preserved in `reference/previous-work/decomp/evidence/fire-update/`; avoid repeating those scans as the next step.
+
+Fresh function decompilations, vtable memory reads, and raw-byte checks for this map are saved in `tracker/evidence/runtime-loop/`. `tracker/evidence/runtime-loop/README.md` distinguishes fresh function objects from manually bounded code slices and records the exact input hash.
+
+## First EXE-to-Genesis callsite crosswalk
+
+The EXE imports 116 `Genesis.dll` names. This first selected crosswalk follows file, world-collision, actor-pose, and frame APIs; it is a map of the boundary, not a recovered Genesis implementation. Caller lists and fresh Ghidra pseudocode are saved in `tracker/evidence/genesis-boundary/`, with a machine-readable summary in `tracker/genesis_api_crosswalk.csv`.
+
+### Virtual files and world creation
+
+- `geVFile_OpenNewSystem` has four callers: `FUN_004928B0`, `FUN_00493460`, `FUN_00494AD0`, and `FUN_00495210`. The first is a thin open wrapper; the next two feed bitmap decoding and engine/world bitmap registration; the last is the BSP world load path.
+- `FUN_00495210` opens the provided map path and passes the resulting VFile handle to `geWorld_Create`. The saved x86 disassembly confirms the handle is pushed as the argument to the imported create call, although Ghidra's pseudocode omits it because the import prototype is incomplete. It closes the file handle after creation, checks the returned world, adds a successful world to the engine, and initializes the selected world subobject.
+- `geWorld_Create` also has a second caller, `FUN_00492950`, which creates an empty world and registers it with the engine. These two call paths should remain distinct until their use is known.
+- The public Genesis3D `VFile/vfile.h` declaration takes a parent file system, filesystem type, name, context, and open flags. Its constants identify type `1` as DOS and flag `1` as read-only. This matches the observable `FUN_00495210` arguments in the public 1.1-based reference tree. That agreement does not prove the shipped `Genesis.dll` has the same implementation.
+
+The copied game assets include Training's `.bsp`, `.brf`, `.bmp`, and `.evs` files under `inputs/original/Data/Maps/`; identifying the loading routine shows the `.bsp` path entering Genesis directly, while the bitmap helper loads companion textures through VFile. The `.evs` script path remains a game-side resource question.
+
+The pinned `Data/` snapshot has 346 files (about 155 MiB): 247 BMPs, 33 ACT actor files, 21 EVS scripts, 17 BSP worlds, 12 BRF files, 6 RRF resource definitions, 4 MP3s, 3 AVIs, and one WAV. Training has `Data/Maps/training.bsp`, `.brf`, `.bmp`, and `.evs`; the first map-scenario trace should follow those references into `Data/ResDefs/thegame.lev` and the script/resource loaders rather than treating a BSP alone as a playable level.
+
+### Collision and actor-pose calls
+
+- `geWorld_Collision` has six EXE callers: `FUN_00448630`, `FUN_0046C5A0`, `FUN_0048FEA0`, `FUN_0048FF30`, `FUN_00490000`, and `FUN_00492CE0`. The first uses a vertical floor probe during FireRescue `FloorMe` and logs a failure with source text `rescue\\FireRescueEnt.cpp:0x231`. `FUN_00492CE0` is the general extent-plus-segment wrapper already present in prior component comparisons. `FUN_0048FF30` probes a vertical interval, while `FUN_00490000` derives collision extents from a radius-like value. `FUN_0048FEA0` uses a zero-extent segment. `FUN_0046C5A0` is a larger multi-step routine with repeated world queries; its enclosing gameplay role is still provisional.
+- `geActor_SetPose` has three callers: `FUN_00480D50`, `FUN_00492410`, and `FUN_00492450`. Together they show the EXE supplying actor, motion, time, and transform values for pose updates; `FUN_00492450` also writes actor scale. The public `Actor/actor.h` reference describes `SetPose` as applying a motion at a time offset and transform. The exact DLL revision and animation cadence remain unverified.
+
+### Frame and world rendering
+
+- On the ordinary scene branch, `FUN_0042AEA0` calls `FUN_00429520` and then `FUN_00494670`. Under a separate guard-byte branch (`param_1[0x64C] != 0`), it calls `FUN_0042D8C0` and returns before the ordinary manager/render path.
+- `FUN_0042D8C0` reads `MOUSE_X`, `MOUSE_Y`, `MOUSE_LB`, and `MOUSE_RB`; accumulates and clamps cursor coordinates; dispatches `FUN_00494670`; conditionally updates actor flags, lighting, and pose; derives a camera adjustment from `BIP01 R TOE0`; and sends current/previous cursor/button state to an input sink. The meaning of the guard byte and the activation conditions for this alternate path remain unresolved. Fresh pseudocode and the sole caller are under `tracker/evidence/runtime-loop/`.
+- `FUN_00494670` drains a pending pre-frame callback list through `FUN_004943E0`, prepares the selected world's render-object list, calls `geEngine_BeginFrame`, invokes eligible render objects at vtable `+0x10`, optionally flushes the pipeline and calls a supplied callback, then calls `geEngine_EndFrame`.
+- `FUN_004943E0` calls pending objects at vtable `+0x08` when the selected world handle is present, then clears the pending list. This is a promising route into the unresolved visual update schedule, but no evidence yet identifies those callback objects as FireRescue or proves that slot `+0x08` is its visual Think method.
+- `FUN_0043E360` appends 16-byte timed-script-command records to a `this+0x148/+0x14C` list via the `addtimecmd` branch in `FUN_0043E680`. The records begin with an active flag and are not the vtable-bearing elements consumed by `FUN_004943E0`. No object identity link connects this list to the selected renderer context, so the matching offset does not identify the pre-frame producer; an indirect relation through later script execution remains possible. See [`0043e360_time_command_list_false_match.md`](../tracker/evidence/runtime-loop/0043e360_time_command_list_false_match.md).
+- `FUN_00492C40` is the sole `geEngine_RenderWorld` caller found. It selects the active world and camera and calls the engine renderer. `FUN_0042D1B0` is the other BeginFrame/EndFrame caller and draws a bitmap between them; its enclosing UI/loading role is not yet named.
+
+The public Genesis3D source tree is based on Genesis3D 1.1 with later community modifications. Use its headers to clarify API shape and constants, then validate every behavior claim against this game's pinned binary. Do not treat this callsite map as proof that the source tree or engine binary can be reused directly; see [`ENGINE_SOURCE_REUSE.md`](ENGINE_SOURCE_REUSE.md).
+
+## Level catalog and Training data
+
+`FUN_0042B4E0` references the executable string `data\\resdefs\\thegame.lev` and calls `FUN_00423160` during subsystem startup. The string's only current data xref is in `FUN_0042B4E0`. `FUN_00423160` handles `menumusic:`, `level:`, `title:`, `rrf:`, `music:`, `time:`, and `mapcoords:` records, creates 0x28-byte level entries, and appends them to the level list. Its error path contains source label `main\\LevelManager.cpp:0x57`. This identifies a level-catalog parse path, not the later mission-loading path.
+
+The Training catalog row names rescue.rrf, ebtwist.mp3, time 500, and map coordinates (52, 43). The copied training.evs begins with exec rescue.evs and defines hints and a touch condition; rescue.evs includes shared tool, bonus-item, and door scripts. The BSP contains script-related entity strings. Startup passes the initialized subsystem collection at +0x6AC directly to the parser; raw x86 stack tracing proves the parser appends through its array-pointer field at +0x6B0. The selector looks up the same collection by the record ordinal at +0x18, and the adjacent update routine copies the resolved ordinal to the selector object's +0x2C. Scene child activation initializes the selector ordinal through 0042F600. Runtime callback cadence and event timing remain open. Hash-pinned inputs and evidence are in tracker/evidence/scenario-loading/README.md.
+
+`FUN_0049E4D0` is a WorldEntity vtable method, with log strings identifying `ROCWorldEntity` and `WorldEntity.cpp`. Its static dispatch path is now resolved: startup registers a descriptor named `World`; `0042AB00` resolves it and stores the descriptor in the selected-level request; queue drain `0049C670` calls descriptor slot `+0x08`, which maps to factory `0049E300`; that factory constructs a WorldEntity with the BSP path at `+0x24`; and its initialization slot `+0x20` calls `0049E4D0`. This method passes the path to BSP loader `00495210`, then enumerates the loaded world's entities and stages spawn records. For Training the path is `data\\maps\\training.bsp`. The chain is static and does not prove runtime timing or failure-path behavior. Evidence: [`world_factory_resolution.md`](../tracker/evidence/scenario-loading/world_factory_resolution.md).
+
+### Level choice to event-script loading
+
+The selection-to-loader callsite is now mapped. Subsystem construction calls 004230E0 on the embedded object at +0x6AC; this initializes the level-choice collection. Function 004225A0 scans its entries, reading the array pointer at collection +4 and count at +8, and returns the entry whose +0x18 ordinal matches the supplied value. For selection events 0 and 1, 0042F500 calls that lookup using its UI object's +0x2C value, then passes the returned record directly to 0042AB00. A data reference at 004DFD18 supports virtual/table dispatch. The event codes' exact meanings are unknown.
+
+The catalog parser builds 0x28-byte records and assigns sequential ordinals at +0x18; its level key is at offset 0. Raw x86 dataflow proves parser records enter the initialized +0x6AC selector collection through array field +0x6B0. Function 0042AB00 stores the selected record as active state, and 00403E40 appends .bsp to the record's first string field. Function 00471310 then changes the .bsp suffix to .evs and sends its mode value to one of two wrappers. Its only direct callers in the current program are 0042AB00 and 0049E2C0.
+
+Mode 0 routes through 0047A070, mode 1 through 0047A130, and both call common source parser 004799E0. Script statement handler 0047A1F0 routes exec to mode 0 and execsetsonly to mode 1. The mode-1 parser compares each non-comment statement's first token with `set` and `exec`, skipping it only when both comparisons fail; accepted statements go through ScriptActor dispatch at 00475310. The comparison helper 00401C30 is byte-wise and returns zero on equality. The Training script begins with exec rescue.evs; this supports the nested script path, but asset strings alone do not establish which events run at runtime.
+
+A separate constructor/update pair, 0049E240 and 0049E2C0, initializes a counter to four and calls the EVS loader with mode 0 after four method invocations. The factory resolution proves this is the WorldEntity constructed for the selected-level request. The queue pump 0049C0E0 and cadence-limiter-shaped 0049C630 are not proven callers: the first dispatches slot +4, while the second has no identified WorldEntity receiver. No scheduler for WorldEntity slot +0x14 is mapped, so invocation interval and relation to other world/entity work remain unknown. See [worldentity_callback_dispatch_boundary.md](../tracker/evidence/scenario-loading/worldentity_callback_dispatch_boundary.md) and the full static trace in tracker/evidence/scenario-loading/level_to_evs_static_trace.md.
+
+### Training trigger script dispatch
+
+Training BSP strings include RCS_BoundsTrigger entities and touch commands. BoundsTrigger setup at 00441040 registers non-null script properties through 00475310 and 00470150; the embedded ScriptActor vtable at 004E1088 uses 00441A60 as derived command fallback. Raw root-vtable and instruction checks map the trigger's own contact route: root slot +0x48 is 00440CE0, which checks candidate geometry against trigger bounds and stores matched pairs at root +0x100. Root slot +0x14 adjusts to the embedded ScriptActor and enters shared updater 00470740; embedded slot 0 is 00440DC0, which passes the list to 00470840 for `touch`, `touching`, and `untouch` event dispatch, then rotates and clears the list. The shared manager admits entities whose root +0x14 mask matches filter 0x20; the BoundsTrigger base mask `0xFFEB` and type 8 make the class eligible for the corresponding type list, whose slot +0x48 callback is 00440CE0. Per-instance manager membership is not yet verified. The updater's recurring caller, timing relative to contact production, and the exact authored `tell player escape` recipient edge remain open. BoundsTrigger setup separately stores the presence of `tell player escape` at +0x164; later `0044FCE0` carry/reset and `004504C0` final-exit paths consume it through 00440F50 for model-flag handling. See [`training_touch_dispatch_boundary.md`](../tracker/evidence/scenario-loading/training_touch_dispatch_boundary.md).
+
+The Player script handler 00451870 has an escape branch through 004513A0 to 00451160. If the Player carries a victim, 00451160 increments rescue statistics, updates the victim, clears carry state, and refreshes exit-zone state. Training's `tell player escape` reaches parser helper 00472270, but the recipient lookup and forwarding edge from that helper to 00451870 are unproven. See [`training_tell_recipient_boundary.md`](../tracker/evidence/scenario-loading/training_tell_recipient_boundary.md); do not treat the matching command text as proof of delivery.
+
+## Module boundary clues
+
+The EXE has 291 imported symbols from nine libraries. It imports 116 symbols from `Genesis.dll`, 31 from `fmod.dll`, and one from `DINPUT8.dll`. `Genesis.dll` exports 536 names; `D3DDrv.dll` exports only `DriverHook` and imports DirectDraw; `fmod.dll` exports 215 names but the supplied file is UPX-packed, so its one Ghidra body candidate is not a useful code inventory. Raw disassembly maps the dynamic path in Genesis function `FUN_10023950`: it loads candidate DLLs, resolves `DriverHook`, validates table fields `+4 == 101` and `+8 == 1`, then invokes table method `+0x14` with an engine callback. That callback copies subdriver records into engine state and invokes table method `+0x18` with a mode callback; the mode callback copies mode records. This is consistent with subdriver and mode enumeration before Genesis calls `FreeLibrary`. Later selected-driver loading and the lifetime/role of the retained table pointer remain open. `D3DDrv.dll`'s export at `0x10006300` writes the internal table pointer and initializes globals. See [`d3ddrv_driverhook_boundary.md`](../tracker/evidence/driver-boundary/d3ddrv_driverhook_boundary.md) and [`driverhook_caller_table_trace.md`](../tracker/evidence/driver-boundary/driverhook_caller_table_trace.md). The public-source comparison is [`public_driver_comparison.md`](../tracker/evidence/driver-boundary/public_driver_comparison.md). The import and export inventories are in `tracker/imports.csv` and `tracker/exports.csv`.
+
+## Next queries
+
+- Trace direct writers and indirect registration paths into the selected context's `+0x94/+0x98` pre-frame array; compare stored element types with FireRescue and Player vtables. `FUN_0042D8C0` is mapped as a guarded alternate input/camera pass.
+- Trace the source of the `geEngine_RenderWorld` camera/world pair.
+- Identify the BoundsTrigger embedded updater's dynamic caller/order relative to its contact producer and the WorldEntity slot +0x14 caller. Trace the exact Training escape-command recipient. Continue the Genesis API map with actor creation/render preparation, camera updates, and sound.
+- Continue the FireRescue visual-Think route from the owning engine/list registration or a bounded runtime trace; do not repeat the already exhausted literal fixed-offset scan.
+- Resolve the disc/resource check through its callers and data references, without assuming what it validates.

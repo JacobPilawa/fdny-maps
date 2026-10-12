@@ -1,0 +1,14 @@
+Read-only Ghidra 12.0.4 xrefs for FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e, captured 2026-10-12.
+
+004E335C bytes: 65 78 65 63 00 ... = "exec"
+004E3364 bytes: 73 65 74 00 ... = "set"
+
+Xrefs to 004E335C:
+- 00479E52 in FUN_004799E0 [DATA]
+- 0047AFF9 in FUN_0047A1F0 [DATA]
+
+Xrefs to 004E3364:
+- 00479E40 in FUN_004799E0 [DATA]
+- 0047A86D in FUN_0047A1F0 [DATA]
+
+FUN_00401C30 compares the byte string at *(this + 0x0C) with the supplied literal and returns zero on equality, nonzero on inequality. In FUN_004799E0, mode 1 tests the statement token against "set" and "exec"; it skips the statement only when both comparisons report inequality. Thus only statements whose first parsed token equals "set" or "exec" continue to FUN_00475310. Other non-comment statements are skipped. This is static parser behavior; it does not establish runtime event timing.

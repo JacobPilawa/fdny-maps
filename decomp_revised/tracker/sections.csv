@@ -1,0 +1,16 @@
+binary,section,size_hex,vma,type
+D3DDrv.dll,.text,00013a3c,10001000,TEXT
+D3DDrv.dll,.rdata,00009ed8,10015000,DATA
+D3DDrv.dll,.data,00001000,1001f000,DATA
+D3DDrv.dll,.reloc,0000475c,1052d000,DATA
+FDNYFirefighter.exe,.text,000da98f,00401000,TEXT
+FDNYFirefighter.exe,.rdata,00022ad4,004dc000,DATA
+FDNYFirefighter.exe,.data,00003000,004ff000,DATA
+FDNYFirefighter.exe,.rsrc,00000bd0,00506000,DATA
+Genesis.dll,.text,0004ff50,10001000,TEXT
+Genesis.dll,.rdata,0000dcf8,10051000,DATA
+Genesis.dll,.data,0004d000,1005f000,DATA
+Genesis.dll,.reloc,00005566,1038c000,DATA
+fmod.dll,UPX0,00000000,10001000,BSS
+fmod.dll,UPX1,0001cc00,1004f000,DATA
+fmod.dll,.rsrc,00002400,1006c000,DATA

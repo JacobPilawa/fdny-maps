@@ -1,0 +1,34 @@
+Read-only Ghidra MCP references, FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e, queried 2026-10-12.
+
+GET /get_function_callers?address=0x00471310
+FUN_0042ab00 @ 0042ab00
+FUN_0049e2c0 @ 0049e2c0
+
+GET /get_function_callers?address=0x0042AB00
+FUN_0042aea0 @ 0042aea0
+FUN_0042f500 @ 0042f500
+
+GET /get_function_callers?address=0x0042F500
+No direct callers found.
+
+GET /get_xrefs_to?address=0x0042F500
+From 004dfd18 [DATA]
+
+The function bodies for these edges are saved beside this file. The 0042F500 data xref supports an indirect/table call; it does not identify the table owner by itself.
+
+GET /get_function_xrefs?address=0x0048D9D0
+From 004233E2 in FUN_00423160 [UNCONDITIONAL_CALL]
+From 0047407F in FUN_00474020 [UNCONDITIONAL_CALL]
+From 0042F965 in FUN_0042F670 [UNCONDITIONAL_CALL]
+From 0042FA28 in FUN_0042F670 [UNCONDITIONAL_CALL]
+From 0042FAFA in FUN_0042F670 [UNCONDITIONAL_CALL]
+From 0043065C in FUN_004304E0 [UNCONDITIONAL_CALL]
+From 00430723 in FUN_004304E0 [UNCONDITIONAL_CALL]
+From 00430848 in FUN_004304E0 [UNCONDITIONAL_CALL]
+From 004945B8 in FUN_00494500 [UNCONDITIONAL_CALL]
+From 00432994 in FUN_00432960 [UNCONDITIONAL_CALL]
+From 00457962 in FUN_004576B0 [UNCONDITIONAL_CALL]
+
+GET /analyze_dataflow?address=004233E2&variable=local_c0&direction=backward&max_steps=30
+Anchor: local_c0, output of INDIRECT at the array append call in FUN_00423160.
+The preceding MULTIEQUAL node retains local_c0 on both control-flow inputs; the associated instruction loads ECX from [ESP + 0x30]. The P-code trace does not resolve that stack-held owner to the subsystem's +0x6AC collection.

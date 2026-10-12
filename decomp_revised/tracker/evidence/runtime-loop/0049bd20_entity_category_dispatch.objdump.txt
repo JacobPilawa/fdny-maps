@@ -1,0 +1,193 @@
+
+inputs/original/binaries/FDNYFirefighter.exe:	file format coff-i386
+
+Disassembly of section .text:
+
+00401000 <.text>:
+  49bd20: 83 ec 08                     	sub	esp, 8
+  49bd23: 8b 41 14                     	mov	eax, dword ptr [ecx + 20]
+  49bd26: 53                           	push	ebx
+  49bd27: 55                           	push	ebp
+  49bd28: 56                           	push	esi
+  49bd29: 57                           	push	edi
+  49bd2a: 8d 79 04                     	lea	edi, [ecx + 4]
+  49bd2d: 33 db                        	xor	ebx, ebx
+  49bd2f: 89 4c 24 10                  	mov	dword ptr [esp + 16], ecx
+  49bd33: 89 47 04                     	mov	dword ptr [edi + 4], eax
+  49bd36: 89 5f 08                     	mov	dword ptr [edi + 8], ebx
+  49bd39: 88 5f 0c                     	mov	byte ptr [edi + 12], bl
+  49bd3c: c6 47 0d 01                  	mov	byte ptr [edi + 13], 1
+  49bd40: 8b 47 04                     	mov	eax, dword ptr [edi + 4]
+  49bd43: 3b c3                        	cmp	eax, ebx
+  49bd45: 0f 84 aa 00 00 00            	je	0x49bdf5 <.text+0x9adf5>
+  49bd4b: 38 5f 0d                     	cmp	byte ptr [edi + 13], bl
+  49bd4e: 74 09                        	je	0x49bd59 <.text+0x9ad59>
+  49bd50: 8b c8                        	mov	ecx, eax
+  49bd52: 88 5f 0d                     	mov	byte ptr [edi + 13], bl
+  49bd55: 8b 29                        	mov	ebp, dword ptr [ecx]
+  49bd57: eb 21                        	jmp	0x49bd7a <.text+0x9ad7a>
+  49bd59: 38 5f 0c                     	cmp	byte ptr [edi + 12], bl
+  49bd5c: 74 0a                        	je	0x49bd68 <.text+0x9ad68>
+  49bd5e: 8b 57 04                     	mov	edx, dword ptr [edi + 4]
+  49bd61: 88 5f 0c                     	mov	byte ptr [edi + 12], bl
+  49bd64: 8b 2a                        	mov	ebp, dword ptr [edx]
+  49bd66: eb 12                        	jmp	0x49bd7a <.text+0x9ad7a>
+  49bd68: 89 47 08                     	mov	dword ptr [edi + 8], eax
+  49bd6b: 8b 47 04                     	mov	eax, dword ptr [edi + 4]
+  49bd6e: 8b 40 04                     	mov	eax, dword ptr [eax + 4]
+  49bd71: 3b c3                        	cmp	eax, ebx
+  49bd73: 89 47 04                     	mov	dword ptr [edi + 4], eax
+  49bd76: 74 7d                        	je	0x49bdf5 <.text+0x9adf5>
+  49bd78: 8b 28                        	mov	ebp, dword ptr [eax]
+  49bd7a: 3b eb                        	cmp	ebp, ebx
+  49bd7c: 74 77                        	je	0x49bdf5 <.text+0x9adf5>
+  49bd7e: 8b 55 00                     	mov	edx, dword ptr [ebp]
+  49bd81: 8b cd                        	mov	ecx, ebp
+  49bd83: ff 52 04                     	call	dword ptr [edx + 4]
+  49bd86: 84 c0                        	test	al, al
+  49bd88: 74 b6                        	je	0x49bd40 <.text+0x9ad40>
+  49bd8a: 8b 77 04                     	mov	esi, dword ptr [edi + 4]
+  49bd8d: 8b 4f 08                     	mov	ecx, dword ptr [edi + 8]
+  49bd90: 3b cb                        	cmp	ecx, ebx
+  49bd92: 8b 46 04                     	mov	eax, dword ptr [esi + 4]
+  49bd95: 89 47 04                     	mov	dword ptr [edi + 4], eax
+  49bd98: 74 03                        	je	0x49bd9d <.text+0x9ad9d>
+  49bd9a: 89 41 04                     	mov	dword ptr [ecx + 4], eax
+  49bd9d: 39 77 10                     	cmp	dword ptr [edi + 16], esi
+  49bda0: 75 03                        	jne	0x49bda5 <.text+0x9ada5>
+  49bda2: 89 47 10                     	mov	dword ptr [edi + 16], eax
+  49bda5: 39 77 14                     	cmp	dword ptr [edi + 20], esi
+  49bda8: 75 06                        	jne	0x49bdb0 <.text+0x9adb0>
+  49bdaa: 8b 47 08                     	mov	eax, dword ptr [edi + 8]
+  49bdad: 89 47 14                     	mov	dword ptr [edi + 20], eax
+  49bdb0: 39 5f 14                     	cmp	dword ptr [edi + 20], ebx
+  49bdb3: 75 0a                        	jne	0x49bdbf <.text+0x9adbf>
+  49bdb5: 8b 47 10                     	mov	eax, dword ptr [edi + 16]
+  49bdb8: 3b c3                        	cmp	eax, ebx
+  49bdba: 74 03                        	je	0x49bdbf <.text+0x9adbf>
+  49bdbc: 89 47 14                     	mov	dword ptr [edi + 20], eax
+  49bdbf: 56                           	push	esi
+  49bdc0: 8b cf                        	mov	ecx, edi
+  49bdc2: e8 59 df f8 ff               	call	0x429d20 <.text+0x28d20>
+  49bdc7: 56                           	push	esi
+  49bdc8: e8 96 bd 01 00               	call	0x4b7b63 <.text+0xb6b63>
+  49bdcd: 8b 77 18                     	mov	esi, dword ptr [edi + 24]
+  49bdd0: 8b 54 24 14                  	mov	edx, dword ptr [esp + 20]
+  49bdd4: 83 c4 04                     	add	esp, 4
+  49bdd7: 4e                           	dec	esi
+  49bdd8: 89 77 18                     	mov	dword ptr [edi + 24], esi
+  49bddb: c6 47 0c 01                  	mov	byte ptr [edi + 12], 1
+  49bddf: 8b 45 18                     	mov	eax, dword ptr [ebp + 24]
+  49bde2: 8d 0c c0                     	lea	ecx, [eax + 8*eax]
+  49bde5: 8b 44 ca 4c                  	mov	eax, dword ptr [edx + 8*ecx + 76]
+  49bde9: 8d 4c ca 4c                  	lea	ecx, [edx + 8*ecx + 76]
+  49bded: 55                           	push	ebp
+  49bdee: ff 10                        	call	dword ptr [eax]
+  49bdf0: e9 4b ff ff ff               	jmp	0x49bd40 <.text+0x9ad40>
+  49bdf5: 8b 4f 10                     	mov	ecx, dword ptr [edi + 16]
+  49bdf8: 89 4f 04                     	mov	dword ptr [edi + 4], ecx
+  49bdfb: 89 5f 08                     	mov	dword ptr [edi + 8], ebx
+  49bdfe: 88 5f 0c                     	mov	byte ptr [edi + 12], bl
+  49be01: c6 47 0d 01                  	mov	byte ptr [edi + 13], 1
+  49be05: 8b 47 04                     	mov	eax, dword ptr [edi + 4]
+  49be08: 3b c3                        	cmp	eax, ebx
+  49be0a: 0f 84 bd 00 00 00            	je	0x49becd <.text+0x9aecd>
+  49be10: 38 5f 0d                     	cmp	byte ptr [edi + 13], bl
+  49be13: 74 09                        	je	0x49be1e <.text+0x9ae1e>
+  49be15: 8b d0                        	mov	edx, eax
+  49be17: 88 5f 0d                     	mov	byte ptr [edi + 13], bl
+  49be1a: 8b 2a                        	mov	ebp, dword ptr [edx]
+  49be1c: eb 23                        	jmp	0x49be41 <.text+0x9ae41>
+  49be1e: 38 5f 0c                     	cmp	byte ptr [edi + 12], bl
+  49be21: 74 08                        	je	0x49be2b <.text+0x9ae2b>
+  49be23: 8b 47 04                     	mov	eax, dword ptr [edi + 4]
+  49be26: 88 5f 0c                     	mov	byte ptr [edi + 12], bl
+  49be29: eb 14                        	jmp	0x49be3f <.text+0x9ae3f>
+  49be2b: 8b 4f 04                     	mov	ecx, dword ptr [edi + 4]
+  49be2e: 89 47 08                     	mov	dword ptr [edi + 8], eax
+  49be31: 8b 41 04                     	mov	eax, dword ptr [ecx + 4]
+  49be34: 3b c3                        	cmp	eax, ebx
+  49be36: 89 47 04                     	mov	dword ptr [edi + 4], eax
+  49be39: 0f 84 8e 00 00 00            	je	0x49becd <.text+0x9aecd>
+  49be3f: 8b 28                        	mov	ebp, dword ptr [eax]
+  49be41: 3b eb                        	cmp	ebp, ebx
+  49be43: 0f 84 84 00 00 00            	je	0x49becd <.text+0x9aecd>
+  49be49: 8b 74 24 10                  	mov	esi, dword ptr [esp + 16]
+  49be4d: 33 c9                        	xor	ecx, ecx
+  49be4f: 89 4c 24 14                  	mov	dword ptr [esp + 20], ecx
+  49be53: 83 c6 54                     	add	esi, 84
+  49be56: 8b 45 20                     	mov	eax, dword ptr [ebp + 32]
+  49be59: ba 01 00 00 00               	mov	edx, 1
+  49be5e: d3 e2                        	shl	edx, cl
+  49be60: 85 d0                        	test	eax, edx
+  49be62: 74 57                        	je	0x49bebb <.text+0x9aebb>
+  49be64: 8b 46 08                     	mov	eax, dword ptr [esi + 8]
+  49be67: 89 46 fc                     	mov	dword ptr [esi - 4], eax
+  49be6a: 89 1e                        	mov	dword ptr [esi], ebx
+  49be6c: 88 5e 04                     	mov	byte ptr [esi + 4], bl
+  49be6f: c6 46 05 01                  	mov	byte ptr [esi + 5], 1
+  49be73: 8b 46 fc                     	mov	eax, dword ptr [esi - 4]
+  49be76: 3b c3                        	cmp	eax, ebx
+  49be78: 74 3d                        	je	0x49beb7 <.text+0x9aeb7>
+  49be7a: 38 5e 05                     	cmp	byte ptr [esi + 5], bl
+  49be7d: 74 09                        	je	0x49be88 <.text+0x9ae88>
+  49be7f: 8b c8                        	mov	ecx, eax
+  49be81: 88 5e 05                     	mov	byte ptr [esi + 5], bl
+  49be84: 8b 01                        	mov	eax, dword ptr [ecx]
+  49be86: eb 20                        	jmp	0x49bea8 <.text+0x9aea8>
+  49be88: 38 5e 04                     	cmp	byte ptr [esi + 4], bl
+  49be8b: 74 0a                        	je	0x49be97 <.text+0x9ae97>
+  49be8d: 8b 56 fc                     	mov	edx, dword ptr [esi - 4]
+  49be90: 88 5e 04                     	mov	byte ptr [esi + 4], bl
+  49be93: 8b 02                        	mov	eax, dword ptr [edx]
+  49be95: eb 11                        	jmp	0x49bea8 <.text+0x9aea8>
+  49be97: 89 06                        	mov	dword ptr [esi], eax
+  49be99: 8b 46 fc                     	mov	eax, dword ptr [esi - 4]
+  49be9c: 8b 40 04                     	mov	eax, dword ptr [eax + 4]
+  49be9f: 3b c3                        	cmp	eax, ebx
+  49bea1: 89 46 fc                     	mov	dword ptr [esi - 4], eax
+  49bea4: 74 11                        	je	0x49beb7 <.text+0x9aeb7>
+  49bea6: 8b 00                        	mov	eax, dword ptr [eax]
+  49bea8: 3b c3                        	cmp	eax, ebx
+  49beaa: 74 0b                        	je	0x49beb7 <.text+0x9aeb7>
+  49beac: 8b 55 00                     	mov	edx, dword ptr [ebp]
+  49beaf: 50                           	push	eax
+  49beb0: 8b cd                        	mov	ecx, ebp
+  49beb2: ff 52 48                     	call	dword ptr [edx + 72]
+  49beb5: eb bc                        	jmp	0x49be73 <.text+0x9ae73>
+  49beb7: 8b 4c 24 14                  	mov	ecx, dword ptr [esp + 20]
+  49bebb: 41                           	inc	ecx
+  49bebc: 83 c6 48                     	add	esi, 72
+  49bebf: 83 f9 09                     	cmp	ecx, 9
+  49bec2: 89 4c 24 14                  	mov	dword ptr [esp + 20], ecx
+  49bec6: 7c 8e                        	jl	0x49be56 <.text+0x9ae56>
+  49bec8: e9 38 ff ff ff               	jmp	0x49be05 <.text+0x9ae05>
+  49becd: 5f                           	pop	edi
+  49bece: 5e                           	pop	esi
+  49becf: 5d                           	pop	ebp
+  49bed0: 5b                           	pop	ebx
+  49bed1: 83 c4 08                     	add	esp, 8
+  49bed4: c2 08 00                     	ret	8
+  49bed7: 90                           	nop
+  49bed8: 90                           	nop
+  49bed9: 90                           	nop
+  49beda: 90                           	nop
+  49bedb: 90                           	nop
+  49bedc: 90                           	nop
+  49bedd: 90                           	nop
+  49bede: 90                           	nop
+  49bedf: 90                           	nop
+  49bee0: 56                           	push	esi
+  49bee1: 57                           	push	edi
+  49bee2: 8b 7c 24 0c                  	mov	edi, dword ptr [esp + 12]
+  49bee6: 8b 47 18                     	mov	eax, dword ptr [edi + 24]
+  49bee9: 40                           	inc	eax
+  49beea: 8b f1                        	mov	esi, ecx
+  49beec: 8d 04 c0                     	lea	eax, [eax + 8*eax]
+  49beef: 8b 14 c6                     	mov	edx, dword ptr [esi + 8*eax]
+  49bef2: 8d 0c c6                     	lea	ecx, [esi + 8*eax]
+  49bef5: 57                           	push	edi
+  49bef6: ff 12                        	call	dword ptr [edx]
+  49bef8: 57                           	push	edi
+  49bef9: 8b ce                        	mov	ecx, esi
+  49befb: e8 40 e5 f8 ff               	call	0x42a440 <.text+0x29440>

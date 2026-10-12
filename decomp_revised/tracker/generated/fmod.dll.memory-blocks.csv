@@ -1,0 +1,6 @@
+binary,name,start_address,end_address,size_bytes,read,write,execute,initialized
+"fmod.dll","Headers","10000000","100003ff",1024,true,false,false,true
+"fmod.dll","UPX0","10001000","1004efff",319488,true,true,true,false
+"fmod.dll","UPX1","1004f000","1006bfff",118784,true,true,true,true
+"fmod.dll",".rsrc","1006c000","1006efff",12288,true,true,false,true
+"fmod.dll","tdb","ffdff000","ffdfffff",4096,true,true,false,true

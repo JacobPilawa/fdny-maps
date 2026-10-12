@@ -1,0 +1,28 @@
+
+inputs/original/binaries/FDNYFirefighter.exe:	file format coff-i386
+
+Disassembly of section .text:
+
+00401000 <.text>:
+  449fe0: 83 ec 34                     	sub	esp, 52
+  449fe3: 56                           	push	esi
+  449fe4: 8b f1                        	mov	esi, ecx
+  449fe6: 83 7e 4c 05                  	cmp	dword ptr [esi + 76], 5
+  449fea: 0f 84 9a 02 00 00            	je	0x44a28a <.text+0x4928a>
+  449ff0: d9 86 04 01 00 00            	fld	dword ptr [esi + 260]
+  449ff6: 57                           	push	edi
+  449ff7: d8 1d 80 16 4e 00            	fcomp	dword ptr [5117568]
+  449ffd: df e0                        	fnstsw	ax
+  449fff: f6 c4 05                     	test	ah, 5
+  44a002: 0f 8a ae 00 00 00            	jp	0x44a0b6 <.text+0x490b6>
+  44a008: d9 86 04 01 00 00            	fld	dword ptr [esi + 260]
+  44a00e: 8d 44 24 0c                  	lea	eax, [esp + 12]
+  44a012: d8 35 80 16 4e 00            	fdiv	dword ptr [5117568]
+  44a018: 50                           	push	eax
+  44a019: 51                           	push	ecx
+  44a01a: 8d 4c 24 2c                  	lea	ecx, [esp + 44]
+  44a01e: c7 44 24 14 66 66 66 3f      	mov	dword ptr [esp + 20], 1063675494
+  44a026: c7 44 24 18 9a 99 99 3e      	mov	dword ptr [esp + 24], 1050253722
+  44a02e: c7 44 24 1c cd cc cc 3d      	mov	dword ptr [esp + 28], 1036831949
+  44a036: c7 44 24 20 00 00 80 3f      	mov	dword ptr [esp + 32], 1065353216
+  44a03e: c7 44 24 24 00 00 80 3f      	mov	dword ptr [esp + 36], 1065353216

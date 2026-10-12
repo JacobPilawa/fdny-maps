@@ -1,0 +1,15 @@
+timestamp_utc,reviewed_exe_functions,note
+2026-10-12T20:05:21Z,17,Initial clean-project function review checkpoint after tracing the app idle loop and game-owner update
+2026-10-12T20:13:36Z,35,"Added the first Genesis callsite crosswalk: VFile/BSP loading, collision wrappers, actor pose adapters, and the pre-frame/render dispatch path"
+2026-10-12T20:30:00Z,36,Mapped the guarded 0042D8C0 input/camera pass and rejected a same-offset timed-script list as direct producer evidence
+2026-10-12T20:34:17Z,37,Mapped the LevelManager catalog parser and anchored the Training level record to its copied map and event files
+2026-10-12T20:36:52Z,38,Mapped the WorldEntity BSP-load method and its world-entity spawn queue; connection to Training selection remains open
+2026-10-12T20:53:37Z,48,"Closed the level-choice to active-level path and mapped its EVS loader, mode branches, delayed callback, and script statement dispatch"
+2026-10-12T21:00:34Z,51,"Mapped level collection construction, ordinal lookup, and parser append helper; confirmed all 351 selected raw inputs match the pinned snapshot"
+2026-10-12T21:07:57Z,55,"Mapped Training BoundsTrigger script registration, ScriptActor command dispatch, and touch-command classification"
+2026-10-12T21:11:11Z,58,"Mapped Player escape command branch through carried-victim rescue completion; dashboard refresh deferred to a larger batch"
+2026-10-12T21:12:04Z,59,"Added the common ScriptActor command router to the Training touch-command path; dashboard still shows the prior larger batch"
+2026-10-12T21:16:16Z,60,Resolved the EVS mode-1 statement filter: only statements beginning with set or exec continue to ScriptActor dispatch; dashboard refresh deferred
+2026-10-12T21:24:36Z,64,"Tied Training selection to a data\\maps\\training.bsp World spawn request; it strongly matches the WorldEntity BSP loader, with factory dispatch still open"
+2026-10-12T21:38:49Z,66,"Resolved the selected World request through its registered factory to WorldEntity and the BSP loader"
+2026-10-12T21:46:21Z,66,"Proved catalog parser and selector share the +0x6AC collection; mapped zero-based ordinal use in the menu"

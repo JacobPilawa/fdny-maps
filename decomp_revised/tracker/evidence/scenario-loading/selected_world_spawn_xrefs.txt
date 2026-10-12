@@ -1,0 +1,20 @@
+Read-only Ghidra 12.0.4 evidence for FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e, captured 2026-10-12.
+
+Selected-level request construction:
+- 0042AB00 calls 00429C00 with the name object "World", writes the returned registry value at request +0x0C, writes 0x2711 at request +8, and sets the request's first field through 0049D130.
+- 0042A050 delegates to 00422DE0. That function starts from "data\\maps\\", calls 004040E0 to append the selected record's first string field (its level key), then appends ".bsp" through 00403E40. For Training, the resulting path is data\\maps\\training.bsp.
+- 0042AB00 queues the request through the global spawn service at DAT_00503A78 + 0x24.
+
+World factory dispatch:
+- Fresh pseudocode for 0042B4E0 shows subsystem startup constructing a 12-byte descriptor with 0049E360 and registering it through 0049F160 on the object at DAT_00503A78 + 0x14.
+- The preserved constructor pseudocode for 0049E360 sets descriptor vtable 004E44B0 and registers the name "World". In the hash-pinned EXE, vtable slot +8 at 004E44B8 contains 0049E300.
+- 0042AB00 resolves "World" through 00429C00 and stores the returned descriptor pointer in request +0x0C. The queued request carries command 0x2711 and the selected BSP path.
+- Queue drain 0049C670 reads request +0x0C and calls descriptor virtual slot +8. Factory 0049E300 allocates and constructs the WorldEntity through 0049E240, which stores the BSP path at object +0x24.
+- The WorldEntity initialization slot +0x20 resolves to 0049E4D0. It reads object +0x24 and invokes the BSP loader 00495210.
+- This closes the static factory-dispatch gap for the successful path. The preserved queue/factory decompilations are in reference/previous-work/decomp/evidence/entity-queues/ and startup-world/; a consolidated address-by-address trace is in world_factory_resolution.md.
+
+WorldEntity load method:
+- 0049E4D0 has a data-table reference at 004E4478, slot +0x18 in the table at 004E4460; its source strings identify ROCWorldEntity / WorldEntity.cpp.
+- The method reads its path from this +0x24 and passes it to 00495210, which loads the BSP and creates the Genesis3D world.
+- It enumerates the resulting world's entities and submits spawn records through the same DAT_00503A78 + 0x24 service.
+- Ghidra reports no direct callers for 0049E4D0 because the call is indirect through WorldEntity's initialization vtable slot. The descriptor lookup, queue factory call, constructor, and initialization slot resolve the selected-level request to this exact method; see world_factory_resolution.md.
