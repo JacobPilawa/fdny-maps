@@ -21,6 +21,7 @@ struct PlayerAshParticle {
     bool vectorsDirty = true;              // +0xa0, 004463f0 -> 0047f1d0
     uint32_t animationFlags = 0;           // +0x18, copied from selected descriptor container
     float activationScale = 1.0f;           // +0x1c, 0047d330
+    float byteChannelScale = 1.0f;          // +0x20, 0047d330
     float opacityScale = 1.0f;              // +0xa8, 0047f500
     uint32_t animationIndex = 0;            // +0x04, 0047d300
     uint32_t nextAnimationIndex = 1;        // +0x08, 0047d300

@@ -35,11 +35,14 @@ The renderer path consumes more of each descriptor than its animation timing:
   current/next records (or returns the current value when this flag is clear);
   `0047F960` multiplies this result by particle `+0xa8` for the polygon's final
   alpha operand. Training's authored `+0x0c` values are all `0.2`.
-- `0047D6D0` reads the current and next records' `+8` values, converts them
-  through the 255-scale/round helper to bytes, then—because bit `0x4` is set—
-  interpolates the two byte channels by elapsed-frame fraction and multiplies
-  by particle `+0x20` before its final byte conversion. Training's `+8` words
-  are `1,1,1,1,0` as float bit patterns; this path does not consult shared RNG.
+- `0047D6D0` reads the current and next records' `+8` values, multiplies them
+  by 255, and converts through `004B9400` to bytes. The helper's x87
+  nearest-integer intermediate is corrected by the signed fractional residue,
+  so the returned integer truncates toward zero. With Training flags `0x3c`,
+  bit `0x4` crossfades the byte channels by elapsed-frame fraction into the
+  current byte, then both channels are multiplied by particle `+0x20` and
+  truncated again. Training's `+8` words are `1,1,1,1,0` as float bit
+  patterns; this path does not consult shared RNG.
 
 The submission path calls through the Genesis.dll import-address-table (IAT)
 entry at `004DC0D0` from both `0047FCF9` and `0047FE58` (the optional second
@@ -79,7 +82,9 @@ operands, using the next-frame helpers `0047D560` and `0047D960`.
 
 This closes a concrete descriptor-to-render-data path: record ID selects a
 renderer resource object, its trailing triplet supplies interpolated vertex
-color, and `+0x0c` supplies the final alpha factor. It does not identify the
+color, and `+0x0c` supplies the alpha factor. The helper arithmetic and caller
+spill now have a native component comparison in `ash-presentation-component.md`.
+It does not identify the
 resource object's runtime table state or establish live Training vertex
 positions/visibility. The imported submission API and its list insertion are
 resolved, but actual Training list contents and visible output have not been

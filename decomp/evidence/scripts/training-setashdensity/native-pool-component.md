@@ -18,7 +18,9 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   animation-enabled `+0xad = 1`, lazy-cache byte `+0x78 = 1`, opacity
   `+0xa8 = 1`, and zero vectors at `+0x7c`, `+0x88`, and `+0x94`. It writes
   `(1,1,1)` at `+0xb4` and calls `0047d330` to set activation scale
-  `+0x1c = 1`. Afterward, `004463f0` calls `0047f1d0`, setting vector-dirty
+  `+0x1c = 1`; `0047d330` also sets byte-channel scale `+0x20 = 1`.
+  Activation `00446470` later draws and stores its independent opacity scale at
+  `+0xa8`. Afterward, `004463f0` calls `0047f1d0`, setting vector-dirty
   `+0xa0 = 1` and zeroing `+0x94`; deadline `+0x168` is also zero. The focused
   model now starts with origin position, dirty vectors, zero `+0x94`, and unit
   `+0xb4`.

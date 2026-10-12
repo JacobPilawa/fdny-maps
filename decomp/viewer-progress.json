@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "028e87c",
-  "tests": 29,
+  "commit": "fdad11f",
+  "tests": 30,
   "scope": "Training",
   "files": [
     {
@@ -1394,7 +1394,7 @@
           "evidence/scripts/training-setashdensity/ash-integrate-pcode-oracle.json"
         ]
       ],
-      "bytes": 14293
+      "bytes": 14356
     },
     {
       "path": "src/player_ash_integrate.h",
@@ -1427,6 +1427,43 @@
         ]
       ],
       "bytes": 3645
+    },
+    {
+      "path": "src/player_ash_presentation.h",
+      "group": "Effects",
+      "summary": "Native Training ash descriptor presentation helpers preserve x87 interpolation, binary32 vector stores, byte truncation and render alpha spill; exact helper-level original comparisons pass.",
+      "evidence": "evidence/scripts/training-setashdensity/ash-presentation-component.md",
+      "units": [
+        [
+          "0047D420",
+          "Ash RGB interpolation",
+          "verified",
+          "11 original P-code cases compare RGB cache words and direct-pointer control; training RGB weights current by (1-f), next by f, with source binary32 stores.",
+          "evidence/scripts/training-setashdensity/ash-presentation-pcode-oracle.json"
+        ],
+        [
+          "0047D6D0",
+          "Ash byte channels",
+          "verified",
+          "Original byte flag branches and 004B9400 truncation toward zero match for Training records, scales, and wrapped time.",
+          "evidence/scripts/training-setashdensity/ash-presentation-pcode-oracle.json"
+        ],
+        [
+          "0047D8A0",
+          "Ash alpha interpolation",
+          "verified",
+          "Original x87 result and 0047F960 opacity product/binary32 spill match, including a non-Training alpha pair.",
+          "evidence/scripts/training-setashdensity/ash-presentation-pcode-oracle.json"
+        ],
+        [
+          "0047F960",
+          "Ash render callback",
+          "partial",
+          "Descriptor helper outputs are source-matched; runtime resource/context objects, visibility, polygon-list integration and callback scheduling remain open.",
+          "evidence/scripts/training-setashdensity/presentation-callback-audit.md"
+        ]
+      ],
+      "bytes": 7200
     }
   ]
 }
