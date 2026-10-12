@@ -1,11 +1,28 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FDNY · Decompilation map</title><style>
-:root{--ink:#283344;--muted:#657083;--line:#d5dce7;--green:#00ba81;--blue:#509bd4;--amber:#e6af49;--gray:#c4ccd8}*{box-sizing:border-box}body{margin:0;background:#fbfcfe;color:var(--ink);font:15px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:42px 32px}h1{font-size:29px;margin:0 0 8px}h2{font-size:18px;margin:22px 0 8px}p{margin:8px 0;color:var(--muted)}a{color:#3970a4}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.button{border:1px solid #889bb9;border-radius:5px;padding:10px 18px;text-decoration:none;white-space:nowrap;background:white}.sub{font-size:19px;font-weight:600}.bar{height:27px;background:#e9edf4;display:flex;border-radius:4px;overflow:hidden}.bar i{height:100%}.metrics{display:flex;gap:22px;flex-wrap:wrap;margin:20px 0}.metrics b{font-size:22px;display:block}.metrics span{font-size:12px;color:var(--muted)}.legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0;font-size:12px}.legend i{width:12px;height:12px;display:inline-block;margin-right:6px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 12px}select,input{padding:13px;border:1px solid var(--line);border-radius:4px;background:white;font:inherit;width:100%}.map{height:470px;position:relative;background:#e8edf4;border:1px solid var(--line);overflow:hidden}.tile{position:absolute;border:1px solid #ffffffaa;overflow:hidden;padding:5px;background:var(--gray);color:#172c26;text-align:left;font:12px/1.3 system-ui;cursor:pointer;transition:filter .15s}.tile:hover,.tile:focus-visible,.tile[aria-pressed=true]{filter:brightness(1.1);outline:3px solid #233852;outline-offset:-3px;z-index:1}.tile small{display:block;font-size:10px}.detail{margin-top:16px;border:1px solid var(--line);border-radius:5px;background:white;padding:18px}.detail h2{margin:0;font-size:18px;overflow-wrap:anywhere}.detail ul{padding-left:20px}.detail li{margin:8px 0}.filelist{max-height:300px;overflow:auto;border:1px solid var(--line);background:white}.row{width:100%;border:0;border-bottom:1px solid #edf0f5;padding:10px 14px;background:white;display:flex;justify-content:space-between;gap:12px;text-align:left;cursor:pointer;font:13px system-ui}.row:hover{background:#f2f5fa}.row span{overflow-wrap:anywhere}.row small{color:var(--muted);white-space:nowrap}.footer{font-size:12px;margin-top:24px}.empty{padding:30px}code{font-size:12px} .module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 24px}.module{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:6px;background:white;padding:14px;min-width:0}.module.open{border-left-color:var(--gray)}.module h3{margin:0 0 6px;font-size:16px}.module-state{font-size:12px;font-weight:700;color:#76540c}.module.open .module-state{color:#5e6877}.module p{font-size:13px}.module-next{border-top:1px solid #edf0f5;padding-top:8px}.module-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.module-files a{font-size:11px;border:1px solid var(--line);border-radius:4px;padding:2px 6px;text-decoration:none;background:#f8f9fc}.module-evidence{font-size:12px}.evidence-details{margin:16px 0;padding:12px;border:1px solid var(--line);border-radius:5px;background:#f7f9fc}.evidence-details summary{cursor:pointer;font-weight:600}.current-build{padding:12px 14px;border-left:4px solid var(--blue);background:white}.current-build strong{color:var(--ink)}@media(max-width:850px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){main{padding:22px 16px}header{display:block}.button{display:inline-block;margin-top:12px}.controls{grid-template-columns:1fr}.module-grid{grid-template-columns:1fr}.map{height:400px}h1{font-size:24px}}
-</style></head><body><main><header><div><h1>FDNY Firefighter · Decompilation map</h1><div class="sub">Training: component recovery in progress</div><p>Original routines mapped to native C++ files, with evidence and remaining work.</p></div><a class="button" href="https://github.com/JacobPilawa/fdny-maps/tree/main/decomp">Repository ↗</a></header>
-<h2>Training module status</h2><p class="current-build"><strong>Current runnable state:</strong> playable Training scene prototype. It does not yet complete the source-accurate level. The module order below is the delivery path; start with the shared runtime and actor schedule.</p><div class="module-grid" id="modules" aria-label="Training gameplay module status"></div><p id="snapshot"></p><details class="evidence-details"><summary>Component evidence counts (not a gameplay completion score)</summary><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><div class="metrics" id="metrics"></div></details><h2>Component evidence map</h2><p>The file tree is for looking up source routines, comparisons, and open evidence. Its size and status colors do not represent how much of the full game is playable.</p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="TRAINING_MODULE_ROADMAP.md">Module roadmap</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FDNY Training · source progress</title>
+<style>
+:root{color-scheme:light;--ink:#1e2938;--muted:#586779;--line:#d9e1eb;--bg:#f4f7fb;--card:#fff;--green:#16845b;--blue:#3973b5;--amber:#9b680e;--gray:#687487}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,sans-serif}main{max-width:1440px;margin:0 auto;padding:34px 28px 56px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}h1{font-size:30px;line-height:1.2;margin:0}h2{font-size:21px;margin:32px 0 5px}h3{margin:0;font-size:16px}p{color:var(--muted);margin:7px 0}.lede{font-size:17px;font-weight:600;color:var(--ink);margin-top:9px}.toplink,.links a,.source-link,.routine-links a{color:#245e99}.toplink{border:1px solid #9aabc0;padding:8px 12px;background:white;border-radius:5px;text-decoration:none;white-space:nowrap}.callout{background:#eaf2fb;border-left:4px solid var(--blue);border-radius:4px;padding:12px 15px;margin:19px 0}.metrics{display:flex;gap:10px;flex-wrap:wrap;margin:17px 0}.metric{border:1px solid var(--line);background:white;border-radius:6px;padding:9px 13px;min-width:160px}.metric strong{display:block;font-size:19px}.metric span{font-size:12px;color:var(--muted)}.buckets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;align-items:start;margin-top:14px}.bucket{background:white;border:1px solid var(--line);border-radius:8px;overflow:hidden}.bucket>header{display:block;padding:14px 16px;border-bottom:1px solid var(--line)}.bucket>header h3{display:flex;justify-content:space-between;gap:10px;align-items:center}.count{font-size:13px;font-weight:700;padding:2px 8px;border-radius:12px;background:#edf1f6}.bucket.completed{border-top:4px solid var(--green)}.bucket.in-progress{border-top:4px solid var(--amber)}.bucket.not-started{border-top:4px solid #929cac}.bucket-body{padding:9px;max-height:650px;overflow:auto}.file{border:1px solid #e4e9f0;border-radius:5px;margin:6px 0;background:#fff}.file summary{list-style:none;cursor:pointer;padding:9px 10px;display:flex;gap:8px;justify-content:space-between;align-items:flex-start}.file summary::-webkit-details-marker{display:none}.file summary:hover{background:#f7f9fc}.path{overflow-wrap:anywhere;font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}.small{font-size:11px;color:var(--muted);white-space:nowrap}.file-content{padding:0 11px 11px;border-top:1px solid #eef1f5}.summary-text{font-size:13px}.file-meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.tag{font-size:11px;border-radius:3px;background:#edf2f8;padding:2px 6px;color:#445368}.unit{border-top:1px solid #edf0f4;padding:9px 0}.unit:first-child{margin-top:8px}.unit-title{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.unit-title strong{font-size:13px}.status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.035em;white-space:nowrap;padding:2px 5px;border-radius:3px;background:#edf1f5;color:#566173}.status.verified{background:#e4f5ec;color:#176b49}.status.connected{background:#e5f0fc;color:#245e99}.status.partial{background:#fff3d8;color:#805708}.routine-links{display:flex;gap:11px;flex-wrap:wrap;font-size:12px;margin-top:5px}.routine-links a{text-decoration:none}.routine-links a:hover{text-decoration:underline}.note{font-size:12px;margin:5px 0 0}.boundary{font-size:10px;color:#785e28}.activity{background:white;border:1px solid var(--line);border-radius:8px;padding:12px 16px 15px;margin-top:13px}.activity svg{width:100%;height:auto;display:block}.chart-note{font-size:12px}.pending{border-left:4px solid #b27c1b;background:#fff8e9;padding:10px 13px;margin-top:9px;font-size:13px}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.links a{font-size:13px}.foot{font-size:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:32px}.empty{padding:20px;color:var(--muted)}@media(max-width:950px){.buckets{grid-template-columns:1fr 1fr}.bucket.not-started{grid-column:1/-1}.bucket-body{max-height:560px}}@media(max-width:620px){main{padding:22px 13px 40px}header{display:block}h1{font-size:25px}.toplink{display:inline-block;margin-top:12px}.buckets{grid-template-columns:1fr}.bucket.not-started{grid-column:auto}.bucket-body{max-height:510px}.metric{flex:1;min-width:135px}}
+</style>
+</head>
+<body><main>
+<header><div><h1>FDNY Training · file progress</h1><div class="lede">Which native files are completed, in progress, or not started?</div><p id="snapshot"></p></div><a class="toplink" href="https://github.com/JacobPilawa/fdny-maps/tree/main/decomp">Open decomp in GitHub ↗</a></header>
+<div class="callout"><strong>How to read “completed”:</strong> every Ghidra routine currently indexed for that native file has verified component evidence. It does not mean the file contains no untracked original routines, or that Training / the full game is finished. Each tracked routine links to its native C++ and the matching Ghidra C-like decompilation.</div>
+<div class="metrics" id="metrics"></div>
+<p class="callout"><strong>Work priority:</strong> finish an already listed in-progress file to verified before opening another partial source file. Add code only when it closes that file or is required by its acceptance check.</p>
+<h2>Files completed over time</h2><p>This is the count of native files whose currently tracked Ghidra routine entries were all verified at each saved progress snapshot. The chart uses the committed history of <code>viewer-progress.json</code>; the first snapshot already had 15 completed files, so earlier completion history is unavailable in this ledger. Labels show the snapshot commit time in Pacific Time.</p>
+<section class="activity" aria-label="Completed native files over saved progress snapshots"><div id="completion-chart"></div><p class="chart-note" id="completion-history"></p></section>
+<h2>Files by status</h2><p>Completed means every currently tracked routine entry in the file has status <code>verified</code>.</p><section class="buckets"><div class="bucket completed"><header><h3>Completed <span class="count" id="completed-count"></span></h3></header><div class="bucket-body" id="completed"></div></div><div class="bucket in-progress"><header><h3>In progress <span class="count" id="progress-count"></span></h3></header><div class="bucket-body" id="progress"></div></div><div class="bucket not-started"><header><h3>Not started <span class="count" id="not-started-count"></span></h3></header><div class="bucket-body" id="not-started"></div></div></section>
+<h2>Reference and validation</h2><p id="validation"></p><div class="links"><a href="evidence/original-function-inventory.json">Original Ghidra function inventory</a><a href="evidence/ghidra-original-c/README.md">Ghidra C export provenance</a><a href="evidence/ghidra-original-c/index.json">Ghidra address index</a><a href="CHECKLIST.md">Checklist</a><a href="HANDOFF.md">Handoff</a><a href="TRAINING_MODULE_ROADMAP.md">Training module roadmap</a><a href="mechanics.json">Mechanics record</a><a href="viewer-progress.json">Viewer data</a></div>
+<footer class="foot">Ghidra’s output is a C-like interpretation of the preserved executable, not the original source text. The export covers only indexed addresses. 93 exported addresses were existing Ghidra function entries; 11 boundaries were defined in a scratch copy and are labeled as such. The saved Ghidra project was left unchanged. Viewer snapshot and counts are frozen here as requested; source/evidence work can continue without refreshing this page.</footer>
+</main>
+<script>
 const data={
   "snapshot": "2026-10-12",
-  "commit": "86ef364",
-  "tests": 37,
+  "commit": "working tree based on 3ec239a",
+  "tests": 40,
   "scope": "Training",
   "files": [
     {
@@ -99,7 +116,7 @@ const data={
           "The movement path is ported; remaining movement and ladder comparisons are open."
         ]
       ],
-      "bytes": 12639
+      "bytes": 12614
     },
     {
       "path": "src/main.cpp",
@@ -127,7 +144,7 @@ const data={
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 181042
+      "bytes": 187619
     },
     {
       "path": "src/startup.h",
@@ -196,7 +213,7 @@ const data={
           "The queue component is compared on a controlled fixture; live callback order remains unresolved."
         ]
       ],
-      "bytes": 6773
+      "bytes": 7129
     },
     {
       "path": "src/world_startup.h",
@@ -558,15 +575,15 @@ const data={
     },
     {
       "path": "src/hose_valve_callback.h",
-      "group": "Tools",
-      "summary": "Exact 00444120 attach/detach callback order; native owner frame integration remains incomplete.",
+      "group": "Interactions",
+      "summary": "The complete modeled 00444120 callback decision is verified against five original P-code cases. Owner-body, item, frame and UI effects belong to separately tracked components.",
       "evidence": "evidence/hose-spray/valve-callback-pcode-audit.md",
       "units": [
         [
           "00444120",
           "Valve callback forwarding",
-          "partial",
-          "Five hash-pinned original P-code cases compare the 0044C840 call boundary and prove detach 1002 skips the use script event; owner, string, and script services are intercepted."
+          "verified",
+          "Five hash-pinned original P-code cases and the focused CTest verify the owner receiver/arguments, string/script call branches and detach-1002 early return. This status covers 00444120 only; owner-body, item, frame and UI effects are tracked separately."
         ]
       ],
       "bytes": 573
@@ -799,14 +816,14 @@ const data={
     {
       "path": "src/victim_frame_ops.h",
       "group": "Victims",
-      "summary": "618 frame/floor words match including native Training BSP; live correction receiver remains open.",
+      "summary": "All tracked passout frame/floor adapter work is verified: 618 words match across release, passout and Training BSP cases. The changed carry receiver is tested by the transaction wrapper; recurring victim schedule remains open.",
       "evidence": "evidence/victim-ai-audit/victim-frame-ops.md",
       "units": [
         [
           "0045C1A0",
           "victim_frame_ops",
-          "partial",
-          "618 frame/floor words match including native Training BSP; live correction receiver remains open."
+          "verified",
+          "618 original frame/floor words match across 8 release, 32 passout and 6 Training BSP cases. Failure fallback and the frame correction are checked. The integrated transaction test mutates the carry receiver during reset and verifies the later correction targets the live receiver; recurring victim scheduling remains open."
         ]
       ],
       "bytes": 2975
@@ -1004,9 +1021,11 @@ const data={
           "Eight original P-code cases compare returned action values for controlled Hose Spray slot, raw Player byte, held pointer, and object state."
         ],
         [
-          "Player +0x12C receiver audit",
+          "0044CD10",
+          "Player eligibility-byte reset",
           "partial",
-          "0044CD10 is the only direct displacement store proven to target the Player root; the two apparent stores at 00446FC9 and 00447440 belong to EscapeArrow and a type-3 actor. Alias writes and the live Training value remain open."
+          "This helper sets Player root bytes +0x12C and +0x12D to 1. Direct-store receiver is established; alias writes and live Training value remain open.",
+          "evidence/training-liftable-audit/bmodel-selection-pass-audit.md"
         ],
         [
           "0044BC40",
@@ -1627,16 +1646,87 @@ const data={
         ]
       ],
       "bytes": 4434
+    },
+    {
+      "path": "src/training_hose_interaction.h",
+      "group": "Interactions",
+      "summary": "Composes Training valve target selection, owner inventory/frame transaction, pose-list head write, and callback event branch in the live input path. Original cadence and residual x87 basis words remain open.",
+      "evidence": "evidence/training-hose-interaction-scenario.md",
+      "units": [
+        [
+          "00459350",
+          "PropModel target selection",
+          "connected",
+          "Training makevalve candidates reach the native ray/sphere use manager in saved registration order. Original runtime target selection is not captured."
+        ],
+        [
+          "00444120",
+          "Valve callback",
+          "connected",
+          "Owner-action ordering and attach-versus-detach event forwarding are checked against five original P-code cases and composed into the native input path."
+        ],
+        [
+          "0044C840",
+          "Hose attach/detach owner",
+          "connected",
+          "Indexed item selection, frame commit, Hose mode and pose-list head are composed. Training residual basis words retain the documented Ghidra Java Math approximation."
+        ]
+      ],
+      "bytes": 4564
+    },
+    {
+      "path": "src/training_liftable_sequence.h",
+      "group": "Interactions",
+      "summary": "Source-ordered native liftable pickup/carry/release/throw transaction composed; live candidate registration, transforms, services, and recurring schedule remain open.",
+      "evidence": "evidence/training-liftable-audit/native-sequence-core.md",
+      "units": [
+        [
+          "0044C520",
+          "Lift action gate",
+          "partial",
+          "Composes the controlled Hose Spray slot/player-byte/held-object gate; live candidate order and event timing remain open.",
+          "evidence/training-liftable-audit/bmodel-use-component.md"
+        ],
+        [
+          "0044BC40",
+          "Pickup state transition",
+          "partial",
+          "Composes source-ordered held-object/BModel writes, action status 3, then the use event; live Player callback integration remains open.",
+          "evidence/training-liftable-audit/bmodel-use-component.md"
+        ],
+        [
+          "00452570",
+          "Carry pose and release gate",
+          "partial",
+          "The component calls external pose/correction and angle services, then applies the source strict <10-degree branch. Exact scene service construction and recurring cadence remain open.",
+          "evidence/training-liftable-audit/native-sequence-core.md"
+        ],
+        [
+          "0043B580",
+          "Throw setup",
+          "partial",
+          "Source scalar setup is ordered before Player action status 4 and carry clear; live action/stat adapters remain open.",
+          "evidence/training-liftable-audit/throw-path-ghidra-audit.md"
+        ],
+        [
+          "0043D330",
+          "Throw update and completion",
+          "partial",
+          "One explicitly driven scalar update orders endpoint application, endpoint flip, drop event, and timer clear; Genesis model transform and update cadence remain open.",
+          "evidence/training-liftable-audit/throw-runtime-ghidra-audit.md"
+        ]
+      ],
+      "bytes": 7415
     }
   ],
-  "test_status": "37 CTest checks configured; the three focused hose checks pass; the full suite was last run at 36 checks.",
+  "test_status": "Recorded full CTest: 40/40 passed before training_liftable_sequence.h was added. Since then, its header passes a standalone C++17 syntax check, and focused acceptance passed: victim_frame_ops + victim_transactions 2/2; hose_valve_callback_pcode 1/1. The liftable header is not live-connected or covered by CTest.",
   "modules": [
     {
       "name": "Runtime, startup, and actor schedule",
-      "state": "Foundation; incomplete",
+      "state": "Startup composed; recurring schedule open",
       "state_key": "partial",
-      "summary": "A Training scene runs, but source-ordered initialization and recurring Player, victim, BModel, and FireRescue updates are not closed.",
-      "next": "Close the shared callback/order boundary, then connect authored startup and recurring updates.",
+      "summary": "A fixed-seed gate composes the authored startup batch and delayed EVS load. No original recurring Player, victim, BModel, or FireRescue callback order/cadence has been proved.",
+      "next": "Recover and compare recurring caller order and cadence, then connect source-ordered updates, message latency and shared RNG.",
       "files": [
         "src/main.cpp",
         "src/world_startup.h",
@@ -1646,14 +1736,18 @@ const data={
         "src/clock.h",
         "src/bmodel_contact.h"
       ],
-      "evidence": "evidence/fire-update/root-think-dispatch-query-20261012.md"
+      "evidence": "evidence/fire-update/root-think-dispatch-query-20261012.md",
+      "new_work": [
+        "src/training_schedule.h \u2014 conditional; create only when original callback order/cadence is established.",
+        "Add a hash-pinned original-runtime schedule trace under evidence/ before claiming recurring parity."
+      ]
     },
     {
       "name": "Player movement and world interactions",
-      "state": "Partly playable",
+      "state": "Valve path composed; module remains open",
       "state_key": "partial",
-      "summary": "Movement and several world contacts work in the native scene. Axe, lift/carry/throw, candidate order, and some callback latency remain disconnected or approximate.",
-      "next": "Finish the Training interaction path as one input-to-action sequence.",
+      "summary": "Valve3 attach \u2192 detach \u2192 Valve5 attach now composes targeting, inventory, frame commit, pose-list head and callback event behavior. Axe, BModel carry/throw, door/ladder actions and original cadence remain.",
+      "next": "Connect the authored liftable BModel path through selection, carry, release/throw and drop; then unify the axe and door/ladder actions in a Training scenario.",
       "files": [
         "src/main.cpp",
         "src/motion.h",
@@ -1662,9 +1756,21 @@ const data={
         "src/bmodel_use.h",
         "src/use_manager.h",
         "src/throw_scalar.h",
-        "src/interaction_box.h"
+        "src/interaction_box.h",
+        "src/training_hose_interaction.h",
+        "src/hose_attachment_frame.h",
+        "src/hose_item_selection.h",
+        "src/hose_spray_pose_list.h",
+        "tools/training_hose_interaction_check.cpp",
+        "evidence/training-hose-interaction-scenario.md"
       ],
-      "evidence": "evidence/training-liftable-audit.md"
+      "evidence": "evidence/training-hose-interaction-scenario.md",
+      "new_work": [
+        "Created: src/training_hose_interaction.h \u2014 connects the valve owner/callback path in the live input loop.",
+        "Created: tools/training_hose_interaction_check.cpp and evidence/training-hose-interaction-scenario.md \u2014 Valve3 attach/detach/Valve5 attach sequence and limits.",
+        "Next: extend the module scenario to BModel lift/use/carry/release/throw; add only the adapters needed to connect authored handlers.",
+        "Open precision item: replace provisional valve-frame residual words with x87-confirmed outputs."
+      ]
     },
     {
       "name": "Fire response and tools",
@@ -1684,7 +1790,12 @@ const data={
         "src/hose_spray_pose_list.h",
         "src/main.cpp"
       ],
-      "evidence": "evidence/fire-update/training-think-behavior-audit.md"
+      "evidence": "evidence/fire-update/training-think-behavior-audit.md",
+      "new_work": [
+        "Conditional: src/fire_runtime.h only if a separate owner is needed for schedule/message/presentation composition.",
+        "Add one Training fire-response scenario/checker covering scheduled Think, extinguisher/hose contacts, state change, RNG and visible result.",
+        "Add source-comparison evidence for remaining lifecycle and callback boundaries; current component fixtures stay as supporting checks."
+      ]
     },
     {
       "name": "Victim lifecycle and mission flow",
@@ -1701,7 +1812,12 @@ const data={
         "src/player_passout.h",
         "src/main.cpp"
       ],
-      "evidence": "evidence/victim-ai-audit/training-pickup-flow.md"
+      "evidence": "evidence/victim-ai-audit/training-pickup-flow.md",
+      "new_work": [
+        "Conditional: src/victim_runtime.h only if rescue/carry/exit coordination cannot stay in current owners.",
+        "Add one Training victim lifecycle scenario/checker from authored spawn through rescue or failure and mission result.",
+        "Add original-order evidence for actor movement, carry/rescue/exit callbacks and their shared RNG effects."
+      ]
     },
     {
       "name": "Presentation and game services",
@@ -1720,7 +1836,11 @@ const data={
         "src/ui.h",
         "src/assets.h"
       ],
-      "evidence": "evidence/README.md"
+      "evidence": "evidence/README.md",
+      "new_work": [
+        "No speculative renderer rewrite: create focused engine-service adapters only where an integrated gameplay module demonstrates a missing owner.",
+        "Add renderer/audio/HUD comparison fixtures alongside the gameplay scenarios that consume those services."
+      ]
     },
     {
       "name": "Whole-Training parity and runnable handoff",
@@ -1736,21 +1856,767 @@ const data={
         "mechanics.json",
         "tools/record_startup.py"
       ],
-      "evidence": "IMPLEMENTATION_PLAN.md"
+      "evidence": "IMPLEMENTATION_PLAN.md",
+      "new_work": [
+        "Create tools/record_training_replay.py (or extend the existing recorder) for repeatable inputs, frame timing, RNG draws and state checkpoints.",
+        "Add a tracked replay/evidence bundle for one full Training run from matching seed through mission outcome.",
+        "Finish decomp/run.sh, CMakeLists.txt, README.md and an asset manifest for a clean documented native handoff."
+      ]
     }
-  ]
+  ],
+  "ghidra_sources": {
+    "00404930": {
+      "address": "00404930",
+      "file": "evidence/ghidra-original-c/00404930.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404930",
+      "function_name": "FUN_00404930"
+    },
+    "00404960": {
+      "address": "00404960",
+      "file": "evidence/ghidra-original-c/00404960.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404960",
+      "function_name": "FUN_00404960"
+    },
+    "00404A70": {
+      "address": "00404A70",
+      "file": "evidence/ghidra-original-c/00404A70.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404A70",
+      "function_name": "FUN_00404a70"
+    },
+    "00404AC0": {
+      "address": "00404AC0",
+      "file": "evidence/ghidra-original-c/00404AC0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404AC0",
+      "function_name": "FUN_00404ac0"
+    },
+    "00404B30": {
+      "address": "00404B30",
+      "file": "evidence/ghidra-original-c/00404B30.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404B30",
+      "function_name": "FUN_00404b30"
+    },
+    "00404B50": {
+      "address": "00404B50",
+      "file": "evidence/ghidra-original-c/00404B50.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404B50",
+      "function_name": "FUN_00404b50"
+    },
+    "0042BF70": {
+      "address": "0042BF70",
+      "file": "evidence/ghidra-original-c/0042BF70.c",
+      "boundary": "existing-entry",
+      "entry_address": "0042BF70",
+      "function_name": "FUN_0042bf70"
+    },
+    "0043B580": {
+      "address": "0043B580",
+      "file": "evidence/ghidra-original-c/0043B580.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043B580",
+      "function_name": "FUN_0043b580"
+    },
+    "0043B690": {
+      "address": "0043B690",
+      "file": "evidence/ghidra-original-c/0043B690.c",
+      "boundary": "scratch-defined",
+      "entry_address": "0043B690",
+      "function_name": "FUN_0043b690"
+    },
+    "0043D330": {
+      "address": "0043D330",
+      "file": "evidence/ghidra-original-c/0043D330.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043D330",
+      "function_name": "FUN_0043d330"
+    },
+    "0043D660": {
+      "address": "0043D660",
+      "file": "evidence/ghidra-original-c/0043D660.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043D660",
+      "function_name": "FUN_0043d660"
+    },
+    "0043F810": {
+      "address": "0043F810",
+      "file": "evidence/ghidra-original-c/0043F810.c",
+      "boundary": "scratch-defined",
+      "entry_address": "0043F810",
+      "function_name": "FUN_0043f810"
+    },
+    "00443860": {
+      "address": "00443860",
+      "file": "evidence/ghidra-original-c/00443860.c",
+      "boundary": "existing-entry",
+      "entry_address": "00443860",
+      "function_name": "FUN_00443860"
+    },
+    "00444120": {
+      "address": "00444120",
+      "file": "evidence/ghidra-original-c/00444120.c",
+      "boundary": "existing-entry",
+      "entry_address": "00444120",
+      "function_name": "FUN_00444120"
+    },
+    "00446470": {
+      "address": "00446470",
+      "file": "evidence/ghidra-original-c/00446470.c",
+      "boundary": "existing-entry",
+      "entry_address": "00446470",
+      "function_name": "FUN_00446470"
+    },
+    "00446510": {
+      "address": "00446510",
+      "file": "evidence/ghidra-original-c/00446510.c",
+      "boundary": "existing-entry",
+      "entry_address": "00446510",
+      "function_name": "FUN_00446510"
+    },
+    "004465D0": {
+      "address": "004465D0",
+      "file": "evidence/ghidra-original-c/004465D0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004465D0",
+      "function_name": "FUN_004465d0"
+    },
+    "004467E0": {
+      "address": "004467E0",
+      "file": "evidence/ghidra-original-c/004467E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004467E0",
+      "function_name": "FUN_004467e0"
+    },
+    "004476B0": {
+      "address": "004476B0",
+      "file": "evidence/ghidra-original-c/004476B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004476B0",
+      "function_name": "FUN_004476b0"
+    },
+    "00448630": {
+      "address": "00448630",
+      "file": "evidence/ghidra-original-c/00448630.c",
+      "boundary": "existing-entry",
+      "entry_address": "00448630",
+      "function_name": "FUN_00448630"
+    },
+    "00448970": {
+      "address": "00448970",
+      "file": "evidence/ghidra-original-c/00448970.c",
+      "boundary": "existing-entry",
+      "entry_address": "00448970",
+      "function_name": "FUN_00448970"
+    },
+    "00448D60": {
+      "address": "00448D60",
+      "file": "evidence/ghidra-original-c/00448D60.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00448D60",
+      "function_name": "FUN_00448d60"
+    },
+    "00449340": {
+      "address": "00449340",
+      "file": "evidence/ghidra-original-c/00449340.c",
+      "boundary": "existing-entry",
+      "entry_address": "00449340",
+      "function_name": "FUN_00449340"
+    },
+    "00449A40": {
+      "address": "00449A40",
+      "file": "evidence/ghidra-original-c/00449A40.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00449A40",
+      "function_name": "FUN_00449a40"
+    },
+    "00449FE0": {
+      "address": "00449FE0",
+      "file": "evidence/ghidra-original-c/00449FE0.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00449FE0",
+      "function_name": "FUN_00449fe0"
+    },
+    "0044A840": {
+      "address": "0044A840",
+      "file": "evidence/ghidra-original-c/0044A840.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044A840",
+      "function_name": "FUN_0044a840"
+    },
+    "0044AE80": {
+      "address": "0044AE80",
+      "file": "evidence/ghidra-original-c/0044AE80.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044AE80",
+      "function_name": "FUN_0044ae80"
+    },
+    "0044B060": {
+      "address": "0044B060",
+      "file": "evidence/ghidra-original-c/0044B060.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B060",
+      "function_name": "FUN_0044b060"
+    },
+    "0044B270": {
+      "address": "0044B270",
+      "file": "evidence/ghidra-original-c/0044B270.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B270",
+      "function_name": "FUN_0044b270"
+    },
+    "0044B510": {
+      "address": "0044B510",
+      "file": "evidence/ghidra-original-c/0044B510.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B510",
+      "function_name": "FUN_0044b510"
+    },
+    "0044B620": {
+      "address": "0044B620",
+      "file": "evidence/ghidra-original-c/0044B620.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B620",
+      "function_name": "FUN_0044b620"
+    },
+    "0044BC40": {
+      "address": "0044BC40",
+      "file": "evidence/ghidra-original-c/0044BC40.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044BC40",
+      "function_name": "FUN_0044bc40"
+    },
+    "0044C2A0": {
+      "address": "0044C2A0",
+      "file": "evidence/ghidra-original-c/0044C2A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C2A0",
+      "function_name": "FUN_0044c2a0"
+    },
+    "0044C360": {
+      "address": "0044C360",
+      "file": "evidence/ghidra-original-c/0044C360.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C360",
+      "function_name": "FUN_0044c360"
+    },
+    "0044C520": {
+      "address": "0044C520",
+      "file": "evidence/ghidra-original-c/0044C520.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C520",
+      "function_name": "FUN_0044c520"
+    },
+    "0044C840": {
+      "address": "0044C840",
+      "file": "evidence/ghidra-original-c/0044C840.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C840",
+      "function_name": "FUN_0044c840"
+    },
+    "0044CD10": {
+      "address": "0044CD10",
+      "file": "evidence/ghidra-original-c/0044CD10.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044CD10",
+      "function_name": "FUN_0044cd10"
+    },
+    "0044D080": {
+      "address": "0044D080",
+      "file": "evidence/ghidra-original-c/0044D080.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044D080",
+      "function_name": "FUN_0044d080"
+    },
+    "0044F340": {
+      "address": "0044F340",
+      "file": "evidence/ghidra-original-c/0044F340.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044F340",
+      "function_name": "FUN_0044f340"
+    },
+    "0044FBA0": {
+      "address": "0044FBA0",
+      "file": "evidence/ghidra-original-c/0044FBA0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044FBA0",
+      "function_name": "FUN_0044fba0"
+    },
+    "0044FCE0": {
+      "address": "0044FCE0",
+      "file": "evidence/ghidra-original-c/0044FCE0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044FCE0",
+      "function_name": "FUN_0044fce0"
+    },
+    "0044FF10": {
+      "address": "0044FF10",
+      "file": "evidence/ghidra-original-c/0044FF10.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044FF10",
+      "function_name": "FUN_0044ff10"
+    },
+    "00450440": {
+      "address": "00450440",
+      "file": "evidence/ghidra-original-c/00450440.c",
+      "boundary": "existing-entry",
+      "entry_address": "00450440",
+      "function_name": "FUN_00450440"
+    },
+    "004504C0": {
+      "address": "004504C0",
+      "file": "evidence/ghidra-original-c/004504C0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004504C0",
+      "function_name": "FUN_004504c0"
+    },
+    "00450FB0": {
+      "address": "00450FB0",
+      "file": "evidence/ghidra-original-c/00450FB0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00450FB0",
+      "function_name": "FUN_00450fb0"
+    },
+    "00451080": {
+      "address": "00451080",
+      "file": "evidence/ghidra-original-c/00451080.c",
+      "boundary": "existing-entry",
+      "entry_address": "00451080",
+      "function_name": "FUN_00451080"
+    },
+    "00451160": {
+      "address": "00451160",
+      "file": "evidence/ghidra-original-c/00451160.c",
+      "boundary": "existing-entry",
+      "entry_address": "00451160",
+      "function_name": "FUN_00451160"
+    },
+    "004513A0": {
+      "address": "004513A0",
+      "file": "evidence/ghidra-original-c/004513A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004513A0",
+      "function_name": "FUN_004513a0"
+    },
+    "00451640": {
+      "address": "00451640",
+      "file": "evidence/ghidra-original-c/00451640.c",
+      "boundary": "existing-entry",
+      "entry_address": "00451640",
+      "function_name": "FUN_00451640"
+    },
+    "00452570": {
+      "address": "00452570",
+      "file": "evidence/ghidra-original-c/00452570.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00452570",
+      "function_name": "FUN_00452570"
+    },
+    "004541A0": {
+      "address": "004541A0",
+      "file": "evidence/ghidra-original-c/004541A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004541A0",
+      "function_name": "FUN_004541a0"
+    },
+    "00458FA0": {
+      "address": "00458FA0",
+      "file": "evidence/ghidra-original-c/00458FA0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00458FA0",
+      "function_name": "FUN_00458fa0"
+    },
+    "00459350": {
+      "address": "00459350",
+      "file": "evidence/ghidra-original-c/00459350.c",
+      "boundary": "existing-entry",
+      "entry_address": "00459350",
+      "function_name": "FUN_00459350"
+    },
+    "00459840": {
+      "address": "00459840",
+      "file": "evidence/ghidra-original-c/00459840.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00459840",
+      "function_name": "FUN_00459840"
+    },
+    "0045A070": {
+      "address": "0045A070",
+      "file": "evidence/ghidra-original-c/0045A070.c",
+      "boundary": "scratch-defined",
+      "entry_address": "0045A070",
+      "function_name": "FUN_0045a070"
+    },
+    "0045A3D0": {
+      "address": "0045A3D0",
+      "file": "evidence/ghidra-original-c/0045A3D0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045A3D0",
+      "function_name": "FUN_0045a3d0"
+    },
+    "0045AA10": {
+      "address": "0045AA10",
+      "file": "evidence/ghidra-original-c/0045AA10.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045AA10",
+      "function_name": "FUN_0045aa10"
+    },
+    "0045B690": {
+      "address": "0045B690",
+      "file": "evidence/ghidra-original-c/0045B690.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045B690",
+      "function_name": "FUN_0045b690"
+    },
+    "0045C000": {
+      "address": "0045C000",
+      "file": "evidence/ghidra-original-c/0045C000.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045C000",
+      "function_name": "FUN_0045c000"
+    },
+    "0045C1A0": {
+      "address": "0045C1A0",
+      "file": "evidence/ghidra-original-c/0045C1A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045C1A0",
+      "function_name": "FUN_0045c1a0"
+    },
+    "0045D450": {
+      "address": "0045D450",
+      "file": "evidence/ghidra-original-c/0045D450.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045D450",
+      "function_name": "FUN_0045d450"
+    },
+    "0045D5B0": {
+      "address": "0045D5B0",
+      "file": "evidence/ghidra-original-c/0045D5B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045D5B0",
+      "function_name": "FUN_0045d5b0"
+    },
+    "0045DFF0": {
+      "address": "0045DFF0",
+      "file": "evidence/ghidra-original-c/0045DFF0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045DFF0",
+      "function_name": "FUN_0045dff0"
+    },
+    "0045FEC0": {
+      "address": "0045FEC0",
+      "file": "evidence/ghidra-original-c/0045FEC0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045FEC0",
+      "function_name": "FUN_0045fec0"
+    },
+    "00461F80": {
+      "address": "00461F80",
+      "file": "evidence/ghidra-original-c/00461F80.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00461F80",
+      "function_name": "FUN_00461f80"
+    },
+    "00471310": {
+      "address": "00471310",
+      "file": "evidence/ghidra-original-c/00471310.c",
+      "boundary": "existing-entry",
+      "entry_address": "00471310",
+      "function_name": "FUN_00471310"
+    },
+    "004799E0": {
+      "address": "004799E0",
+      "file": "evidence/ghidra-original-c/004799E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004799E0",
+      "function_name": "FUN_004799e0"
+    },
+    "0047D2B0": {
+      "address": "0047D2B0",
+      "file": "evidence/ghidra-original-c/0047D2B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D2B0",
+      "function_name": "FUN_0047d2b0"
+    },
+    "0047D370": {
+      "address": "0047D370",
+      "file": "evidence/ghidra-original-c/0047D370.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D370",
+      "function_name": "FUN_0047d370"
+    },
+    "0047D420": {
+      "address": "0047D420",
+      "file": "evidence/ghidra-original-c/0047D420.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D420",
+      "function_name": "FUN_0047d420"
+    },
+    "0047D660": {
+      "address": "0047D660",
+      "file": "evidence/ghidra-original-c/0047D660.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D660",
+      "function_name": "FUN_0047d660"
+    },
+    "0047D6D0": {
+      "address": "0047D6D0",
+      "file": "evidence/ghidra-original-c/0047D6D0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D6D0",
+      "function_name": "FUN_0047d6d0"
+    },
+    "0047D8A0": {
+      "address": "0047D8A0",
+      "file": "evidence/ghidra-original-c/0047D8A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D8A0",
+      "function_name": "FUN_0047d8a0"
+    },
+    "0047F2A0": {
+      "address": "0047F2A0",
+      "file": "evidence/ghidra-original-c/0047F2A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F2A0",
+      "function_name": "FUN_0047f2a0"
+    },
+    "0047F5A0": {
+      "address": "0047F5A0",
+      "file": "evidence/ghidra-original-c/0047F5A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F5A0",
+      "function_name": "FUN_0047f5a0"
+    },
+    "0047F850": {
+      "address": "0047F850",
+      "file": "evidence/ghidra-original-c/0047F850.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F850",
+      "function_name": "FUN_0047f850"
+    },
+    "0047F960": {
+      "address": "0047F960",
+      "file": "evidence/ghidra-original-c/0047F960.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F960",
+      "function_name": "FUN_0047f960"
+    },
+    "00480D50": {
+      "address": "00480D50",
+      "file": "evidence/ghidra-original-c/00480D50.c",
+      "boundary": "existing-entry",
+      "entry_address": "00480D50",
+      "function_name": "FUN_00480d50"
+    },
+    "00480EA0": {
+      "address": "00480EA0",
+      "file": "evidence/ghidra-original-c/00480EA0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00480EA0",
+      "function_name": "FUN_00480ea0"
+    },
+    "00481A50": {
+      "address": "00481A50",
+      "file": "evidence/ghidra-original-c/00481A50.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481A50",
+      "function_name": "FUN_00481a50"
+    },
+    "00481A60": {
+      "address": "00481A60",
+      "file": "evidence/ghidra-original-c/00481A60.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481A60",
+      "function_name": "FUN_00481a60"
+    },
+    "00483030": {
+      "address": "00483030",
+      "file": "evidence/ghidra-original-c/00483030.c",
+      "boundary": "existing-entry",
+      "entry_address": "00483030",
+      "function_name": "FUN_00483030"
+    },
+    "00483140": {
+      "address": "00483140",
+      "file": "evidence/ghidra-original-c/00483140.c",
+      "boundary": "existing-entry",
+      "entry_address": "00483140",
+      "function_name": "FUN_00483140"
+    },
+    "004834A0": {
+      "address": "004834A0",
+      "file": "evidence/ghidra-original-c/004834A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004834A0",
+      "function_name": "FUN_004834a0"
+    },
+    "00483720": {
+      "address": "00483720",
+      "file": "evidence/ghidra-original-c/00483720.c",
+      "boundary": "existing-entry",
+      "entry_address": "00483720",
+      "function_name": "FUN_00483720"
+    },
+    "00488D40": {
+      "address": "00488D40",
+      "file": "evidence/ghidra-original-c/00488D40.c",
+      "boundary": "existing-entry",
+      "entry_address": "00488D40",
+      "function_name": "FUN_00488d40"
+    },
+    "00489CE0": {
+      "address": "00489CE0",
+      "file": "evidence/ghidra-original-c/00489CE0.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00489CE0",
+      "function_name": "FUN_00489ce0"
+    },
+    "00489D80": {
+      "address": "00489D80",
+      "file": "evidence/ghidra-original-c/00489D80.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00489D80",
+      "function_name": "FUN_00489d80"
+    },
+    "0048D8F0": {
+      "address": "0048D8F0",
+      "file": "evidence/ghidra-original-c/0048D8F0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0048D8F0",
+      "function_name": "FUN_0048d8f0"
+    },
+    "0048E080": {
+      "address": "0048E080",
+      "file": "evidence/ghidra-original-c/0048E080.c",
+      "boundary": "existing-entry",
+      "entry_address": "0048E080",
+      "function_name": "FUN_0048e080"
+    },
+    "00492CE0": {
+      "address": "00492CE0",
+      "file": "evidence/ghidra-original-c/00492CE0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00492CE0",
+      "function_name": "FUN_00492ce0"
+    },
+    "00495D20": {
+      "address": "00495D20",
+      "file": "evidence/ghidra-original-c/00495D20.c",
+      "boundary": "existing-entry",
+      "entry_address": "00495D20",
+      "function_name": "FUN_00495d20"
+    },
+    "00495EB0": {
+      "address": "00495EB0",
+      "file": "evidence/ghidra-original-c/00495EB0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00495EB0",
+      "function_name": "FUN_00495eb0"
+    },
+    "00497300": {
+      "address": "00497300",
+      "file": "evidence/ghidra-original-c/00497300.c",
+      "boundary": "existing-entry",
+      "entry_address": "00497300",
+      "function_name": "FUN_00497300"
+    },
+    "004977B0": {
+      "address": "004977B0",
+      "file": "evidence/ghidra-original-c/004977B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004977B0",
+      "function_name": "FUN_004977b0"
+    },
+    "00497E90": {
+      "address": "00497E90",
+      "file": "evidence/ghidra-original-c/00497E90.c",
+      "boundary": "existing-entry",
+      "entry_address": "00497E90",
+      "function_name": "FUN_00497e90"
+    },
+    "00498B30": {
+      "address": "00498B30",
+      "file": "evidence/ghidra-original-c/00498B30.c",
+      "boundary": "existing-entry",
+      "entry_address": "00498B30",
+      "function_name": "FUN_00498b30"
+    },
+    "0049B4C0": {
+      "address": "0049B4C0",
+      "file": "evidence/ghidra-original-c/0049B4C0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049B4C0",
+      "function_name": "FUN_0049b4c0"
+    },
+    "0049B9E0": {
+      "address": "0049B9E0",
+      "file": "evidence/ghidra-original-c/0049B9E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049B9E0",
+      "function_name": "FUN_0049b9e0"
+    },
+    "0049C670": {
+      "address": "0049C670",
+      "file": "evidence/ghidra-original-c/0049C670.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049C670",
+      "function_name": "FUN_0049c670"
+    },
+    "0049D4E0": {
+      "address": "0049D4E0",
+      "file": "evidence/ghidra-original-c/0049D4E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049D4E0",
+      "function_name": "FUN_0049d4e0"
+    },
+    "0049DA00": {
+      "address": "0049DA00",
+      "file": "evidence/ghidra-original-c/0049DA00.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049DA00",
+      "function_name": "FUN_0049da00"
+    },
+    "0049DBC0": {
+      "address": "0049DBC0",
+      "file": "evidence/ghidra-original-c/0049DBC0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049DBC0",
+      "function_name": "FUN_0049dbc0"
+    },
+    "0049E2C0": {
+      "address": "0049E2C0",
+      "file": "evidence/ghidra-original-c/0049E2C0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049E2C0",
+      "function_name": "FUN_0049e2c0"
+    }
+  },
+  "ghidra_source_provenance": {
+    "program": "FDNYFirefighter.exe",
+    "sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "ghidra_version": "12.0.4",
+    "index": "evidence/ghidra-original-c/index.json",
+    "address_count": 104,
+    "boundary_counts": {
+      "existing-entry": 93,
+      "scratch-defined": 11
+    },
+    "note": "Exports use the preserved database copied to scratch; 11 missing boundaries were created only in that scratch copy."
+  }
 };
-const names={verified:'Compared component',connected:'Native connection',partial:'Partial / traced',open:'Open / unclassified'}, colors={verified:'#00ba81',connected:'#509bd4',partial:'#e6af49',open:'#c4ccd8'};
-const $=id=>document.getElementById(id), all=data.files.flatMap(f=>f.units), counts=Object.fromEntries(Object.keys(names).map(s=>[s,all.filter(u=>u[2]===s).length]));
-for(const s in names){const i=document.createElement('i');i.style.width=100*counts[s]/all.length+'%';i.style.background=colors[s];$('bar').append(i);const label=document.createElement('span');const swatch=document.createElement('i');swatch.style.background=colors[s];label.append(swatch,document.createTextNode(`${names[s]} · ${counts[s]}`));$('legend').append(label)}
-$('coverage').textContent=`${counts.verified} of ${all.length} tracked component entries have comparisons. Entries overlap and include unclassified routines; this count is not a measure of Training completion.`;
-for(const [n,label] of [[data.files.filter(f=>f.path.startsWith('src/')).length,'native files inventoried'],[all.length,'tracked entries'],[data.tests,'CTest checks configured']]){const box=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span');b.textContent=n;span.textContent=label;box.append(b,span);$('metrics').append(box)}
-$('snapshot').textContent=`Module snapshot ${data.snapshot} · source ${data.commit}. ${data.test_status} These checks are not a full-suite or mission-completion claim.`;
-for(const m of data.modules){const card=document.createElement('article');card.className='module '+m.state_key;const h=document.createElement('h3');h.textContent=m.name;const state=document.createElement('div');state.className='module-state';state.textContent=m.state;const summary=document.createElement('p');summary.textContent=m.summary;const next=document.createElement('p');next.className='module-next';const label=document.createElement('strong');label.textContent='Next: ';next.append(label,document.createTextNode(m.next));const files=document.createElement('div');files.className='module-files';for(const path of m.files){files.append(link(path,path.replace(/^src\//,'')))}const evidence=document.createElement('p');evidence.className='module-evidence';evidence.append(link(m.evidence,'Open module evidence'));card.append(h,state,summary,next,files,evidence);$('modules').append(card)}
-for(const g of ['All',...new Set(data.files.map(f=>f.group))]){const o=document.createElement('option');o.textContent=g;$('group').append(o)}
-function link(path,label){const a=document.createElement('a');a.href=path;a.textContent=label;return a}
-function inspect(f){$('detail').replaceChildren();const h=document.createElement('h2');h.textContent=f.path;const p=document.createElement('p');p.textContent=f.summary;const links=document.createElement('p');if(f.path.startsWith('src/'))links.append(link(f.path,'Open native source'),document.createTextNode(' · '));links.append(link(f.evidence,'Open evidence'));const ul=document.createElement('ul');for(const u of f.units){const li=document.createElement('li'),b=document.createElement('b');b.textContent=`${u[0]} · ${u[1]} — ${names[u[2]]}`;const note=document.createElement('div');note.textContent=u[3];li.append(b,note);if(u[4])li.append(link(u[4],'Routine evidence'));ul.append(li)}$('detail').append(h,p,links,ul);document.querySelectorAll('.tile').forEach(t=>t.setAttribute('aria-pressed',t.dataset.path===f.path?'true':'false'))}
-function partition(items,x,y,w,h,out){if(items.length===1){out.push({f:items[0],x,y,w,h});return}const total=items.reduce((a,f)=>a+f.units.length,0);let at=1,sum=items[0].units.length;while(at<items.length-1&&sum<total/2){sum+=items[at++].units.length}const ratio=sum/total;if(w>=h){partition(items.slice(0,at),x,y,w*ratio,h,out);partition(items.slice(at),x+w*ratio,y,w*(1-ratio),h,out)}else{partition(items.slice(0,at),x,y,w,h*ratio,out);partition(items.slice(at),x,y+h*ratio,w,h*(1-ratio),out)}}
-function render(){const query=$('search').value.toLowerCase(),group=$('group').value;const visible=data.files.filter(f=>(group==='All'||f.group===group)&&JSON.stringify(f).toLowerCase().includes(query)).sort((a,b)=>b.units.length-a.units.length||a.path.localeCompare(b.path));$('map').replaceChildren();$('filelist').replaceChildren();if(!visible.length){const p=document.createElement('p');p.className='empty';p.textContent='No matching files or routines.';$('map').append(p);return}const rectangles=[];partition(visible,0,0,$('map').clientWidth,$('map').clientHeight,rectangles);for(const r of rectangles){const f=r.f,b=document.createElement('button');b.className='tile';b.dataset.path=f.path;b.type='button';b.setAttribute('aria-pressed','false');Object.assign(b.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px'});let start=0,stops=[];for(const s in names){const n=f.units.filter(u=>u[2]===s).length;if(n){let end=start+100*n/f.units.length;stops.push(`${colors[s]} ${start}% ${end}%`);start=end}}b.style.background=`linear-gradient(135deg,${stops.join(',')})`;const summary=Object.keys(names).filter(s=>f.units.some(u=>u[2]===s)).map(s=>names[s]).join(', ');b.title=`${f.path} · ${f.units.length} entries · ${summary}`;b.setAttribute('aria-label',b.title);if(r.w>90&&r.h>35){b.textContent=f.path.replace('src/','');if(r.h>60){const n=document.createElement('small');n.textContent=f.units.length+' tracked entries';b.append(n)}}b.onclick=()=>inspect(f);$('map').append(b)}for(const f of visible){const b=document.createElement('button');b.className='row';const label=document.createElement('span');label.textContent=f.path;const small=document.createElement('small');small.textContent=`${f.units.length} entries${f.bytes?' · '+(f.bytes/1024).toFixed(1)+' KB native':''}`;b.append(label,small);b.onclick=()=>inspect(f);$('filelist').append(b)}}
-$('group').onchange=render;$('search').oninput=render;new ResizeObserver(render).observe($('map'));render();inspect(data.files.find(f=>f.path==='src/victim_transactions.h')||data.files[0]);
-</script></body></html>
+const names=[];
+const completionSnapshots=[{label:'Oct 11 · 7:50 PM',completed:15,commit:'f7e0e4f',event:'earliest saved ledger'},{label:'Oct 12 · 3:14 AM',completed:16,commit:'fdad11f',event:'src/view_update.h completed'},{label:'Oct 12 · 4:53 AM',completed:17,commit:'01a5c45',event:'src/throw_scalar.h completed'},{label:'Current tracker',completed:19,commit:'working tree',event:'victim_frame_ops.h and hose_valve_callback.h verified'}];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const bucketFor=f=>{const a=f.units.map(u=>u[2]);if(a.length&&a.every(s=>s==='verified'))return'completed';if(a.some(s=>['verified','connected','partial'].includes(s)))return'progress';return'not-started'};
+const totalUnits=data.files.reduce((n,f)=>n+f.units.length,0);
+const counts={completed:0,progress:0,'not-started':0};data.files.forEach(f=>counts[bucketFor(f)]++);
+const ghidraCount=Object.keys(data.ghidra_sources||{}).length;
+document.getElementById('snapshot').textContent=`Snapshot ${data.snapshot} · base ${data.commit} · ${data.scope} scope`;
+document.getElementById('metrics').innerHTML=`<div class="metric"><strong>${data.files.length}</strong><span>indexed native files</span></div><div class="metric"><strong>${totalUnits}</strong><span>tracked routine entries</span></div><div class="metric"><strong>${ghidraCount}</strong><span>unique Ghidra address exports</span></div><div class="metric"><strong>${counts.completed} / ${data.files.length}</strong><span>files completed in tracked scope</span></div>`;
+for(const [key,id] of [['completed','completed'],['progress','progress'],['not-started','not-started']]){document.getElementById(id+'-count').textContent=counts[key];const target=document.getElementById(id);const files=data.files.filter(f=>bucketFor(f)===key).sort((a,b)=>a.path.localeCompare(b.path));if(!files.length){target.innerHTML='<div class="empty">No files in this group.</div>';continue}target.innerHTML=files.map(f=>{const unitHtml=f.units.map(u=>{const addr=/^[0-9a-fA-F]{8}$/.test(u[0])?u[0].toUpperCase():null;const original=addr&&(data.ghidra_sources||{})[addr];const ev=u[4]||f.evidence;const status=u[2];const gLink=original?`<a href="${esc(original.file)}">Ghidra C · ${esc(original.function_name)} · ${original.boundary==='scratch-defined'?'scratch boundary':original.boundary==='inside-function'?'inside function':'function entry'}</a>`:'<span class="boundary">No address-matched Ghidra function in the current index</span>';return `<div class="unit"><div class="unit-title"><strong>${esc(u[1])}${addr?` <span class="small">${addr}</span>`:''}</strong><span class="status ${esc(status)}">${esc(status)}</span></div><div class="routine-links">${gLink}${ev?`<a href="${esc(ev)}">Evidence</a>`:''}</div><p class="note">${esc(u[3])}</p></div>`}).join('');return `<details class="file"><summary><span class="path">${esc(f.path)}</span><span class="small">${f.units.length} routine${f.units.length===1?'':'s'}</span></summary><div class="file-content"><div class="file-meta"><span class="tag">${esc(f.group)}</span><a class="source-link small" href="${esc(f.path)}">Open native file</a></div><p class="summary-text">${esc(f.summary)}</p>${unitHtml}</div></details>`}).join('')}
+function drawCompletedChart(){const W=980,H=350,L=82,R=930,T=35,B=245,MIN=14,MAX=20,xs=completionSnapshots.map((_,i)=>L+20+i*((R-L-40)/(completionSnapshots.length-1))),y=v=>B-(v-MIN)/(MAX-MIN)*(B-T);let svg=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="complete-title complete-desc"><title id="complete-title">Completed native files across saved progress snapshots</title><desc id="complete-desc">The count starts at 15 on October 11, rises to 16 when view_update.h is completed, rises to 17 when throw_scalar.h is completed, and is 19 in the current tracker after victim_frame_ops.h and hose_valve_callback.h are verified.</desc><text x="${L}" y="18" font-size="12" fill="#586779">native files fully verified in the tracked scope</text>`;for(let v=MIN;v<=MAX;v++){const yy=y(v);svg+=`<line x1="${L}" x2="${R}" y1="${yy}" y2="${yy}" stroke="#e5eaf1"/><text x="${L-12}" y="${yy+4}" text-anchor="end" font-size="11" fill="#718096">${v}</text>`}let d=`M ${xs[0]} ${y(completionSnapshots[0].completed)}`;for(let i=1;i<completionSnapshots.length;i++)d+=` H ${xs[i]} V ${y(completionSnapshots[i].completed)}`;svg+=`<path d="${d}" fill="none" stroke="#2774a8" stroke-width="3" stroke-linejoin="round"/>`;completionSnapshots.forEach((p,i)=>{const x=xs[i],yy=y(p.completed);svg+=`<circle cx="${x}" cy="${yy}" r="6" fill="#2774a8" stroke="white" stroke-width="2"/><text x="${x}" y="${yy-12}" text-anchor="middle" font-size="13" font-weight="700" fill="#245e99">${p.completed}</text><text x="${x}" y="${B+24}" text-anchor="middle" font-size="11" fill="#445368">${esc(p.label)}</text><text x="${x}" y="${B+42}" text-anchor="middle" font-size="10" fill="#718096">${esc(p.commit)}</text>`});svg+=`</svg>`;document.getElementById('completion-chart').innerHTML=svg}drawCompletedChart();document.getElementById('completion-history').textContent='40 committed progress snapshots are available. Two files reached completed after the first snapshot: src/view_update.h and src/throw_scalar.h. The current tracker adds src/victim_frame_ops.h and src/hose_valve_callback.h after their existing acceptance checks passed. Current count: 19 completed of 84 indexed files; the latest point is a working-tree snapshot.';document.getElementById('validation').textContent=`${data.test_status} Ghidra export provenance: ${data.ghidra_source_provenance.boundary_counts['existing-entry']} existing function entries and ${data.ghidra_source_provenance.boundary_counts['scratch-defined']} scratch-defined boundaries. See each routine’s links for source and evidence.`;
+</script>
+</body></html>

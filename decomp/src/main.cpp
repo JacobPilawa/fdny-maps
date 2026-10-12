@@ -85,6 +85,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "use_manager.h"
 #include "hose_valve_callback.h"
 #include "hose_item_selection.h"
+#include "training_hose_interaction.h"
 #include "clock.h"
 struct Mesh{int model;std::vector<float> positions,uvs;GLuint texture=0;};
 struct TrainingPropModel{int entity=0;std::string name;V center{};float radius=0;bool makeValve=false;};
@@ -222,7 +223,7 @@ int main(int argc,char** argv){try{
  if(argc>1&&std::string(argv[1])=="--throw-scalar-check")return checkThrowScalarOracle();
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-asset-check")return checkTrainingBModelContactAssets();
  if(argc>1&&std::string(argv[1])=="--door-asset-check")return checkTrainingDoorAssets();
- auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe";std::set<std::string> equipment{"axe"};HoseItemSelection::State itemInventory;itemInventory.selected=0;HoseSprayPoseList::State hosePoseList;float extinguisherCharge=1;int attachedValve=-1;Scripts vm(load("scripts.json"));TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);std::vector<Door> doors;std::map<int,size_t> doorByEntity;std::vector<TrainingPropModel> propModels;auto trainingMotions=load("motions.json");auto modelIds=trainingModelIds(entities);
+ auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe";std::set<std::string> equipment{"axe"};HoseItemSelection::State itemInventory;itemInventory.selected=0;HoseSprayPoseList::State hosePoseList;HoseAttachmentFrame::State hoseAttachmentFrame;float extinguisherCharge=1;int attachedValve=-1;Scripts vm(load("scripts.json"));TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);std::vector<Door> doors;std::map<int,size_t> doorByEntity;std::vector<TrainingPropModel> propModels;std::vector<TrainingHoseInteraction::Valve> trainingValves;auto trainingMotions=load("motions.json");auto modelIds=trainingModelIds(entities);
  auto itemSlot=[](const std::string& name){if(name=="axe")return 1;if(name=="extinguisher")return 2;if(name=="goggles")return 3;if(name=="hose")return 4;return -1;};
  auto itemName=[](int slot){if(slot==1)return std::string("axe");if(slot==2)return std::string("extinguisher");if(slot==3)return std::string("goggles");if(slot==4)return std::string("hose");return std::string{};};
  auto selectEquipment=[&](const std::string& name){int slot=itemSlot(name);if(slot<0||!equipment.count(name)||!itemInventory.slots[size_t(slot)].present)return false;HoseItemSelection::Result selection;bool changed=HoseItemSelection::selectSlot(itemInventory,slot,false,selection);if(changed)selected=itemName(itemInventory.selected);return changed;};
@@ -272,8 +273,9 @@ int main(int argc,char** argv){try{
  // switch that enables the valve action query; Hose1 remains a touch prop.
  for(auto e:startup)if(str(field(e,"class"))=="RCS_PropModel"){
   auto p=field(e,"properties");TrainingPropModel prop;prop.entity=integer(field(e,"index"));prop.name=str(field(p,"A_Name"));prop.center=location(p,"ZZ_location");prop.radius=std::stof(str(field(p,"F_TouchRadius")));prop.makeValve=str(field(p,"S_Script01"))=="makevalve";propModels.push_back(prop);
+  if(prop.makeValve){int model=std::stoi(str(field(p,"D_Model")));float heading=std::stof(str(field(p,"E_Heading")));trainingValves.push_back(TrainingHoseInteraction::trainingValve(prop.entity,model,heading,{prop.center.x,prop.center.y,prop.center.z},prop.radius));}
  }
- std::vector<UseManager::Candidate> valveCandidates;for(const auto& prop:propModels)if(prop.makeValve)valveCandidates.push_back({prop.entity,prop.center,prop.radius});
+ auto valveCandidates=TrainingHoseInteraction::candidates(trainingValves);
  vm.loadLevel("training.evs",playerId,true);size_t earlyLevelBindingCount=vm.bindings.size();uint64_t earlyLevelHostCommandCount=trainingHostCommandCount;bool earlyLevelHasDoorMacro=vm.variables.count("Door")!=0;WorldStartup worldStartup;
  auto startupTick=[&]{worldStartup.update([&]{vm.loadLevel("training.evs",playerId,false);},[]{});};
  // The loaded BSP supplies this batch. Gameplay constructors and the later
@@ -552,7 +554,11 @@ int main(int argc,char** argv){try{
  auto compareWord=[&](int& total,uint32_t actual,J expected,const char* fieldName,int index){if(actual!=uint32_t(json_object_get_uint64(expected)))mismatch(total,fieldName,index);};
  int mismatches=0;auto input=field(fixture,"input"),messages=field(fixture,"messages");
  float dt=fromBits(field(input,"frame_dt_bits")),divisor=fromBits(field(input,"model_divisor_bits"));
- struct NativeFire{FireSuppression value;uint32_t targetOffset=0;};
+ struct NativeFire{
+  FireSuppression value;uint32_t targetOffset=0;
+  void spray(float dt,float influence,bool terminal,const std::function<void()>& countDoused,
+             const std::function<void()>& stopSound){value.spray(dt,influence,terminal,countDoused,stopSound);}
+ };
  NativeFire fireA,fireB,fireStale;
  auto initialize=[&](NativeFire& fire,const char* name,uint32_t target){fire.value.strength=fromBits(field(field(input,"fire_strength_bits"),name));fire.value.sprayTime=divisor;fire.value.state=integer(field(input,"fire_state"));fire.targetOffset=target;};
  initialize(fireA,"A",uint32_t(json_object_get_uint64(field(at(messages,0),"fire_offset"))));
@@ -601,8 +607,7 @@ int main(int argc,char** argv){try{
    call.payloadOffset=int(reinterpret_cast<const unsigned char*>(payload)-reinterpret_cast<const unsigned char*>(&contactStorage));
    call.payload={ToolFollow::bits(contact->x),ToolFollow::bits(contact->y),ToolFollow::bits(contact->z),ToolFollow::bits(contact->strength)};
    deliveries.push_back(call);
-   if(target->value.state!=5&&messageId==ExtinguisherContacts::messageId)
-    target->value.spray(dt,contact->strength,false,[]{},[]{}); // 00449A40 passes terminal=0 to 00448970.
+   ExtinguisherEffects::deliverContact(messageId,payload,dt,*target);
   };
  };
  queue.drain(resolver,[&](const FireMessageQueue::Delivery& event){
@@ -724,10 +729,7 @@ int main(int argc,char** argv){try{
  float dt=fromBits(field(input,"frame_dt_bits"));
  queue.drain([&](uint32_t route,uint32_t generation)->FireMessageQueue::Receiver{
   auto* target=static_cast<FireEntity*>(ids.resolve(route,generation));if(!target)return {};
-  return [&,target](uint32_t message,const void* payload){if(message!=ExtinguisherContacts::messageId)return;
-   auto* contact=static_cast<const ExtinguisherContacts::Contact*>(payload);
-   target->spray(dt,contact->strength,false,[]{},[]{}); // 00449A40 passes terminal=0 to 00448970.
-  };
+  return [&,target](uint32_t message,const void* payload){ExtinguisherEffects::deliverContact(message,payload,dt,*target);};
  },[&](const FireMessageQueue::Delivery& event){drain.push_back({event.slot,uint32_t(event.record->active),uint32_t(event.pendingAfterPop),ToolFollow::bits(fire.suppression.strength),uint32_t(fire.suppression.sprayed)});});
  auto expectedDrain=field(expectedQueue,"drain_steps");
  compareNumber(uint32_t(drain.size()),uint32_t(count(expectedDrain)),"drain-count",0);
@@ -1347,7 +1349,7 @@ int main(int argc,char** argv){try{
  actionPressed=actionReleased=false;
  V headPosition{headOffset.x,headOffset.y,headOffset.z};auto viewResult=ViewUpdate::transition(playerFrame,headPosition,itemViewOffset,itemAimOffset,{0,0,0},{0,0,0},viewHeight,1.f,viewAngle,dt,playerViewFollower,playerState==4);playerViewFollower=viewResult.follower;
  auto useTarget=UseManager::select(playerViewFollower.position,playerViewFollower.basis[2],valveCandidates,itemInventory.hoseMode,attachedValve);
- if(usePressed){usePressed=false;if(useTarget.index>=0){const auto& prop=valveCandidates[size_t(useTarget.index)];auto callback=HoseValveCallback::invoke(1,useTarget.action);if(callback.callOwnerAction){if(useTarget.action==1001){auto owner=HoseItemSelection::attach(itemInventory);if(owner.reachedFrameTransform){HoseSprayPoseList::setPosePosition(hosePoseList,{prop.center.x,prop.center.y,prop.center.z});attachedValve=prop.entity;itemInventory.hoseMode=3;HoseSprayPoseList::cacheAndWriteHeadPosition(hosePoseList,{prop.center.x,prop.center.y,prop.center.z});selected=itemName(itemInventory.selected);}}else if(useTarget.action==1002){auto owner=HoseItemSelection::detach(itemInventory);itemInventory.hoseMode=2;attachedValve=-1;selected=itemName(itemInventory.selected);}}if(callback.forwardUseEvent)vm.dispatch(prop.entity,"use");}}
+ if(usePressed){usePressed=false;if(useTarget.index>=0){const auto& valve=trainingValves[size_t(useTarget.index)];auto result=TrainingHoseInteraction::use(valve,useTarget.action,itemInventory,hosePoseList,hoseAttachmentFrame,attachedValve);if(result.ownerCalled)selected=itemName(itemInventory.selected);if(result.forwardUseEvent)vm.dispatch(result.targetEntity,"use");}}
  auto extinguisherIt=itemFollowers.find("extinguisher");bool extinguisherEquipped=selected=="extinguisher";
  if(extinguisherIt!=itemFollowers.end()&&extinguisherEquipped){
   auto& extTool=extinguisherIt->second;extTool.follower.update(playerViewFollower.position,dt);extTool.follower.basis=playerViewFollower.basis;
@@ -1388,7 +1390,7 @@ int main(int argc,char** argv){try{
  // frame order remains unresolved, so this is not whole-run scheduling parity.
  liveFireMessages.drain([&](uint32_t route,uint32_t generation)->FireMessageQueue::Receiver{
   auto* identity=static_cast<TrainingEntityIdentity*>(trainingRoutes.resolve(route,generation));if(!identity||!identity->fire)return {};
-  auto* target=identity->fire;return [&,target](uint32_t message,const void* payload){if(message!=ExtinguisherContacts::messageId)return;auto* contact=static_cast<const ExtinguisherContacts::Contact*>(payload);target->spray(dt,contact->strength,false,[]{},[]{});}; // 00449A40 passes terminal=0 to 00448970.
+  auto* target=identity->fire;return [&,target](uint32_t message,const void* payload){ExtinguisherEffects::deliverContact(message,payload,dt,*target);};
  },[](const FireMessageQueue::Delivery&){});
  // The camera entity is parented to the player follower at +34a4. Use that
  // recovered world basis and position as the renderer's inverse view transform.

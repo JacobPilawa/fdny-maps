@@ -6,6 +6,17 @@
 
 `DecompileFunctions.java` prints Ghidra C output for explicit function entry addresses.
 
+`ExportFunctionC.java <output-directory> [--define-missing] <entry-address> ...`
+writes address-named Ghidra C snapshots for a bounded address list. Without
+`--define-missing`, it exports only existing function entries or the containing
+function. With that option, a missing boundary is created before export; use
+that mode only on a copied scratch project, never the preserved read-only
+database. Each output records whether the requested address is a defined entry,
+inside a defined function, or a scratch-defined boundary. A failed/missing
+boundary is preserved as a short note rather than represented as decompiled C.
+The Training viewer links only to these address-scoped snapshots; the snapshots
+remain Ghidra's C-like output, not recovered original source text.
+
 `DefineAndDecompile.java` creates a function at a supplied entry when the program does not currently define one, then prints its decompilation. Function creation changes the analysis database: use this only in a temporary Ghidra project after verifying the entry from a vtable, direct branch or other source.
 
 `ExportFunctionAssembly.java` prints the original instruction listing for explicit function entry addresses.
@@ -64,7 +75,7 @@ Use this to check a particular reference edge; a missing static code reference d
 
 `PlayerRescueDeadlineOracle.java <output.json> <original.exe>` executes original `004541A0` after original seeding, with supplied singleton/Player/app state. It verifies program/input hashes and records deadline plus word-generator draw count for 48 clamp/mode/clock cases. See `evidence/victim-ai-audit/rescue-deadline-exit-component.md` for scope.
 
-`PlayerPainDeadlinePcodeOracle.java <output.json> <original.exe>` executes the bounded original `00451640` suffix from `00451742`, after its vector-facing turn helper. It records equal/deadline-due behavior, the original seeded delay helper/conversion, exposure store, and strict passout branch with string, RC_Pain, and statistic services stubbed. Its three samples are in `evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json`; its no-draw pain-service pairing and limits are in the adjacent native deadline audit.
+`PlayerPainDeadlinePcodeOracle.java <output.json> <original.exe>` executes the bounded original `00451640` suffix from `00451742`, after its vector-facing turn helper. It records equal/deadline-due behavior, the original seeded delay helper/conversion, exposure store, and strict passout branch with string, RC_Pain, and statistic services stubbed. The four hash-pinned cases include a `2^-55` delta whose binary32 exposure store rounds to `1.0` while the original x87 compare still takes the passout branch; they are in `evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json`. The no-draw pain-service pairing and other limits are in the adjacent native deadline audit.
 
 `PlayerBurnCoolingPcodeOracle.java <output.json> <original.exe>` executes Player `00452570` from `004529A2` to `00452A5F`, after the status helper and non-state-6 dispatch. It covers the four directional bytes, x87 cooling/store and strict binary64 `0.1` comparison, side-copy gates and original `00441E90` helper, negative clamp, status-marker reset and flag clears. The hash-provenanced fixture is `evidence/player-update/burn-cooling-pcode-oracle.json`; status handling, state-6 behavior, following movement logic, and recurring scheduling are outside its boundary.
 

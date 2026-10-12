@@ -35,3 +35,7 @@ negated X/Z axes. Training victim hull bounds are recorded in
 `../victim-startup/native-runtime-integration.md`; the six authored floor
 cases match Genesis.dll P-code as documented in
 `../victim-startup/victim-floor-ghidra-pcode-oracle.md`.
+
+## Acceptance and caller boundary (2026-10-12)
+
+`ctest --test-dir decomp/build -R '^(victim_frame_ops|victim_transactions)$' --output-on-failure` passes 2/2. The adapter check covers 46 original frame/floor samples and 618 compared words: 8 release-frame, 32 passout-frame, and 6 Training Genesis floor cases. It also checks three separate Player-frame reads, failed-floor fallback, and the correction arithmetic. `VictimTransactions::PassoutOps` owns the live receiver lookup because the original path rereads Player+0x3534 after callbacks; the composed transaction check changes that carried entity during reset and confirms the redirected actor frame receives the 30-unit X correction. This verifies the tracked frame/floor component and caller boundary only; it does not establish recurring victim scheduling or full Training behavior.

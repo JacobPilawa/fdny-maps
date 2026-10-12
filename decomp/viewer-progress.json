@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "86ef364",
-  "tests": 37,
+  "commit": "working tree based on 3ec239a",
+  "tests": 40,
   "scope": "Training",
   "files": [
     {
@@ -95,7 +95,7 @@
           "The movement path is ported; remaining movement and ladder comparisons are open."
         ]
       ],
-      "bytes": 12639
+      "bytes": 12614
     },
     {
       "path": "src/main.cpp",
@@ -123,7 +123,7 @@
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 181042
+      "bytes": 187399
     },
     {
       "path": "src/startup.h",
@@ -192,7 +192,7 @@
           "The queue component is compared on a controlled fixture; live callback order remains unresolved."
         ]
       ],
-      "bytes": 6773
+      "bytes": 7129
     },
     {
       "path": "src/world_startup.h",
@@ -492,14 +492,14 @@
     {
       "path": "src/extinguisher_effects.h",
       "group": "Tools",
-      "summary": "Accepted contacts consume source-backed effect timer and offset draws; particle rendering remains open.",
+      "summary": "Message-30000 delivery and accepted-contact timer/offset draws match source-backed captures; particle rendering remains open.",
       "evidence": "evidence/item-pose/live-extinguisher/",
       "units": [
         [
           "00449A40",
           "Nonterminal suppression dispatch",
-          "partial",
-          "Contacts reach message 30000 and nonterminal suppression in the native loop."
+          "verified",
+          "The shared native handler accepts message 30000 and applies terminal=false; both fire-message and 135-value contact-path original-capture checks pass with zero mismatches."
         ],
         [
           "0044D080",
@@ -508,7 +508,7 @@
           "The active-tool offset is sourced from the factory and item initializer call chain."
         ]
       ],
-      "bytes": 1380
+      "bytes": 2025
     },
     {
       "path": "src/interaction_sphere.h",
@@ -554,15 +554,15 @@
     },
     {
       "path": "src/hose_valve_callback.h",
-      "group": "Tools",
-      "summary": "Exact 00444120 attach/detach callback order; native owner frame integration remains incomplete.",
+      "group": "Interactions",
+      "summary": "The complete modeled 00444120 callback decision is verified against five original P-code cases. Owner-body, item, frame and UI effects belong to separately tracked components.",
       "evidence": "evidence/hose-spray/valve-callback-pcode-audit.md",
       "units": [
         [
           "00444120",
           "Valve callback forwarding",
-          "partial",
-          "Five hash-pinned original P-code cases compare the 0044C840 call boundary and prove detach 1002 skips the use script event; owner, string, and script services are intercepted."
+          "verified",
+          "Five hash-pinned original P-code cases and the focused CTest verify the owner receiver/arguments, string/script call branches and detach-1002 early return. This status covers 00444120 only; owner-body, item, frame and UI effects are tracked separately."
         ]
       ],
       "bytes": 573
@@ -795,14 +795,14 @@
     {
       "path": "src/victim_frame_ops.h",
       "group": "Victims",
-      "summary": "618 frame/floor words match including native Training BSP; live correction receiver remains open.",
+      "summary": "All tracked passout frame/floor adapter work is verified: 618 words match across release, passout and Training BSP cases. The changed carry receiver is tested by the transaction wrapper; recurring victim schedule remains open.",
       "evidence": "evidence/victim-ai-audit/victim-frame-ops.md",
       "units": [
         [
           "0045C1A0",
           "victim_frame_ops",
-          "partial",
-          "618 frame/floor words match including native Training BSP; live correction receiver remains open."
+          "verified",
+          "618 original frame/floor words match across 8 release, 32 passout and 6 Training BSP cases. Failure fallback and the frame correction are checked. The integrated transaction test mutates the carry receiver during reset and verifies the later correction targets the live receiver; recurring victim scheduling remains open."
         ]
       ],
       "bytes": 2975
@@ -1000,9 +1000,11 @@
           "Eight original P-code cases compare returned action values for controlled Hose Spray slot, raw Player byte, held pointer, and object state."
         ],
         [
-          "Player +0x12C receiver audit",
+          "0044CD10",
+          "Player eligibility-byte reset",
           "partial",
-          "0044CD10 is the only direct displacement store proven to target the Player root; the two apparent stores at 00446FC9 and 00447440 belong to EscapeArrow and a type-3 actor. Alias writes and the live Training value remain open."
+          "This helper sets Player root bytes +0x12C and +0x12D to 1. Direct-store receiver is established; alias writes and live Training value remain open.",
+          "evidence/training-liftable-audit/bmodel-selection-pass-audit.md"
         ],
         [
           "0044BC40",
@@ -1347,14 +1349,14 @@
     {
       "path": "src/player_fire_exposure.h",
       "group": "Player",
-      "summary": "Stores source-ordered x87 exposure into binary32, then tests the still-live extended sum for strict passout. The whole 00451640 message now composes the pain, exposure and passout components; producer cadence and host services remain open.",
+      "summary": "The 00451640 exposure accumulator matches original x87 store/compare behavior through the sub-ULP edge; surrounding services and live scheduling remain open.",
       "evidence": "evidence/fire-update/player-exposure-accumulation-audit.md",
       "units": [
         [
           "00451640",
           "Exposure accumulation",
-          "partial",
-          "Three representative original suffix cases run through the composed message handler; sub-ULP source edge, real passout services and live dispatch remain open.",
+          "verified",
+          "Four original suffix captures, including a sub-ULP increment that stores 1.0f but takes the original strict passout branch, match the native accumulator/composition; live host services and scheduling remain outside this helper.",
           "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
         ]
       ],
@@ -1370,7 +1372,7 @@
           "00451640",
           "Player 0x7531 message transaction",
           "partial",
-          "Three original suffix cases, callback order and failed-state no-op pass; facing, service bindings, producer and cadence remain open.",
+          "Four original suffix cases, callback order, passout composition and failed-state no-op pass; facing/service bindings, producer and cadence remain open.",
           "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
         ]
       ],
@@ -1623,16 +1625,87 @@
         ]
       ],
       "bytes": 4434
+    },
+    {
+      "path": "src/training_hose_interaction.h",
+      "group": "Interactions",
+      "summary": "Composes Training valve target selection, owner inventory/frame transaction, pose-list head write, and callback event branch in the live input path. Original cadence and residual x87 basis words remain open.",
+      "evidence": "evidence/training-hose-interaction-scenario.md",
+      "units": [
+        [
+          "00459350",
+          "PropModel target selection",
+          "connected",
+          "Training makevalve candidates reach the native ray/sphere use manager in saved registration order. Original runtime target selection is not captured."
+        ],
+        [
+          "00444120",
+          "Valve callback",
+          "connected",
+          "Owner-action ordering and attach-versus-detach event forwarding are checked against five original P-code cases and composed into the native input path."
+        ],
+        [
+          "0044C840",
+          "Hose attach/detach owner",
+          "connected",
+          "Indexed item selection, frame commit, Hose mode and pose-list head are composed. Training residual basis words retain the documented Ghidra Java Math approximation."
+        ]
+      ],
+      "bytes": 4564
+    },
+    {
+      "path": "src/training_liftable_sequence.h",
+      "group": "Interactions",
+      "summary": "Source-ordered native liftable pickup/carry/release/throw transaction composed; live candidate registration, transforms, services, and recurring schedule remain open.",
+      "evidence": "evidence/training-liftable-audit/native-sequence-core.md",
+      "units": [
+        [
+          "0044C520",
+          "Lift action gate",
+          "partial",
+          "Composes the controlled Hose Spray slot/player-byte/held-object gate; live candidate order and event timing remain open.",
+          "evidence/training-liftable-audit/bmodel-use-component.md"
+        ],
+        [
+          "0044BC40",
+          "Pickup state transition",
+          "partial",
+          "Composes source-ordered held-object/BModel writes, action status 3, then the use event; live Player callback integration remains open.",
+          "evidence/training-liftable-audit/bmodel-use-component.md"
+        ],
+        [
+          "00452570",
+          "Carry pose and release gate",
+          "partial",
+          "The component calls external pose/correction and angle services, then applies the source strict <10-degree branch. Exact scene service construction and recurring cadence remain open.",
+          "evidence/training-liftable-audit/native-sequence-core.md"
+        ],
+        [
+          "0043B580",
+          "Throw setup",
+          "partial",
+          "Source scalar setup is ordered before Player action status 4 and carry clear; live action/stat adapters remain open.",
+          "evidence/training-liftable-audit/throw-path-ghidra-audit.md"
+        ],
+        [
+          "0043D330",
+          "Throw update and completion",
+          "partial",
+          "One explicitly driven scalar update orders endpoint application, endpoint flip, drop event, and timer clear; Genesis model transform and update cadence remain open.",
+          "evidence/training-liftable-audit/throw-runtime-ghidra-audit.md"
+        ]
+      ],
+      "bytes": 7415
     }
   ],
-  "test_status": "37 CTest checks configured; the three focused hose checks pass; the full suite was last run at 36 checks.",
+  "test_status": "Recorded full CTest: 40/40 passed before training_liftable_sequence.h was added. Since then, its header passes a standalone C++17 syntax check, and focused acceptance passed: victim_frame_ops + victim_transactions 2/2; hose_valve_callback_pcode 1/1. The liftable header is not live-connected or covered by CTest. Latest extinguisher acceptance: ./run.sh --fire-message-check built fdny-training and passed the original message/registry oracle with zero mismatches; ./build/fdny-training --extinguisher-contact-path-check compared 135 values with zero mismatches. This is focused validation, not a new full CTest run. Latest Player exposure closure: read-only Ghidra captured the hash-matched sub-ULP original x87 branch; player_fire_exposure and player_fire_pcode CTests passed 2/2. No full-suite rerun.",
   "modules": [
     {
       "name": "Runtime, startup, and actor schedule",
-      "state": "Foundation; incomplete",
+      "state": "Startup composed; recurring schedule open",
       "state_key": "partial",
-      "summary": "A Training scene runs, but source-ordered initialization and recurring Player, victim, BModel, and FireRescue updates are not closed.",
-      "next": "Close the shared callback/order boundary, then connect authored startup and recurring updates.",
+      "summary": "A fixed-seed gate composes the authored startup batch and delayed EVS load. No original recurring Player, victim, BModel, or FireRescue callback order/cadence has been proved.",
+      "next": "Recover and compare recurring caller order and cadence, then connect source-ordered updates, message latency and shared RNG.",
       "files": [
         "src/main.cpp",
         "src/world_startup.h",
@@ -1642,14 +1715,18 @@
         "src/clock.h",
         "src/bmodel_contact.h"
       ],
-      "evidence": "evidence/fire-update/root-think-dispatch-query-20261012.md"
+      "evidence": "evidence/fire-update/root-think-dispatch-query-20261012.md",
+      "new_work": [
+        "src/training_schedule.h \u2014 conditional; create only when original callback order/cadence is established.",
+        "Add a hash-pinned original-runtime schedule trace under evidence/ before claiming recurring parity."
+      ]
     },
     {
       "name": "Player movement and world interactions",
-      "state": "Partly playable",
+      "state": "Valve path composed; module remains open",
       "state_key": "partial",
-      "summary": "Movement and several world contacts work in the native scene. Axe, lift/carry/throw, candidate order, and some callback latency remain disconnected or approximate.",
-      "next": "Finish the Training interaction path as one input-to-action sequence.",
+      "summary": "Valve3 attach \u2192 detach \u2192 Valve5 attach now composes targeting, inventory, frame commit, pose-list head and callback event behavior. Axe, BModel carry/throw, door/ladder actions and original cadence remain.",
+      "next": "Connect the authored liftable BModel path through selection, carry, release/throw and drop; then unify the axe and door/ladder actions in a Training scenario.",
       "files": [
         "src/main.cpp",
         "src/motion.h",
@@ -1658,9 +1735,21 @@
         "src/bmodel_use.h",
         "src/use_manager.h",
         "src/throw_scalar.h",
-        "src/interaction_box.h"
+        "src/interaction_box.h",
+        "src/training_hose_interaction.h",
+        "src/hose_attachment_frame.h",
+        "src/hose_item_selection.h",
+        "src/hose_spray_pose_list.h",
+        "tools/training_hose_interaction_check.cpp",
+        "evidence/training-hose-interaction-scenario.md"
       ],
-      "evidence": "evidence/training-liftable-audit.md"
+      "evidence": "evidence/training-hose-interaction-scenario.md",
+      "new_work": [
+        "Created: src/training_hose_interaction.h \u2014 connects the valve owner/callback path in the live input loop.",
+        "Created: tools/training_hose_interaction_check.cpp and evidence/training-hose-interaction-scenario.md \u2014 Valve3 attach/detach/Valve5 attach sequence and limits.",
+        "Next: extend the module scenario to BModel lift/use/carry/release/throw; add only the adapters needed to connect authored handlers.",
+        "Open precision item: replace provisional valve-frame residual words with x87-confirmed outputs."
+      ]
     },
     {
       "name": "Fire response and tools",
@@ -1680,7 +1769,12 @@
         "src/hose_spray_pose_list.h",
         "src/main.cpp"
       ],
-      "evidence": "evidence/fire-update/training-think-behavior-audit.md"
+      "evidence": "evidence/fire-update/training-think-behavior-audit.md",
+      "new_work": [
+        "Conditional: src/fire_runtime.h only if a separate owner is needed for schedule/message/presentation composition.",
+        "Add one Training fire-response scenario/checker covering scheduled Think, extinguisher/hose contacts, state change, RNG and visible result.",
+        "Add source-comparison evidence for remaining lifecycle and callback boundaries; current component fixtures stay as supporting checks."
+      ]
     },
     {
       "name": "Victim lifecycle and mission flow",
@@ -1697,7 +1791,12 @@
         "src/player_passout.h",
         "src/main.cpp"
       ],
-      "evidence": "evidence/victim-ai-audit/training-pickup-flow.md"
+      "evidence": "evidence/victim-ai-audit/training-pickup-flow.md",
+      "new_work": [
+        "Conditional: src/victim_runtime.h only if rescue/carry/exit coordination cannot stay in current owners.",
+        "Add one Training victim lifecycle scenario/checker from authored spawn through rescue or failure and mission result.",
+        "Add original-order evidence for actor movement, carry/rescue/exit callbacks and their shared RNG effects."
+      ]
     },
     {
       "name": "Presentation and game services",
@@ -1716,7 +1815,11 @@
         "src/ui.h",
         "src/assets.h"
       ],
-      "evidence": "evidence/README.md"
+      "evidence": "evidence/README.md",
+      "new_work": [
+        "No speculative renderer rewrite: create focused engine-service adapters only where an integrated gameplay module demonstrates a missing owner.",
+        "Add renderer/audio/HUD comparison fixtures alongside the gameplay scenarios that consume those services."
+      ]
     },
     {
       "name": "Whole-Training parity and runnable handoff",
@@ -1732,7 +1835,754 @@
         "mechanics.json",
         "tools/record_startup.py"
       ],
-      "evidence": "IMPLEMENTATION_PLAN.md"
+      "evidence": "IMPLEMENTATION_PLAN.md",
+      "new_work": [
+        "Create tools/record_training_replay.py (or extend the existing recorder) for repeatable inputs, frame timing, RNG draws and state checkpoints.",
+        "Add a tracked replay/evidence bundle for one full Training run from matching seed through mission outcome.",
+        "Finish decomp/run.sh, CMakeLists.txt, README.md and an asset manifest for a clean documented native handoff."
+      ]
     }
-  ]
+  ],
+  "ghidra_sources": {
+    "00404930": {
+      "address": "00404930",
+      "file": "evidence/ghidra-original-c/00404930.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404930",
+      "function_name": "FUN_00404930"
+    },
+    "00404960": {
+      "address": "00404960",
+      "file": "evidence/ghidra-original-c/00404960.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404960",
+      "function_name": "FUN_00404960"
+    },
+    "00404A70": {
+      "address": "00404A70",
+      "file": "evidence/ghidra-original-c/00404A70.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404A70",
+      "function_name": "FUN_00404a70"
+    },
+    "00404AC0": {
+      "address": "00404AC0",
+      "file": "evidence/ghidra-original-c/00404AC0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404AC0",
+      "function_name": "FUN_00404ac0"
+    },
+    "00404B30": {
+      "address": "00404B30",
+      "file": "evidence/ghidra-original-c/00404B30.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404B30",
+      "function_name": "FUN_00404b30"
+    },
+    "00404B50": {
+      "address": "00404B50",
+      "file": "evidence/ghidra-original-c/00404B50.c",
+      "boundary": "existing-entry",
+      "entry_address": "00404B50",
+      "function_name": "FUN_00404b50"
+    },
+    "0042BF70": {
+      "address": "0042BF70",
+      "file": "evidence/ghidra-original-c/0042BF70.c",
+      "boundary": "existing-entry",
+      "entry_address": "0042BF70",
+      "function_name": "FUN_0042bf70"
+    },
+    "0043B580": {
+      "address": "0043B580",
+      "file": "evidence/ghidra-original-c/0043B580.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043B580",
+      "function_name": "FUN_0043b580"
+    },
+    "0043B690": {
+      "address": "0043B690",
+      "file": "evidence/ghidra-original-c/0043B690.c",
+      "boundary": "scratch-defined",
+      "entry_address": "0043B690",
+      "function_name": "FUN_0043b690"
+    },
+    "0043D330": {
+      "address": "0043D330",
+      "file": "evidence/ghidra-original-c/0043D330.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043D330",
+      "function_name": "FUN_0043d330"
+    },
+    "0043D660": {
+      "address": "0043D660",
+      "file": "evidence/ghidra-original-c/0043D660.c",
+      "boundary": "existing-entry",
+      "entry_address": "0043D660",
+      "function_name": "FUN_0043d660"
+    },
+    "0043F810": {
+      "address": "0043F810",
+      "file": "evidence/ghidra-original-c/0043F810.c",
+      "boundary": "scratch-defined",
+      "entry_address": "0043F810",
+      "function_name": "FUN_0043f810"
+    },
+    "00443860": {
+      "address": "00443860",
+      "file": "evidence/ghidra-original-c/00443860.c",
+      "boundary": "existing-entry",
+      "entry_address": "00443860",
+      "function_name": "FUN_00443860"
+    },
+    "00444120": {
+      "address": "00444120",
+      "file": "evidence/ghidra-original-c/00444120.c",
+      "boundary": "existing-entry",
+      "entry_address": "00444120",
+      "function_name": "FUN_00444120"
+    },
+    "00446470": {
+      "address": "00446470",
+      "file": "evidence/ghidra-original-c/00446470.c",
+      "boundary": "existing-entry",
+      "entry_address": "00446470",
+      "function_name": "FUN_00446470"
+    },
+    "00446510": {
+      "address": "00446510",
+      "file": "evidence/ghidra-original-c/00446510.c",
+      "boundary": "existing-entry",
+      "entry_address": "00446510",
+      "function_name": "FUN_00446510"
+    },
+    "004465D0": {
+      "address": "004465D0",
+      "file": "evidence/ghidra-original-c/004465D0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004465D0",
+      "function_name": "FUN_004465d0"
+    },
+    "004467E0": {
+      "address": "004467E0",
+      "file": "evidence/ghidra-original-c/004467E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004467E0",
+      "function_name": "FUN_004467e0"
+    },
+    "004476B0": {
+      "address": "004476B0",
+      "file": "evidence/ghidra-original-c/004476B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004476B0",
+      "function_name": "FUN_004476b0"
+    },
+    "00448630": {
+      "address": "00448630",
+      "file": "evidence/ghidra-original-c/00448630.c",
+      "boundary": "existing-entry",
+      "entry_address": "00448630",
+      "function_name": "FUN_00448630"
+    },
+    "00448970": {
+      "address": "00448970",
+      "file": "evidence/ghidra-original-c/00448970.c",
+      "boundary": "existing-entry",
+      "entry_address": "00448970",
+      "function_name": "FUN_00448970"
+    },
+    "00448D60": {
+      "address": "00448D60",
+      "file": "evidence/ghidra-original-c/00448D60.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00448D60",
+      "function_name": "FUN_00448d60"
+    },
+    "00449340": {
+      "address": "00449340",
+      "file": "evidence/ghidra-original-c/00449340.c",
+      "boundary": "existing-entry",
+      "entry_address": "00449340",
+      "function_name": "FUN_00449340"
+    },
+    "00449A40": {
+      "address": "00449A40",
+      "file": "evidence/ghidra-original-c/00449A40.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00449A40",
+      "function_name": "FUN_00449a40"
+    },
+    "00449FE0": {
+      "address": "00449FE0",
+      "file": "evidence/ghidra-original-c/00449FE0.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00449FE0",
+      "function_name": "FUN_00449fe0"
+    },
+    "0044A840": {
+      "address": "0044A840",
+      "file": "evidence/ghidra-original-c/0044A840.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044A840",
+      "function_name": "FUN_0044a840"
+    },
+    "0044AE80": {
+      "address": "0044AE80",
+      "file": "evidence/ghidra-original-c/0044AE80.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044AE80",
+      "function_name": "FUN_0044ae80"
+    },
+    "0044B060": {
+      "address": "0044B060",
+      "file": "evidence/ghidra-original-c/0044B060.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B060",
+      "function_name": "FUN_0044b060"
+    },
+    "0044B270": {
+      "address": "0044B270",
+      "file": "evidence/ghidra-original-c/0044B270.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B270",
+      "function_name": "FUN_0044b270"
+    },
+    "0044B510": {
+      "address": "0044B510",
+      "file": "evidence/ghidra-original-c/0044B510.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B510",
+      "function_name": "FUN_0044b510"
+    },
+    "0044B620": {
+      "address": "0044B620",
+      "file": "evidence/ghidra-original-c/0044B620.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044B620",
+      "function_name": "FUN_0044b620"
+    },
+    "0044BC40": {
+      "address": "0044BC40",
+      "file": "evidence/ghidra-original-c/0044BC40.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044BC40",
+      "function_name": "FUN_0044bc40"
+    },
+    "0044C2A0": {
+      "address": "0044C2A0",
+      "file": "evidence/ghidra-original-c/0044C2A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C2A0",
+      "function_name": "FUN_0044c2a0"
+    },
+    "0044C360": {
+      "address": "0044C360",
+      "file": "evidence/ghidra-original-c/0044C360.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C360",
+      "function_name": "FUN_0044c360"
+    },
+    "0044C520": {
+      "address": "0044C520",
+      "file": "evidence/ghidra-original-c/0044C520.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C520",
+      "function_name": "FUN_0044c520"
+    },
+    "0044C840": {
+      "address": "0044C840",
+      "file": "evidence/ghidra-original-c/0044C840.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044C840",
+      "function_name": "FUN_0044c840"
+    },
+    "0044CD10": {
+      "address": "0044CD10",
+      "file": "evidence/ghidra-original-c/0044CD10.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044CD10",
+      "function_name": "FUN_0044cd10"
+    },
+    "0044D080": {
+      "address": "0044D080",
+      "file": "evidence/ghidra-original-c/0044D080.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044D080",
+      "function_name": "FUN_0044d080"
+    },
+    "0044F340": {
+      "address": "0044F340",
+      "file": "evidence/ghidra-original-c/0044F340.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044F340",
+      "function_name": "FUN_0044f340"
+    },
+    "0044FBA0": {
+      "address": "0044FBA0",
+      "file": "evidence/ghidra-original-c/0044FBA0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044FBA0",
+      "function_name": "FUN_0044fba0"
+    },
+    "0044FCE0": {
+      "address": "0044FCE0",
+      "file": "evidence/ghidra-original-c/0044FCE0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044FCE0",
+      "function_name": "FUN_0044fce0"
+    },
+    "0044FF10": {
+      "address": "0044FF10",
+      "file": "evidence/ghidra-original-c/0044FF10.c",
+      "boundary": "existing-entry",
+      "entry_address": "0044FF10",
+      "function_name": "FUN_0044ff10"
+    },
+    "00450440": {
+      "address": "00450440",
+      "file": "evidence/ghidra-original-c/00450440.c",
+      "boundary": "existing-entry",
+      "entry_address": "00450440",
+      "function_name": "FUN_00450440"
+    },
+    "004504C0": {
+      "address": "004504C0",
+      "file": "evidence/ghidra-original-c/004504C0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004504C0",
+      "function_name": "FUN_004504c0"
+    },
+    "00450FB0": {
+      "address": "00450FB0",
+      "file": "evidence/ghidra-original-c/00450FB0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00450FB0",
+      "function_name": "FUN_00450fb0"
+    },
+    "00451080": {
+      "address": "00451080",
+      "file": "evidence/ghidra-original-c/00451080.c",
+      "boundary": "existing-entry",
+      "entry_address": "00451080",
+      "function_name": "FUN_00451080"
+    },
+    "00451160": {
+      "address": "00451160",
+      "file": "evidence/ghidra-original-c/00451160.c",
+      "boundary": "existing-entry",
+      "entry_address": "00451160",
+      "function_name": "FUN_00451160"
+    },
+    "004513A0": {
+      "address": "004513A0",
+      "file": "evidence/ghidra-original-c/004513A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004513A0",
+      "function_name": "FUN_004513a0"
+    },
+    "00451640": {
+      "address": "00451640",
+      "file": "evidence/ghidra-original-c/00451640.c",
+      "boundary": "existing-entry",
+      "entry_address": "00451640",
+      "function_name": "FUN_00451640"
+    },
+    "00452570": {
+      "address": "00452570",
+      "file": "evidence/ghidra-original-c/00452570.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00452570",
+      "function_name": "FUN_00452570"
+    },
+    "004541A0": {
+      "address": "004541A0",
+      "file": "evidence/ghidra-original-c/004541A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004541A0",
+      "function_name": "FUN_004541a0"
+    },
+    "00458FA0": {
+      "address": "00458FA0",
+      "file": "evidence/ghidra-original-c/00458FA0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00458FA0",
+      "function_name": "FUN_00458fa0"
+    },
+    "00459350": {
+      "address": "00459350",
+      "file": "evidence/ghidra-original-c/00459350.c",
+      "boundary": "existing-entry",
+      "entry_address": "00459350",
+      "function_name": "FUN_00459350"
+    },
+    "00459840": {
+      "address": "00459840",
+      "file": "evidence/ghidra-original-c/00459840.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00459840",
+      "function_name": "FUN_00459840"
+    },
+    "0045A070": {
+      "address": "0045A070",
+      "file": "evidence/ghidra-original-c/0045A070.c",
+      "boundary": "scratch-defined",
+      "entry_address": "0045A070",
+      "function_name": "FUN_0045a070"
+    },
+    "0045A3D0": {
+      "address": "0045A3D0",
+      "file": "evidence/ghidra-original-c/0045A3D0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045A3D0",
+      "function_name": "FUN_0045a3d0"
+    },
+    "0045AA10": {
+      "address": "0045AA10",
+      "file": "evidence/ghidra-original-c/0045AA10.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045AA10",
+      "function_name": "FUN_0045aa10"
+    },
+    "0045B690": {
+      "address": "0045B690",
+      "file": "evidence/ghidra-original-c/0045B690.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045B690",
+      "function_name": "FUN_0045b690"
+    },
+    "0045C000": {
+      "address": "0045C000",
+      "file": "evidence/ghidra-original-c/0045C000.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045C000",
+      "function_name": "FUN_0045c000"
+    },
+    "0045C1A0": {
+      "address": "0045C1A0",
+      "file": "evidence/ghidra-original-c/0045C1A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045C1A0",
+      "function_name": "FUN_0045c1a0"
+    },
+    "0045D450": {
+      "address": "0045D450",
+      "file": "evidence/ghidra-original-c/0045D450.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045D450",
+      "function_name": "FUN_0045d450"
+    },
+    "0045D5B0": {
+      "address": "0045D5B0",
+      "file": "evidence/ghidra-original-c/0045D5B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045D5B0",
+      "function_name": "FUN_0045d5b0"
+    },
+    "0045DFF0": {
+      "address": "0045DFF0",
+      "file": "evidence/ghidra-original-c/0045DFF0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045DFF0",
+      "function_name": "FUN_0045dff0"
+    },
+    "0045FEC0": {
+      "address": "0045FEC0",
+      "file": "evidence/ghidra-original-c/0045FEC0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0045FEC0",
+      "function_name": "FUN_0045fec0"
+    },
+    "00461F80": {
+      "address": "00461F80",
+      "file": "evidence/ghidra-original-c/00461F80.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00461F80",
+      "function_name": "FUN_00461f80"
+    },
+    "00471310": {
+      "address": "00471310",
+      "file": "evidence/ghidra-original-c/00471310.c",
+      "boundary": "existing-entry",
+      "entry_address": "00471310",
+      "function_name": "FUN_00471310"
+    },
+    "004799E0": {
+      "address": "004799E0",
+      "file": "evidence/ghidra-original-c/004799E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004799E0",
+      "function_name": "FUN_004799e0"
+    },
+    "0047D2B0": {
+      "address": "0047D2B0",
+      "file": "evidence/ghidra-original-c/0047D2B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D2B0",
+      "function_name": "FUN_0047d2b0"
+    },
+    "0047D370": {
+      "address": "0047D370",
+      "file": "evidence/ghidra-original-c/0047D370.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D370",
+      "function_name": "FUN_0047d370"
+    },
+    "0047D420": {
+      "address": "0047D420",
+      "file": "evidence/ghidra-original-c/0047D420.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D420",
+      "function_name": "FUN_0047d420"
+    },
+    "0047D660": {
+      "address": "0047D660",
+      "file": "evidence/ghidra-original-c/0047D660.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D660",
+      "function_name": "FUN_0047d660"
+    },
+    "0047D6D0": {
+      "address": "0047D6D0",
+      "file": "evidence/ghidra-original-c/0047D6D0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D6D0",
+      "function_name": "FUN_0047d6d0"
+    },
+    "0047D8A0": {
+      "address": "0047D8A0",
+      "file": "evidence/ghidra-original-c/0047D8A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047D8A0",
+      "function_name": "FUN_0047d8a0"
+    },
+    "0047F2A0": {
+      "address": "0047F2A0",
+      "file": "evidence/ghidra-original-c/0047F2A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F2A0",
+      "function_name": "FUN_0047f2a0"
+    },
+    "0047F5A0": {
+      "address": "0047F5A0",
+      "file": "evidence/ghidra-original-c/0047F5A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F5A0",
+      "function_name": "FUN_0047f5a0"
+    },
+    "0047F850": {
+      "address": "0047F850",
+      "file": "evidence/ghidra-original-c/0047F850.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F850",
+      "function_name": "FUN_0047f850"
+    },
+    "0047F960": {
+      "address": "0047F960",
+      "file": "evidence/ghidra-original-c/0047F960.c",
+      "boundary": "existing-entry",
+      "entry_address": "0047F960",
+      "function_name": "FUN_0047f960"
+    },
+    "00480D50": {
+      "address": "00480D50",
+      "file": "evidence/ghidra-original-c/00480D50.c",
+      "boundary": "existing-entry",
+      "entry_address": "00480D50",
+      "function_name": "FUN_00480d50"
+    },
+    "00480EA0": {
+      "address": "00480EA0",
+      "file": "evidence/ghidra-original-c/00480EA0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00480EA0",
+      "function_name": "FUN_00480ea0"
+    },
+    "00481A50": {
+      "address": "00481A50",
+      "file": "evidence/ghidra-original-c/00481A50.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481A50",
+      "function_name": "FUN_00481a50"
+    },
+    "00481A60": {
+      "address": "00481A60",
+      "file": "evidence/ghidra-original-c/00481A60.c",
+      "boundary": "existing-entry",
+      "entry_address": "00481A60",
+      "function_name": "FUN_00481a60"
+    },
+    "00483030": {
+      "address": "00483030",
+      "file": "evidence/ghidra-original-c/00483030.c",
+      "boundary": "existing-entry",
+      "entry_address": "00483030",
+      "function_name": "FUN_00483030"
+    },
+    "00483140": {
+      "address": "00483140",
+      "file": "evidence/ghidra-original-c/00483140.c",
+      "boundary": "existing-entry",
+      "entry_address": "00483140",
+      "function_name": "FUN_00483140"
+    },
+    "004834A0": {
+      "address": "004834A0",
+      "file": "evidence/ghidra-original-c/004834A0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004834A0",
+      "function_name": "FUN_004834a0"
+    },
+    "00483720": {
+      "address": "00483720",
+      "file": "evidence/ghidra-original-c/00483720.c",
+      "boundary": "existing-entry",
+      "entry_address": "00483720",
+      "function_name": "FUN_00483720"
+    },
+    "00488D40": {
+      "address": "00488D40",
+      "file": "evidence/ghidra-original-c/00488D40.c",
+      "boundary": "existing-entry",
+      "entry_address": "00488D40",
+      "function_name": "FUN_00488d40"
+    },
+    "00489CE0": {
+      "address": "00489CE0",
+      "file": "evidence/ghidra-original-c/00489CE0.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00489CE0",
+      "function_name": "FUN_00489ce0"
+    },
+    "00489D80": {
+      "address": "00489D80",
+      "file": "evidence/ghidra-original-c/00489D80.c",
+      "boundary": "scratch-defined",
+      "entry_address": "00489D80",
+      "function_name": "FUN_00489d80"
+    },
+    "0048D8F0": {
+      "address": "0048D8F0",
+      "file": "evidence/ghidra-original-c/0048D8F0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0048D8F0",
+      "function_name": "FUN_0048d8f0"
+    },
+    "0048E080": {
+      "address": "0048E080",
+      "file": "evidence/ghidra-original-c/0048E080.c",
+      "boundary": "existing-entry",
+      "entry_address": "0048E080",
+      "function_name": "FUN_0048e080"
+    },
+    "00492CE0": {
+      "address": "00492CE0",
+      "file": "evidence/ghidra-original-c/00492CE0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00492CE0",
+      "function_name": "FUN_00492ce0"
+    },
+    "00495D20": {
+      "address": "00495D20",
+      "file": "evidence/ghidra-original-c/00495D20.c",
+      "boundary": "existing-entry",
+      "entry_address": "00495D20",
+      "function_name": "FUN_00495d20"
+    },
+    "00495EB0": {
+      "address": "00495EB0",
+      "file": "evidence/ghidra-original-c/00495EB0.c",
+      "boundary": "existing-entry",
+      "entry_address": "00495EB0",
+      "function_name": "FUN_00495eb0"
+    },
+    "00497300": {
+      "address": "00497300",
+      "file": "evidence/ghidra-original-c/00497300.c",
+      "boundary": "existing-entry",
+      "entry_address": "00497300",
+      "function_name": "FUN_00497300"
+    },
+    "004977B0": {
+      "address": "004977B0",
+      "file": "evidence/ghidra-original-c/004977B0.c",
+      "boundary": "existing-entry",
+      "entry_address": "004977B0",
+      "function_name": "FUN_004977b0"
+    },
+    "00497E90": {
+      "address": "00497E90",
+      "file": "evidence/ghidra-original-c/00497E90.c",
+      "boundary": "existing-entry",
+      "entry_address": "00497E90",
+      "function_name": "FUN_00497e90"
+    },
+    "00498B30": {
+      "address": "00498B30",
+      "file": "evidence/ghidra-original-c/00498B30.c",
+      "boundary": "existing-entry",
+      "entry_address": "00498B30",
+      "function_name": "FUN_00498b30"
+    },
+    "0049B4C0": {
+      "address": "0049B4C0",
+      "file": "evidence/ghidra-original-c/0049B4C0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049B4C0",
+      "function_name": "FUN_0049b4c0"
+    },
+    "0049B9E0": {
+      "address": "0049B9E0",
+      "file": "evidence/ghidra-original-c/0049B9E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049B9E0",
+      "function_name": "FUN_0049b9e0"
+    },
+    "0049C670": {
+      "address": "0049C670",
+      "file": "evidence/ghidra-original-c/0049C670.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049C670",
+      "function_name": "FUN_0049c670"
+    },
+    "0049D4E0": {
+      "address": "0049D4E0",
+      "file": "evidence/ghidra-original-c/0049D4E0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049D4E0",
+      "function_name": "FUN_0049d4e0"
+    },
+    "0049DA00": {
+      "address": "0049DA00",
+      "file": "evidence/ghidra-original-c/0049DA00.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049DA00",
+      "function_name": "FUN_0049da00"
+    },
+    "0049DBC0": {
+      "address": "0049DBC0",
+      "file": "evidence/ghidra-original-c/0049DBC0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049DBC0",
+      "function_name": "FUN_0049dbc0"
+    },
+    "0049E2C0": {
+      "address": "0049E2C0",
+      "file": "evidence/ghidra-original-c/0049E2C0.c",
+      "boundary": "existing-entry",
+      "entry_address": "0049E2C0",
+      "function_name": "FUN_0049e2c0"
+    }
+  },
+  "ghidra_source_provenance": {
+    "program": "FDNYFirefighter.exe",
+    "sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+    "ghidra_version": "12.0.4",
+    "index": "evidence/ghidra-original-c/index.json",
+    "address_count": 104,
+    "boundary_counts": {
+      "existing-entry": 93,
+      "scratch-defined": 11
+    },
+    "note": "Exports use the preserved database copied to scratch; 11 missing boundaries were created only in that scratch copy."
+  }
 }

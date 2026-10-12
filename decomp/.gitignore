@@ -17,6 +17,9 @@
 # Raw disassembly/decompiler exports are retained locally; the GitHub mirror
 # keeps native code, authored summaries and numeric oracle fixtures.
 /evidence/**/*.c
+# This address-filtered Ghidra subset is the public comparison set described
+# in README.md; the broader raw decompiler exports remain local-only.
+!/evidence/ghidra-original-c/*.c
 /evidence/**/*.txt
 /evidence/**/*.asm
 /evidence/**/*.tsv

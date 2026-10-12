@@ -28,6 +28,10 @@ src/hose_valve_callback.h expresses this call/return decision. The Training valv
 
 The next bounded owner slice now has its own original-P-code comparison: `item-selection-pcode-audit.md` covers the slot array, selection gate callsite, slot-4 callback order, detach first-available scan, mode change and UI service arguments through the pre-frame boundary. The actual Axe gate state, item callback bodies, valve transform/frame math, pointer/mode-3 stores, and follower parenting remain open. The Player updater's cached dispatch-before-refresh timing and complete native view/candidate integration also remain open.
 
+## Acceptance and scope
+
+On 2026-10-12, `ctest --test-dir decomp/build --output-on-failure -R hose_valve_callback_pcode` passed 1/1. The native component is complete for the modeled `00444120` callback branch and its intercepted call boundaries. This does not close the downstream owner body, Hose Spray frame/UI integration, target cadence, or stream behavior; those remain tracked in their own files and evidence.
+
 ## Reproduction
 
 The original cases are generated with tools/ghidra/HoseValveCallbackPcodeOracle.java and stored in valve-callback-pcode-oracle.json. The native check is hose_valve_callback_pcode-check and is registered as the hose_valve_callback_pcode CTest.

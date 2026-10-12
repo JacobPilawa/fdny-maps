@@ -1,10 +1,23 @@
 #pragma once
+#include "extinguisher_contacts.h"
 #include "extinguisher_pose.h"
 
 // RNG and timer portion of the emitter request in 00461F80. Particle drawing
 // is still a renderer task; this keeps its shared-stream draws in source order.
 struct ExtinguisherEffects {
  struct SpawnRequest { V offset{}; };
+
+ // 00449A40 accepts the four-word message-30000 contact and calls the fire
+ // suppression path with terminal=false. Route and generation validation
+ // stay with the message-queue owner; FireEntity::spray retains its visual
+ // side effects after the source-matched suppression update.
+ template<class Fire>
+ static bool deliverContact(uint32_t message,const void* payload,float dt,Fire& fire){
+  if(message!=ExtinguisherContacts::messageId)return false;
+  const auto* contact=static_cast<const ExtinguisherContacts::Contact*>(payload);
+  fire.spray(dt,contact->strength,false,[]{},[]{});
+  return true;
+ }
 
  static Extended range(Random& random,float low,float high){
   return (Extended::from(high)-Extended::from(low))*Extended::from(random.unit())
