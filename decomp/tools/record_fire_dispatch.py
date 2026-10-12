@@ -57,10 +57,12 @@ def main():
     parser.add_argument('--pid', help='Wine Windows process ID in hexadecimal; auto-detected when unique')
     parser.add_argument('--max-think-calls', type=int, default=28,
                         help='Detach after this many Fire Think entries')
+    parser.add_argument('--max-seconds', type=int, default=300,
+                        help='Maximum recorder wall time including attach; reserves up to 30s to detach')
     parser.add_argument('--check-only', action='store_true', help='Check files and hashes without attaching')
     args = parser.parse_args()
-    if args.max_think_calls < 1:
-        parser.error('--max-think-calls must be positive')
+    if args.max_think_calls < 1 or args.max_seconds < 31:
+        parser.error('--max-think-calls must be positive and --max-seconds must be at least 31')
 
     contents, prefix, game, wine, debugger = app_files(args.app)
     executable = game / 'FDNYFirefighter.exe'
@@ -77,6 +79,9 @@ def main():
         print(json.dumps(hashed, indent=2))
         return
 
+    # Keep 30 seconds inside the requested wall-time cap for Ctrl-C, detach,
+    # and debugger exit if the first expected callback never arrives.
+    session_deadline = time.monotonic() + args.max_seconds - 30
     env = os.environ.copy()
     env.update(WINEPREFIX=str(prefix), WINEDEBUG='-all', WINEMSYNC='1',
                CX_ROOT=str(contents / 'SharedSupport/wine'), WINELOADER=str(wine),
@@ -84,9 +89,13 @@ def main():
     if args.pid:
         pid = int(args.pid, 16)
     else:
+        remaining = session_deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError('Fire Think recorder reached --max-seconds before process discovery.')
         listing_result = subprocess.run([str(wine), str(debugger), '--command', 'info proc'],
                                          env=env, text=True, stdout=subprocess.PIPE,
-                                         stderr=subprocess.STDOUT, timeout=30, check=False)
+                                         stderr=subprocess.STDOUT, timeout=min(30, remaining),
+                                         check=False)
         listing = listing_result.stdout
         if listing_result.returncode:
             parser.error('WineDbg could not list running game processes.\n' + listing)
@@ -101,6 +110,7 @@ def main():
     manifest = {
         'game_directory': str(game), 'file_sha256': hashed, 'windows_pid': pid,
         'method': 'WineDbg entry breakpoints; EIP/ECX/ESP, return addresses and stack words',
+        'max_seconds': args.max_seconds,
         'timing': 'Breakpoints perturb timing; events establish call identity/order only.',
         'scope': ('Wait for Fire Think in Training, then record nearby owner/player/tool/queue '
                   'entries and shared RNG function entry/callsite order.'),
@@ -114,9 +124,11 @@ def main():
     sequence = 0
     with (output / 'debugger.txt').open('w') as transcript, \
             (output / 'events.jsonl').open('w') as events:
-        dbg = Debugger([str(wine), str(debugger), str(pid)], env, transcript)
+        dbg = Debugger([str(wine), str(debugger)], env, transcript,
+                       deadline=session_deadline)
         try:
             dbg.prompt()
+            dbg.attach(pid)
             modules = dbg.command('info share')
             (output / 'modules.txt').write_text(modules)
             for address in POINTS:
@@ -129,7 +141,10 @@ def main():
                 raise RuntimeError('Could not confirm Fire Think breakpoint. See transcript.')
             print('Recording Fire Think calls. Enter Training in the game; the recorder detaches automatically.')
             while counts['fire_think'] < args.max_think_calls:
-                dbg.command('cont', 600)
+                remaining = session_deadline - time.monotonic()
+                if remaining <= 0:
+                    raise TimeoutError('Fire Think capture reached --max-seconds before completion.')
+                dbg.command('cont', remaining)
                 regs = dbg.command('info reg')
                 pc = register(regs, 'EIP')
                 if pc not in POINTS:
