@@ -89,6 +89,24 @@ same-tick reactivation during the later one-entry density scan. The existing
 `0047D660`; this proves the shared update routine but is not a live ash render
 comparison.
 
+## Motion integration
+
+`0047F960` advances finite animation first, then calls `0047F2A0` when particle
+byte `+0xA0` is set, before the later active/presentation gates. The isolated
+native helper in `player_ash_integrate.h` maps `+0x7C`, `+0x88`, `+0x94`, and
+`+0x5C` onto the particle structure and accepts the global `00502B04` timestep
+from its caller. Original `0042D050` is a componentwise vector add; its
+binary64 threshold at `004E3540` is `1e-5`, and the executable's `004DC50C`
+zero sentinel is binary32 `+0.0`.
+
+The hash-pinned `ash-integrate-pcode-oracle.json` executes `0047F2A0` with its
+actual `00446390` and `0042D050` helpers for eight finite inputs, including
+both sides of the clamp threshold and both clamp directions. The native
+particle adapter matches all six changed position/origin words in all eight
+cases. No random state is read or written. The exact timestep producer and
+the surrounding call schedule remain open; the component is not yet wired
+into Player's recurring ash-pool update.
+
 The original-P-code update oracle at
 `evidence/scripts/training-setashdensity/ash-update-pcode-oracle.json` executes
 `00446510` after seeding the real game RNG and exercises its real calls to
@@ -130,6 +148,32 @@ transform as input. `00495D20` scales the local coordinates, applies the three
 basis columns, spills the linear result to float, then reloads it to add
 translation and stores each world-space float. Matching the x87 sum order and
 intermediate float spill matters for bit parity.
+
+The parent resolver itself is now represented in `src/player_ash_transform.h`.
+Transform parent is the pointer at `+0x40`. `00497300` composes the child's
+basis under its immediate parent, scales the child translation componentwise
+by the parent scale, transforms that point through `00495D20`, and multiplies
+the scale vectors. `004977B0` then attaches the intermediate to the
+grandparent and recurses. For a three-node chain the actual rounding order is
+`grandparent * (parent * child)`; every composition stores its basis and
+translation intermediates back to binary32 before the next ancestor is applied.
+The translation path also rounds the child-position/parent-scale products to
+binary32, rounds the linear transform before adding parent translation, and
+stores the final point to binary32. This association is observable: composing
+the ancestor transforms first gave three basis-word and three origin-word
+mismatches in the three-node fixture.
+
+`AshTransformChainPcodeOracle.java` runs the original `004977B0` against four
+hash-pinned trees: a root-only transform, one parent, two parent levels, and
+signed-zero inputs. `player_ash_transform_pcode-check` compares all nine basis
+words, three origin words, three scale words, and the cleared parent pointer;
+all four cases match exactly. These authored cases establish the resolver's
+generic component behavior, not a captured Training parent chain. The ash
+particle constructor calls `0042D2D0` with a null parent, but later runtime
+mutation of that pointer has not been captured. Likewise, the existing
+`0047F5A0` geometry oracle still supplies a resolved transform directly, so
+parent composition, geometry, render-list insertion, and visible output have
+not yet been checked as one original execution.
 
 `AshParticleGeometryPcodeOracle.java` executes original `0047F5A0` through
 `004977B0` and `00495D20` for five hash-pinned affine frames; its local static

@@ -1368,11 +1368,50 @@
           "0047F5A0 / 00495D20",
           "Cached quad positions",
           "partial",
-          "Five original P-code affine frames match all four cached position triplets; local XY template and x87 store order recovered. Parent-chain composition and polygon submission remain open.",
+          "Five original P-code affine frames match all four cached position triplets; local XY template and x87 store order recovered. Generic parent-chain resolution is separately compared across four original cases; runtime parent mutation and polygon submission remain open.",
           "evidence/scripts/training-setashdensity/ash-geometry-pcode-oracle.json"
+        ],
+        [
+          "0047F2A0",
+          "Ash motion integration",
+          "verified",
+          "Eight hash-pinned original P-code cases match all changed +0x7C/+0x5C words through the particle adapter; global timestep producer and recurring Player cadence remain open.",
+          "evidence/scripts/training-setashdensity/ash-integrate-pcode-oracle.json"
         ]
       ],
       "bytes": 14293
+    },
+    {
+      "path": "src/player_ash_integrate.h",
+      "group": "Effects",
+      "summary": "Source-ordered particle motion integration with explicit timestep and a native PlayerAshParticle adapter; recurring Player cadence remains open.",
+      "evidence": "evidence/scripts/training-setashdensity/ash-integrate-component.md",
+      "units": [
+        [
+          "0047F2A0",
+          "Particle motion integration",
+          "partial",
+          "Eight original P-code cases compare through actual vector helpers and the particle state adapter; global timestep origin and recurring call order remain open.",
+          "evidence/scripts/training-setashdensity/ash-integrate-pcode-oracle.json"
+        ]
+      ],
+      "bytes": 3114
+    },
+    {
+      "path": "src/player_ash_transform.h",
+      "group": "Effects",
+      "summary": "Genesis parent-chain affine resolver with source-ordered binary32 rounding; constructor-parent mutation and combined geometry/render integration remain open.",
+      "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
+      "units": [
+        [
+          "004977B0 / 00497300",
+          "Ash transform chain",
+          "partial",
+          "Four hash-pinned original P-code cases compare all resolved basis, origin, scale, and parent-pointer fields through two parent levels; no Training runtime parent was captured.",
+          "evidence/scripts/training-setashdensity/ash-transform-chain-pcode-oracle.json"
+        ]
+      ],
+      "bytes": 3645
     }
   ]
 }

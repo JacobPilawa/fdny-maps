@@ -68,6 +68,21 @@ Use this to check a particular reference edge; a missing static code reference d
 
 `AshParticleUpdatePcodeOracle.java <output.json> <original.exe>` seeds the original RNG and executes `00446510`, including its real vector access/store helpers and `00498B30` draws, for due, inactive, not-due, and wrap-boundary inputs. `AshParticleActivatePcodeOracle.java <output.json> <original.exe>` executes `00446470` and its original animation-index reset for three seeded input vectors. Both verify the program hash; their fixtures and native checks are under `evidence/scripts/training-setashdensity/`.
 
+`AshTransformChainPcodeOracle.java <output.json> <original.exe>` executes
+`004977B0` on four hash-checked transform trees (root-only, one parent, two
+parent levels, and signed-zero fields) and records the resolved basis,
+translation, scale, and parent pointer. The native comparison is
+`tools/player_ash_transform_pcode_check.cpp`; the transform layout and
+parent-first rounding order are detailed in
+`evidence/scripts/training-setashdensity/native-pool-component.md`.
+
+`AshIntegratePcodeOracle.java <output.json> <original.exe>` executes original
+`0047F2A0` and its real vector helpers with a controlled `00502B04` timestep.
+It leaves the hash-pinned `004DC50C` zero sentinel intact and compares eight
+finite cases against `tools/player_ash_integrate_pcode_check.cpp`. Source
+behavior and limits are in
+`evidence/scripts/training-setashdensity/ash-integrate-component.md`.
+
 Use the same `-noanalysis -readOnly` project command above with either oracle script name and its output path plus `decomp/evidence/original/FDNYFirefighter.exe`. Do not execute the oracles against the extracted executable from an unverified path; the script checks that its SHA-256 matches Ghidra's program.
 
 If headless execution reports `Failed to get OSGi bundle containing script`, compile all Java helpers against the installed Ghidra jars first. In this workspace that generic loader message concealed twelve ordinary Java argument errors in a new script; standalone `javac` exposed them immediately. For example:

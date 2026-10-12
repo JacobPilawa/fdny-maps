@@ -286,7 +286,7 @@
     },
     {
       "name": "Training ash-pool lifecycle",
-      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; five 004467E0 spawn cases match native position/activation bits and draw counts with four real Player getter calls; five original 0047F5A0 affine cases match all cached vertex bits; constructor vector/cache flags and source-bound five-frame animation are modeled; render lookup maps IDs 200/201 to rescue.rrf ash1.bmp/ash2.bmp and source-maps color/alpha operands; the Genesis.dll polygon wrapper/36-byte copy is recovered; parent composition, runtime world-list/resource state, Player schedule, presentation, all-input trig exactness and full RNG parity remain pending",
+      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; five 004467E0 spawn cases match native position/activation bits and draw counts with four real Player getter calls; five original 0047F5A0 affine cases match all cached vertex bits; four original 004977B0 transform-chain cases match native basis/origin/scale/parent fields through two parent levels; eight original 0047F2A0 motion-integration cases match changed position/origin words through the particle adapter; constructor vector/cache flags and source-bound five-frame animation are modeled; render lookup maps IDs 200/201 to rescue.rrf ash1.bmp/ash2.bmp and source-maps color/alpha operands; the Genesis.dll polygon wrapper/36-byte copy is recovered; runtime mutation of the constructor-null transform parent, parent+geometry integration, integration timestep source/Player cadence, runtime world-list/resource state, presentation, all-input trig exactness and full RNG parity remain pending",
       "original_entries": [
         "004465d0",
         "004463f0",
@@ -310,12 +310,14 @@
         "0049d760",
         "0049e770",
         "00446390",
+        "0042d050",
         "0047f5a0",
+        "0047f2a0",
         "004977b0",
         "00495d20"
       ],
-      "implementation": "src/player_ash_pool.h",
-      "comparison": "player_ash_pool-check; ash-update/activate/spawn/geometry-pcode-checks"
+      "implementation": "src/player_ash_pool.h; src/player_ash_transform.h; src/player_ash_integrate.h",
+      "comparison": "player_ash_pool-check; ash-update/activate/spawn/geometry/transform/integrate-pcode-checks"
     },
     {
       "name": "Combined fire visual component",
