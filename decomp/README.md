@@ -2,7 +2,7 @@
 
 A native Mac reconstruction of the original executable's Training mode, map and scripts. This folder is the working copy; the public GitHub mirror omits local retail inputs and raw reverse-engineering exports.
 
-Compact handoff and progress tracker: [CHECKLIST.md](CHECKLIST.md). Update it whenever implementation, verification or outstanding work changes.
+Start here: [HANDOFF.md](HANDOFF.md) for the current verified snapshot, then [CHECKLIST.md](CHECKLIST.md) for detailed progress. Update the checklist whenever implementation, verification or outstanding work changes.
 
 Training progress report: [training-progress.html](training-progress.html). It uses a file tree and labeled original-code blocks to show component comparisons, integration state and evidence without a guessed decompilation percentage.
 
@@ -34,7 +34,7 @@ WASD moves, the mouse looks, right mouse or Space jumps, C or either Ctrl key to
 - Original direct tutorial hints and named hint macros.
 - Original class order and batch dispatcher for script startup, with an early definitions pass and a full script pass after four updates.
 - Both victims' initial sound-deadline draw then motion choice in pass one, followed by second-pass spawn choice and source-backed ±24 hull floor placement through the native Training BSP trace. The native scene also draws their selected initial poses with source-traced actor wrapper transforms; final skinned-vertex parity is unverified.
-- The delivered `0x7532` victim-pickup handler is source-mapped and isolated in `src/victim_rescue.h`; its Training actor flags transition `0x400→0`, and the post-event Player effect order is documented. Proximity/message timing, actor scheduling, post-effects integration, carry transform and rescue/exit integration remain open (`evidence/victim-ai-audit/training-pickup-flow.md`, `evidence/victim-ai-audit/pickup-post-effects.md`, `evidence/victim-ai-audit/actor-render-flags.md`).
+- The delivered `0x7532` victim-pickup handler is source-mapped and isolated in `src/victim_rescue.h`; its Training actor flags transition `0x400→0`, and the post-event Player effect order is documented. Ghidra also maps Training escape release `00451160→0045C000` and a separate passout/drop route, but neither is implemented natively. Proximity/message timing, actor scheduling, post-effects integration, carry transform, rescue and exit integration remain open ([pickup flow](evidence/victim-ai-audit/training-pickup-flow.md), [post-effects](evidence/victim-ai-audit/pickup-post-effects.md), [lifecycle trace](evidence/victim-ai-audit/post-pickup-lifecycle-static.md), [render flags](evidence/victim-ai-audit/actor-render-flags.md)).
 - Recovered original clock behavior, including long frames and timer wrap.
 - Active extinguisher sampling against seven FireRescue candidates, generation-checked message `30000` delivery and nonterminal suppression state updates.
 - Player `setashdensity` stores the source-clamped `[0,1]` value (initialized to `1.0`; Training sets it to `0`, and two touch triggers set `0.5` then `0`). Ghidra maps the field to a 100-slot particle scan limit; the native pool, conditional RNG/update path and presentation remain open.
