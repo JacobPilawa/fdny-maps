@@ -1,6 +1,6 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "86dd149",
+  "commit": "9be64e8",
   "tests": 35,
   "scope": "Training",
   "files": [
@@ -570,7 +570,7 @@
     {
       "path": "src/hose_item_selection.h",
       "group": "Tools",
-      "summary": "Training indexed inventory selection and detach rescan match bounded original P-code owner transactions.",
+      "summary": "Training indexed owner selection and rescan match original P-code; Axe gate/activation and Hose attachment frame commit are source-mapped.",
       "evidence": "evidence/hose-spray/item-selection-pcode-audit.md",
       "units": [
         [

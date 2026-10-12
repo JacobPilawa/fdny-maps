@@ -105,7 +105,7 @@
     },
     {
       "name": "Hose pickup, connection, length and spray",
-      "status": "source target/action path mapped; native Training prop centers/radii and indexed Axe slot 1/Hose slot 4 owner selection/rescan wired; 548 original ray/sphere queries and nine owner/helper P-code cases match, including 00444120 event forwarding/early return and 0044C840/0044C360 ordered item/UI boundaries; actual axe gate state, item callback bodies, hose transform/frame/pointer commit, composed view selection/schedule, touch geometry, candidate order, actor/stream/effects pending",
+      "status": "source target/action path mapped; native Training prop centers/radii and indexed Axe slot 1/Hose slot 4 owner selection/rescan wired; 548 original ray/sphere queries and nine owner/helper P-code cases match, including 00444120 event forwarding/early return and 0044C840/0044C360 ordered item/UI boundaries; Axe initialized gate and +0x3C activation dispatch source-mapped, busy-state cadence/child action behavior pending; Hose 0044C840 frame/pointer/mode-3/pose-node stores source-mapped but not ported or compared through owner; composed view selection/schedule, touch geometry, candidate order, actor/stream/effects pending",
       "original_entries": [
         "00451870",
         "0044cab0",

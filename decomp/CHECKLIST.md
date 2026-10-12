@@ -216,7 +216,7 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] Preserved Training inventory slots: `equip axe` stores kind 1 at slot 1 and selects it; `touchhose 25` stores Hose Spray at slot 4 and sets mode 2 without changing selection.
 - [x] `src/hose_item_selection.h` models owner attach selection/gating, mode transition, first-populated detach selection, forced rescan and empty-list clearing. The native Training host now uses indexed slots for Axe/Hose Spray and Space/Shift valve attach/detach.
 - [x] `HoseItemSelectionPcodeOracle.java` executes the original owner/rescan/mode-setter paths. Eight owner cases plus a direct empty-rescan case compare 20 ordered item/UI calls with zero mismatches; attach capture stops before `004977B0`.
-- [ ] Axe's actual `+0x38` gate state and item callback bodies, attachment frame/pointer commit, follower parenting, real UI, touch/use scheduling and hose stream/suppression remain open. See `evidence/hose-spray/item-selection-pcode-audit.md`.
+- [ ] Axe's initialized `+0x38` gate state and `+0x3C` activation route are sourced; its busy-state update cadence, child callback effects and complete action behavior remain open. Hose attachment frame/pointer/mode-3 commit is source-mapped but not yet ported or compared through the owner; follower parenting, real UI, touch/use scheduling and stream/suppression remain open. See `evidence/hose-spray/item-selection-pcode-audit.md`.
 
 ## Ash pool and goggles audit (2026-10-12)
 
