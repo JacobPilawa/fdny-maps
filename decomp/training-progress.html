@@ -4,8 +4,8 @@
 <h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
 const data={
   "snapshot": "2026-10-12",
-  "commit": "75a4258",
-  "tests": 25,
+  "commit": "028e87c",
+  "tests": 29,
   "scope": "Training",
   "files": [
     {
@@ -1182,18 +1182,33 @@ const data={
     },
     {
       "path": "src/view_update.h",
-      "group": "Inventory",
-      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
-      "evidence": "CHECKLIST.md",
+      "group": "Player",
+      "summary": "Player view-frame construction and timed transition are compared exactly; the offset-to-view chain is numeric fixture coverage, not live item scheduling.",
+      "evidence": "evidence/player-tool-pose/view-call-dataflow.md",
       "units": [
         [
-          "UNMAPPED",
-          "view_update.h",
-          "open",
-          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+          "0044F340",
+          "Player view frame update",
+          "verified",
+          "Four ordinary movement captures (108 words) and 12 timed-transition captures (324 words) match exactly.",
+          "evidence/view-update-oracle.json"
+        ],
+        [
+          "00451080",
+          "Timed view transition",
+          "verified",
+          "Original x87 mixed-precision normalization and basis output match all 324 compared words.",
+          "evidence/view-update-oracle.json"
+        ],
+        [
+          "0045FEC0 \u2192 0044F340",
+          "Tool offset to view frame",
+          "verified",
+          "12 controlled captures match all 420 words; item Think callbacks remain stubbed, so this does not prove live scheduling.",
+          "evidence/view-item-offset-chain-oracle.json"
         ]
       ],
-      "bytes": 7131
+      "bytes": 8226
     },
     {
       "path": "src/zones.h",
@@ -1423,7 +1438,7 @@ const names={verified:'Compared component',connected:'Native connection',partial
 const $=id=>document.getElementById(id), all=data.files.flatMap(f=>f.units), counts=Object.fromEntries(Object.keys(names).map(s=>[s,all.filter(u=>u[2]===s).length]));
 for(const s in names){const i=document.createElement('i');i.style.width=100*counts[s]/all.length+'%';i.style.background=colors[s];$('bar').append(i);const label=document.createElement('span');const swatch=document.createElement('i');swatch.style.background=colors[s];label.append(swatch,document.createTextNode(`${names[s]} · ${counts[s]}`));$('legend').append(label)}
 $('coverage').textContent=`${counts.verified} / ${all.length} tracked entries have component comparisons (${(100*counts.verified/all.length).toFixed(1)}% of this inventory). Counts include overlapping routine mappings and unclassified entries.`;
-for(const [n,label] of [[data.files.filter(f=>f.path.startsWith('src/')).length,'native files inventoried'],[all.length,'tracked entries'],[data.tests,'CTest checks passing']]){const box=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span');b.textContent=n;span.textContent=label;box.append(b,span);$('metrics').append(box)}
+for(const [n,label] of [[data.files.filter(f=>f.path.startsWith('src/')).length,'native files inventoried'],[all.length,'tracked entries'],[data.tests,'CTest checks configured']]){const box=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span');b.textContent=n;span.textContent=label;box.append(b,span);$('metrics').append(box)}
 $('snapshot').textContent=`Evidence snapshot ${data.snapshot} · based on ${data.commit} · scope: ${data.scope}. Viewer updates do not change game completion.`;
 for(const g of ['All',...new Set(data.files.map(f=>f.group))]){const o=document.createElement('option');o.textContent=g;$('group').append(o)}
 function link(path,label){const a=document.createElement('a');a.href=path;a.textContent=label;return a}

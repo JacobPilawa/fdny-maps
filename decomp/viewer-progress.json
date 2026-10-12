@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "75a4258",
-  "tests": 25,
+  "commit": "028e87c",
+  "tests": 29,
   "scope": "Training",
   "files": [
     {
@@ -1178,18 +1178,33 @@
     },
     {
       "path": "src/view_update.h",
-      "group": "Inventory",
-      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
-      "evidence": "CHECKLIST.md",
+      "group": "Player",
+      "summary": "Player view-frame construction and timed transition are compared exactly; the offset-to-view chain is numeric fixture coverage, not live item scheduling.",
+      "evidence": "evidence/player-tool-pose/view-call-dataflow.md",
       "units": [
         [
-          "UNMAPPED",
-          "view_update.h",
-          "open",
-          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+          "0044F340",
+          "Player view frame update",
+          "verified",
+          "Four ordinary movement captures (108 words) and 12 timed-transition captures (324 words) match exactly.",
+          "evidence/view-update-oracle.json"
+        ],
+        [
+          "00451080",
+          "Timed view transition",
+          "verified",
+          "Original x87 mixed-precision normalization and basis output match all 324 compared words.",
+          "evidence/view-update-oracle.json"
+        ],
+        [
+          "0045FEC0 \u2192 0044F340",
+          "Tool offset to view frame",
+          "verified",
+          "12 controlled captures match all 420 words; item Think callbacks remain stubbed, so this does not prove live scheduling.",
+          "evidence/view-item-offset-chain-oracle.json"
         ]
       ],
-      "bytes": 7131
+      "bytes": 8226
     },
     {
       "path": "src/zones.h",

@@ -75,12 +75,27 @@ struct ViewUpdate {
           (E::from(a.x)*E::from(b.y)-E::from(a.y)*E::from(b.x)).asFloat()};
  }
  static V normalize(V a){
-  E squared=E::from(a.x)*E::from(a.x)+E::from(a.y)*E::from(a.y)+E::from(a.z)*E::from(a.z);
+  // 00459B80 and the inline 0044F340 normalization accumulate Z², then Y²,
+  // then X² on the x87 stack before FSQRT.
+  E squared=E::from(a.z)*E::from(a.z)+E::from(a.y)*E::from(a.y)+E::from(a.x)*E::from(a.x);
   E length=squareRoot(squared);
   if(!length.m||std::abs(length.asDouble())<1e-28)return a;
   E reciprocal=E::from(1.f)/length;V result;
   for(int i=0;i<3;i++)result[i]=(E::from(a[i])*reciprocal).asFloat();
   return result;
+ }
+ static V normalizeDirectionDifference(V scaledBaseTarget,V scaledTargetEndpoint,V position){
+  // 0044FA00 sums the two already-scaled target vectors in x87. X is rounded
+  // only after subtracting position; Y stays extended through normalization;
+  // Z is stored to binary32 before subtracting position. This mirrors the
+  // inline 0044FA28..0044FA75 path before the virtual +0x14 normalizes again.
+  float x=(E::from(scaledBaseTarget.x)+E::from(scaledTargetEndpoint.x)-E::from(position.x)).asFloat();
+  E y=E::from(scaledBaseTarget.y)+E::from(scaledTargetEndpoint.y)-E::from(position.y);
+  float targetZ=(E::from(scaledBaseTarget.z)+E::from(scaledTargetEndpoint.z)).asFloat();
+  E z=E::from(targetZ)-E::from(position.z);
+  E squared=z*z+y*y+E::from(x)*E::from(x);
+  E reciprocal=E::from(1.0)/squareRoot(squared);
+  return {(E::from(x)*reciprocal).asFloat(),(y*reciprocal).asFloat(),(z*reciprocal).asFloat()};
  }
  static bool nearlyOrthogonal(V a,V b){return std::abs(dotExact(a,b).asDouble())<=axisDotLimit;}
  static void permuteAxes(FrameTransform& f){auto x=f.axis[0];f.axis[0]=f.axis[1];f.axis[1]=f.axis[2];f.axis[2]=x;}
@@ -141,9 +156,9 @@ struct ViewUpdate {
   FrameTransform local;local.parent=&root;
   V offset=add(add(headMotion,{0,height,0}),scale(toolPosition,fraction));
   local.position=add(offset,scale(positionEndpoint,1.f-fraction));
-  V target=add(V{0,height,1000},toolRotation);
-  target=add(scale(target,fraction),scale(targetEndpoint,1.f-fraction));
-  setUp(local,{0,1,0});setForward(local,normalize(subtract(target,local.position)));
+  V scaledBaseTarget=scale(add(V{0,height,1000},toolRotation),fraction);
+  V scaledTargetEndpoint=scale(targetEndpoint,1.f-fraction);
+  setUp(local,{0,1,0});setForward(local,normalizeDirectionDifference(scaledBaseTarget,scaledTargetEndpoint,local.position));
   rollDegrees(local,roll);orthogonalize(local);
   FrameTransform world=local.world();
   // 0044F340 calls 00483680(1) before 00483720 while crouching or in the
