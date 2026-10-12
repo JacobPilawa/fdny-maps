@@ -28,6 +28,8 @@ Use `mechanics.json` for subsystem summaries, `function-index.json` to find pres
 
 The retail target is a monolithic PE32 x86 executable. `objdiff` supports PC x86 and compares relocatable object files; its detailed progress reports power `decomp.dev`. It can become useful if the original compiler/toolchain and linkable target objects are recovered. It cannot turn the current executable alone into a meaningful compiler-match score. `decomp.me` accepts one extracted function plus context and likewise needs the right compiler preset and flags to prove an instruction match. For now, keep the native build's claims behavioral: use hash-pinned original/P-code fixtures, compare state words and shared-RNG ordinals, then add live event/clock/RNG transcripts when the game can be run. Keep the progress viewer's denominator scoped to the tracked ledger.
 
+The public projects reinforce this split. The Black & White guide organizes a matching project around a binary config, address ranges (`splits.txt`) and named symbols, and promotes one source object only after `objdiff` says it matches. Zelda Twilight Princess likewise keeps functions marked nonmatching until the per-object diff reaches 100%. For FDNY, borrow the address-keyed inventory and explicit per-routine acceptance state, but defer that compiler/linker scaffolding until an original build recipe exists; the current small native components and original-execution fixtures fit behavioral recovery.
+
 `decomp.dev`'s repo describes a dashboard and GitHub bot rather than a reverse-engineering engine. Its project tracking is optional. The existing local viewer already gives this project the useful file and routine navigation without implying source or function completion. Do not introduce a CI/toolchain integration until it can compare something meaningful for the original PE32 target.
 
 ## Assets and local material
@@ -40,5 +42,7 @@ Keep original retail files, extracted assets, raw Ghidra databases, and machine-
 - [decomp.dev Parasite Eve project](https://decomp.dev/khasinski/parasite-eve-decomp) — user-provided visual reference; the page could not be fetched by the automated browser.
 - [decomp.me FAQ](https://www.decomp.me/faq) — what compiler matching means and why compiler settings matter.
 - [objdiff](https://github.com/encounter/objdiff) — object/function comparison tooling, including x86/MSVC workflows.
+- [Black & White decomp getting started](https://github.com/openblack/bw1-decomp/blob/main/docs/getting_started.md) — config, split ranges, symbol names, and a per-object matching loop.
+- [Zelda Twilight Princess decompiling guide](https://github.com/zeldaret/tww/blob/main/docs/decompiling.md) — Ghidra/objdiff workflow and a clear nonmatching-to-matching gate.
 - [sm64 project layout](https://github.com/n64decomp/sm64) — source, assets, tools, build artifacts, and local ROM extraction separation.
 - [GoldenEye setup guide](https://github.com/n64decomp/007/blob/master/docs/SetupGuide.md) — original-data extraction and generated-resource build workflow.

@@ -67,9 +67,11 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
 ## Limits
 
 The direct state writes, spawn transform and draw order are source-mapped, and
-finite animation advancement is connected to the pool. Remaining constructor
-side effects, computed engine calls, visibility gates, polygon construction,
-and the presentation indirect-call closure remain open. The four-call getter
+finite animation advancement is connected to the pool. The two polygon calls
+are identified as `Genesis.dll!geWorld_AddPolyOnce`, and that API's allocation,
+copy and world-list insertion behavior is recovered. Remaining constructor
+side effects, other computed engine calls, visibility/context/resource-table
+state and live polygon-list integration remain open. The four-call getter
 adapter is explicit; its statically selected `0049D760` implementation itself
 is a no-draw leaf, but runtime vtable replacement has not been excluded.
 This component does not implement ash rendering, validate Training cadence,
@@ -135,4 +137,6 @@ template guard is pre-marked initialized and no parent transform is supplied.
 The native `player_ash_geometry_pcode-check` compares all twelve output words
 per case and dirty-byte clearing; all five cases match exactly. This establishes
 isolated cached vertex parity, not state scheduling, parent composition, render
-resources, polygon API calls, or visible ash output.
+resources, live polygon-list contents, or visible ash output. The imported
+polygon API identity and its local list-insertion effects are separately
+recorded in `resource-render-followup.md`.

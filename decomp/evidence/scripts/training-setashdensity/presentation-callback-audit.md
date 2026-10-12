@@ -81,11 +81,12 @@ shared RNG through `004B9400`; the four direct RNG draws in the active-particle
 update `00446510` and five direct draws in activation `00446470` remain distinct
 and are not canceled by a renderer draw. This does not close the 130 computed
 call sites in the older direct-call closure: dynamic engine callbacks and any
-other computed dispatch remain unproven. The ash render path calls through data
-cell `004DC0D0` at `0047FCF9` and `0047FE58`. Its named `Genesis.dll` wrapper
-and polygon-list effects are now mapped in `resource-render-followup.md`; the
-loaded cell value and all other computed callsites remain open, so whole-frame
-RNG parity is still unproven.
+other computed dispatch remain unproven. The ash render path calls through the
+Genesis.dll IAT entry at `004DC0D0` from `0047FCF9` and `0047FE58`. The PE
+import-by-name record and Ghidra external reference identify
+`geWorld_AddPolyOnce`, whose list effects are mapped in
+`resource-render-followup.md`. The other computed callsites remain open, so
+whole-frame RNG parity is still unproven.
 
 `00502B04` is zero in the static data snapshot but is read by `0047F2A0` and
 other engine update routines; its runtime value is not established here.
@@ -97,15 +98,17 @@ the native component.
 
 The control flow for state gating, geometry cache writes, per-particle
 visibility, frame/color selection, and the one/two polygon submission paths is
-source-backed and safe to translate as a bounded native component. Preserve
+source-backed and safe to translate as a bounded native component. Both calls
+resolve to the imported `Genesis.dll!geWorld_AddPolyOnce`; the wrapper's list
+effects are documented, while live world/resource state remains open. Preserve
 the original x87 rounding behavior and float operation order for parity.
 Rendering cannot yet be claimed exact: the ash descriptor flags, five frame
 durations, and collection-to-particle binding are now recovered in
 `descriptor-lifetime-followup.md`; `resource-render-followup.md` maps IDs
 200/201 to the authored `ash1.bmp`/`ash2.bmp` names and resolves descriptor
 color/alpha operands. Exact bitmap copies are now present in the ignored local
-asset extraction; vertex data, runtime resource-table objects, computed
-render-context APIs, global step-time setup, and the indirect closure remain
+asset extraction; runtime resource-table objects, computed render-context
+helpers, global step-time setup, other indirect calls, and visible parity remain
 unresolved. There is no live Training capture in this evidence.
 Do not replace these gaps with placeholder geometry, material choices, or
 callback defaults in a parity claim.
@@ -113,11 +116,9 @@ callback defaults in a parity claim.
 ## Best next step
 
 Use the source references (`0047F960` call from `004467E0` at `00446891` and
-the FireRescue four-record loop in `0044B060`; second polygon callsite
-`0047FE58`) to identify
-the actual Training descriptor/resource setup and flags, then inspect the
-candidate table values and texture/material bindings. In parallel, resolve the
-two computed polygon/context calls from the exact operands at `0047FCF9` and
-`0047FE58`; this will bound the render API adapter needed by the native ash
-component. A live Training capture is still needed to validate the first
-callback timing and actual visible output.
+the FireRescue four-record loop in `0044B060`) to identify the actual Training
+descriptor/resource setup and flags, then inspect candidate table values and
+texture/material bindings. The polygon submission target is resolved; next
+trace the remaining context/visibility helpers and connect the render payload
+to native world-list state. A live Training capture is still needed to validate
+the first callback timing and actual visible output.
