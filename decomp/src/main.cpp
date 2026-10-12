@@ -210,6 +210,13 @@ int checkTrainingDoorAssets(){
  std::cout<<"Training door source inputs: 20 one-child models, BSP-root-derived contracted bounds (14 exact extents, 6 known float32 rounding cases), and two-key Y-rotation motions; source-derived inputs validated\n";return 0;
 }
 int main(int argc,char** argv){try{
+ bool hasRequestedSeed=false;uint32_t requestedSeed=0;
+ for(int i=1;i<argc;i++)if(std::string(argv[i])=="--seed"){
+  if(i+1>=argc)throw std::runtime_error("--seed requires an unsigned 32-bit value");
+  std::string text=argv[++i];size_t consumed=0;unsigned long long parsed=std::stoull(text,&consumed,0);
+  if(consumed!=text.size()||parsed>std::numeric_limits<uint32_t>::max())throw std::runtime_error("--seed requires an unsigned 32-bit value");
+  requestedSeed=uint32_t(parsed);hasRequestedSeed=true;
+ }
  if(argc>1&&std::string(argv[1])=="--asset-path"){std::cout<<assetDirectory()<<"\n";return 0;}
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-check")return checkBModelContact();
  if(argc>1&&std::string(argv[1])=="--throw-scalar-check")return checkThrowScalarOracle();
@@ -228,7 +235,8 @@ int main(int argc,char** argv){try{
  vm.hint=[&](std::string text,float seconds){hint=text;hintRemaining=seconds;};
  vm.findEntity=[&](std::string name){if(name=="player"||name=="Player")return playerId;for(int i=0;i<count(entities);i++){auto e=at(entities,i);if(str(field(field(e,"properties"),"A_Name"))==name)return integer(field(e,"index"));}return -1;};
  auto retryDoorCommand=[&](int id,const std::string& command){auto& queue=vm.actorQueues[id];queue.commands.clear();queue.waiting=false;queue.commands.push_back({id,command,"door-command-retry",false});};
- vm.host=[&](int id,std::string command){auto [verb,args]=token(command);
+ uint64_t trainingHostCommandCount=0;
+ vm.host=[&](int id,std::string command){trainingHostCommandCount++;auto [verb,args]=token(command);
  if(id==playerId){if(verb=="equip"){equipment.insert(args);int slot=itemSlot(args);if(slot>=0){itemInventory.slots[size_t(slot)].present=true;HoseItemSelection::Result selection;if(HoseItemSelection::selectSlot(itemInventory,slot,false,selection))selected=itemName(itemInventory.selected);}return true;}if(verb=="select"){selectEquipment(args);return true;}if(verb=="touchhose"&&args=="25"){equipment.insert("hose");if(!itemInventory.slots[4].present){itemInventory.slots[4].present=true;HoseSprayPoseList::initializeTraining(hosePoseList,25);}HoseItemSelection::Result modeChange;HoseItemSelection::setMode(itemInventory,2,modeChange);return true;}if(command=="toolcmd extinguisher refill"){extinguisherCharge=1;return true;}if(verb=="climb"){if(!player.climbing){player.climbing=true;player.v={};}return true;}if(verb=="unclimb"){player.climbing=false;return true;}if(verb=="setashdensity"){char* end=nullptr;float value=std::strtof(args.c_str(),&end);if(end!=args.c_str())player.setAshDensity(value);return true;}if(verb=="setrescuebot"){int value;if(std::sscanf(args.c_str(),"%i",&value)==1)player.rescueBotEnabled=value!=0;return true;}}
  if(verb=="makezone"){
   J trigger=nullptr;for(int i=0;i<count(entities);i++){J candidate=at(entities,i);if(integer(field(candidate,"index"))==id){trigger=candidate;break;}}
@@ -266,7 +274,7 @@ int main(int argc,char** argv){try{
   auto p=field(e,"properties");TrainingPropModel prop;prop.entity=integer(field(e,"index"));prop.name=str(field(p,"A_Name"));prop.center=location(p,"ZZ_location");prop.radius=std::stof(str(field(p,"F_TouchRadius")));prop.makeValve=str(field(p,"S_Script01"))=="makevalve";propModels.push_back(prop);
  }
  std::vector<UseManager::Candidate> valveCandidates;for(const auto& prop:propModels)if(prop.makeValve)valveCandidates.push_back({prop.entity,prop.center,prop.radius});
- vm.loadLevel("training.evs",playerId,true);WorldStartup worldStartup;
+ vm.loadLevel("training.evs",playerId,true);size_t earlyLevelBindingCount=vm.bindings.size();uint64_t earlyLevelHostCommandCount=trainingHostCommandCount;bool earlyLevelHasDoorMacro=vm.variables.count("Door")!=0;WorldStartup worldStartup;
  auto startupTick=[&]{worldStartup.update([&]{vm.loadLevel("training.evs",playerId,false);},[]{});};
  // The loaded BSP supplies this batch. Gameplay constructors and the later
  // camera batch will use the same dispatcher as those systems are recovered.
@@ -277,9 +285,10 @@ int main(int argc,char** argv){try{
  TrainingEntityIdentity worldIdentity{0x2711,worldSource,"World"};trainingRoutes.registerObject(&worldIdentity,worldIdentity.route);
  // Original application seeds from timeGetTime (0042C800). Use host monotonic
  // milliseconds; full startup draw ordering is still being integrated.
- uint32_t seed=uint32_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());Random sharedRandom(seed);int fireDivider=0;std::map<int,FireEntity> fires;
- startupQueue.registerEntity=[&](int id){auto& identity=trainingEntities.at(id);trainingRoutes.registerObject(&identity,identity.route);};
- startupQueue.firstPass=[&](int id){auto e=startupEntities.at(id);auto entityClass=str(field(e,"class"));if(entityClass=="RCS_FireRescue"){
+ uint32_t seed=hasRequestedSeed?requestedSeed:uint32_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());Random sharedRandom(seed);int fireDivider=0;std::map<int,FireEntity> fires;
+ std::vector<std::pair<std::string,int>> trainingStartupPhases;
+ startupQueue.registerEntity=[&](int id){trainingStartupPhases.emplace_back("register",id);auto& identity=trainingEntities.at(id);trainingRoutes.registerObject(&identity,identity.route);};
+ startupQueue.firstPass=[&](int id){trainingStartupPhases.emplace_back("first",id);auto e=startupEntities.at(id);auto entityClass=str(field(e,"class"));if(entityClass=="RCS_FireRescue"){
  auto p=field(e,"properties");V position;auto location=str(field(p,"ZZ_location"));sscanf(location.c_str(),"%f %f %f",&position.x,&position.y,&position.z);
  auto value=[&](const char* key){return std::stof(str(field(p,key)));};bool floor=value("L_FloorMe")!=0;auto& fire=fires[id];
  fire.initialize(sharedRandom,0,fireDivider,position,value("H_Radius"),value("H_Height"),value("K_SprayTime"),!str(field(p,"A_Name")).empty(),value("M_Smoking")!=0,[&](FireVisual& visual){if(floor)FireFloor::alignInWorld(visual,collision);},[](int){});auto& identity=trainingEntities.at(id);identity.fire=&fire;fireContactCandidates.push_back(&identity);
@@ -292,13 +301,44 @@ int main(int argc,char** argv){try{
   victim->second->initializeMotion(sharedRandom,trainingManMotionCount);
  }vm.startupEntity(e);};
  std::map<int,int> victimAppearanceCounters;const int trainingManMaterialCount=count(field(trainingManAsset,"materials"));
- startupQueue.secondPass=[&](int id){auto e=startupEntities.at(id);if(str(field(e,"class"))!="RCS_VictimRescue")return;auto victim=victimByEntity.find(id);if(victim==victimByEntity.end())throw std::runtime_error("Training victim missing from recovered candidate list");auto& spawn=*victim->second;spawn.choose(sharedRandom);spawn.floorPlacementAttempted=true;spawn.floorPlacementSucceeded=placeModelOnFloor(spawn.selectedPosition,spawn.modelMins,spawn.modelMaxs,[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;},[&]{std::cerr<<"Error placing \""<<spawn.name<<"\": cannot find floor!\n";});
+ startupQueue.secondPass=[&](int id){trainingStartupPhases.emplace_back("second",id);auto e=startupEntities.at(id);if(str(field(e,"class"))!="RCS_VictimRescue")return;auto victim=victimByEntity.find(id);if(victim==victimByEntity.end())throw std::runtime_error("Training victim missing from recovered candidate list");auto& spawn=*victim->second;spawn.choose(sharedRandom);spawn.floorPlacementAttempted=true;spawn.floorPlacementSucceeded=placeModelOnFloor(spawn.selectedPosition,spawn.modelMins,spawn.modelMaxs,[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;},[&]{std::cerr<<"Error placing \""<<spawn.name<<"\": cannot find floor!\n";});
  // 0045D5B0 assigns the next source-ordered material for this model ID. This does not draw from shared RNG.
  int& nextAppearance=victimAppearanceCounters[spawn.modelId];spawn.appearanceIndex=nextAppearance<trainingManMaterialCount?nextAppearance:0;nextAppearance=spawn.appearanceIndex+1;
  auto& frame=victimActorStates.at(id).frame;frame.position=spawn.selectedPosition;
  double angle=(double(spawn.selectedHeading)*30.0+180.0)*double(float(0.01745329238474369f));float c=float(std::cos(angle)),sn=float(std::sin(angle));frame.axis={{{c,0,sn},{0,1,0},{-sn,0,c}}};};
- for(auto e:startup){int id=integer(field(e,"index"));startupEntities[id]=e;trainingEntities.emplace(id,TrainingEntityIdentity{id,e,str(field(e,"class"))});startupQueue.enqueue([id]{return id;});}
+ for(auto e:startup){int id=integer(field(e,"index"));startupEntities[id]=e;trainingEntities.emplace(id,TrainingEntityIdentity{id,e,str(field(e,"class"))});startupQueue.enqueue([&,id]{trainingStartupPhases.emplace_back("construct",id);return id;});}
  startupQueue.drain();
+ if(argc>1&&std::string(argv[1])=="--training-startup-check"){
+  int mismatches=0;std::vector<std::pair<std::string,int>> expectedPhases;std::vector<int> startupIds;
+  for(auto e:startup)startupIds.push_back(integer(field(e,"index")));
+  for(int id:startupIds){expectedPhases.emplace_back("construct",id);expectedPhases.emplace_back("register",id);}
+  for(const char* phase:{"first","second"})for(int id:startupIds)expectedPhases.emplace_back(phase,id);
+  if(trainingStartupPhases!=expectedPhases){mismatches++;std::cout<<"Training startup factory/register/first/second-pass order mismatch\n";}
+  if(earlyLevelBindingCount!=0||earlyLevelHostCommandCount!=0||!earlyLevelHasDoorMacro||!vm.variables.count("Door")||!vm.reported.empty()){mismatches++;std::cout<<"Training early EVS pass did not remain definitions-only\n";}
+  int fireCount=0;
+  for(auto e:startup)if(str(field(e,"class"))=="RCS_FireRescue"){
+   int id=integer(field(e,"index"));auto identity=trainingEntities.find(id);
+   if(identity==trainingEntities.end()||!identity->second.fire||trainingRoutes.resolve(identity->second.route.route,identity->second.route.generation)!=&identity->second)mismatches++;
+   fireCount++;
+  }
+  if(fireCount!=7||fires.size()!=size_t(fireCount)){mismatches++;std::cout<<"Training placed-fire startup count/link mismatch\n";}
+  if(victimSpawns.size()!=2||victimSounds.size()!=victimSpawns.size()){mismatches++;std::cout<<"Training victim sound/startup count mismatch\n";}
+  for(const auto& victim:victimSpawns)if(!victim.motionInitialized||!victim.spawnSelected||!victim.floorPlacementAttempted||!victim.floorPlacementSucceeded||victim.candidates.size()!=3||!victimSounds.count(victim.entity)){
+   mismatches++;std::cout<<"Training victim startup transaction incomplete for entity "<<victim.entity<<"\n";
+  }
+  auto commandsBeforeWorld=trainingHostCommandCount;
+  for(int update=1;update<=4;update++){
+   auto before=trainingHostCommandCount;startupTick();
+   if(update<4&&(worldStartup.complete||trainingHostCommandCount!=before)){mismatches++;std::cout<<"Training EVS became active before world update four\n";}
+   if(update==4&&(!worldStartup.complete||trainingHostCommandCount==before||trainingHostCommandCount<=commandsBeforeWorld)){mismatches++;std::cout<<"Training EVS did not activate on world update four\n";}
+  }
+  if(!worldStartup.complete||worldStartup.remaining!=0||vm.bindings.empty()||!vm.reported.empty())mismatches++;
+  if(doors.size()!=20)mismatches++;
+  for(const auto& door:doors)if(door.hitPoints!=0||door.timeScale!=3.f){mismatches++;break;}
+  if(player.ashDensity!=0.f||!player.rescueBotEnabled||*player.rescueBotEnabled){mismatches++;std::cout<<"Training player startup script state mismatch\n";}
+  std::cout<<"Training startup integration: seed="<<seed<<", entities="<<startup.size()<<", phase-events="<<trainingStartupPhases.size()<<", fires="<<fires.size()<<", victims="<<victimSpawns.size()<<", doors="<<doors.size()<<", host-commands="<<trainingHostCommandCount<<", RNG-draws="<<sharedRandom.drawCount<<", EVS-update=4, unsupported="<<vm.reported.size()<<", mismatches="<<mismatches<<" (recurring actor cadence remains unresolved)\n";
+  return mismatches?51:0;
+ }
  if(argc>1&&std::string(argv[1])=="--door-script-check"){
   int mismatches=0;if(doors.size()!=20||doorByEntity.size()!=20){std::cout<<"Training door entity count mismatch: "<<doors.size()<<"\n";return 3;}
   int id=doorByEntity.begin()->first;Door& door=doors[doorByEntity.begin()->second];

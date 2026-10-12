@@ -89,6 +89,7 @@ The C++ collision port matches all 611 recorded fresh contacts from the shipped 
 ./run.sh --actor-pose-check
 ./run.sh --genesis-transform-check
 ./run.sh --startup-check
+./run.sh --training-startup-check --seed 0x46444e59
 ./run.sh --spawn-queue-check
 ./run.sh --world-startup-check
 ./run.sh --model-floor-check
@@ -96,6 +97,8 @@ The C++ collision port matches all 611 recorded fresh contacts from the shipped 
 ./run.sh --sound-queue-check
 python3 tools/rng_audit.py
 ```
+
+`--seed <uint32>` fixes the native shared RNG seed for repeatable runs. Without it, the build keeps its existing host-monotonic-millisecond seed. `--training-startup-check` composes the real Training entity batch, FireRescue and victim startup, and four-update delayed EVS activation; it reports the final native draw count but does not claim the missing engine callback schedule or whole-run RNG parity.
 
 The graphics and text adapters are new platform code. Recovered gameplay code is identified by original function addresses in the source. Ghidra 12.0.4 headless queries use the preserved project with `-readOnly -noanalysis`; functions absent from that database can be defined in a temporary analysis project without changing the preserved database.
 
