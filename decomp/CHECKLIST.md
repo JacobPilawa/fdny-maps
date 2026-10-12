@@ -209,7 +209,7 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 ## Hose valve callback continuation (2026-10-12)
 
 - [x] Ghidra EmulatorHelper ran hash-pinned original 00444120 for five PropModel state/action pairs. Active valves call 0044C840 with the Player receiver and PropModel-root argument; action 1002 returns before the use string/event path, while attach 1001 forwards it. The native Space/Shift integration now follows that branch order (src/hose_valve_callback.h, tools/ghidra/HoseValveCallbackPcodeOracle.java, evidence/hose-spray/valve-callback-pcode-oracle.json). The owner routine and string/script services are controlled stubs here; Hose Spray item-array selection, full frame parenting, UI hiding, dispatch-before-refresh scheduling, and live stream behavior remain open (evidence/hose-spray/valve-callback-pcode-audit.md).
-- [x] Reconfigured and rebuilt the native app and owner-selection checker; all 35 configured CTest checks pass, and `fdny-training --smoke-test` reaches the settled Training spawn.
+- [x] Reconfigured and rebuilt the native app and owner-selection checker; all 36 configured CTest checks pass, and `fdny-training --smoke-test` reaches the settled Training spawn.
 
 ## Hose inventory-selection continuation (2026-10-12)
 
@@ -217,7 +217,7 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] `src/hose_item_selection.h` models owner attach selection/gating, mode transition, first-populated detach selection, forced rescan and empty-list clearing. The native Training host now uses indexed slots for Axe/Hose Spray and Space/Shift valve attach/detach.
 - [x] `HoseItemSelectionPcodeOracle.java` executes the original owner/rescan/mode-setter paths. Eight owner cases plus a direct empty-rescan case compare 20 ordered item/UI calls with zero mismatches; attach capture stops before `004977B0`.
 - [x] The original owner attachment commit now runs through `004977B0`, the first basis-axis copy/negation, valve `+0x18` getter, pointer/mode-3 writes and first stream-pose-node position write. Four controlled frame trees compare 36 vector words, state identities and ordered HUD/hide calls with zero mismatches. The node-list trace establishes 12 constructor nodes resized to 30 by Training `touchhose 25`; node `+0x2C` remains uninitialized/unknown. See `evidence/hose-spray/item-selection-pcode-audit.md` and `attachment-frame-pcode-oracle.json`.
-- [ ] Wire real Training valve frame/getter construction into the host and apply the committed vectors/list state; reproduce Hose follower parenting, Axe busy-state cadence, cached-target scheduling, real UI and stream/suppression. Axe initialized gate and activation dispatch are sourced, but complete action behavior remains open. No live-game inventory/frame capture has run.
+- [ ] Resolve model asset 5's local frame basis and verify PropModel updater timing; seed the host from Valve3/Valve5's source-mapped locations and headings, then apply the committed vectors/list state. Reproduce Hose follower parenting, Axe busy-state cadence, cached-target scheduling, real UI and stream/suppression. Axe initialized gate and activation dispatch are sourced, but complete action behavior remains open. No live-game inventory/frame capture has run.
 
 ## Ash pool and goggles audit (2026-10-12)
 

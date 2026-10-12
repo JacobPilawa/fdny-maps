@@ -1,6 +1,6 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "e5f6144",
+  "commit": "a161bd8",
   "tests": 36,
   "scope": "Training",
   "files": [
@@ -1598,7 +1598,13 @@
           "0044C840 / 004977B0",
           "Hose attachment frame commit",
           "partial",
-          "Four controlled frame trees compare 36 vector words, mode, saved identities and ordered HUD/hide events with zero mismatches; real Training frame/getter construction and runtime integration remain open."
+          "Four controlled frame trees compare 36 vector words, mode, saved identities and ordered HUD/hide events. Valve3/5 getter translation and load/heading route are source-mapped; model 5 local basis, live words, updater timing and runtime integration remain open."
+        ],
+        [
+          "00443860 / 00497E90",
+          "Training PropModel frame inputs",
+          "partial",
+          "Valve3/5 location, model ID, heading/pitch, embedded getter frame, model-frame parent and rotation helpers are traced. Asset model 5 local basis and updater timing remain to be sourced."
         ]
       ],
       "bytes": 2065
