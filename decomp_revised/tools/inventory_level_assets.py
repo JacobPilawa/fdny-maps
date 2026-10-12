@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import json
 import re
 from collections import Counter
 from pathlib import Path
@@ -63,12 +64,33 @@ def rel(path: Path | None, root: Path) -> str:
     return path.relative_to(root).as_posix() if path is not None else ""
 
 
+def scene_export_status(key: str, bsp: Path | None, source_hash: str, project_root: Path) -> str:
+    if bsp is None:
+        return "not_exported"
+    report = project_root / ".local" / "exports" / key.casefold() / "report.json"
+    if not report.is_file():
+        return "not_exported"
+    try:
+        data = json.loads(report.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return "stale_or_invalid_local_export"
+    if data.get("source_sha256") != source_hash:
+        return "stale_or_invalid_local_export"
+    if data.get("format") != "fdny-gbsp-v15-scene-v2":
+        return "stale_or_invalid_local_export"
+    required = {"geometry.json", "world_mesh.json", "collision.json", "entities.json"}
+    if not required.issubset(set(data.get("outputs", []))):
+        return "partial_local_export"
+    return "typed_scene_export_local"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("inputs/original/Data"))
     parser.add_argument("--output", type=Path, default=Path("tracker/level_map_inventory.csv"))
     args = parser.parse_args()
     data_root = args.data.resolve()
+    project_root = Path(__file__).resolve().parents[1]
     catalog_path = data_root / "ResDefs" / "thegame.lev"
     map_dir = data_root / "Maps"
     if not catalog_path.is_file() or not map_dir.is_dir():
@@ -92,6 +114,8 @@ def main() -> int:
         briefing = file_lookup(map_dir, key, ".brf")
         bsp = file_lookup(map_dir, key, ".bsp")
         evs = file_lookup(map_dir, key, ".evs")
+        bsp_digest = sha256(bsp)
+        scene_status = scene_export_status(key, bsp, bsp_digest, project_root)
         classes = Counter()
         if bsp:
             _, entities = read_entities(bsp)
@@ -114,7 +138,7 @@ def main() -> int:
             "briefing_file": rel(briefing, data_root),
             "briefing_sha256": sha256(briefing),
             "bsp_file": rel(bsp, data_root),
-            "bsp_sha256": sha256(bsp),
+            "bsp_sha256": bsp_digest,
             "same_key_evs_file": rel(evs, data_root),
             "same_key_evs_sha256": sha256(evs),
             "map_relation": "catalogued" if bsp else "catalogued_without_bsp",
@@ -124,14 +148,16 @@ def main() -> int:
             "victim_rescue_count": str(classes.get("RCS_VictimRescue", 0)) if bsp else "",
             "bounds_trigger_count": str(classes.get("RCS_BoundsTrigger", 0)) if bsp else "",
             "entity_class_counts": ";".join(f"{name}={count}" for name, count in sorted(classes.items()) if name.startswith("RCS_")) if bsp else "",
-            "scene_export_status": "training_workbench_only" if key.casefold() == "training" else "not_exported",
-            "notes": "; ".join(notes),
+            "scene_export_status": scene_status,
+            "notes": "; ".join(notes + (["typed scene bundle is local-only and has not been loaded by the port"] if scene_status == "typed_scene_export_local" else [])),
         })
 
     for bsp in bsp_files:
         if bsp.stem.casefold() in catalog_keys:
             continue
         evs = file_lookup(map_dir, bsp.stem, ".evs")
+        bsp_digest = sha256(bsp)
+        scene_status = scene_export_status(bsp.stem, bsp, bsp_digest, project_root)
         _, entities = read_entities(bsp)
         classes = Counter(next((value for name, value in pairs if name == "classname"), "<none>") for pairs in entities)
         rows.append({
@@ -144,7 +170,7 @@ def main() -> int:
             "briefing_file": "",
             "briefing_sha256": "",
             "bsp_file": rel(bsp, data_root),
-            "bsp_sha256": sha256(bsp),
+            "bsp_sha256": bsp_digest,
             "same_key_evs_file": rel(evs, data_root),
             "same_key_evs_sha256": sha256(evs),
             "map_relation": "BSP_not_in_level_catalog",
@@ -154,7 +180,7 @@ def main() -> int:
             "victim_rescue_count": str(classes.get("RCS_VictimRescue", 0)),
             "bounds_trigger_count": str(classes.get("RCS_BoundsTrigger", 0)),
             "entity_class_counts": ";".join(f"{name}={count}" for name, count in sorted(classes.items()) if name.startswith("RCS_")),
-            "scene_export_status": "not_exported",
+            "scene_export_status": scene_status,
             "notes": "determine whether this is a variant, shared map, or unused asset",
         })
 
