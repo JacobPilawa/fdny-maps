@@ -1,11 +1,11 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FDNY · Decompilation map</title><style>
-:root{--ink:#283344;--muted:#657083;--line:#d5dce7;--green:#00ba81;--blue:#509bd4;--amber:#e6af49;--gray:#c4ccd8}*{box-sizing:border-box}body{margin:0;background:#fbfcfe;color:var(--ink);font:15px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:42px 32px}h1{font-size:29px;margin:0 0 8px}h2{font-size:18px;margin:22px 0 8px}p{margin:8px 0;color:var(--muted)}a{color:#3970a4}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.button{border:1px solid #889bb9;border-radius:5px;padding:10px 18px;text-decoration:none;white-space:nowrap;background:white}.sub{font-size:19px;font-weight:600}.bar{height:27px;background:#e9edf4;display:flex;border-radius:4px;overflow:hidden}.bar i{height:100%}.metrics{display:flex;gap:22px;flex-wrap:wrap;margin:20px 0}.metrics b{font-size:22px;display:block}.metrics span{font-size:12px;color:var(--muted)}.legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0;font-size:12px}.legend i{width:12px;height:12px;display:inline-block;margin-right:6px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 12px}select,input{padding:13px;border:1px solid var(--line);border-radius:4px;background:white;font:inherit;width:100%}.map{height:470px;position:relative;background:#e8edf4;border:1px solid var(--line);overflow:hidden}.tile{position:absolute;border:1px solid #ffffffaa;overflow:hidden;padding:5px;background:var(--gray);color:#172c26;text-align:left;font:12px/1.3 system-ui;cursor:pointer;transition:filter .15s}.tile:hover,.tile:focus-visible,.tile[aria-pressed=true]{filter:brightness(1.1);outline:3px solid #233852;outline-offset:-3px;z-index:1}.tile small{display:block;font-size:10px}.detail{margin-top:16px;border:1px solid var(--line);border-radius:5px;background:white;padding:18px}.detail h2{margin:0;font-size:18px;overflow-wrap:anywhere}.detail ul{padding-left:20px}.detail li{margin:8px 0}.filelist{max-height:300px;overflow:auto;border:1px solid var(--line);background:white}.row{width:100%;border:0;border-bottom:1px solid #edf0f5;padding:10px 14px;background:white;display:flex;justify-content:space-between;gap:12px;text-align:left;cursor:pointer;font:13px system-ui}.row:hover{background:#f2f5fa}.row span{overflow-wrap:anywhere}.row small{color:var(--muted);white-space:nowrap}.footer{font-size:12px;margin-top:24px}.empty{padding:30px}code{font-size:12px} @media(max-width:650px){main{padding:22px 16px}header{display:block}.button{display:inline-block;margin-top:12px}.controls{grid-template-columns:1fr}.map{height:400px}h1{font-size:24px}}
+:root{--ink:#283344;--muted:#657083;--line:#d5dce7;--green:#00ba81;--blue:#509bd4;--amber:#e6af49;--gray:#c4ccd8}*{box-sizing:border-box}body{margin:0;background:#fbfcfe;color:var(--ink);font:15px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:42px 32px}h1{font-size:29px;margin:0 0 8px}h2{font-size:18px;margin:22px 0 8px}p{margin:8px 0;color:var(--muted)}a{color:#3970a4}header{display:flex;justify-content:space-between;gap:20px;align-items:start}.button{border:1px solid #889bb9;border-radius:5px;padding:10px 18px;text-decoration:none;white-space:nowrap;background:white}.sub{font-size:19px;font-weight:600}.bar{height:27px;background:#e9edf4;display:flex;border-radius:4px;overflow:hidden}.bar i{height:100%}.metrics{display:flex;gap:22px;flex-wrap:wrap;margin:20px 0}.metrics b{font-size:22px;display:block}.metrics span{font-size:12px;color:var(--muted)}.legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0;font-size:12px}.legend i{width:12px;height:12px;display:inline-block;margin-right:6px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 12px}select,input{padding:13px;border:1px solid var(--line);border-radius:4px;background:white;font:inherit;width:100%}.map{height:470px;position:relative;background:#e8edf4;border:1px solid var(--line);overflow:hidden}.tile{position:absolute;border:1px solid #ffffffaa;overflow:hidden;padding:5px;background:var(--gray);color:#172c26;text-align:left;font:12px/1.3 system-ui;cursor:pointer;transition:filter .15s}.tile:hover,.tile:focus-visible,.tile[aria-pressed=true]{filter:brightness(1.1);outline:3px solid #233852;outline-offset:-3px;z-index:1}.tile small{display:block;font-size:10px}.detail{margin-top:16px;border:1px solid var(--line);border-radius:5px;background:white;padding:18px}.detail h2{margin:0;font-size:18px;overflow-wrap:anywhere}.detail ul{padding-left:20px}.detail li{margin:8px 0}.filelist{max-height:300px;overflow:auto;border:1px solid var(--line);background:white}.row{width:100%;border:0;border-bottom:1px solid #edf0f5;padding:10px 14px;background:white;display:flex;justify-content:space-between;gap:12px;text-align:left;cursor:pointer;font:13px system-ui}.row:hover{background:#f2f5fa}.row span{overflow-wrap:anywhere}.row small{color:var(--muted);white-space:nowrap}.footer{font-size:12px;margin-top:24px}.empty{padding:30px}code{font-size:12px} .module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 24px}.module{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:6px;background:white;padding:14px;min-width:0}.module.open{border-left-color:var(--gray)}.module h3{margin:0 0 6px;font-size:16px}.module-state{font-size:12px;font-weight:700;color:#76540c}.module.open .module-state{color:#5e6877}.module p{font-size:13px}.module-next{border-top:1px solid #edf0f5;padding-top:8px}.module-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.module-files a{font-size:11px;border:1px solid var(--line);border-radius:4px;padding:2px 6px;text-decoration:none;background:#f8f9fc}.module-evidence{font-size:12px}.evidence-details{margin:16px 0;padding:12px;border:1px solid var(--line);border-radius:5px;background:#f7f9fc}.evidence-details summary{cursor:pointer;font-weight:600}.current-build{padding:12px 14px;border-left:4px solid var(--blue);background:white}.current-build strong{color:var(--ink)}@media(max-width:850px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){main{padding:22px 16px}header{display:block}.button{display:inline-block;margin-top:12px}.controls{grid-template-columns:1fr}.module-grid{grid-template-columns:1fr}.map{height:400px}h1{font-size:24px}}
 </style></head><body><main><header><div><h1>FDNY Firefighter · Decompilation map</h1><div class="sub">Training: component recovery in progress</div><p>Original routines mapped to native C++ files, with evidence and remaining work.</p></div><a class="button" href="https://github.com/JacobPilawa/fdny-maps/tree/main/decomp">Repository ↗</a></header>
-<h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
+<h2>Training module status</h2><p class="current-build"><strong>Current runnable state:</strong> playable Training scene prototype. It does not yet complete the source-accurate level. The module order below is the delivery path; start with the shared runtime and actor schedule.</p><div class="module-grid" id="modules" aria-label="Training gameplay module status"></div><p id="snapshot"></p><details class="evidence-details"><summary>Component evidence counts (not a gameplay completion score)</summary><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><div class="metrics" id="metrics"></div></details><h2>Component evidence map</h2><p>The file tree is for looking up source routines, comparisons, and open evidence. Its size and status colors do not represent how much of the full game is playable.</p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="TRAINING_MODULE_ROADMAP.md">Module roadmap</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
 const data={
   "snapshot": "2026-10-12",
-  "commit": "a161bd8",
-  "tests": 36,
+  "commit": "86ef364",
+  "tests": 37,
   "scope": "Training",
   "files": [
     {
@@ -127,7 +127,7 @@ const data={
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 180682
+      "bytes": 181042
     },
     {
       "path": "src/startup.h",
@@ -1612,15 +1612,141 @@ const data={
         ]
       ],
       "bytes": 2065
+    },
+    {
+      "path": "src/hose_spray_pose_list.h",
+      "group": "Inventory",
+      "summary": "Original-function coverage not classified in this viewer.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "hose_spray_pose_list.h",
+          "open",
+          "Inventory entry awaiting classification."
+        ]
+      ],
+      "bytes": 4434
+    }
+  ],
+  "test_status": "37 CTest checks configured; the three focused hose checks pass; the full suite was last run at 36 checks.",
+  "modules": [
+    {
+      "name": "Runtime, startup, and actor schedule",
+      "state": "Foundation; incomplete",
+      "state_key": "partial",
+      "summary": "A Training scene runs, but source-ordered initialization and recurring Player, victim, BModel, and FireRescue updates are not closed.",
+      "next": "Close the shared callback/order boundary, then connect authored startup and recurring updates.",
+      "files": [
+        "src/main.cpp",
+        "src/world_startup.h",
+        "src/startup.h",
+        "src/scripts.h",
+        "src/spawn_queue.h",
+        "src/clock.h",
+        "src/bmodel_contact.h"
+      ],
+      "evidence": "evidence/fire-update/root-think-dispatch-query-20261012.md"
+    },
+    {
+      "name": "Player movement and world interactions",
+      "state": "Partly playable",
+      "state_key": "partial",
+      "summary": "Movement and several world contacts work in the native scene. Axe, lift/carry/throw, candidate order, and some callback latency remain disconnected or approximate.",
+      "next": "Finish the Training interaction path as one input-to-action sequence.",
+      "files": [
+        "src/main.cpp",
+        "src/motion.h",
+        "src/core.h",
+        "src/bmodel_contact.h",
+        "src/bmodel_use.h",
+        "src/use_manager.h",
+        "src/throw_scalar.h",
+        "src/interaction_box.h"
+      ],
+      "evidence": "evidence/training-liftable-audit.md"
+    },
+    {
+      "name": "Fire response and tools",
+      "state": "Partial; lifecycle not wired",
+      "state_key": "partial",
+      "summary": "Training fire visuals and extinguisher contact/suppression components exist. Recurring Fire Think, visible dousing/recovery, complete hose stream, particles, and Axe behavior remain open.",
+      "next": "Connect the fire update, messages, tools, state changes, and visible result in one Training scenario.",
+      "files": [
+        "src/fire_entity.h",
+        "src/fire_update.h",
+        "src/fire_size.h",
+        "src/fire_message_queue.h",
+        "src/fire_suppression.h",
+        "src/fire_contact.h",
+        "src/extinguisher_contacts.h",
+        "src/extinguisher_effects.h",
+        "src/hose_spray_pose_list.h",
+        "src/main.cpp"
+      ],
+      "evidence": "evidence/fire-update/training-think-behavior-audit.md"
+    },
+    {
+      "name": "Victim lifecycle and mission flow",
+      "state": "Partial; no full rescue run",
+      "state_key": "partial",
+      "summary": "Victim spawn selection/rendering and several pickup, escape, and passout transactions are implemented as components. Automatic AI, carry, rescue/exit scheduling, engine services, and mission completion are not integrated.",
+      "next": "Connect one authored Training victim from spawn through rescue or failure and mission outcome.",
+      "files": [
+        "src/victim_proximity.h",
+        "src/victim_rescue.h",
+        "src/victim_transactions.h",
+        "src/victim_release.h",
+        "src/victim_exit.h",
+        "src/player_passout.h",
+        "src/main.cpp"
+      ],
+      "evidence": "evidence/victim-ai-audit/training-pickup-flow.md"
+    },
+    {
+      "name": "Presentation and game services",
+      "state": "Partial",
+      "state_key": "partial",
+      "summary": "The scene renders map geometry, fire visuals, and initial victim poses. Audio, HUD/stat services, goggles, complete particle/smoke/light paths, and full actor animation parity remain.",
+      "next": "Bind presentation to the completed gameplay modules and compare the visible/audio result.",
+      "files": [
+        "src/fire_renderer.h",
+        "src/actor_renderer.h",
+        "src/actor_pose.h",
+        "src/actor_animation.h",
+        "src/sprite_animation.h",
+        "src/player_ash_pool.h",
+        "src/sound_queue.h",
+        "src/ui.h",
+        "src/assets.h"
+      ],
+      "evidence": "evidence/README.md"
+    },
+    {
+      "name": "Whole-Training parity and runnable handoff",
+      "state": "Not verified",
+      "state_key": "open",
+      "summary": "There is no complete original-versus-native Training run. Shared RNG helpers have strong component comparisons, but end-to-end draw order, interactions, outcomes, restart, and clean asset setup remain unverified.",
+      "next": "Replay a complete authored Training run from equal RNG state, inputs, and frame timing; fix divergences module by module.",
+      "files": [
+        "run.sh",
+        "CMakeLists.txt",
+        "README.md",
+        "CHECKLIST.md",
+        "mechanics.json",
+        "tools/record_startup.py"
+      ],
+      "evidence": "IMPLEMENTATION_PLAN.md"
     }
   ]
 };
 const names={verified:'Compared component',connected:'Native connection',partial:'Partial / traced',open:'Open / unclassified'}, colors={verified:'#00ba81',connected:'#509bd4',partial:'#e6af49',open:'#c4ccd8'};
 const $=id=>document.getElementById(id), all=data.files.flatMap(f=>f.units), counts=Object.fromEntries(Object.keys(names).map(s=>[s,all.filter(u=>u[2]===s).length]));
 for(const s in names){const i=document.createElement('i');i.style.width=100*counts[s]/all.length+'%';i.style.background=colors[s];$('bar').append(i);const label=document.createElement('span');const swatch=document.createElement('i');swatch.style.background=colors[s];label.append(swatch,document.createTextNode(`${names[s]} · ${counts[s]}`));$('legend').append(label)}
-$('coverage').textContent=`${counts.verified} / ${all.length} tracked entries have component comparisons (${(100*counts.verified/all.length).toFixed(1)}% of this inventory). Counts include overlapping routine mappings and unclassified entries.`;
+$('coverage').textContent=`${counts.verified} of ${all.length} tracked component entries have comparisons. Entries overlap and include unclassified routines; this count is not a measure of Training completion.`;
 for(const [n,label] of [[data.files.filter(f=>f.path.startsWith('src/')).length,'native files inventoried'],[all.length,'tracked entries'],[data.tests,'CTest checks configured']]){const box=document.createElement('div'),b=document.createElement('b'),span=document.createElement('span');b.textContent=n;span.textContent=label;box.append(b,span);$('metrics').append(box)}
-$('snapshot').textContent=`Evidence snapshot ${data.snapshot} · based on ${data.commit} · scope: ${data.scope}. Viewer updates do not change game completion.`;
+$('snapshot').textContent=`Module snapshot ${data.snapshot} · source ${data.commit}. ${data.test_status} These checks are not a full-suite or mission-completion claim.`;
+for(const m of data.modules){const card=document.createElement('article');card.className='module '+m.state_key;const h=document.createElement('h3');h.textContent=m.name;const state=document.createElement('div');state.className='module-state';state.textContent=m.state;const summary=document.createElement('p');summary.textContent=m.summary;const next=document.createElement('p');next.className='module-next';const label=document.createElement('strong');label.textContent='Next: ';next.append(label,document.createTextNode(m.next));const files=document.createElement('div');files.className='module-files';for(const path of m.files){files.append(link(path,path.replace(/^src\//,'')))}const evidence=document.createElement('p');evidence.className='module-evidence';evidence.append(link(m.evidence,'Open module evidence'));card.append(h,state,summary,next,files,evidence);$('modules').append(card)}
 for(const g of ['All',...new Set(data.files.map(f=>f.group))]){const o=document.createElement('option');o.textContent=g;$('group').append(o)}
 function link(path,label){const a=document.createElement('a');a.href=path;a.textContent=label;return a}
 function inspect(f){$('detail').replaceChildren();const h=document.createElement('h2');h.textContent=f.path;const p=document.createElement('p');p.textContent=f.summary;const links=document.createElement('p');if(f.path.startsWith('src/'))links.append(link(f.path,'Open native source'),document.createTextNode(' · '));links.append(link(f.evidence,'Open evidence'));const ul=document.createElement('ul');for(const u of f.units){const li=document.createElement('li'),b=document.createElement('b');b.textContent=`${u[0]} · ${u[1]} — ${names[u[2]]}`;const note=document.createElement('div');note.textContent=u[3];li.append(b,note);if(u[4])li.append(link(u[4],'Routine evidence'));ul.append(li)}$('detail').append(h,p,links,ul);document.querySelectorAll('.tile').forEach(t=>t.setAttribute('aria-pressed',t.dataset.path===f.path?'true':'false'))}

@@ -215,7 +215,7 @@ int main(int argc,char** argv){try{
  if(argc>1&&std::string(argv[1])=="--throw-scalar-check")return checkThrowScalarOracle();
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-asset-check")return checkTrainingBModelContactAssets();
  if(argc>1&&std::string(argv[1])=="--door-asset-check")return checkTrainingDoorAssets();
- auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe";std::set<std::string> equipment{"axe"};HoseItemSelection::State itemInventory;itemInventory.selected=0;HoseSprayPoseList::State hosePoseList;float extinguisherCharge=1;int attachedValve=-1;Scripts vm(load("scripts.json"));TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);std::vector<Door> doors;std::vector<TrainingPropModel> propModels;auto trainingMotions=load("motions.json");auto modelIds=trainingModelIds(entities);
+ auto entities=load("entities.json");auto world=load("world_mesh.json");Collision collision(load("collision.json"));Player player;int playerId=115;std::string hint;float hintRemaining=0;std::string selected="axe",previousSelected="axe";std::set<std::string> equipment{"axe"};HoseItemSelection::State itemInventory;itemInventory.selected=0;HoseSprayPoseList::State hosePoseList;float extinguisherCharge=1;int attachedValve=-1;Scripts vm(load("scripts.json"));TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);std::vector<Door> doors;std::map<int,size_t> doorByEntity;std::vector<TrainingPropModel> propModels;auto trainingMotions=load("motions.json");auto modelIds=trainingModelIds(entities);
  auto itemSlot=[](const std::string& name){if(name=="axe")return 1;if(name=="extinguisher")return 2;if(name=="goggles")return 3;if(name=="hose")return 4;return -1;};
  auto itemName=[](int slot){if(slot==1)return std::string("axe");if(slot==2)return std::string("extinguisher");if(slot==3)return std::string("goggles");if(slot==4)return std::string("hose");return std::string{};};
  auto selectEquipment=[&](const std::string& name){int slot=itemSlot(name);if(slot<0||!equipment.count(name)||!itemInventory.slots[size_t(slot)].present)return false;HoseItemSelection::Result selection;bool changed=HoseItemSelection::selectSlot(itemInventory,slot,false,selection);if(changed)selected=itemName(itemInventory.selected);return changed;};
@@ -223,10 +223,11 @@ int main(int argc,char** argv){try{
  // Genesis 1003BBA0 copies serialized GFX_Model origin (+0x20) into the
  // WorldModel rotational center (+0xA4), read by geWorld_GetModelRotationalCenter.
  for(int i=0;i<count(entities);i++){auto e=at(entities,i);auto props=field(e,"properties");if(str(field(e,"class"))=="RCS_BModel"&&str(field(props,"S_Script01"))=="*Door"){
- int mi=integer(field(e,"model"));auto children=trainingDoorChildren(e,modelIds);if(children.size()!=1||children[0]!=mi)throw std::runtime_error("Training door child/model mapping changed for entity "+std::to_string(integer(field(e,"index"))));V pivot{};auto models=field(collision.data,"models");for(int k=0;k<count(models);k++)if(integer(field(at(models,k),"index"))==children[0])pivot=vec(field(at(models,k),"origin"));auto b=field(e,"bounds");auto sourceBounds=trainingDoorOpenAwayBounds(e,collision.data,modelIds);Door door{mi,vec(field(b,"mins")),vec(field(b,"maxs")),pivot,sourceBounds.first,sourceBounds.second,float(std::stof(str(field(props,"E_Reach"))))};door.pathEndRotation=trainingDoorEndRotation(trainingMotions,children[0]);doors.push_back(door);}
+ int mi=integer(field(e,"model")),entity=integer(field(e,"index"));auto children=trainingDoorChildren(e,modelIds);if(children.size()!=1||children[0]!=mi)throw std::runtime_error("Training door child/model mapping changed for entity "+std::to_string(entity));V pivot{};auto models=field(collision.data,"models");for(int k=0;k<count(models);k++)if(integer(field(at(models,k),"index"))==children[0])pivot=vec(field(at(models,k),"origin"));auto sourceBounds=trainingDoorOpenAwayBounds(e,collision.data,modelIds);Door door;door.entity=entity;door.model=mi;door.pivot=pivot;door.openAwayLo=sourceBounds.first;door.openAwayHi=sourceBounds.second;door.pathEndRotation=trainingDoorEndRotation(trainingMotions,children[0]);doorByEntity.emplace(entity,doors.size());doors.push_back(door);}
  if(str(field(e,"class"))=="RCS_BoundsTrigger")collision.disabled.insert(integer(field(e,"model")));if(str(field(e,"class"))=="RCS_PlayerRescue"){playerId=integer(field(e,"index"));std::string pos=str(field(props,"ZZ_location"));sscanf(pos.c_str(),"%f %f %f",&player.p.x,&player.p.y,&player.p.z);}}
  vm.hint=[&](std::string text,float seconds){hint=text;hintRemaining=seconds;};
  vm.findEntity=[&](std::string name){if(name=="player"||name=="Player")return playerId;for(int i=0;i<count(entities);i++){auto e=at(entities,i);if(str(field(field(e,"properties"),"A_Name"))==name)return integer(field(e,"index"));}return -1;};
+ auto retryDoorCommand=[&](int id,const std::string& command){auto& queue=vm.actorQueues[id];queue.commands.clear();queue.waiting=false;queue.commands.push_back({id,command,"door-command-retry",false});};
  vm.host=[&](int id,std::string command){auto [verb,args]=token(command);
  if(id==playerId){if(verb=="equip"){equipment.insert(args);int slot=itemSlot(args);if(slot>=0){itemInventory.slots[size_t(slot)].present=true;HoseItemSelection::Result selection;if(HoseItemSelection::selectSlot(itemInventory,slot,false,selection))selected=itemName(itemInventory.selected);}return true;}if(verb=="select"){selectEquipment(args);return true;}if(verb=="touchhose"&&args=="25"){equipment.insert("hose");if(!itemInventory.slots[4].present){itemInventory.slots[4].present=true;HoseSprayPoseList::initializeTraining(hosePoseList,25);}HoseItemSelection::Result modeChange;HoseItemSelection::setMode(itemInventory,2,modeChange);return true;}if(command=="toolcmd extinguisher refill"){extinguisherCharge=1;return true;}if(verb=="climb"){if(!player.climbing){player.climbing=true;player.v={};}return true;}if(verb=="unclimb"){player.climbing=false;return true;}if(verb=="setashdensity"){char* end=nullptr;float value=std::strtof(args.c_str(),&end);if(end!=args.c_str())player.setAshDensity(value);return true;}if(verb=="setrescuebot"){int value;if(std::sscanf(args.c_str(),"%i",&value)==1)player.rescueBotEnabled=value!=0;return true;}}
  if(verb=="makezone"){
@@ -234,6 +235,21 @@ int main(int argc,char** argv){try{
   if(!trigger||str(field(trigger,"class"))!="RCS_BoundsTrigger")throw std::runtime_error("makezone source is not a Training BoundsTrigger: "+std::to_string(id));
   J bounds=field(trigger,"bounds");if(!field(bounds,"mins")||!field(bounds,"maxs"))throw std::runtime_error("Training BoundsTrigger has no extracted bounds: "+std::to_string(id));
   zones.addTrigger(unwrap(args),id,vec(field(bounds,"mins")),vec(field(bounds,"maxs")));return true;
+ }
+ auto doorAt=doorByEntity.find(id);if(doorAt!=doorByEntity.end()){
+  auto& door=doors[doorAt->second];
+  if(verb=="sethitpoints"){char* end=nullptr;door.hitPoints=int(std::strtol(args.c_str(),&end,0));return end!=args.c_str();}
+  if(verb=="settimescale"){char* end=nullptr;float value=std::strtof(args.c_str(),&end);if(end==args.c_str())return false;door.timeScale=value;return true;}
+  if(verb=="openaway"){
+   if(door.motionState==4)retryDoorCommand(id,"openaway");
+   else{door.chooseOpenAway(player.p);door.motionState=3;}
+   return true;
+  }
+  if(verb=="close"){
+   if(door.motionState!=3)door.motionState=4;
+   else retryDoorCommand(id,"close");
+   return true;
+  }
  }
  if(verb=="makevalve"||verb=="setscale"||verb=="settimescale"||verb=="sethitpoints"||verb=="openaway"||verb=="close"||verb=="flush")return true;
  return false;
@@ -283,6 +299,20 @@ int main(int argc,char** argv){try{
  double angle=(double(spawn.selectedHeading)*30.0+180.0)*double(float(0.01745329238474369f));float c=float(std::cos(angle)),sn=float(std::sin(angle));frame.axis={{{c,0,sn},{0,1,0},{-sn,0,c}}};};
  for(auto e:startup){int id=integer(field(e,"index"));startupEntities[id]=e;trainingEntities.emplace(id,TrainingEntityIdentity{id,e,str(field(e,"class"))});startupQueue.enqueue([id]{return id;});}
  startupQueue.drain();
+ if(argc>1&&std::string(argv[1])=="--door-script-check"){
+  int mismatches=0;if(doors.size()!=20||doorByEntity.size()!=20){std::cout<<"Training door entity count mismatch: "<<doors.size()<<"\n";return 3;}
+  int id=doorByEntity.begin()->first;Door& door=doors[doorByEntity.begin()->second];
+  if(door.hitPoints!=0||door.timeScale!=3.f){mismatches++;std::cout<<"Door startup EVS did not set hitpoints/timescale\n";}
+  vm.dispatch(id,"touch");if(door.motionState!=3)mismatches++;
+  door.update(.05f,collision);vm.dispatch(id,"untouch");door.update(.05f,collision);vm.advanceEntity(id,50);
+  if(door.motionState!=3||door.fraction<=0||vm.actorQueues[id].commands.empty()||token(vm.actorQueues[id].commands.front().command).first!="close"){mismatches++;std::cout<<"Door close-while-opening retry did not queue\n";}
+  door.update(.25f,collision);vm.advanceEntity(id,300);if(door.motionState!=4)mismatches++;
+  door.update(.05f,collision);vm.dispatch(id,"touch");if(vm.actorQueues[id].commands.empty()||token(vm.actorQueues[id].commands.front().command).first!="openaway")mismatches++;
+  door.update(.1f,collision);vm.advanceEntity(id,400);door.update(.2f,collision);vm.advanceEntity(id,600);
+  if(door.motionState!=3||door.fraction!=0.f)mismatches++;
+  door.update(1.f,collision);if(door.motionState!=0||door.fraction!=1.f)mismatches++;
+  std::cout<<"Training door scripts: 20 authored doors; startup sethitpoints/settimescale, touch/open, untouch/close retry, and reopen-during-close; mismatches="<<mismatches<<" (global BModel callback cadence remains unresolved)\n";return mismatches?3:0;
+ }
  // Only the source types consumed by the victim membership/exit routines.
  // This preserves their relative global startup order without classifying
  // unrelated engine entities with guessed type IDs.
@@ -1251,7 +1281,7 @@ int main(int argc,char** argv){try{
  // A fresh TPlayerInfo defaults to DifficultyLevel 1, selecting the source's
  // 40-degree pitch cap. SDL relative-Y units are not calibrated to the old backend.
  while(running){SDL_Event event;while(SDL_PollEvent(&event)){if(event.type==SDL_QUIT)running=false;if(event.type==SDL_KEYDOWN&&!event.key.repeat){auto key=event.key.keysym.sym;if(key==SDLK_ESCAPE){captured=!captured;SDL_SetRelativeMouseMode(captured?SDL_TRUE:SDL_FALSE);}if(key==SDLK_SPACE)jumpEdge=true;if(key==SDLK_SPACE||key==SDLK_LSHIFT||key==SDLK_RSHIFT)usePressed=true;if(key==SDLK_c||key==SDLK_LCTRL||key==SDLK_RCTRL)crouchEdge=true;if(key==SDLK_1||key==SDLK_KP_1)selectEquipment("axe");if(key==SDLK_2||key==SDLK_KP_2)selectEquipment("extinguisher");}if(event.type==SDL_MOUSEBUTTONDOWN){if(event.button.button==SDL_BUTTON_RIGHT)jumpEdge=true;if(event.button.button==SDL_BUTTON_LEFT&&!actionHeld){actionHeld=true;actionPressed=true;}}if(event.type==SDL_MOUSEBUTTONUP&&event.button.button==SDL_BUTTON_LEFT&&actionHeld){actionHeld=false;actionReleased=true;}if(event.type==SDL_MOUSEMOTION&&captured){yaw-=event.motion.xrel*.0025f;pitch-=event.motion.yrel*(0.1f*0.01745329251994329577f);pitch=std::clamp(pitch,-40.f*0.01745329251994329577f,40.f*0.01745329251994329577f);}}
- if(!clock.tick(SDL_GetTicks())){SDL_Delay(1);continue;}float dt=clock.dt;startupTick();auto keys=SDL_GetKeyboardState(nullptr);float moveForward=captured?float(keys[SDL_SCANCODE_W]-keys[SDL_SCANCODE_S]):0.f;float moveSide=captured?.75f*float(keys[SDL_SCANCODE_D]-keys[SDL_SCANCODE_A]):0.f;for(auto& door:doors)door.update(player.p,dt,collision);if(captured)player.step(dt,moveForward,moveSide,yaw,keys[SDL_SCANCODE_SPACE]||(SDL_GetMouseState(nullptr,nullptr)&SDL_BUTTON(SDL_BUTTON_RIGHT)),jumpEdge,crouchEdge,collision,pitch);jumpEdge=crouchEdge=false;vm.advance(clock.current);
+ if(!clock.tick(SDL_GetTicks())){SDL_Delay(1);continue;}float dt=clock.dt;startupTick();auto keys=SDL_GetKeyboardState(nullptr);float moveForward=captured?float(keys[SDL_SCANCODE_W]-keys[SDL_SCANCODE_S]):0.f;float moveSide=captured?.75f*float(keys[SDL_SCANCODE_D]-keys[SDL_SCANCODE_A]):0.f;if(captured)player.step(dt,moveForward,moveSide,yaw,keys[SDL_SCANCODE_SPACE]||(SDL_GetMouseState(nullptr,nullptr)&SDL_BUTTON(SDL_BUTTON_RIGHT)),jumpEdge,crouchEdge,collision,pitch);jumpEdge=crouchEdge=false;for(auto& door:doors)door.update(dt,collision);vm.advance(clock.current);
  // 00452570 tests the movement vector against 1e-7. 0044F340 then chooses
  // the 00491140 mode from that flag, player state, and active-view byte.
  bool moving=std::sqrt(moveForward*moveForward+moveSide*moveSide)>1e-7f;int playerState=player.crouch?4:3;int requestedHeadMode=HeadMotion::viewMode(playerState,true,moving);auto headOffset=headMotion.update(requestedHeadMode,dt);

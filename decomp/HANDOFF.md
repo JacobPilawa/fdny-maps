@@ -2,6 +2,10 @@
 
 Snapshot: 2026-10-12. Target: complete source-verified 1-to-1 Training reproduction, then reuse recovered systems for a full C++ port. Training remains a partial playable reconstruction; whole-run RNG and frame order are unverified.
 
+**Current module chunk — Training doors:** authored EVS touch/untouch now drives path states 3/4 for all 20 doors; queued close/open retries and startup hitpoints/timescale are represented. Build succeeded and `--door-script-check` passes the authored macro transitions. Initial motion state, recurring callback cadence, exact Genesis transform, door audio, and whole-loop parity remain open. See [`evidence/training-door-motion-audit.md`](evidence/training-door-motion-audit.md). This advances the Player/world-interactions module in [`TRAINING_MODULE_ROADMAP.md`](TRAINING_MODULE_ROADMAP.md); it does not close that module.
+
+For module-level delivery order and the concrete existing/new files per module, see [`TRAINING_MODULE_ROADMAP.md`](TRAINING_MODULE_ROADMAP.md). Work now closes one connected gameplay module at a time; the HTML viewer refreshes at module milestones, not after each helper trace.
+
 ## Workspace and navigation
 
 - Workspace: `/Users/jacobpilawa/Documents/ChatGPT/FDNY_trackdown`; source: `decomp/`; branch: `main`.

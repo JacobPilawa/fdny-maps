@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "a161bd8",
-  "tests": 36,
+  "commit": "86ef364",
+  "tests": 37,
   "scope": "Training",
   "files": [
     {
@@ -123,7 +123,7 @@
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 180682
+      "bytes": 181042
     },
     {
       "path": "src/startup.h",
@@ -1608,6 +1608,131 @@
         ]
       ],
       "bytes": 2065
+    },
+    {
+      "path": "src/hose_spray_pose_list.h",
+      "group": "Inventory",
+      "summary": "Original-function coverage not classified in this viewer.",
+      "evidence": "CHECKLIST.md",
+      "units": [
+        [
+          "UNMAPPED",
+          "hose_spray_pose_list.h",
+          "open",
+          "Inventory entry awaiting classification."
+        ]
+      ],
+      "bytes": 4434
+    }
+  ],
+  "test_status": "37 CTest checks configured; the three focused hose checks pass; the full suite was last run at 36 checks.",
+  "modules": [
+    {
+      "name": "Runtime, startup, and actor schedule",
+      "state": "Foundation; incomplete",
+      "state_key": "partial",
+      "summary": "A Training scene runs, but source-ordered initialization and recurring Player, victim, BModel, and FireRescue updates are not closed.",
+      "next": "Close the shared callback/order boundary, then connect authored startup and recurring updates.",
+      "files": [
+        "src/main.cpp",
+        "src/world_startup.h",
+        "src/startup.h",
+        "src/scripts.h",
+        "src/spawn_queue.h",
+        "src/clock.h",
+        "src/bmodel_contact.h"
+      ],
+      "evidence": "evidence/fire-update/root-think-dispatch-query-20261012.md"
+    },
+    {
+      "name": "Player movement and world interactions",
+      "state": "Partly playable",
+      "state_key": "partial",
+      "summary": "Movement and several world contacts work in the native scene. Axe, lift/carry/throw, candidate order, and some callback latency remain disconnected or approximate.",
+      "next": "Finish the Training interaction path as one input-to-action sequence.",
+      "files": [
+        "src/main.cpp",
+        "src/motion.h",
+        "src/core.h",
+        "src/bmodel_contact.h",
+        "src/bmodel_use.h",
+        "src/use_manager.h",
+        "src/throw_scalar.h",
+        "src/interaction_box.h"
+      ],
+      "evidence": "evidence/training-liftable-audit.md"
+    },
+    {
+      "name": "Fire response and tools",
+      "state": "Partial; lifecycle not wired",
+      "state_key": "partial",
+      "summary": "Training fire visuals and extinguisher contact/suppression components exist. Recurring Fire Think, visible dousing/recovery, complete hose stream, particles, and Axe behavior remain open.",
+      "next": "Connect the fire update, messages, tools, state changes, and visible result in one Training scenario.",
+      "files": [
+        "src/fire_entity.h",
+        "src/fire_update.h",
+        "src/fire_size.h",
+        "src/fire_message_queue.h",
+        "src/fire_suppression.h",
+        "src/fire_contact.h",
+        "src/extinguisher_contacts.h",
+        "src/extinguisher_effects.h",
+        "src/hose_spray_pose_list.h",
+        "src/main.cpp"
+      ],
+      "evidence": "evidence/fire-update/training-think-behavior-audit.md"
+    },
+    {
+      "name": "Victim lifecycle and mission flow",
+      "state": "Partial; no full rescue run",
+      "state_key": "partial",
+      "summary": "Victim spawn selection/rendering and several pickup, escape, and passout transactions are implemented as components. Automatic AI, carry, rescue/exit scheduling, engine services, and mission completion are not integrated.",
+      "next": "Connect one authored Training victim from spawn through rescue or failure and mission outcome.",
+      "files": [
+        "src/victim_proximity.h",
+        "src/victim_rescue.h",
+        "src/victim_transactions.h",
+        "src/victim_release.h",
+        "src/victim_exit.h",
+        "src/player_passout.h",
+        "src/main.cpp"
+      ],
+      "evidence": "evidence/victim-ai-audit/training-pickup-flow.md"
+    },
+    {
+      "name": "Presentation and game services",
+      "state": "Partial",
+      "state_key": "partial",
+      "summary": "The scene renders map geometry, fire visuals, and initial victim poses. Audio, HUD/stat services, goggles, complete particle/smoke/light paths, and full actor animation parity remain.",
+      "next": "Bind presentation to the completed gameplay modules and compare the visible/audio result.",
+      "files": [
+        "src/fire_renderer.h",
+        "src/actor_renderer.h",
+        "src/actor_pose.h",
+        "src/actor_animation.h",
+        "src/sprite_animation.h",
+        "src/player_ash_pool.h",
+        "src/sound_queue.h",
+        "src/ui.h",
+        "src/assets.h"
+      ],
+      "evidence": "evidence/README.md"
+    },
+    {
+      "name": "Whole-Training parity and runnable handoff",
+      "state": "Not verified",
+      "state_key": "open",
+      "summary": "There is no complete original-versus-native Training run. Shared RNG helpers have strong component comparisons, but end-to-end draw order, interactions, outcomes, restart, and clean asset setup remain unverified.",
+      "next": "Replay a complete authored Training run from equal RNG state, inputs, and frame timing; fix divergences module by module.",
+      "files": [
+        "run.sh",
+        "CMakeLists.txt",
+        "README.md",
+        "CHECKLIST.md",
+        "mechanics.json",
+        "tools/record_startup.py"
+      ],
+      "evidence": "IMPLEMENTATION_PLAN.md"
     }
   ]
 }

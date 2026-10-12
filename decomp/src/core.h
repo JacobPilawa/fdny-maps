@@ -98,16 +98,17 @@ struct Player{
  }
 };
 struct Door{
- int model;V lo,hi,pivot,openAwayLo,openAwayHi;float reach=100,fraction=0;Q pathEndRotation{};bool touching=false;
- void openAway(V player){
+ int entity=0,model=0;V pivot,openAwayLo,openAwayHi;float fraction=0,timeScale=0;int motionState=0,hitPoints=-1;Q pathEndRotation{};
+ void chooseOpenAway(V player){
   // RCS_BModel::openaway (0043D6A0). Training door keyframe 0 is identity,
   // so the source transform keyframe0^T * keyframe1 is pathEndRotation.
   V p0{openAwayLo.x,0,openAwayLo.z},p1{openAwayHi.x,0,openAwayHi.z};V d0=p0-pivot,d1=p1-pivot;
   V direction=length(d0)<=length(d1)?p1-p0:p0-p1;float span=length(direction);if(span!=0)direction=direction*(1/span);
   V transformed=rotateQ(direction,pathEndRotation);if(dot(transformed,player-pivot)>=0)pathEndRotation=normalizeQuaternion({pathEndRotation.w,-pathEndRotation.x,-pathEndRotation.y,-pathEndRotation.z});
  }
- void update(V p,float dt,Collision& c){float dist=0;for(int i=0;i<3;i++){float d=p[i]-std::clamp(p[i],lo[i],hi[i]);dist+=d*d;}bool wants=dist<=reach*reach;
- if(wants&&!touching&&fraction==0)openAway(p);touching=wants;fraction=std::clamp(fraction+(wants?1:-1)*dt*3,0.f,1.f);
+ void update(float dt,Collision& c){
+  if(motionState==3){fraction+=dt*timeScale;if(fraction>=1.f){fraction=1.f;motionState=0;}}
+  else if(motionState==4){fraction-=dt*timeScale;if(fraction<=0.f){fraction=0.f;motionState=0;}}
  Q rotation=slerp(Q{},pathEndRotation,fraction);c.angles[model]=2*std::atan2(rotation.y,rotation.w);
  }
 };

@@ -40,8 +40,11 @@ struct Scripts{
  void dispatch(int entity,std::string event){auto copy=bindings[entity];for(auto& binding:copy)if(binding.event==event)run(binding.command,entity,binding.source);}
  void startupEntity(J e){int entity=integer(field(e,"index"));auto props=field(e,"properties");for(int i=1;i<=10;i++){char key[24];snprintf(key,sizeof(key),"S_Script%02d",i);run(str(field(props,key)),entity,std::to_string(entity)+":"+key,0,true);}}
  // 00470740 checks the absolute wait deadline and removes at most one queued
- // command per ScriptActor update. This host schedules one such update per
- // entity here; its position/order versus the original world callbacks is not
- // yet verified.
- void advance(uint32_t currentTimeMs){timeMs=currentTimeMs;std::vector<int> scheduled;for(const auto& [entity,queue]:actorQueues)scheduled.push_back(entity);for(int entity:scheduled){auto& queue=actorQueues.at(entity);if(queue.waiting){if(queue.waitUntil>timeMs)continue;queue.waiting=false;}if(queue.commands.empty())continue;auto item=std::move(queue.commands.front());queue.commands.pop_front();run(item.command,item.entity,item.source,0,item.startup);}}
+ // command per ScriptActor update. The per-entity primitive lets a reconstructed
+ // owner callback preserve its local contact -> motion -> queue order without
+ // claiming that the host's global callback schedule is original.
+ void advanceEntity(int entity,uint32_t currentTimeMs){timeMs=currentTimeMs;auto found=actorQueues.find(entity);if(found==actorQueues.end())return;auto& queue=found->second;if(queue.waiting){if(queue.waitUntil>timeMs)return;queue.waiting=false;}if(queue.commands.empty())return;auto item=std::move(queue.commands.front());queue.commands.pop_front();run(item.command,item.entity,item.source,0,item.startup);}
+ // The host currently approximates the original scheduler by visiting every
+ // queued entity once per frame, in entity-ID order.
+ void advance(uint32_t currentTimeMs){timeMs=currentTimeMs;std::vector<int> scheduled;for(const auto& [entity,queue]:actorQueues)scheduled.push_back(entity);for(int entity:scheduled)advanceEntity(entity,currentTimeMs);}
 };
