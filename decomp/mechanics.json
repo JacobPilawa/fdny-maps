@@ -286,7 +286,7 @@
     },
     {
       "name": "Training ash-pool lifecycle",
-      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; source-bound five-frame 3,500-clock-unit animation now advances before density scan; Player schedule, scene transform, rendering and full RNG parity pending",
+      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; source-bound five-frame 3,500-clock-unit animation now advances before density scan; render lookup maps IDs 200/201 to rescue.rrf ash1.bmp/ash2.bmp and source-maps color/alpha operands; bitmap copies, runtime renderer objects, Player schedule, scene transform, rendering and full RNG parity pending",
       "original_entries": [
         "004465d0",
         "004463f0",
@@ -295,7 +295,14 @@
         "00446470",
         "0047d370",
         "0047d660",
-        "0047d2b0"
+        "0047d2b0",
+        "0047f960",
+        "0047d820",
+        "00493d00",
+        "00493650",
+        "0047d420",
+        "0047d8a0",
+        "0047d6d0"
       ],
       "implementation": "src/player_ash_pool.h",
       "comparison": "player_ash_pool-check"
