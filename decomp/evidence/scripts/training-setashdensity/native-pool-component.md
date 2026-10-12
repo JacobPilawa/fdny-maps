@@ -169,19 +169,26 @@ hash-pinned trees: a root-only transform, one parent, two parent levels, and
 signed-zero inputs. `player_ash_transform_pcode-check` compares all nine basis
 words, three origin words, three scale words, and the cleared parent pointer;
 all four cases match exactly. These authored cases establish the resolver's
-generic component behavior, not a captured Training parent chain. The ash
-particle constructor calls `0042D2D0` with a null parent, but later runtime
-mutation of that pointer has not been captured. Likewise, the existing
-`0047F5A0` geometry oracle still supplies a resolved transform directly, so
-parent composition, geometry, render-list insertion, and visible output have
-not yet been checked as one original execution.
+generic component behavior, not a captured non-null Training parent chain.
+The ash particle transform begins at `particle+0x34`, so its parent pointer is
+`particle+0x74`. Constructor `0047F850` calls `0042D2D0` on that subobject with
+a null parent; `0047F500` also explicitly resets particle `+0x74` to zero.
+Player pool updater `004467E0` calls `00446510` and then `0047F960` for each
+listed particle. The recovered particle-update and geometry path contains no
+parent assignment. A whole-listing `FieldStoreAudit.java 0x74` found no
+particle-specific nonzero direct store; its results include unrelated stack
+locals and same-offset fields in other classes, and do not rule out indirect or
+computed writes. The recurring Player scheduler remains open. A separate
+`RCS_MiscEmitter` child-particle path calls `0047F960`; see
+[`evidence/effects/misc-emitter-particle-path.md`](../../effects/misc-emitter-particle-path.md).
 
-`AshParticleGeometryPcodeOracle.java` executes original `0047F5A0` through
-`004977B0` and `00495D20` for five hash-pinned affine frames; its local static
-template guard is pre-marked initialized and no parent transform is supplied.
-The native `player_ash_geometry_pcode-check` compares all twelve output words
-per case and dirty-byte clearing; all five cases match exactly. This establishes
-isolated cached vertex parity, not state scheduling, parent composition, render
-resources, live polygon-list contents, or visible ash output. The imported
+`AshParticleGeometryPcodeOracle.java` seeds the particle transform at `+0x34`
+with its parent pointer `+0x74` null, then executes original `0047F5A0`
+through the real `004977B0` resolver and `00495D20` vertex transform for five
+hash-pinned affine frames. The native `player_ash_geometry_pcode-check`
+compares all twelve output words per case and dirty-byte clearing; all five
+cases match exactly. Thus the null-parent resolver-plus-geometry path is
+compared together. Non-null parent ancestry through geometry, render resources,
+live polygon-list contents, and visible ash output remain open. The imported
 polygon API identity and its local list-insertion effects are separately
 recorded in `resource-render-followup.md`.
