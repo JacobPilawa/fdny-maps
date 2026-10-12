@@ -12,6 +12,9 @@ struct VictimPickupPlayerState {
 struct VictimPickupActorState {
  int entity=-1;
  uint32_t state=4; // VictimRescueEnt::Init (0045B690) writes state 4.
+ // Training RCS_VictimRescue construction adds both actors with 0x400.
+ // Other classes/levels should seed this field from their own AddActor path.
+ uint32_t worldActorFlags=0x400;
 };
 
 enum class VictimPickupMessageResult {
@@ -26,8 +29,9 @@ enum class VictimPickupMessageResult {
 // Player+0x3534 before calling 0045BEF0. That helper sets victim state 5,
 // calls 00481140 with false (which sets the Genesis world actor flags word to
 // 0, suppressing normal-pass render submission), then sends the synchronous
-// "pickup" event through 004705B0. Player UI/state work in
-// 00450440 follows that helper. The event callbacks below preserve this order.
+// "pickup" event through 004705B0. Ordered Player post-effects in 00450440
+// follow that helper; see evidence/victim-ai-audit/pickup-post-effects.md.
+// The callbacks below preserve these boundaries and source order.
 // They deliberately do not model the caller's update schedule.
 template<class SetActorFlags,class DispatchPickup,class ApplyPlayerPostPickup>
 VictimPickupMessageResult deliverVictimPickupMessage(
@@ -44,6 +48,7 @@ VictimPickupMessageResult deliverVictimPickupMessage(
 
  player.carriedVictimEntity=victim.entity;
  victim.state=5;
+ victim.worldActorFlags=0;
  setActorFlags(victim.entity,uint32_t(0));
  dispatchPickup(victim.entity);
  applyPlayerPostPickup();

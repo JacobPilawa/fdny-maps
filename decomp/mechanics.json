@@ -128,7 +128,7 @@
     },
     {
       "name": "Fire growth, suppression, spreading and cleanup",
-      "status": "initializer and Think branches source-mapped; 50 placed-fire initializer fixtures match; Training A_Name at UserData +0x04 confirms one conditional FireBurn RNG draw per fire after effect init; recurring Think schedule, visible lifecycle and audio remain open",
+      "status": "initializer and Think branches source-mapped; 50 placed-fire initializer fixtures match; Training A_Name at UserData +0x04 confirms one conditional FireBurn RNG draw per fire after effect init; bounded Ghidra follow-up checked the shared visual initializer and app callback route without finding a recurring Think dispatcher; schedule/order, visible lifecycle and audio remain open (evidence/fire-update/think-dispatcher-candidate-followup.md)",
       "original_entries": [
         "00448970",
         "0044a7a0",
@@ -144,7 +144,7 @@
     },
     {
       "name": "Victim startup candidates, AI and collision",
-      "status": "authored three-candidate lists recovered for both Training victims; selection conversion verified; runtime model/AI pending; model-floor wrapper matches 84 original calls; live actor integration pending",
+      "status": "authored three-candidate lists recovered for both Training victims; selection conversion verified; native scene draws both selected victims with source-traced transforms and initial motions; model-floor wrapper matches 84 original calls; live actor runtime and AI pending",
       "original_entries": [
         "0045d5b0",
         "0045c7f0"
@@ -152,10 +152,20 @@
     },
     {
       "name": "Victim pickup, carrying, rescue and exits",
-      "status": "pending",
+      "status": "read-only Ghidra maps the delivered 0x7532 pickup handler and ordered Player post-effects; isolated native transaction tracks Training actor flags 0x400→0 and passes its gate/order check; proximity/message scheduling, post-effects, carry transform, rescue and exits remain open",
       "original_entries": [
+        "00453a70",
+        "00450440",
+        "0045bef0",
+        "00481140",
+        "0044fce0",
+        "00490e60",
+        "004571a0",
+        "00484260",
         "004513a0",
-        "004504c0"
+        "00451160",
+        "004504c0",
+        "0045c000"
       ]
     },
     {
@@ -218,7 +228,7 @@
     },
     {
       "name": "Fire Think recovery and update gating",
-      "status": "1350 original calls match core strength/gating/presentation and host size/path call counts; visual/audio/path services supplied by fixture; live entity integration pending",
+      "status": "1350 original calls match core strength/gating/presentation and host size/path call counts; visual/audio/path services supplied by fixture; Ghidra has not identified a recurring 00449FE0 dispatcher; live entity integration pending",
       "original_entries": [
         "00449FE0"
       ],
