@@ -1,6 +1,6 @@
 # FDNY decomp handoff
 
-Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduction, then reuse recovered systems for a full C++ port. Training remains a partial playable reconstruction; whole-run RNG and frame order are unverified.
+Snapshot: 2026-10-12. Target: complete source-verified 1-to-1 Training reproduction, then reuse recovered systems for a full C++ port. Training remains a partial playable reconstruction; whole-run RNG and frame order are unverified.
 
 ## Workspace and navigation
 
@@ -31,7 +31,7 @@ Evidence: also see `evidence/victim-ai-audit/rescue-deadline-exit-component.md`.
 
 ## Validation and remaining gaps
 
-All 22 configured CTest checks pass, including four focused Player checks. Original P-code fixtures compare the native deadline/exposure suffix in three cases and the passout dispatcher in five cases under controlled host-service stubs. Existing pickup message/14-case geometry checks pass. The prior arithmetic milestone passed fourteen broader selected checks; timed-transition `--view-update-check` and `--view-item-offset-chain-check` remain red with identical old/new arithmetic results. They are existing parity gaps, not passing checks. Details are in `release-frame-component.md`. The prior two-frame native render check drew 90 textured mesh groups with OpenGL error 0 after display-service access.
+The last full CTest run passed all 22 checks configured at that time, including four focused Player checks. The ash-pool standalone check was added afterward, compiled and passed; rerun full CTest when the build environment is next available. Original P-code fixtures compare the native deadline/exposure suffix in three cases and the passout dispatcher in five cases under controlled host-service stubs. Existing pickup message/14-case geometry checks pass. The prior arithmetic milestone passed fourteen broader selected checks; timed-transition `--view-update-check` and `--view-item-offset-chain-check` remain red with identical old/new arithmetic results. They are existing parity gaps, not passing checks. Details are in `release-frame-component.md`. The prior two-frame native render check drew 90 textured mesh groups with OpenGL error 0 after display-service access.
 
 Next work:
 
@@ -39,6 +39,10 @@ Next work:
 2. Establish the recurring root-slot caller, owner/cadence/order for BModel updater `0043DC60` and Fire Think `00449FE0`. FireRescue root `+0x14 → 0043AFE0 → 00470740 → secondary slot 0` proves the local Think route, but not its recurring caller. See `evidence/fire-update/root-slot-think-route-followup.md`.
 3. Bind player passout animation/chatter/selected-item release and stat services, plus victim passout/drop animation, status, spawn, and UI services into the scene. Then connect verified schedules and continuous carry. The component checks do not establish live-game behavior.
 4. Complete scripts, BModel carry/throw/axe, hose, damage, goggles, sounds, mission completion and full Training replay parity. Never insert guessed RNG draws to compensate for missing consumers.
+
+Training ash now has a partial native component at `src/player_ash_pool.h`: known particle constructor state, exact vector writes, descriptor metadata and direct RNG order are represented. Ghidra also confirms Training's density command only changes the post-update scan prefix; the all-entry update/presentation pass still runs. Engine constructor/presentation services, scene transform, indirect-call effects, live cadence, runtime integration and visual parity remain open; see `evidence/scripts/training-setashdensity/native-pool-component.md` and `ghidra-helper-recovery.md`.
+
+Training goggles flow is a separate open path: `004395C0` registers `SELECT_GOGGLES`, and `00462A60` creates a named Goggles resource, but the authored Training scripts exclude the shared goggles grant and `input.rrf` has no goggles binding. Native currently only records the generic `equip` string; it has no goggles selection/update/scan. The original selection key, item vtable, scan callback and result/message effects remain unknown. Do not infer them from the tutorial hint alone; see `evidence/goggles-training-flow-audit.md`.
 
 ## Reverse-engineering and user constraints
 
@@ -48,7 +52,7 @@ Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d
 
 No live game capture has run. Earlier WineDbg attaches froze/crashed. The Fire-dispatch recorder now has a 300-second default end-to-end cap, explicit PID attach, Ctrl-C/detach recovery, and a 30-second cleanup reserve. It records global game clock `00502AFC` at the key owner, Think, influence, drain, view and Player callbacks. A disposable cloned-prefix 64-bit `ping.exe` smoke test confirmed forced-timeout interrupt, detach, debugger exit, and target survival. A PE32 ping follow-up timed out during process enumeration before attach; previous game attempts did enumerate FDNY but then stalled on an interactive command. Next step: run the bounded capture with the matching game at its main menu, then have the user enter Training. See `evidence/item-pose/live-extinguisher/message-components/fire-think-live-capture.md`, `evidence/fire-update/winedbg-recovery-smoke.md`, and the raw local results under `evidence/live/`.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation on 2026-10-11: 24% five-hour used and 69% weekly used (76% and 31% remaining).
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation on 2026-10-12: 28% five-hour used and 69% weekly used (72% and 31% remaining).
 
 ## Proximity and deadline input continuation
 
@@ -78,7 +82,7 @@ FireRescue primary vtable slot `+0x14` points to thunk `0043AFE0`; its `this+0x2
 
 ## Viewer update (2026-10-11)
 
-Replaced the ledger-style HTML with a decomp.dev-inspired searchable file treemap, subsystem filters, status distribution, file/routine details and evidence links. Inventories all 67 current native source files, includes recent victim/staging/catalog work, and labels unclassified entries. Rectangle area uses tracked entry count, not original byte size; displayed comparison coverage is not whole-game completion. `viewer-progress.json` maintains the snapshot; run `python3 tools/refresh_progress_viewer.py` from decomp (or use its full path) after editing it to re-embed data and refresh file sizes. The standalone HTML opens without a server. The user resumed the full decompilation goal on 2026-10-11.
+Replaced the ledger-style HTML with a decomp.dev-inspired searchable file treemap, subsystem filters, status distribution, file/routine details and evidence links. The 2026-10-12 refresh inventories all 70 native source files, adds an Effects category and ash-pool routine row, and retains the warning that rectangle size/counts are not whole-game completion. `viewer-progress.json` maintains the snapshot; run `python3 tools/refresh_progress_viewer.py` from decomp (or use its full path) after editing it to re-embed data and refresh file sizes. The standalone HTML opens without a server. The user resumed the full decompilation goal on 2026-10-11.
 
 ## Fire exposure, pain deadline, and passout slice (2026-10-11)
 

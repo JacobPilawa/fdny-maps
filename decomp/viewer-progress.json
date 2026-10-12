@@ -1,7 +1,7 @@
 {
-  "snapshot": "2026-10-11",
+  "snapshot": "2026-10-12",
   "commit": "a97c101",
-  "tests": 22,
+  "tests": 23,
   "scope": "Training",
   "files": [
     {
@@ -1308,6 +1308,43 @@
         ]
       ],
       "bytes": 1331
+    },
+    {
+      "path": "src/player_ash_pool.h",
+      "group": "Effects",
+      "summary": "Source-mapped 100-slot ash pool metadata, known constructor state, direct update vector writes, and conditional RNG order. Engine services and runtime parity remain open.",
+      "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
+      "units": [
+        [
+          "004465D0",
+          "Pool construction",
+          "partial",
+          "Five descriptor records per container, constructor subset, and initial density are source-mapped; opaque constructor services remain.",
+          "evidence/scripts/training-setashdensity/ghidra-helper-recovery.md"
+        ],
+        [
+          "004467E0",
+          "Pool tick / density scan",
+          "partial",
+          "All entries update and present before the density-sized prefix scan; scene callback and schedule are unresolved.",
+          "evidence/scripts/training-setashdensity/audit.md"
+        ],
+        [
+          "00446510",
+          "Due particle update",
+          "partial",
+          "Four conditional draws and their source-ordered vector writes are mapped; presentation can alter active slots.",
+          "evidence/scripts/training-setashdensity/native-pool-component.md"
+        ],
+        [
+          "00446470",
+          "Inactive-slot activation",
+          "partial",
+          "Five conditional draws and direct state stores are mapped; scene transform and animation reset are services.",
+          "evidence/scripts/training-setashdensity/native-pool-component.md"
+        ]
+      ],
+      "bytes": 6818
     }
   ]
 }

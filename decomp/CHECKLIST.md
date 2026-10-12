@@ -1,6 +1,6 @@
 # Training handoff checklist
 
-Updated 2026-10-11. **Target: complete original Training gameplay, then reuse recovered systems for the full game. Currently a playable map/movement prototype. Full Training and whole-run RNG parity are unfinished.**
+Updated 2026-10-12. **Target: complete original Training gameplay, then reuse recovered systems for the full game. Currently a playable map/movement prototype. Full Training and whole-run RNG parity are unfinished.**
 
 `[x]` = done for the stated scope; `[ ]` = outstanding. “Verified” below means a component was compared with original machine-code execution, not that it is integrated or the whole game matches.
 
@@ -41,7 +41,7 @@ Paths below are relative to `decomp/`. Addresses are original EXE entries unless
 - [ ] Fire growth/spread/dousing, player burn damage, air and passing out.
 - [x] Initial Training victim sound-deadline and motion draws run in first-pass source order; spawn-candidate choice and source-derived actor hull floor placement run in the second pass through native Training collision.
 - [ ] Implement victim movement/AI, pickup/carrying and rescue exits; compare the final skinned-vertex/render path against Genesis.dll. The six static authored hull floor contacts now match the original DLL P-code bit-for-bit (`evidence/victim-startup/victim-floor-ghidra-pcode-oracle.md`).
-- [ ] Goggles, particles, lighting, audio, HUD, statistics, failure/restart and completion. Player ash-density state and its 100-slot scan limit are source-mapped; the native effect pool, conditional RNG/update path and particle presentation remain open.
+- [ ] Goggles, particles, lighting, audio, HUD, statistics, failure/restart and completion. Player ash density, 100-slot pool construction, known particle fields/vector writes, and direct conditional RNG order are source-mapped in `src/player_ash_pool.h`; engine constructors, scene transforms, animation/presentation callbacks, runtime integration, indirect-call RNG use, and visual parity remain open (`evidence/scripts/training-setashdensity/`). The original goggles control/resource exists, but Training's scripts do not grant it, no input binding is preserved, and the scan callback is unidentified; native scan behavior is absent (`evidence/goggles-training-flow-audit.md`).
 - [ ] Complete original-run comparison: seed/state, every RNG draw, scheduling and reachable Training mechanics.
 - [ ] Shareable native bundle with dependencies; full asset/presentation parity.
 
@@ -202,6 +202,13 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 
 - [x] Passout composition review preserves cached/frame position distinction and live post-event inputs. Herodown cleanup uses source-ordered live getters; passout composes with the tail and resolves the correction receiver after reset. The composed check and 18 CTest checks pass.
 - [ ] Automatic Player/victim scheduling, real engine/UI adapters and whole-run parity remain unfinished.
+
+## Ash pool and goggles audit (2026-10-12)
+
+- [x] Read-only Ghidra follow-up for the ash-pool constructor/helper fields recovered initial scales/flags, zeroed vectors, the `0042D280` vector store, and the due-update component order. Added `src/player_ash_pool.h` for the 100-slot descriptors, known state, direct RNG/update writes, and explicit engine-service requirements. The focused standalone check compiles and passes; this does not establish original-process parity or runtime integration (`evidence/scripts/training-setashdensity/native-pool-component.md`, `ghidra-helper-recovery.md`).
+- [x] Audited original/native goggles paths and preserved the control/resource, Training grant conditions, and scan-callback gap. No scan behavior was inferred from tutorial text (`evidence/goggles-training-flow-audit.md`).
+- [ ] Finish ash constructor, scene transform, animation/presentation and indirect-call audits; then bind its complete callback/schedule to the Player update and compare live RNG/event/clock traces. Training's Goggles key, vtable, scan target/result, and native scan flow also remain open.
+- Usage at this snapshot: 28% five-hour used, 69% weekly used. The original game was not running at the last process check; a live Training capture still needs a game session at the menu.
 
 ## Viewer update (2026-10-11)
 
