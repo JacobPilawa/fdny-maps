@@ -105,7 +105,7 @@
     },
     {
       "name": "Hose pickup, connection, length and spray",
-      "status": "source target/action path mapped; native Training prop centers/radii, partial Space/Shift USE selection and local attach/detach modes wired; ray/sphere component matches 548 original queries / 3,836 words; five hash-pinned 00444120 P-code cases now confirm attach-event forwarding and the detach early return; composed view selection, touch geometry/schedule, candidate-order capture, original item inventory/frame/UI state, hose actor/stream/effects pending",
+      "status": "source target/action path mapped; native Training prop centers/radii and indexed Axe slot 1/Hose slot 4 owner selection/rescan wired; 548 original ray/sphere queries and nine owner/helper P-code cases match, including 00444120 event forwarding/early return and 0044C840/0044C360 ordered item/UI boundaries; actual axe gate state, item callback bodies, hose transform/frame/pointer commit, composed view selection/schedule, touch geometry, candidate order, actor/stream/effects pending",
       "original_entries": [
         "00451870",
         "0044cab0",
@@ -123,6 +123,12 @@
         "0044c780",
         "00444120",
         "0044c840",
+        "0044c360",
+        "0044c2a0",
+        "00463370",
+        "0044d080",
+        "00460a50",
+        "0045f930",
         "004444b0"
       ]
     },

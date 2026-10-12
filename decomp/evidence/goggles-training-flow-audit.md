@@ -14,7 +14,7 @@ Native Training does not currently select, update, or scan with goggles. The ori
 
 ## Native status
 
-In src/main.cpp, native Training starts with equipment{"axe"} and selected = "axe". The script host's equip verb only inserts the named item into the equipment set, while select changes selection only if the item is already equipped. The live key handling maps 1 to axe and 2 to extinguisher; there is no goggles input, goggles item state/update, or scan action. The native host therefore cannot currently perform the scripted goggles tutorial.
+In `src/main.cpp`, the script host now maps indexed item slots for the source-established Training Axe (slot 1) and Hose Spray (slot 4), and selection updates that inventory state. Extinguisher remains keyed to the source factory's item kind. There is still no goggles grant, goggles input, goggles item callback/state update, or scan action, so the native host cannot currently perform the goggles tutorial.
 
 No goggles behavior was implemented from this static evidence. The Training grant, selection binding/default, live scan inputs/results, and consequences of pressing 1 after spotting a survivor are unresolved. In particular, the hint text in training.evs is not sufficient evidence for granting the item or for the live presentation of a scan.
 

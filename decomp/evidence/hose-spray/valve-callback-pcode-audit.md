@@ -26,7 +26,7 @@ All other tested paths construct and dispatch "use" through the script subobject
 
 src/hose_valve_callback.h expresses this call/return decision. The Training valve candidates are built only from PropModels whose S_Script01 is makevalve, so the current native callback input state is 1. The input loop applies its local attach/detach state when the owner action is called and now omits the script event on detach code 1002.
 
-This does not yet port the exact player item-slot array, old-item activation gate, slot-4 selection callbacks, attachment transform, saved valve pointer, UI refresh/hide calls, or item-frame parenting. Those internals are decompiled under 0044C840 / 0044C2A0 / 0044C360 and remain the next direct valve implementation target. The Player updater's cached dispatch-before-refresh timing and complete native view/candidate integration also remain open.
+The next bounded owner slice now has its own original-P-code comparison: `item-selection-pcode-audit.md` covers the slot array, selection gate callsite, slot-4 callback order, detach first-available scan, mode change and UI service arguments through the pre-frame boundary. The actual Axe gate state, item callback bodies, valve transform/frame math, pointer/mode-3 stores, and follower parenting remain open. The Player updater's cached dispatch-before-refresh timing and complete native view/candidate integration also remain open.
 
 ## Reproduction
 

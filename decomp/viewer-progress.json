@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
   "commit": "86dd149",
-  "tests": 34,
+  "tests": 35,
   "scope": "Training",
   "files": [
     {
@@ -123,7 +123,7 @@
           "evidence/training-door-motion-audit.md"
         ]
       ],
-      "bytes": 179490
+      "bytes": 180682
     },
     {
       "path": "src/startup.h",
@@ -555,7 +555,7 @@
     {
       "path": "src/hose_valve_callback.h",
       "group": "Tools",
-      "summary": "Exact callback branch in 00444120; the owner item-array/frame mutation remains a separate incomplete component.",
+      "summary": "Exact 00444120 attach/detach callback order; owner frame commit remains incomplete.",
       "evidence": "evidence/hose-spray/valve-callback-pcode-audit.md",
       "units": [
         [
@@ -566,6 +566,33 @@
         ]
       ],
       "bytes": 573
+    },
+    {
+      "path": "src/hose_item_selection.h",
+      "group": "Tools",
+      "summary": "Training indexed inventory selection and detach rescan match bounded original P-code owner transactions.",
+      "evidence": "evidence/hose-spray/item-selection-pcode-audit.md",
+      "units": [
+        [
+          "0044C840",
+          "Hose attach/detach selection",
+          "partial",
+          "Eight owner executions compare slot writes, mode and 20 ordered item/UI service events; attachment stops before 004977B0 frame construction."
+        ],
+        [
+          "0044C2A0",
+          "Item activation gate and setter",
+          "partial",
+          "The original selection branch is compared with vtable +0x38/+0x3C as controlled callbacks; Axe's runtime gate state and callback body remain open."
+        ],
+        [
+          "0044C360",
+          "First-available inventory rescan",
+          "verified",
+          "Populated-slot order and empty-list selected-index clear match original P-code."
+        ]
+      ],
+      "bytes": 4045
     },
     {
       "path": "src/tool_follow.h",
