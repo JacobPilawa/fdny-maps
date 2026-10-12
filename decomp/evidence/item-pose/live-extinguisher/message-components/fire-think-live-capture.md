@@ -1,6 +1,6 @@
 # Fire Think live caller capture
 
-Current status (2026-10-11): **the bounded recovery path has passed a harmless-process smoke test; no live game capture has run yet.** The user agreed to enter Training for a bounded capture after this path was ready. Prior WineDbg attempts stalled on the first interactive command; the user saw a black/frozen screen after the first and a crash during the second. Neither attempt recorded gameplay events. See the preserved attempt folders under `decomp/evidence/live/fire-dispatch-20261011-*`, the tracked [recovery smoke note](../../../fire-update/winedbg-recovery-smoke.md), and raw local results under `decomp/evidence/live/winedbg-safe-20261011-233125/`.
+Current status (2026-10-11): **a 64-bit harmless-process timeout/detach smoke test passed; a PE32 ping follow-up timed out before attach; no live game capture has run.** The user agreed to enter Training for a bounded capture after the recovery work. Prior WineDbg game attempts stalled on the first interactive command; the user saw a black/frozen screen after the first and a crash during the second. Neither attempt recorded gameplay events. See the preserved attempt folders under `decomp/evidence/live/fire-dispatch-20261011-*`, the tracked [recovery smoke note](../../../fire-update/winedbg-recovery-smoke.md), and raw local results under `decomp/evidence/live/`.
 
 ## Bounded capture and recovery path
 
