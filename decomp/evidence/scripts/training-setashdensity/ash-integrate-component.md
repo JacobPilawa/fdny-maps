@@ -25,6 +25,10 @@ adapter for `PlayerAshParticle`: `+0x7C` position, `+0x88` velocity,
 `+0x94` acceleration, and `+0x5C` origin. It receives `dt` explicitly so it
 does not assume who schedules the particle update.
 
+## Timestep source
+
+The global timestep at 00502B04 is field +0x4C of the clock wrapper at 00502AB8. On the recovered application idle path, owner callback 0042AEA0 calls 0042C080 to update that field before the owner manager pass. 0042C080 selects a timer subobject, whose 0042BF70 update converts elapsed Windows milliseconds to seconds using 0.001 and caps the interval at 0.1. The callback and field transfer are source-mapped; who recurringly calls Player root slot +0x14, and thus when the ash pool runs, remains unknown. Full query and ordering evidence: `../../game-clock/frame-delta-provenance.md`.
+
 ## Original comparison
 
 `AshIntegratePcodeOracle.java` runs original `0047F2A0` and its actual
@@ -43,6 +47,8 @@ branches for the authored inputs. A float cannot equal the binary64 `1e-5`
 constant exactly, so that comparison boundary is not directly representable.
 The recovered `0047F960` caller invokes `0047F2A0` when particle byte `+0xA0`
 is set, after finite-animation advancement and before later presentation gates.
-The helper is not yet wired into a source-verified Player cadence; the global
-timestep producer, live callback order, full particle state trace, and
-whole-Training shared-RNG parity remain open. The routine makes no RNG calls.
+The helper is not yet wired into a source-verified Player cadence. The static
+global timestep producer and its position before the owner manager pass are
+recovered, but the Player callback cadence, live clock values, full particle
+state trace, and whole-Training shared-RNG parity remain open. The routine
+makes no RNG calls.
