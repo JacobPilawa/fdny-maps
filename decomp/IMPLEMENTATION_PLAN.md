@@ -40,3 +40,5 @@ V1/V2/V3 now have source-derived isolated components and a composed delivered-tr
 Continuation: V5 has a source proximity publisher and real queued-delivery composed check; S1 still blocks automatic cadence. Deadline input arithmetic is verified against 15 original fragments. The staged Player registration task is now complete for successful loading; recurring dispatch remains separate.
 
 Player staging follow-up closes the successful-load factory/queue participation gap (see `evidence/victim-ai-audit/player-staging-chain.md`). S1 now specifically concerns recurring dispatch, not whether Player reaches its staged initializer. The herodown tail core exists with explicit spawn/UI services; compose it with the shared passout wrapper next.
+
+Passout integration constraint: cached Player position and frame translation require separate bindings. Acquire tail mode/entities after the passout event; cleanup fields are now live getters after spawn/stat/log. Compose the shared wrapper with those boundaries rather than precomputing a tail snapshot.

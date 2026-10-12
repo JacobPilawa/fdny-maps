@@ -5,7 +5,7 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 ## Workspace and navigation
 
 - Workspace: `.`; source: `decomp/`; branch: `main`.
-- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Last pushed proximity/input milestone: `1c5def1`; staging/catalog/tail continuation follows it.
+- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Last pushed staging/catalog/tail milestone: `7b96618`; live-cleanup continuation follows it.
 - Leave unrelated untracked `fire_spread/` untouched. Stage only decomp work. Retail assets/binaries, raw Ghidra exports and build/runtime products stay local under existing exclusions.
 - Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is stale and is not authoritative.
 
@@ -63,3 +63,5 @@ The Player factory registration, World-generated request and primary returned re
 `player_herodown_tail.h` recovers mode/argument-gated counting/spawn and wrapped rescue-total update plus conditional cleanup and unconditional reset/status callbacks. Spawn/UI internals remain explicit services. Assembly review is authoritative for formatter varargs omitted by decompilation; see `herodown-tail-component.md`. Automatic passout integration still needs the shared wrapper and source schedule.
 
 Catalog source `thegame.lev` is now preserved locally under original exclusions; numeric `training-level-deadline.json` records its hash and Training conversion. The composed queued rescue check now uses actual authored input 30000→45000 for supplied mode 0, instead of placeholder 180. Input and deadline oracles cover 21 and 60 original executions respectively.
+
+Passout composition review: preserve cached Player+4C, checkpoint+3400 and frame translation as distinct sources; their synchronization is not proved. Herodown cleanup now reads state/count through live Ops getters after spawn/stat/log, including the two separate +357C loads. Regression check mutates both during spawn and verifies later diagnostic/transition. See `evidence/victim-ai-audit/passout-composition-review.md`.

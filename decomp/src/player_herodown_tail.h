@@ -45,6 +45,7 @@ inline bool playerHeroDownNameEqual(const std::string& value);
 // repeat the passout preamble/transaction and does not schedule or draw RNG.
 // Ops preserve boundaries around engine spawn/selection/status helpers:
 //   spawnHeroDown(spec), setRescueStatisticTotal(value), logFirefightersDown(n),
+//   readCleanupState(), readCleanupCollectionCount(),
 //   reportCleanupArrayBounds(), cleanupSubobjectMode(),
 //   transitionCleanupSubobjectTo2(), refreshSelection(), resetPassoutPlayerView(),
 //   finishPlayerRescueStatus(). The last two correspond to 0044CD10 and
@@ -54,7 +55,7 @@ PlayerHeroDownTailResult continuePlayerHeroDownTail(
     VictimPassoutPlayerState& player, RescueExitState& rescue,
     int gameMode, char helperArgument,
     const std::vector<PlayerHeroDownEntity>& entities,
-    int cleanupState, int cleanupCollectionCount, Ops&& ops) {
+    Ops&& ops) {
     PlayerHeroDownTailResult result;
     if (gameMode == 2 && helperArgument == 0) {
         result.countBranchEntered = true;
@@ -85,9 +86,11 @@ PlayerHeroDownTailResult continuePlayerHeroDownTail(
         ops.logFirefightersDown(count); // "Firefighters down = " source log
     }
 
-    if (cleanupState != 0) {
-        if (cleanupState == 4) {
-            if (cleanupCollectionCount < 5)
+    // The source loads +0x357C independently for its outer and inner tests.
+    // Read live state at each point so spawn/status/log callbacks may change it.
+    if (ops.readCleanupState() != 0) {
+        if (ops.readCleanupState() == 4) {
+            if (ops.readCleanupCollectionCount() < 5)
                 ops.reportCleanupArrayBounds(); // 00422060 diagnostic boundary; continuation retained
             if (ops.cleanupSubobjectMode() == 3)
                 ops.transitionCleanupSubobjectTo2(); // 00463370(entity, 2)

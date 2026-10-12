@@ -192,3 +192,5 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [ ] Compose passout prefix/tail with shared runtime and exact spawn/UI/clock services. Resolve recurring dispatch and preserve original draw/event order.
 
 - [x] Installed `thegame.lev` Training `time:500` traced through parser00423160 ×60 store+10, level loader and Player initializer. Record default1200 is distinct from null fallback600. Composed rescue check now uses actual authored input with supplied mode0; 21 initialization / 60 deadline original executions are covered. All 18 CTest checks pass with the expanded fixtures and authored-input composed check.
+
+- [x] Passout composition review preserves cached/frame position distinction and live post-event inputs. Fixed herodown cleanup snapshots to source-ordered getters; spawn mutation regression passes. Shared passout wrapper and recurring scheduling remain unfinished.
