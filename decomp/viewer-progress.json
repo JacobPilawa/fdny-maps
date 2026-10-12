@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "fdad11f",
-  "tests": 30,
+  "commit": "ac709c4",
+  "tests": 31,
   "scope": "Training",
   "files": [
     {
@@ -1464,6 +1464,29 @@
         ]
       ],
       "bytes": 7200
+    },
+    {
+      "path": "src/player_ash_polygon.h",
+      "group": "Effects",
+      "summary": "Original ash polygon payload assembly; source-buffer and submission parity match for supplied callback state, while live resource/list integration remains open.",
+      "evidence": "evidence/scripts/training-setashdensity/ash-native-render-bridge-audit.md",
+      "units": [
+        [
+          "0047F850",
+          "Ash vertex UV initialization",
+          "verified",
+          "Constructor writes the four UV pairs captured by the original callback fixture.",
+          "evidence/scripts/training-setashdensity/ash-native-render-bridge-audit.md"
+        ],
+        [
+          "0047F960",
+          "Ash polygon callback payload",
+          "partial",
+          "Six original P-code callbacks match all 36 XYZ/UV/RGBA words and seven submission arguments under a controlled fake renderer context; live world/resource state, recurring cadence, and visible parity remain open.",
+          "evidence/scripts/training-setashdensity/ash-poly-pcode-oracle.json"
+        ]
+      ],
+      "bytes": 2328
     }
   ]
 }
