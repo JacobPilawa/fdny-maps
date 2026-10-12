@@ -152,7 +152,7 @@
     },
     {
       "name": "Victim pickup, carrying, rescue and exits",
-      "status": "read-only Ghidra maps the delivered 0x7532 pickup handler and ordered Player post-effects; isolated native transaction tracks Training actor flags 0x400→0 and passes its gate/order check; proximity/message scheduling, post-effects, carry transform, rescue and exits remain open",
+      "status": "read-only Ghidra maps the delivered 0x7532 pickup handler, ordered Player post-effects, Training escape release 00451160→0045C000, and separate passout/drop 0044FF10→0045C1A0; isolated native pickup transaction tracks Training actor flags 0x400→0 and passes its gate/order check; scheduling, post-effects, carry transform, native release/passout, rescue and exits remain open",
       "original_entries": [
         "00453a70",
         "00450440",
