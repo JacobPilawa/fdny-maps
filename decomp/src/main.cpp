@@ -67,6 +67,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "extinguisher_effects.h"
 #include "victim_sound.h"
 #include "victim_pickup.h"
+#include "victim_rescue.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
 #include "interaction_box.h"
@@ -894,6 +895,53 @@ int main(int argc,char** argv){try{
  int mismatches=0;
  for(const auto& sample:cases){bool actual=sourceVictimPickupCandidate(sample.state,sample.type,sample.available,sample.box,sample.center,sample.radius);if(actual!=sample.expected){mismatches++;std::cout<<"Mismatch: "<<sample.name<<" expected="<<sample.expected<<" actual="<<actual<<"\n";}}
  std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
+ }
+ if(argc>1&&std::string(argv[1])=="--victim-pickup-message-check"){
+ int mismatches=0;
+ auto checkNoSideEffects=[&](VictimPickupMessageResult expected,const char* name,
+                              int message,bool gateOpen,VictimPickupPlayerState player,
+                              VictimPickupActorState victim){
+  const auto carryBefore=player.carriedVictimEntity;
+  std::vector<std::string> calls;
+  auto result=deliverVictimPickupMessage(message,gateOpen,player,victim,
+   [&](int,uint32_t){calls.push_back("flags");},
+   [&](int){calls.push_back("pickup");},
+   [&]{calls.push_back("player-post");});
+  if(result!=expected||player.carriedVictimEntity!=carryBefore||victim.state!=4||!calls.empty()){
+   mismatches++;std::cout<<"Victim pickup message mismatch: "<<name<<"\n";
+  }
+ };
+ checkNoSideEffects(VictimPickupMessageResult::playerMessageGateClosed,
+                    "player-message-gate",0x7532,false,{}, {191,4});
+ checkNoSideEffects(VictimPickupMessageResult::ignoredMessage,
+                    "other-message",30000,true,{}, {191,4});
+ checkNoSideEffects(VictimPickupMessageResult::playerAlreadyCarrying,
+                    "occupied-carry",0x7532,true,{{194}}, {191,4});
+
+ VictimPickupPlayerState player;VictimPickupActorState victim{191,4};
+ std::vector<std::string> order;
+ auto accepted=deliverVictimPickupMessage(0x7532,true,player,victim,
+  [&](int entity,uint32_t flags){
+   if(entity!=191||flags!=0||player.carriedVictimEntity!=191||victim.state!=5)mismatches++;
+   order.push_back("actor-flags-zero");
+  },
+  [&](int entity){
+   if(entity!=191||player.carriedVictimEntity!=191||victim.state!=5||
+      order!=std::vector<std::string>{"actor-flags-zero"})mismatches++;
+   order.push_back("pickup-event");
+  },
+  [&]{
+   if(order!=std::vector<std::string>{"actor-flags-zero","pickup-event"})mismatches++;
+   order.push_back("player-post-effects");
+  });
+ if(accepted!=VictimPickupMessageResult::accepted||player.carriedVictimEntity!=191||
+    victim.state!=5||order!=std::vector<std::string>{"actor-flags-zero","pickup-event","player-post-effects"})mismatches++;
+ auto duplicate=deliverVictimPickupMessage(0x7532,true,player,victim,
+  [&](int,uint32_t){mismatches++;},[&](int){mismatches++;},[&]{mismatches++;});
+ if(duplicate!=VictimPickupMessageResult::playerAlreadyCarrying)mismatches++;
+ std::cout<<"Victim pickup message: handler gates, state writes and callback order; mismatches="<<mismatches
+          <<" (Ghidra-derived transaction component; no callback schedule claim)\n";
+ return mismatches?50:0;
  }
  if(argc>1&&std::string(argv[1])=="--world-startup-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/world-startup-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing world startup evidence");auto samples=field(fixture,"samples");int updates=0,mismatches=0;

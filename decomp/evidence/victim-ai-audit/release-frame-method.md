@@ -10,7 +10,7 @@ The behavior is established; a source-level method name is not. Treat this as a 
 
 ## Actor flag `0x400`
 
-`00481140` passes `0x400` when its boolean is true and `0` when false to `geWorld_SetActorFlags` for the actor pointer at the `+0x170` subobject. This proves which mask is toggled, but the preserved local Genesis data does not document its render or visibility meaning. `evidence/genesis-actor-source/` contains selected pose and frame source only (`pose.c`, `vkframe.c`, `qkframe.c`, `path.h`); `evidence/original/` contains the shipped binaries and game resources, with no Genesis SDK headers or actor-flag enum. Do not label `0x400` as a visibility flag based on this preserved local evidence alone.
+`00481140` passes `0x400` when true and `0` when false to `geWorld_SetActorFlags` for the actor pointer at the `+0x170` subobject. Exact bundled `Genesis.dll` Ghidra analysis proves this argument replaces the entire stored flags word. In the normal world render pass, `(flags & 0x1400) != 0` is required for submission, so `0x400` passes and `0` fails. The actor stays in the world actor list. Reflection uses a separate `(flags & 0x1800)` gate, where `0x400` alone fails; the checked collision paths use `0x2000`. This is a normal-pass render eligibility effect, not a proven official enum name or general visibility flag. See [`actor-render-flags.md`](actor-render-flags.md) for DLL hash and Ghidra provenance.
 
 ## Sources
 

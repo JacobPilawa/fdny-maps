@@ -16,6 +16,16 @@ Read-only Ghidra 12.0.4 inspection of `FDNYFirefighter.exe` (SHA-256 `4b3b4dc1cc
 
 The local Player movement call chain is now source-mapped, but the regular caller that invokes Player root slot `+0x14` is not. The verified app idle path runs the owner manager pass before the app callback-list `+0x70` pass; the verified owner root callback is a no-op, and the inspected app callback list does not identify the movement subobject as one of its members. Static xrefs do not rule out a computed engine dispatcher or an indirect registration path not identified here. Player movement cadence and its order relative to owner callbacks, message drains, Fire Think, and victim child updates therefore remain open. Do not treat the native per-frame call as original scheduling evidence. A focused runtime trace would need to record a hit at `0044FE20` and its caller relative to `0042AEA0`/`00429520`; no live trace is claimed. The bounded shared ScriptActor search is recorded in [`scriptactor-common-scheduler-audit.md`](scriptactor-common-scheduler-audit.md).
 
+## Player dispatcher follow-up (2026-10-11)
+
+A read-only Ghidra follow-up checked the app callback registry and Player singleton references for an indirect root `+0x14` caller. It found no verified bridge:
+
+- Registration method `00499DE0` writes object `+0x4C` and calls `00498F90(DAT_00503A70,obj)`, which stores it in registry `+0x40`; app walker `00499E60` invokes registered members' primary vtable `+0x70`. The xrefs to `00499DE0` are vtable data words `004DF9FC` and `004E3EE4`. The inspected Player initialization path registers its ScriptActor name through `0046E320`, but does not call `00499DE0`; the Player secondary vtable's `+0x70` method is type/name helper `00453CF0`, not movement.
+- Player construction stores the Player pointer at global `DAT_00503A78+0x30`; the inspected owner path's call through `*DAT_00503A78` at slot `+0x14` targets the separately installed input object (`004992D0`), not Player. The likely Player consumer found in the singleton reference sweep, `00459090`, reads Player `+0x33DC` for an interaction/action notification, not movement dispatch.
+- The Player root `+0x14` vtable word `004E1C5C → 0044FE20` still establishes only the local route `0044FE20 → 00470740 → 00452570`. Neither the registry nor singleton checks identify who recurringly invokes that root slot.
+
+These checks narrow the searched paths; they do not prove that no computed or otherwise indirect dispatcher exists. Queries used the preserved project copy `/private/tmp/fdny-ghidra-ro-20261011`: `AddressXrefs.java` on `0044FE20, 004E1C5C, 00499DE0, 00499E60, 00503A78, 0049D330, 00429520`; decompilation of `00499DE0, 00499E60, 0049A310, 0049D330, 0042AEA0, 0049DF30, 0049D8C0, 0049D420, 00499C70, 00499CA0, 0043F610, 0046F930`; and targeted global-reference sweeps. Scratch logs are retained under `/private/tmp/fdny-player-*-20261011.log`; no repository executable or live game was modified.
+
 This refines the movement scheduling boundary noted in [`training-ladder-audit.md`](training-ladder-audit.md) and [`item-pose/live-extinguisher/message-components/owner-vtable-indirect-call-inventory.md`](item-pose/live-extinguisher/message-components/owner-vtable-indirect-call-inventory.md).
 
 ## Ghidra query provenance
