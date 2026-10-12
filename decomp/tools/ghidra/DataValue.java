@@ -2,7 +2,7 @@ import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.listing.Data;
 
-/** Print a defined data item and raw little-endian interpretations at explicit addresses. */
+/** Print a defined data item and raw integer/float interpretations at explicit addresses. */
 public class DataValue extends GhidraScript {
     @Override
     public void run() throws Exception {
@@ -28,6 +28,13 @@ public class DataValue extends GhidraScript {
                     (bits >>> 24) & 0xff));
             } catch (Exception e) {
                 println("  READ_FAILED " + e.getMessage());
+            }
+            try {
+                long bits = currentProgram.getMemory().getLong(address);
+                println(String.format("  INT64 0x%016X (%d)", bits, bits));
+                println(String.format("  FLOAT64 %.17g", Double.longBitsToDouble(bits)));
+            } catch (Exception e) {
+                println("  READ64_FAILED " + e.getMessage());
             }
         }
     }

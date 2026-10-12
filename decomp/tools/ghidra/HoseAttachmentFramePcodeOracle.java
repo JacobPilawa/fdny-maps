@@ -32,13 +32,17 @@ public class HoseAttachmentFramePcodeOracle extends GhidraScript {
   if(!hash.toString().equalsIgnoreCase(currentProgram.getExecutableSHA256()))throw new IllegalStateException("Executable hash mismatch");
   int[][] identity=axes(new float[][][]{{{1,0,0},{0,1,0},{0,0,1}}});
   int[][] unitScale=vectors(new float[][]{{1,1,1}});
+  int[] valve3ModelAxis={0x3f800000,0,0xb3510b46,0,0x3f800000,0,0x33510b46,0x80000000,0x3f800000};
+  int[] valve5ModelAxis={0xbf800000,0,0x32d10b46,0,0x3f800000,0,0xb2d10b46,0,0xbf800000};
   Sample[] samples={
    new Sample("owner_attach_root_frame",new int[][]{identity[0]},vectors(new float[][]{{10.25f,-20.5f,30.75f}}),unitScale,new int[]{-1},new int[]{f(2.5f),f(3.25f),f(-4.0f)},2),
    new Sample("owner_attach_parent_rotation",axes(new float[][][]{{{0,-1,0},{1,0,0},{0,0,1}},{{1,0,0},{0,1,0},{0,0,1}}}),vectors(new float[][]{{10,-4,2},{1,2,3}}),vectors(new float[][]{{2,1,0.5f},{1,1,1}}),new int[]{-1,0},new int[]{f(-0.5f),f(8.25f),f(0.125f)},2),
    new Sample("owner_attach_two_parent_chain",axes(new float[][][]{{{0,1,0},{-1,0,0},{0,0,1}},{{1,0.25f,0},{0,1,0.5f},{0,0,1}},{{1,0,0},{0,0.5f,-0.5f},{0,0.5f,0.5f}}}),vectors(new float[][]{{-3,5,8},{2,-1,4},{0.5f,0.25f,-2}}),vectors(new float[][]{{1.5f,0.5f,2},{0.75f,1.25f,0.5f},{1,2,0.25f}}),new int[]{-1,0,1},new int[]{f(4),f(-8),f(16)},2),
-   new Sample("owner_attach_signed_zero",axes(new float[][][]{{{-1,0,0},{0,1,0},{0,0,1}}}),vectors(new float[][]{{Float.intBitsToFloat(0x80000000),0,Float.intBitsToFloat(0x80000000)}}),unitScale,new int[]{-1},new int[]{f(-0.0f),f(0.0f),f(1.0f)},2)};
+   new Sample("owner_attach_signed_zero",axes(new float[][][]{{{-1,0,0},{0,1,0},{0,0,1}}}),vectors(new float[][]{{Float.intBitsToFloat(0x80000000),0,Float.intBitsToFloat(0x80000000)}}),unitScale,new int[]{-1},new int[]{f(-0.0f),f(0.0f),f(1.0f)},2),
+   new Sample("training_valve3_frame_from_angle_oracle",new int[][]{identity[0],valve3ModelAxis},vectors(new float[][]{{1368,-176,-2080},{0,0,0}}),vectors(new float[][]{{1,1,1},{1,1,1}}),new int[]{-1,0},new int[]{f(1368),f(-176),f(-2080)},2),
+   new Sample("training_valve5_frame_from_angle_oracle",new int[][]{identity[0],valve5ModelAxis},vectors(new float[][]{{416,-176,-2404},{0,0,0}}),vectors(new float[][]{{1,1,1},{1,1,1}}),new int[]{-1,0},new int[]{f(416),f(-176),f(-2404)},2)};
   List<String> rows=new ArrayList<>();for(Sample sample:samples)rows.add(capture(sample));
-  Files.writeString(Path.of(args[0]),"{\"exe_sha256\":\""+hash+"\",\"engine\":\"Ghidra EmulatorHelper original x86 PE32 P-code\",\"entries\":[\"0044C840\",\"004977B0\",\"00497300\",\"0042D0A0\",\"00446EE0\",\"0042D2B0\",\"00485A80\",\"00485AA0\",\"00463370\"],\"scope\":\"Original 0044C840 attach owner runs from already-selected Hose Spray through transform, saved valve pointer, mode 3 and first stream-pose-node write. Frame tree and valve +0x18 getter result are controlled inputs; HUD/hide are boundary stubs. Inventory and Hose Spray constructors, real Training frame objects and live scheduling are outside this fixture.\",\"samples\":["+String.join(",",rows)+"]}\n");
+  Files.writeString(Path.of(args[0]),"{\"exe_sha256\":\""+hash+"\",\"engine\":\"Ghidra EmulatorHelper original x86 PE32 P-code\",\"entries\":[\"0044C840\",\"004977B0\",\"00497300\",\"0042D0A0\",\"00446EE0\",\"0042D2B0\",\"00485A80\",\"00485AA0\",\"00463370\"],\"scope\":\"Original 0044C840 attach owner runs from already-selected Hose Spray through transform, saved valve pointer, mode 3 and first stream-pose-node write. Four frame trees are controlled; the two Training frame trees use basis words captured by the companion TrainingValveFramePcodeOracle (which substitutes Java Math for x87 FCOS/FSIN) and authored getter positions. HUD/hide are boundary stubs. Inventory, actor loading, callback scheduling, and live state are outside this fixture.\",\"samples\":["+String.join(",",rows)+"]}\n");
   println("Captured "+rows.size()+" original Hose attachment frame commits");
  }
 

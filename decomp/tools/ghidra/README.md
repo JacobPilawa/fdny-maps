@@ -16,7 +16,7 @@
 
 `InstructionContext.java` prints a small address-labeled instruction window around an explicit address, including callsites whose containing function is not defined in Ghidra. The addresses make it easier to recover missing function boundaries and check the exact instruction against decompilation output.
 
-`DataValue.java` prints Ghidra's defined data item and the raw 32-bit integer, float, and byte interpretations at explicit addresses. Use it to verify constants loaded by code rather than inferring their value from a symbol name.
+`DataValue.java` prints Ghidra's defined data item and raw 32-bit and 64-bit integer/float interpretations at explicit addresses. Use the operand width from disassembly to choose the relevant view; this matters for overlapping `.rdata` constants such as the doubles in the PropModel angle conversion.
 
 `ExportFunctionInventory.java <output.json> [executable-sha256] [ghidra-version]` writes a sorted, read-only index of the functions currently defined in the selected Ghidra database, including entry address, provisional name, body size, thunk/external flags, and an `unclassified` status. It does not run analysis or modify the project. The FDNY snapshot `evidence/original-function-inventory.json` contains 5,807 defined entries for the hash-pinned executable; this is not proof that every routine in the binary has a Ghidra function boundary. Use it as an address denominator to classify, not as a completion percentage.
 
@@ -79,6 +79,16 @@ translation, scale, and parent pointer. The native comparison is
 `tools/player_ash_transform_pcode_check.cpp`; the transform layout and
 parent-first rounding order are detailed in
 `evidence/scripts/training-setashdensity/native-pool-component.md`.
+
+`TrainingValveFramePcodeOracle.java <output.json> <original.exe>` verifies the
+64-bit angle constants and executes original `00443860` instructions
+`00443948..0044399E`, both rotation routines, and `004977B0` for both Training
+valves. It captures the mutated angle words exactly. Its x87 `FCOS`/`FSIN`
+operators use Java `Math` results because Ghidra's EmulatorHelper does not
+implement those callother operators, so resulting residual axis words are
+provisional. `HoseAttachmentFramePcodeOracle.java` feeds those matrices into
+the original `0044C840` owner and records its first pose-node write in
+`evidence/hose-spray/attachment-frame-pcode-oracle.json`.
 
 `AshIntegratePcodeOracle.java <output.json> <original.exe>` executes original
 `0047F2A0` and its real vector helpers with a controlled `00502B04` timestep.
