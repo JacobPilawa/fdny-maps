@@ -1379,7 +1379,7 @@ const data={
           "0047F2A0",
           "Ash motion integration",
           "verified",
-          "Eight hash-pinned original P-code cases match all changed +0x7C/+0x5C words through the particle adapter; global timestep producer and recurring Player cadence remain open.",
+          "Eight hash-pinned original P-code cases match all changed +0x7C/+0x5C words through the particle adapter; global timestep source and owner-loop order are mapped; recurring Player cadence remains open.",
           "evidence/scripts/training-setashdensity/ash-integrate-pcode-oracle.json"
         ]
       ],
@@ -1388,14 +1388,14 @@ const data={
     {
       "path": "src/player_ash_integrate.h",
       "group": "Effects",
-      "summary": "Source-ordered particle motion integration with explicit timestep and a native PlayerAshParticle adapter; recurring Player cadence remains open.",
+      "summary": "Source-ordered particle motion integration with explicit timestep and a native PlayerAshParticle adapter; global dt origin and idle-loop order are source-mapped; recurring Player cadence remains open.",
       "evidence": "evidence/scripts/training-setashdensity/ash-integrate-component.md",
       "units": [
         [
           "0047F2A0",
           "Particle motion integration",
           "partial",
-          "Eight original P-code cases compare through actual vector helpers and the particle state adapter; global timestep origin and recurring call order remain open.",
+          "Eight original P-code cases compare through actual vector helpers and the particle state adapter; global dt origin and idle-loop position are mapped; recurring Player call order remains open.",
           "evidence/scripts/training-setashdensity/ash-integrate-pcode-oracle.json"
         ]
       ],

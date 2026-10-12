@@ -103,9 +103,10 @@ The hash-pinned `ash-integrate-pcode-oracle.json` executes `0047F2A0` with its
 actual `00446390` and `0042D050` helpers for eight finite inputs, including
 both sides of the clamp threshold and both clamp directions. The native
 particle adapter matches all six changed position/origin words in all eight
-cases. No random state is read or written. The exact timestep producer and
-the surrounding call schedule remain open; the component is not yet wired
-into Player's recurring ash-pool update.
+cases. No random state is read or written. The global timestep source and owner-loop
+order are now mapped in `../../game-clock/frame-delta-provenance.md`; the
+Player call schedule remains open, and the component is not yet wired into
+Player's recurring ash-pool update.
 
 The original-P-code update oracle at
 `evidence/scripts/training-setashdensity/ash-update-pcode-oracle.json` executes
