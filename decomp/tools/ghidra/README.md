@@ -53,3 +53,5 @@ Use `-postScript DataValue.java 004E0ED4` to inspect a referenced constant's dat
 Use `-postScript FindStringReferences.java moveto stopmove setsize` to locate matching string data and its references.
 
 Use this to check a particular reference edge; a missing static code reference does not rule out indirect dispatch through a vtable or runtime registration.
+
+`VictimReleaseFrameOracle.java <output.json> <original.exe> [drop]` executes the original release prefix (`0045C000` to `0045C0EE`) or passout prefix (`0045C1A0` to `0045C295`). Drop mode seeds and executes original bounded RNG, records animation arguments, and stops before floor placement. Only frame getter and animation adapters are supplied; no game process is attached. Numeric fixtures and limits are recorded in `evidence/victim-ai-audit/release-frame-component.md` and `passout-frame-component.md`.

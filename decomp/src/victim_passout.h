@@ -16,7 +16,6 @@ struct VictimPassoutPlayerState : VictimPickupPlayerState {
 
 struct VictimPassoutActorState : VictimPickupActorState {
     uint32_t motionCount = 0; // victim +0x180
-    float frameTranslationX = 0; // victim frame slot +0x18, first position component +0x28
 };
 
 enum class VictimPassoutResult { noCarriedVictim, dropped };
@@ -27,7 +26,7 @@ enum class VictimPassoutResult { noCarriedVictim, dropped };
 //   setMotion(victim, boundedDraw, speed), copyFirstPlayerFrameAxis,
 //   copySecondPlayerFrameAxis, rebuildVictimFrameBasis, copyPlayerFramePosition,
 //   placeOnFloor, setWorldActorFlags(victim, true), dispatchPassout,
-//   resetPlayerRescue(), readPassoutCorrection().
+//   resetPlayerRescue(), readPassoutCorrection(), correctDroppedFrameX(value).
 // Frame and engine internals remain delegated. The two reads of the source
 // correction value stay in caller order around distinct Player/frame X writes.
 template<class Ops>
@@ -57,7 +56,7 @@ VictimPassoutResult applyVictimPassout(VictimPassoutPlayerState& player,
 
     ops.resetPlayerRescue(); // 0044FCE0(0)
     player.position[0] += ops.readPassoutCorrection();
-    victim.frameTranslationX -= ops.readPassoutCorrection();
+    ops.correctDroppedFrameX(ops.readPassoutCorrection());
     player.carriedVictimEntity.reset();
     return VictimPassoutResult::dropped;
 }

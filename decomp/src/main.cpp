@@ -69,6 +69,8 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_pickup.h"
 #include "victim_rescue.h"
 #include "victim_release_frame.h"
+#include "victim_frame_ops.h"
+#include "victim_release.h"
 #include "actor_render_flags.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
@@ -898,16 +900,56 @@ int main(int argc,char** argv){try{
  for(const auto& sample:cases){bool actual=sourceVictimPickupCandidate(sample.state,sample.type,sample.available,sample.box,sample.center,sample.radius);if(actual!=sample.expected){mismatches++;std::cout<<"Mismatch: "<<sample.name<<" expected="<<sample.expected<<" actual="<<actual<<"\n";}}
  std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
  }
- if(argc>1&&std::string(argv[1])=="--victim-release-frame-check"){
- auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/victim-release-frame-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing victim release frame evidence");
+ if(argc>1&&std::string(argv[1])=="--victim-frame-ops-check"){
+ int mismatches=0,words=0,cases=0;
+ for(bool drop:{false,true}){
+  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/"+(drop?"victim-passout-frame-pcode-oracle.json":"victim-release-frame-pcode-oracle.json")).c_str());if(!fixture)throw std::runtime_error("Missing victim adapter fixture");
+  auto samples=field(fixture,"samples");
+  for(int i=0;i<count(samples);i++){
+   cases++;auto sample=at(samples,i),input=field(sample,"input");FrameTransform source,frame;frame.scale={2,3,4};
+   for(int k=0;k<3;k++){source.axis[0][k]=num(at(input,k));source.axis[2][k]=num(at(input,k+3));source.position[k]=num(at(input,k+6));}
+   int reads=0;VictimFrameOps ops(frame,[&]()->const FrameTransform&{reads++;return source;},[](V,V,V,V,V&){return false;},[]{});
+   VictimPickupActorState actor;VictimPickupPlayerState carry;
+   ops.copyFirstPlayerFrameAxis(actor,carry);ops.copySecondPlayerFrameAxis(actor,carry);ops.setVictimFrameUp(actor,0,1,0);
+   if(drop)ops.copyPlayerFramePosition(actor,carry);else{ops.releaseOffsetTimes5(actor);ops.releaseOffsetTimes24(actor);ops.setReleasePositionFromPlayerFrame(actor,carry);}
+   if(reads!=3)mismatches++;auto result=frame.words();auto expected=field(sample,"expected_words");
+   for(int k=0;k<15;k++){words++;if(result[k+1]!=uint32_t(json_object_get_uint64(at(expected,k))))mismatches++;}
+  }
+ }
+ auto floorFixture=json_object_from_file((assetDirectory()+"/../../evidence/victim-startup/victim-floor-collision-oracle.json").c_str());if(!floorFixture)throw std::runtime_error("Missing Training victim floor fixture");
+ auto samples=field(floorFixture,"samples");
+ for(int i=0;i<count(samples);i++){
+  cases++;auto sample=at(samples,i);FrameTransform source,frame;source.position=vec(field(sample,"authored_position"));
+  VictimFrameOps ops(frame,[&]()->const FrameTransform&{return source;},[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;},[&]{mismatches++;});
+  VictimPickupActorState actor;VictimPickupPlayerState carry;ops.copyFirstPlayerFrameAxis(actor,carry);ops.copySecondPlayerFrameAxis(actor,carry);ops.rebuildVictimFrameBasis(actor);ops.copyPlayerFramePosition(actor,carry);ops.placeOnFloor(actor);
+  if(!ops.lastFloorTraceSucceeded)mismatches++;auto expected=field(sample,"expected_position_bits");
+  for(int k=0;k<3;k++){words++;uint32_t bits;std::memcpy(&bits,&frame.position[k],4);if(bits!=std::stoul(str(at(expected,k)),nullptr,16))mismatches++;}
+  float oldX=frame.position.x;ops.correctDroppedFrameX(30);if(frame.position.x!=float(double(oldX)-30))mismatches++;
+ }
+ // Exercise failed floor placement: original still stores (0,1,0).
+ FrameTransform failed;failed.position={100,200,300};int reports=0;
+ VictimFrameOps failure(failed,[&]()->const FrameTransform&{return failed;},[](V,V,V,V,V&){return false;},[&]{reports++;});VictimPickupActorState actor;failure.placeOnFloor(actor);
+ if(failure.lastFloorTraceSucceeded||reports!=1||failed.position.x!=0||failed.position.y!=1||failed.position.z!=0)mismatches++;
+ std::cout<<"Victim frame/floor adapters: "<<cases<<" cases, "<<words<<" original word comparisons; mismatches="<<mismatches<<" (no recurring schedule)\n";return mismatches?52:0;
+ }
+ if(argc>1&&(std::string(argv[1])=="--victim-release-frame-check"||std::string(argv[1])=="--victim-passout-frame-check")){
+ bool drop=std::string(argv[1])=="--victim-passout-frame-check";
+ auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/"+(drop?"victim-passout-frame-pcode-oracle.json":"victim-release-frame-pcode-oracle.json")).c_str());if(!fixture)throw std::runtime_error("Missing victim frame evidence");
  int mismatches=0,comparisons=0;auto samples=field(fixture,"samples");
  for(int i=0;i<count(samples);i++){
   auto sample=at(samples,i);auto input=field(sample,"input");FrameTransform source,victim;victim.scale={2,3,4};
   for(int k=0;k<3;k++){source.axis[0][k]=num(at(input,k));source.axis[2][k]=num(at(input,k+3));source.position[k]=num(at(input,k+6));}
-  auto result=sourceVictimReleaseFrame(source,victim).words();auto expected=field(sample,"expected_words");
+  auto result=(drop?sourceVictimPassoutFrame(source,victim):sourceVictimReleaseFrame(source,victim)).words();auto expected=field(sample,"expected_words");
+  if(drop){
+   uint32_t motionCount=uint32_t(json_object_get_uint64(field(sample,"motion_count")));Random random(uint32_t(json_object_get_uint64(field(sample,"seed"))));
+   uint32_t motion=random.bounded(motionCount==6?3:motionCount);float speed=motionCount==6?1.0f:0.2f;uint32_t speedBits;std::memcpy(&speedBits,&speed,4);
+   comparisons+=3;if(motion!=uint32_t(json_object_get_uint64(field(sample,"motion"))))mismatches++;
+   if(random.drawCount!=uint64_t(json_object_get_uint64(field(sample,"draws"))))mismatches++;
+   if(speedBits!=uint32_t(json_object_get_uint64(field(sample,"speed_bits"))))mismatches++;
+  }
   for(int k=0;k<15;k++){comparisons++;uint32_t word=uint32_t(json_object_get_uint64(at(expected,k)));if(result[k+1]!=word){mismatches++;std::cout<<"Release frame mismatch sample="<<i<<" word="<<k<<" expected="<<word<<" native="<<result[k+1]<<"\n";}}
  }
- std::cout<<"Victim release frame: "<<count(samples)<<" prefix cases, "<<comparisons<<" word comparisons; mismatches="<<mismatches<<" (P-code oracle, no floor/schedule claim)\n";return mismatches?51:0;
+ std::cout<<(drop?"Victim passout frame/motion: ":"Victim release frame: ")<<count(samples)<<" prefix cases, "<<comparisons<<" word comparisons; mismatches="<<mismatches<<" (P-code oracle, no floor/schedule claim)\n";return mismatches?51:0;
  }
  if(argc>1&&std::string(argv[1])=="--victim-pickup-message-check"){
  int mismatches=0;

@@ -11,6 +11,7 @@ struct RecordingOps {
     VictimPassoutPlayerState* player = nullptr;
     VictimPassoutActorState* victim = nullptr;
     int correctionReads = 0;
+    float frameTranslationX = 100;
     bool inspectVerticalBoundary = false;
 
     void setMotion(VictimPassoutActorState&, uint32_t draw, float speed) {
@@ -26,14 +27,15 @@ struct RecordingOps {
     }
     void dispatchPassout(VictimPassoutActorState&) { calls.push_back("passout-event"); }
     void resetPlayerRescue() { calls.push_back("player-reset-0044fce0-0"); }
+    void correctDroppedFrameX(float value){frameTranslationX-=value;calls.push_back("frame-correction");}
     float readPassoutCorrection() {
         if (correctionReads++ == 0) {
             if (inspectVerticalBoundary)
-                assert(player->position[0] == 20 && victim->frameTranslationX == 100);
+                assert(player->position[0] == 20 && frameTranslationX == 100);
             calls.push_back("player-correction-read");
         } else {
             if (inspectVerticalBoundary)
-                assert(player->position[0] == 50 && victim->frameTranslationX == 100);
+                assert(player->position[0] == 50 && frameTranslationX == 100);
             calls.push_back("victim-correction-read");
         }
         return 30.0f;
@@ -44,7 +46,7 @@ int main() {
     const std::vector<std::string> expected = {
         "motion", "axis-a", "axis-b", "basis", "position", "floor",
         "flags-true", "passout-event", "player-reset-0044fce0-0",
-        "player-correction-read", "victim-correction-read"
+        "player-correction-read", "victim-correction-read", "frame-correction"
     };
 
     VictimPassoutPlayerState player;
@@ -54,7 +56,6 @@ int main() {
     VictimPassoutActorState victim;
     victim.entity = 17;
     victim.motionCount = 6;
-    victim.frameTranslationX = 100;
     Random random(1234), expectedRandom(1234);
     const uint32_t expectedMotion = expectedRandom.bounded(3);
     RecordingOps ops; ops.player = &player; ops.victim = &victim; ops.inspectVerticalBoundary = true;
@@ -63,7 +64,7 @@ int main() {
     assert(ops.selectedMotion == expectedMotion && ops.selectedSpeed == 1.0f);
     assert(random.drawCount == 1 && victim.state == 4 && victim.worldActorFlags == 0x400);
     assert(player.position[0] == 50 && player.position[1] == 5 && player.position[2] == 6);
-    assert(victim.frameTranslationX == 70 && !player.carriedVictimEntity);
+    assert(ops.frameTranslationX == 70 && !player.carriedVictimEntity);
 
     // Non-six motion counts use that count as the bound and animation speed .2.
     VictimPassoutPlayerState otherPlayer; otherPlayer.carriedVictimEntity = 22;
