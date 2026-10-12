@@ -23,9 +23,11 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   model now starts with origin position, dirty vectors, zero `+0x94`, and unit
   `+0xb4`.
 - Initialization and tick require explicit engine-service callbacks. Opaque
-  constructor, scene transform, and presentation work cannot silently default
-  to no-ops. These receive the shared `Random` where indirect RNG use could
-  affect parity. The direct animation reset in `0047D300` is now modeled.
+  constructor and presentation work cannot silently default to no-ops. The
+  Player frame getter is now source-mapped and the native transform is
+  implemented; callbacks receive the shared `Random` where an unresolved
+  dispatch could affect parity. The direct animation reset in `0047D300` is
+  now modeled.
 
 ## Update and activation order
 
@@ -39,8 +41,17 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   stored at `vector7c.z`; the second is added to its prior Y; the third becomes
   X. The fourth becomes `vector88.y`. The wrappers set dirty flag `+0xa0`.
 - An inactive entry in the scanned prefix draws angle `(0,6.2831855)` and
-  distance `(10,400)`, then uses the player/camera transform chain to form its
-  spawn point. `00446470` stores that point at `+0x5c`, selects animation
+  distance `(10,400)`, each stored to a float local. `004467E0` then calls
+  Player primary-vtable slot `+0x18` four times. The selected slot is
+  `0049D760`, a leaf getter returning Player `+0x24`; the emitter reads its
+  position X, Z, Y in that order, then copies its direction vector at `+0x1c`.
+  `0049E770` copies that direction and `00446390` scales it componentwise by
+  75. The recovered spawn point is
+  `x = playerX + distance*cos(angle) + 75*directionX`,
+  `y = playerY + 150 + 75*directionY`,
+  `z = playerZ + distance*sin(angle) + 75*directionZ`.
+  The native helper preserves the four getter callbacks, source coordinate
+  order and intermediate float stores. `00446470` stores that point at `+0x5c`, selects animation
   indices 0 and 1 and timestamps them through `0047D300`, draws `(0.5,1.5)`
   into `+0x1c`, sets active, draws `(0.5,1.5)` into `+0xa8`, clears deadline,
   then draws `(-80,-10)` into `vector7c.y` with X/Z set to 0.
@@ -55,13 +66,14 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
 
 ## Limits
 
-The direct state writes and draw order are source-mapped, and finite animation
-advancement is now connected to the pool. Scene callbacks are not reconstructed
-here. Computed engine calls, visibility gates, polygon construction, and the
-indirect-call closure remain open.
-The spawn-point chain includes computed Player/camera methods. This component
-does not identify every indirect RNG consumer in those closures, implement
-ash rendering, validate Training cadence, or establish complete RNG parity.
+The direct state writes, spawn transform and draw order are source-mapped, and
+finite animation advancement is connected to the pool. Remaining constructor
+side effects, computed engine calls, visibility gates, polygon construction,
+and the presentation indirect-call closure remain open. The four-call getter
+adapter is explicit; its statically selected `0049D760` implementation itself
+is a no-draw leaf, but runtime vtable replacement has not been excluded.
+This component does not implement ash rendering, validate Training cadence,
+or establish complete RNG parity.
 
 The focused check verifies descriptor words/flags, initial modeled fields,
 the 400 direct draws for 100 due entries under no-draw callbacks, and 50
@@ -91,4 +103,11 @@ The activation oracle in `ash-activate-pcode-oracle.json` executes original
 bounded RNG. Three hash-pinned seeds compare activation flags, animation
 indices/timestamp, spawn position, activation/opacity scales, deadline, velocity
 vector words, and call count; all cases match. The caller's angle/distance draws
-and scene transform are outside this routine-level comparison.
+and scene transform are outside this routine-level comparison. The
+`ash-spawn-pcode-oracle.json` fixture adds five one-particle cases through
+`004467E0`, four real Player getter dispatches and original `00446470`; native
+spawn position, activation/opacity scales, velocity, active/deadline fields,
+and five bounded RNG calls match bit-for-bit. Ghidra's x86 emulator does not
+implement the `FCOS`/`FSIN` callother operators, so the oracle supplies Java
+`Math` double results at those two instructions; those five cases are an
+integration check, not proof of every x87 trig result for every float input.

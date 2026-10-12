@@ -1,11 +1,13 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <functional>
 #include <stdexcept>
 #include <vector>
+#include "extended.h"
 #include "random.h"
 #include "sprite_animation.h"
 
@@ -37,6 +39,13 @@ struct PlayerAshDescriptor {
     std::array<uint32_t,3> trailingBits;
 };
 
+// The Player primary-vtable +0x18 getter returns Player+0x24.  The emitter
+// reads position at +0x28/+0x2c/+0x30 and direction at +0x1c..+0x24.
+struct PlayerAshFrame {
+    std::array<float,3> position{};
+    std::array<float,3> direction{};
+};
+
 struct PlayerAshPoolServices {
     // The pool seeds source-mapped fields before the opaque engine/resource
     // constructor remainder. Keep that remainder explicit, including possible
@@ -45,11 +54,14 @@ struct PlayerAshPoolServices {
                        const PlayerAshDescriptor&,Random&)> addDescriptor;
     std::function<void(size_t particle,size_t descriptorContainer,
                        PlayerAshParticle&,Random&)> constructOpaqueParticle;
-    // Scene position and presentation calls are outside the scalar/vector
-    // model. `present` is the remainder of 0047F960 after this component's
-    // exact 0047D660 animation step. The density scan cannot silently
-    // substitute either service.
-    std::function<std::array<float,3>(float angle,float distance,Random&)> spawnPoint;
+    // 004467E0 calls Player vtable slot +0x18 four times, reading X, Z, Y,
+    // then the direction vector. Keep each dispatch explicit: the computed
+    // target can have engine/RNG effects even though the recovered leaf
+    // getter 0049D760 returns Player+0x24 without drawing.
+    std::function<PlayerAshFrame(Random&)> getPlayerFrame;
+    // `present` is the remainder of 0047F960 after this component's exact
+    // 0047D660 animation step. The density scan cannot silently substitute
+    // either unresolved engine service.
     std::function<void(PlayerAshParticle&,Random&)> present;
 };
 
@@ -147,6 +159,38 @@ struct PlayerAshPool {
         p.vector7c={0.0f,velocityY,0.0f};
     }
 
+    // 004467E0 after its angle/distance draws. Inputs are rounded to float by
+    // the caller, matching the original FSTP locals. Position + radial offset
+    // is rounded once to float; the scaled direction is separately stored as
+    // float by 00446390, then added and stored as float by the caller.
+    static std::array<float,3> spawnPosition(float angle,float distance,
+                                              Random& rng,
+                                              const PlayerAshPoolServices& s) {
+        if (!s.getPlayerFrame)
+            throw std::invalid_argument("ash spawn requires Player frame service");
+        using E=Extended;
+        const PlayerAshFrame frameX=s.getPlayerFrame(rng);
+        const E cosine=E::from(std::cos(double(angle)));
+        const float xRadial=(cosine*E::from(distance)+E::from(frameX.position[0])).asFloat();
+
+        const PlayerAshFrame frameZ=s.getPlayerFrame(rng);
+        const E sine=E::from(std::sin(double(angle)));
+        const float zRadial=(sine*E::from(distance)+E::from(frameZ.position[2])).asFloat();
+
+        const PlayerAshFrame frameY=s.getPlayerFrame(rng);
+        const float yRaised=(E::from(frameY.position[1])+E::from(150.0f)).asFloat();
+
+        const PlayerAshFrame frameDirection=s.getPlayerFrame(rng);
+        std::array<float,3> directionScaled{};
+        for (size_t axis=0;axis<3;axis++)
+            directionScaled[axis]=frameDirection.direction[axis]*75.0f;
+        return {
+            (E::from(xRadial)+E::from(directionScaled[0])).asFloat(),
+            (E::from(yRaised)+E::from(directionScaled[1])).asFloat(),
+            (E::from(zRadial)+E::from(directionScaled[2])).asFloat()
+        };
+    }
+
     static const std::vector<float>& animationDurations() {
         static const std::vector<float> durations=[] {
             std::vector<float> values;
@@ -185,7 +229,7 @@ struct PlayerAshPool {
     // caller cannot silently replace unknown behavior with a no-op.
     void tick(uint32_t now, Random& rng, const PlayerAshPoolServices& s) {
         if (!initialized) throw std::logic_error("Player ash pool not initialized");
-        if (!s.present || !s.spawnPoint)
+        if (!s.present || !s.getPlayerFrame)
             throw std::invalid_argument("ash pool tick requires scene and presentation services");
         for (auto& p : particles) {
             update(p,now,rng);
@@ -200,7 +244,7 @@ struct PlayerAshPool {
             if (p.active) continue;
             float angle=float(rng.range(0.0f,6.2831855f));
             float distance=float(rng.range(10.0f,400.0f));
-            auto position=s.spawnPoint(angle,distance,rng);
+            auto position=spawnPosition(angle,distance,rng,s);
             activate(p,position,now,rng);
         }
     }

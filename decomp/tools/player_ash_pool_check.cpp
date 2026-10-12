@@ -3,8 +3,7 @@
 
 int main() {
     PlayerAshPool pool;
-    int descriptors=0, constructions=0, presents=0, spawns=0;
-    std::array<std::array<float,3>,50> spawnPoints{};
+    int descriptors=0, constructions=0, presents=0, frameReads=0;
     Random rng(1);
     PlayerAshPoolServices services;
     services.addDescriptor=[&](size_t c,uint32_t flags,size_t,
@@ -24,10 +23,10 @@ int main() {
         ++constructions;
     };
     services.present=[&](PlayerAshParticle&,Random&) { ++presents; };
-    services.spawnPoint=[&](float angle,float distance,Random&) {
-        auto point=std::array<float,3>{angle,distance,0.0f};
-        spawnPoints[size_t(spawns++)]=point;
-        return point;
+    const PlayerAshFrame frame{{20.0f,30.0f,40.0f},{1.0f,2.0f,3.0f}};
+    services.getPlayerFrame=[&](Random&) {
+        ++frameReads;
+        return frame;
     };
     pool.initialize(services,1,rng);
     pool.initialize(services,1,rng);
@@ -50,14 +49,26 @@ int main() {
     presents=0;
     pool.tick(1,rng,services);
     assert(rng.drawCount==650 && presents==100);
-    assert(spawns==50);
+    assert(frameReads==200);
     for(size_t i=0;i<pool.particles.size();i++) assert(pool.particles[i].active==(i<50));
     for(size_t i=0;i<50;i++) {
         assert(pool.particles[i].deadline==0);
         assert(pool.particles[i].opacityScale>=0.5f && pool.particles[i].opacityScale<=1.5f);
         assert(pool.particles[i].animationIndex==0 && pool.particles[i].nextAnimationIndex==1 && pool.particles[i].animationTimestamp==1);
-        assert(pool.particles[i].spawnPosition==spawnPoints[i]);
         assert(pool.particles[i].vector7c[0]==0.0f && pool.particles[i].vector7c[2]==0.0f);
+    }
+    Random expectedRng(1);
+    for(size_t i=0;i<100;i++){
+        PlayerAshParticle updateParticle;
+        PlayerAshPool::update(updateParticle,0,expectedRng);
+    }
+    for(size_t i=0;i<50;i++){
+        float angle=float(expectedRng.range(0.0f,6.2831855f));
+        float distance=float(expectedRng.range(10.0f,400.0f));
+        auto expected=PlayerAshPool::spawnPosition(angle,distance,expectedRng,services);
+        assert(pool.particles[i].spawnPosition==expected);
+        PlayerAshParticle activated;
+        PlayerAshPool::activate(activated,expected,1,expectedRng);
     }
 
     pool.setDensity(2.0f); assert(pool.density==1.0f);
@@ -91,10 +102,10 @@ int main() {
     lifecycleServices.present=[&](PlayerAshParticle& p,Random&) {
         if (&p==&last) presentedAfterDeactivation=!p.active;
     };
-    lifecycleServices.spawnPoint=[&](float angle,float distance,Random&) {
-        ++respawns;return std::array<float,3>{angle,distance,0.0f};
+    lifecycleServices.getPlayerFrame=[&](Random&) {
+        ++respawns;return frame;
     };
     lifecycle.tick(3500,rng,lifecycleServices); // record 4: 1.0 s; deactivation precedes scan
-    assert(presentedAfterDeactivation && respawns==1 && last.active);
+    assert(presentedAfterDeactivation && respawns==4 && last.active);
     assert(last.animationIndex==0 && last.nextAnimationIndex==1 && last.animationTimestamp==3500);
 }
