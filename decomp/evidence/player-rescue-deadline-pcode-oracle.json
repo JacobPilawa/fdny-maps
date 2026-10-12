@@ -1,4 +1,4 @@
-{"exe_sha256":"4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e","entry":"004541a0","method":"original P-code, initialized shared RNG, supplied singleton/player/app state","samples":[{"field":0.0,"mode":0,"now":0,"seed":1234,"deadline":118836,"draws":1},
+{"exe_sha256":"4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e","entry":"004541a0","method":"original P-code with supplied globals; input mode stops at 0044de96, deadline mode executes original RNG","samples":[{"field":0.0,"mode":0,"now":0,"seed":1234,"deadline":118836,"draws":1},
 {"field":0.0,"mode":0,"now":107999,"seed":1234,"deadline":178836,"draws":1},
 {"field":0.0,"mode":0,"now":108000,"seed":1234,"deadline":178837,"draws":1},
 {"field":0.0,"mode":0,"now":4294967280,"seed":1234,"deadline":70821,"draws":1},
@@ -45,4 +45,16 @@
 {"field":7201.0,"mode":2,"now":0,"seed":1234,"deadline":7210837,"draws":1},
 {"field":7201.0,"mode":2,"now":107999,"seed":1234,"deadline":7210837,"draws":1},
 {"field":7201.0,"mode":2,"now":108000,"seed":1234,"deadline":7210837,"draws":1},
-{"field":7201.0,"mode":2,"now":4294967280,"seed":1234,"deadline":60010821,"draws":1}]}
+{"field":7201.0,"mode":2,"now":4294967280,"seed":1234,"deadline":60010821,"draws":1},
+{"field":30000.0,"mode":0,"now":0,"seed":1234,"deadline":4330836,"draws":1},
+{"field":30000.0,"mode":0,"now":107999,"seed":1234,"deadline":4330836,"draws":1},
+{"field":30000.0,"mode":0,"now":108000,"seed":1234,"deadline":4330836,"draws":1},
+{"field":30000.0,"mode":0,"now":4294967280,"seed":1234,"deadline":70821,"draws":1},
+{"field":30000.0,"mode":1,"now":0,"seed":1234,"deadline":5410837,"draws":1},
+{"field":30000.0,"mode":1,"now":107999,"seed":1234,"deadline":5410837,"draws":1},
+{"field":30000.0,"mode":1,"now":108000,"seed":1234,"deadline":5410837,"draws":1},
+{"field":30000.0,"mode":1,"now":4294967280,"seed":1234,"deadline":130821,"draws":1},
+{"field":30000.0,"mode":2,"now":0,"seed":1234,"deadline":7210837,"draws":1},
+{"field":30000.0,"mode":2,"now":107999,"seed":1234,"deadline":7210837,"draws":1},
+{"field":30000.0,"mode":2,"now":108000,"seed":1234,"deadline":7210837,"draws":1},
+{"field":30000.0,"mode":2,"now":4294967280,"seed":1234,"deadline":60010821,"draws":1}]}

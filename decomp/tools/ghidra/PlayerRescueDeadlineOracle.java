@@ -31,7 +31,7 @@ public class PlayerRescueDeadlineOracle extends GhidraScript {
   StringBuilder hash=new StringBuilder();for(byte b:MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(Path.of(args[1]))))hash.append(String.format("%02x",b));
   if(!hash.toString().equalsIgnoreCase(currentProgram.getExecutableSHA256()))throw new IllegalStateException("Hash mismatch");
   ArrayList<String> rows=new ArrayList<>();
-  float[] fields=input?new float[]{Float.NaN,0,180,600,7200}:new float[]{0,180,7200,7201};
+  float[] fields=input?new float[]{Float.NaN,0,180,600,1200,7200,30000}:new float[]{0,180,7200,7201,30000};
   int[] clocks=input?new int[]{0}:new int[]{0,107999,108000,-16};
   for(float field:fields)for(int mode:new int[]{0,1,2})for(int now:clocks){
    EmulatorHelper e=new EmulatorHelper(currentProgram);

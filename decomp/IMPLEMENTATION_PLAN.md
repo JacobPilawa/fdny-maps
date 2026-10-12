@@ -13,7 +13,7 @@ Keep recovered transactions in small C++ components with original addresses. Use
 | V1 | Port escape/release `00451160→0045C000`; verify state, transform operations, flags, event, timer wrap and ordered Player cleanup as isolated transactions. | Existing lifecycle/frame evidence |
 | V2 | Port pickup post-effects `00450440`: entity mode, `00490E60` storage, status callback, zone refresh, final clock sample. Validate field-4 branch, event ordering and carried-victim zone exclusion. | Existing pickup component |
 | V3 | Apply Genesis normal render flag gate at native actor submission using per-entity actor state. Validate both mask bits and pickup/release visibility transitions. | Existing actor flags evidence |
-| V4 | Recover continuous carry positioning and passout/drop, including exact motion RNG and vertical correction; make separate components and original-code fixtures. | V1/V2; source trace |
+| V4 | Recover continuous carry positioning and passout/drop, including exact motion RNG and separate Player/frame X corrections; make separate components and original-code fixtures. | V1/V2; source trace |
 | S1 | Establish root secondary-slot dispatcher for Player, victims and BModels. Trace computed receivers and engine callback registration; record ruled-out paths and limits. | Existing scheduling audits |
 | S2 | Establish FireRescue visual Think dispatcher, timing, and order relative to proximity, messages and tool action. | Existing fire dispatch audits |
 | V5 | Connect proximity producer, generation-aware delivery, pickup effects, escape release and exits in verified order. Compare original event transcript and actor flags. | V1–V4, S1 |
@@ -37,4 +37,6 @@ For subsequent milestones: rerun affected original fixtures, compare integrated 
 
 V1/V2/V3 now have source-derived isolated components and a composed delivered-transaction check. The scene uses the same runtime actor frame/animation/flags. V5 still requires source proximity/route scheduling and actual engine/UI services; composition is not a captured gameplay schedule. Keep S1/S2 as integration gates and continue V4/runtime service recovery in parallel.
 
-Continuation: V5 has a source proximity publisher and real queued-delivery composed check; S1 still blocks automatic cadence. Deadline input arithmetic is verified against 15 original fragments. Next bounded S1 task: trace staged Player callback registration into 0049C670, separating initialization from recurring update.
+Continuation: V5 has a source proximity publisher and real queued-delivery composed check; S1 still blocks automatic cadence. Deadline input arithmetic is verified against 15 original fragments. The staged Player registration task is now complete for successful loading; recurring dispatch remains separate.
+
+Player staging follow-up closes the successful-load factory/queue participation gap (see `evidence/victim-ai-audit/player-staging-chain.md`). S1 now specifically concerns recurring dispatch, not whether Player reaches its staged initializer. The herodown tail core exists with explicit spawn/UI services; compose it with the shared passout wrapper next.

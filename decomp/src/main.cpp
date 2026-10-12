@@ -935,7 +935,10 @@ int main(int argc,char** argv){try{
  VictimTransactionServices services;
  services.playerFrame=[&]()->const FrameTransform&{return playerFrame;};
  services.traceFloor=[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;};services.reportFloorFailure=[&]{failures++;};
- services.readClock=[&]{return now;};services.readPlayerField18C=[&]{return int(field18C);};services.readGlobalMode=[]{return 0;};services.readPlayerField343C=[]{return 180.0f;};
+ services.readClock=[&]{return now;};services.readPlayerField18C=[&]{return int(field18C);};services.readGlobalMode=[]{return 0;};
+ auto levelMetadata=json_object_from_file((assetDirectory()+"/../../evidence/training-level-deadline.json").c_str());if(!levelMetadata)throw std::runtime_error("Missing Training level deadline metadata");
+ float deadlineInput=initializePlayerDeadlineInput(num(field(levelMetadata,"level_field10")),0);if(deadlineInput!=45000.0f)failures++;
+ services.readPlayerField343C=[&]{return deadlineInput;};
  services.setActorFlags=[&](int entity,uint32_t flags){if(victimRuntime.actors.at(entity).worldActorFlags!=flags)failures++;events.push_back("flags:"+std::to_string(flags));};
  services.dispatchVictimEvent=[&](int entity,const char* event){events.push_back(std::string(event)+":"+std::to_string(entity));vm.dispatch(entity,event);};
  services.setEntityCarryMode=[&](bool mode){events.push_back(mode?"carry-on":"carry-off");field18C=mode?4:3;};
