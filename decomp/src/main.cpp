@@ -907,7 +907,8 @@ int main(int argc,char** argv){try{
    [&](int,uint32_t){calls.push_back("flags");},
    [&](int){calls.push_back("pickup");},
    [&]{calls.push_back("player-post");});
-  if(result!=expected||player.carriedVictimEntity!=carryBefore||victim.state!=4||!calls.empty()){
+  if(result!=expected||player.carriedVictimEntity!=carryBefore||victim.state!=4||
+     victim.worldActorFlags!=0x400||!calls.empty()){
    mismatches++;std::cout<<"Victim pickup message mismatch: "<<name<<"\n";
   }
  };
@@ -922,7 +923,8 @@ int main(int argc,char** argv){try{
  std::vector<std::string> order;
  auto accepted=deliverVictimPickupMessage(0x7532,true,player,victim,
   [&](int entity,uint32_t flags){
-   if(entity!=191||flags!=0||player.carriedVictimEntity!=191||victim.state!=5)mismatches++;
+   if(entity!=191||flags!=0||player.carriedVictimEntity!=191||victim.state!=5||
+      victim.worldActorFlags!=0)mismatches++;
    order.push_back("actor-flags-zero");
   },
   [&](int entity){
@@ -935,7 +937,8 @@ int main(int argc,char** argv){try{
    order.push_back("player-post-effects");
   });
  if(accepted!=VictimPickupMessageResult::accepted||player.carriedVictimEntity!=191||
-    victim.state!=5||order!=std::vector<std::string>{"actor-flags-zero","pickup-event","player-post-effects"})mismatches++;
+    victim.state!=5||victim.worldActorFlags!=0||
+    order!=std::vector<std::string>{"actor-flags-zero","pickup-event","player-post-effects"})mismatches++;
  auto duplicate=deliverVictimPickupMessage(0x7532,true,player,victim,
   [&](int,uint32_t){mismatches++;},[&](int){mismatches++;},[&]{mismatches++;});
  if(duplicate!=VictimPickupMessageResult::playerAlreadyCarrying)mismatches++;

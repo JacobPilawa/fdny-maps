@@ -8,6 +8,8 @@ I also checked the app callback-list route. Idle update `00499410` calls the cur
 
 This rules out the inspected app callback-list registration path as evidence for FireRescue Think scheduling. It does not establish that no other engine-side or dynamic dispatch exists. The recurring caller, cadence, and order of `00449FE0` remain unresolved; see `training-think-behavior-audit.md` and `subobject-init-followup/scheduler-registration-audit.md`.
 
+A bounded follow-up also checked the shared visual-subobject initializer `0046F930` and its cleanup slot, alongside the app registration path. Neither establishes a recurring call to FireRescue secondary slot 0; query details and the remaining limits are in [`think-dispatcher-candidate-followup.md`](think-dispatcher-candidate-followup.md).
+
 ## Entity-route registry follow-up
 
 A separate read-only Ghidra pass checked whether the FireRescue entity-route registry also dispatched visual callbacks. Constructor `0044A330` calls `0049D310` to copy root relation fields and `0049D330` to set category bit 1 at `+0x20`; neither call reaches visual slot 0. `0049D450 → 0049B810` allocates/stores a two-word route ID and generation, while destructor-side `0049D510 → 0049B780` releases the ID and clears the handle. These functions manage message identity/lifetime; they provide no recurring invocation of `00449FE0`.
