@@ -50,6 +50,16 @@
     "sha256": "f4bb9740af5811d3ec71472c6ecc92bf5b207e7540e5f068520d4ad81ecb6d4e"
   },
   {
+    "path": "assets/training/fire-sprites/ash1.bmp",
+    "bytes": 1336,
+    "sha256": "837d3734793590398e21034bcb2f14d76b47f825632a8c0c9f5fb4301ec2d4ad"
+  },
+  {
+    "path": "assets/training/fire-sprites/ash2.bmp",
+    "bytes": 1336,
+    "sha256": "37afd21798d6273538097360c94d2fd159dfe75577691974ab3f41c524dee5d1"
+  },
+  {
     "path": "assets/training/fire-sprites/bsmoke.bmp",
     "bytes": 2096,
     "sha256": "b56e9426aa51e99703cfde744a62669d74650d97046d8e5202be9dbabffe8b9d"

@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <cstring>
 #include <functional>
-#include <optional>
 #include <stdexcept>
 #include <vector>
 #include "random.h"
@@ -17,7 +16,7 @@ struct PlayerAshParticle {
     bool active = true;                    // +0x30, 0047f500
     bool animationEnabled = true;          // +0xad, 0047f500
     bool positionInitialized = true;       // +0x78, 0047f500
-    bool vectorsDirty = false;             // +0xa0, 0047f500
+    bool vectorsDirty = true;              // +0xa0, 004463f0 -> 0047f1d0
     uint32_t animationFlags = 0;           // +0x18, copied from selected descriptor container
     float activationScale = 1.0f;           // +0x1c, 0047d330
     float opacityScale = 1.0f;              // +0xa8, 0047f500
@@ -25,9 +24,11 @@ struct PlayerAshParticle {
     uint32_t nextAnimationIndex = 1;        // +0x08, 0047d300
     uint32_t animationTimestamp = 0;        // +0x14, 0047d300
     uint32_t deadline = 0;                  // +0x168, 004463f0
+    std::array<float,3> vector94{};          // +0x94, 004463f0 -> 0047f1d0
     std::array<float,3> vector7c{};         // +0x7c, 0047f500 / 00446510
     std::array<float,3> vector88{};         // +0x88, 0047f500 / 00446510
-    std::optional<std::array<float,3>> spawnPosition; // +0x5c is not set by 0047f500
+    std::array<float,3> vectorB4{1.0f,1.0f,1.0f}; // +0xb4, 0047f500
+    std::array<float,3> spawnPosition{};    // +0x5c, identity transform from 0042d2d0
 };
 
 struct PlayerAshDescriptor {
@@ -37,8 +38,9 @@ struct PlayerAshDescriptor {
 };
 
 struct PlayerAshPoolServices {
-    // Keep opaque engine constructors explicit. These callbacks receive the
-    // shared RNG in case later source recovery finds draws in their call trees.
+    // The pool seeds source-mapped fields before the opaque engine/resource
+    // constructor remainder. Keep that remainder explicit, including possible
+    // shared-RNG use until its call tree is closed.
     std::function<void(size_t container,uint32_t currentFlags,size_t record,
                        const PlayerAshDescriptor&,Random&)> addDescriptor;
     std::function<void(size_t particle,size_t descriptorContainer,

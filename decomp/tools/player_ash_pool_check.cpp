@@ -4,6 +4,7 @@
 int main() {
     PlayerAshPool pool;
     int descriptors=0, constructions=0, presents=0, spawns=0;
+    std::array<std::array<float,3>,50> spawnPoints{};
     Random rng(1);
     PlayerAshPoolServices services;
     services.addDescriptor=[&](size_t c,uint32_t flags,size_t,
@@ -15,15 +16,18 @@ int main() {
         assert(c==(i&1) && p.active && p.animationEnabled && p.activationScale==1.0f);
         assert(p.animationFlags==PlayerAshPool::descriptorFlagsAfterSetup);
         assert(p.animationIndex==0 && p.nextAnimationIndex==1 && p.animationTimestamp==1);
-        assert(p.positionInitialized && !p.vectorsDirty);
+        assert(p.positionInitialized && p.vectorsDirty);
         assert(p.opacityScale==1.0f && p.deadline==0);
         assert((p.vector7c==std::array<float,3>{} && p.vector88==std::array<float,3>{}));
-        assert(!p.spawnPosition.has_value());
+        assert((p.vector94==std::array<float,3>{} && p.vectorB4==std::array<float,3>{1.0f,1.0f,1.0f}));
+        assert((p.spawnPosition==std::array<float,3>{0.0f,0.0f,0.0f}));
         ++constructions;
     };
     services.present=[&](PlayerAshParticle&,Random&) { ++presents; };
     services.spawnPoint=[&](float angle,float distance,Random&) {
-        ++spawns; return std::array<float,3>{angle,distance,0.0f};
+        auto point=std::array<float,3>{angle,distance,0.0f};
+        spawnPoints[size_t(spawns++)]=point;
+        return point;
     };
     pool.initialize(services,1,rng);
     pool.initialize(services,1,rng);
@@ -52,7 +56,7 @@ int main() {
         assert(pool.particles[i].deadline==0);
         assert(pool.particles[i].opacityScale>=0.5f && pool.particles[i].opacityScale<=1.5f);
         assert(pool.particles[i].animationIndex==0 && pool.particles[i].nextAnimationIndex==1 && pool.particles[i].animationTimestamp==1);
-        assert(pool.particles[i].spawnPosition.has_value());
+        assert(pool.particles[i].spawnPosition==spawnPoints[i]);
         assert(pool.particles[i].vector7c[0]==0.0f && pool.particles[i].vector7c[2]==0.0f);
     }
 

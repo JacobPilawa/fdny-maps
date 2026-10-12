@@ -59,6 +59,9 @@ resource object's runtime table state, resolve the indirect call target, or
 establish live Training vertex positions/visibility. The preserved
 `evidence/original/rescue.rrf` resolves the authored names: ID 200 is
 `data\sprites\ash1.bmp` (line 60), and ID 201 is `data\sprites\ash2.bmp`
-(line 61). Neither bitmap is present in the current `assets/training/`
-extraction or asset manifest. No pixel match or exact visual reproduction is
-claimed.
+(line 61). Both original 16×16, 8-bit BMPs were found in the installed game's
+`Data/sprites/` directory and copied byte-for-byte to the ignored local
+`assets/training/fire-sprites/` directory. Their SHA-256 hashes are recorded in
+`evidence/asset-manifest.json`; the proprietary bitmaps themselves are not
+staged for the public source mirror. This resolves asset availability, but no
+pixel match or exact visual reproduction is claimed.
