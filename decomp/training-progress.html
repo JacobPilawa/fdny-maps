@@ -4,8 +4,8 @@
 <h2>Tracked component coverage</h2><div id="bar" class="bar" aria-label="Tracked unit status distribution"></div><div id="legend" class="legend"></div><p id="coverage"></p><p>Exact whole-game decompilation and byte-match percentages are not measured. Full Training and shared RNG parity remain unverified.</p><div class="metrics" id="metrics"></div><p id="snapshot"></p><div class="controls"><select id="group" aria-label="Subsystem"></select><input id="search" placeholder="Filter files, routines or addresses…" aria-label="Search files and routines"></div><p id="map-caption">Rectangle area represents tracked routine count, not original binary size. Color describes the file’s mixture of evidence statuses. Select a file to inspect its routines.</p><div id="map" class="map" aria-label="Interactive file progress treemap"></div><section id="detail" class="detail" aria-live="polite"></section><h2>Files and remaining subsystems</h2><div id="filelist" class="filelist"></div><p class="footer">Snapshot inventory includes unclassified native files and explicitly tracked missing subsystems; it is not an exhaustive original-game function inventory. Native file sizes are shown only for navigation. <a href="CHECKLIST.md">Checklist</a> · <a href="HANDOFF.md">Handoff</a> · <a href="IMPLEMENTATION_PLAN.md">Implementation plan</a> · <a href="mechanics.json">Mechanics</a> · <a href="viewer-progress.json">Viewer data</a><br>Layout inspired by <a href="https://decomp.dev/khasinski/parasite-eve-decomp">decomp.dev</a>. Evidence statuses are independent of complete runtime parity.</p></main><script>
 const data={
   "snapshot": "2026-10-12",
-  "commit": "ac709c4",
-  "tests": 31,
+  "commit": "975ef9d",
+  "tests": 32,
   "scope": "Training",
   "files": [
     {
@@ -942,18 +942,39 @@ const data={
     },
     {
       "path": "src/bmodel_contact.h",
-      "group": "Inventory",
-      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
-      "evidence": "CHECKLIST.md",
+      "group": "Core",
+      "summary": "Source-mapped BModel contact AABB and authored E_Reach override; component input/output comparison is still open.",
+      "evidence": "evidence/training-bmodel-contact-audit.md",
       "units": [
         [
-          "UNMAPPED",
-          "bmodel_contact.h",
-          "open",
-          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+          "0043B690",
+          "BModel contact overlap",
+          "partial",
+          "AABB and reach rules are sourced; current checks assert recovered branch behavior, not original-execution parity."
         ]
       ],
       "bytes": 1148
+    },
+    {
+      "path": "src/bmodel_use.h",
+      "group": "Core",
+      "summary": "Source-derived BModel action gate and lift field transition; original P-code checks eight gate cases and the ordered action-service boundary.",
+      "evidence": "evidence/training-liftable-audit/bmodel-use-component.md",
+      "units": [
+        [
+          "0044C520",
+          "Lift action gate",
+          "verified",
+          "Eight original P-code cases compare returned action values for controlled Hose Spray slot, raw Player byte, held pointer, and object state."
+        ],
+        [
+          "0044BC40",
+          "Lift state transition",
+          "partial",
+          "0044BC40 fields and the 004571A0 receiver/arguments/order compare with its service stubbed; ScriptActor event and runtime integration remain open."
+        ]
+      ],
+      "bytes": 2700
     },
     {
       "path": "src/entity_id_registry.h",
@@ -1077,15 +1098,15 @@ const data={
     },
     {
       "path": "src/interaction_box.h",
-      "group": "Inventory",
-      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
-      "evidence": "CHECKLIST.md",
+      "group": "Core",
+      "summary": "BModel axis-box query compared with original Ghidra P-code; signed-zero condition-code artifacts and far negative-zero parity remain open.",
+      "evidence": "evidence/bmodel-interaction-box-oracle-audit.md",
       "units": [
         [
-          "UNMAPPED",
-          "interaction_box.h",
-          "open",
-          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+          "00489D80",
+          "BModel axis-box query",
+          "partial",
+          "1,813 output words compare; nine signed-zero oracle cases are excluded as inconclusive and far negative-zero output remains unresolved."
         ]
       ],
       "bytes": 2247
@@ -1137,15 +1158,21 @@ const data={
     },
     {
       "path": "src/throw_scalar.h",
-      "group": "Inventory",
-      "summary": "Native file exists; original-function coverage has not been classified in this viewer. Inspect the source and evidence before assigning a status.",
-      "evidence": "CHECKLIST.md",
+      "group": "Core",
+      "summary": "BModel throw setup/update scalar path compared against original Ghidra P-code; model transforms and scheduler remain open.",
+      "evidence": "evidence/training-liftable-audit/throw-scalar-native-check.md",
       "units": [
         [
-          "UNMAPPED",
-          "throw_scalar.h",
-          "open",
-          "Unclassified inventory entry; this is not proof the original code is wholly unimplemented."
+          "0043B580",
+          "Throw setup",
+          "verified",
+          "24 setup fields compare bit-for-bit; no BModel transform or event integration."
+        ],
+        [
+          "0043D330",
+          "Throw update scalar",
+          "verified",
+          "64 branch/point fields compare; update cadence and model wiring remain open."
         ]
       ],
       "bytes": 4286
