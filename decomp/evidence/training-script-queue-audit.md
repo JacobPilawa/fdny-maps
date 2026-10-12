@@ -1,6 +1,6 @@
 # Training ScriptActor queue audit
 
-Read-only Ghidra 12.0.4 audit on 2026-10-11 for `FDNYFirefighter.exe` (SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6fca72fe5f7064ca8122fda7d41e6f2fc3e`). The command handlers were inspected with `DecompileFunctions.java`, the multiplier with `DataValue.java`, and caller references with `AddressXrefs.java`. No live gameplay capture was used.
+Read-only Ghidra 12.0.4 audit on 2026-10-11 for `FDNYFirefighter.exe` (SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`). The command handlers were inspected with `DecompileFunctions.java`, the multiplier with `DataValue.java`, and caller references with `AddressXrefs.java`. No live gameplay capture was used.
 
 ## Original behavior
 

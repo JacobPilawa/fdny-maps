@@ -1,0 +1,1288 @@
+{
+  "scope": "Exact-address joins among current Ghidra function definitions, preserved decompiler export index, and mechanics ledger references.",
+  "limitation": "Address links only. The export index does not carry an executable identity for every source file, so unmatched addresses require provenance review before calling them missing boundaries. This does not assess correctness, function-boundary completeness, runtime reachability, implementation quality, or game completion.",
+  "inputSha256": {
+    "evidence/original-function-inventory.json": "02b650c50982e1dc935aeaaeb1b5e1e6e3ba2bee52876379bd2e945f54621efb",
+    "evidence/function-index.json": "4c97dffd90e8541ca5c00c02daeff1ec507f739ec073487e48eb9a9b16c4899f",
+    "mechanics.json": "301b937212285f827090bf331991a350a90f3262ad9673672fa1ed8f05356fbb"
+  },
+  "summary": {
+    "ghidraDefinedFunctions": 5807,
+    "ghidraEntriesMarkedOtherThanUnclassified": 0,
+    "preservedExportAddresses": 840,
+    "preservedExportAddressesWithExactGhidraEntry": 737,
+    "preservedExportAddressesWithoutExactGhidraEntry": 103,
+    "mechanicsOriginalEntryReferences": 111,
+    "mechanicsUniqueAddresses": 104,
+    "mechanicsAddressesWithExactGhidraEntry": 91,
+    "mechanicsUniqueAddressesWithoutExactGhidraEntry": 13,
+    "uniqueAddressesFromEitherArtifactWithExactGhidraEntry": 743,
+    "definedGhidraEntriesWithoutExactAddressInEitherArtifact": 5064
+  },
+  "mechanicsSystems": {
+    "Assets and resources": {
+      "references": [],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Startup and entity ordering": {
+      "references": [
+        "004297E0",
+        "0049F160",
+        "0049E4D0",
+        "0049C670",
+        "00459840",
+        "0045DDD0",
+        "0045D5B0",
+        "0049E240",
+        "0049E2C0",
+        "00471310",
+        "004799E0"
+      ],
+      "exactGhidraEntryMatches": [
+        "004297E0",
+        "0045D5B0",
+        "0045DDD0",
+        "00471310",
+        "004799E0",
+        "0049C670",
+        "0049E240",
+        "0049E2C0",
+        "0049E4D0",
+        "0049F160"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "00459840"
+      ]
+    },
+    "Shared RNG and all draw ordering": {
+      "references": [
+        "00404930",
+        "00404960",
+        "00404A70",
+        "00404AC0",
+        "00404B30",
+        "00404B50",
+        "00498B30",
+        "00488D40"
+      ],
+      "exactGhidraEntryMatches": [
+        "00404930",
+        "00404960",
+        "00404A70",
+        "00404AC0",
+        "00404B30",
+        "00404B50",
+        "00488D40",
+        "00498B30"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Clock and scheduling": {
+      "references": [
+        "0042BF70"
+      ],
+      "exactGhidraEntryMatches": [
+        "0042BF70"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Player controls, movement, collision": {
+      "references": [
+        "00452570",
+        "0049DBC0",
+        "0049E0A0",
+        "0043F810"
+      ],
+      "exactGhidraEntryMatches": [
+        "0049DBC0",
+        "0049E0A0"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "0043F810",
+        "00452570"
+      ]
+    },
+    "Doors and authored brush motion": {
+      "references": [
+        "0043D660"
+      ],
+      "exactGhidraEntryMatches": [
+        "0043D660"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Script interpreter and message queues": {
+      "references": [
+        "0049B4C0",
+        "0049B610",
+        "0049B7E0",
+        "0049D4E0",
+        "0049B9E0",
+        "0049B810",
+        "0049B780",
+        "0049D450"
+      ],
+      "exactGhidraEntryMatches": [
+        "0049B4C0",
+        "0049B780",
+        "0049B7E0",
+        "0049B810",
+        "0049B9E0",
+        "0049D450",
+        "0049D4E0"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "0049B610"
+      ]
+    },
+    "Axe and destructible objects": {
+      "references": [
+        "00460B90",
+        "0043E2A0"
+      ],
+      "exactGhidraEntryMatches": [
+        "0043E2A0",
+        "00460B90"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Liftable objects and use selection": {
+      "references": [
+        "00458FA0",
+        "0043BE00"
+      ],
+      "exactGhidraEntryMatches": [
+        "0043BE00",
+        "00458FA0"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Extinguisher spray, charge and refill": {
+      "references": [
+        "00461F80",
+        "00461830",
+        "00481A50",
+        "00481A60",
+        "00449A40",
+        "00448970"
+      ],
+      "exactGhidraEntryMatches": [
+        "00448970",
+        "00481A50",
+        "00481A60"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "00449A40",
+        "00461830",
+        "00461F80"
+      ]
+    },
+    "Hose pickup, connection, length and spray": {
+      "references": [
+        "00451870",
+        "0044CAB0",
+        "00463EF0",
+        "00452570",
+        "00459350",
+        "00458FA0",
+        "00459630",
+        "00459050",
+        "00459000",
+        "00489CE0",
+        "004834A0",
+        "004395C0",
+        "004442B0",
+        "0044C780",
+        "00444120",
+        "0044C840",
+        "004444B0"
+      ],
+      "exactGhidraEntryMatches": [
+        "004395C0",
+        "00444120",
+        "004444B0",
+        "0044C780",
+        "0044C840",
+        "0044CAB0",
+        "00451870",
+        "00458FA0",
+        "00459000",
+        "00459050",
+        "00459350",
+        "00459630",
+        "00463EF0",
+        "004834A0"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "004442B0",
+        "00452570",
+        "00489CE0"
+      ]
+    },
+    "Fire growth, suppression, spreading and cleanup": {
+      "references": [
+        "00448970",
+        "0044A7A0",
+        "00447A90"
+      ],
+      "exactGhidraEntryMatches": [
+        "00447A90",
+        "00448970",
+        "0044A7A0"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Player fire damage, air and passing out": {
+      "references": [
+        "0044D550"
+      ],
+      "exactGhidraEntryMatches": [
+        "0044D550"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Victim startup candidates, AI and collision": {
+      "references": [
+        "0045D5B0",
+        "0045C7F0"
+      ],
+      "exactGhidraEntryMatches": [
+        "0045C7F0",
+        "0045D5B0"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Victim pickup, carrying, rescue and exits": {
+      "references": [
+        "00453A70",
+        "00450440",
+        "0045BEF0",
+        "00481140",
+        "0044FCE0",
+        "00490E60",
+        "004571A0",
+        "00484260",
+        "004513A0",
+        "00451160",
+        "004504C0",
+        "0045C000",
+        "00454300",
+        "004541A0",
+        "0044FBA0",
+        "0044C360"
+      ],
+      "exactGhidraEntryMatches": [
+        "0044C360",
+        "0044FBA0",
+        "0044FCE0",
+        "00450440",
+        "004504C0",
+        "00451160",
+        "004513A0",
+        "004541A0",
+        "00454300",
+        "004571A0",
+        "0045BEF0",
+        "0045C000",
+        "00481140",
+        "00484260",
+        "00490E60"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "00453A70"
+      ]
+    },
+    "Goggles and visibility": {
+      "references": [],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Actor poses, weapon placement and animations": {
+      "references": [],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Lighting, particles, smoke and audio": {
+      "references": [],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "HUD, failure, restart, statistics and mission completion": {
+      "references": [],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Fire visual initialization RNG": {
+      "references": [
+        "0044B270",
+        "0047F850",
+        "0047D370",
+        "00458E40"
+      ],
+      "exactGhidraEntryMatches": [
+        "0044B270",
+        "00458E40",
+        "0047D370",
+        "0047F850"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Victim sound timing and RNG": {
+      "references": [
+        "0048D8F0",
+        "0048E080"
+      ],
+      "exactGhidraEntryMatches": [
+        "0048D8F0",
+        "0048E080"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Actor animation timing": {
+      "references": [
+        "00480EA0",
+        "00480D50"
+      ],
+      "exactGhidraEntryMatches": [
+        "00480D50",
+        "00480EA0"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Actor bone poses": {
+      "references": [],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Fire spray suppression and final douse": {
+      "references": [
+        "00448970"
+      ],
+      "exactGhidraEntryMatches": [
+        "00448970"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Fire Think recovery and update gating": {
+      "references": [
+        "00449FE0"
+      ],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": [
+        "00449FE0"
+      ]
+    },
+    "Player fire exposure and damage": {
+      "references": [
+        "004483A0",
+        "00453A70",
+        "00451640",
+        "00450FB0"
+      ],
+      "exactGhidraEntryMatches": [
+        "00450FB0",
+        "00451640"
+      ],
+      "referencesWithoutExactGhidraEntry": [
+        "004483A0",
+        "00453A70"
+      ]
+    },
+    "Fire size keys and interpolation": {
+      "references": [
+        "0044B620",
+        "0044AE80",
+        "0044B510"
+      ],
+      "exactGhidraEntryMatches": [
+        "0044AE80",
+        "0044B510",
+        "0044B620"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Flame and glow placement": {
+      "references": [
+        "0044A840",
+        "00495D20",
+        "00495EB0",
+        "0047F1A0"
+      ],
+      "exactGhidraEntryMatches": [
+        "0044A840",
+        "0047F1A0",
+        "00495D20",
+        "00495EB0"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Sprite frame timing and looping": {
+      "references": [
+        "0047D660",
+        "0047D2B0"
+      ],
+      "exactGhidraEntryMatches": [
+        "0047D2B0",
+        "0047D660"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Combined fire visual component": {
+      "references": [
+        "0044B270",
+        "0044B060",
+        "0045DFF0"
+      ],
+      "exactGhidraEntryMatches": [
+        "0044B060",
+        "0044B270",
+        "0045DFF0"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    },
+    "Assembled placed-fire entity": {
+      "references": [
+        "00448D60"
+      ],
+      "exactGhidraEntryMatches": [],
+      "referencesWithoutExactGhidraEntry": [
+        "00448D60"
+      ]
+    },
+    "Fire floor alignment": {
+      "references": [
+        "00448630",
+        "004476B0"
+      ],
+      "exactGhidraEntryMatches": [
+        "004476B0",
+        "00448630"
+      ],
+      "referencesWithoutExactGhidraEntry": []
+    }
+  },
+  "preservedExportAddressesWithoutExactGhidraEntry": [
+    {
+      "address": "00404B20",
+      "systems": [],
+      "exports": [
+        "evidence/rng-gaussian/00404b20_thunk_FUN_00404ac0.c"
+      ]
+    },
+    {
+      "address": "00429326",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/00429326_FUN_00429326.c"
+      ]
+    },
+    {
+      "address": "0042B280",
+      "systems": [],
+      "exports": [
+        "evidence/entity-dispatch/0042b280_FUN_0042b280.c",
+        "evidence/item-pose/live-extinguisher/message-components/0042b280_FUN_0042b280.c"
+      ]
+    },
+    {
+      "address": "0042BC70",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/app-update-pass/0042bc70_FUN_0042bc70.c"
+      ]
+    },
+    {
+      "address": "0042BC90",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/app-update-pass/0042bc90_FUN_0042bc90.c"
+      ]
+    },
+    {
+      "address": "0042BD50",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/app-update-pass/0042bd50_FUN_0042bd50.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/0042bd50_FUN_0042bd50.c",
+        "evidence/player-tool-pose/frame-functions/0042bd50_FUN_0042bd50.c"
+      ]
+    },
+    {
+      "address": "0042BDA0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/app-update-pass/0042bda0_FUN_0042bda0.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/0042bda0_FUN_0042bda0.c"
+      ]
+    },
+    {
+      "address": "0042F0D6",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/0042f0d6_FUN_0042f0d6.c"
+      ]
+    },
+    {
+      "address": "0042FD30",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/0042fd30_FUN_0042fd30.c",
+        "evidence/startup-world/0042fd30_FUN_0042fd30.c"
+      ]
+    },
+    {
+      "address": "00439310",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00439310_FUN_00439310.c"
+      ]
+    },
+    {
+      "address": "00439410",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00439410_FUN_00439410.c"
+      ]
+    },
+    {
+      "address": "0043C670",
+      "systems": [],
+      "exports": [
+        "evidence/startup-draw-order/0043c670_FUN_0043c670.c"
+      ]
+    },
+    {
+      "address": "0043F2F0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/0043f2f0_FUN_0043f2f0.c"
+      ]
+    },
+    {
+      "address": "0043F300",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/0043f300_FUN_0043f300.c"
+      ]
+    },
+    {
+      "address": "0043F650",
+      "systems": [],
+      "exports": [
+        "evidence/startup-initializers/0043f650_FUN_0043f650.c"
+      ]
+    },
+    {
+      "address": "0043F810",
+      "systems": [
+        "Player controls, movement, collision"
+      ],
+      "exports": [
+        "evidence/collision-audit/0043f810_FUN_0043f810.c",
+        "evidence/fresh/0043f810_FUN_0043f810.c"
+      ]
+    },
+    {
+      "address": "0043FDD0",
+      "systems": [],
+      "exports": [
+        "evidence/rng-startup/0043fdd0_FUN_0043fdd0.c"
+      ]
+    },
+    {
+      "address": "00444050",
+      "systems": [],
+      "exports": [
+        "evidence/hose-spray/prop-model/use-manager/00444050_FUN_00444050.c",
+        "evidence/hose-spray/prop-model/use-routing/00444050_FUN_00444050.c"
+      ]
+    },
+    {
+      "address": "004442B0",
+      "systems": [
+        "Hose pickup, connection, length and spray"
+      ],
+      "exports": [
+        "evidence/hose-spray/prop-model/use-routing-code/004442b0_FUN_004442b0.c"
+      ]
+    },
+    {
+      "address": "00444A30",
+      "systems": [],
+      "exports": [
+        "evidence/hose-spray/prop-model/use-manager/00444a30_FUN_00444a30.c"
+      ]
+    },
+    {
+      "address": "00445F00",
+      "systems": [],
+      "exports": [
+        "evidence/rng-startup/00445f00_FUN_00445f00.c"
+      ]
+    },
+    {
+      "address": "004475F0",
+      "systems": [],
+      "exports": [
+        "evidence/fire-update/004475f0_FUN_004475f0.c"
+      ]
+    },
+    {
+      "address": "00448173",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/dispatch-traces/00448173_FUN_00448173.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/00448173_FUN_00448173.c"
+      ]
+    },
+    {
+      "address": "004483A0",
+      "systems": [],
+      "exports": [
+        "evidence/fire-update/004483a0_FUN_004483a0.c"
+      ]
+    },
+    {
+      "address": "00448D60",
+      "systems": [
+        "Assembled placed-fire entity"
+      ],
+      "exports": [
+        "evidence/rng-startup/00448d60_FUN_00448d60.c",
+        "evidence/startup-initializers/00448d60_FUN_00448d60.c"
+      ]
+    },
+    {
+      "address": "00449A40",
+      "systems": [
+        "Extinguisher spray, charge and refill"
+      ],
+      "exports": [
+        "evidence/extinguisher-contact/00449a40_FUN_00449a40.c",
+        "evidence/item-pose/live-extinguisher/contact-dispatch/00449a40_FUN_00449a40.c"
+      ]
+    },
+    {
+      "address": "00449FE0",
+      "systems": [
+        "Fire Think recovery and update gating"
+      ],
+      "exports": [
+        "evidence/fire-update/00449fe0_FUN_00449fe0.c",
+        "evidence/item-pose/live-extinguisher/contact-dispatch/00449fe0_FUN_00449fe0.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/fireresque-helper-exports/00449fe0_FUN_00449fe0.c"
+      ]
+    },
+    {
+      "address": "0044A310",
+      "systems": [],
+      "exports": [
+        "evidence/fire-update/0044a310_FUN_0044a310.c"
+      ]
+    },
+    {
+      "address": "0044A320",
+      "systems": [],
+      "exports": [
+        "evidence/fire-update/0044a320_FUN_0044a320.c"
+      ]
+    },
+    {
+      "address": "0044A470",
+      "systems": [],
+      "exports": [
+        "evidence/startup-constructors/0044a470_FUN_0044a470.c"
+      ]
+    },
+    {
+      "address": "0044C100",
+      "systems": [],
+      "exports": [
+        "evidence/gameplay/0044c100_FUN_0044c100.c",
+        "evidence/mechanics-decompiled/0044c100_FUN_0044c100.c"
+      ]
+    },
+    {
+      "address": "0044FE20",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/0044fe20_FUN_0044fe20.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/0044fe20_FUN_0044fe20.c"
+      ]
+    },
+    {
+      "address": "00452570",
+      "systems": [
+        "Player controls, movement, collision",
+        "Hose pickup, connection, length and spray"
+      ],
+      "exports": [
+        "evidence/gameplay/00452570_FUN_00452570.c",
+        "evidence/hose-spray/prop-model/use-manager/00452570_FUN_00452570.c"
+      ]
+    },
+    {
+      "address": "00453A70",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/00453a70_FUN_00453a70.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00453a70_FUN_00453a70.c"
+      ]
+    },
+    {
+      "address": "00453CF0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00453cf0_FUN_00453cf0.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/app-update-entity-exports/00453cf0_FUN_00453cf0.c"
+      ]
+    },
+    {
+      "address": "00459840",
+      "systems": [
+        "Startup and entity ordering"
+      ],
+      "exports": [
+        "evidence/victim-startup/00459840_FUN_00459840.c"
+      ]
+    },
+    {
+      "address": "0045F970",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/0045f970_FUN_0045f970.c"
+      ]
+    },
+    {
+      "address": "0045F9B0",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/0045f9b0_FUN_0045f9b0.c"
+      ]
+    },
+    {
+      "address": "0045FA50",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/0045fa50_FUN_0045fa50.c"
+      ]
+    },
+    {
+      "address": "00460AD0",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/00460ad0_FUN_00460ad0.c"
+      ]
+    },
+    {
+      "address": "00460AE0",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/00460ae0_FUN_00460ae0.c"
+      ]
+    },
+    {
+      "address": "004610E0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/004610e0_FUN_004610e0.c",
+        "evidence/tool-decompiled/004610e0_FUN_004610e0.c"
+      ]
+    },
+    {
+      "address": "00461260",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/00461260_FUN_00461260.c",
+        "evidence/tool-decompiled/00461260_FUN_00461260.c"
+      ]
+    },
+    {
+      "address": "004614E0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/vtable-methods/004614e0_FUN_004614e0.c",
+        "evidence/tool-decompiled/004614e0_FUN_004614e0.c"
+      ]
+    },
+    {
+      "address": "004614FE",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/004614fe_FUN_004614fe.c"
+      ]
+    },
+    {
+      "address": "00461590",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/vtable-methods/00461590_FUN_00461590.c",
+        "evidence/tool-decompiled/00461590_FUN_00461590.c"
+      ]
+    },
+    {
+      "address": "00461596",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/00461596_FUN_00461596.c"
+      ]
+    },
+    {
+      "address": "004615BC",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/004615bc_FUN_004615bc.c"
+      ]
+    },
+    {
+      "address": "00461830",
+      "systems": [
+        "Extinguisher spray, charge and refill"
+      ],
+      "exports": [
+        "evidence/gameplay/00461830_FUN_00461830.c",
+        "evidence/item-pose/live-extinguisher/00461830_FUN_00461830.c",
+        "evidence/tool-decompiled/00461830_FUN_00461830.c"
+      ]
+    },
+    {
+      "address": "00461900",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/00461900_FUN_00461900.c"
+      ]
+    },
+    {
+      "address": "00461F80",
+      "systems": [
+        "Extinguisher spray, charge and refill"
+      ],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/00461f80_FUN_00461f80.c",
+        "evidence/rng-startup/00461f80_FUN_00461f80.c",
+        "evidence/tool-decompiled/00461f80_FUN_00461f80.c"
+      ]
+    },
+    {
+      "address": "004632B0",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/004632b0_FUN_004632b0.c"
+      ]
+    },
+    {
+      "address": "00463460",
+      "systems": [],
+      "exports": [
+        "evidence/tool-decompiled/00463460_FUN_00463460.c"
+      ]
+    },
+    {
+      "address": "004640F0",
+      "systems": [],
+      "exports": [
+        "evidence/rng-startup/004640f0_FUN_004640f0.c",
+        "evidence/tool-decompiled/004640f0_FUN_004640f0.c"
+      ]
+    },
+    {
+      "address": "00464D4C",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/dispatch-traces/00464d4c_FUN_00464d4c.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/00464d4c_FUN_00464d4c.c"
+      ]
+    },
+    {
+      "address": "00468AC0",
+      "systems": [],
+      "exports": [
+        "evidence/rng-startup/00468ac0_FUN_00468ac0.c"
+      ]
+    },
+    {
+      "address": "00489CE0",
+      "systems": [
+        "Hose pickup, connection, length and spray"
+      ],
+      "exports": [
+        "evidence/hose-spray/prop-model/use-range/00489ce0_FUN_00489ce0.c"
+      ]
+    },
+    {
+      "address": "004960C0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/004960c0_FUN_004960c0.c"
+      ]
+    },
+    {
+      "address": "00496210",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00496210_FUN_00496210.c",
+        "evidence/player-tool-pose/view-methods/00496210_FUN_00496210.c"
+      ]
+    },
+    {
+      "address": "00498B50",
+      "systems": [],
+      "exports": [
+        "evidence/entity-dispatch/00498b50_FUN_00498b50.c",
+        "evidence/rng-gaussian/00498b50_FUN_00498b50.c"
+      ]
+    },
+    {
+      "address": "00498C00",
+      "systems": [],
+      "exports": [
+        "evidence/rng-final-helpers/00498c00_FUN_00498c00.c"
+      ]
+    },
+    {
+      "address": "00498D80",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/00498d80_FUN_00498d80.c"
+      ]
+    },
+    {
+      "address": "00499CF0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00499cf0_FUN_00499cf0.c"
+      ]
+    },
+    {
+      "address": "00499EF0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/app-update-pass/00499ef0_FUN_00499ef0.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00499ef0_FUN_00499ef0.c"
+      ]
+    },
+    {
+      "address": "00499FB0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00499fb0_FUN_00499fb0.c"
+      ]
+    },
+    {
+      "address": "00499FC0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/app-update-pass/00499fc0_FUN_00499fc0.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/00499fc0_FUN_00499fc0.c"
+      ]
+    },
+    {
+      "address": "0049B610",
+      "systems": [
+        "Script interpreter and message queues"
+      ],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/0049b610_FUN_0049b610.c"
+      ]
+    },
+    {
+      "address": "0049BB90",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049bb90_FUN_0049bb90.c"
+      ]
+    },
+    {
+      "address": "0049BD20",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049bd20_FUN_0049bd20.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/fireresque-helper-exports/0049bd20_FUN_0049bd20.c"
+      ]
+    },
+    {
+      "address": "0049BDEE",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/dispatch-traces/0049bdee_FUN_0049bdee.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/0049bdee_FUN_0049bdee.c"
+      ]
+    },
+    {
+      "address": "0049BEF6",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/dispatch-traces/0049bef6_FUN_0049bef6.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/0049bef6_FUN_0049bef6.c"
+      ]
+    },
+    {
+      "address": "0049BFB0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049bfb0_FUN_0049bfb0.c"
+      ]
+    },
+    {
+      "address": "0049C3D0",
+      "systems": [],
+      "exports": [
+        "evidence/entity-dispatch/0049c3d0_FUN_0049c3d0.c",
+        "evidence/startup-world/0049c3d0_FUN_0049c3d0.c"
+      ]
+    },
+    {
+      "address": "0049C820",
+      "systems": [],
+      "exports": [
+        "evidence/entity-dispatch/0049c820_FUN_0049c820.c",
+        "evidence/item-pose/live-extinguisher/message-components/0049c820_FUN_0049c820.c"
+      ]
+    },
+    {
+      "address": "0049C870",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/0049c870_FUN_0049c870.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/dispatch-traces/0049c870_FUN_0049c870.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/0049c870_FUN_0049c870.c"
+      ]
+    },
+    {
+      "address": "0049D7F0",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/0049d7f0_FUN_0049d7f0.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/0049d7f0_FUN_0049d7f0.c"
+      ]
+    },
+    {
+      "address": "0049DB80",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/0049db80_FUN_0049db80.c"
+      ]
+    },
+    {
+      "address": "0049DB90",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/0049db90_thunk_FUN_0049d790.c",
+        "evidence/item-pose/live-extinguisher/message-components/owner-callers/0049db90_thunk_FUN_0049d790.c"
+      ]
+    },
+    {
+      "address": "0049DE70",
+      "systems": [],
+      "exports": [
+        "evidence/collision-audit/0049de70_FUN_0049de70.c"
+      ]
+    },
+    {
+      "address": "004A1AF0",
+      "systems": [],
+      "exports": [
+        "evidence/player-tool-pose/actor-binding/004a1af0_FUN_004a1af0.c"
+      ]
+    },
+    {
+      "address": "004A9972",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/004a9972_FUN_004a9972.c"
+      ]
+    },
+    {
+      "address": "004C0329",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/004c0329_FUN_004c0329.c",
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-transfer-candidates-final/004c0329_FUN_004c0329.c"
+      ]
+    },
+    {
+      "address": "004C6524",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/register-call-candidates/004c6524_FUN_004c6524.c"
+      ]
+    },
+    {
+      "address": "10002020",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10002020_FUN_10002020.c"
+      ]
+    },
+    {
+      "address": "1000E5E0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/1000e5e0_FUN_1000e5e0.c"
+      ]
+    },
+    {
+      "address": "10018C60",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10018c60_FUN_10018c60.c",
+        "evidence/ghidra/genesis/register-call-final/10018c60_FUN_10018c60.c"
+      ]
+    },
+    {
+      "address": "1001E9A0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/1001e9a0_FUN_1001e9a0.c"
+      ]
+    },
+    {
+      "address": "10020AA0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10020aa0_FUN_10020aa0.c"
+      ]
+    },
+    {
+      "address": "10021C60",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10021c60_FUN_10021c60.c"
+      ]
+    },
+    {
+      "address": "10023874",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/slot-zero-exports/10023874_FUN_10023874.c"
+      ]
+    },
+    {
+      "address": "10023950",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10023950_FUN_10023950.c"
+      ]
+    },
+    {
+      "address": "10025E00",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10025e00_FUN_10025e00.c"
+      ]
+    },
+    {
+      "address": "100260E0",
+      "systems": [],
+      "exports": [
+        "evidence/item-pose/live-extinguisher/message-components/genesis-engine/100260e0_geEngine_EndFrame.c"
+      ]
+    },
+    {
+      "address": "1002F8C0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/1002f8c0_FUN_1002f8c0.c"
+      ]
+    },
+    {
+      "address": "100360F0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/100360f0_FUN_100360f0.c"
+      ]
+    },
+    {
+      "address": "100372A0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/100372a0_FUN_100372a0.c"
+      ]
+    },
+    {
+      "address": "10037E90",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10037e90_FUN_10037e90.c"
+      ]
+    },
+    {
+      "address": "10038470",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/10038470_FUN_10038470.c"
+      ]
+    },
+    {
+      "address": "1003C9F0",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/1003c9f0_FUN_1003c9f0.c"
+      ]
+    },
+    {
+      "address": "1003CC20",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-candidates/1003cc20_FUN_1003cc20.c"
+      ]
+    },
+    {
+      "address": "10046847",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-final/10046847_FUN_10046847.c"
+      ]
+    },
+    {
+      "address": "100468AC",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-final/100468ac_FUN_100468ac.c"
+      ]
+    },
+    {
+      "address": "1004C674",
+      "systems": [],
+      "exports": [
+        "evidence/ghidra/genesis/register-call-final/1004c674_FUN_1004c674.c"
+      ]
+    }
+  ],
+  "mechanicsAddressesWithoutExactGhidraEntry": {
+    "Startup and entity ordering": [
+      "00459840"
+    ],
+    "Player controls, movement, collision": [
+      "0043F810",
+      "00452570"
+    ],
+    "Script interpreter and message queues": [
+      "0049B610"
+    ],
+    "Extinguisher spray, charge and refill": [
+      "00449A40",
+      "00461830",
+      "00461F80"
+    ],
+    "Hose pickup, connection, length and spray": [
+      "004442B0",
+      "00452570",
+      "00489CE0"
+    ],
+    "Victim pickup, carrying, rescue and exits": [
+      "00453A70"
+    ],
+    "Fire Think recovery and update gating": [
+      "00449FE0"
+    ],
+    "Player fire exposure and damage": [
+      "004483A0",
+      "00453A70"
+    ],
+    "Assembled placed-fire entity": [
+      "00448D60"
+    ]
+  }
+}

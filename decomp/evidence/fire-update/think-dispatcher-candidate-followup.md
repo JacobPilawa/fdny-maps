@@ -1,6 +1,6 @@
 # FireRescue Think dispatcher candidate follow-up
 
-Read-only Ghidra 12.0.4 follow-up, 2026-10-11. The preserved executable analyzed in the project is `FDNYFirefighter.exe`, SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6fca72fe5f7064ca8122fda7d41e7f6d2fc3e`. No live process was attached, and no gameplay code or Ghidra project was modified.
+Read-only Ghidra 12.0.4 follow-up, 2026-10-11. The preserved executable analyzed in the project is `FDNYFirefighter.exe`, SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`. No live process was attached, and no gameplay code or Ghidra project was modified.
 
 ## Verified paths
 
