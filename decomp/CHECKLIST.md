@@ -176,3 +176,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] Luna supplied source carry-mode fields/diagnostic/API boundary and status action1/2 ordering. Lead review used actual shared counter/arithmetic types in checks and corrected lazy total's zero-before-enumeration write.
 - [x] Composed check executes actual Training pickup EVS scripts and native BSP release for both victims, verifies membership/counters/gates and one shared draw per rescue. All 15 CTest checks pass. See `evidence/victim-ai-audit/composed-transactions.md`.
 - [ ] Proximity/route producers and root scheduling remain unconnected; engine/UI service presentation, continuous carry, passout integration and mission completion remain unfinished. No full-level parity is claimed.
+
+## Proximity queue / deadline input milestone (2026-10-11)
+
+- [x] Source proximity publisher preserves state/type/getter/geometry/route order and queue-full handling. Real queue and registry tests cover FIFO and generation invalidation.
+- [x] Composed Training victim check now publishes and drains source 0x7532 before real EVS pickup and native BSP escape; no automatic scene tick is added.
+- [x] Player+343C initialization arithmetic matches 15 original P-code fragments. Conditional staging target and vtable byte/index distinction are documented.
+- [x] All 17 CTest checks pass; existing view parity failures remain unresolved.
+- [ ] Prove Player staging participation and recurring actor/frame scheduling; connect actual services and producer cadence. Recover level+10 authoring meaning and remaining passout tail.
