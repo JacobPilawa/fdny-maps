@@ -57,10 +57,11 @@ input reachability, carry transforms, callback effects beyond the recorded
 boundary, recurring scheduling, or Training parity.
 
 Still open: the meaning and intervening-write lifecycle of root `+0x12C`, mode
-2/action 1000, axis-box query composition, Training list membership and runtime
-registration order, event delivery and latency, held-object positioning/
+2/action 1000, axis-box query composition, exact type-1 contact candidates,
+live registration order, event delivery and latency, held-object positioning/
 release integration, and the caller cadence. `00459050/00459090` and BModel
-updater `0043DC60` now explain one conditional registration path; the exact
-Training conditions and schedule remain open. The Player update block
-dispatches its cached selection before refreshing it, but that local order
-does not prove a frame schedule.
+updater `0043DC60` now explain the touch/untouch-driven registration path for
+nonzero `useMode`; Training's two liftables qualify with mode 1 and source
+reaches 50/20. The relation between their contact dispatch and Player update
+order remains open. The Player update block dispatches its cached selection
+before refreshing it, but that local order does not prove a frame schedule.

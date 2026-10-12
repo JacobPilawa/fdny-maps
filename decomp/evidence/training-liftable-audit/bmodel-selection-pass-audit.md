@@ -81,6 +81,13 @@ registration reuses the lowest-numbered hole, which can give a newly active
 candidate an earlier tie-break position than older entries still in the list.
 The array callback's ownership effects are not yet resolved.
 
+Candidate teardown wrappers `0043AF10/0043AF20` switch the subobject to base
+vtable `004E0B7C` before calling the remove adapter. The first six words of
+that table are `0043AF00`, `0043F670`, `0043AF20`, `0043F2F0`, `0043F670`, and
+`004B9323`; slot `+8` is the deleting destructor that removes registration
+before optionally freeing the object. The other slot meanings are not assigned
+here.
+
 Incoming references and local code establish three add paths: the concrete
 constructor at `00463700` registers its subobject at `this+0x1FC` at
 `00463D31`; the BModel updater `0043DC60` conditionally registers its subobject
@@ -90,13 +97,44 @@ untyped routine has a paired removal at `00444100`. Several owner teardown
 paths also call the removal adapter (`0043AF10/20`, `0043F180`, `004448F0`,
 and `00463D50`).
 
-For BModel update `0043DC60`, `this+0x218` is set when helper `00490300` on
-`this+0x13C` returns true. If it returns false, the byte is cleared only when
-`004903A0` returns true; otherwise its prior value remains. When `this+0x234`
-is nonzero, that byte selects add versus remove for `this+0x7C`, before the
-routine calls `0043D330`. The two helper results and fields are still
-unlabelled; this maps the registration edge, not the exact Training condition
-or its recurring update schedule.
+The `0043DC60` receiver is the BModel ScriptActor subobject at root `+0x24`.
+Its `+0x13C` contact-pair container is root `+0x160`; the shared dispatcher
+`00470840` sends `touch` events for entries returned by `00490300`, `touching`
+events for entries enumerated by `00490380`, and `untouch` events for entries
+returned by `004903A0`. The first/second array comparison in `00490300` and
+`004903A0` is pointer-pair based (`0049D3D0`); `00490380` enumerates the first
+array. This is the ScriptActor contact-event path, not a generic geometry
+query.
+
+After that event dispatch, `0043DC60` updates the byte at receiver `+0x218`
+(BModel root `+0x23C`): it sets the byte when `00490300(container, 0)` finds a
+pair, clears it when that function finds none but `004903A0(container, 0)` finds
+one, and otherwise preserves its prior value. When `useMode` at BModel root
+`+0x258` is nonzero (the updater's receiver `+0x234` gate), this contact-state
+byte selects add versus remove for the candidate subobject at BModel root
+`+0xA0` (receiver `+0x7C`). Registration therefore happens after the named
+touch-event dispatch in this updater, before its call to `0043D330`.
+
+Training BModels 109 and 111 both set UserData `G_Liftable=1`; the existing
+`0043BE00` trace shows successful lift-mode initialization writes
+`useMode = 1`. They therefore pass the nonzero `useMode` gate when this updater
+runs. The other half of this contact route is recorded in
+[`../training-bmodel-contact-scheduling-audit.md`](../training-bmodel-contact-scheduling-audit.md):
+the normal owner manager calls BModel contact callback `0043B620`, which adds
+pair keys from type-1 candidate objects' `+4/+8` fields to the current contact
+list. Player construction sets its type to 1, so the Player qualifies for this
+route. Training BModels 109 and 111 have authored `E_Reach` values 50 and 20;
+their `G_Liftable=1` makes the `0043AFF0` 48-unit substitution gate false, so
+those authored reach expansions apply. This supports Player contact as the
+expected source of their use-candidate registration, but the type-1 category
+is not proven to contain only Player objects.
+
+Contact-pair production and ScriptActor event conversion remain on separate
+local routes. The recurring caller of `0043DC60` and its order relative to the
+normal owner manager are unresolved, so actual registration latency and the
+relative order of Training liftables 109/111 still need a live or complete
+dispatcher trace. Do not use BSP entity order as a substitute for those
+runtime registration/removal events.
 
 The list's static append/first-hole rules and BModel add/remove caller are now
 source-mapped. Actual Training membership and moment-by-moment order remain
@@ -128,15 +166,17 @@ Using `DecompileFunctions.java 0044CD10 0044D550 0044FF10 004590C0
 00458FA0 0044C520 0043D2B0`, `InstructionContext.java 0045386B 16 16`
 and `InstructionContext.java 004533C2 16 16`, `DecompileFunctions.java
 00459000 00459050 00459090 00429FE0 00463700 0043AF10 0043AF20 0043F180
-004448F0 00463D50`, temporary-copy `DefineAndDecompile.java 0043DC60`,
+004448F0 00463D50 004705B0 00470840 00490300 00490380 004903A0`,
+temporary-copy `DefineAndDecompile.java 0043DC60`,
 `AddressXrefs.java 00459000 00459050 00459090`, `InstructionContext.java
 0043DDB8 18 20` and `004440D8 18 20`, `DataValue.java 004E0B7C 004E0B80
 004E0B84 004E0B88 004E0B8C 004E0B90`, `FieldStoreAudit.java 0x12c 0x188
-0x18c`, and `FieldOffsetReferences.java 0x3114`. All queries against the
-preserved project used `-noanalysis -readOnly`; missing function boundaries
-were defined only in the scratch copy under `/private/tmp`.
+0x18c`, and separate `FieldOffsetReferences.java 0x3114` and
+`FieldOffsetReferences.java 0x234` queries. All queries against the preserved
+project used `-noanalysis -readOnly`; missing function boundaries were defined
+only in the scratch copy under `/private/tmp`.
 
-Next source work: identify the Training BModel instances for which `+0x234`
-enables registration, resolve the two `+0x13C` checks and their update caller,
-then connect those dynamically ordered entries to the BModel axis-box query
-and action methods without guessing scheduler or live field values.
+Next source work: enumerate the Training type-1 contact candidates, recover the
+updater's actual call order relative to the owner contact manager, then connect
+those dynamically ordered entries to the BModel axis-box query and action
+methods without guessing scheduler or live field values.
