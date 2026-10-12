@@ -1,6 +1,6 @@
 # Original input snapshot
 
-This directory contains local copies used for the new workspace. The copied `Data/` tree contains 346 files (about 155 MB). `binaries/` contains the main game EXE, `Genesis.dll`, `D3DDrv.dll`, packed `fmod.dll`, and `FDNYFireFighter.cfg`. `manifest.csv` records a SHA-256 and byte size for every copied file.
+This directory contains local copies used for the new workspace. The copied `Data/` tree contains 468 files (about 188 MB). `binaries/` contains the main game EXE, `Genesis.dll`, `D3DDrv.dll`, packed `fmod.dll`, and `FDNYFireFighter.cfg`. `manifest.csv` records a SHA-256 and byte size for every copied file (474 total, including this README).
 
 Source directory: `<game-install>/`.
 
@@ -10,4 +10,4 @@ The input directory is selective rather than a full install image. It leaves out
 
 The original Desktop files remain untouched. `Data/` and `binaries/` are local-only inputs and are excluded from Git; the manifest and notes stay versioned.
 
-The snapshot was independently compared with the user's raw folder `<game-install>/` on 2026-10-12. All 346 files in Data and the five selected EXE/DLL/config files matched byte-for-byte (351 checked, zero differences). See [the raw-copy comparison note](../reference/raw-copy/README.md).
+The snapshot was independently compared with the user's raw folder `<game-install>/` on 2026-10-12. All 346 files in the original Data snapshot and the five selected EXE/DLL/config files matched byte-for-byte (351 checked, zero differences). The ISO's InstallShield cabinet supplied the 122 additional missing audio files, bringing `Data/Snd/` to the full 127 WAV/MP3 entries listed by the installer; the five existing audio files matched the cabinet byte-for-byte. These source audio files and other `Data/` inputs remain local-only and are excluded from Git. See [the raw-copy comparison note](../reference/raw-copy/README.md).
