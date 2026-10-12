@@ -49,7 +49,7 @@ def register(output, name):
 
 
 class Debugger:
-    def __init__(self, command, env, transcript):
+    def __init__(self, command, env, transcript, deadline=None):
         self.master, slave = pty.openpty()
         attrs = termios.tcgetattr(slave)
         # Wine's Windows console needs CR as Enter. Keep the pseudo-terminal
@@ -64,9 +64,13 @@ class Debugger:
         self.buffer = b''
         self.transcript = transcript
         self.stopped = False
+        self.deadline = deadline
+        self.attached = False
 
-    def prompt(self, timeout=60):
-        deadline = time.monotonic() + timeout
+    def prompt(self, timeout=60, honor_deadline=True):
+        prompt_deadline = time.monotonic() + timeout
+        if honor_deadline and self.deadline is not None:
+            prompt_deadline = min(prompt_deadline, self.deadline)
         while True:
             match = re.search(rb'Wine-dbg>\s*', self.buffer)
             if match:
@@ -74,7 +78,7 @@ class Debugger:
                 self.buffer = self.buffer[match.end():]
                 self.stopped = True
                 return result
-            if time.monotonic() >= deadline:
+            if time.monotonic() >= prompt_deadline:
                 raise TimeoutError('Debugger did not reach a prompt. See transcript.')
             if select.select([self.master], [], [], 0.25)[0]:
                 try:
@@ -87,33 +91,63 @@ class Debugger:
                 self.transcript.flush()
                 self.buffer += chunk
 
-    def command(self, command, timeout=60):
+    def command(self, command, timeout=60, honor_deadline=True):
         self.transcript.write('\n>>> ' + command + '\n')
         self.transcript.flush()
         self.stopped = False
         # WineDbg's Windows console on macOS displayed LF input as a literal
         # ^J and left the command pending; carriage return submits a command.
         os.write(self.master, (command + '\r').encode())
-        return self.prompt(timeout)
+        return self.prompt(timeout, honor_deadline)
 
     def words(self, address, count):
         # count=2 also supplies an address header; x/1x does not in WineDbg.
         text = self.command(f'x/{max(count, 2)}x 0x{address:x}')
         return memory_words(text, max(count, 2))[:count]
 
+    def attach(self, windows_pid, timeout=60):
+        result = self.command(f'attach 0x{windows_pid:x}', timeout)
+        if re.search(r"could(?:n't| not) attach|unable to attach", result, re.I):
+            raise RuntimeError('WineDbg could not attach to the requested process. See transcript.')
+        # From this point the attach command returned to a prompt without a
+        # rejection. Record that state before asking for registers so cleanup
+        # still detaches if the register query itself fails or times out.
+        self.attached = True
+        registers = self.command('info reg', timeout)
+        if not re.search(r'\b(?:EIP|RIP)\s*[:=]', registers, re.I):
+            raise RuntimeError('WineDbg did not expose a stopped target after attach. See transcript.')
+        return result + registers
+
+    def interrupt(self, timeout=10):
+        if self.stopped:
+            return
+        self.transcript.write('\n>>> <Ctrl-C interrupt>\n')
+        self.transcript.flush()
+        os.write(self.master, b'\x03')
+        self.prompt(timeout, honor_deadline=False)
+
     def cleanup(self):
-        # Never kill the game or its Wine server. Detach removes breakpoints.
+        # Never kill the game or its Wine server. Stop the inferior, detach to
+        # remove breakpoints, then exit WineDbg. Ctrl-C must be validated with
+        # a disposable Wine process before this is used on the game.
         try:
             if not self.stopped:
-                self.prompt(15)
-            self.command('detach', 15)
-            os.write(self.master, b'quit\n')
-            self.process.wait(timeout=15)
+                self.interrupt(10)
+            if self.attached:
+                self.command('detach', 10, honor_deadline=False)
+                self.attached = False
+            os.write(self.master, b'quit\r')
+            self.process.wait(timeout=10)
+            return True
         except Exception:
             print('Automatic detach could not be confirmed. Close the game normally; '
                   'the transcript contains the last debugger state.')
         finally:
-            os.close(self.master)
+            # If detach failed, leave the PTY open while this owner remains
+            # alive so WineDbg does not receive an unexplained hangup.
+            if self.process.poll() is not None:
+                os.close(self.master)
+        return False
 
 
 def main():
@@ -166,9 +200,10 @@ def main():
                 'scope': 'Attach at main menu; next level startup plus limited following draws.'}
     (output / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     with (output / 'debugger.txt').open('w') as transcript, (output / 'events.jsonl').open('w') as events:
-        dbg = Debugger([str(wine), str(debugger), str(pid)], env, transcript)
+        dbg = Debugger([str(wine), str(debugger)], env, transcript)
         try:
             dbg.prompt()
+            dbg.attach(pid)
             modules = dbg.command('info share')
             # Record module layout; disk hash guards addresses, live entry bytes below
             # additionally reject a runtime mod that replaced any traced entry.

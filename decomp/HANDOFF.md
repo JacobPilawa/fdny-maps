@@ -46,9 +46,9 @@ Use `tools/ghidra/README.md`. Preserved-project queries are `-noanalysis -readOn
 
 Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`; DLL: `5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643`. The current EXE hash corrects an older transcription that omitted a character; the oracle verifies actual program/input hashes.
 
-No live game capture succeeded. Earlier WineDbg attaches froze/crashed; do not attach or ask the user to enter Training without a safe bounded capture/recovery method. Continue static/oracle work meanwhile.
+No live game capture has run. Earlier WineDbg attaches froze/crashed. The Fire-dispatch recorder now has a 300-second default end-to-end cap, explicit PID attach, Ctrl-C/detach recovery, and a 30-second cleanup reserve. A disposable cloned-prefix `ping.exe` smoke test confirmed forced-timeout interrupt, detach, debugger exit, and target survival; it does not test the game or prove gameplay scheduling. Next step: attach only after the matching game is open at its main menu, then have the user enter Training during the bounded capture. See `evidence/item-pose/live-extinguisher/message-components/fire-think-live-capture.md`, `evidence/fire-update/winedbg-recovery-smoke.md`, and the raw local results under `evidence/live/winedbg-safe-20261011-233125/`.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 18% five-hour used and 68% weekly used (82% and 32% remaining).
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 23% five-hour used and 68% weekly used (77% and 32% remaining).
 
 ## Proximity and deadline input continuation
 
