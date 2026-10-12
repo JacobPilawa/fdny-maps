@@ -1,0 +1,33 @@
+# Player fire-exposure and passout callback trace
+
+Static trace of `004483A0 → 0x7531 → 00453A70 → 00451640 → 00450FB0`, using the saved instructions in `player-exposure-assembly.txt`, the preserved Ghidra decompilations cited below, and executable constants read by `tools/pe_constants.py`. No live Training scheduler or callback cadence was established.
+
+## Fire-side producer
+
+`004483A0` returns for FireRescue state `+0x70 == 5` or exposure-record count `+0xB8` outside `[0,4)`. It asks the candidate's vtable `+0x0C` for an origin, computes absolute XYZ deltas from FireRescue `+0x7C..+0x84`, selects the largest-axis distance, then calls `004B9400` and `00448320`. That conversion is distance-to-integer work, not an RNG draw. `00448320` receives the distance before influence calculation; its nearby authored thresholds include `750.0f` (`004E16B0`) and the FireRescue `+0x120 <= 500.0f` gate (`004E16C0`).
+
+For influence, `004483A0` forms `fire[+0x128] + (1 - fire[+0x128]) * 0.25` using binary64 constant `004E0508 = 0.25`. It multiplies this by `0044A7A0(fire+0x12C, candidateOrigin, candidate[+0x0C])`, stores the binary32 result temporarily at `004FF8E0`, and proceeds when it is at least binary64 `004E16B8 = 0.0001`. If the world ray query `0048FEA0` returns false, it multiplies the stored influence by binary64 `004DF7B8 = 0.1` and rounds back to binary32. It then stores the FireRescue pointer and influence in the next eight-byte record beginning at fire `+0xBC`, gets the candidate route pair with `0049D350`, and submits `0x7531` through `0049D4E0`; only afterward does it increment `+0xB8`.
+
+`0044A7A0` supplies radial falloff: radius is `(object[+0x4C] + object[+0x44]) * 0.5` (`004DE6F8 = 0.5`), must be at least `0.01` (`004DFC78`), and is increased by the message's radius. It computes the transformed relative vector and returns a linear remaining-radius term scaled by object `+0x60/+0xD0`; otherwise it returns zero. The false-ray attenuation and all these services are conditional inputs to the event payload. They do not identify how often the owner callback runs or when Think resets the four-record buffer.
+
+## Player message and exposure
+
+`00453A70` ignores messages if Player `+0x3438 != 0`. For `0x7531`, payload word 0 identifies the FireRescue record and word 1 is the influence float. It obtains the source point from that FireRescue's `+0x12C` position through `00447870`, then calls `00451640(player, source, influence)`. Message `30000` calls `0044BC00`; `0x7532` calls pickup handler `00450440`.
+
+`00451640` first returns when Player state `+0x18C == 6`; otherwise it turns toward the supplied fire point through vector conversion, two x87 `FPATAN` operations, angle wrapping with `±π/2π`, and `0044BB00`. If unsigned clock `[0x00502AFC] > Player[+0x390]`, it calls `004897C0(Player+0x3540, "RC_Pain", 0)`, then draws the deadline interval, adds the unsigned current clock, truncates via `004B9400`, and writes Player `+0x390`. It then adds one to the `"Serious Burns"` statistic with `00486980` at game statistics service `DAT_00502AAC + 0x6E4 + 0x30`.
+
+The exposure accumulator is independent of that timer gate. Instructions `00451820..0045183F` load binary32 `004E1818 = 1.2`, multiply by frame delta `[0x00502B04]`, multiply by the message's influence, add Player `+0x3538`, and store the rounded binary32 result back at `+0x3538`. A strict `> 1.0` comparison (`004DD808`, binary64) calls `00450FB0(player, 1)`. The `FST` at `00451839` is non-pop: `FCOMP` at `0045183F` compares the still-live x87 extended sum, not its binary32 memory copy. `src/player_fire_exposure.h` implements this operation order and takes the passout service as an injected callback; no schedule or exposure producer is connected.
+
+## Pain and passout services
+
+`004897C0` is a keyed chatter-set lookup/play path, not a passive queue insertion. It resolves the string through `00488E30`. If a matching set is found and flag is `0`, it calls `00488D40`: one shared `00498B30(0, count - 0.01)` selection draw, plus a second shared `00498B30(0,1)` draw only when the chosen entry repeats the previous index; it wraps the neighbor and plays with `004A11A0`. Therefore the matching-set path consumes one or two `RC_Pain` sound-selection draws *before* its single `00498B30(1000,2500)` deadline draw; a missing set consumes none. The native pain-deadline component now passes the shared `Random` to its explicit host service, and its check models a service draw followed by the one deadline draw. It does not port the actual chatter lookup/picker, whose exact Training set contents and runtime sound adapters remain host inputs.
+
+`00450FB0(player,1)` calls `004A11A0(player+0x430, null)`, then resolves `"RC_PassOut"` through `004897C0(...,1)`, timestamps Player `+0x342C`, sets state `+0x18C = 6`, and, when Player `+0x357C` is nonzero, resolves the indexed object in `+0x3564` and invokes its vtable slot `+0x1C`. The flag-1 chatter path uses `00489110` to advance a set index and play; its preserved body has no RNG calls. This fire-triggered flag-1 call does **not** take `00450FB0`'s `param == 2` branch to `0044FF10`; immediate carry/drop behavior belongs to a distinct caller/parameter route. The active-object `+0x1C` callback's semantic identity and downstream state work remain unclassified.
+
+## Evidence limits
+
+Ghidra exports are `fire-update/004483a0_FUN_004483a0.c`, `gameplay/0044a7a0_FUN_0044a7a0.c`, `victim-ai-audit/rescue-flow/00453a70_FUN_00453a70.c`, `startup-factories/00451640_FUN_00451640.c`, `startup-factories/00450fb0_FUN_00450fb0.c`, `startup-initializers/004897c0_FUN_004897c0.c`, `startup-draw-order/00488e30_FUN_00488e30.c`, `startup-initializers/00488d40_FUN_00488d40.c`, and `startup-draw-order/00489110_FUN_00489110.c`. Decompiler expressions are provisional; in particular, the current-clock addition to the pain draw is only evident in raw `00451772..004517A3` instructions. The exposure arithmetic/order above is read directly from `00451820..00451850`; float stores and comparison instructions define its rounding and strict threshold. The original `00451640` P-code fixture and live dispatch/sound capture remain unavailable.
+
+## Native accumulator check
+
+`player_fire_exposure-check` verifies source operation/store behavior, passout callback after the binary32 store, and below/equal/above threshold cases. For `prior=1.0f`, `dt=2^-55f`, and `influence=1.0f`, the stored float rounds to `1.0f` while the extended sum remains greater than one; the callback must still run. This is a native/source-derived control-flow check, not an original P-code comparison. The original `00451640` P-code fixture and live dispatch/sound capture remain unavailable.

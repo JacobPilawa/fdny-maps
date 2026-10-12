@@ -2,7 +2,7 @@
 
 Read-only source audit of `00451640`, using `../player-exposure-assembly.txt`, preserved helper instructions in `random-conversion-assembly.txt`, and the original clock path in `../../timing-audit/clock.asm`.
 
-At `00451748`, the player callback compares global clock `[0x00502AFC]` against player field `+0x390`. `JBE 00451820` skips the pain branch while the unsigned current value is less than or equal to the stored value. In the branch, it queues `RC_Pain`, then calls `00498B30(1000,2500)`. That helper calls `00404AC0` once and returns the scaled draw in x87 `ST(0)`.
+At `00451748`, the player callback compares global clock `[0x00502AFC]` against player field `+0x390`. `JBE 00451820` skips the pain branch while the unsigned current value is less than or equal to the stored value. In the branch, it resolves `RC_Pain` through `004897C0` before calling `00498B30(1000,2500)`. The key lookup can play a matching chatter set: flag 0 reaches `00488D40`, which consumes one shared draw and a second only when avoiding a repeated sound. After that host callback, the deadline range helper consumes exactly one further `00404AC0` draw and returns its scaled result in x87 `ST(0)`.
 
 The raw instructions after the helper reload `[0x00502AFC]`, convert the current dword to x87 (correcting negative signed interpretations to the unsigned value), add it to the random delay with `FADDP`, and pass the sum to `004B9400`. The conversion helper produces the integer form and the caller stores `EAX` at player `+0x390`. Thus this field is a future time deadline, and its pain draw occurs only after the previous deadline. `004B9400` in this callback is a float-to-integer conversion, not a draw.
 
