@@ -2,10 +2,13 @@
 
 #include <array>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 #include <optional>
 #include <stdexcept>
+#include <vector>
 #include "random.h"
+#include "sprite_animation.h"
 
 // Source-addressed state for the 100 Player ash children at Player+0x55c.
 // This is not the complete 0x16c-byte engine object: calls outside the
@@ -15,10 +18,11 @@ struct PlayerAshParticle {
     bool animationEnabled = true;          // +0xad, 0047f500
     bool positionInitialized = true;       // +0x78, 0047f500
     bool vectorsDirty = false;             // +0xa0, 0047f500
+    uint32_t animationFlags = 0;           // +0x18, copied from selected descriptor container
     float activationScale = 1.0f;           // +0x1c, 0047d330
     float opacityScale = 1.0f;              // +0xa8, 0047f500
     uint32_t animationIndex = 0;            // +0x04, 0047d300
-    uint32_t nextAnimationIndex = 0;        // +0x08, 0047d300
+    uint32_t nextAnimationIndex = 1;        // +0x08, 0047d300
     uint32_t animationTimestamp = 0;        // +0x14, 0047d300
     uint32_t deadline = 0;                  // +0x168, 004463f0
     std::array<float,3> vector7c{};         // +0x7c, 0047f500 / 00446510
@@ -40,7 +44,9 @@ struct PlayerAshPoolServices {
     std::function<void(size_t particle,size_t descriptorContainer,
                        PlayerAshParticle&,Random&)> constructOpaqueParticle;
     // Scene position and presentation calls are outside the scalar/vector
-    // model. The density scan cannot silently substitute either service.
+    // model. `present` is the remainder of 0047F960 after this component's
+    // exact 0047D660 animation step. The density scan cannot silently
+    // substitute either service.
     std::function<std::array<float,3>(float angle,float distance,Random&)> spawnPoint;
     std::function<void(PlayerAshParticle&,Random&)> present;
 };
@@ -74,7 +80,7 @@ struct PlayerAshPool {
             throw std::invalid_argument("ash pool initialization requires engine constructors");
     }
 
-    void initialize(const PlayerAshPoolServices& s, Random& rng) {
+    void initialize(const PlayerAshPoolServices& s, uint32_t now, Random& rng) {
         if (initialized) return;
         requireInitializationServices(s);
         for (size_t container=0;container<2;container++) {
@@ -86,6 +92,10 @@ struct PlayerAshPool {
         }
         for (size_t i=0;i<particles.size();i++) {
             particles[i]=PlayerAshParticle{};
+            particles[i].animationFlags=descriptorFlags[i&1];
+            particles[i].animationIndex=0;
+            particles[i].nextAnimationIndex=1;
+            particles[i].animationTimestamp=now;
             s.constructOpaqueParticle(i,i&1,particles[i],rng);
         }
         density = 1.0f;
@@ -135,6 +145,39 @@ struct PlayerAshPool {
         p.vector7c={0.0f,velocityY,0.0f};
     }
 
+    static const std::vector<float>& animationDurations() {
+        static const std::vector<float> durations=[] {
+            std::vector<float> values;
+            values.reserve(descriptorWords.size());
+            for (const auto& record : descriptorWords) {
+                float duration;
+                std::memcpy(&duration,&record[0],sizeof(duration));
+                values.push_back(duration);
+            }
+            return values;
+        }();
+        return durations;
+    }
+
+    // `0047F960` calls `0047D660` before its vector/presentation gates when
+    // +0xad is set. The selected container is installed at particle +0x0c by
+    // `0047D370`; its five record durations are descriptor word +4.
+    static void updateAnimation(PlayerAshParticle& p, uint32_t now) {
+        if (!p.animationEnabled) return;
+        SpriteAnimation animation;
+        animation.frame=static_cast<int>(p.animationIndex);
+        animation.nextFrame=static_cast<int>(p.nextAnimationIndex);
+        animation.flags=static_cast<int>(p.animationFlags);
+        animation.started=p.animationTimestamp;
+        animation.rate=p.activationScale;
+        animation.active=p.active;
+        animation.update(now,animationDurations());
+        p.animationIndex=static_cast<uint32_t>(animation.frame);
+        p.nextAnimationIndex=static_cast<uint32_t>(animation.nextFrame);
+        p.animationTimestamp=animation.started;
+        p.active=animation.active;
+    }
+
     // 004467e0 updates/presents every slot, then scans int(100*density).
     // Engine presentation and scene transforms are mandatory services so a
     // caller cannot silently replace unknown behavior with a no-op.
@@ -144,7 +187,8 @@ struct PlayerAshPool {
             throw std::invalid_argument("ash pool tick requires scene and presentation services");
         for (auto& p : particles) {
             update(p,now,rng);
-            s.present(p,rng); // 0047f960, after 00446510
+            updateAnimation(p,now); // 0047f960 -> 0047d660, before its other gates
+            s.present(p,rng);       // remaining 0047f960 work
         }
         int scan = static_cast<int>(double(capacity) * double(density));
         if (scan < 0) scan = 0;

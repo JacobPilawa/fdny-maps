@@ -42,3 +42,5 @@ Continuation: V5 has a source proximity publisher and real queued-delivery compo
 Player staging is proved through the successful-load factory/queue path (see `evidence/victim-ai-audit/player-staging-chain.md`). S1 concerns recurring dispatch, not whether Player reaches its initializer. Passout now composes with the herodown tail; actual spawn/UI adapters and recurring scheduling remain open.
 
 Passout integration constraint: cached Player position, source position `+0x3400`, and frame translation remain separate. The wrapper writes Player position at source points, reads mode before gated entity enumeration, and uses live cleanup getters after callbacks. See `evidence/victim-ai-audit/passout-composed-transaction.md`.
+
+Ash continuation (2026-10-12): Training descriptor binding, flags and the five finite-animation durations are now source-mapped; `PlayerAshPool::tick` advances animation before the rest of presentation and the density scan. This is an isolated component connection, not Player scheduling or ash rendering. F2 remains open for the scene transform, remaining engine services, visible particle path, smoke/sound/light systems, and whole-run RNG order.

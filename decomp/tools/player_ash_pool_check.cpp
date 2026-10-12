@@ -13,6 +13,8 @@ int main() {
     };
     services.constructOpaqueParticle=[&](size_t i,size_t c,PlayerAshParticle& p,Random&) {
         assert(c==(i&1) && p.active && p.animationEnabled && p.activationScale==1.0f);
+        assert(p.animationFlags==PlayerAshPool::descriptorFlagsAfterSetup);
+        assert(p.animationIndex==0 && p.nextAnimationIndex==1 && p.animationTimestamp==1);
         assert(p.positionInitialized && !p.vectorsDirty);
         assert(p.opacityScale==1.0f && p.deadline==0);
         assert((p.vector7c==std::array<float,3>{} && p.vector88==std::array<float,3>{}));
@@ -23,8 +25,8 @@ int main() {
     services.spawnPoint=[&](float angle,float distance,Random&) {
         ++spawns; return std::array<float,3>{angle,distance,0.0f};
     };
-    pool.initialize(services,rng);
-    pool.initialize(services,rng);
+    pool.initialize(services,1,rng);
+    pool.initialize(services,1,rng);
     assert(descriptors==10 && constructions==100 && pool.density==1.0f);
     assert(PlayerAshPool::descriptorFlagsDuringAdd==0x35);
     assert(PlayerAshPool::descriptorFlagsAfterSetup==0x3c);
@@ -56,4 +58,39 @@ int main() {
 
     pool.setDensity(2.0f); assert(pool.density==1.0f);
     pool.setDensity(-1.0f); assert(pool.density==0.0f);
+
+    PlayerAshParticle finite;
+    finite.animationFlags=PlayerAshPool::descriptorFlagsAfterSetup;
+    finite.nextAnimationIndex=1;
+    PlayerAshPool::updateAnimation(finite,499);
+    assert(finite.animationIndex==0 && finite.animationTimestamp==0 && finite.active);
+    PlayerAshPool::updateAnimation(finite,500); // record 0: 0.5 s
+    assert(finite.animationIndex==1 && finite.nextAnimationIndex==2 && finite.animationTimestamp==500 && finite.active);
+    PlayerAshPool::updateAnimation(finite,1000); // record 1: 0.5 s
+    assert(finite.animationIndex==2 && finite.animationTimestamp==1000 && finite.active);
+    PlayerAshPool::updateAnimation(finite,1500); // record 2: 0.5 s
+    assert(finite.animationIndex==3 && finite.animationTimestamp==1500 && finite.active);
+    PlayerAshPool::updateAnimation(finite,2500); // record 3: 1.0 s
+    assert(finite.animationIndex==4 && finite.animationTimestamp==2500 && finite.active);
+
+    PlayerAshPool lifecycle;
+    lifecycle.initialized=true;
+    lifecycle.descriptorFlags={0x3c,0x3c};
+    lifecycle.density=0.02f; // trunc(100 * 0.02f) selects one entry
+    for (auto& p : lifecycle.particles) p.animationEnabled=false;
+    auto& last=lifecycle.particles[0];
+    last.active=true;last.animationEnabled=true;last.animationFlags=0x3c;
+    last.animationIndex=4;last.nextAnimationIndex=4;last.animationTimestamp=2500;
+    last.deadline=0xffffffffu;last.activationScale=1.0f;
+    bool presentedAfterDeactivation=false;int respawns=0;
+    PlayerAshPoolServices lifecycleServices;
+    lifecycleServices.present=[&](PlayerAshParticle& p,Random&) {
+        if (&p==&last) presentedAfterDeactivation=!p.active;
+    };
+    lifecycleServices.spawnPoint=[&](float angle,float distance,Random&) {
+        ++respawns;return std::array<float,3>{angle,distance,0.0f};
+    };
+    lifecycle.tick(3500,rng,lifecycleServices); // record 4: 1.0 s; deactivation precedes scan
+    assert(presentedAfterDeactivation && respawns==1 && last.active);
+    assert(last.animationIndex==0 && last.nextAnimationIndex==1 && last.animationTimestamp==3500);
 }

@@ -41,13 +41,21 @@ query and field recovery are recorded in `ghidra-helper-recovery.md`.
   indices 0 and 1 and timestamps them through `0047D300`, draws `(0.5,1.5)`
   into `+0x1c`, sets active, draws `(0.5,1.5)` into `+0xa8`, clears deadline,
   then draws `(-80,-10)` into `vector7c.y` with X/Z set to 0.
+- `tick` now advances the finite ash animation inline before the remaining
+  presentation service. It reuses the original-compared `SpriteAnimation`
+  implementation with the five literal descriptor durations
+  `0.5,0.5,0.5,1.0,1.0`, descriptor flags `0x3c`, the particle's scale and
+  timestamp. The fifth due transition deactivates the particle; because this
+  happens before the later density scan, an inactive prefix slot can reactivate
+  in the same pool tick. This is component integration, not Player scheduling
+  or visible-render parity.
 
 ## Limits
 
-The direct state writes and draw order are source-mapped, but the callback
-services are not reconstructed here. `0047f960` can advance finite animations
-and deactivate entries before the density scan; its computed engine calls,
-visibility gates, polygon construction, and indirect-call closure remain open.
+The direct state writes and draw order are source-mapped, and finite animation
+advancement is now connected to the pool. Scene callbacks are not reconstructed
+here. Computed engine calls, visibility gates, polygon construction, and the
+indirect-call closure remain open.
 The spawn-point chain includes computed Player/camera methods. This component
 does not identify every indirect RNG consumer in those closures, implement
 ash rendering, validate Training cadence, or establish complete RNG parity.
@@ -57,6 +65,13 @@ the 400 direct draws for 100 due entries under no-draw callbacks, and 50
 controlled half-density activations (250 draws). Callback no-ops are test
 stubs, not claims about the original engine.
 
+The check now also verifies the ash animation boundaries at 499/500, 1,000,
+1,500, 2,500 and 3,500 clock units, plus deactivation before presentation and
+same-tick reactivation during the later one-entry density scan. The existing
+`--sprite-animation-check` separately compares 5,760 calls to original
+`0047D660`; this proves the shared update routine but is not a live ash render
+comparison.
+
 The original-P-code update oracle at
 `evidence/scripts/training-setashdensity/ash-update-pcode-oracle.json` executes
 `00446510` after seeding the real game RNG and exercises its real calls to
@@ -65,8 +80,8 @@ due zero/nonzero vectors, not-yet-due, inactive, signed/unsigned deadline
 comparison across wrap, and unsigned clock wrap. The
 native check compares active state, deadline, dirty flag, output vector words,
 and bounded draw count; all six cases match. This proves the isolated update
-component only. It does not prove animation/presentation ordering, scene
-callbacks, pool scheduling, or whole-Training RNG parity.
+component only. It does not prove scene callbacks, Player pool scheduling, or
+whole-Training RNG parity.
 
 The activation oracle in `ash-activate-pcode-oracle.json` executes original
 `00446470` with the real `0047D300`/`0047D2B0` animation-index reset and real
