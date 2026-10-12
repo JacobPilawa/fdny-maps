@@ -1,6 +1,6 @@
 # Training implementation plan
 
-Snapshot: 2026-10-11. Read HANDOFF.md and CHECKLIST.md first. The current map is playable, but no complete Training run or shared RNG sequence has been verified. Component comparisons, static source recovery, and live integration are separate milestones.
+Snapshot: 2026-10-12. Read HANDOFF.md and CHECKLIST.md first. The current map is playable, but no complete Training run or shared RNG sequence has been verified. Component comparisons, static source recovery, and live integration are separate milestones.
 
 ## Architecture and evidence rules
 
@@ -43,4 +43,4 @@ Player staging is proved through the successful-load factory/queue path (see `ev
 
 Passout integration constraint: cached Player position, source position `+0x3400`, and frame translation remain separate. The wrapper writes Player position at source points, reads mode before gated entity enumeration, and uses live cleanup getters after callbacks. See `evidence/victim-ai-audit/passout-composed-transaction.md`.
 
-Ash continuation (2026-10-12): Training descriptor binding, flags and the five finite-animation durations are now source-mapped; `PlayerAshPool::tick` advances animation before the rest of presentation and the density scan. This is an isolated component connection, not Player scheduling or ash rendering. F2 remains open for the scene transform, remaining engine services, visible particle path, smoke/sound/light systems, and whole-run RNG order.
+Ash continuation (2026-10-12): Training descriptor binding, flags and the five finite-animation durations are now source-mapped; `PlayerAshPool::tick` advances animation before the rest of presentation and the density scan. Static render tracing maps descriptor IDs 200/201 to the `rescue.rrf` names `ash1.bmp`/`ash2.bmp` and recovers color/alpha operands, but the bitmaps are absent from the local asset extraction and runtime resource objects remain unresolved. These are static discoveries, not Player scheduling or visual parity. F2 remains open for the scene transform, remaining engine services, visible particle path, smoke/sound/light systems, and whole-run RNG order.
