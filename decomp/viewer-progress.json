@@ -534,20 +534,20 @@
     {
       "path": "src/use_manager.h",
       "group": "Tools",
-      "summary": "Training valve selection and local Hose Spray attach state are partially connected.",
+      "summary": "Training valve selection models reach and tie behavior; the original BModel candidate list and update order are only source-mapped.",
       "evidence": "evidence/hose-spray/prop-model/use-manager/",
       "units": [
         [
           "00459350",
           "Use candidate scan",
           "partial",
-          "Reach and source-derived Training valve candidates are wired; full order is unverified."
+          "The native prop path models the 200-unit reach and later-wins ties; original candidate-list production/order and BModel selection remain open."
         ],
         [
           "00458FA0",
           "Use action dispatch",
           "partial",
-          "Mapped action codes and local attach/detach state are connected."
+          "Mapped action codes and local attach/detach state are connected; the original update block dispatches cached selection before refreshing it."
         ],
         [
           "00444120",
@@ -954,7 +954,7 @@
     {
       "path": "src/bmodel_use.h",
       "group": "Core",
-      "summary": "Source-derived BModel action gate and lift field transition; original P-code checks eight gate cases and the ordered action-service boundary.",
+      "summary": "Source-derived BModel action gate and lift field transition; Player reset defaults and cached-selection update order are documented, while runtime integration remains open.",
       "evidence": "evidence/training-liftable-audit/bmodel-use-component.md",
       "units": [
         [
