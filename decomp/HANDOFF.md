@@ -48,7 +48,7 @@ Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d
 
 No live game capture has run. Earlier WineDbg attaches froze/crashed. The Fire-dispatch recorder now has a 300-second default end-to-end cap, explicit PID attach, Ctrl-C/detach recovery, and a 30-second cleanup reserve. A disposable cloned-prefix 64-bit `ping.exe` smoke test confirmed forced-timeout interrupt, detach, debugger exit, and target survival. A PE32 ping follow-up timed out during process enumeration before attach; previous game attempts did enumerate FDNY but then stalled on an interactive command. Next step: run the bounded capture with the matching game at its main menu, then have the user enter Training. See `evidence/item-pose/live-extinguisher/message-components/fire-think-live-capture.md`, `evidence/fire-update/winedbg-recovery-smoke.md`, and the raw local results under `evidence/live/`.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 23% five-hour used and 68% weekly used (77% and 32% remaining).
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation on 2026-10-11: 24% five-hour used and 69% weekly used (76% and 31% remaining).
 
 ## Proximity and deadline input continuation
 
