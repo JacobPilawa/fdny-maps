@@ -1,0 +1,8 @@
+
+inputs/original/binaries/FDNYFirefighter.exe:	file format coff-i386
+
+Disassembly of section .text:
+
+00401000 <.text>:
+  43afe0: 83 c1 24                     	add	ecx, 36
+  43afe3: e9 58 57 03 00               	jmp	0x470740 <.text+0x6f740>

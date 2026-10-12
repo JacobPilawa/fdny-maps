@@ -1,0 +1,7 @@
+binary,name,start_address,end_address,size_bytes,read,write,execute,initialized
+"FDNYFirefighter.exe","Headers","00400000","00400fff",4096,true,false,false,true
+"FDNYFirefighter.exe",".text","00401000","004dbfff",897024,true,false,true,true
+"FDNYFirefighter.exe",".rdata","004dc000","004fefff",143360,true,false,false,true
+"FDNYFirefighter.exe",".data","004ff000","00505437",25656,true,true,false,true
+"FDNYFirefighter.exe",".rsrc","00506000","00506fff",4096,true,false,false,true
+"FDNYFirefighter.exe","tdb","ffdff000","ffdfffff",4096,true,true,false,true

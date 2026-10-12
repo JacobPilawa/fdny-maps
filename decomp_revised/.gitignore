@@ -1,0 +1,13 @@
+# Local-only analysis state and proprietary retail inputs
+.DS_Store
+__pycache__/
+*.py[cod]
+.local/
+analysis/ghidra/
+logs/*.log
+inputs/original/Data/
+inputs/original/binaries/
+inputs/runtime-reference/sikarugir/game-overrides/
+inputs/runtime-reference/sikarugir/wrapper-metadata/
+reference/previous-work/decomp/evidence/ghidra/
+reference/previous-work/decomp/evidence/ghidra-refresh/

@@ -1,0 +1,90 @@
+
+undefined4 * __thiscall FUN_0043f340(void *this,void *param_1)
+
+{
+  int iVar1;
+  void *local_c;
+  undefined1 *puStack_8;
+  undefined4 local_4;
+  
+  local_4 = 0xffffffff;
+  puStack_8 = &LAB_004ced75;
+  local_c = ExceptionList;
+  ExceptionList = &local_c;
+  FUN_0049d420(this,(int)param_1);
+  local_4 = 0;
+  FUN_004799b0((undefined4 *)((int)this + 0x24));
+  *(undefined ***)((int)this + 0xa0) = &PTR_LAB_004e0b7c;
+  *(undefined1 *)((int)this + 0xa4) = 0;
+  local_4._0_1_ = 2;
+  *(undefined ***)this = &PTR_FUN_004e0df8;
+  *(undefined4 *)((int)this + 0x24) = &PTR_LAB_004e0df0;
+  *(undefined ***)((int)this + 0xa0) = &PTR_LAB_004e0de4;
+  FUN_0042d2d0((void *)((int)this + 0xa8),0);
+  *(undefined4 *)((int)this + 0xf0) = 0;
+  *(undefined4 *)((int)this + 0xf4) = 0;
+  *(undefined4 *)((int)this + 0xf8) = 0;
+  *(undefined4 *)((int)this + 0x100) = 0;
+  *(undefined4 *)((int)this + 0x104) = 0;
+  *(undefined4 *)((int)this + 0x108) = 0;
+  *(undefined4 *)((int)this + 0x10c) = 0;
+  *(undefined4 *)((int)this + 0x110) = 0;
+  *(undefined4 *)((int)this + 0x114) = 0;
+  *(undefined4 *)((int)this + 0x118) = 0;
+  *(undefined4 *)((int)this + 0x11c) = 0;
+  *(undefined4 *)((int)this + 0x120) = 0;
+  *(undefined4 *)((int)this + 0xfc) = 0;
+  FUN_004a13a0((undefined4 *)((int)this + 0x124));
+  *(undefined4 *)((int)this + 0x15c) = 0x10;
+  *(code **)((int)this + 0x158) = FUN_0043f660;
+  *(undefined4 *)((int)this + 0x148) = 0;
+  *(undefined4 *)((int)this + 0x14c) = 0;
+  *(undefined4 *)((int)this + 0x150) = 0;
+  *(undefined4 *)((int)this + 0x154) = 0;
+  local_4._0_1_ = 4;
+  FUN_00490270((void *)((int)this + 0x160),0x10);
+  local_4._0_1_ = 5;
+  _eh_vector_constructor_iterator_
+            ((void *)((int)this + 0x178),0x18,3,(_func_void_void_ptr *)&LAB_0043b780,FUN_00470c40);
+  *(undefined4 *)((int)this + 0x1d4) = 0x10;
+  *(code **)((int)this + 0x1d0) = FUN_0043f660;
+  *(undefined4 *)((int)this + 0x1c0) = 0;
+  *(undefined4 *)((int)this + 0x1c4) = 0;
+  *(undefined4 *)((int)this + 0x1c8) = 0;
+  *(undefined4 *)((int)this + 0x1cc) = 0;
+  *(undefined4 *)((int)this + 0x1f0) = 0;
+  *(undefined4 *)((int)this + 500) = 0;
+  *(undefined4 *)((int)this + 0x1f8) = 0;
+  *(undefined4 *)((int)this + 0x1fc) = 0;
+  *(undefined4 *)((int)this + 0x200) = 0;
+  *(undefined4 *)((int)this + 0x204) = 0;
+  local_4._0_1_ = 7;
+  *(undefined4 *)((int)this + 0x224) = 0;
+  *(undefined4 *)((int)this + 0x228) = 0;
+  *(undefined4 *)((int)this + 0x22c) = 0;
+  *(undefined4 *)((int)this + 0x230) = 0;
+  *(undefined4 *)((int)this + 0x234) = 0;
+  *(undefined4 *)((int)this + 0x238) = 0;
+  FUN_00481950((undefined4 *)((int)this + 0x240));
+  *(undefined4 *)((int)this + 0x264) = 0;
+  *(undefined4 *)((int)this + 0x270) = 0;
+  *(undefined ***)((int)this + 0x260) = &PTR_LAB_004e0cbc;
+  *(undefined4 *)((int)this + 0x278) = 0;
+  *(undefined4 *)((int)this + 0x27c) = 0;
+  *(undefined4 *)((int)this + 0x280) = 0;
+  *(undefined4 *)((int)this + 0x284) = 0;
+  *(undefined4 *)((int)this + 0x288) = 0;
+  *(undefined4 *)((int)this + 0x28c) = 0;
+  local_4 = CONCAT31(local_4._1_3_,8);
+  FUN_0049d160(param_1,(int *)((int)this + 0xec),0x70);
+  iVar1 = *(int *)((int)this + 0xec);
+  *(undefined4 *)((int)this + 0xd0) = *(undefined4 *)(iVar1 + 100);
+  *(undefined4 *)((int)this + 0xd4) = *(undefined4 *)(iVar1 + 0x68);
+  *(undefined4 *)((int)this + 0xd8) = *(undefined4 *)(iVar1 + 0x6c);
+  *(undefined4 *)((int)this + 0x18) = 4;
+  FUN_0049d330(this,1);
+  *(undefined4 *)((int)this + 0x25c) = 0;
+  ExceptionList = local_c;
+  return this;
+}
+

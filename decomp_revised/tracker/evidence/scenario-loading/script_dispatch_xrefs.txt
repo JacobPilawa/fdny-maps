@@ -1,0 +1,23 @@
+Read-only Ghidra MCP references, FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e, queried 2026-10-12.
+
+GET /get_function_callers?address=00475310
+FUN_00441040 @ 00441040
+FUN_00442c90 @ 00442c90
+FUN_00443860 @ 00443860
+FUN_0045d5b0 @ 0045d5b0
+FUN_00470f10 @ 00470f10
+FUN_004758f0 @ 004758f0
+FUN_00475af0 @ 00475af0
+FUN_00475ce0 @ 00475ce0
+FUN_00475f10 @ 00475f10
+FUN_004764e0 @ 004764e0
+FUN_00476670 @ 00476670
+FUN_00476800 @ 00476800
+FUN_00476990 @ 00476990
+FUN_00476e60 @ 00476e60
+FUN_00477090 @ 00477090
+FUN_004772c0 @ 004772c0
+FUN_00477500 @ 00477500
+FUN_004799e0 @ 004799e0
+
+00475310 is a shared script-object bridge with multiple callers; 00441040 is the verified BoundsTrigger caller. This caller list does not prove event execution timing.

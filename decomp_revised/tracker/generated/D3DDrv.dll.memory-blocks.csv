@@ -1,0 +1,7 @@
+binary,name,start_address,end_address,size_bytes,read,write,execute,initialized
+"D3DDrv.dll","Headers","10000000","10000fff",4096,true,false,false,true
+"D3DDrv.dll",".text","10001000","10014fff",81920,true,false,true,true
+"D3DDrv.dll",".rdata","10015000","1001efff",40960,true,false,false,true
+"D3DDrv.dll",".data","1001f000","1052cd07",5299464,true,true,false,true
+"D3DDrv.dll",".reloc","1052d000","10531fff",20480,true,false,false,true
+"D3DDrv.dll","tdb","ffdff000","ffdfffff",4096,true,true,false,true

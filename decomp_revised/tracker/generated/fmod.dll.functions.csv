@@ -1,0 +1,9 @@
+binary,entry_address,body_bytes,name,namespace,is_external,is_thunk,calling_convention,signature
+"fmod.dll","1006b8d0",393,"entry","Global",false,false,"__fastcall","longlong __fastcall entry(undefined4 param_1, uint param_2, undefined4 param_3, char param_4)"
+"fmod.dll","EXTERNAL:00000001",0,"LoadLibraryA","KERNEL32.DLL",true,false,"__stdcall","HMODULE __stdcall LoadLibraryA(LPCSTR lpLibFileName)"
+"fmod.dll","EXTERNAL:00000002",0,"GetProcAddress","KERNEL32.DLL",true,false,"__stdcall","FARPROC __stdcall GetProcAddress(HMODULE hModule, LPCSTR lpProcName)"
+"fmod.dll","EXTERNAL:00000003",0,"RegCloseKey","ADVAPI32.DLL",true,false,"__stdcall","LSTATUS __stdcall RegCloseKey(HKEY hKey)"
+"fmod.dll","EXTERNAL:00000005",0,"pow","MSVCRT.DLL",true,false,"__cdecl","double __cdecl pow(double _X, double _Y)"
+"fmod.dll","EXTERNAL:00000006",0,"CoInitialize","OLE32.DLL",true,false,"__stdcall","HRESULT __stdcall CoInitialize(LPVOID pvReserved)"
+"fmod.dll","EXTERNAL:00000007",0,"ShowWindow","USER32.DLL",true,false,"__stdcall","BOOL __stdcall ShowWindow(HWND hWnd, int nCmdShow)"
+"fmod.dll","EXTERNAL:00000008",0,"mixerOpen","WINMM.DLL",true,false,"__stdcall","MMRESULT __stdcall mixerOpen(LPHMIXER phmx, UINT uMxId, DWORD_PTR dwCallback, DWORD_PTR dwInstance, DWORD fdwOpen)"
