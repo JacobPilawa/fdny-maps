@@ -39,9 +39,22 @@ Ghidra `AddressXrefs.java 00498B30` lists direct calls from `004467E0`, `0044647
 4. `00446470`: `00498B30(0.5, 1.5)`, stored at entry `+0xa8`.
 5. `00446470`: `00498B30(-80, -10)`, passed to the vector update after setting active byte `+0x30` and clearing deadline `+0x168`.
 
+The scene transform between calls 2 and 3 is now source-mapped: Player primary
+vtable slot `+0x18` is `0049D760`, which returns Player `+0x24`. The emitter
+calls that getter four times and reads frame position X, Z, Y, then direction
+at `+0x1c..+0x24`. It places ash at radial distance 10–400 around the player,
+raises the origin by 150 units, and offsets the result 75 units along the
+frame direction. `src/player_ash_pool.h` preserves the four dispatches and
+float-store boundaries. Five hash-pinned one-particle P-code cases at
+`ash-spawn-pcode-oracle.json` compare the combined angle/distance/transform/
+activation path; native position and activation fields match bit-for-bit with
+five total RNG range calls. Ghidra's emulator leaves `FCOS`/`FSIN` unimplemented,
+so those two operators are supplied as Java `Math` double results in the oracle;
+the transform's all-float-input exactness remains open.
+
 The separate update branch in `00446510` is taken only when active byte `+0x30` is nonzero and unsigned deadline `+0x168` is at most global time `[0x00502AFC]`. It first writes deadline `global time + 99,999,999`, then directly draws, in order, `(-40,40)`, `(0,10)`, `(-40,40)`, and `(-30,-5)`. This branch is distinct from spawning; a newly spawned entry is encountered by this update pass on a later call to `004467E0`.
 
-These are only the direct `00498B30` calls visible in these three functions. Ghidra `CallGraphPath.java` found no statically resolved direct-call path from `0047F960` to `00498B30` after visiting its 177-function direct-call closure; it found no unresolved direct targets and did not hit its function limit. It did encounter 130 computed callsites that it could not follow, so indirect shared-RNG use remains unresolved. A positive-control search from `00446510` reaches `00498B30` at `00446548`. Thus the five-call activation path and four-call due-update path are not complete per-frame or whole-run RNG counts. The native port does not yet connect this pool or consume these draws. Ghidra xrefs, graph output, and instruction listings are locally retained in ignored files in this directory; the reusable tools are `tools/ghidra/AddressXrefs.java`, `ExportFunctionAssembly.java`, and `CallGraphPath.java`.
+These are only the direct `00498B30` calls visible in these three functions. Ghidra `CallGraphPath.java` found no statically resolved direct-call path from `0047F960` to `00498B30` after visiting its 177-function direct-call closure; it found no unresolved direct targets and did not hit its function limit. It did encounter 130 computed callsites that it could not follow, so indirect shared-RNG use remains unresolved. A positive-control search from `00446510` reaches `00498B30` at `00446548`. Thus the five-call activation path and four-call due-update path are not complete per-frame or whole-run RNG counts. The native component consumes these isolated draws, but is not yet connected to Training's Player frame schedule. Ghidra xrefs, graph output, and instruction listings are locally retained in ignored files in this directory; the reusable tools are `tools/ghidra/AddressXrefs.java`, `ExportFunctionAssembly.java`, and `CallGraphPath.java`.
 
 ## Presentation path partially mapped
 
@@ -51,4 +64,4 @@ These are only the direct `00498B30` calls visible in these three functions. Ghi
 
 `Player::ashDensity` now starts at the source-backed 1.0 default. The native host uses `strtof`'s prefix conversion semantics to preserve the original `%f`/`%g` scan behavior, then stores the state and applies the same verified clamp. The existing `--script-check` runs startup and reports 0.0 after Player entity 115's command. The two BoundsTrigger commands are event bindings and are not exercised by this startup-only check.
 
-This ports the command state only; the new `src/player_ash_pool.h` component separately records source-mapped pool metadata, known state/vector writes and direct RNG order, but it is not connected to the native Training Player schedule and does not implement the engine callbacks or visible ash. No original live capture or visual parity result is claimed. The refreshed local raw Ghidra exports are in `functions/`, with the emitter/update instructions in `effect-assembly.txt` and Player vtable words in `player-vtable.tsv`; all raw exports remain ignored by the Git mirror. The `004B9400` conversion's decompilation and instructions are also preserved under `../rng/004b9400_FUN_004b9400.c` and `../fire-update/player-exposure-timer-followup/random-conversion-assembly.txt`.
+This ports the density command and a source-mapped ash component, including known pool metadata/state, vector updates, spawn transform, direct RNG order and finite animation. It is not connected to the native Training Player schedule and does not implement the engine presentation callbacks or visible ash. No original live capture or visual parity result is claimed. The refreshed local raw Ghidra exports are in `functions/`, with emitter/update instructions in `effect-assembly.txt` and Player vtable words in `player-vtable.tsv`; all raw exports remain ignored by the Git mirror. The `004B9400` conversion's decompilation and instructions are also preserved under `../rng/004b9400_FUN_004b9400.c` and `../fire-update/player-exposure-timer-followup/random-conversion-assembly.txt`.
