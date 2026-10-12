@@ -1,4 +1,7 @@
 #pragma once
+#include <cstdint>
+#include <stdexcept>
+#include <vector>
 // 0047D660 and 0047D2B0: a sprite advances at most one frame per call.
 struct SpriteAnimation {
  int frame=0,nextFrame=1,flags=1;uint32_t started=0;float rate=1;bool active=true;

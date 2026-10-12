@@ -209,6 +209,18 @@
       ]
     },
     {
+      "address": "0040CC50",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "0cfe79cd5fde30ad31154bb947a49b34c0c0d385820709837c694a8d52574a4a",
+          "exports": [
+            "evidence/scripts/training-setashdensity/functions/0040cc50_FUN_0040cc50.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "0040EFD0",
       "systems": [],
       "variants": [
@@ -293,6 +305,18 @@
       ]
     },
     {
+      "address": "00423DB0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "8007d96b85fc251a3715ebd2f40c226ace63daad42509fcda96d1df72ee7acf0",
+          "exports": [
+            "evidence/player-tool-pose/state-offsets/pitch-writer/00423db0_FUN_00423db0.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "00424710",
       "systems": [],
       "variants": [
@@ -353,6 +377,7 @@
             "evidence/tool-decompiled/00424710_FUN_00424710.c",
             "evidence/training-id-registration-callers/00424710_FUN_00424710.c",
             "evidence/victim-startup/00424710_FUN_00424710.c",
+            "evidence/victim-startup/bounds-audit/00424710_FUN_00424710.c",
             "evidence/world-script/00424710_FUN_00424710.c"
           ]
         }
@@ -566,6 +591,7 @@
           "sha256": "430447606c7c33756d25d511e13a1a3fa96ab0dac845a71fddc19c030d735ad5",
           "exports": [
             "evidence/entity-bootstrap/00429520_FUN_00429520.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/00429520_FUN_00429520.c",
             "evidence/item-pose/live-extinguisher/message-components/app-callback-registration/00429520_FUN_00429520.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/all-attributed/00429520_FUN_00429520.c",
             "evidence/timing-audit/00429520_FUN_00429520.c"
@@ -858,6 +884,7 @@
           "sha256": "5b0f09f033645470f9615ac8bf85f0a6ff7a92b65322464255780eb354426b5f",
           "exports": [
             "evidence/entity-queues/0042aea0_FUN_0042aea0.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0042aea0_FUN_0042aea0.c",
             "evidence/item-pose/live-extinguisher/message-components/0042aea0_FUN_0042aea0.c",
             "evidence/item-pose/live-extinguisher/message-components/app-callback-registration/0042aea0_FUN_0042aea0.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0042aea0_FUN_0042aea0.c",
@@ -1329,7 +1356,20 @@
         {
           "sha256": "03c3959b34d3982069c6146db5b0cce8f3c68470015ec42679bc50d836de27eb",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0042d280_FUN_0042d280.c",
             "evidence/player-tool-pose/head-motion/0042d280_FUN_0042d280.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0042D2B0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "2d3f2bb4c072ab5beb1caddd06ade45b51e2c1620d1b5f3f7d195ec679192c97",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0042d2b0_FUN_0042d2b0.c"
           ]
         }
       ]
@@ -1583,6 +1623,18 @@
       ]
     },
     {
+      "address": "00437620",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "88d10b277aac39c7c1af0249a63f9761923e59edbeaae580e743bf0b2d020a0c",
+          "exports": [
+            "evidence/player-tool-pose/state-offsets/pitch-writer/00437620_FUN_00437620.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "00437680",
       "systems": [],
       "variants": [
@@ -1740,7 +1792,8 @@
         {
           "sha256": "a8906330f2a253e682fd13cb42a4f62644f4f19c11eb60571f07f09e7e399608",
           "exports": [
-            "evidence/item-pose/live-extinguisher/message-components/owner-callers/00439310_FUN_00439310.c"
+            "evidence/item-pose/live-extinguisher/message-components/owner-callers/00439310_FUN_00439310.c",
+            "evidence/player-tool-pose/state-offsets/pitch-writer/00439310_FUN_00439310.c"
           ]
         }
       ]
@@ -1830,6 +1883,7 @@
             "evidence/tool-attachment/004395c0_FUN_004395c0.c",
             "evidence/tool-decompiled/004395c0_FUN_004395c0.c",
             "evidence/victim-startup/004395c0_FUN_004395c0.c",
+            "evidence/victim-startup/bounds-audit/004395c0_FUN_004395c0.c",
             "evidence/world-script/004395c0_FUN_004395c0.c"
           ]
         }
@@ -1843,6 +1897,18 @@
           "sha256": "43822ac5016b17ab87c9ae45c7b3df93b37db76391f41decfb1f2989fb89f854",
           "exports": [
             "evidence/item-pose/live-extinguisher/message-components/owner-callers/0043adc0_FUN_0043adc0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0043AEE0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "b64a463eceb5d833643784e0229f0dbea13c06bc1e93329d452cc23e42b5c983",
+          "exports": [
+            "evidence/victim-startup/bounds-audit/0043aee0_FUN_0043aee0.c"
           ]
         }
       ]
@@ -2091,6 +2157,7 @@
             "evidence/timing-audit/0043d6a0_FUN_0043d6a0.c",
             "evidence/tool-attachment/0043d6a0_FUN_0043d6a0.c",
             "evidence/victim-startup/0043d6a0_FUN_0043d6a0.c",
+            "evidence/victim-startup/bounds-audit/0043d6a0_FUN_0043d6a0.c",
             "evidence/world-script/0043d6a0_FUN_0043d6a0.c"
           ]
         }
@@ -2166,6 +2233,7 @@
             "evidence/timing-audit/0043e680_FUN_0043e680.c",
             "evidence/tool-attachment/0043e680_FUN_0043e680.c",
             "evidence/victim-startup/0043e680_FUN_0043e680.c",
+            "evidence/victim-startup/bounds-audit/0043e680_FUN_0043e680.c",
             "evidence/world-script/0043e680_FUN_0043e680.c"
           ]
         }
@@ -2242,7 +2310,8 @@
         {
           "sha256": "938dec7f2cf46cf8f0b84e162eac29f1b7ae7d6e88d85fccd5d6357e9abb125f",
           "exports": [
-            "evidence/collision-audit/0043f610_FUN_0043f610.c"
+            "evidence/collision-audit/0043f610_FUN_0043f610.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0043f610_FUN_0043f610.c"
           ]
         }
       ]
@@ -2255,6 +2324,30 @@
           "sha256": "d43a2a94b856bb2a7a16003465edc47ba9bb7466557d3c9f17ea2be408513781",
           "exports": [
             "evidence/startup-initializers/0043f650_FUN_0043f650.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0043F660",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "835e2f0a03093b3d35bd3dafd64cb6725ca82a8cacb7a55efce4fbd7127fdc2a",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0043f660_FUN_0043f660.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0043F670",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "549c7d1613d66ed8663d744225acadd10486c03b5de42e9b0e24f8d4402b3151",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0043f670_FUN_0043f670.c"
           ]
         }
       ]
@@ -2467,6 +2560,18 @@
           "exports": [
             "evidence/entity-queues/00441eb0_FUN_00441eb0.c",
             "evidence/startup-factories/00441eb0_FUN_00441eb0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "004420F0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "52c1f9a0861b6c5f236db5a7e9feb5b38699ec70e9505bde6b842ebb39edc231",
+          "exports": [
+            "evidence/fire-update/training-route-attachment/related-command-handler/004420f0_FUN_004420f0.c"
           ]
         }
       ]
@@ -2747,38 +2852,85 @@
       ]
     },
     {
-      "address": "00446470",
+      "address": "00446350",
       "systems": [],
+      "variants": [
+        {
+          "sha256": "7fc854c13086f114a490fde00c4d3df5d98aff3fcae76cac5c88d3f5316a850d",
+          "exports": [
+            "evidence/scripts/training-setashdensity/functions/00446350_FUN_00446350.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "00446470",
+      "systems": [
+        "Training ash-pool lifecycle"
+      ],
       "variants": [
         {
           "sha256": "b1b536efc511fccf1ba064424dedbb4f27f23173eec9cbab31e70418ecd700fc",
           "exports": [
-            "evidence/rng-callers/00446470_FUN_00446470.c"
+            "evidence/rng-callers/00446470_FUN_00446470.c",
+            "evidence/scripts/training-setashdensity/functions/00446470_FUN_00446470.c"
           ]
         }
       ]
     },
     {
       "address": "00446510",
-      "systems": [],
+      "systems": [
+        "Training ash-pool lifecycle"
+      ],
       "variants": [
         {
           "sha256": "640cd64b42d989c71cec535a82e179d34892152924841f102b31ca3f7584f90a",
           "exports": [
             "evidence/rng-callers/00446510_FUN_00446510.c",
+            "evidence/scripts/training-setashdensity/functions/00446510_FUN_00446510.c",
             "evidence/startup-factories/00446510_FUN_00446510.c"
           ]
         }
       ]
     },
     {
+      "address": "004465D0",
+      "systems": [
+        "Training ash-pool lifecycle"
+      ],
+      "variants": [
+        {
+          "sha256": "fa830356be2a99e33d49702e8eb078237c7456085d50d99721fdc927707fff5a",
+          "exports": [
+            "evidence/scripts/training-setashdensity/functions/004465d0_FUN_004465d0.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "004467E0",
-      "systems": [],
+      "systems": [
+        "Training ash-pool lifecycle"
+      ],
       "variants": [
         {
           "sha256": "7554926c0bb79a6202575353aedaa708e32c91fc6914010dee77257dd58721fe",
           "exports": [
-            "evidence/rng-callers/004467e0_FUN_004467e0.c"
+            "evidence/rng-callers/004467e0_FUN_004467e0.c",
+            "evidence/scripts/training-setashdensity/functions/004467e0_FUN_004467e0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "004469F0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "75fcab232cf93c6c1b54ca8dca651f8331d7640c58fab3dbfb256ed512dbfa28",
+          "exports": [
+            "evidence/scripts/training-setashdensity/functions/004469f0_FUN_004469f0.c"
           ]
         }
       ]
@@ -2992,7 +3144,9 @@
     },
     {
       "address": "004483A0",
-      "systems": [],
+      "systems": [
+        "Player fire exposure and damage"
+      ],
       "variants": [
         {
           "sha256": "036d4b0553cc8234bab6eda4b9330733263d27849b7b3681ca3cffaed48db233",
@@ -3079,6 +3233,7 @@
             "evidence/tool-attachment/00448630_FUN_00448630.c",
             "evidence/tool-decompiled/00448630_FUN_00448630.c",
             "evidence/victim-startup/00448630_FUN_00448630.c",
+            "evidence/victim-startup/bounds-audit/00448630_FUN_00448630.c",
             "evidence/world-script/00448630_FUN_00448630.c"
           ]
         }
@@ -3162,6 +3317,7 @@
             "evidence/tool-attachment/00448a90_FUN_00448a90.c",
             "evidence/tool-decompiled/00448a90_FUN_00448a90.c",
             "evidence/victim-startup/00448a90_FUN_00448a90.c",
+            "evidence/victim-startup/bounds-audit/00448a90_FUN_00448a90.c",
             "evidence/world-script/00448a90_FUN_00448a90.c"
           ]
         }
@@ -3211,6 +3367,18 @@
           "exports": [
             "evidence/extinguisher-contact/00449a40_FUN_00449a40.c",
             "evidence/item-pose/live-extinguisher/contact-dispatch/00449a40_FUN_00449a40.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "00449A80",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "c49b9b164a8b19ee1bec034b7648e39bb1f923c5ab5dd40056d4f5526bd645f1",
+          "exports": [
+            "evidence/fire-update/training-route-attachment/00449a80_FUN_00449a80.c"
           ]
         }
       ]
@@ -3278,6 +3446,12 @@
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/app-update-entity-exports/0044a330_FUN_0044a330.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/visual-base-exports/0044a330_FUN_0044a330.c",
             "evidence/startup-draw-order/0044a330_FUN_0044a330.c"
+          ]
+        },
+        {
+          "sha256": "df92bb13977e3aef943964398500d93d2c2e01bd1f7d97d281cae5803919372b",
+          "exports": [
+            "evidence/fire-update/training-route-attachment/constructor-state/0044a330_FUN_0044a330.c"
           ]
         },
         {
@@ -3452,6 +3626,18 @@
       ]
     },
     {
+      "address": "0044BC90",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "efd27fa2c6cd6c32ad05d0a5132da5119cef0e459bd021ab6a161d952afc4c07",
+          "exports": [
+            "evidence/scripts/training-setashdensity/functions/0044bc90_FUN_0044bc90.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "0044BCB0",
       "systems": [],
       "variants": [
@@ -3550,6 +3736,7 @@
             "evidence/tool-attachment/0044bff0_FUN_0044bff0.c",
             "evidence/tool-decompiled/0044bff0_FUN_0044bff0.c",
             "evidence/victim-startup/0044bff0_FUN_0044bff0.c",
+            "evidence/victim-startup/bounds-audit/0044bff0_FUN_0044bff0.c",
             "evidence/world-script/0044bff0_FUN_0044bff0.c"
           ]
         }
@@ -3608,7 +3795,9 @@
     },
     {
       "address": "0044C360",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "415ac382d4584411249a0f9d21f22a3fd95a5a47877fec556d0b46712e268d38",
@@ -3743,6 +3932,7 @@
             "evidence/tool-attachment/0044ca50_FUN_0044ca50.c",
             "evidence/tool-decompiled/0044ca50_FUN_0044ca50.c",
             "evidence/victim-startup/0044ca50_FUN_0044ca50.c",
+            "evidence/victim-startup/bounds-audit/0044ca50_FUN_0044ca50.c",
             "evidence/world-script/0044ca50_FUN_0044ca50.c"
           ]
         }
@@ -3810,6 +4000,7 @@
             "evidence/tool-attachment/0044cab0_FUN_0044cab0.c",
             "evidence/tool-decompiled/0044cab0_FUN_0044cab0.c",
             "evidence/victim-startup/0044cab0_FUN_0044cab0.c",
+            "evidence/victim-startup/bounds-audit/0044cab0_FUN_0044cab0.c",
             "evidence/world-script/0044cab0_FUN_0044cab0.c"
           ]
         }
@@ -3889,6 +4080,7 @@
             "evidence/tool-attachment/0044cfd0_FUN_0044cfd0.c",
             "evidence/tool-decompiled/0044cfd0_FUN_0044cfd0.c",
             "evidence/victim-startup/0044cfd0_FUN_0044cfd0.c",
+            "evidence/victim-startup/bounds-audit/0044cfd0_FUN_0044cfd0.c",
             "evidence/world-script/0044cfd0_FUN_0044cfd0.c"
           ]
         }
@@ -3931,6 +4123,7 @@
             "evidence/fire-update/think-scheduler-followup/0044d550_FUN_0044d550.c",
             "evidence/fresh/0044d550_FUN_0044d550.c",
             "evidence/gameplay/0044d550_FUN_0044d550.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0044d550_FUN_0044d550.c",
             "evidence/hose-spray/prop-model/detach-path/0044d550_FUN_0044d550.c",
             "evidence/input-action/0044d550_FUN_0044d550.c",
             "evidence/input-action/device-backend/0044d550_FUN_0044d550.c",
@@ -3958,6 +4151,7 @@
             "evidence/rng-gaussian/0044d550_FUN_0044d550.c",
             "evidence/rng-integer/0044d550_FUN_0044d550.c",
             "evidence/rng-startup/0044d550_FUN_0044d550.c",
+            "evidence/scripts/training-setashdensity/functions/0044d550_FUN_0044d550.c",
             "evidence/sprite-descriptors/0044d550_FUN_0044d550.c",
             "evidence/sprite-render/0044d550_FUN_0044d550.c",
             "evidence/sprite-textures/0044d550_FUN_0044d550.c",
@@ -3973,6 +4167,7 @@
             "evidence/tool-decompiled/0044d550_FUN_0044d550.c",
             "evidence/training-id-registration-callers/0044d550_FUN_0044d550.c",
             "evidence/victim-startup/0044d550_FUN_0044d550.c",
+            "evidence/victim-startup/bounds-audit/0044d550_FUN_0044d550.c",
             "evidence/world-script/0044d550_FUN_0044d550.c"
           ]
         }
@@ -4050,6 +4245,7 @@
             "evidence/tool-attachment/0044e990_FUN_0044e990.c",
             "evidence/tool-decompiled/0044e990_FUN_0044e990.c",
             "evidence/victim-startup/0044e990_FUN_0044e990.c",
+            "evidence/victim-startup/bounds-audit/0044e990_FUN_0044e990.c",
             "evidence/world-script/0044e990_FUN_0044e990.c"
           ]
         }
@@ -4198,6 +4394,7 @@
             "evidence/tool-attachment/0044ff10_FUN_0044ff10.c",
             "evidence/tool-decompiled/0044ff10_FUN_0044ff10.c",
             "evidence/victim-startup/0044ff10_FUN_0044ff10.c",
+            "evidence/victim-startup/bounds-audit/0044ff10_FUN_0044ff10.c",
             "evidence/world-script/0044ff10_FUN_0044ff10.c"
           ]
         }
@@ -4205,14 +4402,18 @@
     },
     {
       "address": "00450440",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "310d67e6dc6a9012a0d8acdbd57769f543c29442bc6478b29f9aa5bba76b6b1e",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00450440_FUN_00450440.c",
             "evidence/player-tool-pose/head-motion/00450440_FUN_00450440.c",
             "evidence/player-tool-pose/state-offsets/00450440_FUN_00450440.c",
-            "evidence/startup-factories/00450440_FUN_00450440.c"
+            "evidence/startup-factories/00450440_FUN_00450440.c",
+            "evidence/victim-ai-audit/rescue-flow/00450440_FUN_00450440.c"
           ]
         }
       ]
@@ -4242,6 +4443,7 @@
             "evidence/fire-update/think-scheduler-followup/004504c0_FUN_004504c0.c",
             "evidence/fresh/004504c0_FUN_004504c0.c",
             "evidence/gameplay/004504c0_FUN_004504c0.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/004504c0_FUN_004504c0.c",
             "evidence/hose-spray/prop-model/detach-path/004504c0_FUN_004504c0.c",
             "evidence/input-action/004504c0_FUN_004504c0.c",
             "evidence/input-action/device-backend/004504c0_FUN_004504c0.c",
@@ -4282,7 +4484,9 @@
             "evidence/tool-attachment/004504c0_FUN_004504c0.c",
             "evidence/tool-decompiled/004504c0_FUN_004504c0.c",
             "evidence/training-id-registration-callers/004504c0_FUN_004504c0.c",
+            "evidence/victim-ai-audit/rescue-flow/004504c0_FUN_004504c0.c",
             "evidence/victim-startup/004504c0_FUN_004504c0.c",
+            "evidence/victim-startup/bounds-audit/004504c0_FUN_004504c0.c",
             "evidence/world-script/004504c0_FUN_004504c0.c"
           ]
         }
@@ -4362,6 +4566,7 @@
             "evidence/tool-attachment/00450a70_FUN_00450a70.c",
             "evidence/tool-decompiled/00450a70_FUN_00450a70.c",
             "evidence/victim-startup/00450a70_FUN_00450a70.c",
+            "evidence/victim-startup/bounds-audit/00450a70_FUN_00450a70.c",
             "evidence/world-script/00450a70_FUN_00450a70.c"
           ]
         }
@@ -4369,11 +4574,14 @@
     },
     {
       "address": "00450FB0",
-      "systems": [],
+      "systems": [
+        "Player fire exposure and damage"
+      ],
       "variants": [
         {
           "sha256": "66a5b1d8adc027bfe473c28dbddad94f1fda8f5ac2b133c03e1e66d273aa8d91",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00450fb0_FUN_00450fb0.c",
             "evidence/player-tool-pose/state-offsets/00450fb0_FUN_00450fb0.c",
             "evidence/startup-factories/00450fb0_FUN_00450fb0.c"
           ]
@@ -4398,13 +4606,17 @@
     },
     {
       "address": "00451160",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "032065db72610152595919a17163ad4b0f2e5ac3c3cbb14361f01ad709f11a78",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00451160_FUN_00451160.c",
             "evidence/rng-callers/00451160_FUN_00451160.c",
-            "evidence/startup-factories/00451160_FUN_00451160.c"
+            "evidence/startup-factories/00451160_FUN_00451160.c",
+            "evidence/victim-ai-audit/rescue-flow/00451160_FUN_00451160.c"
           ]
         }
       ]
@@ -4418,8 +4630,10 @@
         {
           "sha256": "4073d5187d72bcadbc54e1673c0a70344aee0766794d156215ab1ece17dfc16e",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/004513a0_FUN_004513a0.c",
             "evidence/player-tool-pose/state-offsets/004513a0_FUN_004513a0.c",
-            "evidence/rng/004513a0_FUN_004513a0.c"
+            "evidence/rng/004513a0_FUN_004513a0.c",
+            "evidence/victim-ai-audit/rescue-flow/004513a0_FUN_004513a0.c"
           ]
         }
       ]
@@ -4439,7 +4653,9 @@
     },
     {
       "address": "00451640",
-      "systems": [],
+      "systems": [
+        "Player fire exposure and damage"
+      ],
       "variants": [
         {
           "sha256": "888986629811c107b631849c46af44f9ab42a3d791d276f46801693d02ddcc6e",
@@ -4476,6 +4692,7 @@
             "evidence/fire-update/think-scheduler-followup/00451870_FUN_00451870.c",
             "evidence/fresh/00451870_FUN_00451870.c",
             "evidence/gameplay/00451870_FUN_00451870.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/00451870_FUN_00451870.c",
             "evidence/hose-spray/prop-model/detach-path/00451870_FUN_00451870.c",
             "evidence/input-action/00451870_FUN_00451870.c",
             "evidence/input-action/device-backend/00451870_FUN_00451870.c",
@@ -4501,6 +4718,7 @@
             "evidence/rng-gaussian/00451870_FUN_00451870.c",
             "evidence/rng-integer/00451870_FUN_00451870.c",
             "evidence/rng-startup/00451870_FUN_00451870.c",
+            "evidence/scripts/training-setashdensity/functions/00451870_FUN_00451870.c",
             "evidence/sprite-descriptors/00451870_FUN_00451870.c",
             "evidence/sprite-render/00451870_FUN_00451870.c",
             "evidence/sprite-textures/00451870_FUN_00451870.c",
@@ -4515,7 +4733,9 @@
             "evidence/tool-attachment/00451870_FUN_00451870.c",
             "evidence/tool-decompiled/00451870_FUN_00451870.c",
             "evidence/training-id-registration-callers/00451870_FUN_00451870.c",
+            "evidence/victim-ai-audit/rescue-flow/00451870_FUN_00451870.c",
             "evidence/victim-startup/00451870_FUN_00451870.c",
+            "evidence/victim-startup/bounds-audit/00451870_FUN_00451870.c",
             "evidence/world-script/00451870_FUN_00451870.c"
           ]
         }
@@ -4532,6 +4752,7 @@
           "sha256": "17dba566c95d14ff9efa2e921a73cced917d9ad3ca7a35217de302431973a9c2",
           "exports": [
             "evidence/gameplay/00452570_FUN_00452570.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/00452570_FUN_00452570.c",
             "evidence/hose-spray/prop-model/use-manager/00452570_FUN_00452570.c"
           ]
         }
@@ -4539,13 +4760,17 @@
     },
     {
       "address": "00453A70",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits",
+        "Player fire exposure and damage"
+      ],
       "variants": [
         {
           "sha256": "bacbd95afd196502a5ed0b03e48dbd6fcd505ee1607a302c0fda7d1f75408eb1",
           "exports": [
             "evidence/collision-audit/00453a70_FUN_00453a70.c",
-            "evidence/item-pose/live-extinguisher/message-components/owner-callers/00453a70_FUN_00453a70.c"
+            "evidence/item-pose/live-extinguisher/message-components/owner-callers/00453a70_FUN_00453a70.c",
+            "evidence/victim-ai-audit/rescue-flow/00453a70_FUN_00453a70.c"
           ]
         }
       ]
@@ -4571,6 +4796,7 @@
         {
           "sha256": "091a84871e2b453aa47b6bc8ed25881ab3d4c9e99fb7b650843b1956233edf86",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00453cf0_FUN_00453cf0.c",
             "evidence/item-pose/live-extinguisher/message-components/owner-callers/00453cf0_FUN_00453cf0.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/app-update-entity-exports/00453cf0_FUN_00453cf0.c"
           ]
@@ -4585,11 +4811,13 @@
           "sha256": "519b84a45288185eaccefcb4d926e04510c8c2be70238cff77d6cf37cd733af4",
           "exports": [
             "evidence/collision-audit/00453d50_FUN_00453d50.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/00453d50_FUN_00453d50.c",
             "evidence/item-pose/live-extinguisher/callback-refs/00453d50_FUN_00453d50.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/00453d50_FUN_00453d50.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/visual-base-exports/00453d50_FUN_00453d50.c",
             "evidence/item-pose/live-extinguisher/message-routing/00453d50_FUN_00453d50.c",
-            "evidence/player-tool-pose/head-motion/00453d50_FUN_00453d50.c"
+            "evidence/player-tool-pose/head-motion/00453d50_FUN_00453d50.c",
+            "evidence/scripts/training-setashdensity/functions/00453d50_FUN_00453d50.c"
           ]
         }
       ]
@@ -4613,6 +4841,7 @@
         {
           "sha256": "6d02469744e536571f20001c69cd9ac7c43f4f4e8bab396aeb492cc78736f81a",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00454080_FUN_00454080.c",
             "evidence/id-registration-direct-callers/00454080_FUN_00454080.c",
             "evidence/training-id-registration-callers/00454080_FUN_00454080.c"
           ]
@@ -4646,7 +4875,9 @@
     },
     {
       "address": "004541A0",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "b087c57b842f12a0be8e7d537052db59f88a18139c6c3e88c68167e3d7f58dfe",
@@ -4903,7 +5134,9 @@
     },
     {
       "address": "004571A0",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "92e2abfed0d8837103a1d428d3e433a51f048532bf7097f5bcc19d0e6dfce650",
@@ -5148,6 +5381,7 @@
             "evidence/startup-world/004597c0_FUN_004597c0.c",
             "evidence/tool-attachment/004597c0_FUN_004597c0.c",
             "evidence/victim-startup/004597c0_FUN_004597c0.c",
+            "evidence/victim-startup/bounds-audit/004597c0_FUN_004597c0.c",
             "evidence/world-script/004597c0_FUN_004597c0.c"
           ]
         }
@@ -5174,7 +5408,9 @@
         {
           "sha256": "18be95239e5be20be78fa5c3cbf02cd0abc9fd3ed6bcea14976593c7e056b981",
           "exports": [
-            "evidence/startup-factories/004599b0_FUN_004599b0.c"
+            "evidence/ghidra-refresh/rescue-flow-20261011/004599b0_FUN_004599b0.c",
+            "evidence/startup-factories/004599b0_FUN_004599b0.c",
+            "evidence/victim-ai-audit/runtime-flow/004599b0_FUN_004599b0.c"
           ]
         }
       ]
@@ -5186,7 +5422,20 @@
         {
           "sha256": "60ef0b8ee15877539e52177980f34ff2fb9ea34ca6bef24fb8c2299b1bbbf9b8",
           "exports": [
-            "evidence/rng-integer/00459a50_FUN_00459a50.c"
+            "evidence/rng-integer/00459a50_FUN_00459a50.c",
+            "evidence/victim-ai-audit/00459a50_FUN_00459a50.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "00459B40",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "373d256b7b6ddfe189b22fd09c7911cbf0a25da3cb9f8f854fc624955368eb1d",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00459b40_FUN_00459b40.c"
           ]
         }
       ]
@@ -5262,7 +5511,22 @@
             "evidence/tool-attachment/0045a010_FUN_0045a010.c",
             "evidence/tool-decompiled/0045a010_FUN_0045a010.c",
             "evidence/victim-startup/0045a010_FUN_0045a010.c",
+            "evidence/victim-startup/bounds-audit/0045a010_FUN_0045a010.c",
             "evidence/world-script/0045a010_FUN_0045a010.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045A070",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "83938257c97b6d2a5339f90d49689fc44d5af6c3108576997c99df33ad27547e",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045a070_FUN_0045a070.c",
+            "evidence/victim-ai-audit/rescue-flow/0045a070_FUN_0045a070.c",
+            "evidence/victim-ai-audit/runtime-callbacks/0045a070_FUN_0045a070.c"
           ]
         }
       ]
@@ -5286,6 +5550,7 @@
         {
           "sha256": "d4e633f256bca0fe5149bb2257b2bf8b0113487f476450739a013a6452d38edc",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045a3d0_FUN_0045a3d0.c",
             "evidence/rng-core/0045a3d0_FUN_0045a3d0.c",
             "evidence/startup-draw-order/0045a3d0_FUN_0045a3d0.c",
             "evidence/startup-initializers/0045a3d0_FUN_0045a3d0.c"
@@ -5316,6 +5581,7 @@
             "evidence/fire-update/think-scheduler-followup/0045a900_FUN_0045a900.c",
             "evidence/fresh/0045a900_FUN_0045a900.c",
             "evidence/gameplay/0045a900_FUN_0045a900.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045a900_FUN_0045a900.c",
             "evidence/hose-spray/prop-model/detach-path/0045a900_FUN_0045a900.c",
             "evidence/input-action/0045a900_FUN_0045a900.c",
             "evidence/input-action/device-backend/0045a900_FUN_0045a900.c",
@@ -5351,8 +5617,22 @@
             "evidence/timing-audit/0045a900_FUN_0045a900.c",
             "evidence/tool-attachment/0045a900_FUN_0045a900.c",
             "evidence/tool-decompiled/0045a900_FUN_0045a900.c",
+            "evidence/victim-ai-audit/0045a900_FUN_0045a900.c",
             "evidence/victim-startup/0045a900_FUN_0045a900.c",
+            "evidence/victim-startup/bounds-audit/0045a900_FUN_0045a900.c",
             "evidence/world-script/0045a900_FUN_0045a900.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045AA10",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "35b357ffe4ff9c65f5bb37d003d50c2e3144d1e6e9c2484b6116fbd3474f7059",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045aa10_FUN_0045aa10.c"
           ]
         }
       ]
@@ -5365,7 +5645,8 @@
           "sha256": "e797001117a1184f29d5992caac83e3189698ed3efccd3dc12b5ee77e5ce3658",
           "exports": [
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0045ab40_FUN_0045ab40.c",
-            "evidence/item-pose/live-extinguisher/message-routing/0045ab40_FUN_0045ab40.c"
+            "evidence/item-pose/live-extinguisher/message-routing/0045ab40_FUN_0045ab40.c",
+            "evidence/victim-ai-audit/runtime-flow/0045ab40_FUN_0045ab40.c"
           ]
         }
       ]
@@ -5380,7 +5661,8 @@
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0045ae50_FUN_0045ae50.c",
             "evidence/item-pose/live-extinguisher/message-routing/0045ae50_FUN_0045ae50.c",
             "evidence/rng-callers/0045ae50_FUN_0045ae50.c",
-            "evidence/rng-integer/0045ae50_FUN_0045ae50.c"
+            "evidence/rng-integer/0045ae50_FUN_0045ae50.c",
+            "evidence/victim-ai-audit/runtime-flow/0045ae50_FUN_0045ae50.c"
           ]
         }
       ]
@@ -5392,9 +5674,11 @@
         {
           "sha256": "ae7bf0e178eb4358f8d1a745fc05fd5e14c1b46d033f22e5c5b8914671dc17ef",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045b220_FUN_0045b220.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0045b220_FUN_0045b220.c",
             "evidence/item-pose/live-extinguisher/message-routing/0045b220_FUN_0045b220.c",
-            "evidence/rng-integer/0045b220_FUN_0045b220.c"
+            "evidence/rng-integer/0045b220_FUN_0045b220.c",
+            "evidence/victim-ai-audit/runtime-flow/0045b220_FUN_0045b220.c"
           ]
         }
       ]
@@ -5458,6 +5742,7 @@
             "evidence/tool-attachment/0045b3b0_FUN_0045b3b0.c",
             "evidence/tool-decompiled/0045b3b0_FUN_0045b3b0.c",
             "evidence/victim-startup/0045b3b0_FUN_0045b3b0.c",
+            "evidence/victim-startup/bounds-audit/0045b3b0_FUN_0045b3b0.c",
             "evidence/world-script/0045b3b0_FUN_0045b3b0.c"
           ]
         }
@@ -5486,6 +5771,7 @@
             "evidence/fire-update/think-scheduler-followup/0045b690_FUN_0045b690.c",
             "evidence/fresh/0045b690_FUN_0045b690.c",
             "evidence/gameplay/0045b690_FUN_0045b690.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045b690_FUN_0045b690.c",
             "evidence/hose-spray/prop-model/detach-path/0045b690_FUN_0045b690.c",
             "evidence/input-action/0045b690_FUN_0045b690.c",
             "evidence/input-action/device-backend/0045b690_FUN_0045b690.c",
@@ -5523,15 +5809,33 @@
             "evidence/timing-audit/0045b690_FUN_0045b690.c",
             "evidence/tool-attachment/0045b690_FUN_0045b690.c",
             "evidence/tool-decompiled/0045b690_FUN_0045b690.c",
+            "evidence/victim-ai-audit/0045b690_FUN_0045b690.c",
             "evidence/victim-startup/0045b690_FUN_0045b690.c",
+            "evidence/victim-startup/bounds-audit/0045b690_FUN_0045b690.c",
             "evidence/world-script/0045b690_FUN_0045b690.c"
           ]
         }
       ]
     },
     {
-      "address": "0045BEF0",
+      "address": "0045BEA0",
       "systems": [],
+      "variants": [
+        {
+          "sha256": "1ff466c627878afc4812a943066997ac9d0346cbeff0805708140a5b6087ee6d",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045bea0_FUN_0045bea0.c",
+            "evidence/victim-ai-audit/runtime-callbacks/0045bea0_FUN_0045bea0.c",
+            "evidence/victim-ai-audit/runtime-flow/0045bea0_FUN_0045bea0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045BEF0",
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "83b59bb502bf4c684109bfad1b5f7214caa62cbd3b216ed9d20fa7633a4ea601",
@@ -5551,6 +5855,7 @@
             "evidence/fire-update/think-scheduler-followup/0045bef0_FUN_0045bef0.c",
             "evidence/fresh/0045bef0_FUN_0045bef0.c",
             "evidence/gameplay/0045bef0_FUN_0045bef0.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045bef0_FUN_0045bef0.c",
             "evidence/hose-spray/prop-model/detach-path/0045bef0_FUN_0045bef0.c",
             "evidence/input-action/0045bef0_FUN_0045bef0.c",
             "evidence/input-action/device-backend/0045bef0_FUN_0045bef0.c",
@@ -5587,6 +5892,7 @@
             "evidence/tool-attachment/0045bef0_FUN_0045bef0.c",
             "evidence/training-id-registration-callers/0045bef0_FUN_0045bef0.c",
             "evidence/victim-startup/0045bef0_FUN_0045bef0.c",
+            "evidence/victim-startup/bounds-audit/0045bef0_FUN_0045bef0.c",
             "evidence/world-script/0045bef0_FUN_0045bef0.c"
           ]
         }
@@ -5594,11 +5900,14 @@
     },
     {
       "address": "0045C000",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "06e68f88d49f77c08313b252f5d1c42768af4c54f0cd7ce7d58c648544b8c881",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045c000_FUN_0045c000.c",
             "evidence/startup-factories/0045c000_FUN_0045c000.c"
           ]
         }
@@ -5676,6 +5985,7 @@
             "evidence/tool-attachment/0045c4d0_FUN_0045c4d0.c",
             "evidence/tool-decompiled/0045c4d0_FUN_0045c4d0.c",
             "evidence/victim-startup/0045c4d0_FUN_0045c4d0.c",
+            "evidence/victim-startup/bounds-audit/0045c4d0_FUN_0045c4d0.c",
             "evidence/world-script/0045c4d0_FUN_0045c4d0.c"
           ]
         }
@@ -5742,8 +6052,24 @@
             "evidence/timing-audit/0045c7f0_FUN_0045c7f0.c",
             "evidence/tool-attachment/0045c7f0_FUN_0045c7f0.c",
             "evidence/tool-decompiled/0045c7f0_FUN_0045c7f0.c",
+            "evidence/victim-ai-audit/0045c7f0_FUN_0045c7f0.c",
+            "evidence/victim-ai-audit/runtime-flow/0045c7f0_FUN_0045c7f0.c",
             "evidence/victim-startup/0045c7f0_FUN_0045c7f0.c",
+            "evidence/victim-startup/bounds-audit/0045c7f0_FUN_0045c7f0.c",
             "evidence/world-script/0045c7f0_FUN_0045c7f0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045CDB0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "1196bc27cc95cf7903d443d7b8745add6448ccb0a7c67e43eefdedeee9338c36",
+          "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/0045cdb0_FUN_0045cdb0.c",
+            "evidence/victim-ai-audit/0045cdb0_FUN_0045cdb0.c"
           ]
         }
       ]
@@ -5756,6 +6082,18 @@
           "sha256": "f48889770764dca790d2b815a985951ea2d9da65ac9e6f65bc1f8bf99b0015a0",
           "exports": [
             "evidence/rng-integer/0045d250_FUN_0045d250.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045D450",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "a3e60011a627e5326e401aac4043da0fd162d67bad24b6d30d086502a1c3c67d",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045d450_FUN_0045d450.c"
           ]
         }
       ]
@@ -5823,8 +6161,35 @@
             "evidence/timing-audit/0045d5b0_FUN_0045d5b0.c",
             "evidence/tool-attachment/0045d5b0_FUN_0045d5b0.c",
             "evidence/tool-decompiled/0045d5b0_FUN_0045d5b0.c",
+            "evidence/victim-ai-audit/0045d5b0_FUN_0045d5b0.c",
             "evidence/victim-startup/0045d5b0_FUN_0045d5b0.c",
+            "evidence/victim-startup/bounds-audit/0045d5b0_FUN_0045d5b0.c",
             "evidence/world-script/0045d5b0_FUN_0045d5b0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045DBD0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "bb0e01214ddb9a2e072bce578be845f07435dd3490eec9b023ec9890d6b68ed0",
+          "exports": [
+            "evidence/victim-ai-audit/runtime-flow/0045dbd0_FUN_0045dbd0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045DD70",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "977f9e28ceab29c275319627a8c54c0d72a6c6e0f5a298583d3996bd6dab03ef",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045dd70_FUN_0045dd70.c",
+            "evidence/victim-ai-audit/runtime-callbacks/0045dd70_FUN_0045dd70.c"
           ]
         }
       ]
@@ -5838,7 +6203,21 @@
         {
           "sha256": "c3ab622508a7b525bfa956b8616793c301cffc0ac9add89e1e6b5378d9fc41ce",
           "exports": [
-            "evidence/rng-core/0045ddd0_FUN_0045ddd0.c"
+            "evidence/ghidra-refresh/rescue-flow-20261011/0045ddd0_FUN_0045ddd0.c",
+            "evidence/rng-core/0045ddd0_FUN_0045ddd0.c",
+            "evidence/victim-ai-audit/runtime-flow/0045ddd0_FUN_0045ddd0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0045DF60",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "3e0ea3b90c3ebbe997fcb303c5165554954337b57d797b5b6041356a2a8216df",
+          "exports": [
+            "evidence/victim-ai-audit/runtime-callbacks/0045df60_FUN_0045df60.c"
           ]
         }
       ]
@@ -6270,6 +6649,7 @@
             "evidence/tool-attachment/00460250_FUN_00460250.c",
             "evidence/tool-decompiled/00460250_FUN_00460250.c",
             "evidence/victim-startup/00460250_FUN_00460250.c",
+            "evidence/victim-startup/bounds-audit/00460250_FUN_00460250.c",
             "evidence/world-script/00460250_FUN_00460250.c"
           ]
         }
@@ -6737,6 +7117,7 @@
             "evidence/tool-attachment/00462a60_FUN_00462a60.c",
             "evidence/tool-decompiled/00462a60_FUN_00462a60.c",
             "evidence/victim-startup/00462a60_FUN_00462a60.c",
+            "evidence/victim-startup/bounds-audit/00462a60_FUN_00462a60.c",
             "evidence/world-script/00462a60_FUN_00462a60.c"
           ]
         }
@@ -6907,6 +7288,7 @@
             "evidence/tool-attachment/00463700_FUN_00463700.c",
             "evidence/tool-decompiled/00463700_FUN_00463700.c",
             "evidence/victim-startup/00463700_FUN_00463700.c",
+            "evidence/victim-startup/bounds-audit/00463700_FUN_00463700.c",
             "evidence/world-script/00463700_FUN_00463700.c"
           ]
         }
@@ -7388,6 +7770,7 @@
             "evidence/tool-decompiled/00466d60_FUN_00466d60.c",
             "evidence/training-id-registration-callers/00466d60_FUN_00466d60.c",
             "evidence/victim-startup/00466d60_FUN_00466d60.c",
+            "evidence/victim-startup/bounds-audit/00466d60_FUN_00466d60.c",
             "evidence/world-script/00466d60_FUN_00466d60.c"
           ]
         }
@@ -7722,9 +8105,27 @@
       ]
     },
     {
+      "address": "0046ED70",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "9235accd31c5202aa9274cb71403893c2b1d77bf7303dec9bffcd69b455db785",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0046ed70_FUN_0046ed70.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "0046F930",
       "systems": [],
       "variants": [
+        {
+          "sha256": "d86620c89749fa2f5659ab45ce11faa3dbb7882a500e4b6fdc2946ad73fdbc1b",
+          "exports": [
+            "evidence/fire-update/training-route-attachment/constructor-state/0046f930_FUN_0046f930.c"
+          ]
+        },
         {
           "sha256": "f24ad24a9aa118adbe58b2f454a9d930e3949320df16ff082f7c5dcd6a7dfdd6",
           "exports": [
@@ -7797,6 +8198,18 @@
       ]
     },
     {
+      "address": "004727D0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "b28bd1650da105a7881a11e7cf8a693b42bb79ec3d6289b9adeed8c3377c7911",
+          "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/004727d0_FUN_004727d0.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "00474910",
       "systems": [],
       "variants": [
@@ -7822,6 +8235,18 @@
       ]
     },
     {
+      "address": "00474F60",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "3e109e355b75ac356eec456d78ea5b535bc111c7eb6c9fec8e2029adea37be29",
+          "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/00474f60_FUN_00474f60.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "00475020",
       "systems": [],
       "variants": [
@@ -7830,6 +8255,18 @@
           "exports": [
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/00475020_FUN_00475020.c",
             "evidence/item-pose/live-extinguisher/message-routing/00475020_FUN_00475020.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "004752A0",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "5762bc1642c666856f4fe26525548dbaa80b5bee47831b5f01d344a3b2262d1b",
+          "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/004752a0_FUN_004752a0.c"
           ]
         }
       ]
@@ -7900,6 +8337,18 @@
       ]
     },
     {
+      "address": "00478B80",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "4718ecbdadbdeaf933fe139468d59589af072ab98336cecdabaacef92e414a7b",
+          "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/00478b80_FUN_00478b80.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "00478E20",
       "systems": [],
       "variants": [
@@ -7908,6 +8357,18 @@
           "exports": [
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/00478e20_FUN_00478e20.c",
             "evidence/item-pose/live-extinguisher/message-routing/00478e20_FUN_00478e20.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "00479670",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "ec66036b4c3e4dcb9e58bb6b4455195dcc8c1610e7fd3f521bb0fd9cd8632447",
+          "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/00479670_FUN_00479670.c"
           ]
         }
       ]
@@ -7970,6 +8431,7 @@
         {
           "sha256": "082f3d1065825712b81a757e2ddd7845329db4fcca1e390255d9c822ef873861",
           "exports": [
+            "evidence/ghidra-refresh/console-audit-20261011/0047a1f0_FUN_0047a1f0.c",
             "evidence/interactions/0047a1f0_FUN_0047a1f0.c",
             "evidence/training-id-registration-callers/0047a1f0_FUN_0047a1f0.c"
           ]
@@ -7979,7 +8441,8 @@
     {
       "address": "0047D2B0",
       "systems": [
-        "Sprite frame timing and looping"
+        "Sprite frame timing and looping",
+        "Training ash-pool lifecycle"
       ],
       "variants": [
         {
@@ -8020,7 +8483,8 @@
     {
       "address": "0047D370",
       "systems": [
-        "Fire visual initialization RNG"
+        "Fire visual initialization RNG",
+        "Training ash-pool lifecycle"
       ],
       "variants": [
         {
@@ -8061,7 +8525,8 @@
     {
       "address": "0047D660",
       "systems": [
-        "Sprite frame timing and looping"
+        "Sprite frame timing and looping",
+        "Training ash-pool lifecycle"
       ],
       "variants": [
         {
@@ -8416,7 +8881,8 @@
         {
           "sha256": "28ad0f0448d730fdf922e0c41c93c615572a9936c12eb95f17d0e3bde5b0805b",
           "exports": [
-            "evidence/fire-size/0047f960_FUN_0047f960.c"
+            "evidence/fire-size/0047f960_FUN_0047f960.c",
+            "evidence/scripts/training-setashdensity/functions/0047f960_FUN_0047f960.c"
           ]
         }
       ]
@@ -8591,7 +9057,9 @@
     },
     {
       "address": "00481140",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "8a4f5795b53bfb7a3d690140b3c11d16bfaeaed7065ba339a3cd0180f2950930",
@@ -9350,7 +9818,9 @@
     },
     {
       "address": "00490E60",
-      "systems": [],
+      "systems": [
+        "Victim pickup, carrying, rescue and exits"
+      ],
       "variants": [
         {
           "sha256": "07fe2f1b498a275646811d50ec144d8e214129a4637491a083fae88e2be73584",
@@ -9733,6 +10203,18 @@
           "sha256": "63cfc5c600eb724686181ad594f38b190358c232676e3c2ad13cfc661cca5488",
           "exports": [
             "evidence/fire-placement/00495eb0_FUN_00495eb0.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "00496020",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "1d0b128ebea022fdeed6dfa65bdb09561219d2e5ca353ae6ba456db2cae31398",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/00496020_FUN_00496020.c"
           ]
         }
       ]
@@ -10674,8 +11156,10 @@
         {
           "sha256": "89f1732dbdd51e99c3e4dcbb3156ced5bca5f53f9a2a222261fccab8e099e69e",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049bd20_FUN_0049bd20.c",
             "evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049bd20_FUN_0049bd20.c",
-            "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/fireresque-helper-exports/0049bd20_FUN_0049bd20.c"
+            "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/fireresque-helper-exports/0049bd20_FUN_0049bd20.c",
+            "evidence/victim-ai-audit/runtime-flow/0049bd20_FUN_0049bd20.c"
           ]
         }
       ]
@@ -10859,7 +11343,8 @@
           "sha256": "32b4420dda0349b9ffd8b566e34b2a601165bf23d0f1efd6aee8166a36f7aeb5",
           "exports": [
             "evidence/entity-dispatch/0049c820_FUN_0049c820.c",
-            "evidence/item-pose/live-extinguisher/message-components/0049c820_FUN_0049c820.c"
+            "evidence/item-pose/live-extinguisher/message-components/0049c820_FUN_0049c820.c",
+            "evidence/victim-ai-audit/runtime-flow/0049c820_FUN_0049c820.c"
           ]
         }
       ]
@@ -10974,6 +11459,7 @@
           "sha256": "d7f5c6f4c2bedcce11ce4a6cb3997674da8dbbc95c7a05656fd5bad29625360a",
           "exports": [
             "evidence/entity-load/0049d160_FUN_0049d160.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d160_FUN_0049d160.c",
             "evidence/interactions/0049d160_FUN_0049d160.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0049d160_FUN_0049d160.c",
             "evidence/item-pose/live-extinguisher/message-routing/0049d160_FUN_0049d160.c",
@@ -11015,7 +11501,9 @@
         {
           "sha256": "1e333fd5711cefa0cbcac862d9eae6b958be733263c755200fffc2e7f49cc79c",
           "exports": [
-            "evidence/item-pose/live-extinguisher/contact-dispatch/0049d350_FUN_0049d350.c"
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d350_FUN_0049d350.c",
+            "evidence/item-pose/live-extinguisher/contact-dispatch/0049d350_FUN_0049d350.c",
+            "evidence/victim-startup/bounds-audit/0049d350_FUN_0049d350.c"
           ]
         }
       ]
@@ -11028,8 +11516,10 @@
           "sha256": "e74cd5e774e6eac416a031d4733fe025fbc8b47b09848a2395d8a2c32cffe1bb",
           "exports": [
             "evidence/entity-passes/0049d420_FUN_0049d420.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d420_FUN_0049d420.c",
             "evidence/item-pose/live-extinguisher/message-manager/0049d420_FUN_0049d420.c",
-            "evidence/startup-initializers/0049d420_FUN_0049d420.c"
+            "evidence/startup-initializers/0049d420_FUN_0049d420.c",
+            "evidence/victim-startup/bounds-audit/0049d420_FUN_0049d420.c"
           ]
         }
       ]
@@ -11089,6 +11579,7 @@
         {
           "sha256": "a14e0551ee44acf35bd9748f42daf88a4b5175308cdeec28eece5448233e309c",
           "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d4e0_FUN_0049d4e0.c",
             "evidence/item-pose/live-extinguisher/contact-dispatch/0049d4e0_FUN_0049d4e0.c",
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0049d4e0_FUN_0049d4e0.c",
             "evidence/item-pose/live-extinguisher/message-manager/0049d4e0_FUN_0049d4e0.c",
@@ -11149,6 +11640,30 @@
       ]
     },
     {
+      "address": "0049D760",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "2d349ccb5954dbe805b7ae2b55137359f4e492f15f49bf40bce35305c8863145",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d760_FUN_0049d760.c"
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0049D790",
+      "systems": [],
+      "variants": [
+        {
+          "sha256": "0b1b30aa7418245b50f46077b21b615613ab81e92fab334dbd7081c3c13f07de",
+          "exports": [
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d790_FUN_0049d790.c"
+          ]
+        }
+      ]
+    },
+    {
       "address": "0049D7F0",
       "systems": [],
       "variants": [
@@ -11156,6 +11671,7 @@
           "sha256": "4950037ed6226acf734e1924dfc37f4579b058dcc5c571dd33e8504720e57673",
           "exports": [
             "evidence/collision-audit/0049d7f0_FUN_0049d7f0.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d7f0_FUN_0049d7f0.c",
             "evidence/item-pose/live-extinguisher/message-components/owner-callers/0049d7f0_FUN_0049d7f0.c"
           ]
         }
@@ -11169,6 +11685,7 @@
           "sha256": "ccdb90f7476fce3a2f7259454dba679b8b2147321cb212bebe01beb3b1e59b49",
           "exports": [
             "evidence/entity-order/0049d8c0_FUN_0049d8c0.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049d8c0_FUN_0049d8c0.c",
             "evidence/startup-constructors/0049d8c0_FUN_0049d8c0.c"
           ]
         }
@@ -11183,7 +11700,8 @@
           "exports": [
             "evidence/item-pose/live-extinguisher/message-components/slot-zero-callers/staged-callback-global-users/0049da00_FUN_0049da00.c",
             "evidence/item-pose/live-extinguisher/message-routing/0049da00_FUN_0049da00.c",
-            "evidence/rng-core/0049da00_FUN_0049da00.c"
+            "evidence/rng-core/0049da00_FUN_0049da00.c",
+            "evidence/victim-startup/bounds-audit/0049da00_FUN_0049da00.c"
           ]
         }
       ]
@@ -11208,6 +11726,7 @@
           "sha256": "6f976594c6167b66a13675615c1e5b8ab60c77455d80fe2444f4ad0595850568",
           "exports": [
             "evidence/collision-audit/0049db90_thunk_FUN_0049d790.c",
+            "evidence/ghidra-refresh/rescue-flow-20261011/0049db90_thunk_FUN_0049d790.c",
             "evidence/item-pose/live-extinguisher/message-components/owner-callers/0049db90_thunk_FUN_0049d790.c"
           ]
         }

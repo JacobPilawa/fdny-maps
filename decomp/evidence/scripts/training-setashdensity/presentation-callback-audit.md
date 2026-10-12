@@ -87,12 +87,13 @@ The control flow for state gating, geometry cache writes, per-particle
 visibility, frame/color selection, and the one/two polygon submission paths is
 source-backed and safe to translate as a bounded native component. Preserve
 the original x87 rounding behavior and float operation order for parity.
-Rendering cannot yet be claimed exact: the ash descriptor’s actual flags,
-animation arrays, vertex data, texture/material, computed render-context APIs,
-global step-time setup, and the indirect closure are still unresolved. There
-is no live Training capture in this evidence. Do not replace these gaps with
-placeholder geometry, material choices, or callback defaults in a parity
-claim.
+Rendering cannot yet be claimed exact: the ash descriptor flags, five frame
+durations, and collection-to-particle binding are now recovered in
+`descriptor-lifetime-followup.md`, but vertex data, texture/material,
+computed render-context APIs, global step-time setup, and the indirect
+closure remain unresolved. There is no live Training capture in this evidence.
+Do not replace these gaps with placeholder geometry, material choices, or
+callback defaults in a parity claim.
 
 ## Best next step
 

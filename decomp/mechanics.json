@@ -276,13 +276,29 @@
     },
     {
       "name": "Sprite frame timing and looping",
-      "status": "5760 original frame-update comparisons match; frame descriptor loading and live fire rendering pending",
+      "status": "5760 original frame-update comparisons match; fire resource descriptor loading and live fire rendering pending; Training ash descriptor binding/durations are recovered and the component uses this update path",
       "original_entries": [
         "0047D660",
         "0047D2B0"
       ],
       "implementation": "src/sprite_animation.h",
       "comparison": "--sprite-animation-check"
+    },
+    {
+      "name": "Training ash-pool lifecycle",
+      "status": "100-slot descriptor/update/activation component; six original 00446510 and three 00446470 P-code cases match; source-bound five-frame 3,500-clock-unit animation now advances before density scan; Player schedule, scene transform, rendering and full RNG parity pending",
+      "original_entries": [
+        "004465d0",
+        "004463f0",
+        "00446510",
+        "004467e0",
+        "00446470",
+        "0047d370",
+        "0047d660",
+        "0047d2b0"
+      ],
+      "implementation": "src/player_ash_pool.h",
+      "comparison": "player_ash_pool-check"
     },
     {
       "name": "Combined fire visual component",

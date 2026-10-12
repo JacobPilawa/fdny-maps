@@ -1,6 +1,6 @@
 {
   "snapshot": "2026-10-12",
-  "commit": "b910628",
+  "commit": "e9e82c6",
   "tests": 25,
   "scope": "Training",
   "files": [
@@ -394,7 +394,7 @@
           "One-frame, looping and timer-wrap cases are included."
         ]
       ],
-      "bytes": 804
+      "bytes": 862
     },
     {
       "path": "src/fire_visual.h",
@@ -1312,7 +1312,7 @@
     {
       "path": "src/player_ash_pool.h",
       "group": "Effects",
-      "summary": "100-slot ash pool and direct update/activation writes; six due-update and three activation P-code cases match native fields and draws. Constructor services, scheduling and presentation parity remain open.",
+      "summary": "100-slot ash pool with source-mapped descriptors, direct update/activation writes, and finite animation order. Six update and three activation P-code cases match; Player scheduling and rendering remain open.",
       "evidence": "evidence/scripts/training-setashdensity/native-pool-component.md",
       "units": [
         [
@@ -1326,7 +1326,7 @@
           "004467E0",
           "Pool tick / density scan",
           "partial",
-          "All entries update and present before the density-sized prefix scan; scene callback and schedule are unresolved.",
+          "Every slot now receives direct update, finite animation, then remaining presentation before the density-sized prefix scan; the Player caller cadence remains unresolved.",
           "evidence/scripts/training-setashdensity/audit.md"
         ],
         [
@@ -1347,11 +1347,25 @@
           "0047F960",
           "Particle presentation",
           "partial",
-          "State gates, culling, geometry/color writes, and polygon submission are mapped; render assets/context and 130 computed callsites remain unresolved.",
+          "Finite animation is now advanced in the pool component; state gates, culling, geometry/color writes and polygon submission are mapped, while render services and 130 computed calls remain open.",
           "evidence/scripts/training-setashdensity/presentation-callback-audit.md"
+        ],
+        [
+          "0047D370",
+          "Ash descriptor binding",
+          "partial",
+          "Each particle receives its alternating container pointer/flags and initial animation state; opaque constructor services and native Player integration remain.",
+          "evidence/scripts/training-setashdensity/descriptor-lifetime-followup.md"
+        ],
+        [
+          "0047D660 / 0047D2B0",
+          "Ash finite animation",
+          "partial",
+          "Five descriptor durations total 3,500 clock units at scale 1. The original-compared animation routine now runs before presentation and the density scan; live cadence/rendering remain open.",
+          "evidence/scripts/training-setashdensity/descriptor-lifetime-followup.md"
         ]
       ],
-      "bytes": 7411
+      "bytes": 9441
     }
   ]
 }
