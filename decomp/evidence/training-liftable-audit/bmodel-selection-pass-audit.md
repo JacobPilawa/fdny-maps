@@ -194,7 +194,9 @@ queries. All queries against the preserved project used `-noanalysis
 -readOnly`; missing function boundaries were defined only in the scratch copy
 under `/private/tmp`.
 
-Next source work: enumerate the Training type-1 contact candidates, recover the
-updater's actual call order relative to the owner contact manager, then connect
-those dynamically ordered entries to the BModel axis-box query and action
-methods without guessing scheduler or live field values.
+Next source work: establish which of the source-eligible type-1 objects are
+actually admitted to Training's contact manager (the map has no authored
+`RCS_PlayerHose` instance), recover the updater's call order relative to the
+owner contact manager, then connect the dynamically ordered entries to the
+BModel axis-box query and action methods without guessing scheduler or live
+field values.
