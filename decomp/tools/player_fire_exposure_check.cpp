@@ -38,7 +38,7 @@ int main(){
   check(above.passoutTriggered&&passouts==2,"above-threshold exposure did not trigger passout once");
 
   std::cout<<"Player fire exposure source-derived control flow: failures="<<failures
-           <<" (native check only; original 00451640 P-code fixture missing)\n";
+           <<" (native boundary check; representative original P-code samples are in fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json)\n";
   return failures?1:0;
  }catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 2;}
 }

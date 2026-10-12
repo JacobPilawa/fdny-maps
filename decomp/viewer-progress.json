@@ -1,7 +1,7 @@
 {
   "snapshot": "2026-10-11",
   "commit": "f7e0e4f",
-  "tests": 18,
+  "tests": 21,
   "scope": "Training",
   "files": [
     {
@@ -1209,7 +1209,7 @@
     {
       "path": "No native module yet",
       "group": "Mission",
-      "summary": "Original behavior has source evidence, but the native implementation is still open.",
+      "summary": "Some original routines have source/native component work recorded below; unresolved lifecycle and damage routines remain open.",
       "evidence": "evidence/victim-render/appearance-trace.md",
       "units": [
         [
@@ -1248,18 +1248,50 @@
           "00451640",
           "Player fire exposure",
           "partial",
-          "The source trace is preserved; native message handling and live scheduling remain open.",
-          "evidence/startup-factories/00451640_FUN_00451640.c"
+          "Exposure and pain-deadline suffix components now compare three representative original P-code cases under controlled stubs; the full callback and live message/scheduler path remain open.",
+          "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
         ],
         [
           "00450FB0",
           "Damage / passing out",
           "open",
-          "Native exposure, air, damage and failure behavior remain unimplemented.",
+          "Only the injected passout call boundary is covered. Original passout effects, active-object callback, damage/air behavior and native integration remain open.",
           "evidence/startup-factories/00450fb0_FUN_00450fb0.c"
         ]
       ],
       "bytes": 0
+    },
+    {
+      "path": "src/player_fire_exposure.h",
+      "group": "Player",
+      "summary": "Stores source-ordered x87 exposure into binary32, then tests the still-live extended sum for strict passout. Three original suffix cases compare in a fixture-driven check; scheduler and live passout service remain open.",
+      "evidence": "evidence/fire-update/player-exposure-accumulation-audit.md",
+      "units": [
+        [
+          "00451640",
+          "Exposure accumulation",
+          "partial",
+          "Three representative original P-code suffix cases are compared; the sub-ULP edge, passout service and live dispatch remain open.",
+          "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
+        ]
+      ],
+      "bytes": 1160
+    },
+    {
+      "path": "src/player_pain_deadline.h",
+      "group": "Player",
+      "summary": "Unsigned pain-deadline gate, shared RNG ordering, truncating clock-plus-delay store and stat callback boundary.",
+      "evidence": "evidence/fire-update/player-exposure-timer-followup/native-player-pain-deadline.md",
+      "units": [
+        [
+          "00451640",
+          "Pain deadline",
+          "partial",
+          "Compared with original suffix P-code when injected RC_Pain consumes zero draws; Training chatter lookup/playback and stat storage remain open.",
+          "evidence/fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json"
+        ]
+      ],
+      "bytes": 1284
     }
   ]
 }

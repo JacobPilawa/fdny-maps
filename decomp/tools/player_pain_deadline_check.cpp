@@ -45,7 +45,7 @@ int main(){
   check(deadline<uint32_t(0xffffffffu)&&wrapRandom.drawCount==1,"deadline store must retain low 32 bits");
 
   std::cout<<"Player pain deadline source-derived control flow: failures="<<failures
-           <<" (native check only; original 00451640 P-code fixture missing)\n";
+           <<" (native component check; see fire-update/player-exposure-timer-followup/original-player-pain-suffix-pcode.json for bounded original P-code samples)\n";
   return failures?1:0;
  }catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 2;}
 }
