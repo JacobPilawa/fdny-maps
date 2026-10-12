@@ -152,3 +152,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] Luna supplied `src/victim_passout.h` with source preamble, conditional bounded motion draw, actor event/flags boundary, and separate correction writes. Lead review corrected old Y claims: assembly proves Player and victim-frame **X** corrections of 30 units. The independent `herodown` tail remains unported.
 - [x] Six CTest checks cover new transaction/zero/frame work. Fourteen of sixteen broader regression checks pass; two existing view checks remain red with identical results in a build using the pre-change arithmetic. See `evidence/victim-ai-audit/release-frame-component.md`.
 - [ ] Connect release frame helper and native floor placement to transaction adapters, port passout frame math and remaining caller tail, verify statistics/status helpers, then wire source-ordered gameplay once callback timing is established.
+
+## Concrete frame/floor and statistics continuation (2026-10-11)
+
+- [x] `victim_frame_ops.h` fills release/passout frame and floor callbacks using one external frame reference and three distinct Player getter calls; dropped-frame X correction now updates that frame rather than a mirrored scalar.
+- [x] Extended original P-code oracle executes drop motion RNG/branch/transform across 32 cases (counts 6/5/0/negative): 576 native values match. Concrete adapter operations plus six actual Training floor cases match 618 words; failed floor fallback is checked.
+- [x] `victim_rescue_statistics.h` supplies counter/statistics ordering and separately reads live timestamp then clock per assembly. Record mode determines min/max behavior; the statistic-store adapter remains open.
+- [x] All nine CTest checks pass. Evidence: `evidence/victim-ai-audit/passout-frame-component.md`, `victim-frame-ops.md`, `rescue-statistics-component.md`.
+- [ ] Compose frame/floor/statistics adapters with delivered pickup/escape/passout gameplay; port remaining engine/status/zone/exit actions and passout tail. Establish Player/victim and Fire Think scheduling before whole-run parity claims.
