@@ -1,0 +1,31 @@
+#pragma once
+#include <algorithm>
+#include <cmath>
+#include "random.h"
+#include "extended.h"
+
+// 004541A0, reached by escape via thunk 00454300 after status call 2.
+// Storage target is (Player+0x340C)+0x14 = Player+0x3420.
+// The producer/meaning of Player+0x343C is not assigned here.
+struct PlayerRescueDeadlineResult {
+ uint32_t threshold=0,base=0,bound=0;
+ bool beforeThreshold=false;
+};
+inline PlayerRescueDeadlineResult setPlayerRescueDeadline(
+ uint32_t& deadline,float playerField343C,int mode,uint32_t now,Random& random){
+ using E=Extended;
+ float value=std::clamp(playerField343C,180.0f,7200.0f);
+ double factor=mode==0?0.6:mode==1?0.75:1.0;
+ uint32_t threshold=uint32_t((E::from(value)*E::from(1000.0f)*E::from(factor)).truncate());
+ if(now<threshold){
+  deadline=threshold+random.bounded(30000);
+  return {threshold,threshold,30000,true};
+ }
+ // Original modes select literal doubles 1, 2, and 1000 for this branch.
+ double delayFactor=mode==0?1.0:mode==1?2.0:1000.0;
+ uint32_t base=uint32_t((E::integer(now)+E::from(delayFactor)*E::from(60000.0f)).truncate());
+ deadline=base; // This source store precedes the RNG call.
+ uint32_t draw=random.bounded(60000);
+ deadline+=draw;
+ return {threshold,base,60000,false};
+}

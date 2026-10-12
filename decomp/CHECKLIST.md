@@ -160,3 +160,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] `victim_rescue_statistics.h` supplies counter/statistics ordering and separately reads live timestamp then clock per assembly. Record mode determines min/max behavior; the statistic-store adapter remains open.
 - [x] All nine CTest checks pass. Evidence: `evidence/victim-ai-audit/passout-frame-component.md`, `victim-frame-ops.md`, `rescue-statistics-component.md`.
 - [ ] Compose frame/floor/statistics adapters with delivered pickup/escape/passout gameplay; port remaining engine/status/zone/exit actions and passout tail. Establish Player/victim and Fire Think scheduling before whole-run parity claims.
+
+## Deadline RNG / zone and exit milestone (2026-10-11)
+
+- [x] `player_rescue_deadline.h`: source post-rescue thunk `00454300→004541A0` updates Player+3420 with one bound-30000/60000 draw, clamped Player+343C and mode-specific x87 arithmetic. 48 complete original P-code helper calls match deadlines/draw counts.
+- [x] `zone_membership.h` and `victim_exit.h` port membership filtering/order and lazy count/exit bookkeeping, including wrapped gate, zone dedup, prompt order, unzoned diagnostics and empty-exit branch. Engine inputs/callbacks remain explicit.
+- [x] All 12 CTest checks pass. New tests use actual `Extended` arithmetic. Source evidence: `evidence/victim-ai-audit/rescue-deadline-exit-component.md`.
+- [ ] Wire the source deadline draw into escape after status action 2, before carry clear; retain one shared RNG object. Map Player+343C producer, complete status/item helpers and connect shared runtime state. No callback schedule or full mission completion is claimed.
+- Five more bounded root-slot candidates were classified as parser/container paths; scheduler remains open. Preserve `evidence/scriptactor-common-scheduler-audit/remaining-candidates-followup.md`.
