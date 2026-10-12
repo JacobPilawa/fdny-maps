@@ -5,7 +5,7 @@ Snapshot: 2026-10-11. Target: complete source-verified 1-to-1 Training reproduct
 ## Workspace and navigation
 
 - Workspace: `.`; source: `decomp/`; branch: `main`.
-- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Latest pushed milestone: `e30fbec` (passout composition and original-function inventory).
+- Remote: `https://github.com/JacobPilawa/fdny-maps.git`; the user authorized milestone commits/pushes. Latest pushed scheduler/inventory milestone: `c2c9abc` (Fire Think candidate classification and exact-address reconciliation), following `e30fbec` (passout composition and original-function inventory).
 - Leave unrelated untracked `fire_spread/` untouched. Stage only decomp work. Retail assets/binaries, raw Ghidra exports and build/runtime products stay local under existing exclusions.
 - Read `CHECKLIST.md`, `IMPLEMENTATION_PLAN.md`, `mechanics.json` and `README.md`. `training-progress.html` is the file-map snapshot; `evidence/original-function-inventory.json` is a provisional 5,807-entry index of current Ghidra function definitions, not proof of binary-wide completeness. `evidence/function-inventory-reconciliation.json` exact-joins it against the preserved export index and mechanics ledger; it is a record-link report, not a completion metric. `evidence/RE_DECOMP_WORKFLOW.md` records the recommended comparison workflow. Detailed evidence and CHECKLIST.md remain authoritative.
 
@@ -48,7 +48,7 @@ Exact bundled EXE SHA-256: `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d
 
 No live game capture succeeded. Earlier WineDbg attaches froze/crashed; do not attach or ask the user to enter Training without a safe bounded capture/recovery method. Continue static/oracle work meanwhile.
 
-The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 3% five-hour used and 66% weekly used.
+The user requested GPT-6 Luna implementation delegation, lead ownership of complex source/integration decisions, preserved discoveries beyond Training, occasional milestone pushes, and pausing at 1% remaining in either usage window. Recheck usage during extended work. Latest observation: 7% five-hour used and 66% weekly used.
 
 ## Proximity and deadline input continuation
 
