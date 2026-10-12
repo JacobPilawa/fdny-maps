@@ -168,3 +168,11 @@ Current continuation (2026-10-11): `0044F340` ordinary view/player-follower outp
 - [x] All 12 CTest checks pass. New tests use actual `Extended` arithmetic. Source evidence: `evidence/victim-ai-audit/rescue-deadline-exit-component.md`.
 - [ ] Wire the source deadline draw into escape after status action 2, before carry clear; retain one shared RNG object. Map Player+343C producer, complete status/item helpers and connect shared runtime state. No callback schedule or full mission completion is claimed.
 - Five more bounded root-slot candidates were classified as parser/container paths; scheduler remains open. Preserve `evidence/scriptactor-common-scheduler-audit/remaining-candidates-followup.md`.
+
+## Shared victim transaction milestone (2026-10-11)
+
+- [x] `victim_transactions.h` composes delivered pickup/escape with shared carry/effects/counter/actor/frame/animation state, real frame/floor and membership/exit cores, and the source deadline RNG consumer. Required engine/UI services are explicit.
+- [x] Renderer and animation use `VictimRuntimeActor`; initial root transforms retain the previous source-traced placement. Native two-frame render passes with 90 textured groups / GL error 0.
+- [x] Luna supplied source carry-mode fields/diagnostic/API boundary and status action1/2 ordering. Lead review used actual shared counter/arithmetic types in checks and corrected lazy total's zero-before-enumeration write.
+- [x] Composed check executes actual Training pickup EVS scripts and native BSP release for both victims, verifies membership/counters/gates and one shared draw per rescue. All 15 CTest checks pass. See `evidence/victim-ai-audit/composed-transactions.md`.
+- [ ] Proximity/route producers and root scheduling remain unconnected; engine/UI service presentation, continuous carry, passout integration and mission completion remain unfinished. No full-level parity is claimed.

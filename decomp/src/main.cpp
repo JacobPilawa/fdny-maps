@@ -72,6 +72,9 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_frame_ops.h"
 #include "victim_release.h"
 #include "player_rescue_deadline.h"
+#include "victim_transactions.h"
+#include "victim_status.h"
+#include "carry_entity_mode.h"
 #include "actor_render_flags.h"
 #include "sound_queue.h"
 #include "interaction_sphere.h"
@@ -228,8 +231,8 @@ int main(int argc,char** argv){try{
  if(verb=="makevalve"||verb=="setscale"||verb=="settimescale"||verb=="sethitpoints"||verb=="openaway"||verb=="close"||verb=="flush")return true;
  return false;
  };
- auto startup=originalStartupOrder(entities);auto victimSpawns=originalVictimCandidates(startup);std::map<int,VictimSpawn*> victimByEntity;std::map<int,VictimSoundChoices> victimSounds;std::map<int,VictimPickupActorState> victimActorStates;
- for(auto& victim:victimSpawns){victimByEntity.emplace(victim.entity,&victim);victimActorStates.emplace(victim.entity,VictimPickupActorState{victim.entity,4,0x400});}
+ auto startup=originalStartupOrder(entities);auto victimSpawns=originalVictimCandidates(startup);std::map<int,VictimSpawn*> victimByEntity;std::map<int,VictimSoundChoices> victimSounds;VictimTransactionState victimRuntime;auto& victimActorStates=victimRuntime.actors;
+ for(auto& victim:victimSpawns){victimByEntity.emplace(victim.entity,&victim);VictimRuntimeActor actor;actor.entity=victim.entity;victimActorStates.emplace(victim.entity,std::move(actor));}
  J trainingManAsset=load("actors/vic_man.json");int trainingManMotionCount=count(field(trainingManAsset,"motions"));
  if(trainingManMotionCount!=6)throw std::runtime_error("Training victim ACT motion count changed; review the original spawn branch");
  // PropModel instance fields are reconstructed from the saved Training BSP
@@ -267,9 +270,15 @@ int main(int argc,char** argv){try{
  std::map<int,int> victimAppearanceCounters;const int trainingManMaterialCount=count(field(trainingManAsset,"materials"));
  startupQueue.secondPass=[&](int id){auto e=startupEntities.at(id);if(str(field(e,"class"))!="RCS_VictimRescue")return;auto victim=victimByEntity.find(id);if(victim==victimByEntity.end())throw std::runtime_error("Training victim missing from recovered candidate list");auto& spawn=*victim->second;spawn.choose(sharedRandom);spawn.floorPlacementAttempted=true;spawn.floorPlacementSucceeded=placeModelOnFloor(spawn.selectedPosition,spawn.modelMins,spawn.modelMaxs,[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;},[&]{std::cerr<<"Error placing \""<<spawn.name<<"\": cannot find floor!\n";});
  // 0045D5B0 assigns the next source-ordered material for this model ID. This does not draw from shared RNG.
- int& nextAppearance=victimAppearanceCounters[spawn.modelId];spawn.appearanceIndex=nextAppearance<trainingManMaterialCount?nextAppearance:0;nextAppearance=spawn.appearanceIndex+1;};
+ int& nextAppearance=victimAppearanceCounters[spawn.modelId];spawn.appearanceIndex=nextAppearance<trainingManMaterialCount?nextAppearance:0;nextAppearance=spawn.appearanceIndex+1;
+ auto& frame=victimActorStates.at(id).frame;frame.position=spawn.selectedPosition;
+ double angle=(double(spawn.selectedHeading)*30.0+180.0)*double(float(0.01745329238474369f));float c=float(std::cos(angle)),sn=float(std::sin(angle));frame.axis={{{c,0,sn},{0,1,0},{-sn,0,c}}};};
  for(auto e:startup){int id=integer(field(e,"index"));startupEntities[id]=e;trainingEntities.emplace(id,TrainingEntityIdentity{id,e,str(field(e,"class"))});startupQueue.enqueue([id]{return id;});}
  startupQueue.drain();
+ // Only the source types consumed by the victim membership/exit routines.
+ // This preserves their relative global startup order without classifying
+ // unrelated engine entities with guessed type IDs.
+ for(auto e:startup){auto cl=str(field(e,"class"));if(cl=="RCS_VictimRescue")victimRuntime.entities.push_back({integer(field(e,"index")),2,false,{}});else if(cl=="RCS_BoundsTrigger"){auto bounds=field(e,"bounds");V lo=vec(field(bounds,"mins")),hi=vec(field(bounds,"maxs"));V center;for(int k=0;k<3;k++)center[k]=float((double(lo[k])+hi[k])*0.5);victimRuntime.entities.push_back({integer(field(e,"index")),8,false,center});}}
  if(argc>1&&std::string(argv[1])=="--training-zone-check"){
   struct ExpectedZone{int entity;const char* label;V mins,maxs;};
   const std::array<ExpectedZone,5> expected{{
@@ -901,6 +910,54 @@ int main(int argc,char** argv){try{
  for(const auto& sample:cases){bool actual=sourceVictimPickupCandidate(sample.state,sample.type,sample.available,sample.box,sample.center,sample.radius);if(actual!=sample.expected){mismatches++;std::cout<<"Mismatch: "<<sample.name<<" expected="<<sample.expected<<" actual="<<actual<<"\n";}}
  std::cout<<"Victim pickup geometry: "<<std::size(cases)<<" source-derived boundary/gate cases; mismatches="<<mismatches<<" (isolated predicate, no scheduler claim)\n";return mismatches?49:0;
  }
+ if(argc>1&&std::string(argv[1])=="--victim-transactions-check"){
+ int failures=0;uint32_t now=100,field18C=3;FrameTransform playerFrame;playerFrame.position={1472,-230.9f,-5092};std::vector<std::string> events;std::map<std::string,SourceStatisticRecord> stats{{"Rescues",{0,0}},{"Longest Rescue Time",{2,0}},{"Shortest Rescue Time",{1,0x7fffffffu}}};
+ for(const auto& spawn:victimSpawns){auto oldRoot=victimActorRoot(spawn),liveRoot=victimActorRoot(victimActorStates.at(spawn.entity).frame);for(int k=0;k<9;k++)if(oldRoot.r[k]!=liveRoot.r[k])failures++;for(int k=0;k<3;k++)if(oldRoot.t[k]!=liveRoot.t[k])failures++;victimActorStates.at(spawn.entity).animation.playing=true;}
+ TrainingVictimStatusState status{victimRuntime.exits};
+ struct StatusOps {
+  VictimTransactionState& state;uint32_t& now;std::vector<std::string>& events;
+  void setVictPickStatusLayer(bool){events.push_back("pick-layer");}
+  uint32_t readClock(){return now;}
+  int sampleVictPickList(float){return 7;} // Controlled UI service output.
+  void updateVictPickStatus(int sample){if(sample!=7)throw std::runtime_error("Status sample changed");}
+  void setStatusKey(const char* key,bool){events.push_back(key);}
+  void hideVictDropDetail(){events.push_back("drop-detail");}
+  void setVictDropStatusLayer(bool){events.push_back("drop-layer");}
+  void prepareVictDropMessage(){}
+  uint32_t countType2Entities(){uint32_t n=0;for(const auto& entity:state.entities)if(entity.type==2)n++;return n;}
+  void setRescueStatisticTotal(uint32_t value){events.push_back("total:"+std::to_string(value));}
+  std::function<void()> refresh;
+  void refreshMembership(){refresh();}
+  void showVictDropMessageOne(const char*,float duration){if(duration!=5)throw std::runtime_error("Wrong status duration");events.push_back("one-survivor");}
+  void showVictDropMessageMany(const char*,float,uint32_t){events.push_back("many-survivors");}
+ } statusOps{victimRuntime,now,events,{}};
+ VictimTransactionServices services;
+ services.playerFrame=[&]()->const FrameTransform&{return playerFrame;};
+ services.traceFloor=[&](V start,V delta,V mins,V maxs,V& point){Hit hit;if(!collision.trace(start,delta,mins,maxs,hit))return false;point=hit.point;return true;};services.reportFloorFailure=[&]{failures++;};
+ services.readClock=[&]{return now;};services.readPlayerField18C=[&]{return int(field18C);};services.readGlobalMode=[]{return 0;};services.readPlayerField343C=[]{return 180.0f;};
+ services.setActorFlags=[&](int entity,uint32_t flags){if(victimRuntime.actors.at(entity).worldActorFlags!=flags)failures++;events.push_back("flags:"+std::to_string(flags));};
+ services.dispatchVictimEvent=[&](int entity,const char* event){events.push_back(std::string(event)+":"+std::to_string(entity));vm.dispatch(entity,event);};
+ services.setEntityCarryMode=[&](bool mode){events.push_back(mode?"carry-on":"carry-off");field18C=mode?4:3;};
+ services.updateVictimStatus=[&](int action){trainingVictimStatusAction(status,action,statusOps);};
+ services.addStatistic=[&](const char* name,uint32_t value){addSourceStatistic(&stats.at(name),value);};services.updateStatistic=[&](const char* name,uint32_t value){updateSourceStatistic(&stats.at(name),value);};
+ services.setRescueStatisticTotal=[&](uint32_t value){statusOps.setRescueStatisticTotal(value);};services.reportUnzonedVictim=[&](int){failures++;};services.reportUnzonedExit=[&](int){failures++;};services.enableExitTrigger=[&](int){failures++;};services.refreshSelectedItem=[&]{events.push_back("item-refresh");};
+ VictimTransactions runtime{victimRuntime,services,zones,sharedRandom};statusOps.refresh=[&]{runtime.refreshMembership();};
+ runtime.refreshMembership();auto membershipCount=[&]{size_t total=0;for(const auto& zone:victimRuntime.membership.actorsByZone)total+=zone.second.size();return total;};
+ if(membershipCount()!=2)failures++;
+ for(size_t n=0;n<victimSpawns.size();n++){
+  int entity=victimSpawns[n].entity;uint64_t before=sharedRandom.drawCount;now=100+uint32_t(n)*1000;
+  if(runtime.pickup(entity)!=VictimPickupMessageResult::accepted)failures++;
+  if(victimRuntime.pickupEffects.value!=20||victimRuntime.pickupEffects.pickupClock!=now||victimRuntime.actors.at(entity).state!=5||vm.variables["gotvictim"]!="1"||membershipCount()!=1-n)failures++;
+  if(runtime.pickup(entity)!=VictimPickupMessageResult::playerAlreadyCarrying||sharedRandom.drawCount!=before)failures++;
+  now+=300;
+  if(!runtime.escape()||sharedRandom.drawCount!=before+1||victimRuntime.player.carriedVictimEntity||victimRuntime.actors.at(entity).state!=6||victimRuntime.actors.at(entity).animation.playing||membershipCount()!=1-n)failures++;
+  if(victimRuntime.actors.at(entity).frame.position.y!=-230.9f||victimRuntime.actors.at(entity).rescueStart!=now+2000)failures++;
+  if(runtime.escape()||sharedRandom.drawCount!=before+1)failures++;
+ }
+ if(victimRuntime.exits.total!=2||victimRuntime.exits.rescues!=2||stats.at("Rescues").value!=2||victimRuntime.exits.messageGate!=1||runtime.pickup(victimSpawns[0].entity)!=VictimPickupMessageResult::playerMessageGateClosed)failures++;
+ if(std::count(events.begin(),events.end(),"one-survivor")!=1||std::count(events.begin(),events.end(),"item-refresh")!=1)failures++;
+ std::cout<<"Training victim transactions: shared actor/render state, actual EVS pickup events, native BSP releases, status/membership/exit and one source RNG draw per rescue; failures="<<failures<<" (UI services supplied; producer schedule unconnected)\n";return failures?54:0;
+ }
  if(argc>1&&std::string(argv[1])=="--player-rescue-deadline-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/player-rescue-deadline-pcode-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing Player rescue deadline evidence");
  auto samples=field(fixture,"samples");int mismatches=0;
@@ -1125,7 +1182,7 @@ int main(int argc,char** argv){try{
  FireRenderer fireRenderer;fireRenderer.load();std::vector<FireEntity> renderFixture;int fireQuads=0;
  if(fireRenderCheck){Random shared(4357);int cycle=0;FireEntity fire;fire.initialize(shared,0,cycle,{824,-120,-2092},150,250,0,true,true,[&](FireVisual& v){FireFloor::alignInWorld(v,collision);},[](int){});fire.visual.sizeUpdate(0);renderFixture.push_back(fire);}
  TextOverlay overlay;std::map<int,bool> touching,propTouching;ExtinguisherContacts liveExtinguisherContacts;FireMessageQueue liveFireMessages;
- bool running=true,captured=true,actionHeld=false,actionPressed=false,actionReleased=false,usePressed=false;float yaw=3*3.14159265f/180,pitch=0;GameClock clock;clock.origin=SDL_GetTicks();std::map<int,ActorAnimation> victimAnimations;auto actorMotions=field(trainingManAsset,"motions");for(const auto& spawn:victimSpawns)if(spawn.motionInitialized&&spawn.initialMotion>=0){auto motion=at(actorMotions,spawn.initialMotion);auto& animation=victimAnimations[spawn.entity];animation.select(spawn.initialMotion,num(field(motion,"start")),num(field(motion,"end")),spawn.initialMotionSpeed,clock.current);}bool jumpEdge=false,crouchEdge=false;FrameTransform playerFrame;HeadMotion headMotion;ExtinguisherPose::CallbackState extinguisherAction;HoseSprayAction::State hoseSprayAction;float extinguisherPhase=0;
+ bool running=true,captured=true,actionHeld=false,actionPressed=false,actionReleased=false,usePressed=false;float yaw=3*3.14159265f/180,pitch=0;GameClock clock;clock.origin=SDL_GetTicks();auto actorMotions=field(trainingManAsset,"motions");for(const auto& spawn:victimSpawns)if(spawn.motionInitialized&&spawn.initialMotion>=0){auto motion=at(actorMotions,spawn.initialMotion);auto& animation=victimActorStates.at(spawn.entity).animation;animation.select(spawn.initialMotion,num(field(motion,"start")),num(field(motion,"end")),spawn.initialMotionSpeed,clock.current);}bool jumpEdge=false,crouchEdge=false;FrameTransform playerFrame;HeadMotion headMotion;ExtinguisherPose::CallbackState extinguisherAction;HoseSprayAction::State hoseSprayAction;float extinguisherPhase=0;
  // 0044D550 configures the player-view follower. The extinguisher constructor
  // attaches its tool follower to it; 00461F80 advances that follower only while active.
  Follower playerViewFollower;playerViewFollower.flags=0x2e;playerViewFollower.threshold={20,1000,20};playerViewFollower.settling={.05f,0,.05f};playerViewFollower.smoothing={0,.05f,0};playerViewFollower.held=true;
@@ -1222,7 +1279,7 @@ int main(int argc,char** argv){try{
  V propPlayerMin=player.p+V{-30,-30,-30},propPlayerMax=player.p+player.maxs();
  for(const auto& prop:propModels){bool inside=UseManager::sphereTouchesBox(prop.center,prop.radius,propPlayerMin,propPlayerMax);bool was=propTouching[prop.entity];if(inside&&!was)vm.dispatch(prop.entity,"touch");if(inside)vm.dispatch(prop.entity,"touching");if(!inside&&was)vm.dispatch(prop.entity,"untouch");propTouching[prop.entity]=inside;}
  int w,h;SDL_GL_GetDrawableSize(window,&w,&h);glViewport(0,0,w,h);glClearColor(.15,.2,.25,1);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);glEnable(GL_DEPTH_TEST);glDisable(GL_CULL_FACE);glMatrixMode(GL_PROJECTION);glLoadIdentity();double top=std::tan(70*3.14159265/360)*1;glFrustum(-top*w/h,top*w/h,-top,top,1,18000);glMatrixMode(GL_MODELVIEW);glLoadIdentity();float cameraView[16]={playerViewFollower.basis[0].x,playerViewFollower.basis[1].x,playerViewFollower.basis[2].x,0,playerViewFollower.basis[0].y,playerViewFollower.basis[1].y,playerViewFollower.basis[2].y,0,playerViewFollower.basis[0].z,playerViewFollower.basis[1].z,playerViewFollower.basis[2].z,0,0,0,0,1};glMultMatrixf(cameraView);glTranslatef(-cameraPosition.x,-cameraPosition.y,-cameraPosition.z);
- for(auto& m:meshes){if(collision.disabled.count(m.model))continue;glPushMatrix();float angle=collision.angles[m.model];if(angle!=0||collision.poses.count(m.model)){auto models=field(collision.data,"models");V pivot{};for(int k=0;k<count(models);k++)if(integer(field(at(models,k),"index"))==m.model)pivot=vec(field(at(models,k),"origin"));Pose pose;if(collision.poses.count(m.model))pose=collision.poses[m.model];else pose.rotation={std::cos(angle*.5f),0,std::sin(angle*.5f),0};V x=rotateQ({1,0,0},pose.rotation),y=rotateQ({0,1,0},pose.rotation),z=rotateQ({0,0,1},pose.rotation);float matrix[16]={x.x,x.y,x.z,0,y.x,y.y,y.z,0,z.x,z.y,z.z,0,0,0,0,1};glTranslatef(pivot.x+pose.translation.x,pivot.y+pose.translation.y,pivot.z+pose.translation.z);glMultMatrixf(matrix);glTranslatef(-pivot.x,-pivot.y,-pivot.z);}if(m.texture){glEnable(GL_TEXTURE_2D);glBindTexture(GL_TEXTURE_2D,m.texture);glColor3f(1,1,1);}else{glDisable(GL_TEXTURE_2D);glColor3f(.7,.7,.7);}glBegin(GL_TRIANGLES);for(size_t k=0;k<m.positions.size()/3;k++){if(k*2+1<m.uvs.size())glTexCoord2f(m.uvs[k*2],m.uvs[k*2+1]);glVertex3f(m.positions[k*3],m.positions[k*3+1],m.positions[k*3+2]);}glEnd();glPopMatrix();}for(const auto& spawn:victimSpawns){auto animation=victimAnimations.find(spawn.entity);if(animation!=victimAnimations.end()&&ActorRenderFlags::eligibleForNormalWorldRender(victimActorStates.at(spawn.entity).worldActorFlags))victimRenderer.draw(spawn,animation->second,clock.current,victimActorRoot(spawn));}for(auto& entry:fires){entry.second.visual.sizeUpdate(clock.current);fireRenderer.draw(entry.second,clock.current,true);}for(auto& fire:renderFixture)fireQuads+=fireRenderer.draw(fire,clock.current,true);if(hintRemaining>0)overlay.draw(hint,w,h);SDL_GL_SwapWindow(window);if(renderCheck&&++rendered>=2){int textured=0;for(auto& m:meshes)if(m.texture)textured++;auto error=glGetError();std::cout<<"Rendered "<<meshes.size()<<" mesh groups, "<<textured<<" textured; OpenGL error="<<error<<"\n";if(error)return 4;if(fireRenderCheck){std::cout<<"Fire textures: "<<fireRenderer.textures.size()<<", drawn quads: "<<fireQuads<<"\n";if(fireRenderer.textures.size()!=38||fireQuads!=8)return 29;}running=false;}
+ for(auto& m:meshes){if(collision.disabled.count(m.model))continue;glPushMatrix();float angle=collision.angles[m.model];if(angle!=0||collision.poses.count(m.model)){auto models=field(collision.data,"models");V pivot{};for(int k=0;k<count(models);k++)if(integer(field(at(models,k),"index"))==m.model)pivot=vec(field(at(models,k),"origin"));Pose pose;if(collision.poses.count(m.model))pose=collision.poses[m.model];else pose.rotation={std::cos(angle*.5f),0,std::sin(angle*.5f),0};V x=rotateQ({1,0,0},pose.rotation),y=rotateQ({0,1,0},pose.rotation),z=rotateQ({0,0,1},pose.rotation);float matrix[16]={x.x,x.y,x.z,0,y.x,y.y,y.z,0,z.x,z.y,z.z,0,0,0,0,1};glTranslatef(pivot.x+pose.translation.x,pivot.y+pose.translation.y,pivot.z+pose.translation.z);glMultMatrixf(matrix);glTranslatef(-pivot.x,-pivot.y,-pivot.z);}if(m.texture){glEnable(GL_TEXTURE_2D);glBindTexture(GL_TEXTURE_2D,m.texture);glColor3f(1,1,1);}else{glDisable(GL_TEXTURE_2D);glColor3f(.7,.7,.7);}glBegin(GL_TRIANGLES);for(size_t k=0;k<m.positions.size()/3;k++){if(k*2+1<m.uvs.size())glTexCoord2f(m.uvs[k*2],m.uvs[k*2+1]);glVertex3f(m.positions[k*3],m.positions[k*3+1],m.positions[k*3+2]);}glEnd();glPopMatrix();}for(const auto& spawn:victimSpawns){auto& actor=victimActorStates.at(spawn.entity);if(actor.animation.motion>=0&&ActorRenderFlags::eligibleForNormalWorldRender(actor.worldActorFlags))victimRenderer.draw(spawn,actor.animation,clock.current,victimActorRoot(actor.frame));}for(auto& entry:fires){entry.second.visual.sizeUpdate(clock.current);fireRenderer.draw(entry.second,clock.current,true);}for(auto& fire:renderFixture)fireQuads+=fireRenderer.draw(fire,clock.current,true);if(hintRemaining>0)overlay.draw(hint,w,h);SDL_GL_SwapWindow(window);if(renderCheck&&++rendered>=2){int textured=0;for(auto& m:meshes)if(m.texture)textured++;auto error=glGetError();std::cout<<"Rendered "<<meshes.size()<<" mesh groups, "<<textured<<" textured; OpenGL error="<<error<<"\n";if(error)return 4;if(fireRenderCheck){std::cout<<"Fire textures: "<<fireRenderer.textures.size()<<", drawn quads: "<<fireQuads<<"\n";if(fireRenderer.textures.size()!=38||fireQuads!=8)return 29;}running=false;}
  }
  victimRenderer.release();fireRenderer.release();SDL_GL_DeleteContext(context);SDL_DestroyWindow(window);SDL_Quit();return 0;
  }catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}}
