@@ -37,9 +37,9 @@ cmake --build build -j 4
 ## Map-neutral rescue scene preview
 
 The separate `fdny-scene-viewer` target loads any exported BSP package through
-the shared `SceneData` loader. It uses the recovered player movement and BSP
-collision code and does not start Training's scripts, fire/victim systems, or
-mission flow. From the project root, build it with:
+the shared `SceneData` loader. It uses recovered player movement and BSP
+collision code, and creates rescue victims from map entities plus decoded ACT
+assets. From the project root, build it with:
 
 ```sh
 cmake -S port/spikes/training-native-prototype -B port/spikes/training-native-prototype/.local/build-scene-viewer
@@ -55,15 +55,23 @@ port/spikes/training-native-prototype/.local/build-scene-viewer/fdny-scene-viewe
 
 Use WASD to move, mouse to look, Space or right mouse to jump, C to crouch,
 F to snap to the nearest walkable collision floor below the player, and Escape
-to release or recapture the mouse. The window title reports texture uploads,
-grounded/falling state, and the current player position. Replace `mbase` with any key in
+to release or recapture the mouse. Six-motion survivors run authored `roam`
+commands through a collision-checked waypoint approximation and are picked up
+automatically on contact using the recovered proximity bounds and message
+`0x7532` state transition. The window title reports survivor count and who is
+carried. Replace `mbase` with any key in
 `.local/exports/` to inspect another map. Run the same command with `--inspect`
 to decode and inventory a package, probe the authored spawn against the BSP
 collision hull, and simulate five seconds of idle movement without opening a
 window. Interactive startup also prints the texture paths that fail during
 image decoding or OpenGL upload instead of silently falling back to gray. A fresh checkout
 must first copy the retail inputs locally and export the desired BSP with
-`tools/export_gbsp_scene.py`.
+`tools/export_gbsp_scene.py`. The app builder also runs
+`tools/export_victim_actors.py` if ACT assets are missing, converts their
+bitmaps to SDL-readable BMP files, and bundles `.local/actor_exports` beside
+the selected map. These asset exports remain local-only and are not committed.
+The original roam target selection and callback timing, EVS dispatch, door
+motion, carried-victim presentation, and rescue-exit completion remain open.
 
 For a desktop launch, double-click the project-root `Open FDNY Scene Preview.command`.
 Its macOS map picker lists exported BSP packages and opens the selected one in
@@ -73,7 +81,7 @@ are assembled into a local app bundle before launch; the launcher invokes the
 binary from Terminal so it uses the desktop display session.
 
 For the map-neutral viewer, run `--render-check` to upload the scene's BMPs,
-render the authored spawn view, report framebuffer coverage, and save a BMP
+render the authored spawn view and visible victim actors, report framebuffer coverage, and save a BMP
 capture beside the scene package as `<package>.render-check.bmp`. On macOS this
 uses an offscreen CGL framebuffer, so the check works even when the process has
 no desktop display. It verifies the actual OpenGL draw path and is not a

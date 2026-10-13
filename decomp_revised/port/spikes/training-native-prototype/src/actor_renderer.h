@@ -1,18 +1,22 @@
 #pragma once
+#include <filesystem>
+#include <string>
+#include <utility>
+#include <stdexcept>
 
-// First native draw path for the recovered ACT model. The caller supplies the
-// source-derived actor root transform; this class only evaluates the ACT pose,
-// binds the requested material texture and emits its LOD triangles.
+// First native draw path for a recovered ACT model. The caller supplies the
+// model-specific bitmap directory and source-derived actor root transform.
 struct VictimRenderer {
- J asset;ActorPose pose;std::vector<GLuint> textures;
- explicit VictimRenderer(J model):asset(model),pose(model){}
+ J asset;ActorPose pose;std::filesystem::path bitmapDirectory;std::string stem;std::vector<GLuint> textures;
+ VictimRenderer(J model,std::filesystem::path directory,std::string assetStem)
+  :asset(model),pose(model),bitmapDirectory(std::move(directory)),stem(std::move(assetStem)){}
  VictimRenderer(const VictimRenderer&)=delete;VictimRenderer& operator=(const VictimRenderer&)=delete;
  ~VictimRenderer(){release();}
  void load(){
   auto materials=field(asset,"materials");textures.reserve(count(materials));
   try{for(int i=0;i<count(materials);i++){
-   auto path=assetDirectory()+"/actors/vic_man_"+std::to_string(i)+".bmp";
-   auto surface=SDL_LoadBMP(path.c_str());if(!surface)throw std::runtime_error("Cannot load actor material "+path);
+   auto path=bitmapDirectory/(stem+"_"+std::to_string(i)+".bmp");
+   auto surface=SDL_LoadBMP(path.string().c_str());if(!surface)throw std::runtime_error("Cannot load actor material "+path.string());
    auto rgba=SDL_ConvertSurfaceFormat(surface,SDL_PIXELFORMAT_ABGR8888,0);SDL_FreeSurface(surface);if(!rgba)throw std::runtime_error(SDL_GetError());
    GLuint texture=0;glGenTextures(1,&texture);glBindTexture(GL_TEXTURE_2D,texture);glPixelStorei(GL_UNPACK_ALIGNMENT,4);
    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,rgba->w,rgba->h,0,GL_RGBA,GL_UNSIGNED_BYTE,rgba->pixels);SDL_FreeSurface(rgba);
