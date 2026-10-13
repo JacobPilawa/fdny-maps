@@ -12,8 +12,15 @@ The function reads the authored victim type, requests its resource definition,
 and compares the requested string with the returned definition. On mismatch it
 logs that the type does not exist and that it is “Using default type” before
 continuing with the returned definition. It then resolves a model ID; an
-unavailable model causes victim creation to be rejected. The exact default
-type name/model selected by the resource manager remains to be traced.
+unavailable model causes victim creation to be rejected. The default
+type/model are resolved in [`actor_default_fallback.md`](actor_default_fallback.md).
+
+The first-entry fallback is now resolved by tracing the resource catalog loader
+and lookup helpers in the same hash-pinned executable: the `Victim:` entries
+are appended in file order, and the first `victims.srf` entry is `boy` (model
+11, `vic_boy.act`). Thus `subway_b`'s authored `boy1` value resolves to the
+`boy` resource at runtime. See
+[`actor_default_fallback.md`](actor_default_fallback.md) for the evidence.
 
 The function also has a special branch for resolved model ID 14 that replaces
 it with a random ID in 11–13 before checking/creating the model. Preserve this
