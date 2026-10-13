@@ -1,6 +1,4 @@
 
-/* Fresh read-only Ghidra 12.0.4 decompilation from FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. Captured 2026-10-12. */
-
 void __fastcall FUN_0049e4d0(int param_1)
 
 {
@@ -23,7 +21,7 @@ void __fastcall FUN_0049e4d0(int param_1)
   void *pvStack_c;
   undefined1 *puStack_8;
   undefined4 local_4;
-  
+
   local_4 = 0xffffffff;
   puStack_8 = &LAB_004d4821;
   pvStack_c = ExceptionList;
@@ -82,4 +80,3 @@ void __fastcall FUN_0049e4d0(int param_1)
   ExceptionList = pvStack_c;
   return;
 }
-

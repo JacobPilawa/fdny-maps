@@ -1,10 +1,3 @@
-/* Fresh Ghidra decompilation
- * Program: FDNYFirefighter.exe
- * SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e
- * Function: InitializePlayerRescueEntity at 0044D550
- * Ghidra analysis: current hash-pinned project; saved 2026-10-13
- */
-
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Algorithm: Read the entity's ScriptActor argument and register the embedded ScriptActor at entity

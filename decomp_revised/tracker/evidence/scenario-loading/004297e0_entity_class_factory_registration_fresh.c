@@ -1,29 +1,24 @@
-/* Fresh Ghidra pseudocode captured 2026-10-13.
- * Binary: FDNYFirefighter.exe
- * SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e
- * Address: 004297E0 (RegisterEntityClassFactories)
- * Analysis output, not recovered original source.
- */
+
 /* Summary:
    Registers the game entity-class factory descriptors in the startup factory registry.
-   
+
    Algorithm:
    - Allocates and initializes each descriptor in the class registry list.
    - Appends each descriptor to DAT_00503A78 + 0x14 through 0x0049F160.
    - The list includes the RCS_BModel descriptor from 0x0043B4B0 and the RCS_BoundsTrigger
    descriptor from 0x00440D60.
-   
+
    Parameters:
    - None.
-   
+
    Returns:
    - No value.
-   
+
    Evidence:
    - Fresh Ghidra decompilation at 0x004297E0.
    - The startup routine at 0x0042B4E0 calls this registry initializer.
    - The descriptor constructors store the exact class-name strings used by BSP entities.
-   
+
    Limits:
    - This establishes registry setup; it does not prove any particular map entity's successful
    allocation. */
@@ -35,7 +30,7 @@ void RegisterEntityClassFactories(void)
   void *local_c;
   undefined1 *puStack_8;
   undefined4 local_4;
-  
+
   local_4 = 0xffffffff;
   puStack_8 = &LAB_004cd6c0;
   local_c = ExceptionList;
@@ -136,7 +131,7 @@ void RegisterEntityClassFactories(void)
     puVar1 = (undefined4 *)0x0;
   }
   else {
-    puVar1 = FUN_0044bff0(puVar1);
+    puVar1 = InitializePlayerRescueFactoryDescriptor(puVar1);
   }
   local_4 = 0xffffffff;
   FUN_0049f160(*(void **)(DAT_00503a78 + 0x14),(int)puVar1);
@@ -166,7 +161,7 @@ void RegisterEntityClassFactories(void)
     puVar1 = (undefined4 *)0x0;
   }
   else {
-    puVar1 = FUN_0045a010(puVar1);
+    puVar1 = InitializeVictimRescueFactoryDescriptor(puVar1);
   }
   local_4 = 0xffffffff;
   FUN_0049f160(*(void **)(DAT_00503a78 + 0x14),(int)puVar1);
@@ -176,7 +171,7 @@ void RegisterEntityClassFactories(void)
     puVar1 = (undefined4 *)0x0;
   }
   else {
-    puVar1 = FUN_004597c0(puVar1);
+    puVar1 = InitializeVictimAltSpotFactoryDescriptor(puVar1);
   }
   local_4 = 0xffffffff;
   FUN_0049f160(*(void **)(DAT_00503a78 + 0x14),(int)puVar1);
@@ -203,5 +198,3 @@ void RegisterEntityClassFactories(void)
   ExceptionList = local_c;
   return;
 }
-
-

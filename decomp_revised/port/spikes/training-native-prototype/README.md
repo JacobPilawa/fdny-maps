@@ -60,6 +60,13 @@ to load and inventory a package without opening a window. A fresh checkout
 must first copy the retail inputs locally and export the desired BSP with
 `tools/export_gbsp_scene.py`.
 
+For a desktop launch, double-click the project-root `Open FDNY Scene Preview.command`.
+Its macOS map picker lists exported BSP packages and opens the selected one in
+the viewer. The picker can be skipped from Terminal by passing a map key, such
+as `./Open FDNY Scene Preview.command bank`. The executable and selected scene
+are assembled into a local app bundle before launch; the launcher invokes the
+binary from Terminal so it uses the desktop display session.
+
 The `--render-check` argument renders two hidden frames and reports how many
 Training mesh groups and textures loaded. It is a smoke check, not a gameplay
 parity test.

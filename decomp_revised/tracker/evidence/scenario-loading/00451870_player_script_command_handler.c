@@ -1,8 +1,21 @@
 
-/* Read-only Ghidra 12.0.4 decompilation from FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. Captured 2026-10-12. */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Algorithm:
+   - Parse and compare Player ScriptActor command tokens case-insensitively.
+   - Route `escape` to DispatchPlayerEscapeCommand, `finalexit` to HandleFinalExitCommand, and
+   `finalexitloadmap` to HandlePlayerFinalExitLoadMap.
+   - Other branches handle Player-specific commands including movement, oxygen, hints, and
+   equipment.
 
-int __thiscall FUN_00451870(void *this,int *param_1)
+   Parameters:
+   - ECX / `this`: embedded Player ScriptActor context.
+   - `param_1`: parsed command token list.
+
+   Returns:
+   - Nonzero when a Player command branch is handled. The named actor-registry entry for script
+   target `player` is separate evidence. */
+
+int __thiscall HandlePlayerScriptActorCommand(void *this,int *param_1)
 
 {
   int *this_00;
@@ -30,7 +43,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
   void *local_c;
   undefined1 *puStack_8;
   undefined4 local_4;
-  
+
   this_00 = param_1;
   local_4 = 0xffffffff;
   puStack_8 = &LAB_004d03a8;
@@ -64,7 +77,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
           if (cVar1 == '\0') {
             pcVar11 = "unclimb";
             pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-            bVar2 = FUN_0040c360(pvVar5,pcVar11);
+            bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
             if (bVar2) {
               iVar4 = 0;
               if (0 < this_00[7]) {
@@ -80,13 +93,13 @@ int __thiscall FUN_00451870(void *this,int *param_1)
             else {
               pcVar11 = "escape";
               pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-              bVar2 = FUN_0040c360(pvVar5,pcVar11);
+              bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
               if (bVar2) {
                 iVar4 = this_00[7];
                 iVar8 = 0;
                 if (0 < iVar4) {
                   do {
-                    FUN_004513a0((int *)((int)this + -0x140));
+                    DispatchPlayerEscapeCommand((int *)((int)this + -0x140));
                     iVar4 = this_00[7];
                     iVar8 = iVar8 + 1;
                   } while (iVar8 < iVar4);
@@ -96,7 +109,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
               else {
                 pcVar11 = "oxyon";
                 pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                 if (bVar2) {
                   iVar4 = this_00[7];
                   iVar8 = 0;
@@ -112,7 +125,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                 else {
                   pcVar11 = "oxyoff";
                   pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                  bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                  bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                   if (bVar2) {
                     iVar4 = this_00[7];
                     iVar8 = 0;
@@ -128,14 +141,14 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                   else {
                     pcVar11 = "hint";
                     pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                    bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                    bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                     if (bVar2) {
                       iVar4 = this_00[7];
                       iVar8 = 0;
                       if (0 < iVar4) {
                         do {
                           FUN_00473d20(this_00,&param_1,iVar8,0);
-                          uVar6 = FUN_0040cc50(&param_1,&local_14);
+                          uVar6 = ParseFloatFromString(&param_1,&local_14);
                           ppiVar7 = &param_1;
                           local_4 = 0xffffffff;
                           if ((char)uVar6 != '\0') {
@@ -169,7 +182,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                     else {
                       pcVar11 = "equip";
                       pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                      bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                      bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                       if (bVar2) {
                         iVar4 = this_00[7];
                         iVar8 = 0;
@@ -191,7 +204,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                (piVar10 = param_1, param_1 != &DAT_00501908)) {
                               *param_1 = *param_1 + 1;
                             }
-                            FUN_0044d080(pvVar5,piVar10);
+                            HandlePlayerEquipCommand(pvVar5,piVar10);
                             local_4 = 0xffffffff;
                             FUN_00401c90(&param_1);
                             iVar4 = this_00[7];
@@ -203,7 +216,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                       else {
                         pcVar11 = "select";
                         pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                        bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                        bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                         if (bVar2) {
                           iVar4 = this_00[7];
                           iVar8 = 0;
@@ -225,7 +238,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                  (piVar10 = param_1, param_1 != &DAT_00501908)) {
                                 *param_1 = *param_1 + 1;
                               }
-                              FUN_0044d270(pvVar5,piVar10);
+                              SelectPlayerEquipment(pvVar5,piVar10);
                               local_4 = 0xffffffff;
                               FUN_00401c90(&param_1);
                               iVar4 = this_00[7];
@@ -237,7 +250,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                         else {
                           pcVar11 = "touchhose";
                           pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                          bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                          bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                           pvVar5 = local_24;
                           if (bVar2) {
                             iVar4 = this_00[7];
@@ -264,7 +277,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                           else {
                             pcVar11 = "toolcmd";
                             pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                            bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                            bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                             if (bVar2) {
                               iVar4 = this_00[7];
                               iVar8 = 0;
@@ -313,14 +326,14 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                             else {
                               pcVar11 = "setashdensity";
                               pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                              bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                              bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                               if (bVar2) {
                                 iVar4 = this_00[7];
                                 iVar8 = 0;
                                 if (0 < iVar4) {
                                   do {
                                     FUN_00473d20(this_00,&param_1,iVar8,0);
-                                    uVar6 = FUN_0040cc50(&param_1,&local_14);
+                                    uVar6 = ParseFloatFromString(&param_1,&local_14);
                                     local_4 = 0xffffffff;
                                     if ((char)uVar6 == '\0') {
                                       FUN_00401c90(&param_1);
@@ -338,7 +351,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                               else {
                                 pcVar11 = "addbonus";
                                 pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                                bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                                bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                                 if (bVar2) {
                                   iVar4 = this_00[7];
                                   iVar8 = 0;
@@ -364,7 +377,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                 else {
                                   pcVar11 = "printstats";
                                   pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                                  bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                                  bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                                   if (bVar2) {
                                     iVar4 = this_00[7];
                                     iVar8 = 0;
@@ -380,13 +393,13 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                   else {
                                     pcVar11 = "finalexit";
                                     pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                                    bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                                    bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                                     if (bVar2) {
                                       iVar4 = this_00[7];
                                       iVar8 = 0;
                                       if (0 < iVar4) {
                                         do {
-                                          FUN_00450a00((void *)((int)this + -0x140));
+                                          HandleFinalExitCommand((void *)((int)this + -0x140));
                                           iVar4 = this_00[7];
                                           iVar8 = iVar8 + 1;
                                         } while (iVar8 < iVar4);
@@ -396,7 +409,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                     else {
                                       pcVar11 = "finalexitloadmap";
                                       pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                                      bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                                      bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                                       if (bVar2) {
                                         iVar4 = this_00[7];
                                         iVar8 = 0;
@@ -418,7 +431,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                                (piVar10 = param_1, param_1 != &DAT_00501908)) {
                                               *param_1 = *param_1 + 1;
                                             }
-                                            FUN_00450a70(pvVar5,piVar10,unaff_EDI);
+                                            HandlePlayerFinalExitLoadMap(pvVar5,piVar10,unaff_EDI);
                                             local_4 = 0xffffffff;
                                             FUN_00401c90(&param_1);
                                             iVar4 = this_00[7];
@@ -430,7 +443,7 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                       else {
                                         pcVar11 = "reset";
                                         pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                                        bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                                        bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11);
                                         pvVar5 = local_24;
                                         if (bVar2) {
                                           iVar4 = this_00[7];
@@ -461,7 +474,8 @@ int __thiscall FUN_00451870(void *this,int *param_1)
                                         else {
                                           pcVar11 = "setrescuebot";
                                           pvVar5 = (void *)FUN_0040c330(this_00,&param_1);
-                                          bVar2 = FUN_0040c360(pvVar5,pcVar11);
+                                          bVar2 = CompareStringObjectCaseInsensitive(pvVar5,pcVar11)
+                                          ;
                                           pvVar5 = local_24;
                                           if (bVar2) {
                                             iVar4 = this_00[7];
@@ -635,4 +649,3 @@ int __thiscall FUN_00451870(void *this,int *param_1)
   ExceptionList = local_c;
   return iVar4;
 }
-

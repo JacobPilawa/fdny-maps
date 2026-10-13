@@ -6,9 +6,10 @@
    - Log the label string at block +0x04.
    - When the spawned-level fallback flag at +0x14 is set, compare the resource-definition string at
    +0x08 to rescue and update rescue mode.
-   - Build and load the BSP path by appending .bsp to the map-name string at block +0x00.
-   - Create and queue a World entity request, flush the spawn queue, and clear level-transition
-   state.
+   - Build the selected BSP path and parse its initial EVS mode-1 pass.
+   - Create and append a World entity request to the service queue. A later call from
+   ProcessEverGameUpdate drains that queue; this function itself does not construct World.
+   - Clear level-transition state.
    
    Parameters:
    - this: EverGame state object.

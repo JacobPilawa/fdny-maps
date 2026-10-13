@@ -1,5 +1,5 @@
 {
-  "snapshot_date": "2026-10-13",
+  "snapshot_date": "2026-10-12",
   "ghidra_version": "12.0.4",
   "input_manifest": "inputs/original/manifest.csv",
   "binaries": [
@@ -39,7 +39,7 @@
       "packed_function_candidates": 0,
       "external_functions": 287,
       "thunks": 59,
-      "legacy_exported_functions": 771
+      "legacy_exported_functions": 773
     },
     {
       "binary": "fmod.dll",
@@ -90,12 +90,12 @@
     "old_exe_defined_functions": 5807,
     "fresh_exe_defined_functions": 5824,
     "old_unique_export_addresses": 871,
-    "old_export_addresses_matching_fresh_exe": 772,
-    "old_export_addresses_without_exact_fresh_entry": 99,
+    "old_export_addresses_matching_fresh_exe": 773,
+    "old_export_addresses_without_exact_fresh_entry": 98,
     "stale_report_export_addresses": 840,
     "stale_report_matched_addresses": 737,
     "copied_legacy_export_files": 3115,
-    "reviewed_exe_functions": 191
+    "reviewed_exe_functions": 210
   },
   "scope_note": "Function totals are Ghidra-defined boundaries from this binary snapshot. They are not a completeness claim or source-recovery percentage."
 }

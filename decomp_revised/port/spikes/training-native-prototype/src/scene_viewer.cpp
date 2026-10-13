@@ -301,12 +301,39 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
 
 int main(int argc, char** argv) {
     try {
-        if (argc < 2 || std::string(argv[1]) == "--help") {
-            std::cout << "Usage: fdny-scene-viewer <scene-export-directory> [--inspect]\n";
-            return argc < 2 ? 2 : 0;
+        bool inspectOnly = false;
+        std::filesystem::path package;
+        for (int i = 1; i < argc; ++i) {
+            std::string argument(argv[i]);
+            if (argument == "--help") {
+                std::cout << "Usage: fdny-scene-viewer [scene-export-directory] [--inspect]\n"
+                          << "Without a directory, loads the bundled MBase scene (or .local/exports/mbase in the project).\n";
+                return 0;
+            }
+            if (argument == "--inspect") {
+                inspectOnly = true;
+                continue;
+            }
+            if (!package.empty()) throw std::runtime_error("Only one scene export directory may be supplied.");
+            package = argument;
         }
-        bool inspectOnly = argc > 2 && std::string(argv[2]) == "--inspect";
-        return run(argv[1], inspectOnly);
+        if (package.empty()) {
+            char* basePath = SDL_GetBasePath();
+            if (basePath) {
+                std::filesystem::path executableDirectory(basePath);
+                SDL_free(basePath);
+                auto bundledScene = executableDirectory.parent_path() / "Resources" / "scene";
+                if (std::filesystem::is_directory(bundledScene)) package = bundledScene;
+            }
+            if (package.empty()) {
+                auto projectScene = std::filesystem::current_path() / ".local" / "exports" / "mbase";
+                if (std::filesystem::is_directory(projectScene)) package = projectScene;
+            }
+        }
+        if (package.empty()) {
+            throw std::runtime_error("No scene supplied. Pass a scene-export directory or launch the bundled app with its MBase data.");
+        }
+        return run(package, inspectOnly);
     } catch (const std::exception& error) {
         std::cerr << "Scene viewer: " << error.what() << "\n";
         return 1;
