@@ -38,6 +38,15 @@ struct SceneMesh {
     GLuint texture = 0;
 };
 
+struct TextureLoadSummary {
+    bool uploadAttempted = false;
+    int uniqueFiles = 0;
+    int decodedFiles = 0;
+    int uploadedFiles = 0;
+    int failedFiles = 0;
+    std::vector<std::string> errors;
+};
+
 std::string property(J entity, const char* name) {
     return str(field(field(entity, "properties"), name));
 }
@@ -55,8 +64,11 @@ float parseFloat(const std::string& text, float fallback) {
     return end == text.c_str() ? fallback : value;
 }
 
-std::vector<SceneMesh> loadMeshes(const SceneData& scene, int& missingTextures, bool uploadTextures) {
+std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& textureSummary, bool uploadTextures) {
+    textureSummary.uploadAttempted = uploadTextures;
     std::vector<SceneMesh> meshes;
+    std::map<std::string, GLuint> textureCache;
+    std::set<std::string> seenFiles;
     J groups = field(scene.worldMesh(), "groups");
     meshes.reserve(size_t(count(groups)));
     for (int i = 0; i < count(groups); ++i) {
@@ -75,25 +87,48 @@ std::vector<SceneMesh> loadMeshes(const SceneData& scene, int& missingTextures, 
         if (textureFile.empty()) textureFile = "textures/" + str(field(group, "texture")) + ".bmp";
         try {
             auto path = scene.resolveAsset(textureFile);
-            if (!uploadTextures) {
+            const std::string cacheKey = path.string();
+            if (!seenFiles.insert(cacheKey).second) {
+                auto cached = textureCache.find(cacheKey);
+                if (cached != textureCache.end()) mesh.texture = cached->second;
                 meshes.push_back(std::move(mesh));
                 continue;
             }
+            ++textureSummary.uniqueFiles;
             SDL_Surface* surface = SDL_LoadBMP(path.string().c_str());
             if (!surface) throw std::runtime_error(SDL_GetError());
+            ++textureSummary.decodedFiles;
+            if (!uploadTextures) {
+                SDL_FreeSurface(surface);
+                meshes.push_back(std::move(mesh));
+                continue;
+            }
             SDL_Surface* rgba = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_ABGR8888, 0);
             SDL_FreeSurface(surface);
             if (!rgba) throw std::runtime_error(SDL_GetError());
             glGenTextures(1, &mesh.texture);
+            if (!mesh.texture) {
+                SDL_FreeSurface(rgba);
+                throw std::runtime_error("OpenGL did not allocate a texture name");
+            }
             glBindTexture(GL_TEXTURE_2D, mesh.texture);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rgba->w, rgba->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba->pixels);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             SDL_FreeSurface(rgba);
-        } catch (const std::exception&) {
-            // Keep the geometry visible in flat gray and report the count.
-            ++missingTextures;
+            GLenum glError = glGetError();
+            if (glError != GL_NO_ERROR) {
+                glDeleteTextures(1, &mesh.texture);
+                mesh.texture = 0;
+                throw std::runtime_error("OpenGL texture upload failed with error " + std::to_string(glError));
+            }
+            ++textureSummary.uploadedFiles;
+            textureCache.emplace(cacheKey, mesh.texture);
+        } catch (const std::exception& error) {
+            ++textureSummary.failedFiles;
+            if (textureSummary.errors.size() < 8)
+                textureSummary.errors.push_back(textureFile + ": " + error.what());
         }
         meshes.push_back(std::move(mesh));
     }
@@ -101,7 +136,9 @@ std::vector<SceneMesh> loadMeshes(const SceneData& scene, int& missingTextures, 
 }
 
 void clearTextures(std::vector<SceneMesh>& meshes) {
-    for (auto& mesh : meshes) if (mesh.texture) glDeleteTextures(1, &mesh.texture);
+    std::set<GLuint> textures;
+    for (const auto& mesh : meshes) if (mesh.texture) textures.insert(mesh.texture);
+    for (GLuint texture : textures) glDeleteTextures(1, &texture);
 }
 
 void renderScene(const std::vector<SceneMesh>& meshes, const SceneData& scene,
@@ -164,7 +201,7 @@ void renderScene(const std::vector<SceneMesh>& meshes, const SceneData& scene,
     }
 }
 
-void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes, int missingTextures) {
+void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes, const TextureLoadSummary& textures) {
     J report = field(scene.report(), "counts");
     size_t triangles = 0;
     for (const auto& mesh : meshes) triangles += mesh.positions.size() / 9;
@@ -177,7 +214,30 @@ void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes
               << ", leaves: " << count(field(scene.collision(), "leafs")) << "\n"
               << "BSP faces: " << integer(field(report, "faces"))
               << ", render triangles: " << triangles
-              << ", unresolved mesh textures: " << missingTextures << "\n";
+              << ", texture files: " << textures.decodedFiles << "/" << textures.uniqueFiles << " decoded"
+              << (textures.uploadAttempted ? ", " + std::to_string(textures.uploadedFiles) + " uploaded" : ", GL upload skipped in inspect mode")
+              << ", texture failures: " << textures.failedFiles << "\n";
+    for (const auto& error : textures.errors) std::cout << "  texture error: " << error << "\n";
+}
+
+void printSpawnCollision(const SceneData& scene, V spawn) {
+    Collision collision(scene.collision());
+    Hit floorHit;
+    Player player;
+    player.p = spawn;
+    const V minimum{-30.f, -30.f, -30.f};
+    const V maximum{30.f, 85.f, 30.f};
+    bool floorFound = collision.trace(spawn, {0.f, -3000.f, 0.f}, minimum, maximum, floorHit);
+    bool occupied = collision.solid(spawn, minimum, maximum);
+    std::cout << "Collision at spawn: " << (occupied ? "overlapping solid" : "clear") << "; floor sweep: ";
+    if (floorFound)
+        std::cout << "hit model " << floorHit.model << " at (" << floorHit.point.x << ", " << floorHit.point.y
+                  << ", " << floorHit.point.z << ") normal (" << floorHit.normal.x << ", " << floorHit.normal.y
+                  << ", " << floorHit.normal.z << ")\n";
+    else std::cout << "no hit in 3000 units\n";
+    for (int frame = 0; frame < 300; ++frame) player.step(1.f / 60.f, 0.f, 0.f, 0.f, false, false, false, collision);
+    std::cout << "Idle fall trace (5s): position (" << player.p.x << ", " << player.p.y << ", " << player.p.z
+              << "), grounded=" << (player.ground ? "yes" : "no") << "\n";
 }
 
 int run(const std::filesystem::path& package, bool inspectOnly) {
@@ -204,8 +264,8 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
             SDL_GL_SetSwapInterval(1);
         }
 
-        int missingTextures = 0;
-        meshes = loadMeshes(scene, missingTextures, !inspectOnly);
+        TextureLoadSummary textureSummary;
+        meshes = loadMeshes(scene, textureSummary, !inspectOnly);
         Collision collision(scene.collision());
         V spawn{};
         float yaw = 0.f;
@@ -229,10 +289,13 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
                 spawn = {(lo.x + hi.x) * .5f, lo.y + 128.f, (lo.z + hi.z) * .5f};
             }
         }
-        printInventory(scene, meshes, missingTextures);
+        printInventory(scene, meshes, textureSummary);
         if (foundPlayer) std::cout << "Spawn: " << spawn.x << ", " << spawn.y << ", " << spawn.z << "\n";
         else std::cout << "Spawn: fallback near world-model bounds (no player entity found)\n";
-        if (inspectOnly) return 0;
+        if (inspectOnly) {
+            printSpawnCollision(scene, spawn);
+            return 0;
+        }
 
         Player player;
         player.p = spawn;
@@ -240,8 +303,10 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
         float pitch = 0.f;
         float yawInput = yaw;
         uint32_t previous = SDL_GetTicks();
+        uint32_t previousTitleUpdate = previous;
         SDL_SetRelativeMouseMode(SDL_TRUE);
         std::cout << "WASD move, mouse look, Space/right mouse jump, C crouch, Escape releases the mouse.\n"
+                  << "Press F to snap to the nearest walkable collision floor below you.\n"
                   << "This preview loads BSP geometry/textures and the recovered collision/player movement; mission systems are not wired yet.\n";
         while (running) {
             SDL_Event event;
@@ -253,6 +318,19 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
                         SDL_SetRelativeMouseMode(captured ? SDL_TRUE : SDL_FALSE);
                     }
                     if (event.key.keysym.sym == SDLK_SPACE) jumpEdge = true;
+                    if (event.key.keysym.sym == SDLK_f) {
+                        Hit floorHit;
+                        if (collision.trace(player.p, {0.f, -3000.f, 0.f}, {-30.f, -30.f, -30.f}, player.maxs(), floorHit) &&
+                            floorHit.normal.y >= .5f) {
+                            player.p = floorHit.point;
+                            player.v = {};
+                            player.delta = {};
+                            player.ground = true;
+                            std::cout << "Moved to floor at " << player.p.x << ", " << player.p.y << ", " << player.p.z << "\n";
+                        } else {
+                            std::cout << "No walkable floor found within 3000 units below the player.\n";
+                        }
+                    }
                 }
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) jumpEdge = true;
                 if (event.type == SDL_MOUSEMOTION && captured) {
@@ -278,6 +356,16 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
                 (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_RIGHT)),
                 jumpEdge, crouchEdge, collision, pitch);
             jumpEdge = false;
+            if (now - previousTitleUpdate >= 500) {
+                std::string title = "FDNY scene preview — " + scene.key() + " | " +
+                    std::to_string(textureSummary.uploadedFiles) + "/" +
+                    std::to_string(textureSummary.uniqueFiles) + " textures | " +
+                    (player.ground ? "grounded" : "falling") + " | xyz " +
+                    std::to_string(int(player.p.x)) + "," + std::to_string(int(player.p.y)) + "," +
+                    std::to_string(int(player.p.z));
+                SDL_SetWindowTitle(window, title.c_str());
+                previousTitleUpdate = now;
+            }
             int width = 1, height = 1;
             SDL_GL_GetDrawableSize(window, &width, &height);
             renderScene(meshes, scene, collision, {player.p.x, player.p.y + (player.crouch ? 30.f : 70.f), player.p.z},

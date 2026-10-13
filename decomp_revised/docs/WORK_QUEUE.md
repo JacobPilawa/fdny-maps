@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- The interactive Mac scene preview is the first shell milestone: it loads exported BSP geometry and textures, starts from the authored player spawn when present, and uses the recovered movement and BSP collision path. The map picker currently lists exported map packages; connecting it to the game catalog will make rescue-mission selection explicit. The GUI still needs a successful launch in a normal desktop session. This preview is designed to grow into the shared runtime, then gain authored actors, scripts, tools, and mission flow.
+- The map-neutral Mac scene preview lists every locally exported BSP, starts from the authored player spawn, and uses recovered movement and BSP collision. A fresh collision/asset diagnostic now finds a walkable world-model floor and decodes every referenced texture on MBase and the six other campaign rescue maps (all seven campaign rescues); a five-second idle simulation settles on the floor in each. The report does not confirm visible OpenGL output because this shell has no display. The preview now reports texture upload errors and player grounded/position state, and `F` moves to the nearest floor below. The immediate MVP gate is a visible Mac launch with textured geometry and stable walking; then keep extending the same shared host with actors, scripts, tools, and mission flow.
 
 - 210 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
@@ -34,9 +34,11 @@ research can continue without redoing the old project review or recent audits.
   every exported JSON document, validates package identity/schema, and resolves
   package asset paths without case assumptions.
 - The standalone viewer loaded all 17 packages through the C++ loader with
-  zero unresolved mesh texture paths. It uses the recovered player movement
-  and collision implementation. It is an inspectable geometry slice, not a
-  playable mission.
+  zero unresolved mesh texture paths. Fresh floor sweeps and idle movement
+  checks pass on all six rescue maps other than MBase plus MBase; BMP decode succeeds for every
+  unique texture file on those packages. The visible desktop GL path remains
+  unverified in the no-display shell. See
+  `tracker/evidence/runtime/scene_preview_collision_texture_diagnostics.md`.
 - The user requires every rescue mission and map/mechanic to remain in scope,
   with a cross-platform desktop port and macOS as the first playable target.
 - Gas R BSP entities 265, 280, and 309 are joined to the explosion1, explosion2, and gasoff EVS definitions. ScriptActor queue pop/order and wait deadlines are mapped, alongside BModel button1 use handling, type-1 contact candidate checks, and shared BoundsTrigger overlap-pair → touch/touching/untouch dispatch. The named-model motion join resolves button1's effective reach to 20 units. Live contact/selection, updater cadence, and original-game effect captures remain open. See the Gas R evidence linked in the scenario-loading README. The same retail Genesis.dll MOTN/PATH extent decode is now joined across Training and all seven rescue maps: 71 of 76 authored-gate BModels receive a static 48-unit reach; five motionless ladder/button models retain authored values. Per-map/entity results are in `tracker/evidence/scenario-loading/bmodel_reach_cross_map.md`, its JSON inventory, and the rescue coverage CSV. This closes only the static reach calculation; live contact and callback cadence remain open.
@@ -70,15 +72,20 @@ research can continue without redoing the old project review or recent audits.
 
 ## Next tasks, in order
 
-1. **Runtime catalog/resource resolver.** Trace the actual `.lev` and `.rrf`
-   loaders, then implement catalog-selected `SceneData` creation with explicit
-   case aliases for BSP, briefing, EVS, actors, motions, sounds, and textures.
-   Retain the original resource spelling and source hash on each resolved row.
-2. **Promote the viewer into the shared host.** Extract reusable startup,
+1. **Visible Mac exploration MVP.** Use the current texture-upload and
+   grounded-position diagnostics to verify the rebuilt app on a desktop session.
+   Fix any observed GL upload/render or player collision mismatch until a rescue
+   map visibly renders its textures and supports stable walking.
+2. **Runtime catalog/resource resolver.** The `.lev`/`.rrf` loader trace is
+   recorded in `tracker/evidence/scenario-loading/lev_rrf_catalog_loader_trace_fresh.md`.
+   Implement catalog-selected `SceneData` creation with explicit case aliases for
+   BSP, briefing, EVS, actors, motions, sounds, and textures. Retain the original
+   resource spelling and source hash on each resolved row.
+3. **Promote the viewer into the shared host.** Extract reusable startup,
    movement, collision, renderer, and asset loading from the Training
    `main.cpp`; keep the current Training executable as a regression fixture.
    No map name or Training assumption belongs in the shared loader.
-3. **Wire rescue entities and script startup.** Derive common typed player,
+4. **Wire rescue entities and script startup.** Derive common typed player,
    fire, victim, bounds-trigger, BModel, prop, and exit records from the raw
    ordered epairs. Preserve unknown classes and properties. Trace MBase's
    EVS/shared-EVS commands and original callback cadence before dispatching.
@@ -98,13 +105,13 @@ research can continue without redoing the old project review or recent audits.
    factory path and registration-before-selection order are now mapped. Capture live command timing and the final selected tool per scenario; the static
    Player identity/recipient route is now mapped, and every rescue mission and
    stage remains in scope.
-4. **Build one complete rescue path, then cover every rescue mission.** MBase
+5. **Build one complete rescue path, then cover every rescue mission.** MBase
    is first for loader integration; `bank`, `bar_r`, `gas_r`, `boat_a`,
    `subway_a`, and `oil_rig_a` remain required campaign scenarios. Include
    Training as a required catalog scenario. Reach visible actors, fire state,
    tool interaction, victim rescue, and mission completion for each while
    checking behavior against pinned EXE evidence.
-5. **Cover the complete campaign and platforms.** Track each rescue catalog
+6. **Cover the complete campaign and platforms.** Track each rescue catalog
    scenario, then all hose/other catalog entries and the remaining BSP
    variants. Add Windows/Linux builds against the same scenario contracts.
 

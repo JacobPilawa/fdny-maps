@@ -41,6 +41,8 @@ public:
         scene.key_ = scene.root_.filename().string();
         scene.sourceFile_ = stringField(scene.report_.get(), "source_file");
         scene.sourceSha256_ = stringField(scene.report_.get(), "source_sha256");
+        if (scene.key_ == "scene" && !scene.sourceFile_.empty())
+            scene.key_ = std::filesystem::path(scene.sourceFile_).stem().string();
         if (scene.sourceSha256_.size() != 64)
             throw std::runtime_error("Scene report has no SHA-256 source identity: " + scene.root_.string());
         if (json_object_get_type(scene.worldMesh_.get()) != json_type_object ||
