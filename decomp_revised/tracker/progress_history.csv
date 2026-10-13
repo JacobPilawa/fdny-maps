@@ -48,3 +48,5 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-13T12:53:16Z,174,"Freshly bounded the VictimAltSpot handler from the old-work lead; traced A_Victim lookup and B_Heading registration, and confirmed all 45 authored same-BSP references match."
 2026-10-13T13:05:47Z,175,Mapped Bar R setskin 2 as absent from shared and VictimRescue dispatch; exact token comparison proves it does not match set. Updated shared dispatcher naming and added fresh comparator review; runtime log/effect remains open.
 2026-10-13T13:29:38Z,178,"Mapped victim-roam player proximity, angle-in-degrees and clear-segment gates; corrected Ghidra prototypes and recorded fresh exports."
+2026-10-13T13:43:18Z,180,"Resolved victim roam orientation gate through the embedded transform, reused and freshly verified its ScriptActor getter, and mapped the Y-axis basis rotation."
+2026-10-13T14:00:17Z,185,Mapped the shared victim contact-overlap → Message Mapper → Player carry gate → pickup event path; restored the missing callback boundary in fresh Ghidra and connected map-specific Training script evidence without narrowing the seven-rescue mission scope.

@@ -35,7 +35,11 @@ The state-7 handler `UpdateVictimRoamMovement` (`0x0045B220`) calls `UpdateVicti
 
 In `UpdateVictimRoamTarget`, the local pointer passed as the first argument to `FUN_00459BE0` addresses the stored roam target at victim offset `+0x1C8`. `FUN_00459BE0(target, player_position, 432.0)` compares squared vector distance with `432.0 * 432.0`; the player must be within 432 world units of that target to enter the following player-relative selection path.
 
-The angular helper is `ComputeVectorAngleDegrees` (`0x00497AA0`). Its x86 instructions form the dot product of two 3-component vectors, divide by the product of their lengths, call the x87 arccos routine, and multiply by the double constant `57.2957795` (radians-to-degrees). Its corrected Ghidra prototype models ECX as the first vector and the stack parameter as the second. `MeasurePointOffsetAlignmentAngle` (`0x00459C70`) forms `param_1 - (this + 0x28)` and compares that offset vector with the reference vector at `this + 0x1C`; its corrected prototype returns a float. In the first player-relative branch, a result of 45 degrees or more takes the fallback path. The `+0x1C` vector appears to be directional, but its exact gameplay meaning (such as facing/look direction) still needs confirmation.
+The angular helper is `ComputeVectorAngleDegrees` (`0x00497AA0`). Its x86 instructions form the dot product of two 3-component vectors, divide by the product of their lengths, call the x87 arccos routine, and multiply by the double constant `57.2957795` (radians-to-degrees). Its corrected Ghidra prototype models ECX as the first vector and the stack parameter as the second.
+
+The reference vector's object layout is now tied to VictimRescue. Its root vtable at `0x004E25B8` uses `GetScriptActorSubobject` (`0x0049D760`) in slot `+0x18`; that accessor returns `victim + 0x24`. The previous work already exported the getter's `+0x24` pseudocode; fresh Ghidra work recreated the missing function boundary and tied it to the vtable and embedded ScriptActor. `InitializeVictimRescueEntity` installs the embedded ScriptActor vtable at `victim + 0x24`. The shared transform constructor initializes basis vectors at embedded offsets `+0x04` through `+0x24` and position at `+0x28` through `+0x30`; VictimRescue initialization separately writes its position at `victim + 0x4C` through `+0x54`, confirming the same position field. Thus `MeasurePointOffsetAlignmentAngle` (`0x00459C70`) compares `player_position - victim_position` against the transform's third basis vector at embedded `+0x1C` (victim `+0x40`). `RotateTransformBasisAboutYDegrees` (`0x00496C30`) rotates the first and third basis vectors about Y using a degrees-to-radians constant and re-orthonormalizes the transform. This makes the 45-degree check an orientation-cone test; whether the third basis vector corresponds to the victim model's visible forward direction still needs runtime confirmation.
+
+In the player-relative target branch, the player must therefore be within 432 units of the victim's current roam target, fall inside the 45-degree cone around the victim transform's `+0x1C` basis, and have an unobstructed segment to that target. Otherwise the code selects a fallback candidate. A later angle check in the same block can also choose the fallback.
 
 If the angle gate passes, `CheckActiveWorldSegmentClearance` (`0x00490130`) forwards the segment endpoints and mode to `IsWorldSegmentClear` (`0x0048FEA0`) using the current world at `DAT_00503A78 + 4`. The lower helper calls `geWorld_Collision` and returns true when that query reports no collision. The roam caller also falls back if this segment is blocked. The collision wrapper's corrected prototype returns the boolean consumed by the caller. A later angle check in the same target-selection block can also select the fallback candidate.
 
@@ -63,6 +67,8 @@ The second registration path is now verified as `RegisterVictimAlternateSpawnSpo
 - [Vector angle helper](00497aa0_compute_vector_angle_degrees_fresh.c)
 - [Roam angle wrapper](00459c70_roam_offset_vector_angle_fresh.c)
 - [World-segment query wrapper](00490130_world_segment_clear_wrapper_fresh.c)
+- [Victim ScriptActor accessor](0049d760_get_script_actor_subobject_fresh.c)
+- [Transform yaw update](00496c30_rotate_transform_basis_about_y_fresh.c)
 
 ## Remaining evidence gaps
 
