@@ -66,6 +66,9 @@ classification, recursive leaf traversal, contents masks, and convex leaf
 intersection. Its eight hash-pinned Ghidra decompilations and port/oracle
 limits are recorded in
 [`genesis_collision_path.md`](../tracker/evidence/runtime/genesis_collision_path.md).
+The same DLL's BMP decoder, GBSP v15 chunk reader, embedded-world bitmap list,
+and puppet body-material texture registration are mapped in
+[`genesis_render_asset_path.md`](../tracker/evidence/runtime/genesis_render_asset_path.md).
 
 - `geWorld_Collision` has six EXE callers: `FUN_00448630`, `FUN_0046C5A0`, `FUN_0048FEA0`, `FUN_0048FF30`, `FUN_00490000`, and `FUN_00492CE0`. The first uses a vertical floor probe during FireRescue `FloorMe` and logs a failure with source text `rescue\\FireRescueEnt.cpp:0x231`. `FUN_00492CE0` is the general extent-plus-segment wrapper already present in prior component comparisons. `FUN_0048FF30` probes a vertical interval, while `FUN_00490000` derives collision extents from a radius-like value. `FUN_0048FEA0` uses a zero-extent segment. `FUN_0046C5A0` is a larger multi-step routine with repeated world queries; its enclosing gameplay role is still provisional.
 - `geActor_SetPose` has three callers: `FUN_00480D50`, `FUN_00492410`, and `FUN_00492450`. Together they show the EXE supplying actor, motion, time, and transform values for pose updates; `FUN_00492450` also writes actor scale. The public `Actor/actor.h` reference describes `SetPose` as applying a motion at a time offset and transform. The exact DLL revision and animation cadence remain unverified.

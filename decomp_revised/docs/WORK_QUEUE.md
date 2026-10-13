@@ -9,8 +9,9 @@ research can continue without redoing the old project review or recent audits.
 
 - 223 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
-- Eight hash-pinned Genesis.dll collision functions are now decompiled and
-  recorded in the separate `tracker/genesis_function_reviews.csv` engine ledger.
+- Twenty-five hash-pinned Genesis.dll collision, GBSP, bitmap, and
+  actor-material functions are now decompiled and recorded in the separate
+  `tracker/genesis_function_reviews.csv` engine ledger.
   They are not included in the EXE-only 223-function dashboard count.
 - The new `.lev`/`.rrf` loader pass adds thirteen address-specific function
   reviews across catalog parsing, resource tokenization, bitmap/model records,
@@ -27,7 +28,9 @@ research can continue without redoing the old project review or recent audits.
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
   A fresh renderer trace now follows BSP world creation and `.rrf` bitmap / alpha
   records through the VFile layer into `geBitmap_CreateFromFile` and engine/world
-  registration. This provides the original resource boundary for the preview;
+  registration. The shipped Genesis.dll BMP decoder, GBSP v15 chunk parser,
+  embedded-world bitmap registration, and puppet material registration are
+  now mapped. This provides the original resource boundary for the preview;
   exact surface material joining and visible desktop GL behavior remain open.
   FireRescue random spread, suppression, both hose/message contact routes,
   proximity gating, exposure dispatch, and the player burn/passout receiver
