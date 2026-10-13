@@ -36,14 +36,20 @@ No map-key alias, case normalization, key-to-different-BSP mapping, or per-map b
 ## Evidence files
 
 Fresh pseudocode and caller-site evidence are adjacent:
+- `0042dec0_menu_resource_load_fresh.md` and the catalog callsite JSON pin the
+  `menu.rrf` load from the menu constructor.
 - `startup_resource_loader_calls_fresh.c` (`0042B4E0`)
 - `00423160_level_catalog_parser_fresh.c` (`00423160`)
 - `0049b3b0_resource_definition_loader_fresh.c` (`0049B3B0`)
 - `0049a5f0_resource_file_tokenizer_fresh.c` (`0049A5F0`)
+- `0049ade0_parse_model_resource_record_fresh.c` (`0049ADE0`),
+  `0049aee0_parse_bitmap_resource_record_fresh.c` (`0049AEE0`), and
+  `0049afe0_parse_alpha_texture_record_fresh.c` (`0049AFE0`)
 - `00478150_rescue_resource_request_caller_fresh.c` and `004783d0_hose_resource_request_caller_fresh.c`
 - `00422ef0_map_briefing_path_fresh.c` (`00422EF0`)
 - `0042f280_catalog_selection_briefing_caller_fresh.c` (`0042F280`)
 - `004097f0_path_findfirstfile_probe_fresh.c` (`004097F0`)
+- `004019a0_exact_token_compare_fresh.c` (`004019A0`)
 - `catalog_loader_callsite_context_fresh.json`: Ghidra assembly context at the `.lev`, startup `.rrf`, menu `.rrf`, briefing fallback, and `rrf:` key xrefs.
 - Existing same-hash transition/path evidence: `0042ab00_process_level_load_request_fresh.c`, `00422de0_selected_level_map_path.c`, `00403e40_level_path_suffix.c`, and `level_to_evs_static_trace.md`.
 
