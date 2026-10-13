@@ -44,6 +44,7 @@ def main() -> int:
 
     data_root = args.data.resolve()
     definitions = parse_victim_srf(data_root / "ResDefs/victims.srf")
+    default_type = next(iter(definitions), None)
     model_paths = parse_rrf_models(data_root / "ResDefs/rescue.rrf")
     files_by_casefold = {
         path.relative_to(data_root).as_posix().casefold(): path
@@ -70,7 +71,7 @@ def main() -> int:
 
     all_types = sorted(set(definitions) | set(observed), key=str.casefold)
     columns = [
-        "victim_type", "map_entity_count", "map_file_count", "map_keys",
+        "victim_type", "resolved_victim_type", "map_entity_count", "map_file_count", "map_keys",
         "victims_srf_model", "rescue_rrf_act_path", "act_file_exists",
         "mapping_status",
     ]
@@ -79,11 +80,17 @@ def main() -> int:
         writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
         writer.writeheader()
         for victim_type in all_types:
+            resolved_type = victim_type if victim_type in definitions else ""
             model_id = definitions.get(victim_type)
+            if model_id is None and victim_type in observed and default_type is not None:
+                resolved_type = default_type
+                model_id = definitions[default_type]
             act_path = model_paths.get(model_id, "") if model_id is not None else ""
             local_ref = act_path.split("/", 1)[1] if act_path.casefold().startswith("data/") else act_path
             local_act = files_by_casefold.get(local_ref.casefold()) if local_ref else None
-            if victim_type in observed and model_id is None:
+            if victim_type in observed and victim_type not in definitions and resolved_type:
+                status = "runtime_fallback_first_srf_entry"
+            elif victim_type in observed and model_id is None:
                 status = "unresolved_in_victims_srf"
             elif model_id is None:
                 status = "definition_without_model"
@@ -98,6 +105,7 @@ def main() -> int:
             per_map = observed.get(victim_type, Counter())
             writer.writerow({
                 "victim_type": victim_type,
+                "resolved_victim_type": resolved_type,
                 "map_entity_count": totals.get(victim_type, 0),
                 "map_file_count": len(per_map),
                 "map_keys": ";".join(sorted(per_map, key=str.casefold)),

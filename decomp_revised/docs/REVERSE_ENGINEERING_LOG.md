@@ -239,3 +239,22 @@ This materially reduces the risk of replacing the Training-only `vic_man` asset 
 The old Ghidra export `0045B690.c` is indexed in the archived Ghidra 12.0.4 export set whose README pins it to the same EXE SHA-256 as the current inputs. It was promoted to [`tracker/evidence/victim-resources/`](../tracker/evidence/victim-resources/). `FUN_0045B690` reads the authored `D_Type`; on an unknown value it logs an error and proceeds with the resource manager's configured default type. It then resolves a model, rejecting the victim if that model is unavailable. The exact default returned for `boy1` remains open. A resolved model ID 14 also takes a special random branch that replaces it with ID 11, 12, or 13, which must be understood before binding `fatman` to an ACT by its `.srf` model number alone.
 
 This hash-verified review advances the EXE function ledger from 66 to 67. `tracker/progress_history.csv` records the new checkpoint for the existing CSV-driven dashboard; no HTML was regenerated. The remaining focused query is the default behavior behind `FUN_0048DF10`, plus the model-ID-14 resource/appearance chain.
+
+## 2026-10-13 — Unknown victim type resolved to first catalog record
+
+A fresh Ghidra 12.0.4 headless analysis of the hash-pinned EXE resolved the
+remaining `boy1` lookup. `FUN_0048DF10` returns element zero from the victim
+resource array on a name miss. `FUN_0048DA10` scans that array in index order;
+`FUN_0048E740` parses `Victim:` records sequentially and appends them, while
+`FUN_0043B6E0` grows the array without changing existing entries. Since
+`victims.srf` begins with `boy` / model 11, `subway_b`'s `boy1` resolves to
+`boy` / `data/acts/vic_boy.act`. The detailed pseudocode findings are recorded
+in [`actor_default_fallback.md`](../tracker/evidence/victim-resources/actor_default_fallback.md).
+
+Both generated resource tables now preserve the authored type and record its
+runtime resolved type. `boy1` remains visible as map-authored data and is
+classified as `runtime_fallback_first_srf_entry`, with its ACT and sound
+coverage inherited from the verified `boy` resource. This checkpoint adds
+four function reviews (71 total). The CSV-driven dashboard will pick up the
+new data on its normal refresh; the HTML was not edited. The model-14 random
+replacement and final appearance mapping remain open.

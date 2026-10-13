@@ -85,7 +85,7 @@ def interpolation_modes(motions: list[dict], channel: str) -> set[int]:
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     columns = [
-        "victim_type", "model_id", "resource_act_path", "source_sha256",
+        "victim_type", "resolved_victim_type", "resource_resolution", "model_id", "resource_act_path", "source_sha256",
         "source_file_exists", "map_entity_count", "map_file_count", "used_maps",
         "beckon_sound_ids", "rescue_sound_id", "beckon_delay_min", "beckon_delay_max",
         "speech_names", "referenced_sound_paths", "missing_sound_paths",
@@ -119,7 +119,14 @@ def main() -> int:
     args.output.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, str]] = []
     for victim_type, cross in sorted(crosswalk.items()):
-        victim_definition = victim_defs.get(victim_type, {})
+        victim_definition = victim_defs.get(victim_type)
+        resolved_victim_type = victim_type
+        resource_resolution = "exact_definition"
+        if victim_definition is None and victim_defs:
+            resolved_victim_type, victim_definition = next(iter(victim_defs.items()))
+            resource_resolution = "runtime_first_entry_fallback"
+        if victim_definition is None:
+            victim_definition = {}
         model_id = int(victim_definition["model"]) if victim_definition.get("model", "").isdigit() else None
         resource_path = model_resources.get(model_id) if model_id is not None else None
         source = resolve_case_insensitive(args.inputs, resource_path or "")
@@ -134,6 +141,8 @@ def main() -> int:
         ]
         row = {
             "victim_type": victim_type,
+            "resolved_victim_type": resolved_victim_type,
+            "resource_resolution": resource_resolution,
             "model_id": str(model_id) if model_id is not None else "",
             "resource_act_path": resource_path or "",
             "source_sha256": "",
@@ -226,7 +235,7 @@ def main() -> int:
     (args.output / "manifest.json").write_text(json.dumps(rows, indent=2) + "\n")
     print(f"Inventory: {args.summary}")
     print(f"Decoded review assets: {args.output}")
-    return 0 if all(row["export_status"] == "exported_local" for row in rows if row["victim_type"] != "boy1") else 1
+    return 0 if all(row["export_status"] == "exported_local" for row in rows) else 1
 
 
 if __name__ == "__main__":

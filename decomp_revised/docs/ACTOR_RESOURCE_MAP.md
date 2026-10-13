@@ -20,11 +20,15 @@ ACT resource, but does not appear as a BSP `RCS_VictimRescue` type; its
 relationship to the player-down path should be checked against the mapped
 player code.
 
-One authored type remains unresolved: `subway_b` contains one victim whose
-`D_Type` is `boy1`, which is not a `Victim:` entry in `victims.srf`. The
-`rescue.rrf` does map model 11 to `vic_boy.act`, but that does not prove `boy1`
-aliases `boy`; retain the source value and trace the game's lookup/fallback
-before using that candidate.
+`subway_b` contains one victim whose authored `D_Type` is `boy1`, which has no
+exact `Victim:` entry. The runtime lookup is now resolved: on a miss it returns
+the first entry from the loaded `victims.srf` array, and the loader preserves
+the file's declaration order. The first entry is `boy` (model 11), which
+`rescue.rrf` maps to `vic_boy.act`. Keep `boy1` as the authored map value while
+resolving its runtime resource to `boy`; the generated crosswalk and actor
+inventory record this fallback explicitly. See
+[`actor_default_fallback.md`](../tracker/evidence/victim-resources/actor_default_fallback.md)
+for the hash-pinned code evidence.
 
 ## Reuse and implementation
 
@@ -66,14 +70,11 @@ matched byte-for-byte. The 20 referenced victim voice paths now resolve. The
 versioned input manifest records every extracted file's size and SHA-256; the
 retail audio is not checked in.
 
-One authored type has no matching resource definition: `subway_b` contains one
-victim whose `D_Type` is `boy1`, absent from `victims.srf`. A same-hash Ghidra
-export of `FUN_0045B690` confirms the runtime logs unknown victim types and
-continues with its resource manager's configured default type. The exact
-default type/model returned for `boy1` remains open, so do not assume it aliases
-`boy`. Preserve the authored `D_Type`, then reproduce the verified default
-lookup once its configured target is identified. The selected evidence is in
-[`victim-resources/`](../tracker/evidence/victim-resources/).
+The unknown `boy1` type in `subway_b` is now mapped to the runtime's first-entry
+fallback, `boy` (model 11 / `vic_boy.act`). Preserve `boy1` in the imported BSP
+entity data and resolve it through the same first-entry rule as the original
+resource manager. The model-14 random replacement branch remains a separate
+appearance question for `fatman` and must be resolved before porting that path.
 The next implementation step is a data-driven actor catalog and victim
 renderer that selects the mapped ACT from each entity type instead of always
 loading `vic_man`. Motion lists also differ by actor: the dog has three motions,
