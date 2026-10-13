@@ -1,7 +1,18 @@
-/* Read-only Ghidra 12.0.4 decompilation from FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. Captured 2026-10-12. */
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Fresh Ghidra decompilation: DispatchSharedScriptActorCommand at 0x0047a1f0; FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 
-int __thiscall FUN_0047a1f0(void *this,int *param_1)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Summary: Handles built-in ScriptActor commands before class-specific fallback.
+
+   Algorithm: Dispatches shared command literals using exact case-insensitive comparisons. No
+   setskin token appears in the fresh decompilation. VictimRescue calls this handler before its own
+   derived command branch.
+
+   Parameters: this is the ScriptActor context; param_1 is the parsed command.
+
+   Returns: handled status used to decide whether the derived class handler runs. */
+
+int __thiscall DispatchSharedScriptActorCommand(void *this,int *param_1)
 
 {
   int *this_00;
@@ -60,7 +71,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
   void *local_c;
   undefined1 *puStack_8;
   undefined4 local_4;
-  
+
   this_00 = param_1;
   local_4 = 0xffffffff;
   puStack_8 = &LAB_004d3328;
@@ -96,7 +107,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
           if (cVar1 == '\0') {
             pcVar12 = "if";
             pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-            bVar2 = FUN_0040c360(pvVar6,pcVar12);
+            bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
             if (bVar2) {
               iVar4 = this_00[7];
               iVar8 = 0;
@@ -144,7 +155,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                     *local_2c = *local_2c + 1;
                   }
                   local_4._0_1_ = 9;
-                  FUN_004758f0(local_34,piVar10,piVar13,piVar9);
+                  ExecuteScriptIfValueMatches(local_34,piVar10,piVar13,piVar9);
                   local_4._0_1_ = 8;
                   if (param_1 != &DAT_00501908) {
                     *param_1 = *param_1 + -1;
@@ -184,7 +195,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
             else {
               pcVar12 = "set";
               pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-              bVar2 = FUN_0040c360(pvVar6,pcVar12);
+              bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
               if (bVar2) {
                 iVar4 = this_00[7];
                 iVar8 = 0;
@@ -219,7 +230,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                       *local_2c = *local_2c + 1;
                     }
                     local_4._0_1_ = 0xd;
-                    FUN_004750e0(piVar13,piVar9);
+                    HandleScriptSetCommand(piVar13,piVar9);
                     local_4 = CONCAT31(local_4._1_3_,0xc);
                     FUN_00401c90(&param_1);
                     local_4 = 0xffffffff;
@@ -233,7 +244,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
               else {
                 pcVar12 = "once";
                 pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                 if (bVar2) {
                   iVar4 = this_00[7];
                   iVar8 = 0;
@@ -254,7 +265,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                          ) {
                         *param_1 = *param_1 + 1;
                       }
-                      FUN_00475ce0(local_34,piVar9);
+                      ExecuteScriptCommandOncePerContext(local_34,piVar9);
                       local_4 = 0xffffffff;
                       FUN_00401c90(&param_1);
                       iVar4 = this_00[7];
@@ -266,7 +277,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                 else {
                   pcVar12 = "ignore";
                   pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                  bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                   if (bVar2) {
                     iVar4 = this_00[7];
                     iVar8 = 0;
@@ -315,7 +326,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                   else {
                     pcVar12 = "ifnot";
                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                    bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                     if (bVar2) {
                       iVar4 = this_00[7];
                       iVar8 = 0;
@@ -380,7 +391,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                     else {
                       pcVar12 = "inc";
                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                      bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                       if (bVar2) {
                         iVar4 = this_00[7];
                         iVar8 = 0;
@@ -413,7 +424,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                       else {
                         pcVar12 = "dec";
                         pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                        bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                        bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                         if (bVar2) {
                           iVar4 = this_00[7];
                           iVar8 = 0;
@@ -446,7 +457,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                         else {
                           pcVar12 = "print";
                           pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                          bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                          bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                           if (bVar2) {
                             iVar4 = this_00[7];
                             iVar8 = 0;
@@ -479,7 +490,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                           else {
                             pcVar12 = "exec";
                             pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                            bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                            bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                             if (bVar2) {
                               iVar4 = this_00[7];
                               iVar8 = 0;
@@ -512,7 +523,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                             else {
                               pcVar12 = "execsetsonly";
                               pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                              bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                              bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                               if (bVar2) {
                                 iVar4 = this_00[7];
                                 iVar8 = 0;
@@ -545,7 +556,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                               else {
                                 pcVar12 = "sendmsg";
                                 pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                                 if (bVar2) {
                                   iVar4 = this_00[7];
                                   iVar8 = 0;
@@ -594,7 +605,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                 else {
                                   pcVar12 = "fogenable";
                                   pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                  bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                                   if (bVar2) {
                                     iVar4 = this_00[7];
                                     iVar8 = 0;
@@ -662,7 +673,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                   else {
                                     pcVar12 = "fogdisable";
                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                    bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                                     if (bVar2) {
                                       iVar4 = this_00[7];
                                       iVar8 = 0;
@@ -678,7 +689,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                     else {
                                       pcVar12 = "playsndat";
                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                      bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                                       if (bVar2) {
                                         iVar4 = this_00[7];
                                         iVar8 = 0;
@@ -727,7 +738,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                       else {
                                         pcVar12 = "playsnd";
                                         pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                        bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                        bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12);
                                         if (bVar2) {
                                           iVar4 = this_00[7];
                                           iVar8 = 0;
@@ -748,7 +759,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                  (piVar9 = param_1, param_1 != &DAT_00501908)) {
                                                 *param_1 = *param_1 + 1;
                                               }
-                                              FUN_00477af0(local_34,piVar9);
+                                              HandlePlaySoundCommand(local_34,piVar9);
                                               local_4 = 0xffffffff;
                                               FUN_00401c90(&param_1);
                                               iVar4 = this_00[7];
@@ -760,7 +771,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                         else {
                                           pcVar12 = "stopsnd";
                                           pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                          bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                          bVar2 = CompareStringObjectCaseInsensitive(pvVar6,pcVar12)
+                                          ;
                                           if (bVar2) {
                                             iVar4 = this_00[7];
                                             iVar8 = 0;
@@ -793,7 +805,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                           else {
                                             pcVar12 = "loopsndat";
                                             pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                            bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                            bVar2 = CompareStringObjectCaseInsensitive
+                                                              (pvVar6,pcVar12);
                                             if (bVar2) {
                                               iVar4 = this_00[7];
                                               iVar8 = 0;
@@ -832,7 +845,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                             else {
                                               pcVar12 = "loopsnd";
                                               pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                              bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                              bVar2 = CompareStringObjectCaseInsensitive
+                                                                (pvVar6,pcVar12);
                                               if (bVar2) {
                                                 iVar4 = this_00[7];
                                                 iVar8 = 0;
@@ -855,7 +869,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                               else {
                                                 pcVar12 = "loopsndatloc";
                                                 pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                bVar2 = CompareStringObjectCaseInsensitive
+                                                                  (pvVar6,pcVar12);
                                                 if (bVar2) {
                                                   iVar4 = this_00[7];
                                                   iVar8 = 0;
@@ -912,7 +927,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                 else {
                                                   pcVar12 = "testloopsnd";
                                                   pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
@@ -935,7 +951,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "testambientsnd";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       iVar8 = 0;
@@ -959,7 +976,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "ambientsnd";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         iVar8 = 0;
@@ -1026,14 +1044,16 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "hint";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
                                                     if (0 < iVar4) {
                                                       do {
                                                         FUN_00473d20(this_00,&param_1,iVar8,0);
-                                                        uVar5 = FUN_0040cc50(&param_1,&local_10);
+                                                        uVar5 = ParseFloatFromString
+                                                                          (&param_1,&local_10);
                                                         ppiVar7 = &param_1;
                                                         local_4 = 0xffffffff;
                                                         if ((char)uVar5 != '\0') {
@@ -1057,14 +1077,16 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "quake";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       iVar8 = 0;
                                                       if (0 < iVar4) {
                                                         do {
                                                           FUN_00473d20(this_00,&param_1,iVar8,0);
-                                                          uVar5 = FUN_0040cc50(&param_1,&local_14);
+                                                          uVar5 = ParseFloatFromString
+                                                                            (&param_1,&local_14);
                                                           local_4 = 0xffffffff;
                                                           if ((char)uVar5 == '\0') {
                                                             FUN_00401c90(&param_1);
@@ -1072,8 +1094,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                           else {
                                                             FUN_00401c90(&param_1);
                                                             FUN_00473d20(this_00,&local_24,iVar8,1);
-                                                            uVar5 = FUN_0040cc50(&local_24,&local_10
-                                                                                );
+                                                            uVar5 = ParseFloatFromString
+                                                                              (&local_24,&local_10);
                                                             local_4 = 0xffffffff;
                                                             if ((char)uVar5 == '\0') {
                                                               FUN_00401c90(&local_24);
@@ -1093,7 +1115,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "if<=";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         iVar8 = 0;
@@ -1143,7 +1166,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "if<";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
@@ -1187,7 +1211,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "if>=";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       iVar8 = 0;
@@ -1234,7 +1259,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "if>";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         iVar8 = 0;
@@ -1284,7 +1310,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "iffacing";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
@@ -1336,7 +1363,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "ifnotfacing";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       iVar8 = 0;
@@ -1392,7 +1420,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "ifclear";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         if (0 < iVar4) {
@@ -1427,7 +1456,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "ifnotclear";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     if (0 < iVar4) {
@@ -1459,7 +1489,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "listmaps";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       iVar8 = 0;
@@ -1476,7 +1507,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "loadmap";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         iVar8 = 0;
@@ -1501,7 +1533,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "loadhosemap";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
@@ -1524,7 +1557,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "setlighttable";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       if (0 < iVar4) {
@@ -1558,7 +1592,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "difficulty";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         iVar8 = 0;
@@ -1583,7 +1618,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "quit";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   param_1);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
@@ -1599,7 +1635,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                   else {
                                                     pcVar12 = "debugvictims";
                                                     pvVar6 = (void *)FUN_0040c330(this_00,&param_1);
-                                                    bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                    bVar2 = CompareStringObjectCaseInsensitive
+                                                                      (pvVar6,pcVar12);
                                                     if (bVar2) {
                                                       iVar4 = this_00[7];
                                                       iVar8 = 0;
@@ -1616,7 +1653,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                       pcVar12 = "runrescuebot";
                                                       pvVar6 = (void *)FUN_0040c330(this_00,&param_1
                                                                                    );
-                                                      bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                      bVar2 = CompareStringObjectCaseInsensitive
+                                                                        (pvVar6,pcVar12);
                                                       if (bVar2) {
                                                         iVar4 = this_00[7];
                                                         iVar8 = 0;
@@ -1634,7 +1672,8 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                                                         pcVar12 = "listvars";
                                                         pvVar6 = (void *)FUN_0040c330(this_00,&
                                                   local_34);
-                                                  bVar2 = FUN_0040c360(pvVar6,pcVar12);
+                                                  bVar2 = CompareStringObjectCaseInsensitive
+                                                                    (pvVar6,pcVar12);
                                                   if (bVar2) {
                                                     iVar4 = this_00[7];
                                                     iVar8 = 0;
@@ -1734,7 +1773,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
                 *local_30 = *local_30 + 1;
               }
               local_4._0_1_ = 5;
-              FUN_00475560(local_34,piVar13,piVar9);
+              DispatchScriptCommandToNamedActor(local_34,piVar13,piVar9);
               local_4 = CONCAT31(local_4._1_3_,4);
               if (param_1 != &DAT_00501908) {
                 *param_1 = *param_1 + -1;
@@ -1794,7 +1833,7 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
               *local_30 = *local_30 + 1;
             }
             local_4._0_1_ = 2;
-            FUN_00475560(local_34,piVar13,piVar9);
+            DispatchScriptCommandToNamedActor(local_34,piVar13,piVar9);
             local_4 = CONCAT31(local_4._1_3_,1);
             if (param_1 != &DAT_00501908) {
               *param_1 = *param_1 + -1;
@@ -1862,4 +1901,3 @@ int __thiscall FUN_0047a1f0(void *this,int *param_1)
   ExceptionList = local_c;
   return iVar4;
 }
-
