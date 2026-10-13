@@ -257,4 +257,24 @@ classified as `runtime_fallback_first_srf_entry`, with its ACT and sound
 coverage inherited from the verified `boy` resource. This checkpoint adds
 four function reviews (71 total). The CSV-driven dashboard will pick up the
 new data on its normal refresh; the HTML was not edited. The model-14 random
-replacement and final appearance mapping remain open.
+replacement and final appearance mapping were still open at this checkpoint; a
+subsequent Ghidra trace resolves the constructor's model selection and is
+recorded below.
+
+## 2026-10-13 — `fatman` renderer model selection mapped
+
+Read-only Ghidra queries traced the model-14 branch through its random helper,
+renderer lookup, and separate victim resource initialization. `FUN_00404B30(3)`
+returns a pseudorandom value modulo 3, so `FUN_0045B690` changes model 14 to
+`11 + random() % 3` before model lookup and actor construction. The constructor
+then passes the original `fatman` resource record separately to
+`FUN_0048E330`/`FUN_0048E080`, which reads its Beckon and speech collections.
+The declared `vic_fatty.act` resource path remains in the asset inventory, but
+this victim constructor's renderer actor follows model IDs 11–13; use of
+`vic_fatty.act` in another runtime path remains open. See
+[`fatman_model_selection.md`](../tracker/evidence/victim-resources/fatman_model_selection.md).
+
+The resource crosswalk and actor inventory now show declared model resources
+separately from renderer model selection. Seven additional EXE functions were
+reviewed (78 total); CSV dashboard data was updated without regenerating its
+HTML. No runtime build or game launch was performed.

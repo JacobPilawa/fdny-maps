@@ -1,7 +1,8 @@
 # Rescue actor resource map
 
-Status: **all defined victim ACTs decode locally; generic runtime actor
-selection remains open.**
+Status: **all defined victim ACTs decode locally; the unknown-type fallback
+and constructor model selection are source-mapped; runtime resource binding
+and material selection remain to implement.**
 
 ## Recovered resource chain
 
@@ -29,6 +30,17 @@ resolving its runtime resource to `boy`; the generated crosswalk and actor
 inventory record this fallback explicitly. See
 [`actor_default_fallback.md`](../tracker/evidence/victim-resources/actor_default_fallback.md)
 for the hash-pinned code evidence.
+
+The `fatman` resource record declares model 14, but victim initialization
+replaces that ID with `11 + random() % 3` before looking up and constructing
+the renderer actor. Its runtime actor model is therefore selected from IDs
+11–13. The original `fatman` resource record is still passed to the separate
+victim behavior/resource initializer, so its authored sound and speech
+configuration remains associated with the victim. The direct RRF mapping to
+`vic_fatty.act` does not establish that this constructor renders that ACT; its
+use elsewhere remains open. The generated inventories now keep the declared
+resource ACT and runtime actor model selection in separate columns. See
+[`fatman_model_selection.md`](../tracker/evidence/victim-resources/fatman_model_selection.md).
 
 ## Reuse and implementation
 
@@ -73,8 +85,8 @@ retail audio is not checked in.
 The unknown `boy1` type in `subway_b` is now mapped to the runtime's first-entry
 fallback, `boy` (model 11 / `vic_boy.act`). Preserve `boy1` in the imported BSP
 entity data and resolve it through the same first-entry rule as the original
-resource manager. The model-14 random replacement branch remains a separate
-appearance question for `fatman` and must be resolved before porting that path.
+resource manager. The model-14 path now records its runtime actor choice as
+IDs 11–13; whether another game path uses `vic_fatty.act` remains open.
 The next implementation step is a data-driven actor catalog and victim
 renderer that selects the mapped ACT from each entity type instead of always
 loading `vic_man`. Motion lists also differ by actor: the dog has three motions,
@@ -82,6 +94,5 @@ the fat victim four, and the human actors six. The runtime must resolve
 semantic motion names from each ACT and the original victim behavior, rather
 than assuming each actor has the Training man's six motion indices. Actor pose,
 animation timing, and victim state transitions remain shared across every
-rescue map. `FUN_0045B690` also special-cases resolved model ID 14 to a random
-ID from 11 through 13; verify that resource/model behavior before porting the
-`fatman` appearance path.
+rescue map. See [`fatman_model_selection.md`](../tracker/evidence/victim-resources/fatman_model_selection.md)
+for the separate declared-resource and runtime-actor model behavior.

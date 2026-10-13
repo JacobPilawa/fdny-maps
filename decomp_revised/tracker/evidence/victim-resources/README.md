@@ -22,7 +22,9 @@ are appended in file order, and the first `victims.srf` entry is `boy` (model
 `boy` resource at runtime. See
 [`actor_default_fallback.md`](actor_default_fallback.md) for the evidence.
 
-The function also has a special branch for resolved model ID 14 that replaces
-it with a random ID in 11–13 before checking/creating the model. Preserve this
-as a separate behavior question when binding `fatman`; do not infer the
-resulting actor appearance from the `victims.srf` row alone.
+The function also replaces resolved model ID 14 with `11 + random() % 3`
+before constructing the renderer actor. The selected renderer model and the
+original victim behavior/resource definition follow separate paths; see
+[`fatman_model_selection.md`](fatman_model_selection.md). The direct
+`vic_fatty.act` RRF mapping therefore does not by itself prove that this
+constructor renders that ACT.
