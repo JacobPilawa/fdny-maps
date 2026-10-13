@@ -943,7 +943,7 @@ FDNYFirefighter.exe,0044bdb0,46,FUN_0044bdb0,Global,false,false,__fastcall,undef
 FDNYFirefighter.exe,0044be90,50,FUN_0044be90,Global,false,false,__thiscall,"float * __thiscall FUN_0044be90(void * this, float * param_1)"
 FDNYFirefighter.exe,0044bed0,51,FUN_0044bed0,Global,false,false,__thiscall,"undefined __thiscall FUN_0044bed0(void * this, undefined4 * param_1)"
 FDNYFirefighter.exe,0044bfb0,50,FUN_0044bfb0,Global,false,false,__thiscall,"undefined4 __thiscall FUN_0044bfb0(void * this, undefined4 * param_1)"
-FDNYFirefighter.exe,0044bff0,93,FUN_0044bff0,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0044bff0(undefined4 * param_1)
+FDNYFirefighter.exe,0044bff0,93,InitializePlayerRescueFactoryDescriptor,Global,false,false,__fastcall,undefined4 * __fastcall InitializePlayerRescueFactoryDescriptor(undefined4 * param_1)
 FDNYFirefighter.exe,0044c070,53,FUN_0044c070,Global,false,false,__thiscall,"undefined4 __thiscall FUN_0044c070(void * this, int param_1, int param_2, int param_3)"
 FDNYFirefighter.exe,0044c0b0,68,FUN_0044c0b0,Global,false,false,__fastcall,undefined4 __fastcall FUN_0044c0b0(int param_1)
 FDNYFirefighter.exe,0044c130,27,FUN_0044c130,Global,false,false,__cdecl,undefined __cdecl FUN_0044c130(int * param_1)
@@ -967,7 +967,7 @@ FDNYFirefighter.exe,0044d270,207,FUN_0044d270,Global,false,false,__thiscall,"und
 FDNYFirefighter.exe,0044d340,147,FUN_0044d340,Global,false,false,__fastcall,undefined __fastcall FUN_0044d340(undefined4 * param_1)
 FDNYFirefighter.exe,0044d3e0,114,FUN_0044d3e0,Global,false,false,__fastcall,undefined __fastcall FUN_0044d3e0(void * param_1)
 FDNYFirefighter.exe,0044d460,235,FUN_0044d460,Global,false,false,__fastcall,undefined __fastcall FUN_0044d460(int param_1)
-FDNYFirefighter.exe,0044d550,4739,FUN_0044d550,Global,false,false,__fastcall,undefined __fastcall FUN_0044d550(int * param_1)
+FDNYFirefighter.exe,0044d550,4739,InitializePlayerRescueEntity,Global,false,false,__fastcall,void __fastcall InitializePlayerRescueEntity(int * param_1)
 FDNYFirefighter.exe,0044e7e0,425,FUN_0044e7e0,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_0044e7e0(void * this, undefined4 * param_1)"
 FDNYFirefighter.exe,0044e990,252,FUN_0044e990,Global,false,false,__fastcall,undefined __fastcall FUN_0044e990(int * param_1)
 FDNYFirefighter.exe,0044ea90,315,FUN_0044ea90,Global,false,false,__fastcall,undefined __fastcall FUN_0044ea90(int param_1)
@@ -991,28 +991,28 @@ FDNYFirefighter.exe,0044fda0,35,FUN_0044fda0,Global,false,false,__fastcall,int _
 FDNYFirefighter.exe,0044fdd0,79,FUN_0044fdd0,Global,false,false,__fastcall,undefined __fastcall FUN_0044fdd0(undefined4 * param_1)
 FDNYFirefighter.exe,0044ff10,1327,FUN_0044ff10,Global,false,false,__thiscall,"undefined __thiscall FUN_0044ff10(void * this, char param_1)"
 FDNYFirefighter.exe,00450440,123,HandleVictimPickupMessage,Global,false,false,__thiscall,"void __thiscall HandleVictimPickupMessage(void * this, void * param_1)"
-FDNYFirefighter.exe,004504c0,1335,FUN_004504c0,Global,false,false,__fastcall,undefined __fastcall FUN_004504c0(void * param_1)
-FDNYFirefighter.exe,00450a00,112,FUN_00450a00,Global,false,false,__fastcall,undefined4 __fastcall FUN_00450a00(void * param_1)
-FDNYFirefighter.exe,00450a70,715,FUN_00450a70,Global,false,false,__thiscall,"undefined4 __thiscall FUN_00450a70(void * this, int * param_1, int * param_2)"
+FDNYFirefighter.exe,004504c0,1335,UpdateFinalExitAvailability,Global,false,false,__fastcall,void __fastcall UpdateFinalExitAvailability(void * param_1)
+FDNYFirefighter.exe,00450a00,112,HandleFinalExitCommand,Global,false,false,__fastcall,int __fastcall HandleFinalExitCommand(void * param_1)
+FDNYFirefighter.exe,00450a70,715,HandlePlayerFinalExitLoadMap,Global,false,false,__thiscall,"undefined4 __thiscall HandlePlayerFinalExitLoadMap(void * this, int * param_1, int * param_2)"
 FDNYFirefighter.exe,00450d40,66,FUN_00450d40,Global,false,false,__thiscall,"undefined __thiscall FUN_00450d40(void * this, int param_1)"
 FDNYFirefighter.exe,00450d90,531,FUN_00450d90,Global,false,false,__fastcall,undefined __fastcall FUN_00450d90(int param_1)
 FDNYFirefighter.exe,00450fb0,206,FUN_00450fb0,Global,false,false,__thiscall,"undefined __thiscall FUN_00450fb0(void * this, int param_1)"
 FDNYFirefighter.exe,00451080,221,FUN_00451080,Global,false,false,__fastcall,undefined __fastcall FUN_00451080(int * param_1)
-FDNYFirefighter.exe,00451160,564,FUN_00451160,Global,false,false,__fastcall,undefined __fastcall FUN_00451160(int * param_1)
-FDNYFirefighter.exe,004513a0,76,FUN_004513a0,Global,false,false,__fastcall,undefined4 __fastcall FUN_004513a0(int * param_1)
+FDNYFirefighter.exe,00451160,564,ProcessCarriedVictimRescue,Global,false,false,__fastcall,void __fastcall ProcessCarriedVictimRescue(int * param_1)
+FDNYFirefighter.exe,004513a0,76,DispatchPlayerEscapeCommand,Global,false,false,__fastcall,int __fastcall DispatchPlayerEscapeCommand(int * param_1)
 FDNYFirefighter.exe,00451400,118,FUN_00451400,Global,false,false,__fastcall,undefined __fastcall FUN_00451400(undefined4 * param_1)
 FDNYFirefighter.exe,00451480,131,FUN_00451480,Global,false,false,__fastcall,int __fastcall FUN_00451480(int param_1)
 FDNYFirefighter.exe,00451510,77,FUN_00451510,Global,false,false,__fastcall,undefined __fastcall FUN_00451510(int param_1)
 FDNYFirefighter.exe,00451560,220,FUN_00451560,Global,false,false,__fastcall,undefined __fastcall FUN_00451560(void * param_1)
 FDNYFirefighter.exe,00451640,552,ApplyPlayerFireExposure,Global,false,false,__thiscall,"void __thiscall ApplyPlayerFireExposure(void * this, float * fireSource, float exposureInfluence)"
-FDNYFirefighter.exe,00451870,3196,FUN_00451870,Global,false,false,__thiscall,"undefined4 __thiscall FUN_00451870(void * this, int * param_1)"
+FDNYFirefighter.exe,00451870,3196,HandlePlayerScriptActorCommand,Global,false,false,__thiscall,"int __thiscall HandlePlayerScriptActorCommand(void * this, int * param_1)"
 FDNYFirefighter.exe,004524f0,105,FUN_004524f0,Global,false,false,__fastcall,undefined __fastcall FUN_004524f0(undefined4 * param_1)
 FDNYFirefighter.exe,00452560,5,FUN_00452560,Global,false,false,__fastcall,undefined __fastcall FUN_00452560(undefined4 * param_1)
 FDNYFirefighter.exe,00453a70,110,DispatchPlayerMessage,Global,false,false,__thiscall,"void __thiscall DispatchPlayerMessage(void * this, int messageId, int * payload)"
 FDNYFirefighter.exe,00453ae0,519,FUN_00453ae0,Global,false,false,__fastcall,undefined __fastcall FUN_00453ae0(undefined4 * param_1)
-FDNYFirefighter.exe,00453d50,773,FUN_00453d50,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_00453d50(void * this, void * param_1)"
+FDNYFirefighter.exe,00453d50,773,ConstructPlayerRescueEntity,Global,false,false,__thiscall,"undefined4 * __thiscall ConstructPlayerRescueEntity(void * this, void * param_1)"
 FDNYFirefighter.exe,00454060,30,FUN_00454060,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_00454060(void * this, byte param_1)"
-FDNYFirefighter.exe,00454080,99,FUN_00454080,Global,false,false,__stdcall,undefined4 * __stdcall FUN_00454080(void * param_1)
+FDNYFirefighter.exe,00454080,99,CreatePlayerRescueEntity,Global,false,false,__stdcall,undefined4 * __stdcall CreatePlayerRescueEntity(void * param_1)
 FDNYFirefighter.exe,00454100,39,FUN_00454100,Global,false,false,__fastcall,undefined __fastcall FUN_00454100(int param_1)
 FDNYFirefighter.exe,00454130,39,FUN_00454130,Global,false,false,__fastcall,undefined __fastcall FUN_00454130(int param_1)
 FDNYFirefighter.exe,00454160,53,FUN_00454160,Global,false,false,__fastcall,undefined __fastcall FUN_00454160(int * param_1)

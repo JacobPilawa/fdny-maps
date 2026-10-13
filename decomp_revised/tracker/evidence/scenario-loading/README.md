@@ -27,7 +27,7 @@ Raw vtable and instruction inspection maps the BoundsTrigger-specific path: root
 
 The selector's initial ordinal is also traced: scene child 2 opens through `0042D3E0`, which invokes selector slot 0 at `0042F600`; that method seeds from the active record or probes for a valid catalog ordinal. Full details are in [selector_initial_ordinal_resolution.md](selector_initial_ordinal_resolution.md).
 
-Player handler `00451870` contains the `escape` branch through `004513A0` to `00451160`, which completes rescue only when the Player carries a victim. The `tell` branch reaches `00475560`: its first value is the target actor name, its second value is the command, and lookup-success dispatch enters `00470150`. Bank's `vault` target is tied to the BModel-specific `open` handler at `0043E680` and per-frame animation/timed-event update at `0043DC60`; the shared route also covers 10 named `open` targets across Bank, Boat A, Bar R, and Gas R. See [bank_vault_open_dispatch.md](bank_vault_open_dispatch.md), [bmodel_update.md](bmodel_update.md), and the [rescue target inventory](bmodel_rescue_targets.md). For Training, the particular registry object named `player` and its order relative to the Player handler remain unresolved. The separate `004752A0` → `00472270` chain belongs to `help`. See [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md).
+Player handler `00451870` contains the `escape` branch through `004513A0` to `00451160`, which completes rescue only when the Player carries a victim. The `tell` branch reaches `00475560`: its first value is the target actor name, its second value is the command, and lookup-success dispatch enters `00470150`. `InitializePlayerRescueEntity` (`0044D550`) registers its embedded ScriptActor as `Player`; the vtable's +4 slot reaches `00451870`. Hash-checked counts show one PlayerRescue and no PlayerHose in each rescue BSP, including Training, while four hose BSPs have the inverse. The static successful-path factory route is mapped; live load execution and event ordering remain open. See [player_rescue_factory_and_spawn_path.md](player_rescue_factory_and_spawn_path.md) and the generated [17-map class inventory](../../rescue_exit_trigger_inventory.md). Bank's `vault` target is tied to the BModel-specific `open` handler at `0043E680` and per-frame animation/timed-event update at `0043DC60`; the shared route also covers 10 named `open` targets across Bank, Boat A, Bar R, and Gas R. See [bank_vault_open_dispatch.md](bank_vault_open_dispatch.md), [bmodel_update.md](bmodel_update.md), and the [rescue target inventory](bmodel_rescue_targets.md). The separate `004752A0` → `00472270` chain belongs to `help`. See [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md).
 
 ## Shared rescue pickup path
 
@@ -36,6 +36,13 @@ and `pickup` event dispatch are documented in
 [victim_pickup_message_path.md](victim_pickup_message_path.md). The report combines
 fresh Ghidra exports with selectively reused Training-era evidence and keeps all
 seven campaign rescue maps, Training, and all 17 BSP assets in scope.
+
+The common `escape`, `finalexit`, and `finalexitloadmap` routes are documented in
+[rescue_completion_and_exit_path.md](rescue_completion_and_exit_path.md), with
+the generated [17-BSP exit trigger inventory](../../rescue_exit_trigger_inventory.md).
+The successful PlayerRescue class-factory path through BSP spawn, ScriptActor
+registration, and the `escape` handler is documented in
+[player_rescue_factory_and_spawn_path.md](player_rescue_factory_and_spawn_path.md).
 
 ## Training data anchors
 
@@ -54,7 +61,7 @@ The `.evs` files are CRLF ASCII. The selected-level loader first reads `Data\\Ma
 
 ## Next trace
 
-Identify the dynamic caller of the BoundsTrigger embedded ScriptActor updater and the WorldEntity slot `+0x14` caller. Resolve the concrete registry object and dispatch order for Training's `tell player escape`. The selector initializer, parser-to-selector collection link, World factory path, four-invocation delayed mode-0 load, and mode-1 filter are mapped. See [worldentity_callback_dispatch_boundary.md](worldentity_callback_dispatch_boundary.md), [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md), and [level_to_evs_static_trace.md](level_to_evs_static_trace.md).
+Identify the dynamic caller of the BoundsTrigger embedded ScriptActor updater and the WorldEntity slot `+0x14` caller. Obtain runtime evidence for factory admission, registry insertion, and `tell player escape` event timing; the authored PlayerRescue class-to-handler route is now statically mapped. The selector initializer, parser-to-selector collection link, World factory path, four-invocation delayed mode-0 load, and mode-1 filter are mapped. See [worldentity_callback_dispatch_boundary.md](worldentity_callback_dispatch_boundary.md), [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md), and [level_to_evs_static_trace.md](level_to_evs_static_trace.md).
 
 ## Shared rescue contact manager
 

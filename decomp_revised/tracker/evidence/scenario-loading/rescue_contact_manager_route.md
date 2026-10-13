@@ -16,7 +16,8 @@ registry initializer constructs and appends the `RCS_BModel` descriptor from
 `InitializeBModelFactoryDescriptor` (`0043B4B0`) and the
 `RCS_BoundsTrigger` descriptor from
 `InitializeBoundsTriggerFactoryDescriptor` (`00440D60`). These are the class
-names used by Gas R BSP records.
+names used by Gas R BSP records. It also appends the `RCS_PlayerRescue`
+descriptor from `InitializePlayerRescueFactoryDescriptor` (`0044BFF0`).
 
 The shared `WorldEntity` loader (`0049E4D0`) enumerates BSP entity records and
 submits matching class-factory requests to `ProcessEntitySpawnQueue`
@@ -24,6 +25,16 @@ submits matching class-factory requests to `ProcessEntitySpawnQueue`
 returned entity through `00429490`. BModel construction (`0043F340`) and
 BoundsTrigger construction (`00441C60`) both call common base initializer
 `0049D420`, which sets the root registration mask to `0xFFEB`.
+
+The PlayerRescue descriptor vtable's slot `+0x08` calls
+`CreatePlayerRescueEntity` (`00454080`), which allocates a `0x3580`-byte entity
+and calls `ConstructPlayerRescueEntity` (`00453D50`). The spawn queue then calls
+the entity's root slot `+0x20` in its first initialization pass. On this class,
+that slot is `InitializePlayerRescueEntity` (`0044D550`), which registers the
+embedded ScriptActor at `+0x140` as `Player`. Its vtable slot `+0x04` is
+`HandlePlayerScriptActorCommand` (`00451870`). The complete class-to-handler
+chain and raw vtable bytes are recorded in
+[PlayerRescue factory and spawn path](player_rescue_factory_and_spawn_path.md).
 
 The copied Gas R scene export identifies entity 240 as `RCS_PlayerRescue`,
 entities 265 and 280 as `RCS_BoundsTrigger`, and entity 309 as `RCS_BModel`.
@@ -55,10 +66,12 @@ currently overlap or their script events have fired.
    frame rate.
 
 The common entity base initializes registration mask `0xFFEB`, which includes
-the contact manager's `0x20` filter. The reused [Training scheduling
-audit](../../../reference/previous-work/decomp/evidence/training-bmodel-contact-scheduling-audit.md)
-traces successful Player admission and distinguishes authored Player
-membership from other possible type-1 classes.
+the contact manager's `0x20` filter. The prior
+[Training scheduling audit](../../../reference/previous-work/decomp/evidence/training-bmodel-contact-scheduling-audit.md)
+is retained as corroborating context for Player selection/contact behavior;
+the fresh [PlayerRescue factory path](player_rescue_factory_and_spawn_path.md)
+supplies the hash-pinned class creation and initialization join across all 17
+BSPs.
 
 ## BModel contacts and Gas R `button1`
 
