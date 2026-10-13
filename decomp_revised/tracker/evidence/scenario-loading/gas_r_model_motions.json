@@ -1,0 +1,1824 @@
+{
+  "input": "gas_r.bsp",
+  "input_sha256": "f6822f8d598d2888896165bbee8b554351230cd76ad6331abf0d735a03b54cbc",
+  "motion_chunk_sha256": "da35b1df9e3c8f2f89711d8e9f58875f80582a3b8481224d395a4a66d5ee003e",
+  "motion_chunk_bytes": 95284,
+  "declared_motion_count": 209,
+  "motion_model_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221
+  ],
+  "named_models": [
+    {
+      "entity_index": 1,
+      "name": "door6",
+      "model_index": 1,
+      "motion_record_present": true,
+      "origin": "461.398987 -147.875244 304.000122"
+    },
+    {
+      "entity_index": 2,
+      "name": "door8",
+      "model_index": 2,
+      "motion_record_present": true,
+      "origin": "651.797974 -147.875244 865.460938"
+    },
+    {
+      "entity_index": 3,
+      "name": "door7",
+      "model_index": 3,
+      "motion_record_present": true,
+      "origin": "1354.547363 -147.583496 428.875122"
+    },
+    {
+      "entity_index": 4,
+      "name": "door9",
+      "model_index": 4,
+      "motion_record_present": true,
+      "origin": "1446.930908 -147.875244 1108.843384"
+    },
+    {
+      "entity_index": 5,
+      "name": "ExplodingCar1",
+      "model_index": 5,
+      "motion_record_present": true,
+      "origin": "-84.062378 -190.000031 525.938965"
+    },
+    {
+      "entity_index": 6,
+      "name": "Trigger_Explotion1",
+      "model_index": 6,
+      "motion_record_present": false,
+      "origin": "-339.999939 -100.000000 -324.000000"
+    },
+    {
+      "entity_index": 7,
+      "name": "Pump1",
+      "model_index": 7,
+      "motion_record_present": true,
+      "origin": "45.333870 -170.500000 457.997437"
+    },
+    {
+      "entity_index": 8,
+      "name": "Pump2",
+      "model_index": 8,
+      "motion_record_present": true,
+      "origin": "45.333687 -108.000008 457.997375"
+    },
+    {
+      "entity_index": 9,
+      "name": "Pump3",
+      "model_index": 9,
+      "motion_record_present": true,
+      "origin": "45.333988 -43.999996 457.997345"
+    },
+    {
+      "entity_index": 10,
+      "name": "Pump4",
+      "model_index": 10,
+      "motion_record_present": true,
+      "origin": "44.000000 -216.000000 500.000000"
+    },
+    {
+      "entity_index": 11,
+      "name": "Pump5",
+      "model_index": 11,
+      "motion_record_present": true,
+      "origin": "44.000000 -216.000000 416.000000"
+    },
+    {
+      "entity_index": 12,
+      "name": "Pump6",
+      "model_index": 12,
+      "motion_record_present": true,
+      "origin": "45.333870 -67.999992 501.497314"
+    },
+    {
+      "entity_index": 13,
+      "name": "Pump7",
+      "model_index": 13,
+      "motion_record_present": true,
+      "origin": "44.000000 -68.000000 416.000000"
+    },
+    {
+      "entity_index": 14,
+      "name": "Pump8",
+      "model_index": 14,
+      "motion_record_present": true,
+      "origin": "-121.331940 -68.000000 410.994751"
+    },
+    {
+      "entity_index": 15,
+      "name": "Pump10",
+      "model_index": 15,
+      "motion_record_present": true,
+      "origin": "89.334038 -44.000000 456.997375"
+    },
+    {
+      "entity_index": 16,
+      "name": "Pump11",
+      "model_index": 16,
+      "motion_record_present": true,
+      "origin": "89.334343 -108.000008 456.997375"
+    },
+    {
+      "entity_index": 17,
+      "name": "Pump12",
+      "model_index": 17,
+      "motion_record_present": true,
+      "origin": "90.668060 -216.000000 498.994751"
+    },
+    {
+      "entity_index": 18,
+      "name": "Pump13",
+      "model_index": 18,
+      "motion_record_present": true,
+      "origin": "90.668053 -216.000000 414.994751"
+    },
+    {
+      "entity_index": 19,
+      "name": "Pump14",
+      "model_index": 19,
+      "motion_record_present": true,
+      "origin": "89.334160 -170.500000 456.997314"
+    },
+    {
+      "entity_index": 20,
+      "name": "Pump17",
+      "model_index": 20,
+      "motion_record_present": true,
+      "origin": "44.000000 -68.000000 224.000000"
+    },
+    {
+      "entity_index": 21,
+      "name": "Pump18",
+      "model_index": 21,
+      "motion_record_present": true,
+      "origin": "45.333870 -67.999992 309.497314"
+    },
+    {
+      "entity_index": 22,
+      "name": "Pump19",
+      "model_index": 22,
+      "motion_record_present": true,
+      "origin": "45.333984 -44.000000 265.997345"
+    },
+    {
+      "entity_index": 23,
+      "name": "Pump20",
+      "model_index": 23,
+      "motion_record_present": true,
+      "origin": "45.333687 -108.000000 265.997375"
+    },
+    {
+      "entity_index": 24,
+      "name": "Pump21",
+      "model_index": 24,
+      "motion_record_present": true,
+      "origin": "44.000000 -216.000000 224.000000"
+    },
+    {
+      "entity_index": 25,
+      "name": "Pump22",
+      "model_index": 25,
+      "motion_record_present": true,
+      "origin": "44.000000 -216.000000 308.000000"
+    },
+    {
+      "entity_index": 26,
+      "name": "Pump23",
+      "model_index": 26,
+      "motion_record_present": true,
+      "origin": "45.333870 -170.500000 265.997437"
+    },
+    {
+      "entity_index": 27,
+      "name": "Pump24",
+      "model_index": 27,
+      "motion_record_present": true,
+      "origin": "89.334038 -44.000000 264.997375"
+    },
+    {
+      "entity_index": 28,
+      "name": "Pump25",
+      "model_index": 28,
+      "motion_record_present": true,
+      "origin": "89.334343 -108.000000 264.997375"
+    },
+    {
+      "entity_index": 29,
+      "name": "Pump26",
+      "model_index": 29,
+      "motion_record_present": true,
+      "origin": "90.668060 -216.000000 306.994751"
+    },
+    {
+      "entity_index": 30,
+      "name": "Pump27",
+      "model_index": 30,
+      "motion_record_present": true,
+      "origin": "90.668053 -216.000000 222.994751"
+    },
+    {
+      "entity_index": 31,
+      "name": "Pump28",
+      "model_index": 31,
+      "motion_record_present": true,
+      "origin": "89.334160 -170.500000 264.997314"
+    },
+    {
+      "entity_index": 32,
+      "name": "ExplodingCar2",
+      "model_index": 32,
+      "motion_record_present": true,
+      "origin": "220.291748 -198.000031 162.938965"
+    },
+    {
+      "entity_index": 33,
+      "name": "door10",
+      "model_index": 33,
+      "motion_record_present": true,
+      "origin": "461.398987 -147.875244 -3.999878"
+    },
+    {
+      "entity_index": 34,
+      "name": "door11",
+      "model_index": 34,
+      "motion_record_present": true,
+      "origin": "461.398987 -7.875244 -3.999878"
+    },
+    {
+      "entity_index": 35,
+      "name": "door12",
+      "model_index": 35,
+      "motion_record_present": true,
+      "origin": "533.398987 -171.875244 228.000122"
+    },
+    {
+      "entity_index": 36,
+      "name": "door13",
+      "model_index": 36,
+      "motion_record_present": true,
+      "origin": "533.398987 -171.875244 -51.999878"
+    },
+    {
+      "entity_index": 37,
+      "name": "door14",
+      "model_index": 37,
+      "motion_record_present": true,
+      "origin": "406.600952 28.062515 68.062386"
+    },
+    {
+      "entity_index": 38,
+      "name": "Area_garage",
+      "model_index": 38,
+      "motion_record_present": false,
+      "origin": "922.500000 -72.499985 190.000000"
+    },
+    {
+      "entity_index": 39,
+      "name": "area_store",
+      "model_index": 39,
+      "motion_record_present": false,
+      "origin": "1018.000000 -122.000015 838.500122"
+    },
+    {
+      "entity_index": 40,
+      "name": "area_storage",
+      "model_index": 40,
+      "motion_record_present": false,
+      "origin": "1574.000122 -138.000015 833.999878"
+    },
+    {
+      "entity_index": 41,
+      "name": "Unfog1",
+      "model_index": 41,
+      "motion_record_present": false,
+      "origin": "425.398987 -147.875244 352.000122"
+    },
+    {
+      "entity_index": 42,
+      "name": "Unfog2",
+      "model_index": 42,
+      "motion_record_present": false,
+      "origin": "617.398987 -171.875244 912.000122"
+    },
+    {
+      "entity_index": 43,
+      "name": "fog1",
+      "model_index": 43,
+      "motion_record_present": false,
+      "origin": "497.398987 -171.875244 352.000122"
+    },
+    {
+      "entity_index": 44,
+      "name": "fog2",
+      "model_index": 44,
+      "motion_record_present": false,
+      "origin": "693.398987 -159.875244 912.000122"
+    },
+    {
+      "entity_index": 45,
+      "name": "obj_grabaxe3",
+      "model_index": 45,
+      "motion_record_present": true,
+      "origin": "894.766663 -68.000000 1211.629395"
+    },
+    {
+      "entity_index": 46,
+      "name": "obj_grabaxe1",
+      "model_index": 46,
+      "motion_record_present": true,
+      "origin": "894.766724 -136.000000 1217.629395"
+    },
+    {
+      "entity_index": 47,
+      "name": "obj_grabaxe2",
+      "model_index": 47,
+      "motion_record_present": true,
+      "origin": "890.766663 -128.000000 1223.629395"
+    },
+    {
+      "entity_index": 48,
+      "name": "box_clip",
+      "model_index": 48,
+      "motion_record_present": true,
+      "origin": "1511.625000 -190.224503 942.714050"
+    },
+    {
+      "entity_index": 49,
+      "name": "box_side_d",
+      "model_index": 49,
+      "motion_record_present": true,
+      "origin": "1475.625000 -186.224518 926.714050"
+    },
+    {
+      "entity_index": 50,
+      "name": "box_side_e",
+      "model_index": 50,
+      "motion_record_present": true,
+      "origin": "1491.625000 -186.224518 906.714050"
+    },
+    {
+      "entity_index": 51,
+      "name": "box_side_h",
+      "model_index": 51,
+      "motion_record_present": true,
+      "origin": "1547.625244 -186.224487 958.714050"
+    },
+    {
+      "entity_index": 52,
+      "name": "box_side_a",
+      "model_index": 52,
+      "motion_record_present": true,
+      "origin": "1531.625000 -186.224472 978.714050"
+    },
+    {
+      "entity_index": 53,
+      "name": "box_side_c",
+      "model_index": 53,
+      "motion_record_present": true,
+      "origin": "1475.625000 -186.224518 958.713806"
+    },
+    {
+      "entity_index": 54,
+      "name": "box_top",
+      "model_index": 54,
+      "motion_record_present": true,
+      "origin": "1511.625000 -154.224487 942.714050"
+    },
+    {
+      "entity_index": 55,
+      "name": "box_side_g",
+      "model_index": 55,
+      "motion_record_present": true,
+      "origin": "1547.625244 -186.224487 926.714050"
+    },
+    {
+      "entity_index": 56,
+      "name": "box_side_b",
+      "model_index": 56,
+      "motion_record_present": true,
+      "origin": "1491.625000 -186.224487 978.714050"
+    },
+    {
+      "entity_index": 57,
+      "name": "box_side_f",
+      "model_index": 57,
+      "motion_record_present": true,
+      "origin": "1531.625000 -186.224518 906.714050"
+    },
+    {
+      "entity_index": 58,
+      "name": "box_clip1",
+      "model_index": 58,
+      "motion_record_present": true,
+      "origin": "1598.479980 -190.224503 901.446655"
+    },
+    {
+      "entity_index": 59,
+      "name": "box_side_d1",
+      "model_index": 59,
+      "motion_record_present": true,
+      "origin": "1562.479980 -186.224518 885.446655"
+    },
+    {
+      "entity_index": 60,
+      "name": "box_side_e1",
+      "model_index": 60,
+      "motion_record_present": true,
+      "origin": "1578.479980 -186.224518 865.446655"
+    },
+    {
+      "entity_index": 61,
+      "name": "box_side_h1",
+      "model_index": 61,
+      "motion_record_present": true,
+      "origin": "1634.480225 -186.224487 917.446655"
+    },
+    {
+      "entity_index": 62,
+      "name": "box_side_a1",
+      "model_index": 62,
+      "motion_record_present": true,
+      "origin": "1618.479980 -186.224472 937.446655"
+    },
+    {
+      "entity_index": 63,
+      "name": "box_side_c1",
+      "model_index": 63,
+      "motion_record_present": true,
+      "origin": "1562.479980 -186.224518 917.446411"
+    },
+    {
+      "entity_index": 64,
+      "name": "box_top1",
+      "model_index": 64,
+      "motion_record_present": true,
+      "origin": "1598.479980 -154.224487 901.446655"
+    },
+    {
+      "entity_index": 65,
+      "name": "box_side_g1",
+      "model_index": 65,
+      "motion_record_present": true,
+      "origin": "1634.480225 -186.224487 885.446655"
+    },
+    {
+      "entity_index": 66,
+      "name": "box_side_b1",
+      "model_index": 66,
+      "motion_record_present": true,
+      "origin": "1578.479980 -186.224487 937.446655"
+    },
+    {
+      "entity_index": 67,
+      "name": "box_side_f1",
+      "model_index": 67,
+      "motion_record_present": true,
+      "origin": "1618.479980 -186.224518 865.446655"
+    },
+    {
+      "entity_index": 68,
+      "name": "box_clip2",
+      "model_index": 68,
+      "motion_record_present": true,
+      "origin": "1704.334961 -190.224503 827.179260"
+    },
+    {
+      "entity_index": 69,
+      "name": "box_side_d2",
+      "model_index": 69,
+      "motion_record_present": true,
+      "origin": "1668.334961 -186.224518 811.179260"
+    },
+    {
+      "entity_index": 70,
+      "name": "box_side_e2",
+      "model_index": 70,
+      "motion_record_present": true,
+      "origin": "1684.334961 -186.224518 791.179260"
+    },
+    {
+      "entity_index": 71,
+      "name": "box_side_h2",
+      "model_index": 71,
+      "motion_record_present": true,
+      "origin": "1740.335205 -186.224487 843.179260"
+    },
+    {
+      "entity_index": 72,
+      "name": "box_side_a2",
+      "model_index": 72,
+      "motion_record_present": true,
+      "origin": "1724.334961 -186.224472 863.179260"
+    },
+    {
+      "entity_index": 73,
+      "name": "box_side_c2",
+      "model_index": 73,
+      "motion_record_present": true,
+      "origin": "1668.334961 -186.224518 843.179016"
+    },
+    {
+      "entity_index": 74,
+      "name": "box_top2",
+      "model_index": 74,
+      "motion_record_present": true,
+      "origin": "1704.334961 -154.224487 827.179260"
+    },
+    {
+      "entity_index": 75,
+      "name": "box_side_g2",
+      "model_index": 75,
+      "motion_record_present": true,
+      "origin": "1740.335205 -186.224487 811.179260"
+    },
+    {
+      "entity_index": 76,
+      "name": "box_side_b2",
+      "model_index": 76,
+      "motion_record_present": true,
+      "origin": "1684.334961 -186.224487 863.179260"
+    },
+    {
+      "entity_index": 77,
+      "name": "box_side_f2",
+      "model_index": 77,
+      "motion_record_present": true,
+      "origin": "1724.334961 -186.224518 791.179260"
+    },
+    {
+      "entity_index": 78,
+      "name": "box_clip3",
+      "model_index": 78,
+      "motion_record_present": true,
+      "origin": "1510.189941 -190.224503 812.911865"
+    },
+    {
+      "entity_index": 79,
+      "name": "box_side_d3",
+      "model_index": 79,
+      "motion_record_present": true,
+      "origin": "1474.189941 -186.224518 796.911865"
+    },
+    {
+      "entity_index": 80,
+      "name": "box_side_e3",
+      "model_index": 80,
+      "motion_record_present": true,
+      "origin": "1490.189941 -186.224518 776.911865"
+    },
+    {
+      "entity_index": 81,
+      "name": "box_side_h3",
+      "model_index": 81,
+      "motion_record_present": true,
+      "origin": "1546.190186 -186.224487 828.911865"
+    },
+    {
+      "entity_index": 82,
+      "name": "box_side_a3",
+      "model_index": 82,
+      "motion_record_present": true,
+      "origin": "1530.189941 -186.224472 848.911865"
+    },
+    {
+      "entity_index": 83,
+      "name": "box_side_c3",
+      "model_index": 83,
+      "motion_record_present": true,
+      "origin": "1474.189941 -186.224518 828.911621"
+    },
+    {
+      "entity_index": 84,
+      "name": "box_top3",
+      "model_index": 84,
+      "motion_record_present": true,
+      "origin": "1510.189941 -154.224487 812.911865"
+    },
+    {
+      "entity_index": 85,
+      "name": "box_side_g3",
+      "model_index": 85,
+      "motion_record_present": true,
+      "origin": "1546.190186 -186.224487 796.911865"
+    },
+    {
+      "entity_index": 86,
+      "name": "box_side_b3",
+      "model_index": 86,
+      "motion_record_present": true,
+      "origin": "1490.189941 -186.224487 848.911865"
+    },
+    {
+      "entity_index": 87,
+      "name": "box_side_f3",
+      "model_index": 87,
+      "motion_record_present": true,
+      "origin": "1530.189941 -186.224518 776.911865"
+    },
+    {
+      "entity_index": 89,
+      "name": "Exit1",
+      "model_index": 88,
+      "motion_record_present": false,
+      "origin": "-390.000000 -172.000000 -73.999664"
+    },
+    {
+      "entity_index": 90,
+      "name": "Exit2",
+      "model_index": 89,
+      "motion_record_present": false,
+      "origin": "-170.000198 -212.000000 1914.000366"
+    },
+    {
+      "entity_index": 91,
+      "name": "obj_liftable_woodbox2",
+      "model_index": 90,
+      "motion_record_present": false,
+      "origin": "1706.599365 -60.022324 -365.224762"
+    },
+    {
+      "entity_index": 92,
+      "name": "button1",
+      "model_index": 91,
+      "motion_record_present": false,
+      "origin": "1725.000000 -133.000000 -363.724609"
+    },
+    {
+      "entity_index": 93,
+      "name": "door16",
+      "model_index": 92,
+      "motion_record_present": true,
+      "origin": "406.600952 28.062515 -263.937622"
+    },
+    {
+      "entity_index": 94,
+      "name": "door17",
+      "model_index": 93,
+      "motion_record_present": true,
+      "origin": "533.398987 -171.875244 -383.999878"
+    },
+    {
+      "entity_index": 95,
+      "name": "door18",
+      "model_index": 94,
+      "motion_record_present": true,
+      "origin": "533.398987 -171.875244 -103.999878"
+    },
+    {
+      "entity_index": 96,
+      "name": "door19",
+      "model_index": 95,
+      "motion_record_present": true,
+      "origin": "461.398987 -7.875244 -335.999878"
+    },
+    {
+      "entity_index": 97,
+      "name": "door20",
+      "model_index": 96,
+      "motion_record_present": true,
+      "origin": "461.398987 -147.875244 -335.999878"
+    },
+    {
+      "entity_index": 98,
+      "name": "box_clip4",
+      "model_index": 97,
+      "motion_record_present": true,
+      "origin": "1608.044922 -190.224503 779.644470"
+    },
+    {
+      "entity_index": 99,
+      "name": "box_side_d4",
+      "model_index": 98,
+      "motion_record_present": true,
+      "origin": "1572.044922 -186.224518 763.644470"
+    },
+    {
+      "entity_index": 100,
+      "name": "box_side_e4",
+      "model_index": 99,
+      "motion_record_present": true,
+      "origin": "1588.044922 -186.224518 743.644470"
+    },
+    {
+      "entity_index": 101,
+      "name": "box_side_h4",
+      "model_index": 100,
+      "motion_record_present": true,
+      "origin": "1644.045166 -186.224487 795.644470"
+    },
+    {
+      "entity_index": 102,
+      "name": "box_side_a4",
+      "model_index": 101,
+      "motion_record_present": true,
+      "origin": "1628.044922 -186.224472 815.644470"
+    },
+    {
+      "entity_index": 103,
+      "name": "box_side_c4",
+      "model_index": 102,
+      "motion_record_present": true,
+      "origin": "1572.044922 -186.224518 795.644226"
+    },
+    {
+      "entity_index": 104,
+      "name": "box_top4",
+      "model_index": 103,
+      "motion_record_present": true,
+      "origin": "1608.044922 -154.224487 779.644470"
+    },
+    {
+      "entity_index": 105,
+      "name": "box_side_g4",
+      "model_index": 104,
+      "motion_record_present": true,
+      "origin": "1644.045166 -186.224487 763.644470"
+    },
+    {
+      "entity_index": 106,
+      "name": "box_side_b4",
+      "model_index": 105,
+      "motion_record_present": true,
+      "origin": "1588.044922 -186.224487 815.644470"
+    },
+    {
+      "entity_index": 107,
+      "name": "box_side_f4",
+      "model_index": 106,
+      "motion_record_present": true,
+      "origin": "1628.044922 -186.224518 743.644470"
+    },
+    {
+      "entity_index": 108,
+      "name": "box_clip5",
+      "model_index": 107,
+      "motion_record_present": true,
+      "origin": "1699.754883 -190.224503 730.377075"
+    },
+    {
+      "entity_index": 109,
+      "name": "box_side_d5",
+      "model_index": 108,
+      "motion_record_present": true,
+      "origin": "1663.754883 -186.224518 714.377075"
+    },
+    {
+      "entity_index": 110,
+      "name": "box_side_e5",
+      "model_index": 109,
+      "motion_record_present": true,
+      "origin": "1679.754883 -186.224518 694.377075"
+    },
+    {
+      "entity_index": 111,
+      "name": "box_side_h5",
+      "model_index": 110,
+      "motion_record_present": true,
+      "origin": "1735.755127 -186.224487 746.377075"
+    },
+    {
+      "entity_index": 112,
+      "name": "box_side_a5",
+      "model_index": 111,
+      "motion_record_present": true,
+      "origin": "1719.754883 -186.224472 766.377075"
+    },
+    {
+      "entity_index": 113,
+      "name": "box_side_c5",
+      "model_index": 112,
+      "motion_record_present": true,
+      "origin": "1663.754883 -186.224518 746.376831"
+    },
+    {
+      "entity_index": 114,
+      "name": "box_top5",
+      "model_index": 113,
+      "motion_record_present": true,
+      "origin": "1699.754883 -154.224487 730.377075"
+    },
+    {
+      "entity_index": 115,
+      "name": "box_side_g5",
+      "model_index": 114,
+      "motion_record_present": true,
+      "origin": "1735.755127 -186.224487 714.377075"
+    },
+    {
+      "entity_index": 116,
+      "name": "box_side_b5",
+      "model_index": 115,
+      "motion_record_present": true,
+      "origin": "1679.754883 -186.224487 766.377075"
+    },
+    {
+      "entity_index": 117,
+      "name": "box_side_f5",
+      "model_index": 116,
+      "motion_record_present": true,
+      "origin": "1719.754883 -186.224518 694.377075"
+    },
+    {
+      "entity_index": 118,
+      "name": "box_clip6",
+      "model_index": 117,
+      "motion_record_present": true,
+      "origin": "1715.609863 -190.224503 484.109680"
+    },
+    {
+      "entity_index": 119,
+      "name": "box_side_d6",
+      "model_index": 118,
+      "motion_record_present": true,
+      "origin": "1679.609863 -186.224518 468.109680"
+    },
+    {
+      "entity_index": 120,
+      "name": "box_side_e6",
+      "model_index": 119,
+      "motion_record_present": true,
+      "origin": "1695.609863 -186.224518 448.109680"
+    },
+    {
+      "entity_index": 121,
+      "name": "box_side_h6",
+      "model_index": 120,
+      "motion_record_present": true,
+      "origin": "1751.610107 -186.224487 500.109680"
+    },
+    {
+      "entity_index": 122,
+      "name": "box_side_a6",
+      "model_index": 121,
+      "motion_record_present": true,
+      "origin": "1735.609863 -186.224472 520.109680"
+    },
+    {
+      "entity_index": 123,
+      "name": "box_side_c6",
+      "model_index": 122,
+      "motion_record_present": true,
+      "origin": "1679.609863 -186.224518 500.109436"
+    },
+    {
+      "entity_index": 124,
+      "name": "box_top6",
+      "model_index": 123,
+      "motion_record_present": true,
+      "origin": "1715.609863 -154.224487 484.109680"
+    },
+    {
+      "entity_index": 125,
+      "name": "box_side_g6",
+      "model_index": 124,
+      "motion_record_present": true,
+      "origin": "1751.610107 -186.224487 468.109680"
+    },
+    {
+      "entity_index": 126,
+      "name": "box_side_b6",
+      "model_index": 125,
+      "motion_record_present": true,
+      "origin": "1695.609863 -186.224487 520.109680"
+    },
+    {
+      "entity_index": 127,
+      "name": "box_side_f6",
+      "model_index": 126,
+      "motion_record_present": true,
+      "origin": "1735.609863 -186.224518 448.109680"
+    },
+    {
+      "entity_index": 128,
+      "name": "box_clip7",
+      "model_index": 127,
+      "motion_record_present": true,
+      "origin": "1513.663330 -190.224503 667.832092"
+    },
+    {
+      "entity_index": 129,
+      "name": "box_side_d7",
+      "model_index": 128,
+      "motion_record_present": true,
+      "origin": "1477.663330 -186.224518 651.832092"
+    },
+    {
+      "entity_index": 130,
+      "name": "box_side_e7",
+      "model_index": 129,
+      "motion_record_present": true,
+      "origin": "1493.663330 -186.224518 631.832092"
+    },
+    {
+      "entity_index": 131,
+      "name": "box_side_h7",
+      "model_index": 130,
+      "motion_record_present": true,
+      "origin": "1549.663574 -186.224487 683.832092"
+    },
+    {
+      "entity_index": 132,
+      "name": "box_side_a7",
+      "model_index": 131,
+      "motion_record_present": true,
+      "origin": "1533.663330 -186.224472 703.832092"
+    },
+    {
+      "entity_index": 133,
+      "name": "box_side_c7",
+      "model_index": 132,
+      "motion_record_present": true,
+      "origin": "1477.663330 -186.224518 683.831848"
+    },
+    {
+      "entity_index": 134,
+      "name": "box_top7",
+      "model_index": 133,
+      "motion_record_present": true,
+      "origin": "1513.663330 -154.224487 667.832092"
+    },
+    {
+      "entity_index": 135,
+      "name": "box_side_g7",
+      "model_index": 134,
+      "motion_record_present": true,
+      "origin": "1549.663574 -186.224487 651.832092"
+    },
+    {
+      "entity_index": 136,
+      "name": "box_side_b7",
+      "model_index": 135,
+      "motion_record_present": true,
+      "origin": "1493.663330 -186.224487 703.832092"
+    },
+    {
+      "entity_index": 137,
+      "name": "box_side_f7",
+      "model_index": 136,
+      "motion_record_present": true,
+      "origin": "1533.663330 -186.224518 631.832092"
+    },
+    {
+      "entity_index": 138,
+      "name": "box_clip8",
+      "model_index": 137,
+      "motion_record_present": true,
+      "origin": "1620.518311 -190.224503 685.564697"
+    },
+    {
+      "entity_index": 139,
+      "name": "box_side_d8",
+      "model_index": 138,
+      "motion_record_present": true,
+      "origin": "1584.518311 -186.224518 669.564697"
+    },
+    {
+      "entity_index": 140,
+      "name": "box_side_e8",
+      "model_index": 139,
+      "motion_record_present": true,
+      "origin": "1600.518311 -186.224518 649.564697"
+    },
+    {
+      "entity_index": 141,
+      "name": "box_side_h8",
+      "model_index": 140,
+      "motion_record_present": true,
+      "origin": "1656.518555 -186.224487 701.564697"
+    },
+    {
+      "entity_index": 142,
+      "name": "box_side_a8",
+      "model_index": 141,
+      "motion_record_present": true,
+      "origin": "1640.518311 -186.224472 721.564697"
+    },
+    {
+      "entity_index": 143,
+      "name": "box_side_c8",
+      "model_index": 142,
+      "motion_record_present": true,
+      "origin": "1584.518311 -186.224518 701.564453"
+    },
+    {
+      "entity_index": 144,
+      "name": "box_top8",
+      "model_index": 143,
+      "motion_record_present": true,
+      "origin": "1620.518311 -154.224487 685.564697"
+    },
+    {
+      "entity_index": 145,
+      "name": "box_side_g8",
+      "model_index": 144,
+      "motion_record_present": true,
+      "origin": "1656.518555 -186.224487 669.564697"
+    },
+    {
+      "entity_index": 146,
+      "name": "box_side_b8",
+      "model_index": 145,
+      "motion_record_present": true,
+      "origin": "1600.518311 -186.224487 721.564697"
+    },
+    {
+      "entity_index": 147,
+      "name": "box_side_f8",
+      "model_index": 146,
+      "motion_record_present": true,
+      "origin": "1640.518311 -186.224518 649.564697"
+    },
+    {
+      "entity_index": 148,
+      "name": "obj_breakable_chair10",
+      "model_index": 147,
+      "motion_record_present": true,
+      "origin": "-511.838318 -181.458038 -414.736816"
+    },
+    {
+      "entity_index": 149,
+      "name": "obj_breakable_chair13",
+      "model_index": 148,
+      "motion_record_present": true,
+      "origin": "-488.092407 -83.509659 -556.261353"
+    },
+    {
+      "entity_index": 150,
+      "name": "obj_breakable_chair14",
+      "model_index": 149,
+      "motion_record_present": true,
+      "origin": "-533.668518 -83.509659 -562.031738"
+    },
+    {
+      "entity_index": 151,
+      "name": "obj_breakable_chair12",
+      "model_index": 150,
+      "motion_record_present": true,
+      "origin": "-487.952515 -83.509659 -400.831970"
+    },
+    {
+      "entity_index": 152,
+      "name": "obj_breakable_chair11",
+      "model_index": 151,
+      "motion_record_present": true,
+      "origin": "-533.528625 -83.509659 -406.602356"
+    },
+    {
+      "entity_index": 153,
+      "name": "obj_breakable_chair15",
+      "model_index": 152,
+      "motion_record_present": true,
+      "origin": "-314.562317 -75.286789 -648.429626"
+    },
+    {
+      "entity_index": 154,
+      "name": "obj_breakable_chair16",
+      "model_index": 153,
+      "motion_record_present": true,
+      "origin": "-308.791931 -75.286789 -694.005676"
+    },
+    {
+      "entity_index": 155,
+      "name": "obj_breakable_chair17",
+      "model_index": 154,
+      "motion_record_present": true,
+      "origin": "-469.991699 -75.286789 -648.289734"
+    },
+    {
+      "entity_index": 156,
+      "name": "obj_breakable_chair18",
+      "model_index": 155,
+      "motion_record_present": true,
+      "origin": "-464.221283 -75.286789 -693.865784"
+    },
+    {
+      "entity_index": 157,
+      "name": "obj_breakable_chair19",
+      "model_index": 156,
+      "motion_record_present": true,
+      "origin": "-456.086853 -173.235168 -672.175476"
+    },
+    {
+      "entity_index": 158,
+      "name": "obj_breakable_chair20",
+      "model_index": 157,
+      "motion_record_present": true,
+      "origin": "-506.297485 -83.509659 254.878906"
+    },
+    {
+      "entity_index": 159,
+      "name": "obj_breakable_chair21",
+      "model_index": 158,
+      "motion_record_present": true,
+      "origin": "-552.237061 -83.509659 255.070160"
+    },
+    {
+      "entity_index": 160,
+      "name": "obj_breakable_chair22",
+      "model_index": 159,
+      "motion_record_present": true,
+      "origin": "-485.993958 -83.509659 408.976532"
+    },
+    {
+      "entity_index": 161,
+      "name": "obj_breakable_chair23",
+      "model_index": 160,
+      "motion_record_present": true,
+      "origin": "-531.933533 -83.509659 409.167786"
+    },
+    {
+      "entity_index": 162,
+      "name": "obj_breakable_chair24",
+      "model_index": 161,
+      "motion_record_present": true,
+      "origin": "-511.481842 -181.458038 398.288055"
+    },
+    {
+      "entity_index": 163,
+      "name": "obj_breakable_chair25",
+      "model_index": 162,
+      "motion_record_present": true,
+      "origin": "-526.489502 -83.509659 347.719482"
+    },
+    {
+      "entity_index": 164,
+      "name": "obj_breakable_chair26",
+      "model_index": 163,
+      "motion_record_present": true,
+      "origin": "-572.114868 -83.509659 342.352295"
+    },
+    {
+      "entity_index": 165,
+      "name": "obj_breakable_chair27",
+      "model_index": 164,
+      "motion_record_present": true,
+      "origin": "-524.975281 -83.509659 503.141541"
+    },
+    {
+      "entity_index": 166,
+      "name": "obj_breakable_chair28",
+      "model_index": 165,
+      "motion_record_present": true,
+      "origin": "-570.600647 -83.509659 497.774353"
+    },
+    {
+      "entity_index": 167,
+      "name": "obj_breakable_chair29",
+      "model_index": 166,
+      "motion_record_present": true,
+      "origin": "-548.983154 -181.458038 489.448425"
+    },
+    {
+      "entity_index": 168,
+      "name": "obj_breakable_chair30",
+      "model_index": 167,
+      "motion_record_present": true,
+      "origin": "-483.731873 -86.062714 1216.764648"
+    },
+    {
+      "entity_index": 169,
+      "name": "obj_breakable_chair31",
+      "model_index": 168,
+      "motion_record_present": true,
+      "origin": "-529.357239 -86.624390 1211.426758"
+    },
+    {
+      "entity_index": 170,
+      "name": "obj_breakable_chair32",
+      "model_index": 169,
+      "motion_record_present": true,
+      "origin": "-482.217651 -69.798080 1371.333252"
+    },
+    {
+      "entity_index": 171,
+      "name": "obj_breakable_chair33",
+      "model_index": 170,
+      "motion_record_present": true,
+      "origin": "-527.843018 -70.359741 1365.995850"
+    },
+    {
+      "entity_index": 172,
+      "name": "obj_breakable_chair34",
+      "model_index": 171,
+      "motion_record_present": true,
+      "origin": "-506.225525 -168.641602 1367.965576"
+    },
+    {
+      "entity_index": 173,
+      "name": "obj_breakable_chair40",
+      "model_index": 172,
+      "motion_record_present": true,
+      "origin": "-488.450897 -75.732529 1786.329834"
+    },
+    {
+      "entity_index": 174,
+      "name": "obj_breakable_chair41",
+      "model_index": 173,
+      "motion_record_present": true,
+      "origin": "-534.355225 -75.732529 1784.519531"
+    },
+    {
+      "entity_index": 175,
+      "name": "obj_breakable_chair42",
+      "model_index": 174,
+      "motion_record_present": true,
+      "origin": "-474.879730 -75.732529 1941.165771"
+    },
+    {
+      "entity_index": 176,
+      "name": "obj_breakable_chair43",
+      "model_index": 175,
+      "motion_record_present": true,
+      "origin": "-520.783997 -75.732529 1939.355469"
+    },
+    {
+      "entity_index": 177,
+      "name": "obj_breakable_chair44",
+      "model_index": 176,
+      "motion_record_present": true,
+      "origin": "-499.877869 -173.680908 1929.376953"
+    },
+    {
+      "entity_index": 178,
+      "name": "obj_breakable_chair45",
+      "model_index": 177,
+      "motion_record_present": true,
+      "origin": "308.714722 -84.509659 2156.997559"
+    },
+    {
+      "entity_index": 179,
+      "name": "obj_breakable_chair46",
+      "model_index": 178,
+      "motion_record_present": true,
+      "origin": "326.469086 -84.509659 2114.627197"
+    },
+    {
+      "entity_index": 180,
+      "name": "obj_breakable_chair47",
+      "model_index": 179,
+      "motion_record_present": true,
+      "origin": "158.914261 -84.509659 2115.546631"
+    },
+    {
+      "entity_index": 181,
+      "name": "obj_breakable_chair48",
+      "model_index": 180,
+      "motion_record_present": true,
+      "origin": "176.668610 -84.509659 2073.176270"
+    },
+    {
+      "entity_index": 182,
+      "name": "obj_breakable_chair49",
+      "model_index": 181,
+      "motion_record_present": true,
+      "origin": "178.703125 -182.458038 2096.251953"
+    },
+    {
+      "entity_index": 183,
+      "name": "obj_breakable_chair50",
+      "model_index": 182,
+      "motion_record_present": true,
+      "origin": "739.397461 -84.509659 2068.721680"
+    },
+    {
+      "entity_index": 184,
+      "name": "obj_breakable_chair51",
+      "model_index": 183,
+      "motion_record_present": true,
+      "origin": "746.886658 -84.509659 2023.396484"
+    },
+    {
+      "entity_index": 185,
+      "name": "obj_breakable_chair52",
+      "model_index": 184,
+      "motion_record_present": true,
+      "origin": "584.073730 -84.509659 2062.987061"
+    },
+    {
+      "entity_index": 186,
+      "name": "obj_breakable_chair53",
+      "model_index": 185,
+      "motion_record_present": true,
+      "origin": "591.562927 -84.509659 2017.661621"
+    },
+    {
+      "entity_index": 187,
+      "name": "obj_breakable_chair54",
+      "model_index": 186,
+      "motion_record_present": true,
+      "origin": "598.871582 -182.458038 2039.643799"
+    },
+    {
+      "entity_index": 188,
+      "name": "obj_breakable_chair55",
+      "model_index": 187,
+      "motion_record_present": true,
+      "origin": "928.252380 -84.509659 2063.454346"
+    },
+    {
+      "entity_index": 189,
+      "name": "obj_breakable_chair56",
+      "model_index": 188,
+      "motion_record_present": true,
+      "origin": "935.741577 -84.509659 2018.129150"
+    },
+    {
+      "entity_index": 190,
+      "name": "obj_breakable_chair57",
+      "model_index": 189,
+      "motion_record_present": true,
+      "origin": "772.928650 -84.509659 2057.719727"
+    },
+    {
+      "entity_index": 191,
+      "name": "obj_breakable_chair58",
+      "model_index": 190,
+      "motion_record_present": true,
+      "origin": "780.417847 -84.509659 2012.394287"
+    },
+    {
+      "entity_index": 192,
+      "name": "obj_breakable_chair59",
+      "model_index": 191,
+      "motion_record_present": true,
+      "origin": "787.726501 -182.458038 2034.376465"
+    },
+    {
+      "entity_index": 193,
+      "name": "obj_breakable_chair60",
+      "model_index": 192,
+      "motion_record_present": true,
+      "origin": "1106.650391 -84.509659 2078.577637"
+    },
+    {
+      "entity_index": 194,
+      "name": "obj_breakable_chair61",
+      "model_index": 193,
+      "motion_record_present": true,
+      "origin": "1107.847900 -84.509659 2032.653564"
+    },
+    {
+      "entity_index": 195,
+      "name": "obj_breakable_chair62",
+      "model_index": 194,
+      "motion_record_present": true,
+      "origin": "952.009521 -84.509659 2094.215088"
+    },
+    {
+      "entity_index": 196,
+      "name": "obj_breakable_chair63",
+      "model_index": 195,
+      "motion_record_present": true,
+      "origin": "953.207031 -84.509659 2048.290771"
+    },
+    {
+      "entity_index": 197,
+      "name": "obj_breakable_chair64",
+      "model_index": 196,
+      "motion_record_present": true,
+      "origin": "963.463562 -182.458038 2069.061768"
+    },
+    {
+      "entity_index": 198,
+      "name": "obj_breakable_chair65",
+      "model_index": 197,
+      "motion_record_present": true,
+      "origin": "2257.077637 -85.286789 2017.289551"
+    },
+    {
+      "entity_index": 199,
+      "name": "obj_breakable_chair66",
+      "model_index": 198,
+      "motion_record_present": true,
+      "origin": "2251.643799 -85.286789 1971.672363"
+    },
+    {
+      "entity_index": 200,
+      "name": "obj_breakable_chair67",
+      "model_index": 199,
+      "motion_record_present": true,
+      "origin": "2106.305176 -85.286789 2055.051514"
+    },
+    {
+      "entity_index": 201,
+      "name": "obj_breakable_chair68",
+      "model_index": 200,
+      "motion_record_present": true,
+      "origin": "2100.871338 -85.286789 2009.434082"
+    },
+    {
+      "entity_index": 202,
+      "name": "obj_breakable_chair69",
+      "model_index": 201,
+      "motion_record_present": true,
+      "origin": "2114.014404 -183.235168 2028.509766"
+    },
+    {
+      "entity_index": 203,
+      "name": "obj_breakable_chair70",
+      "model_index": 202,
+      "motion_record_present": true,
+      "origin": "1622.367676 -85.286789 2068.737305"
+    },
+    {
+      "entity_index": 204,
+      "name": "obj_breakable_chair71",
+      "model_index": 203,
+      "motion_record_present": true,
+      "origin": "1628.163086 -85.286789 2023.164551"
+    },
+    {
+      "entity_index": 205,
+      "name": "obj_breakable_chair72",
+      "model_index": 204,
+      "motion_record_present": true,
+      "origin": "1466.938477 -85.286789 2068.793213"
+    },
+    {
+      "entity_index": 206,
+      "name": "obj_breakable_chair73",
+      "model_index": 205,
+      "motion_record_present": true,
+      "origin": "1472.733887 -85.286789 2023.220215"
+    },
+    {
+      "entity_index": 207,
+      "name": "obj_breakable_chair74",
+      "model_index": 206,
+      "motion_record_present": true,
+      "origin": "1480.856445 -183.235168 2044.914551"
+    },
+    {
+      "entity_index": 208,
+      "name": "obj_breakable_chair75",
+      "model_index": 207,
+      "motion_record_present": true,
+      "origin": "1823.834229 -85.286789 2071.859131"
+    },
+    {
+      "entity_index": 209,
+      "name": "obj_breakable_chair76",
+      "model_index": 208,
+      "motion_record_present": true,
+      "origin": "1837.445557 -85.286789 2027.982178"
+    },
+    {
+      "entity_index": 210,
+      "name": "obj_breakable_chair77",
+      "model_index": 209,
+      "motion_record_present": true,
+      "origin": "1670.750732 -85.286789 2044.958008"
+    },
+    {
+      "entity_index": 211,
+      "name": "obj_breakable_chair78",
+      "model_index": 210,
+      "motion_record_present": true,
+      "origin": "1684.362061 -85.286789 2001.080566"
+    },
+    {
+      "entity_index": 212,
+      "name": "obj_breakable_chair79",
+      "model_index": 211,
+      "motion_record_present": true,
+      "origin": "1688.599121 -183.235168 2023.854980"
+    },
+    {
+      "entity_index": 213,
+      "name": "obj_breakable_chair80",
+      "model_index": 212,
+      "motion_record_present": true,
+      "origin": "2036.640869 -86.732529 2057.791992"
+    },
+    {
+      "entity_index": 214,
+      "name": "obj_breakable_chair81",
+      "model_index": 213,
+      "motion_record_present": true,
+      "origin": "2039.084961 -86.732529 2011.917236"
+    },
+    {
+      "entity_index": 215,
+      "name": "obj_breakable_chair82",
+      "model_index": 214,
+      "motion_record_present": true,
+      "origin": "1881.632568 -86.732529 2069.224609"
+    },
+    {
+      "entity_index": 216,
+      "name": "obj_breakable_chair83",
+      "model_index": 215,
+      "motion_record_present": true,
+      "origin": "1884.076660 -86.732529 2023.349609"
+    },
+    {
+      "entity_index": 217,
+      "name": "obj_breakable_chair84",
+      "model_index": 216,
+      "motion_record_present": true,
+      "origin": "1893.765381 -184.680908 2044.391113"
+    },
+    {
+      "entity_index": 218,
+      "name": "obj_breakable_chair85",
+      "model_index": 217,
+      "motion_record_present": true,
+      "origin": "1029.442871 -88.827408 1285.860962"
+    },
+    {
+      "entity_index": 219,
+      "name": "obj_breakable_chair86",
+      "model_index": 218,
+      "motion_record_present": true,
+      "origin": "1035.283691 -88.827660 1332.294189"
+    },
+    {
+      "entity_index": 220,
+      "name": "obj_breakable_chair87",
+      "model_index": 219,
+      "motion_record_present": true,
+      "origin": "874.013306 -88.827408 1285.761475"
+    },
+    {
+      "entity_index": 221,
+      "name": "obj_breakable_chair88",
+      "model_index": 220,
+      "motion_record_present": true,
+      "origin": "879.854248 -88.827644 1332.194336"
+    },
+    {
+      "entity_index": 222,
+      "name": "ExplodingCar3",
+      "model_index": 221,
+      "motion_record_present": true,
+      "origin": "146.114624 -182.000031 1335.761963"
+    },
+    {
+      "entity_index": 224,
+      "name": "Backalley",
+      "model_index": 222,
+      "motion_record_present": false,
+      "origin": "1989.499512 -125.999756 787.499756"
+    },
+    {
+      "entity_index": 226,
+      "name": "PumpStation2A",
+      "model_index": 223,
+      "motion_record_present": false,
+      "origin": "813.500244 -125.999756 1606.499878"
+    },
+    {
+      "entity_index": 227,
+      "name": "PumpStation2A1",
+      "model_index": 224,
+      "motion_record_present": false,
+      "origin": "487.500244 -123.900230 1677.499878"
+    },
+    {
+      "entity_index": 228,
+      "name": "PumpStation2A2",
+      "model_index": 225,
+      "motion_record_present": false,
+      "origin": "1256.500244 -125.999763 1017.499878"
+    },
+    {
+      "entity_index": 229,
+      "name": "PumpStation2A3",
+      "model_index": 226,
+      "motion_record_present": false,
+      "origin": "992.500244 -125.999763 1231.499756"
+    },
+    {
+      "entity_index": 231,
+      "name": "PumpStation1A",
+      "model_index": 227,
+      "motion_record_present": false,
+      "origin": "-58.500061 -125.999756 -26.499939"
+    },
+    {
+      "entity_index": 232,
+      "name": "PumpStation1A1",
+      "model_index": 228,
+      "motion_record_present": false,
+      "origin": "669.282776 -125.999756 305.783295"
+    },
+    {
+      "entity_index": 233,
+      "name": "PumpStation1A2",
+      "model_index": 229,
+      "motion_record_present": false,
+      "origin": "1041.283691 -125.999756 304.783417"
+    }
+  ],
+  "interpretation": "motion_record_present=false means the GBSP loader leaves this model's Motion pointer null"
+}

@@ -16,6 +16,35 @@ BSP entity 309 is an `RCS_BModel` named `button1`. It has child animation model
 - `S_Script01 = use: once (hint 8 (Good job you shut off the gas main.))`
 - `S_Script02 = *gasoff`
 
+## Child-model motion and effective reach
+
+Gas R entity 92 is a `%Model%` record with `%name%=button1`, `Model=91`, and
+origin `(1725, -133, -363.724609)`. The matching hash-pinned motion inventory
+is saved in [gas_r_model_motions.json](gas_r_model_motions.json); it reports
+209 serialized motion records, with no record for model 91. Therefore the
+Genesis3D GBSP loader leaves model 91's `Motion` pointer null. The public
+[Genesis3D 1.1 GBSP loader](https://github.com/RealityFactory/Genesis3D/blob/master/World/Gbspfile.c)
+initializes every model motion pointer to null, then assigns one only for each
+`ModelNum` record in the MOTIONS chunk. Its
+[motion reader](https://github.com/RealityFactory/Genesis3D/blob/master/Actor/motion.c)
+and [path time-extents implementation](https://github.com/RealityFactory/Genesis3D/blob/master/Actor/path.c)
+document the serialized representation and motion end time. The game binary's
+own `InitializeBModelEntity` (`0043C670`) independently follows child-model
+motion pointers and calls `geMotion_GetTimeExtents` only when a pointer exists;
+the largest child end time is stored at BModel root `+0x1EC`.
+
+Fresh Ghidra boundary `CheckBModelReachExpansion` (`0043AFF0`) confirms the
+48-unit override condition: it requires nonzero `F_HitPoints`, zero
+`G_Liftable`, and a maximum child-motion end time outside the inclusive
+`[-1e-28, +1e-28]` window. With model 91 having no motion record, the maximum
+end remains its zero default, so the helper returns false. The `E_Reach=20`
+authored on entity 309 is not promoted; Gas R button1's effective static reach
+is **20 units**.
+
+The inventory was generated locally from the pinned BSP using
+[`list_gbsp_motion_models.py`](../../../tools/list_gbsp_motion_models.py); the
+tool records only the `ModelNum` mapping and does not decode animation keys.
+
 Gas R EVS line 14 defines `gasoff` as a `use` event whose `cmd` list sends six
 `setsize` commands to named FireRescue actors and then sets `GasIsOn` to `0`.
 The parser expands `*gasoff` while processing the BModel script property, after
@@ -46,10 +75,9 @@ earlier `GasIsOn` variable is initialized to `1` on line 12.
    `CheckBModelContactCandidate` (`0x0043B620`). A matching candidate geometry
    is tested against the BModel bounds and an overlap pair is added to root
    `+0x160`. Gas R entity 309 authors `E_Reach=20`, `F_HitPoints=2`, and
-   `G_Liftable=0`. Its user-data gates allow the conditional 48-unit reach
-   override, but that branch also depends on the maximum child-motion endpoint;
-   the embedded BSP MOTIONS payload is not decoded, so the effective reach is
-   still 20-or-48 unresolved.
+   `G_Liftable=0`. The named `%Model%` record maps button1 to model 91, which
+   has no MOTIONS record; `CheckBModelReachExpansion` therefore leaves its
+   effective reach at 20. The asset join and format basis are documented above.
 4. The general BModel updater (`0x0043DC60`) converts contact-pair changes to
    ScriptActor contact events, tracks contact state, and adds or removes the
    interaction subobject at owner `+0xA0` when use mode is nonzero. The shared
@@ -80,6 +108,8 @@ port.
 - `0043c670_bmodel_init_fresh.c` and `0043c670_bmodel_init.asm`
 - `0043db40_bmodel_use_action_fresh.c` and `.asm`
 - `0043d2b0_bmodel_use_event_fresh.c` and `.asm`
+- `0043aff0_bmodel_reach_expansion_fresh.c` and `.asm`
+- `gas_r_model_motions.json` (named model-to-MOTIONS record inventory)
 - `0046e3d0_script_actor_has_event_fresh.c` and `.asm`
 - `004705b0_script_actor_event_dispatch_fresh.c` and `.asm`
 - `0046e470_nested_script_dispatch_fresh.c` and `.asm`

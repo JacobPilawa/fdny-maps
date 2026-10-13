@@ -69,12 +69,14 @@ the source-derived conditional 48-unit override, tests the AABBs, and appends
 an overlapping candidate pair to BModel root `+0x160`.
 
 Gas R BSP entity 309 (`button1`) authors `E_Reach=20`, `F_HitPoints=2`,
-`G_Liftable=0`, and `C_AnimModel0=button1`. The user-data gates for the
-non-liftable hit-point override are present; its remaining condition reads the
-maximum configured child-motion endpoint. The exporter preserves the BSP
-MOTIONS chunk but does not decode that motion stream, so the static data does
-not yet settle whether this instance's effective reach remains 20 or becomes
-48.
+`G_Liftable=0`, and `C_AnimModel0=button1`. The matching `%Model%` entity 92
+maps `button1` to BSP model 91. The hash-pinned MOTIONS inventory has 209 model
+records and omits model 91, so the engine leaves its motion pointer null and
+the BModel's maximum child-motion end remains zero. `CheckBModelReachExpansion`
+(`0043AFF0`) only permits the 48-unit override when that endpoint is at or
+beyond `+/-1e-28`; entity 309 therefore keeps its authored 20-unit reach. See
+the [Gas R model motion inventory](gas_r_model_motions.json) and the full
+[button reach derivation](gas_r_button1_use_path.md#child-model-motion-and-effective-reach).
 
 The BModel updater `UpdateBModelEntity` (`0043DC60`) turns contact-pair
 changes into ScriptActor contact events, tracks whether a candidate is in
