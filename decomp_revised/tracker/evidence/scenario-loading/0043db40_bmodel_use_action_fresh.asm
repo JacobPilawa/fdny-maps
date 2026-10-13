@@ -1,0 +1,77 @@
+0043db40: MOV EAX,FS:[0x0] 
+0043db46: PUSH -0x1 
+0043db48: PUSH 0x4ceab8 
+0043db4d: PUSH EAX 
+0043db4e: MOV dword ptr FS:[0x0],ESP 
+0043db55: SUB ESP,0x58 
+0043db58: PUSH EBP 
+0043db59: MOV EBP,ECX 
+0043db5b: MOV EAX,dword ptr [EBP + 0x1b8] 
+0043db61: TEST EAX,EAX 
+0043db63: JNZ 0x0043dbd3 
+0043db65: PUSH 0x1 
+0043db67: LEA ECX,[ESP + 0x18] 
+0043db6b: MOV dword ptr [ESP + 0x8],0x4dc554 
+0043db73: CALL 0x004a3118 
+0043db78: MOV dword ptr [ESP + 0x8],0x4e0c44 
+0043db80: MOV dword ptr [ESP + 0xc],0x8a 
+0043db88: MOV byte ptr [ESP + 0x10],0x0 
+0043db8d: PUSH 0x4e0d48 
+0043db92: LEA ECX,[ESP + 0x24] 
+0043db96: MOV dword ptr [ESP + 0x68],0x0 
+0043db9e: CALL 0x004a3a19 
+0043dba3: PUSH 0x0 
+0043dba5: LEA ECX,[ESP + 0x8] 
+0043dba9: CALL 0x00401360 
+0043dbae: LEA ECX,[ESP + 0x4] 
+0043dbb2: MOV dword ptr [ESP + 0x64],0xffffffff 
+0043dbba: CALL 0x004012c0 
+0043dbbf: XOR EAX,EAX 
+0043dbc1: POP EBP 
+0043dbc2: MOV ECX,dword ptr [ESP + 0x58] 
+0043dbc6: MOV dword ptr FS:[0x0],ECX 
+0043dbcd: ADD ESP,0x64 
+0043dbd0: RET 0x4 
+0043dbd3: PUSH ESI 
+0043dbd4: MOV ESI,dword ptr [ESP + 0x70] 
+0043dbd8: MOV EAX,dword ptr [ESI] 
+0043dbda: PUSH EDI 
+0043dbdb: LEA EDI,[EBP + 0x1c0] 
+0043dbe1: CMP EAX,EDI 
+0043dbe3: JZ 0x0043dc07 
+0043dbe5: TEST EAX,EAX 
+0043dbe7: JZ 0x0043dbf8 
+0043dbe9: MOV ECX,dword ptr [EAX + 0x4] 
+0043dbec: PUSH ESI 
+0043dbed: CALL 0x00429fe0 
+0043dbf2: MOV dword ptr [ESI],0x0 
+0043dbf8: TEST EDI,EDI 
+0043dbfa: JZ 0x0043dc07 
+0043dbfc: PUSH ESI 
+0043dbfd: LEA ECX,[EDI + 0x4] 
+0043dc00: CALL 0x0041b130 
+0043dc05: MOV dword ptr [ESI],EDI 
+0043dc07: CMP dword ptr [EBP + 0x1b8],0x1 
+0043dc0e: JNZ 0x0043dc39 
+0043dc10: MOV EAX,[0x00503a78] 
+0043dc15: MOV ECX,dword ptr [EAX + 0x30] 
+0043dc18: PUSH ESI 
+0043dc19: ADD EBP,0xffffff60 
+0043dc1f: PUSH EBP 
+0043dc20: CALL 0x0044c520 
+0043dc25: POP EDI 
+0043dc26: POP ESI 
+0043dc27: POP EBP 
+0043dc28: MOV ECX,dword ptr [ESP + 0x58] 
+0043dc2c: MOV dword ptr FS:[0x0],ECX 
+0043dc33: ADD ESP,0x64 
+0043dc36: RET 0x4 
+0043dc39: MOV ECX,dword ptr [ESP + 0x64] 
+0043dc3d: POP EDI 
+0043dc3e: POP ESI 
+0043dc3f: MOV EAX,0x3e8 
+0043dc44: POP EBP 
+0043dc45: MOV dword ptr FS:[0x0],ECX 
+0043dc4c: ADD ESP,0x64 
+0043dc4f: RET 0x4
+

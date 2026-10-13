@@ -18,7 +18,7 @@ The catalogued rescue entry `oil_rig_a` starts at `oil_rig_A.bsp`. `final_exit` 
 | `oil_rig_C.bsp` | 362 | `final_exit` | `touch: tell player (finalexitloadmap oil_rig_D)` | requests D |
 | `oil_rig_D.bsp` | 73 | `exit_lifeboat2` | `touch: tell player escape` | terminal escape command; no next-stage request found |
 
-The Player ScriptActor handler at `00451870` recognizes `finalexitloadmap` and calls `HandlePlayerFinalExitLoadMap` (`00450A70`). The helper builds `data\\maps\\<map-key>.bsp`, checks that path, and on success calls `0042A260` with a forwarded context value and `data\\resdefs\\rescue.rrf`. That function sets pending byte `this+0x68C`. `ProcessEverGameUpdate` (`0042AEA0`) consumes the byte and calls `0042AB00` with the pending descriptor; the existing World factory trace connects that loader to WorldEntity BSP loading. The static command-to-loader control path is mapped. The forwarded context value's identity and exact map-key field in the descriptor, plus successful runtime stage completion and timing, remain open. See [pending level update evidence](evergame_pending_level_update.md), [Player helper output](00450a70_player_finalexitloadmap_fresh.c), and [update output](0042aea0_evergame_pending_load_update_fresh.c).
+The Player ScriptActor handler at `00451870` recognizes `finalexitloadmap` and calls `HandlePlayerFinalExitLoadMap` (`00450A70`). The helper builds `data\\maps\\<map-key>.bsp`, checks that path, and on success calls `0042A260` with a forwarded context value and `data\\resdefs\\rescue.rrf`. That function sets pending byte `this+0x68C`. `ProcessEverGameUpdate` (`0042AEA0`) consumes the byte and calls `0042AB00` with the pending descriptor; the existing World factory trace connects that loader to WorldEntity BSP loading. The static command-to-loader control path is mapped. The pending map-name field at EverGame+0x660 and its loader read are mapped. Equality between the checked command argument and forwarded context, successful runtime stage completion, and timing remain open. See [pending level update evidence](evergame_pending_level_update.md), [Player helper output](00450a70_player_finalexitloadmap_fresh.c), and [update output](0042aea0_evergame_pending_load_update_fresh.c).
 
 ## Stage-local scripted targets
 
@@ -38,6 +38,6 @@ Fresh initializer outputs are [`004424d0_misc_emitter_init_fresh.c`](004424d0_mi
 
 ## Port work remaining
 
-- Resolve the forwarded context value and the exact map-key field in the pending descriptor; capture when the prior BSP unloads and each requested stage loads at runtime.
+- Trace the producer of the context string stored at EverGame+0x660; capture when the prior BSP unloads and each requested stage loads at runtime.
 - Resolve the steam effect types and compare their state changes and visible timing against an original-game capture.
 - Implement and capture the four-stage rescue flow, stage-local catwalk and stair motion, steam effects, rescue mechanics, and terminal escape behavior in the cross-platform port.
