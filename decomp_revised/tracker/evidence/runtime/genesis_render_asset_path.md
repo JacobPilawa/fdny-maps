@@ -72,11 +72,14 @@ unresolved.
 The static port exporter already follows BSP face → texinfo → texture index,
 decodes embedded palette-indexed TEXDATA, and produces the base BMPs consumed
 by the viewer. The macOS CGL framebuffer checks confirm that those BMPs upload
-and produce textured pixels on all seven rescue maps. This does not reproduce
-Genesis lighting/lightmaps, alpha/transparency, surface caching, or the original
-GPU driver's presentation. The concrete preview failure was the viewer
-disabling world model 0 for BoundsTriggers with no `model` property, plus its
-visible `col_*` helper meshes; see
+and produce textured pixels on all seven rescue maps. The shipped D3DDrv.dll
+texture create/lock/unlock and textured draw callbacks are now traced in
+[d3ddrv_render_path.md](d3ddrv_render_path.md); the RRF sidecar audit finds its
+alpha bitmaps are sprite/effect/HUD paths with no BSP texture-name matches.
+This does not reproduce Genesis lighting/lightmaps, per-face alpha, surface
+caching, or original window presentation. The concrete preview failure was the
+viewer disabling world model 0 for BoundsTriggers with no `model` property, plus
+its visible `col_*` helper meshes; see
 [`scene_preview_collision_texture_diagnostics.md`](scene_preview_collision_texture_diagnostics.md).
 
 ## Evidence inventory

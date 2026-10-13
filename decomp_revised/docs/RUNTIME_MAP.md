@@ -143,3 +143,14 @@ Fresh vtable and instruction evidence maps the entity-factory service: `0042B1A0
 - Identify the BoundsTrigger embedded updater's dynamic caller/order relative to its contact producer and the WorldEntity slot +0x14 caller. Trace the exact Training escape-command recipient. Continue the Genesis API map with actor creation/render preparation, camera updates, and sound.
 - Continue the FireRescue visual-Think route from the owning engine/list registration or a bounded runtime trace; do not repeat the already exhausted literal fixed-offset scan.
 - Resolve the disc/resource check through its callers and data references, without assuming what it validates.
+
+### Renderer texture path
+
+The selected D3DDrv.dll version-101.1 table is now decoded through texture
+creation, per-mip locking, textured polygon submission, and begin/end-scene
+callbacks. Pair this with the Genesis bitmap/GBSP path and the separate RRF
+sprite-resource audit in
+[`d3ddrv_render_path.md`](../tracker/evidence/runtime/d3ddrv_render_path.md).
+The portable viewer's collision and textured-render correction is measured
+across all seven rescue maps in
+[`scene_preview_collision_texture_diagnostics.md`](../tracker/evidence/runtime/scene_preview_collision_texture_diagnostics.md).

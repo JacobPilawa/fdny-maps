@@ -381,3 +381,26 @@ Followed the sound definitions through the EXE resource parser. `LoadResourceDef
 `SetFMODSampleMinMaxDistance` (004A0040) calls `FSOUND_Sample_SetMinMaxDistance(sample, first, second)`. Caller assembly and parser dataflow preserve source token order, so Subway A's `SubDoor` and `Zapp3d` entries configure minimum distance 200 and maximum distance 1000. Their WAV file hashes, sound-definition hash, and EVS/BSP joins are in `subway_a_interaction_inventory.json`; callsite evidence is in `sound_rrf_type_and_distance_assembly.md`.
 
 This resolves the static resource flag and numeric-field mapping. It does not capture collision timing, actual FMOD falloff/audibility on macOS, or visual parity, and only covers this Subway mechanic. Five fresh function reviews were added; the ledger now contains 163 functions. `dashboard/index.html` and gameplay code remain unchanged.
+
+
+## 2026-10-13 — D3DDrv texture lifecycle and rescue texture resources
+
+Loaded the copied D3DDrv.dll into Ghidra and followed the version-101.1 table
+from DriverHook through texture handle creation, mip surface allocation,
+lock/unlock, textured polygon preparation, and begin/end-scene callbacks. The
+selected functions are exported to
+`tracker/evidence/driver-boundary/d3ddrv_render_functions.c` and reviewed in a
+separate hash-pinned `tracker/d3ddrv_function_reviews.csv` ledger. The Ghidra
+project still has no configured save location; these exports remain the durable
+record. The Direct3D path describes the shipped Windows renderer boundary and
+is not copied as a macOS implementation.
+
+Audited raw rescue.rrf: 114 ROC_ALPHA_TEXTURE entries, 113 distinct numeric
+keys, 110 distinct base paths, and 44 optional alpha paths. Every base path is
+under Data/Sprites and no case-insensitive base filename matches a BSP texture
+name in any of the seven rescue maps. This separates sprite/effect/HUD alpha
+resources from the embedded BSP albedo path without claiming the numeric keys
+have no consumers. The floor/render symptom was separately fixed in the
+portable viewer: collision/render model 0 stays active when a BoundsTrigger
+omits its optional model index, and col_* helper groups are hidden. All seven
+rescue maps pass grounded movement and offscreen CGL textured-frame checks.

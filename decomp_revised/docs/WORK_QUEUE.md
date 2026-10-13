@@ -25,13 +25,15 @@ research can continue without redoing the old project review or recent audits.
   against that later pump to settle the initial selected tool. See
   `tracker/evidence/scenario-loading/entity_factory_queue_update_order.md`.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
-  level-loading chain and a partial Genesis/D3D driver boundary are mapped.
-  A fresh renderer trace now follows BSP world creation and `.rrf` bitmap / alpha
-  records through the VFile layer into `geBitmap_CreateFromFile` and engine/world
-  registration. The shipped Genesis.dll BMP decoder, GBSP v15 chunk parser,
-  embedded-world bitmap registration, and puppet material registration are
-  now mapped. This provides the original resource boundary for the preview;
-  exact surface material joining and visible desktop GL behavior remain open.
+  level-loading and renderer boundaries are mapped through the shipped
+  Genesis.dll and D3DDrv.dll: GBSP v15 loading, bitmap decode/registration,
+  actor material registration, Direct3D texture-handle creation, mip-level
+  lock/unlock, textured polygon submission, and frame callbacks. The raw
+  rescue.rrf audit separates sprite/effect/HUD alpha pairs from the embedded
+  BSP face-to-TexInfo-to-TEXTURES base-image path. The exact runtime per-face
+  flags/lightmaps and every dynamic surface call remain open. See
+  `tracker/evidence/runtime/d3ddrv_render_path.md` and
+  `tracker/evidence/runtime/genesis_render_asset_path.md`.
   FireRescue random spread, suppression, both hose/message contact routes,
   proximity gating, exposure dispatch, and the player burn/passout receiver
   now have fresh address-specific evidence; callback cadence and runtime
