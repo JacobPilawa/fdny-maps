@@ -262,3 +262,43 @@ endpoint needed to settle the conditional 48-unit override remains undecoded.
 The common BoundsTrigger path is documented alongside it. Exact Gas R
 instance membership, updater order/cadence, and live effects remain open. No
 dashboard HTML or native gameplay code changed.
+
+## 2026-10-13 — Gas R button1 motion join resolved
+
+Decoded the map asset link for entity 309's `button1`: its `%Model%` child is
+model index 91. The Gas R GBSP `MOTIONS` chunk declares 209 records but has no
+`ModelNum 91` entry. The Genesis3D GBSP loader initializes model motion pointers
+to null and assigns them only for serialized motion records; the game binary's
+`InitializeBModelEntity` therefore leaves this model's greatest child-motion
+endpoint at zero. `CheckBModelReachExpansion` (0043AFF0) returns false while
+that extent is strictly between approximately -1e-28 and +1e-28. The BModel
+contact check raises authored `E_Reach` to 48 only when this helper returns
+true. Thus Gas R button1's effective static reach is its authored **20 units**.
+The asset join, chunk hash, inventory output, Ghidra pseudocode, and exact
+threshold bytes are recorded in `gas_r_button1_use_path.md`,
+`gas_r_model_motions.json`, and the fresh helper export. Genesis3D references
+are format/loader corroboration, not evidence that the retail game contains
+those source files. Runtime overlap, candidate ordering, update cadence, input
+selection, and visible effect timing remain open. No dashboard HTML or native
+gameplay code changed.
+
+## 2026-10-13 — BModel motion extents joined across rescue maps
+
+Reused the archived Training door-motion audit and analyzed the copied retail
+`Genesis.dll` (SHA-256 `5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643`)
+in a separate headless Ghidra project. Fresh retail-DLL pseudocode at
+`1000D570`, `1000F580`, `1000BE60`, and `1000E490` establishes the MOTN/PATH
+reader and last-key time extent path. A reusable GBSP audit now joins
+`RCS_BModel.C_AnimModelN` names to `%Model%` indexes and serialized MOTIONS
+records, decodes their F2 key times as binary32, and computes the root's
+greatest child end time using the executable's `0043C670` initialization rule.
+Across Training and all seven campaign rescue maps, 76 BModels pass the
+hit-point/non-liftable/authored-reach gates; 71 feed effective reach 48 into
+`0043B620`, while five motionless ladders/button retain authored reaches.
+Gas R button1 is one of the five and remains 20 units. The full cross-map
+counts and entity-level joins are in
+`bmodel_reach_cross_map.md` and
+`bmodel_reach_asset_inventory.json`. Static bounds-test behavior is resolved;
+live contacts, candidate selection/order, callback cadence, input handling, and
+visible effect parity remain open. No dashboard HTML or native gameplay code
+changed.

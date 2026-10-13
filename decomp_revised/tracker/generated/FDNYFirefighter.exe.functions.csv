@@ -718,7 +718,7 @@ FDNYFirefighter.exe,0043af20,36,FUN_0043af20,Global,false,false,__thiscall,"unde
 FDNYFirefighter.exe,0043af60,21,FUN_0043af60,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0043af60(undefined4 * param_1)
 FDNYFirefighter.exe,0043af80,8,FUN_0043af80,Global,false,false,__fastcall,undefined __fastcall FUN_0043af80(int param_1)
 FDNYFirefighter.exe,0043af90,76,FUN_0043af90,Global,false,false,__fastcall,undefined __fastcall FUN_0043af90(undefined4 * param_1)
-FDNYFirefighter.exe,0043aff0,60,FUN_0043aff0,Global,false,false,__fastcall,uint __fastcall FUN_0043aff0(int param_1)
+FDNYFirefighter.exe,0043aff0,60,CheckBModelReachExpansion,Global,false,false,__fastcall,uint __fastcall FUN_0043aff0(int param_1)
 FDNYFirefighter.exe,0043b120,283,FUN_0043b120,Global,false,false,__cdecl,"uint __cdecl FUN_0043b120(float param_1, float param_2, int param_3)"
 FDNYFirefighter.exe,0043b2d0,69,FUN_0043b2d0,Global,false,false,__cdecl,"undefined __cdecl FUN_0043b2d0(float * param_1, float * param_2, float * param_3)"
 FDNYFirefighter.exe,0043b340,84,FUN_0043b340,Global,false,false,__cdecl,"char __cdecl FUN_0043b340(float * param_1, float * param_2)"

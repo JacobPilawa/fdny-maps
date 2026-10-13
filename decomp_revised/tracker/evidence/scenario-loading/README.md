@@ -68,3 +68,18 @@ and 280 now join through successful factory/spawn admission to the shared
 overlap-pair producer and `touch` / `touching` / `untouch` converter. Their live
 contacts and the updater caller remain unresolved. Fresh pseudocode and assembly exports are saved for
 `00440CE0`, `00440DC0`, and `00470840`.
+
+The Gas R `button1` model join is now resolved: BSP `%Model%` index 91 has no
+entry in the map's `MOTIONS` chunk. With no child motion, the executable's
+near-zero motion-extent gate does not raise `E_Reach`; its effective static
+reach is the authored 20 units. The updater cadence and live contact/selection
+remain unresolved. See [the reach derivation](gas_r_button1_use_path.md) and
+[model-motion inventory](gas_r_model_motions.json).
+
+The exact motion-end threshold is now applied across Training and every
+campaign rescue map. Of 76 BModels that pass the hit-point, non-liftable, and
+authored-reach gates, 71 use a static 48-unit bounds-test reach; five
+motionless ladders/button retain authored values. Per-map counts, retail DLL
+parser evidence, and runtime limits are in
+[the cross-map reach audit](bmodel_reach_cross_map.md), with exact model and
+entity joins in [the JSON inventory](bmodel_reach_asset_inventory.json).

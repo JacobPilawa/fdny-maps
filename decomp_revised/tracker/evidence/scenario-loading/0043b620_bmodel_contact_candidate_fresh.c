@@ -12,8 +12,9 @@
    - Requires the BModel contact model and a candidate whose root type at +0x18 is 1.
    - Requests candidate geometry through virtual slot +0x0C.
    - Reads authored E_Reach from the BModel user data at +0x30.
-   - For hit-point-enabled, non-liftable BModels whose greatest child-motion endpoint lies outside
-   the near-zero interval, raises a reach below 48 units to 48.
+   - Calls CheckBModelReachExpansion (0x0043AFF0); if true and authored E_Reach is below 48,
+   uses 48 units. Gas R button1's model 91 has no motion record, so this predicate is false and
+   its effective reach remains 20 units.
    - Tests the candidate AABB against the BModel bounds with the effective reach.
    - On overlap, creates a candidate pair key and inserts it into the current contact list at BModel
    root +0x160.
@@ -31,13 +32,12 @@
    - Root slot +0x48, manager list traversal, and Gas R factory/spawn admission are documented in
    rescue_contact_manager_route.md.
    - Fresh Ghidra decompilation at 0x0043B620.
-   - Training BModel reach/motion predicate was independently documented from the same hash-pinned
-   executable.
+   - Gas R's model 91 motion-record absence and the conditional predicate are documented in
+   gas_r_button1_use_path.md and gas_r_model_motions.json.
    
    Limits:
-   - Static successful-path admission is mapped for Gas R button1. Its actual overlap, candidate
-   ordering at a location, pair-update timing, and the effective reach pending child-motion decoding
-   remain unresolved. */
+   - Static successful-path admission and 20-unit reach are mapped for Gas R button1. Its actual
+   overlap, candidate ordering at a location, and pair-update timing remain unobserved. */
 
 void __thiscall CheckBModelContactCandidate(void *this,int *candidate)
 

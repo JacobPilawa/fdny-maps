@@ -1,0 +1,4171 @@
+===== geMotion_CreateFromFile @ 1000d570 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* __fastcall geMotion_CreateFromFile,4 */
+
+int __fastcall geMotion_CreateFromFile(undefined4 param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  int iVar3;
+  char *pcVar4;
+  int iVar5;
+  uint unaff_retaddr;
+  undefined4 uVar6;
+  char *pcVar7;
+  int local_124;
+  int local_120;
+  int local_11c;
+  int local_118;
+  uint local_114;
+  int local_110;
+  int local_10c;
+  int local_108;
+  char local_104 [6];
+  char local_fe;
+  undefined1 local_fd [2];
+  char local_fb [3];
+  char local_f8;
+  char local_f7 [243];
+  uint local_4;
+  
+                    /* 0xd570  192  @geMotion_CreateFromFile@4 */
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  iVar2 = geVFile_Read(param_1,&local_11c);
+  if (iVar2 == 0) {
+    pcVar7 = "ERR_MOTION_FILE_READ";
+    uVar6 = 0x47;
+  }
+  else if (local_11c == 0x4e544f4d) {
+    iVar5 = 0;
+    local_120 = 0;
+    local_124 = 0;
+    iVar2 = geMotion_Create(0);
+    local_10c = iVar2;
+    if (iVar2 == 0) {
+      pcVar7 = "-1";
+      uVar6 = 0xffffffff;
+    }
+    else {
+      iVar3 = geVFile_GetS(param_1,local_104);
+      if (iVar3 == 0) {
+        pcVar7 = "ERR_MOTION_FILE_READ";
+        uVar6 = 0x47;
+      }
+      else {
+        iVar3 = _sscanf(local_104,"%X.%X\n");
+        if (iVar3 == 2) {
+          local_114 = local_114 | local_11c << 8;
+          if (0xef < local_114) {
+            local_120 = 6;
+          }
+          *(undefined4 *)(iVar2 + 0xc) = 2;
+          *(undefined4 *)(iVar2 + 0x10) = 0;
+          *(undefined4 *)(iVar2 + 0x18) = 0;
+          *(undefined4 *)(iVar2 + 0x20) = 0;
+          *(undefined4 *)(iVar2 + 0x14) = 0;
+          *(undefined4 *)(iVar2 + 0x1c) = 0;
+          if (local_120 != 0) {
+            do {
+              iVar3 = geVFile_GetS(param_1,local_104);
+              if (iVar3 == 0) {
+                pcVar7 = "ERR_MOTION_FILE_READ";
+                uVar6 = 0x47;
+LAB_1000dab0:
+                geErrorLog_AddExplicit(uVar6,pcVar7,"Actor\\motion.cpp");
+                break;
+              }
+              iVar3 = __strnicmp(local_104,"NameID",6);
+              if (iVar3 == 0) {
+                if (local_104[0] != '\0') {
+                  pcVar7 = local_104;
+                  do {
+                    pcVar4 = pcVar7;
+                    pcVar7 = pcVar4 + 1;
+                  } while (*pcVar4 != '\0');
+                  pcVar4[-1] = '\0';
+                  if (local_104[0] != '\0') {
+                    pcVar7 = local_104;
+                    do {
+                      cVar1 = *pcVar7;
+                      pcVar7 = pcVar7 + 1;
+                    } while (cVar1 != '\0');
+                    if (pcVar7[(int)(local_104 + (-1 - (int)(local_104 + 1)))] == '\r') {
+                      pcVar7[(int)(local_104 + (-1 - (int)(local_104 + 1)))] = '\0';
+                    }
+                  }
+                }
+                pcVar7 = local_104;
+                do {
+                  cVar1 = *pcVar7;
+                  pcVar7 = pcVar7 + 1;
+                } while (cVar1 != '\0');
+                if ((7 < (uint)((int)pcVar7 - (int)(local_104 + 1))) &&
+                   (iVar3 = geMotion_SetName(iVar2,local_fd), iVar3 == 0)) {
+                  pcVar7 = "ERR_MOTION_FILE_READ";
+                  uVar6 = 0x47;
+                  goto LAB_1000dab0;
+                }
+              }
+              else {
+                iVar3 = __strnicmp(local_104,"MaintainNames",0xd);
+                if (iVar3 == 0) {
+                  iVar3 = _sscanf(local_f7,"%d");
+                  if (iVar3 != 1) {
+                    pcVar7 = "ERR_MOTION_FILE_READ";
+                    uVar6 = 0x47;
+                    goto LAB_1000dab0;
+                  }
+                  iVar5 = iVar5 + 1;
+                  local_124 = iVar5;
+                }
+                else {
+                  iVar3 = __strnicmp(local_104,"PathCount",9);
+                  if (iVar3 == 0) {
+                    iVar3 = _sscanf(local_fb,"%d");
+                    if (iVar3 != 1) {
+                      pcVar7 = "ERR_MOTION_FILE_READ";
+                      uVar6 = 0x47;
+                      goto LAB_1000dab0;
+                    }
+                    iVar5 = iVar5 + 1;
+                    local_124 = iVar5;
+                  }
+                  else {
+                    iVar3 = __strnicmp(local_104,"NameChecksum",0xc);
+                    if (iVar3 == 0) {
+                      iVar3 = _sscanf(&local_f8,"%d");
+                      if (iVar3 != 1) {
+                        pcVar7 = "ERR_MOTION_FILE_READ";
+                        uVar6 = 0x47;
+                        goto LAB_1000dab0;
+                      }
+                      iVar5 = iVar5 + 1;
+                      local_124 = iVar5;
+                    }
+                    else {
+                      iVar3 = __strnicmp(local_104,"Events",6);
+                      if (iVar3 == 0) {
+                        iVar3 = _sscanf(&local_fe,"%d");
+                        if (iVar3 != 1) {
+                          pcVar7 = "ERR_MOTION_FILE_READ";
+                          uVar6 = 0x47;
+                          goto LAB_1000dab0;
+                        }
+                        if (local_108 != 0) {
+                          iVar3 = FUN_10014b40();
+                          *(int *)(iVar2 + 0x18) = iVar3;
+                          if (iVar3 == 0) {
+                            pcVar7 = "ERR_MOTION_FILE_READ";
+                            uVar6 = 0x47;
+                            goto LAB_1000dab0;
+                          }
+                        }
+                        iVar5 = iVar5 + 1;
+                        local_124 = iVar5;
+                      }
+                      else {
+                        iVar3 = __strnicmp(local_104,"NameArray",9);
+                        if (iVar3 == 0) {
+                          iVar3 = _sscanf(local_fb,"%d");
+                          if (iVar3 != 1) {
+                            pcVar7 = "ERR_MOTION_FILE_READ";
+                            uVar6 = 0x47;
+                            goto LAB_1000dab0;
+                          }
+                          if (local_110 != 0) {
+                            iVar3 = FUN_10014070();
+                            *(int *)(iVar2 + 0x1c) = iVar3;
+                            if (iVar3 == 0) {
+                              pcVar7 = "ERR_MOTION_FILE_READ";
+                              uVar6 = 0x47;
+                              goto LAB_1000dab0;
+                            }
+                          }
+                          iVar5 = iVar5 + 1;
+                          local_124 = iVar5;
+                        }
+                        else {
+                          iVar3 = __strnicmp(local_104,"PathArray",9);
+                          if (iVar3 == 0) {
+                            iVar3 = _sscanf(local_fb,"%d");
+                            if (iVar3 == 1) {
+                              iVar3 = geRam_Allocate();
+                              *(int *)(iVar2 + 0x20) = iVar3;
+                              if (iVar3 != 0) {
+                                iVar5 = 0;
+                                if (0 < local_118) {
+                                  do {
+                                    uVar6 = gePath_CreateFromFile(param_1);
+                                    *(undefined4 *)(*(int *)(iVar2 + 0x20) + iVar5 * 4) = uVar6;
+                                    if (*(int *)(*(int *)(iVar2 + 0x20) + iVar5 * 4) == 0) {
+                                      geErrorLog_AddExplicit
+                                                (0x47,"ERR_MOTION_FILE_READ","Actor\\motion.cpp");
+                                      break;
+                                    }
+                                    iVar5 = iVar5 + 1;
+                                  } while (iVar5 < local_118);
+                                }
+                                iVar5 = local_124 + 1;
+                                local_124 = iVar5;
+                                goto LAB_1000d99a;
+                              }
+                              pcVar7 = "ERR_MOTION_ADDPATH_ENOMEM";
+                              uVar6 = 0x42;
+                            }
+                            else {
+                              pcVar7 = "ERR_MOTION_FILE_READ";
+                              uVar6 = 0x47;
+                            }
+                            goto LAB_1000dab0;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+LAB_1000d99a:
+            } while (iVar5 < local_120);
+          }
+          if (local_120 != iVar5) {
+            geErrorLog_AddExplicit(0x49,"ERR_MOTION_FILE_PARSE","Actor\\motion.cpp");
+            geMotion_Destroy(&local_10c);
+            return 0;
+          }
+          return iVar2;
+        }
+        pcVar7 = "ERR_MOTION_FILE_READ";
+        uVar6 = 0x47;
+      }
+    }
+  }
+  else {
+    if (local_11c == 0x424e544d) {
+      iVar2 = FUN_1000ceb0();
+      return iVar2;
+    }
+    pcVar7 = "ERR_MOTION_FILE_PARSE";
+    uVar6 = 0x49;
+  }
+  geErrorLog_AddExplicit(uVar6,pcVar7,"Actor\\motion.cpp");
+  return 0;
+}
+
+
+--- DISASSEMBLY ---
+1000d570  SUB ESP,0x124
+1000d576  MOV EAX,[0x100aa8f0]
+1000d57b  XOR EAX,dword ptr [ESP + 0x124]
+1000d582  PUSH EBX
+1000d583  PUSH EBP
+1000d584  PUSH ESI
+1000d585  PUSH EDI
+1000d586  PUSH 0x4
+1000d588  LEA EDX,[ESP + 0x1c]
+1000d58c  MOV dword ptr [ESP + 0x134],EAX
+1000d593  MOV EBP,ECX
+1000d595  CALL 0x1002f160
+1000d59a  TEST EAX,EAX
+1000d59c  JNZ 0x1000d5ba
+1000d59e  PUSH EAX
+1000d59f  PUSH 0x100511b7
+1000d5a4  PUSH 0x5e6
+1000d5a9  PUSH 0x100519ec
+1000d5ae  PUSH 0x10051b10
+1000d5b3  PUSH 0x47
+1000d5b5  JMP 0x1000db13
+1000d5ba  MOV EAX,dword ptr [ESP + 0x18]
+1000d5be  CMP EAX,0x4e544f4d
+1000d5c3  JNZ 0x1000daec
+1000d5c9  XOR EBX,EBX
+1000d5cb  XOR ESI,ESI
+1000d5cd  XOR ECX,ECX
+1000d5cf  MOV dword ptr [ESP + 0x14],EBX
+1000d5d3  MOV dword ptr [ESP + 0x10],ESI
+1000d5d7  CALL 0x1000b840
+1000d5dc  MOV EDI,EAX
+1000d5de  CMP EDI,EBX
+1000d5e0  MOV dword ptr [ESP + 0x28],EDI
+1000d5e4  JNZ 0x1000d602
+1000d5e6  PUSH EBX
+1000d5e7  PUSH 0x100511b7
+1000d5ec  PUSH 0x5f4
+1000d5f1  PUSH 0x100519ec
+1000d5f6  PUSH 0x100511a8
+1000d5fb  PUSH -0x1
+1000d5fd  JMP 0x1000db13
+1000d602  PUSH 0x100
+1000d607  LEA EDX,[ESP + 0x34]
+1000d60b  MOV ECX,EBP
+1000d60d  CALL 0x1002f140
+1000d612  TEST EAX,EAX
+1000d614  JNZ 0x1000d632
+1000d616  PUSH EBX
+1000d617  PUSH 0x100511b7
+1000d61c  PUSH 0x5fb
+1000d621  PUSH 0x100519ec
+1000d626  PUSH 0x10051b10
+1000d62b  PUSH 0x47
+1000d62d  JMP 0x1000db13
+1000d632  LEA EAX,[ESP + 0x20]
+1000d636  PUSH EAX
+1000d637  LEA ECX,[ESP + 0x1c]
+1000d63b  PUSH ECX
+1000d63c  LEA EDX,[ESP + 0x38]
+1000d640  PUSH 0x10051b78
+1000d645  PUSH EDX
+1000d646  CALL 0x1004421c
+1000d64b  ADD ESP,0x10
+1000d64e  CMP EAX,0x2
+1000d651  JZ 0x1000d66f
+1000d653  PUSH EBX
+1000d654  PUSH 0x100511b7
+1000d659  PUSH 0x600
+1000d65e  PUSH 0x100519ec
+1000d663  PUSH 0x10051b10
+1000d668  PUSH 0x47
+1000d66a  JMP 0x1000db13
+1000d66f  MOV ECX,dword ptr [ESP + 0x18]
+1000d673  MOV EAX,dword ptr [ESP + 0x20]
+1000d677  SHL ECX,0x8
+1000d67a  OR EAX,ECX
+1000d67c  CMP EAX,0xf0
+1000d681  MOV dword ptr [ESP + 0x20],EAX
+1000d685  JC 0x1000d68f
+1000d687  MOV dword ptr [ESP + 0x14],0x6
+1000d68f  CMP dword ptr [ESP + 0x14],EBX
+1000d693  MOV dword ptr [EDI + 0xc],0x2
+1000d69a  MOV dword ptr [EDI + 0x10],EBX
+1000d69d  MOV dword ptr [EDI + 0x18],EBX
+1000d6a0  MOV dword ptr [EDI + 0x20],EBX
+1000d6a3  MOV dword ptr [EDI + 0x14],EBX
+1000d6a6  MOV dword ptr [EDI + 0x1c],EBX
+1000d6a9  JLE 0x1000dab8
+1000d6af  NOP
+1000d6b0  PUSH 0x100
+1000d6b5  LEA EDX,[ESP + 0x34]
+1000d6b9  MOV ECX,EBP
+1000d6bb  CALL 0x1002f140
+1000d6c0  TEST EAX,EAX
+1000d6c2  JZ 0x1000d9a9
+1000d6c8  PUSH 0x6
+1000d6ca  LEA EDX,[ESP + 0x34]
+1000d6ce  PUSH 0x10051afc
+1000d6d3  PUSH EDX
+1000d6d4  CALL 0x10045c94
+1000d6d9  ADD ESP,0xc
+1000d6dc  TEST EAX,EAX
+1000d6de  JNZ 0x1000d771
+1000d6e4  CMP byte ptr [ESP + 0x30],BL
+1000d6e8  JZ 0x1000d728
+1000d6ea  LEA EAX,[ESP + 0x30]
+1000d6ee  LEA EDX,[EAX + 0x1]
+1000d6f1  MOV CL,byte ptr [EAX]
+1000d6f3  INC EAX
+1000d6f4  CMP CL,BL
+1000d6f6  JNZ 0x1000d6f1
+1000d6f8  SUB EAX,EDX
+1000d6fa  MOV byte ptr [ESP + EAX*0x1 + 0x2f],BL
+1000d6fe  CMP byte ptr [ESP + 0x30],BL
+1000d702  JZ 0x1000d728
+1000d704  LEA EAX,[ESP + 0x30]
+1000d708  LEA EDX,[EAX + 0x1]
+1000d70b  JMP 0x1000d710
+1000d710  MOV CL,byte ptr [EAX]
+1000d712  INC EAX
+1000d713  CMP CL,BL
+1000d715  JNZ 0x1000d710
+1000d717  SUB EAX,EDX
+1000d719  MOV CL,byte ptr [ESP + EAX*0x1 + 0x2f]
+1000d71d  CMP CL,0xd
+1000d720  LEA EAX,[ESP + EAX*0x1 + 0x2f]
+1000d724  JNZ 0x1000d728
+1000d726  MOV byte ptr [EAX],BL
+1000d728  LEA EAX,[ESP + 0x30]
+1000d72c  LEA EDX,[EAX + 0x1]
+1000d72f  NOP
+1000d730  MOV CL,byte ptr [EAX]
+1000d732  INC EAX
+1000d733  CMP CL,BL
+1000d735  JNZ 0x1000d730
+1000d737  SUB EAX,EDX
+1000d739  CMP EAX,0x7
+1000d73c  JBE 0x1000d99a
+1000d742  LEA EDX,[ESP + 0x37]
+1000d746  MOV ECX,EDI
+1000d748  CALL 0x1000b730
+1000d74d  TEST EAX,EAX
+1000d74f  JNZ 0x1000d99a
+1000d755  PUSH EBX
+1000d756  PUSH 0x100511b7
+1000d75b  PUSH 0x629
+1000d760  PUSH 0x100519ec
+1000d765  PUSH 0x10051b10
+1000d76a  PUSH 0x47
+1000d76c  JMP 0x1000dab0
+1000d771  PUSH 0xd
+1000d773  LEA EAX,[ESP + 0x34]
+1000d777  PUSH 0x10051ae4
+1000d77c  PUSH EAX
+1000d77d  CALL 0x10045c94
+1000d782  ADD ESP,0xc
+1000d785  TEST EAX,EAX
+1000d787  JNZ 0x1000d7b2
+1000d789  LEA ECX,[EDI + 0x8]
+1000d78c  PUSH ECX
+1000d78d  LEA EDX,[ESP + 0x41]
+1000d791  PUSH 0x100515f8
+1000d796  PUSH EDX
+1000d797  CALL 0x1004421c
+1000d79c  ADD ESP,0xc
+1000d79f  CMP EAX,0x1
+1000d7a2  JNZ 0x1000d9c5
+1000d7a8  INC ESI
+1000d7a9  MOV dword ptr [ESP + 0x10],ESI
+1000d7ad  JMP 0x1000d99a
+1000d7b2  PUSH 0x9
+1000d7b4  LEA EAX,[ESP + 0x34]
+1000d7b8  PUSH 0x10051ad8
+1000d7bd  PUSH EAX
+1000d7be  CALL 0x10045c94
+1000d7c3  ADD ESP,0xc
+1000d7c6  TEST EAX,EAX
+1000d7c8  JNZ 0x1000d7f3
+1000d7ca  LEA EAX,[EDI + 0x10]
+1000d7cd  PUSH EAX
+1000d7ce  LEA ECX,[ESP + 0x3d]
+1000d7d2  PUSH 0x100515f8
+1000d7d7  PUSH ECX
+1000d7d8  CALL 0x1004421c
+1000d7dd  ADD ESP,0xc
+1000d7e0  CMP EAX,0x1
+1000d7e3  JNZ 0x1000d9e1
+1000d7e9  INC ESI
+1000d7ea  MOV dword ptr [ESP + 0x10],ESI
+1000d7ee  JMP 0x1000d99a
+1000d7f3  PUSH 0xc
+1000d7f5  LEA EDX,[ESP + 0x34]
+1000d7f9  PUSH 0x10051aa8
+1000d7fe  PUSH EDX
+1000d7ff  CALL 0x10045c94
+1000d804  ADD ESP,0xc
+1000d807  TEST EAX,EAX
+1000d809  JNZ 0x1000d834
+1000d80b  LEA EAX,[EDI + 0x14]
+1000d80e  PUSH EAX
+1000d80f  LEA EAX,[ESP + 0x40]
+1000d813  PUSH 0x100515f8
+1000d818  PUSH EAX
+1000d819  CALL 0x1004421c
+1000d81e  ADD ESP,0xc
+1000d821  CMP EAX,0x1
+1000d824  JNZ 0x1000d9fd
+1000d82a  INC ESI
+1000d82b  MOV dword ptr [ESP + 0x10],ESI
+1000d82f  JMP 0x1000d99a
+1000d834  PUSH 0x6
+1000d836  LEA ECX,[ESP + 0x34]
+1000d83a  PUSH 0x10051aa0
+1000d83f  PUSH ECX
+1000d840  CALL 0x10045c94
+1000d845  ADD ESP,0xc
+1000d848  TEST EAX,EAX
+1000d84a  JNZ 0x1000d88e
+1000d84c  LEA EDX,[ESP + 0x2c]
+1000d850  PUSH EDX
+1000d851  LEA EAX,[ESP + 0x3a]
+1000d855  PUSH 0x100515f8
+1000d85a  PUSH EAX
+1000d85b  CALL 0x1004421c
+1000d860  ADD ESP,0xc
+1000d863  CMP EAX,0x1
+1000d866  JNZ 0x1000da19
+1000d86c  CMP dword ptr [ESP + 0x2c],EBX
+1000d870  JZ 0x1000d884
+1000d872  MOV ECX,EBP
+1000d874  CALL 0x10014b40
+1000d879  CMP EAX,EBX
+1000d87b  MOV dword ptr [EDI + 0x18],EAX
+1000d87e  JZ 0x1000da35
+1000d884  INC ESI
+1000d885  MOV dword ptr [ESP + 0x10],ESI
+1000d889  JMP 0x1000d99a
+1000d88e  PUSH 0x9
+1000d890  LEA ECX,[ESP + 0x34]
+1000d894  PUSH 0x10051a94
+1000d899  PUSH ECX
+1000d89a  CALL 0x10045c94
+1000d89f  ADD ESP,0xc
+1000d8a2  TEST EAX,EAX
+1000d8a4  JNZ 0x1000d8e8
+1000d8a6  LEA EDX,[ESP + 0x24]
+1000d8aa  PUSH EDX
+1000d8ab  LEA EAX,[ESP + 0x3d]
+1000d8af  PUSH 0x100515f8
+1000d8b4  PUSH EAX
+1000d8b5  CALL 0x1004421c
+1000d8ba  ADD ESP,0xc
+1000d8bd  CMP EAX,0x1
+1000d8c0  JNZ 0x1000da4e
+1000d8c6  CMP dword ptr [ESP + 0x24],EBX
+1000d8ca  JZ 0x1000d8de
+1000d8cc  MOV ECX,EBP
+1000d8ce  CALL 0x10014070
+1000d8d3  CMP EAX,EBX
+1000d8d5  MOV dword ptr [EDI + 0x1c],EAX
+1000d8d8  JZ 0x1000da67
+1000d8de  INC ESI
+1000d8df  MOV dword ptr [ESP + 0x10],ESI
+1000d8e3  JMP 0x1000d99a
+1000d8e8  PUSH 0x9
+1000d8ea  LEA ECX,[ESP + 0x34]
+1000d8ee  PUSH 0x10051a88
+1000d8f3  PUSH ECX
+1000d8f4  CALL 0x10045c94
+1000d8f9  ADD ESP,0xc
+1000d8fc  TEST EAX,EAX
+1000d8fe  JNZ 0x1000d99a
+1000d904  LEA EDX,[ESP + 0x1c]
+1000d908  PUSH EDX
+1000d909  LEA EAX,[ESP + 0x3d]
+1000d90d  PUSH 0x100515f8
+1000d912  PUSH EAX
+1000d913  CALL 0x1004421c
+1000d918  ADD ESP,0xc
+1000d91b  CMP EAX,0x1
+1000d91e  JNZ 0x1000da80
+1000d924  MOV ECX,dword ptr [ESP + 0x1c]
+1000d928  LEA EDX,[ECX*0x4 + 0x0]
+1000d92f  PUSH EDX
+1000d930  CALL 0x1002c4e0
+1000d935  ADD ESP,0x4
+1000d938  CMP EAX,EBX
+1000d93a  MOV dword ptr [EDI + 0x20],EAX
+1000d93d  JZ 0x1000da99
+1000d943  MOV EAX,dword ptr [ESP + 0x1c]
+1000d947  XOR ESI,ESI
+1000d949  CMP EAX,EBX
+1000d94b  JLE 0x1000d98f
+1000d94d  LEA ECX,[ECX]
+1000d950  MOV ECX,EBP
+1000d952  CALL 0x1000f580
+1000d957  MOV ECX,dword ptr [EDI + 0x20]
+1000d95a  MOV dword ptr [ECX + ESI*0x4],EAX
+1000d95d  MOV EDX,dword ptr [EDI + 0x20]
+1000d960  CMP dword ptr [EDX + ESI*0x4],EBX
+1000d963  JZ 0x1000d970
+1000d965  MOV EAX,dword ptr [ESP + 0x1c]
+1000d969  INC ESI
+1000d96a  CMP ESI,EAX
+1000d96c  JL 0x1000d950
+1000d96e  JMP 0x1000d98f
+1000d970  PUSH EBX
+1000d971  PUSH 0x100511b7
+1000d976  PUSH 0x688
+1000d97b  PUSH 0x100519ec
+1000d980  PUSH 0x10051b10
+1000d985  PUSH 0x47
+1000d987  CALL 0x1002c240
+1000d98c  ADD ESP,0x18
+1000d98f  MOV EAX,dword ptr [ESP + 0x10]
+1000d993  INC EAX
+1000d994  MOV dword ptr [ESP + 0x10],EAX
+1000d998  MOV ESI,EAX
+1000d99a  CMP ESI,dword ptr [ESP + 0x14]
+1000d99e  JL 0x1000d6b0
+1000d9a4  JMP 0x1000dab8
+1000d9a9  PUSH EBX
+1000d9aa  PUSH 0x100511b7
+1000d9af  PUSH 0x615
+1000d9b4  PUSH 0x100519ec
+1000d9b9  PUSH 0x10051b10
+1000d9be  PUSH 0x47
+1000d9c0  JMP 0x1000dab0
+1000d9c5  PUSH EBX
+1000d9c6  PUSH 0x100511b7
+1000d9cb  PUSH 0x634
+1000d9d0  PUSH 0x100519ec
+1000d9d5  PUSH 0x10051b10
+1000d9da  PUSH 0x47
+1000d9dc  JMP 0x1000dab0
+1000d9e1  PUSH EBX
+1000d9e2  PUSH 0x100511b7
+1000d9e7  PUSH 0x63d
+1000d9ec  PUSH 0x100519ec
+1000d9f1  PUSH 0x10051b10
+1000d9f6  PUSH 0x47
+1000d9f8  JMP 0x1000dab0
+1000d9fd  PUSH EBX
+1000d9fe  PUSH 0x100511b7
+1000da03  PUSH 0x646
+1000da08  PUSH 0x100519ec
+1000da0d  PUSH 0x10051b10
+1000da12  PUSH 0x47
+1000da14  JMP 0x1000dab0
+1000da19  PUSH EBX
+1000da1a  PUSH 0x100511b7
+1000da1f  PUSH 0x650
+1000da24  PUSH 0x100519ec
+1000da29  PUSH 0x10051b10
+1000da2e  PUSH 0x47
+1000da30  JMP 0x1000dab0
+1000da35  PUSH EBX
+1000da36  PUSH 0x100511b7
+1000da3b  PUSH 0x658
+1000da40  PUSH 0x100519ec
+1000da45  PUSH 0x10051b10
+1000da4a  PUSH 0x47
+1000da4c  JMP 0x1000dab0
+1000da4e  PUSH EBX
+1000da4f  PUSH 0x100511b7
+1000da54  PUSH 0x663
+1000da59  PUSH 0x100519ec
+1000da5e  PUSH 0x10051b10
+1000da63  PUSH 0x47
+1000da65  JMP 0x1000dab0
+1000da67  PUSH EBX
+1000da68  PUSH 0x100511b7
+1000da6d  PUSH 0x66b
+1000da72  PUSH 0x100519ec
+1000da77  PUSH 0x10051b10
+1000da7c  PUSH 0x47
+1000da7e  JMP 0x1000dab0
+1000da80  PUSH EBX
+1000da81  PUSH 0x100511b7
+1000da86  PUSH 0x676
+1000da8b  PUSH 0x100519ec
+1000da90  PUSH 0x10051b10
+1000da95  PUSH 0x47
+1000da97  JMP 0x1000dab0
+1000da99  PUSH EBX
+1000da9a  PUSH 0x100511b7
+1000da9f  PUSH 0x67e
+1000daa4  PUSH 0x100519ec
+1000daa9  PUSH 0x10051b44
+1000daae  PUSH 0x42
+1000dab0  CALL 0x1002c240
+1000dab5  ADD ESP,0x18
+1000dab8  CMP dword ptr [ESP + 0x14],ESI
+1000dabc  JNZ 0x1000dac2
+1000dabe  MOV EAX,EDI
+1000dac0  JMP 0x1000db1d
+1000dac2  PUSH EBX
+1000dac3  PUSH 0x100511b7
+1000dac8  PUSH 0x699
+1000dacd  PUSH 0x100519ec
+1000dad2  PUSH 0x10051b60
+1000dad7  PUSH 0x49
+1000dad9  CALL 0x1002c240
+1000dade  ADD ESP,0x18
+1000dae1  LEA ECX,[ESP + 0x28]
+1000dae5  CALL 0x1000b900
+1000daea  JMP 0x1000db1b
+1000daec  CMP EAX,0x424e544d
+1000daf1  JNZ 0x1000dafb
+1000daf3  PUSH EBP
+1000daf4  CALL 0x1000ceb0
+1000daf9  JMP 0x1000db1d
+1000dafb  PUSH 0x0
+1000dafd  PUSH 0x100511b7
+1000db02  PUSH 0x6a6
+1000db07  PUSH 0x100519ec
+1000db0c  PUSH 0x10051b60
+1000db11  PUSH 0x49
+1000db13  CALL 0x1002c240
+1000db18  ADD ESP,0x18
+1000db1b  XOR EAX,EAX
+1000db1d  MOV ECX,dword ptr [ESP + 0x130]
+1000db24  XOR ECX,dword ptr [ESP + 0x134]
+1000db2b  POP EDI
+1000db2c  POP ESI
+1000db2d  POP EBP
+1000db2e  POP EBX
+1000db2f  ADD ESP,0x124
+1000db35  JMP 0x1004414e
+
+===== gePath_CreateFromFile @ 1000f580 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* __fastcall gePath_CreateFromFile,4 */
+
+int * __fastcall gePath_CreateFromFile(undefined4 param_1)
+
+{
+  int iVar1;
+  int *piVar2;
+  uint unaff_retaddr;
+  undefined4 uVar3;
+  char *pcVar4;
+  undefined4 uVar5;
+  int *local_11c;
+  int local_118;
+  uint local_114;
+  uint local_110;
+  int local_10c [2];
+  char local_104 [8];
+  char local_fc [3];
+  char local_f9 [245];
+  uint local_4;
+  
+                    /* 0xf580  232  @gePath_CreateFromFile@4 */
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  iVar1 = geVFile_Read(param_1,&local_110,4);
+  if (iVar1 == 0) {
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x51e,&DAT_100511b7,0);
+    return (int *)0x0;
+  }
+  if ((local_110 & 0xffff0000) == 0x10010000) {
+    piVar2 = (int *)FUN_1000f180(param_1);
+    return piVar2;
+  }
+  if (local_110 != 0x48544150) {
+    uVar5 = 0x528;
+    pcVar4 = "ERR_PATH_FILE_PARSE";
+    uVar3 = 0x3f;
+    goto LAB_1000f9af;
+  }
+  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+  if (iVar1 == 0) {
+    uVar5 = 0x52f;
+    goto LAB_1000f9a3;
+  }
+  iVar1 = _sscanf(local_104,"%X.%X\n",&local_110,&local_114);
+  if (iVar1 != 2) {
+    uVar5 = 0x534;
+    pcVar4 = "ERR_PATH_FILE_PARSE";
+    uVar3 = 0x3f;
+    goto LAB_1000f9af;
+  }
+  local_114 = local_114 | local_110 << 8;
+  if (local_114 == 0xf0) {
+    piVar2 = (int *)FUN_1000eab0();
+    return piVar2;
+  }
+  if ((local_114 != 0xf1) && (local_114 != 0xf2)) {
+    uVar5 = 0x53c;
+    pcVar4 = "ERR_PATH_FILE_PARSE";
+    uVar3 = 0x3f;
+    goto LAB_1000f9af;
+  }
+  piVar2 = (int *)gePath_Create(0,0,0);
+  if (piVar2 == (int *)0x0) {
+    return (int *)0x0;
+  }
+  local_11c = piVar2;
+  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+  if (iVar1 == 0) {
+    gePath_Destroy(&local_11c);
+    uVar5 = 0x547;
+  }
+  else {
+    iVar1 = __strnicmp(local_104,"Rotation",8);
+    if (iVar1 == 0) {
+      if (local_114 == 0xf1) {
+        piVar2[1] = 0;
+        iVar1 = _sscanf(local_fc,"%d",&local_118);
+        if (iVar1 == 1) {
+LAB_1000f7e7:
+          if (local_118 != 0) {
+            iVar1 = FUN_10005a00(local_10c);
+            *piVar2 = iVar1;
+            if (iVar1 == 0) {
+              gePath_Destroy(&local_11c);
+              uVar5 = 0x55e;
+              goto LAB_1000f9a3;
+            }
+            iVar1 = FUN_1000db80();
+            piVar2[1] = iVar1;
+            if (local_10c[0] != 0) {
+              piVar2[0x10] = piVar2[0x10] | 2;
+            }
+          }
+          iVar1 = geVFile_GetS(param_1,local_104,0x100);
+          if (iVar1 == 0) {
+            gePath_Destroy(&local_11c);
+            uVar5 = 0x566;
+          }
+          else {
+            iVar1 = __strnicmp(local_104,"Translation",0xb);
+            if (iVar1 == 0) {
+              if (local_114 == 0xf1) {
+                piVar2[9] = 0;
+                iVar1 = _sscanf(local_f9,"%d",&local_118);
+                if (iVar1 == 1) {
+LAB_1000f923:
+                  if (local_118 == 0) {
+LAB_1000f96f:
+                    piVar2[0x10] = piVar2[0x10] | 1;
+                    return piVar2;
+                  }
+                  iVar1 = FUN_10015fb0(local_10c);
+                  piVar2[8] = iVar1;
+                  if (iVar1 != 0) {
+                    iVar1 = FUN_1000db40();
+                    piVar2[9] = iVar1;
+                    if (local_10c[0] != 0) {
+                      piVar2[0x10] = piVar2[0x10] | 2;
+                    }
+                    goto LAB_1000f96f;
+                  }
+                  gePath_Destroy(&local_11c);
+                  uVar5 = 0x57e;
+                }
+                else {
+                  gePath_Destroy(&local_11c);
+                  uVar5 = 0x56d;
+                }
+              }
+              else if (local_114 == 0xf2) {
+                iVar1 = _sscanf(local_f9,"%d %d",&local_118,piVar2 + 9);
+                if (iVar1 == 2) goto LAB_1000f923;
+                gePath_Destroy(&local_11c);
+                uVar5 = 0x574;
+              }
+              else {
+                gePath_Destroy(&local_11c);
+                uVar5 = 0x577;
+              }
+            }
+            else {
+              gePath_Destroy(&local_11c);
+              uVar5 = 0x568;
+            }
+          }
+        }
+        else {
+          gePath_Destroy(&local_11c);
+          uVar5 = 0x54e;
+        }
+      }
+      else if (local_114 == 0xf2) {
+        iVar1 = _sscanf(local_fc,"%d %d",&local_118,piVar2 + 1);
+        if (iVar1 == 2) goto LAB_1000f7e7;
+        gePath_Destroy(&local_11c);
+        uVar5 = 0x555;
+      }
+      else {
+        gePath_Destroy(&local_11c);
+        uVar5 = 0x558;
+      }
+    }
+    else {
+      gePath_Destroy(&local_11c);
+      uVar5 = 0x549;
+    }
+  }
+LAB_1000f9a3:
+  pcVar4 = "ERR_PATH_FILE_READ";
+  uVar3 = 0x3d;
+LAB_1000f9af:
+  geErrorLog_AddExplicit(uVar3,pcVar4,"Actor\\path.cpp",uVar5,&DAT_100511b7,0);
+  return (int *)0x0;
+}
+
+
+--- DISASSEMBLY ---
+1000f580  SUB ESP,0x11c
+1000f586  MOV EAX,[0x100aa8f0]
+1000f58b  XOR EAX,dword ptr [ESP + 0x11c]
+1000f592  PUSH EBP
+1000f593  PUSH 0x4
+1000f595  LEA EDX,[ESP + 0x14]
+1000f599  MOV dword ptr [ESP + 0x120],EAX
+1000f5a0  MOV EBP,ECX
+1000f5a2  CALL 0x1002f160
+1000f5a7  TEST EAX,EAX
+1000f5a9  JNZ 0x1000f5e6
+1000f5ab  PUSH EAX
+1000f5ac  PUSH 0x100511b7
+1000f5b1  PUSH 0x51e
+1000f5b6  PUSH 0x10051b98
+1000f5bb  PUSH 0x10051390
+1000f5c0  PUSH 0x3d
+1000f5c2  CALL 0x1002c240
+1000f5c7  ADD ESP,0x18
+1000f5ca  XOR EAX,EAX
+1000f5cc  POP EBP
+1000f5cd  MOV ECX,dword ptr [ESP + 0x118]
+1000f5d4  XOR ECX,dword ptr [ESP + 0x11c]
+1000f5db  ADD ESP,0x11c
+1000f5e1  JMP 0x1004414e
+1000f5e6  PUSH EBX
+1000f5e7  MOV EBX,dword ptr [ESP + 0x14]
+1000f5eb  MOV EAX,EBX
+1000f5ed  AND EAX,0xffff0000
+1000f5f2  CMP EAX,0x10010000
+1000f5f7  PUSH ESI
+1000f5f8  PUSH EDI
+1000f5f9  JNZ 0x1000f606
+1000f5fb  PUSH EBP
+1000f5fc  CALL 0x1000f180
+1000f601  JMP 0x1000f9b9
+1000f606  CMP EBX,0x48544150
+1000f60c  JZ 0x1000f62b
+1000f60e  PUSH 0x0
+1000f610  PUSH 0x100511b7
+1000f615  PUSH 0x528
+1000f61a  PUSH 0x10051b98
+1000f61f  PUSH 0x10051c24
+1000f624  PUSH 0x3f
+1000f626  JMP 0x1000f9af
+1000f62b  PUSH 0x100
+1000f630  LEA EDX,[ESP + 0x2c]
+1000f634  MOV ECX,EBP
+1000f636  CALL 0x1002f140
+1000f63b  TEST EAX,EAX
+1000f63d  JNZ 0x1000f64f
+1000f63f  PUSH EAX
+1000f640  PUSH 0x100511b7
+1000f645  PUSH 0x52f
+1000f64a  JMP 0x1000f9a3
+1000f64f  LEA ECX,[ESP + 0x18]
+1000f653  PUSH ECX
+1000f654  LEA EDX,[ESP + 0x20]
+1000f658  PUSH EDX
+1000f659  LEA EAX,[ESP + 0x30]
+1000f65d  PUSH 0x10051b78
+1000f662  PUSH EAX
+1000f663  CALL 0x1004421c
+1000f668  MOV EBX,0x2
+1000f66d  ADD ESP,0x10
+1000f670  CMP EAX,EBX
+1000f672  JZ 0x1000f691
+1000f674  PUSH 0x0
+1000f676  PUSH 0x100511b7
+1000f67b  PUSH 0x534
+1000f680  PUSH 0x10051b98
+1000f685  PUSH 0x10051c24
+1000f68a  PUSH 0x3f
+1000f68c  JMP 0x1000f9af
+1000f691  MOV ECX,dword ptr [ESP + 0x1c]
+1000f695  MOV EAX,dword ptr [ESP + 0x18]
+1000f699  SHL ECX,0x8
+1000f69c  OR EAX,ECX
+1000f69e  CMP EAX,0xf0
+1000f6a3  MOV dword ptr [ESP + 0x18],EAX
+1000f6a7  JNZ 0x1000f6b5
+1000f6a9  MOV ECX,EBP
+1000f6ab  CALL 0x1000eab0
+1000f6b0  JMP 0x1000f9b9
+1000f6b5  CMP EAX,0xf1
+1000f6ba  JZ 0x1000f6e0
+1000f6bc  CMP EAX,0xf2
+1000f6c1  JZ 0x1000f6e0
+1000f6c3  PUSH 0x0
+1000f6c5  PUSH 0x100511b7
+1000f6ca  PUSH 0x53c
+1000f6cf  PUSH 0x10051b98
+1000f6d4  PUSH 0x10051c24
+1000f6d9  PUSH 0x3f
+1000f6db  JMP 0x1000f9af
+1000f6e0  PUSH 0x0
+1000f6e2  XOR EDX,EDX
+1000f6e4  XOR ECX,ECX
+1000f6e6  CALL 0x1000dbc0
+1000f6eb  MOV ESI,EAX
+1000f6ed  TEST ESI,ESI
+1000f6ef  MOV dword ptr [ESP + 0x10],ESI
+1000f6f3  JZ 0x1000f9b7
+1000f6f9  PUSH 0x100
+1000f6fe  LEA EDX,[ESP + 0x2c]
+1000f702  MOV ECX,EBP
+1000f704  CALL 0x1002f140
+1000f709  TEST EAX,EAX
+1000f70b  JNZ 0x1000f727
+1000f70d  LEA ECX,[ESP + 0x10]
+1000f711  CALL 0x1000dd20
+1000f716  PUSH 0x0
+1000f718  PUSH 0x100511b7
+1000f71d  PUSH 0x547
+1000f722  JMP 0x1000f9a3
+1000f727  PUSH 0x8
+1000f729  LEA EDX,[ESP + 0x2c]
+1000f72d  PUSH 0x10051c74
+1000f732  PUSH EDX
+1000f733  CALL 0x10045c94
+1000f738  ADD ESP,0xc
+1000f73b  TEST EAX,EAX
+1000f73d  JZ 0x1000f759
+1000f73f  LEA ECX,[ESP + 0x10]
+1000f743  CALL 0x1000dd20
+1000f748  PUSH 0x0
+1000f74a  PUSH 0x100511b7
+1000f74f  PUSH 0x549
+1000f754  JMP 0x1000f9a3
+1000f759  MOV EAX,dword ptr [ESP + 0x18]
+1000f75d  CMP EAX,0xf1
+1000f762  JNZ 0x1000f7a3
+1000f764  LEA EAX,[ESP + 0x14]
+1000f768  PUSH EAX
+1000f769  LEA ECX,[ESP + 0x34]
+1000f76d  PUSH 0x100515f8
+1000f772  LEA EDI,[ESI + 0x4]
+1000f775  PUSH ECX
+1000f776  MOV dword ptr [EDI],0x0
+1000f77c  CALL 0x1004421c
+1000f781  ADD ESP,0xc
+1000f784  CMP EAX,0x1
+1000f787  JZ 0x1000f7e7
+1000f789  LEA ECX,[ESP + 0x10]
+1000f78d  CALL 0x1000dd20
+1000f792  PUSH 0x0
+1000f794  PUSH 0x100511b7
+1000f799  PUSH 0x54e
+1000f79e  JMP 0x1000f9a3
+1000f7a3  CMP EAX,0xf2
+1000f7a8  JNZ 0x1000f98e
+1000f7ae  LEA EDI,[ESI + 0x4]
+1000f7b1  PUSH EDI
+1000f7b2  LEA EDX,[ESP + 0x18]
+1000f7b6  PUSH EDX
+1000f7b7  LEA EAX,[ESP + 0x38]
+1000f7bb  PUSH 0x10051d40
+1000f7c0  PUSH EAX
+1000f7c1  CALL 0x1004421c
+1000f7c6  ADD ESP,0x10
+1000f7c9  CMP EAX,EBX
+1000f7cb  JZ 0x1000f7e7
+1000f7cd  LEA ECX,[ESP + 0x10]
+1000f7d1  CALL 0x1000dd20
+1000f7d6  PUSH 0x0
+1000f7d8  PUSH 0x100511b7
+1000f7dd  PUSH 0x555
+1000f7e2  JMP 0x1000f9a3
+1000f7e7  MOV EAX,dword ptr [ESP + 0x14]
+1000f7eb  TEST EAX,EAX
+1000f7ed  JZ 0x1000f835
+1000f7ef  LEA ECX,[ESP + 0x20]
+1000f7f3  PUSH ECX
+1000f7f4  LEA EDX,[ESP + 0x28]
+1000f7f8  MOV ECX,EBP
+1000f7fa  CALL 0x10005a00
+1000f7ff  TEST EAX,EAX
+1000f801  MOV dword ptr [ESI],EAX
+1000f803  JNZ 0x1000f81f
+1000f805  LEA ECX,[ESP + 0x10]
+1000f809  CALL 0x1000dd20
+1000f80e  PUSH 0x0
+1000f810  PUSH 0x100511b7
+1000f815  PUSH 0x55e
+1000f81a  JMP 0x1000f9a3
+1000f81f  MOV EAX,dword ptr [ESP + 0x24]
+1000f823  CALL 0x1000db80
+1000f828  MOV dword ptr [EDI],EAX
+1000f82a  MOV EAX,dword ptr [ESP + 0x20]
+1000f82e  TEST EAX,EAX
+1000f830  JZ 0x1000f835
+1000f832  OR dword ptr [ESI + 0x40],EBX
+1000f835  PUSH 0x100
+1000f83a  LEA EDX,[ESP + 0x2c]
+1000f83e  MOV ECX,EBP
+1000f840  CALL 0x1002f140
+1000f845  TEST EAX,EAX
+1000f847  JNZ 0x1000f863
+1000f849  LEA ECX,[ESP + 0x10]
+1000f84d  CALL 0x1000dd20
+1000f852  PUSH 0x0
+1000f854  PUSH 0x100511b7
+1000f859  PUSH 0x566
+1000f85e  JMP 0x1000f9a3
+1000f863  PUSH 0xb
+1000f865  LEA EDX,[ESP + 0x2c]
+1000f869  PUSH 0x10051c68
+1000f86e  PUSH EDX
+1000f86f  CALL 0x10045c94
+1000f874  ADD ESP,0xc
+1000f877  TEST EAX,EAX
+1000f879  JZ 0x1000f895
+1000f87b  LEA ECX,[ESP + 0x10]
+1000f87f  CALL 0x1000dd20
+1000f884  PUSH 0x0
+1000f886  PUSH 0x100511b7
+1000f88b  PUSH 0x568
+1000f890  JMP 0x1000f9a3
+1000f895  MOV EAX,dword ptr [ESP + 0x18]
+1000f899  CMP EAX,0xf1
+1000f89e  JNZ 0x1000f8df
+1000f8a0  LEA EAX,[ESP + 0x14]
+1000f8a4  PUSH EAX
+1000f8a5  LEA ECX,[ESP + 0x37]
+1000f8a9  PUSH 0x100515f8
+1000f8ae  LEA EDI,[ESI + 0x24]
+1000f8b1  PUSH ECX
+1000f8b2  MOV dword ptr [EDI],0x0
+1000f8b8  CALL 0x1004421c
+1000f8bd  ADD ESP,0xc
+1000f8c0  CMP EAX,0x1
+1000f8c3  JZ 0x1000f923
+1000f8c5  LEA ECX,[ESP + 0x10]
+1000f8c9  CALL 0x1000dd20
+1000f8ce  PUSH 0x0
+1000f8d0  PUSH 0x100511b7
+1000f8d5  PUSH 0x56d
+1000f8da  JMP 0x1000f9a3
+1000f8df  CMP EAX,0xf2
+1000f8e4  JNZ 0x1000f977
+1000f8ea  LEA EDI,[ESI + 0x24]
+1000f8ed  PUSH EDI
+1000f8ee  LEA EDX,[ESP + 0x18]
+1000f8f2  PUSH EDX
+1000f8f3  LEA EAX,[ESP + 0x3b]
+1000f8f7  PUSH 0x10051d40
+1000f8fc  PUSH EAX
+1000f8fd  CALL 0x1004421c
+1000f902  ADD ESP,0x10
+1000f905  CMP EAX,EBX
+1000f907  JZ 0x1000f923
+1000f909  LEA ECX,[ESP + 0x10]
+1000f90d  CALL 0x1000dd20
+1000f912  PUSH 0x0
+1000f914  PUSH 0x100511b7
+1000f919  PUSH 0x574
+1000f91e  JMP 0x1000f9a3
+1000f923  MOV EAX,dword ptr [ESP + 0x14]
+1000f927  TEST EAX,EAX
+1000f929  JZ 0x1000f96f
+1000f92b  LEA ECX,[ESP + 0x20]
+1000f92f  PUSH ECX
+1000f930  LEA EDX,[ESP + 0x28]
+1000f934  MOV ECX,EBP
+1000f936  CALL 0x10015fb0
+1000f93b  TEST EAX,EAX
+1000f93d  MOV dword ptr [ESI + 0x20],EAX
+1000f940  JNZ 0x1000f959
+1000f942  LEA ECX,[ESP + 0x10]
+1000f946  CALL 0x1000dd20
+1000f94b  PUSH 0x0
+1000f94d  PUSH 0x100511b7
+1000f952  PUSH 0x57e
+1000f957  JMP 0x1000f9a3
+1000f959  MOV EAX,dword ptr [ESP + 0x24]
+1000f95d  CALL 0x1000db40
+1000f962  MOV dword ptr [EDI],EAX
+1000f964  MOV EAX,dword ptr [ESP + 0x20]
+1000f968  TEST EAX,EAX
+1000f96a  JZ 0x1000f96f
+1000f96c  OR dword ptr [ESI + 0x40],EBX
+1000f96f  OR dword ptr [ESI + 0x40],0x1
+1000f973  MOV EAX,ESI
+1000f975  JMP 0x1000f9b9
+1000f977  LEA ECX,[ESP + 0x10]
+1000f97b  CALL 0x1000dd20
+1000f980  PUSH 0x0
+1000f982  PUSH 0x100511b7
+1000f987  PUSH 0x577
+1000f98c  JMP 0x1000f9a3
+1000f98e  LEA ECX,[ESP + 0x10]
+1000f992  CALL 0x1000dd20
+1000f997  PUSH 0x0
+1000f999  PUSH 0x100511b7
+1000f99e  PUSH 0x558
+1000f9a3  PUSH 0x10051b98
+1000f9a8  PUSH 0x10051390
+1000f9ad  PUSH 0x3d
+1000f9af  CALL 0x1002c240
+1000f9b4  ADD ESP,0x18
+1000f9b7  XOR EAX,EAX
+1000f9b9  MOV ECX,dword ptr [ESP + 0x128]
+1000f9c0  XOR ECX,dword ptr [ESP + 0x12c]
+1000f9c7  POP EDI
+1000f9c8  POP ESI
+1000f9c9  POP EBX
+1000f9ca  POP EBP
+1000f9cb  ADD ESP,0x11c
+1000f9d1  JMP 0x1004414e
+
+===== geMotion_GetTimeExtents @ 1000be60 =====
+
+/* __fastcall geMotion_GetTimeExtents,12 */
+
+undefined4 __fastcall geMotion_GetTimeExtents(int param_1,float *param_2,float *param_3)
+
+{
+  float *pfVar1;
+  float fVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  float local_c;
+  float local_8;
+  float *local_4;
+  
+                    /* 0xbe60  209  @geMotion_GetTimeExtents@12 */
+  iVar5 = 0;
+  local_4 = param_2;
+  if (*(int *)(param_1 + 0xc) == 1) {
+    iVar6 = 0;
+    if (*(int *)(param_1 + 0x10) < 1) {
+      return 0;
+    }
+    iVar3 = 0;
+    do {
+      iVar4 = geMotion_GetTimeExtents
+                        (*(undefined4 *)(*(int *)(param_1 + 0x18) + 0x40 + iVar3),&local_8,&local_c)
+      ;
+      if (iVar4 != 0) {
+        pfVar1 = (float *)(*(int *)(param_1 + 0x18) + iVar3);
+        iVar5 = iVar5 + 1;
+        local_c = (local_c - local_8) / *pfVar1 + pfVar1[1];
+        fVar2 = local_8 + pfVar1[1];
+        local_8 = fVar2;
+        if (local_c < fVar2) {
+          local_8 = local_c;
+          local_c = fVar2;
+        }
+        if (iVar5 == 1) {
+          *local_4 = local_8;
+          *param_3 = local_c;
+        }
+        else {
+          fVar2 = local_8;
+          if (*local_4 <= local_8) {
+            fVar2 = *local_4;
+          }
+          *local_4 = fVar2;
+          fVar2 = local_c;
+          if (local_c < *param_3) {
+            fVar2 = *param_3;
+          }
+          *param_3 = fVar2;
+        }
+      }
+      iVar6 = iVar6 + 1;
+      iVar3 = iVar3 + 0x44;
+    } while (iVar6 < *(int *)(param_1 + 0x10));
+  }
+  else {
+    if (*(int *)(param_1 + 0xc) != 2) {
+      return 0;
+    }
+    iVar6 = 0;
+    if (*(int *)(param_1 + 0x10) < 1) {
+      return 0;
+    }
+    do {
+      iVar3 = gePath_GetTimeExtents
+                        (*(undefined4 *)(*(int *)(param_1 + 0x20) + iVar6 * 4),&local_8,&local_c);
+      if (iVar3 != 0) {
+        iVar5 = iVar5 + 1;
+        if (iVar5 == 1) {
+          *local_4 = local_8;
+          *param_3 = local_c;
+        }
+        else {
+          fVar2 = local_8;
+          if (*local_4 <= local_8) {
+            fVar2 = *local_4;
+          }
+          *local_4 = fVar2;
+          fVar2 = local_c;
+          if (local_c < *param_3) {
+            fVar2 = *param_3;
+          }
+          *param_3 = fVar2;
+        }
+      }
+      iVar6 = iVar6 + 1;
+    } while (iVar6 < *(int *)(param_1 + 0x10));
+  }
+  if (iVar5 < 1) {
+    return 0;
+  }
+  return 1;
+}
+
+
+--- DISASSEMBLY ---
+1000be60  SUB ESP,0xc
+1000be63  PUSH EBX
+1000be64  PUSH EBP
+1000be65  PUSH ESI
+1000be66  MOV ESI,ECX
+1000be68  MOV EAX,dword ptr [ESI + 0xc]
+1000be6b  XOR EBP,EBP
+1000be6d  DEC EAX
+1000be6e  PUSH EDI
+1000be6f  MOV dword ptr [ESP + 0x18],EDX
+1000be73  JZ 0x1000bf00
+1000be79  DEC EAX
+1000be7a  JNZ 0x1000bfd4
+1000be80  MOV EAX,dword ptr [ESI + 0x10]
+1000be83  XOR EDI,EDI
+1000be85  TEST EAX,EAX
+1000be87  JLE 0x1000bfd4
+1000be8d  MOV EBX,dword ptr [ESP + 0x20]
+1000be91  MOV ECX,dword ptr [ESI + 0x20]
+1000be94  MOV ECX,dword ptr [ECX + EDI*0x4]
+1000be97  LEA EAX,[ESP + 0x10]
+1000be9b  PUSH EAX
+1000be9c  LEA EDX,[ESP + 0x18]
+1000bea0  CALL 0x1000e490
+1000bea5  TEST EAX,EAX
+1000bea7  JZ 0x1000bef3
+1000bea9  INC EBP
+1000beaa  CMP EBP,0x1
+1000bead  JNZ 0x1000bec1
+1000beaf  MOV EDX,dword ptr [ESP + 0x14]
+1000beb3  MOV EAX,dword ptr [ESP + 0x18]
+1000beb7  MOV ECX,dword ptr [ESP + 0x10]
+1000bebb  MOV dword ptr [EAX],EDX
+1000bebd  MOV dword ptr [EBX],ECX
+1000bebf  JMP 0x1000bef3
+1000bec1  MOV ECX,dword ptr [ESP + 0x18]
+1000bec5  FLD float ptr [ECX]
+1000bec7  FCOMP float ptr [ESP + 0x14]
+1000becb  FNSTSW AX
+1000becd  TEST AH,0x41
+1000bed0  JNZ 0x1000bed8
+1000bed2  FLD float ptr [ESP + 0x14]
+1000bed6  JMP 0x1000beda
+1000bed8  FLD float ptr [ECX]
+1000beda  FSTP float ptr [ECX]
+1000bedc  FLD float ptr [EBX]
+1000bede  FCOMP float ptr [ESP + 0x10]
+1000bee2  FNSTSW AX
+1000bee4  TEST AH,0x41
+1000bee7  JNZ 0x1000beed
+1000bee9  FLD float ptr [EBX]
+1000beeb  JMP 0x1000bef1
+1000beed  FLD float ptr [ESP + 0x10]
+1000bef1  FSTP float ptr [EBX]
+1000bef3  MOV EAX,dword ptr [ESI + 0x10]
+1000bef6  INC EDI
+1000bef7  CMP EDI,EAX
+1000bef9  JL 0x1000be91
+1000befb  JMP 0x1000bfc1
+1000bf00  MOV EAX,dword ptr [ESI + 0x10]
+1000bf03  XOR EBX,EBX
+1000bf05  TEST EAX,EAX
+1000bf07  JLE 0x1000bfd4
+1000bf0d  XOR EDI,EDI
+1000bf0f  NOP
+1000bf10  MOV EAX,dword ptr [ESI + 0x18]
+1000bf13  MOV ECX,dword ptr [EAX + EDI*0x1 + 0x40]
+1000bf17  LEA EDX,[ESP + 0x10]
+1000bf1b  PUSH EDX
+1000bf1c  LEA EDX,[ESP + 0x18]
+1000bf20  CALL 0x1000be60
+1000bf25  TEST EAX,EAX
+1000bf27  JZ 0x1000bfb2
+1000bf2d  FLD float ptr [ESP + 0x10]
+1000bf31  MOV ECX,dword ptr [ESI + 0x18]
+1000bf34  FSUB float ptr [ESP + 0x14]
+1000bf38  LEA EAX,[ECX + EDI*0x1]
+1000bf3b  INC EBP
+1000bf3c  FDIV float ptr [EAX]
+1000bf3e  FADD float ptr [EAX + 0x4]
+1000bf41  FSTP float ptr [ESP + 0x10]
+1000bf45  FLD float ptr [ESP + 0x14]
+1000bf49  FADD float ptr [EAX + 0x4]
+1000bf4c  FST float ptr [ESP + 0x14]
+1000bf50  FLD float ptr [ESP + 0x10]
+1000bf54  FCOMP
+1000bf56  FNSTSW AX
+1000bf58  TEST AH,0x5
+1000bf5b  JP 0x1000bf6d
+1000bf5d  MOV EDX,dword ptr [ESP + 0x10]
+1000bf61  FSTP float ptr [ESP + 0x10]
+1000bf65  MOV dword ptr [ESP + 0x14],EDX
+1000bf69  FLD float ptr [ESP + 0x14]
+1000bf6d  CMP EBP,0x1
+1000bf70  JNZ 0x1000bf84
+1000bf72  MOV EAX,dword ptr [ESP + 0x18]
+1000bf76  MOV ECX,dword ptr [ESP + 0x10]
+1000bf7a  FSTP float ptr [EAX]
+1000bf7c  MOV EDX,dword ptr [ESP + 0x20]
+1000bf80  MOV dword ptr [EDX],ECX
+1000bf82  JMP 0x1000bfb2
+1000bf84  MOV ECX,dword ptr [ESP + 0x18]
+1000bf88  FCOM float ptr [ECX]
+1000bf8a  FNSTSW AX
+1000bf8c  TEST AH,0x5
+1000bf8f  JNP 0x1000bf95
+1000bf91  FSTP ST0
+1000bf93  FLD float ptr [ECX]
+1000bf95  FSTP float ptr [ECX]
+1000bf97  MOV ECX,dword ptr [ESP + 0x20]
+1000bf9b  FLD float ptr [ECX]
+1000bf9d  FCOMP float ptr [ESP + 0x10]
+1000bfa1  FNSTSW AX
+1000bfa3  TEST AH,0x41
+1000bfa6  JNZ 0x1000bfac
+1000bfa8  FLD float ptr [ECX]
+1000bfaa  JMP 0x1000bfb0
+1000bfac  FLD float ptr [ESP + 0x10]
+1000bfb0  FSTP float ptr [ECX]
+1000bfb2  MOV EAX,dword ptr [ESI + 0x10]
+1000bfb5  INC EBX
+1000bfb6  ADD EDI,0x44
+1000bfb9  CMP EBX,EAX
+1000bfbb  JL 0x1000bf10
+1000bfc1  TEST EBP,EBP
+1000bfc3  JLE 0x1000bfd4
+1000bfc5  POP EDI
+1000bfc6  POP ESI
+1000bfc7  POP EBP
+1000bfc8  MOV EAX,0x1
+1000bfcd  POP EBX
+1000bfce  ADD ESP,0xc
+1000bfd1  RET 0x4
+1000bfd4  POP EDI
+1000bfd5  POP ESI
+1000bfd6  POP EBP
+1000bfd7  XOR EAX,EAX
+1000bfd9  POP EBX
+1000bfda  ADD ESP,0xc
+1000bfdd  RET 0x4
+
+===== gePath_GetTimeExtents @ 1000e490 =====
+
+/* __fastcall gePath_GetTimeExtents,12 */
+
+undefined4 __fastcall gePath_GetTimeExtents(int *param_1,float *param_2,float *param_3)
+
+{
+  float fVar1;
+  float fVar2;
+  int iVar3;
+  int iVar4;
+  float10 fVar5;
+  float local_8;
+  
+                    /* 0xe490  239  @gePath_GetTimeExtents@12 */
+  if (*param_1 == 0) {
+    iVar3 = 0;
+  }
+  else {
+    iVar3 = geActor_GetBody();
+  }
+  if (param_1[8] == 0) {
+    iVar4 = 0;
+  }
+  else {
+    iVar4 = geActor_GetBody();
+  }
+  if (0 < iVar3) {
+    fVar5 = (float10)FUN_10014720();
+    fVar1 = (float)fVar5;
+    local_8 = fVar1;
+    if (1 < iVar3) {
+      fVar5 = (float10)FUN_10014720();
+      local_8 = (float)fVar5;
+    }
+    if (iVar4 < 1) {
+      *param_2 = fVar1;
+      *param_3 = local_8;
+      return 1;
+    }
+    fVar5 = (float10)FUN_10014720();
+    fVar2 = (float)fVar5;
+    if (iVar4 < 2) {
+      fVar5 = (float10)fVar2;
+    }
+    else {
+      fVar5 = (float10)FUN_10014720();
+    }
+    if (fVar1 < fVar2) {
+      fVar2 = fVar1;
+    }
+    *param_2 = fVar2;
+    if (fVar5 <= (float10)local_8) {
+      fVar5 = (float10)local_8;
+    }
+    *param_3 = (float)fVar5;
+    return 1;
+  }
+  if (iVar4 < 1) {
+    return 0;
+  }
+  fVar5 = (float10)FUN_10014720();
+  *param_2 = (float)fVar5;
+  if (iVar4 < 2) {
+    *param_3 = (float)fVar5;
+    return 1;
+  }
+  fVar5 = (float10)FUN_10014720();
+  *param_3 = (float)fVar5;
+  return 1;
+}
+
+
+--- DISASSEMBLY ---
+1000e490  SUB ESP,0xc
+1000e493  PUSH EBX
+1000e494  PUSH EBP
+1000e495  PUSH ESI
+1000e496  MOV ESI,ECX
+1000e498  MOV ECX,dword ptr [ESI]
+1000e49a  TEST ECX,ECX
+1000e49c  PUSH EDI
+1000e49d  MOV EBP,EDX
+1000e49f  JZ 0x1000e4aa
+1000e4a1  CALL 0x1000b7b0
+1000e4a6  MOV EBX,EAX
+1000e4a8  JMP 0x1000e4ac
+1000e4aa  XOR EBX,EBX
+1000e4ac  MOV ECX,dword ptr [ESI + 0x20]
+1000e4af  TEST ECX,ECX
+1000e4b1  JZ 0x1000e4bc
+1000e4b3  CALL 0x1000b7b0
+1000e4b8  MOV EDI,EAX
+1000e4ba  JMP 0x1000e4be
+1000e4bc  XOR EDI,EDI
+1000e4be  TEST EBX,EBX
+1000e4c0  JLE 0x1000e57a
+1000e4c6  MOV ECX,dword ptr [ESI]
+1000e4c8  XOR EDX,EDX
+1000e4ca  CALL 0x10014720
+1000e4cf  FSTP float ptr [ESP + 0x10]
+1000e4d3  CMP EBX,0x1
+1000e4d6  JLE 0x1000e4e8
+1000e4d8  MOV ECX,dword ptr [ESI]
+1000e4da  LEA EDX,[EBX + -0x1]
+1000e4dd  CALL 0x10014720
+1000e4e2  FSTP float ptr [ESP + 0x14]
+1000e4e6  JMP 0x1000e4f0
+1000e4e8  MOV EAX,dword ptr [ESP + 0x10]
+1000e4ec  MOV dword ptr [ESP + 0x14],EAX
+1000e4f0  TEST EDI,EDI
+1000e4f2  JLE 0x1000e55a
+1000e4f4  MOV ECX,dword ptr [ESI + 0x20]
+1000e4f7  XOR EDX,EDX
+1000e4f9  CALL 0x10014720
+1000e4fe  FSTP float ptr [ESP + 0x18]
+1000e502  CMP EDI,0x1
+1000e505  JLE 0x1000e514
+1000e507  MOV ECX,dword ptr [ESI + 0x20]
+1000e50a  LEA EDX,[EDI + -0x1]
+1000e50d  CALL 0x10014720
+1000e512  JMP 0x1000e518
+1000e514  FLD float ptr [ESP + 0x18]
+1000e518  FLD float ptr [ESP + 0x18]
+1000e51c  FCOMP float ptr [ESP + 0x10]
+1000e520  FNSTSW AX
+1000e522  TEST AH,0x41
+1000e525  JNZ 0x1000e52d
+1000e527  FLD float ptr [ESP + 0x10]
+1000e52b  JMP 0x1000e531
+1000e52d  FLD float ptr [ESP + 0x18]
+1000e531  FSTP float ptr [EBP]
+1000e534  FCOM float ptr [ESP + 0x14]
+1000e538  FNSTSW AX
+1000e53a  TEST AH,0x41
+1000e53d  JZ 0x1000e545
+1000e53f  FSTP ST0
+1000e541  FLD float ptr [ESP + 0x14]
+1000e545  MOV ECX,dword ptr [ESP + 0x20]
+1000e549  POP EDI
+1000e54a  FSTP float ptr [ECX]
+1000e54c  POP ESI
+1000e54d  POP EBP
+1000e54e  MOV EAX,0x1
+1000e553  POP EBX
+1000e554  ADD ESP,0xc
+1000e557  RET 0x4
+1000e55a  MOV EDX,dword ptr [ESP + 0x10]
+1000e55e  FLD float ptr [ESP + 0x14]
+1000e562  MOV EAX,dword ptr [ESP + 0x20]
+1000e566  POP EDI
+1000e567  POP ESI
+1000e568  MOV dword ptr [EBP],EDX
+1000e56b  FSTP float ptr [EAX]
+1000e56d  POP EBP
+1000e56e  MOV EAX,0x1
+1000e573  POP EBX
+1000e574  ADD ESP,0xc
+1000e577  RET 0x4
+1000e57a  TEST EDI,EDI
+1000e57c  JLE 0x1000e5c7
+1000e57e  MOV ECX,dword ptr [ESI + 0x20]
+1000e581  XOR EDX,EDX
+1000e583  CALL 0x10014720
+1000e588  FST float ptr [EBP]
+1000e58b  CMP EDI,0x1
+1000e58e  JLE 0x1000e5b2
+1000e590  MOV ECX,dword ptr [ESI + 0x20]
+1000e593  FSTP ST0
+1000e595  LEA EDX,[EDI + -0x1]
+1000e598  CALL 0x10014720
+1000e59d  MOV ECX,dword ptr [ESP + 0x20]
+1000e5a1  POP EDI
+1000e5a2  FSTP float ptr [ECX]
+1000e5a4  POP ESI
+1000e5a5  POP EBP
+1000e5a6  MOV EAX,0x1
+1000e5ab  POP EBX
+1000e5ac  ADD ESP,0xc
+1000e5af  RET 0x4
+1000e5b2  MOV EDX,dword ptr [ESP + 0x20]
+1000e5b6  POP EDI
+1000e5b7  FSTP float ptr [EDX]
+1000e5b9  POP ESI
+1000e5ba  POP EBP
+1000e5bb  MOV EAX,0x1
+1000e5c0  POP EBX
+1000e5c1  ADD ESP,0xc
+1000e5c4  RET 0x4
+1000e5c7  POP EDI
+1000e5c8  POP ESI
+1000e5c9  POP EBP
+1000e5ca  XOR EAX,EAX
+1000e5cc  POP EBX
+1000e5cd  ADD ESP,0xc
+1000e5d0  RET 0x4
+
+===== geMotion_GetPath @ 1000be10 =====
+
+/* __fastcall geMotion_GetPath,8 */
+
+undefined4 __fastcall geMotion_GetPath(int param_1,int param_2)
+
+{
+                    /* 0xbe10  203  @geMotion_GetPath@8 */
+  if (*(int *)(param_1 + 0xc) != 2) {
+    return 0;
+  }
+  return *(undefined4 *)(*(int *)(param_1 + 0x20) + param_2 * 4);
+}
+
+
+--- DISASSEMBLY ---
+1000be10  CMP dword ptr [ECX + 0xc],0x2
+1000be14  JZ 0x1000be19
+1000be16  XOR EAX,EAX
+1000be18  RET
+1000be19  MOV EAX,dword ptr [ECX + 0x20]
+1000be1c  MOV EAX,dword ptr [EAX + EDX*0x4]
+1000be1f  RET
+
+===== gePath_GetKeyframeCount @ 1000e160 =====
+
+/* __fastcall gePath_GetKeyframeCount,8 */
+
+undefined4 __fastcall gePath_GetKeyframeCount(int *param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  
+                    /* 0xe160  237  @gePath_GetKeyframeCount@8 */
+  if (param_2 == 1) {
+    if (*param_1 != 0) {
+      uVar1 = geActor_GetBody();
+      return uVar1;
+    }
+  }
+  else if ((param_2 == 2) && (param_1[8] != 0)) {
+    uVar1 = geActor_GetBody();
+    return uVar1;
+  }
+  return 0;
+}
+
+
+--- DISASSEMBLY ---
+1000e160  MOV EAX,EDX
+1000e162  DEC EAX
+1000e163  JZ 0x1000e174
+1000e165  DEC EAX
+1000e166  JNZ 0x1000e17f
+1000e168  MOV ECX,dword ptr [ECX + 0x20]
+1000e16b  TEST ECX,ECX
+1000e16d  JZ 0x1000e17f
+1000e16f  JMP 0x1000b7b0
+1000e174  MOV ECX,dword ptr [ECX]
+1000e176  TEST ECX,ECX
+1000e178  JZ 0x1000e17f
+1000e17a  JMP 0x1000b7b0
+1000e17f  XOR EAX,EAX
+1000e181  RET
+
+===== FUN_1000f180 @ 1000f180 =====
+
+int * FUN_1000f180(void)
+
+{
+  int *piVar1;
+  int *_Memory;
+  int iVar2;
+  uint unaff_EBX;
+  int local_8;
+  int local_4;
+  
+  if ((unaff_EBX & 0xffff0000) != 0x10010000) {
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\path.cpp",0x63e,"Bad path binary file version",0);
+    return (int *)0x0;
+  }
+  _Memory = (int *)geRam_Allocate(0x44);
+  piVar1 = _Memory + 8;
+  *piVar1 = 0;
+  *_Memory = 0;
+  _Memory[9] = unaff_EBX >> 9 & 0x7f;
+  _Memory[1] = unaff_EBX >> 2 & 0x7f;
+  _Memory[0xe] = 0;
+  _Memory[0xf] = -0x40800000;
+  _Memory[6] = 0;
+  _Memory[7] = -0x40800000;
+  _Memory[0x10] = 0;
+  if ((unaff_EBX & 2) == 0) goto LAB_1000f286;
+  iVar2 = FUN_100163d0(&local_4);
+  *piVar1 = iVar2;
+  if (iVar2 == 0) {
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\path.cpp",0x65d,"Failure to read translation keys",0
+              );
+    geRam_Free_(_Memory);
+    return (int *)0x0;
+  }
+  if (local_8 == 0) {
+LAB_1000f275:
+    iVar2 = 0;
+  }
+  else if (local_8 == 1) {
+    iVar2 = 1;
+  }
+  else {
+    if (local_8 != 2) goto LAB_1000f275;
+    iVar2 = 2;
+  }
+  _Memory[9] = iVar2;
+  if (local_4 != 0) {
+    _Memory[0x10] = _Memory[0x10] | 2;
+  }
+LAB_1000f286:
+  if ((unaff_EBX & 1) != 0) {
+    iVar2 = FUN_10006080(&local_4);
+    *_Memory = iVar2;
+    if (iVar2 == 0) {
+      geErrorLog_AddExplicit
+                (0xffffffff,&DAT_100511a8,"Actor\\path.cpp",0x66b,"Failure to read rotation keys",0)
+      ;
+      if (*piVar1 != 0) {
+        geCamera_Destroy(piVar1);
+      }
+      geRam_Free_(_Memory);
+      return (int *)0x0;
+    }
+    iVar2 = FUN_1000db80();
+    _Memory[1] = iVar2;
+    if (local_4 != 0) {
+      _Memory[0x10] = _Memory[0x10] | 2;
+    }
+  }
+  _Memory[0x10] = _Memory[0x10] | 1;
+  return _Memory;
+}
+
+
+--- DISASSEMBLY ---
+1000f180  MOV EAX,EBX
+1000f182  AND EAX,0xffff0000
+1000f187  SUB ESP,0x8
+1000f18a  CMP EAX,0x10010000
+1000f18f  JZ 0x1000f1b9
+1000f191  PUSH 0x0
+1000f193  PUSH 0x10051d20
+1000f198  PUSH 0x63e
+1000f19d  PUSH 0x10051b98
+1000f1a2  PUSH 0x100511a8
+1000f1a7  PUSH -0x1
+1000f1a9  CALL 0x1002c240
+1000f1ae  ADD ESP,0x18
+1000f1b1  XOR EAX,EAX
+1000f1b3  ADD ESP,0x8
+1000f1b6  RET 0x4
+1000f1b9  PUSH ESI
+1000f1ba  PUSH EDI
+1000f1bb  PUSH 0x44
+1000f1bd  CALL 0x1002c4e0
+1000f1c2  MOV ESI,EAX
+1000f1c4  MOV ECX,EBX
+1000f1c6  MOV EDX,EBX
+1000f1c8  SHR ECX,0x9
+1000f1cb  SHR EDX,0x2
+1000f1ce  AND ECX,0x7f
+1000f1d1  AND EDX,0x7f
+1000f1d4  MOV EAX,0xbf800000
+1000f1d9  ADD ESP,0x4
+1000f1dc  TEST BL,0x2
+1000f1df  LEA EDI,[ESI + 0x20]
+1000f1e2  MOV dword ptr [EDI],0x0
+1000f1e8  MOV dword ptr [ESI],0x0
+1000f1ee  MOV dword ptr [ESI + 0x24],ECX
+1000f1f1  MOV dword ptr [ESI + 0x4],EDX
+1000f1f4  MOV dword ptr [ESI + 0x38],0x0
+1000f1fb  MOV dword ptr [ESI + 0x3c],EAX
+1000f1fe  MOV dword ptr [ESI + 0x18],0x0
+1000f205  MOV dword ptr [ESI + 0x1c],EAX
+1000f208  MOV dword ptr [ESI + 0x40],0x0
+1000f20f  JZ 0x1000f286
+1000f211  MOV ECX,dword ptr [ESP + 0x14]
+1000f215  LEA EAX,[ESP + 0xc]
+1000f219  PUSH EAX
+1000f21a  LEA EDX,[ESP + 0xc]
+1000f21e  CALL 0x100163d0
+1000f223  TEST EAX,EAX
+1000f225  MOV dword ptr [EDI],EAX
+1000f227  JNZ 0x1000f258
+1000f229  PUSH EAX
+1000f22a  PUSH 0x10051cfc
+1000f22f  PUSH 0x65d
+1000f234  PUSH 0x10051b98
+1000f239  PUSH 0x100511a8
+1000f23e  PUSH -0x1
+1000f240  CALL 0x1002c240
+1000f245  PUSH ESI
+1000f246  CALL 0x1002c520
+1000f24b  ADD ESP,0x1c
+1000f24e  POP EDI
+1000f24f  XOR EAX,EAX
+1000f251  POP ESI
+1000f252  ADD ESP,0x8
+1000f255  RET 0x4
+1000f258  MOV EAX,dword ptr [ESP + 0x8]
+1000f25c  SUB EAX,0x0
+1000f25f  JZ 0x1000f275
+1000f261  DEC EAX
+1000f262  JZ 0x1000f26e
+1000f264  DEC EAX
+1000f265  JNZ 0x1000f275
+1000f267  MOV EAX,0x2
+1000f26c  JMP 0x1000f277
+1000f26e  MOV EAX,0x1
+1000f273  JMP 0x1000f277
+1000f275  XOR EAX,EAX
+1000f277  MOV dword ptr [ESI + 0x24],EAX
+1000f27a  MOV EAX,dword ptr [ESP + 0xc]
+1000f27e  TEST EAX,EAX
+1000f280  JZ 0x1000f286
+1000f282  OR dword ptr [ESI + 0x40],0x2
+1000f286  TEST BL,0x1
+1000f289  JZ 0x1000f2fa
+1000f28b  LEA ECX,[ESP + 0xc]
+1000f28f  PUSH ECX
+1000f290  MOV ECX,dword ptr [ESP + 0x18]
+1000f294  LEA EDX,[ESP + 0xc]
+1000f298  CALL 0x10006080
+1000f29d  TEST EAX,EAX
+1000f29f  MOV dword ptr [ESI],EAX
+1000f2a1  JNZ 0x1000f2e2
+1000f2a3  PUSH EAX
+1000f2a4  PUSH 0x10051cdc
+1000f2a9  PUSH 0x66b
+1000f2ae  PUSH 0x10051b98
+1000f2b3  PUSH 0x100511a8
+1000f2b8  PUSH -0x1
+1000f2ba  CALL 0x1002c240
+1000f2bf  MOV EAX,dword ptr [EDI]
+1000f2c1  ADD ESP,0x18
+1000f2c4  TEST EAX,EAX
+1000f2c6  JZ 0x1000f2cf
+1000f2c8  MOV ECX,EDI
+1000f2ca  CALL 0x10001260
+1000f2cf  PUSH ESI
+1000f2d0  CALL 0x1002c520
+1000f2d5  ADD ESP,0x4
+1000f2d8  POP EDI
+1000f2d9  XOR EAX,EAX
+1000f2db  POP ESI
+1000f2dc  ADD ESP,0x8
+1000f2df  RET 0x4
+1000f2e2  MOV EAX,dword ptr [ESP + 0x8]
+1000f2e6  CALL 0x1000db80
+1000f2eb  MOV dword ptr [ESI + 0x4],EAX
+1000f2ee  MOV EAX,dword ptr [ESP + 0xc]
+1000f2f2  TEST EAX,EAX
+1000f2f4  JZ 0x1000f2fa
+1000f2f6  OR dword ptr [ESI + 0x40],0x2
+1000f2fa  OR dword ptr [ESI + 0x40],0x1
+1000f2fe  POP EDI
+1000f2ff  MOV EAX,ESI
+1000f301  POP ESI
+1000f302  ADD ESP,0x8
+1000f305  RET 0x4
+
+===== FUN_1000eab0 @ 1000eab0 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+
+undefined4 * __fastcall FUN_1000eab0(undefined4 param_1)
+
+{
+  undefined4 *puVar1;
+  int iVar2;
+  uint unaff_retaddr;
+  undefined4 *local_10c;
+  int iStack_108;
+  char local_104 [6];
+  char acStack_fe [2];
+  char acStack_fc [3];
+  char acStack_f9 [245];
+  uint local_4;
+  
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  puVar1 = (undefined4 *)geRam_Allocate(0x44);
+  if (puVar1 == (undefined4 *)0x0) {
+    geErrorLog_AddExplicit(0x38,"ERR_PATH_CREATE_ENOMEM","Actor\\path.cpp",0xb4,&DAT_100511b7,0);
+    puVar1 = (undefined4 *)0x0;
+  }
+  else {
+    puVar1[0x10] = 1;
+    puVar1[1] = 3;
+    *puVar1 = 0;
+    puVar1[9] = 0;
+    puVar1[8] = 0;
+  }
+  if (puVar1 != (undefined4 *)0x0) {
+    puVar1[9] = 0;
+    puVar1[1] = 0;
+    local_10c = puVar1;
+    iVar2 = geVFile_GetS(param_1,local_104,0x100);
+    if (iVar2 == 0) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x4ec,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = __strnicmp(local_104,"Looped",6);
+    if (iVar2 != 0) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x4ee,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = _sscanf(acStack_fe,"%d",&iStack_108);
+    if (iVar2 != 1) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x4f1,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    if (iStack_108 == 1) {
+      puVar1[0x10] = puVar1[0x10] | 2;
+    }
+    iVar2 = geVFile_GetS(param_1,local_104,0x100);
+    if (iVar2 != 0) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x4f9,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = __strnicmp(local_104,"Rotation",8);
+    if (iVar2 != 0) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x4fb,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = _sscanf(acStack_fc,"%d",&iStack_108);
+    if (iVar2 != 1) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x4fe,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    if ((iStack_108 != 0) && (iVar2 = FUN_1000e5e0(param_1), iVar2 == 0)) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x502,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = geVFile_GetS(param_1,local_104,0x100);
+    if (iVar2 == 0) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x505,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = __strnicmp(local_104,"Translation",0xb);
+    if (iVar2 != 0) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x507,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    iVar2 = _sscanf(acStack_f9,"%d",&iStack_108);
+    if (iVar2 != 1) {
+      gePath_Destroy(&local_10c);
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x509,&DAT_100511b7,0);
+      return (undefined4 *)0x0;
+    }
+    if ((iStack_108 == 0) || (iVar2 = FUN_1000e5e0(param_1), iVar2 != 0)) {
+      puVar1[0x10] = puVar1[0x10] | 1;
+      return puVar1;
+    }
+    gePath_Destroy(&local_10c);
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\path.cpp",0x50d,&DAT_100511b7,0);
+  }
+  return (undefined4 *)0x0;
+}
+
+
+--- DISASSEMBLY ---
+1000eab0  SUB ESP,0x10c
+1000eab6  MOV EAX,[0x100aa8f0]
+1000eabb  XOR EAX,dword ptr [ESP + 0x10c]
+1000eac2  PUSH EBX
+1000eac3  PUSH ESI
+1000eac4  PUSH EDI
+1000eac5  PUSH 0x44
+1000eac7  MOV dword ptr [ESP + 0x118],EAX
+1000eace  MOV EDI,ECX
+1000ead0  CALL 0x1002c4e0
+1000ead5  XOR EBX,EBX
+1000ead7  ADD ESP,0x4
+1000eada  CMP EAX,EBX
+1000eadc  JNZ 0x1000eb01
+1000eade  PUSH EBX
+1000eadf  PUSH 0x100511b7
+1000eae4  PUSH 0xb4
+1000eae9  PUSH 0x10051b98
+1000eaee  PUSH 0x10051b80
+1000eaf3  PUSH 0x38
+1000eaf5  CALL 0x1002c240
+1000eafa  ADD ESP,0x18
+1000eafd  XOR ESI,ESI
+1000eaff  JMP 0x1000eb19
+1000eb01  MOV dword ptr [EAX + 0x40],0x1
+1000eb08  MOV dword ptr [EAX + 0x4],0x3
+1000eb0f  MOV dword ptr [EAX],EBX
+1000eb11  MOV dword ptr [EAX + 0x24],EBX
+1000eb14  MOV dword ptr [EAX + 0x20],EBX
+1000eb17  MOV ESI,EAX
+1000eb19  CMP ESI,EBX
+1000eb1b  MOV dword ptr [ESP + 0xc],ESI
+1000eb1f  JZ 0x1000ee38
+1000eb25  MOV dword ptr [ESI + 0x24],EBX
+1000eb28  PUSH 0x100
+1000eb2d  LEA EDX,[ESP + 0x18]
+1000eb31  MOV ECX,EDI
+1000eb33  MOV dword ptr [ESI + 0x4],EBX
+1000eb36  CALL 0x1002f140
+1000eb3b  TEST EAX,EAX
+1000eb3d  JNZ 0x1000eb6e
+1000eb3f  LEA ECX,[ESP + 0xc]
+1000eb43  CALL 0x1000dd20
+1000eb48  PUSH EBX
+1000eb49  PUSH 0x100511b7
+1000eb4e  PUSH 0x4ec
+1000eb53  PUSH 0x10051b98
+1000eb58  PUSH 0x10051390
+1000eb5d  PUSH 0x3d
+1000eb5f  CALL 0x1002c240
+1000eb64  ADD ESP,0x18
+1000eb67  XOR EAX,EAX
+1000eb69  JMP 0x1000ee42
+1000eb6e  PUSH 0x6
+1000eb70  LEA EAX,[ESP + 0x18]
+1000eb74  PUSH 0x10051c80
+1000eb79  PUSH EAX
+1000eb7a  CALL 0x10045c94
+1000eb7f  ADD ESP,0xc
+1000eb82  TEST EAX,EAX
+1000eb84  JZ 0x1000ebb5
+1000eb86  LEA ECX,[ESP + 0xc]
+1000eb8a  CALL 0x1000dd20
+1000eb8f  PUSH EBX
+1000eb90  PUSH 0x100511b7
+1000eb95  PUSH 0x4ee
+1000eb9a  PUSH 0x10051b98
+1000eb9f  PUSH 0x10051390
+1000eba4  PUSH 0x3d
+1000eba6  CALL 0x1002c240
+1000ebab  ADD ESP,0x18
+1000ebae  XOR EAX,EAX
+1000ebb0  JMP 0x1000ee42
+1000ebb5  LEA ECX,[ESP + 0x10]
+1000ebb9  PUSH ECX
+1000ebba  LEA EDX,[ESP + 0x1e]
+1000ebbe  PUSH 0x100515f8
+1000ebc3  PUSH EDX
+1000ebc4  CALL 0x1004421c
+1000ebc9  ADD ESP,0xc
+1000ebcc  CMP EAX,0x1
+1000ebcf  JZ 0x1000ec00
+1000ebd1  LEA ECX,[ESP + 0xc]
+1000ebd5  CALL 0x1000dd20
+1000ebda  PUSH EBX
+1000ebdb  PUSH 0x100511b7
+1000ebe0  PUSH 0x4f1
+1000ebe5  PUSH 0x10051b98
+1000ebea  PUSH 0x10051390
+1000ebef  PUSH 0x3d
+1000ebf1  CALL 0x1002c240
+1000ebf6  ADD ESP,0x18
+1000ebf9  XOR EAX,EAX
+1000ebfb  JMP 0x1000ee42
+1000ec00  CMP dword ptr [ESP + 0x10],0x1
+1000ec05  JNZ 0x1000ec0b
+1000ec07  OR dword ptr [ESI + 0x40],0x2
+1000ec0b  PUSH 0x100
+1000ec10  LEA EDX,[ESP + 0x18]
+1000ec14  MOV ECX,EDI
+1000ec16  CALL 0x1002f140
+1000ec1b  TEST EAX,EAX
+1000ec1d  JZ 0x1000ec4e
+1000ec1f  LEA ECX,[ESP + 0xc]
+1000ec23  CALL 0x1000dd20
+1000ec28  PUSH EBX
+1000ec29  PUSH 0x100511b7
+1000ec2e  PUSH 0x4f9
+1000ec33  PUSH 0x10051b98
+1000ec38  PUSH 0x10051390
+1000ec3d  PUSH 0x3d
+1000ec3f  CALL 0x1002c240
+1000ec44  ADD ESP,0x18
+1000ec47  XOR EAX,EAX
+1000ec49  JMP 0x1000ee42
+1000ec4e  PUSH 0x8
+1000ec50  LEA EAX,[ESP + 0x18]
+1000ec54  PUSH 0x10051c74
+1000ec59  PUSH EAX
+1000ec5a  CALL 0x10045c94
+1000ec5f  ADD ESP,0xc
+1000ec62  TEST EAX,EAX
+1000ec64  JZ 0x1000ec95
+1000ec66  LEA ECX,[ESP + 0xc]
+1000ec6a  CALL 0x1000dd20
+1000ec6f  PUSH EBX
+1000ec70  PUSH 0x100511b7
+1000ec75  PUSH 0x4fb
+1000ec7a  PUSH 0x10051b98
+1000ec7f  PUSH 0x10051390
+1000ec84  PUSH 0x3d
+1000ec86  CALL 0x1002c240
+1000ec8b  ADD ESP,0x18
+1000ec8e  XOR EAX,EAX
+1000ec90  JMP 0x1000ee42
+1000ec95  LEA ECX,[ESP + 0x10]
+1000ec99  PUSH ECX
+1000ec9a  LEA EDX,[ESP + 0x20]
+1000ec9e  PUSH 0x100515f8
+1000eca3  PUSH EDX
+1000eca4  CALL 0x1004421c
+1000eca9  ADD ESP,0xc
+1000ecac  CMP EAX,0x1
+1000ecaf  JZ 0x1000ece0
+1000ecb1  LEA ECX,[ESP + 0xc]
+1000ecb5  CALL 0x1000dd20
+1000ecba  PUSH EBX
+1000ecbb  PUSH 0x100511b7
+1000ecc0  PUSH 0x4fe
+1000ecc5  PUSH 0x10051b98
+1000ecca  PUSH 0x10051390
+1000eccf  PUSH 0x3d
+1000ecd1  CALL 0x1002c240
+1000ecd6  ADD ESP,0x18
+1000ecd9  XOR EAX,EAX
+1000ecdb  JMP 0x1000ee42
+1000ece0  CMP dword ptr [ESP + 0x10],EBX
+1000ece4  JZ 0x1000ed26
+1000ece6  PUSH EDI
+1000ece7  MOV EDX,ESI
+1000ece9  MOV ECX,0x1
+1000ecee  CALL 0x1000e5e0
+1000ecf3  TEST EAX,EAX
+1000ecf5  JNZ 0x1000ed26
+1000ecf7  LEA ECX,[ESP + 0xc]
+1000ecfb  CALL 0x1000dd20
+1000ed00  PUSH EBX
+1000ed01  PUSH 0x100511b7
+1000ed06  PUSH 0x502
+1000ed0b  PUSH 0x10051b98
+1000ed10  PUSH 0x10051390
+1000ed15  PUSH 0x3d
+1000ed17  CALL 0x1002c240
+1000ed1c  ADD ESP,0x18
+1000ed1f  XOR EAX,EAX
+1000ed21  JMP 0x1000ee42
+1000ed26  PUSH 0x100
+1000ed2b  LEA EDX,[ESP + 0x18]
+1000ed2f  MOV ECX,EDI
+1000ed31  CALL 0x1002f140
+1000ed36  TEST EAX,EAX
+1000ed38  JNZ 0x1000ed69
+1000ed3a  LEA ECX,[ESP + 0xc]
+1000ed3e  CALL 0x1000dd20
+1000ed43  PUSH EBX
+1000ed44  PUSH 0x100511b7
+1000ed49  PUSH 0x505
+1000ed4e  PUSH 0x10051b98
+1000ed53  PUSH 0x10051390
+1000ed58  PUSH 0x3d
+1000ed5a  CALL 0x1002c240
+1000ed5f  ADD ESP,0x18
+1000ed62  XOR EAX,EAX
+1000ed64  JMP 0x1000ee42
+1000ed69  PUSH 0xb
+1000ed6b  LEA EAX,[ESP + 0x18]
+1000ed6f  PUSH 0x10051c68
+1000ed74  PUSH EAX
+1000ed75  CALL 0x10045c94
+1000ed7a  ADD ESP,0xc
+1000ed7d  TEST EAX,EAX
+1000ed7f  JZ 0x1000edb0
+1000ed81  LEA ECX,[ESP + 0xc]
+1000ed85  CALL 0x1000dd20
+1000ed8a  PUSH EBX
+1000ed8b  PUSH 0x100511b7
+1000ed90  PUSH 0x507
+1000ed95  PUSH 0x10051b98
+1000ed9a  PUSH 0x10051390
+1000ed9f  PUSH 0x3d
+1000eda1  CALL 0x1002c240
+1000eda6  ADD ESP,0x18
+1000eda9  XOR EAX,EAX
+1000edab  JMP 0x1000ee42
+1000edb0  LEA ECX,[ESP + 0x10]
+1000edb4  PUSH ECX
+1000edb5  LEA EDX,[ESP + 0x23]
+1000edb9  PUSH 0x100515f8
+1000edbe  PUSH EDX
+1000edbf  CALL 0x1004421c
+1000edc4  ADD ESP,0xc
+1000edc7  CMP EAX,0x1
+1000edca  JZ 0x1000edf8
+1000edcc  LEA ECX,[ESP + 0xc]
+1000edd0  CALL 0x1000dd20
+1000edd5  PUSH EBX
+1000edd6  PUSH 0x100511b7
+1000eddb  PUSH 0x509
+1000ede0  PUSH 0x10051b98
+1000ede5  PUSH 0x10051390
+1000edea  PUSH 0x3d
+1000edec  CALL 0x1002c240
+1000edf1  ADD ESP,0x18
+1000edf4  XOR EAX,EAX
+1000edf6  JMP 0x1000ee42
+1000edf8  CMP dword ptr [ESP + 0x10],EBX
+1000edfc  JZ 0x1000ee3c
+1000edfe  PUSH EDI
+1000edff  LEA EDX,[ESI + 0x20]
+1000ee02  MOV ECX,0x2
+1000ee07  CALL 0x1000e5e0
+1000ee0c  TEST EAX,EAX
+1000ee0e  JNZ 0x1000ee3c
+1000ee10  LEA ECX,[ESP + 0xc]
+1000ee14  CALL 0x1000dd20
+1000ee19  PUSH EBX
+1000ee1a  PUSH 0x100511b7
+1000ee1f  PUSH 0x50d
+1000ee24  PUSH 0x10051b98
+1000ee29  PUSH 0x10051390
+1000ee2e  PUSH 0x3d
+1000ee30  CALL 0x1002c240
+1000ee35  ADD ESP,0x18
+1000ee38  XOR EAX,EAX
+1000ee3a  JMP 0x1000ee42
+1000ee3c  OR dword ptr [ESI + 0x40],0x1
+1000ee40  MOV EAX,ESI
+1000ee42  MOV ECX,dword ptr [ESP + 0x114]
+1000ee49  XOR ECX,dword ptr [ESP + 0x118]
+1000ee50  POP EDI
+1000ee51  POP ESI
+1000ee52  POP EBX
+1000ee53  ADD ESP,0x10c
+1000ee59  JMP 0x1004414e
+
+===== FUN_10005a00 @ 10005a00 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+
+int __fastcall FUN_10005a00(undefined4 param_1,int *param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  float *pfVar2;
+  int iVar3;
+  bool bVar4;
+  uint unaff_retaddr;
+  int local_12c;
+  int local_128;
+  uint local_124;
+  int local_120;
+  float local_11c;
+  float local_118;
+  undefined4 local_114;
+  undefined1 local_110 [4];
+  undefined1 local_10c [4];
+  undefined1 local_108 [4];
+  char local_104 [4];
+  char local_100 [252];
+  uint local_4;
+  
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  local_118 = 0.0;
+  local_11c = 0.0;
+  local_12c = 0;
+  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+  if (iVar1 == 0) {
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x32b,&DAT_100511b7,0);
+    if (local_12c != 0) {
+      geCamera_Destroy(&local_12c);
+      return 0;
+    }
+  }
+  else {
+    iVar1 = __strnicmp(local_104,"Keys",4);
+    if (iVar1 == 0) {
+      iVar1 = _sscanf(local_100,"%d %d %d %d",&local_128,param_2,&local_124,param_3);
+      if (iVar1 == 4) {
+        iVar1 = *param_2;
+        if (((iVar1 == 0) || (iVar1 == 1)) || (iVar1 == 2)) {
+          if ((int)local_124 < 0x100) {
+            if (((iVar1 == 0) || (iVar1 == 1)) || (iVar1 == 2)) {
+              local_12c = FUN_100143a0();
+              if (local_12c != 0) {
+                if ((local_124 & 2) != 0) {
+                  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+                  if (iVar1 == 0) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x34f,&DAT_100511b7,0)
+                    ;
+                    if (local_12c == 0) {
+                      return 0;
+                    }
+                    geCamera_Destroy(&local_12c);
+                    return 0;
+                  }
+                  iVar1 = _sscanf(local_104,"%f %f",&local_118,&local_11c);
+                  if (iVar1 != 2) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x351,&DAT_100511b7,0)
+                    ;
+                    if (local_12c == 0) {
+                      return 0;
+                    }
+                    geCamera_Destroy(&local_12c);
+                    return 0;
+                  }
+                }
+                if ((local_124 & 0xfffffffd) == 0) {
+                  local_120 = 0;
+                  if (0 < local_128) {
+                    do {
+                      iVar1 = local_120;
+                      pfVar2 = (float *)FUN_10014710();
+                      iVar3 = geVFile_GetS(param_1,local_104,0x100);
+                      if (iVar3 == 0) {
+                        geErrorLog_AddExplicit
+                                  (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x35b,
+                                   &DAT_100511b7,0);
+                        bVar4 = local_12c == 0;
+                        goto LAB_10005d67;
+                      }
+                      if ((local_124 & 2) == 0) {
+                        iVar3 = _sscanf(local_104,"%f %f %f %f %f",pfVar2,pfVar2 + 1,pfVar2 + 2,
+                                        pfVar2 + 3,pfVar2 + 4);
+LAB_10005f93:
+                        if (iVar3 != 5) {
+                          geErrorLog_AddExplicit
+                                    (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x369,
+                                     &DAT_100511b7,0);
+                          bVar4 = local_12c == 0;
+                          goto LAB_10005d67;
+                        }
+                      }
+                      else {
+                        *pfVar2 = (float)local_120 * local_11c + local_118;
+                        iVar3 = _sscanf(local_104,"%f %f %f %f",pfVar2 + 1,pfVar2 + 2,pfVar2 + 3,
+                                        pfVar2 + 4);
+                        if (iVar3 != 4) goto LAB_10005f93;
+                      }
+                      local_120 = iVar1 + 1;
+                    } while (local_120 < local_128);
+                  }
+                }
+                else if ((local_124 & 0xfffffffd) == 1) {
+                  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+                  if (iVar1 == 0) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x372,&DAT_100511b7,0)
+                    ;
+                    bVar4 = local_12c == 0;
+LAB_10005d67:
+                    if (!bVar4) {
+                      geCamera_Destroy(&local_12c);
+                    }
+                  }
+                  else {
+                    iVar1 = _sscanf(local_104,"%f %f %f",local_110,local_10c,local_108);
+                    if (iVar1 == 3) {
+                      local_120 = 0;
+                      if (0 < local_128) {
+                        do {
+                          iVar1 = local_120;
+                          pfVar2 = (float *)FUN_10014710();
+                          iVar3 = geVFile_GetS(param_1,local_104,0x100);
+                          if (iVar3 == 0) {
+                            geErrorLog_AddExplicit
+                                      (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x37a,
+                                       &DAT_100511b7,0);
+                            bVar4 = local_12c == 0;
+                            goto LAB_10005d67;
+                          }
+                          if ((local_124 & 2) == 0) {
+                            iVar3 = _sscanf(local_104,"%f %f",pfVar2,&local_114);
+LAB_10005e54:
+                            if (iVar3 != 2) {
+                              geErrorLog_AddExplicit
+                                        (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x386,
+                                         &DAT_100511b7,0);
+                              bVar4 = local_12c == 0;
+                              goto LAB_10005d67;
+                            }
+                          }
+                          else {
+                            *pfVar2 = (float)local_120 * local_11c + local_118;
+                            iVar3 = _sscanf(local_104,"%f",&local_114);
+                            if (iVar3 != 1) goto LAB_10005e54;
+                          }
+                          geQuaternion_SetFromAxisAngle(pfVar2 + 1,local_110,local_114);
+                          local_120 = iVar1 + 1;
+                        } while (local_120 < local_128);
+                      }
+                      goto LAB_10005e7b;
+                    }
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x375,&DAT_100511b7,0)
+                    ;
+                    if (local_12c != 0) {
+                      geCamera_Destroy(&local_12c);
+                      return 0;
+                    }
+                  }
+                  return 0;
+                }
+LAB_10005e7b:
+                if (*param_2 == 1) {
+                  FUN_10005150();
+                  return local_12c;
+                }
+                if (*param_2 == 2) {
+                  FUN_10005050();
+                  return local_12c;
+                }
+                return local_12c;
+              }
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x34a,&DAT_100511b7,0);
+              if (local_12c != 0) {
+                geCamera_Destroy(&local_12c);
+                return 0;
+              }
+            }
+            else {
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x347,&DAT_100511b7,0);
+              if (local_12c != 0) {
+                geCamera_Destroy(&local_12c);
+                return 0;
+              }
+            }
+          }
+          else {
+            geErrorLog_AddExplicit
+                      (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x337,&DAT_100511b7,0);
+            if (local_12c != 0) {
+              geCamera_Destroy(&local_12c);
+              return 0;
+            }
+          }
+        }
+        else {
+          geErrorLog_AddExplicit
+                    (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x334,&DAT_100511b7,0);
+          if (local_12c != 0) {
+            geCamera_Destroy(&local_12c);
+            return 0;
+          }
+        }
+      }
+      else {
+        geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x331,&DAT_100511b7,0)
+        ;
+        if (local_12c != 0) {
+          geCamera_Destroy(&local_12c);
+          return 0;
+        }
+      }
+    }
+    else {
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x32d,&DAT_100511b7,0);
+      if (local_12c != 0) {
+        geCamera_Destroy(&local_12c);
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+
+--- DISASSEMBLY ---
+10005a00  SUB ESP,0x12c
+10005a06  MOV EAX,[0x100aa8f0]
+10005a0b  XOR EAX,dword ptr [ESP + 0x12c]
+10005a12  PUSH EBX
+10005a13  PUSH EBP
+10005a14  PUSH EDI
+10005a15  MOV EBX,EDX
+10005a17  XOR EDI,EDI
+10005a19  PUSH 0x100
+10005a1e  LEA EDX,[ESP + 0x38]
+10005a22  MOV dword ptr [ESP + 0x138],EAX
+10005a29  MOV EBP,ECX
+10005a2b  MOV dword ptr [ESP + 0x24],0x0
+10005a33  MOV dword ptr [ESP + 0x20],0x0
+10005a3b  MOV dword ptr [ESP + 0x10],EDI
+10005a3f  CALL 0x1002f140
+10005a44  TEST EAX,EAX
+10005a46  JNZ 0x10005a83
+10005a48  PUSH EDI
+10005a49  PUSH 0x100511b7
+10005a4e  PUSH 0x32b
+10005a53  PUSH 0x10051354
+10005a58  PUSH 0x10051390
+10005a5d  PUSH 0x3d
+10005a5f  CALL 0x1002c240
+10005a64  MOV EAX,dword ptr [ESP + 0x24]
+10005a68  ADD ESP,0x18
+10005a6b  CMP EAX,EDI
+10005a6d  JZ 0x10005d10
+10005a73  LEA ECX,[ESP + 0xc]
+10005a77  CALL 0x10001260
+10005a7c  XOR EAX,EAX
+10005a7e  JMP 0x10006012
+10005a83  PUSH 0x4
+10005a85  LEA EAX,[ESP + 0x38]
+10005a89  PUSH 0x10051414
+10005a8e  PUSH EAX
+10005a8f  CALL 0x10045c94
+10005a94  ADD ESP,0xc
+10005a97  TEST EAX,EAX
+10005a99  JZ 0x10005ad6
+10005a9b  PUSH EDI
+10005a9c  PUSH 0x100511b7
+10005aa1  PUSH 0x32d
+10005aa6  PUSH 0x10051354
+10005aab  PUSH 0x10051390
+10005ab0  PUSH 0x3d
+10005ab2  CALL 0x1002c240
+10005ab7  MOV EAX,dword ptr [ESP + 0x24]
+10005abb  ADD ESP,0x18
+10005abe  CMP EAX,EDI
+10005ac0  JZ 0x10005d10
+10005ac6  LEA ECX,[ESP + 0xc]
+10005aca  CALL 0x10001260
+10005acf  XOR EAX,EAX
+10005ad1  JMP 0x10006012
+10005ad6  MOV ECX,dword ptr [ESP + 0x13c]
+10005add  PUSH ECX
+10005ade  LEA EDX,[ESP + 0x18]
+10005ae2  PUSH EDX
+10005ae3  PUSH EBX
+10005ae4  LEA EAX,[ESP + 0x1c]
+10005ae8  PUSH EAX
+10005ae9  LEA ECX,[ESP + 0x48]
+10005aed  PUSH 0x10051450
+10005af2  PUSH ECX
+10005af3  CALL 0x1004421c
+10005af8  ADD ESP,0x18
+10005afb  CMP EAX,0x4
+10005afe  JZ 0x10005b3b
+10005b00  PUSH EDI
+10005b01  PUSH 0x100511b7
+10005b06  PUSH 0x331
+10005b0b  PUSH 0x10051354
+10005b10  PUSH 0x10051390
+10005b15  PUSH 0x3d
+10005b17  CALL 0x1002c240
+10005b1c  MOV EAX,dword ptr [ESP + 0x24]
+10005b20  ADD ESP,0x18
+10005b23  CMP EAX,EDI
+10005b25  JZ 0x10005d10
+10005b2b  LEA ECX,[ESP + 0xc]
+10005b2f  CALL 0x10001260
+10005b34  XOR EAX,EAX
+10005b36  JMP 0x10006012
+10005b3b  MOV EAX,dword ptr [EBX]
+10005b3d  CMP EAX,EDI
+10005b3f  JZ 0x10005b86
+10005b41  CMP EAX,0x1
+10005b44  JZ 0x10005b86
+10005b46  CMP EAX,0x2
+10005b49  JZ 0x10005b86
+10005b4b  PUSH EDI
+10005b4c  PUSH 0x100511b7
+10005b51  PUSH 0x334
+10005b56  PUSH 0x10051354
+10005b5b  PUSH 0x10051390
+10005b60  PUSH 0x3d
+10005b62  CALL 0x1002c240
+10005b67  MOV EAX,dword ptr [ESP + 0x24]
+10005b6b  ADD ESP,0x18
+10005b6e  CMP EAX,EDI
+10005b70  JZ 0x10005d10
+10005b76  LEA ECX,[ESP + 0xc]
+10005b7a  CALL 0x10001260
+10005b7f  XOR EAX,EAX
+10005b81  JMP 0x10006012
+10005b86  CMP dword ptr [ESP + 0x14],0xff
+10005b8e  JLE 0x10005bcb
+10005b90  PUSH EDI
+10005b91  PUSH 0x100511b7
+10005b96  PUSH 0x337
+10005b9b  PUSH 0x10051354
+10005ba0  PUSH 0x10051390
+10005ba5  PUSH 0x3d
+10005ba7  CALL 0x1002c240
+10005bac  MOV EAX,dword ptr [ESP + 0x24]
+10005bb0  ADD ESP,0x18
+10005bb3  CMP EAX,EDI
+10005bb5  JZ 0x10005d10
+10005bbb  LEA ECX,[ESP + 0xc]
+10005bbf  CALL 0x10001260
+10005bc4  XOR EAX,EAX
+10005bc6  JMP 0x10006012
+10005bcb  SUB EAX,EDI
+10005bcd  JZ 0x10005c17
+10005bcf  DEC EAX
+10005bd0  JZ 0x10005c17
+10005bd2  DEC EAX
+10005bd3  JZ 0x10005c10
+10005bd5  PUSH EDI
+10005bd6  PUSH 0x100511b7
+10005bdb  PUSH 0x347
+10005be0  PUSH 0x10051354
+10005be5  PUSH 0x10051390
+10005bea  PUSH 0x3d
+10005bec  CALL 0x1002c240
+10005bf1  MOV EAX,dword ptr [ESP + 0x24]
+10005bf5  ADD ESP,0x18
+10005bf8  CMP EAX,EDI
+10005bfa  JZ 0x10005d10
+10005c00  LEA ECX,[ESP + 0xc]
+10005c04  CALL 0x10001260
+10005c09  XOR EAX,EAX
+10005c0b  JMP 0x10006012
+10005c10  MOV ECX,0x24
+10005c15  JMP 0x10005c1c
+10005c17  MOV ECX,0x14
+10005c1c  MOV EDX,dword ptr [ESP + 0x10]
+10005c20  CALL 0x100143a0
+10005c25  CMP EAX,EDI
+10005c27  MOV dword ptr [ESP + 0xc],EAX
+10005c2b  JNZ 0x10005c68
+10005c2d  PUSH EDI
+10005c2e  PUSH 0x100511b7
+10005c33  PUSH 0x34a
+10005c38  PUSH 0x10051354
+10005c3d  PUSH 0x10051390
+10005c42  PUSH 0x3d
+10005c44  CALL 0x1002c240
+10005c49  MOV EAX,dword ptr [ESP + 0x24]
+10005c4d  ADD ESP,0x18
+10005c50  CMP EAX,EDI
+10005c52  JZ 0x10005d10
+10005c58  LEA ECX,[ESP + 0xc]
+10005c5c  CALL 0x10001260
+10005c61  XOR EAX,EAX
+10005c63  JMP 0x10006012
+10005c68  MOV EAX,dword ptr [ESP + 0x14]
+10005c6c  TEST AL,0x2
+10005c6e  JZ 0x10005d1b
+10005c74  PUSH 0x100
+10005c79  LEA EDX,[ESP + 0x38]
+10005c7d  MOV ECX,EBP
+10005c7f  CALL 0x1002f140
+10005c84  TEST EAX,EAX
+10005c86  JNZ 0x10005cbf
+10005c88  PUSH EDI
+10005c89  PUSH 0x100511b7
+10005c8e  PUSH 0x34f
+10005c93  PUSH 0x10051354
+10005c98  PUSH 0x10051390
+10005c9d  PUSH 0x3d
+10005c9f  CALL 0x1002c240
+10005ca4  MOV EAX,dword ptr [ESP + 0x24]
+10005ca8  ADD ESP,0x18
+10005cab  CMP EAX,EDI
+10005cad  JZ 0x10005d10
+10005caf  LEA ECX,[ESP + 0xc]
+10005cb3  CALL 0x10001260
+10005cb8  XOR EAX,EAX
+10005cba  JMP 0x10006012
+10005cbf  LEA EDX,[ESP + 0x1c]
+10005cc3  PUSH EDX
+10005cc4  LEA EAX,[ESP + 0x24]
+10005cc8  PUSH EAX
+10005cc9  LEA ECX,[ESP + 0x3c]
+10005ccd  PUSH 0x10051448
+10005cd2  PUSH ECX
+10005cd3  CALL 0x1004421c
+10005cd8  ADD ESP,0x10
+10005cdb  CMP EAX,0x2
+10005cde  JZ 0x10005d17
+10005ce0  PUSH EDI
+10005ce1  PUSH 0x100511b7
+10005ce6  PUSH 0x351
+10005ceb  PUSH 0x10051354
+10005cf0  PUSH 0x10051390
+10005cf5  PUSH 0x3d
+10005cf7  CALL 0x1002c240
+10005cfc  MOV EAX,dword ptr [ESP + 0x24]
+10005d00  ADD ESP,0x18
+10005d03  CMP EAX,EDI
+10005d05  JZ 0x10005d10
+10005d07  LEA ECX,[ESP + 0xc]
+10005d0b  CALL 0x10001260
+10005d10  XOR EAX,EAX
+10005d12  JMP 0x10006012
+10005d17  MOV EAX,dword ptr [ESP + 0x14]
+10005d1b  AND EAX,0xfffffffd
+10005d1e  SUB EAX,EDI
+10005d20  PUSH ESI
+10005d21  JZ 0x10005ef8
+10005d27  DEC EAX
+10005d28  JNZ 0x10005e7b
+10005d2e  PUSH 0x100
+10005d33  LEA EDX,[ESP + 0x3c]
+10005d37  MOV ECX,EBP
+10005d39  CALL 0x1002f140
+10005d3e  TEST EAX,EAX
+10005d40  JNZ 0x10005d79
+10005d42  PUSH EDI
+10005d43  PUSH 0x100511b7
+10005d48  PUSH 0x372
+10005d4d  PUSH 0x10051354
+10005d52  PUSH 0x10051390
+10005d57  PUSH 0x3d
+10005d59  CALL 0x1002c240
+10005d5e  MOV EAX,dword ptr [ESP + 0x28]
+10005d62  ADD ESP,0x18
+10005d65  CMP EAX,EDI
+10005d67  JZ 0x10005d72
+10005d69  LEA ECX,[ESP + 0x10]
+10005d6d  CALL 0x10001260
+10005d72  XOR EAX,EAX
+10005d74  JMP 0x10006011
+10005d79  LEA EDX,[ESP + 0x34]
+10005d7d  PUSH EDX
+10005d7e  LEA EAX,[ESP + 0x34]
+10005d82  PUSH EAX
+10005d83  LEA ECX,[ESP + 0x34]
+10005d87  PUSH ECX
+10005d88  LEA EDX,[ESP + 0x44]
+10005d8c  PUSH 0x1005143c
+10005d91  PUSH EDX
+10005d92  CALL 0x1004421c
+10005d97  ADD ESP,0x14
+10005d9a  CMP EAX,0x3
+10005d9d  JZ 0x10005dd6
+10005d9f  PUSH EDI
+10005da0  PUSH 0x100511b7
+10005da5  PUSH 0x375
+10005daa  PUSH 0x10051354
+10005daf  PUSH 0x10051390
+10005db4  PUSH 0x3d
+10005db6  CALL 0x1002c240
+10005dbb  MOV EAX,dword ptr [ESP + 0x28]
+10005dbf  ADD ESP,0x18
+10005dc2  CMP EAX,EDI
+10005dc4  JZ 0x10005d72
+10005dc6  LEA ECX,[ESP + 0x10]
+10005dca  CALL 0x10001260
+10005dcf  XOR EAX,EAX
+10005dd1  JMP 0x10006011
+10005dd6  CMP dword ptr [ESP + 0x14],EDI
+10005dda  MOV dword ptr [ESP + 0x1c],EDI
+10005dde  JLE 0x10005e7b
+10005de4  MOV ECX,dword ptr [ESP + 0x10]
+10005de8  MOV EDX,EDI
+10005dea  CALL 0x10014710
+10005def  PUSH 0x100
+10005df4  LEA EDX,[ESP + 0x3c]
+10005df8  MOV ECX,EBP
+10005dfa  MOV ESI,EAX
+10005dfc  CALL 0x1002f140
+10005e01  TEST EAX,EAX
+10005e03  JZ 0x10005ea2
+10005e09  TEST byte ptr [ESP + 0x18],0x2
+10005e0e  JZ 0x10005e3c
+10005e10  FILD dword ptr [ESP + 0x1c]
+10005e14  LEA EAX,[ESP + 0x28]
+10005e18  PUSH EAX
+10005e19  LEA ECX,[ESP + 0x3c]
+10005e1d  FMUL float ptr [ESP + 0x24]
+10005e21  PUSH 0x10051438
+10005e26  PUSH ECX
+10005e27  FADD float ptr [ESP + 0x30]
+10005e2b  FSTP float ptr [ESI]
+10005e2d  CALL 0x1004421c
+10005e32  ADD ESP,0xc
+10005e35  CMP EAX,0x1
+10005e38  JZ 0x10005e59
+10005e3a  JMP 0x10005e54
+10005e3c  LEA EDX,[ESP + 0x28]
+10005e40  PUSH EDX
+10005e41  PUSH ESI
+10005e42  LEA EAX,[ESP + 0x40]
+10005e46  PUSH 0x10051448
+10005e4b  PUSH EAX
+10005e4c  CALL 0x1004421c
+10005e51  ADD ESP,0x10
+10005e54  CMP EAX,0x2
+10005e57  JNZ 0x10005ecd
+10005e59  MOV ECX,dword ptr [ESP + 0x28]
+10005e5d  PUSH ECX
+10005e5e  LEA ECX,[ESI + 0x4]
+10005e61  LEA EDX,[ESP + 0x30]
+10005e65  CALL 0x1002b670
+10005e6a  MOV EAX,dword ptr [ESP + 0x14]
+10005e6e  INC EDI
+10005e6f  CMP EDI,EAX
+10005e71  MOV dword ptr [ESP + 0x1c],EDI
+10005e75  JL 0x10005de4
+10005e7b  MOV EAX,dword ptr [EBX]
+10005e7d  DEC EAX
+10005e7e  JZ 0x10006004
+10005e84  DEC EAX
+10005e85  JNZ 0x1000600d
+10005e8b  MOV EAX,dword ptr [ESP + 0x140]
+10005e92  MOV EDX,dword ptr [ESP + 0x10]
+10005e96  MOV ECX,dword ptr [EAX]
+10005e98  CALL 0x10005050
+10005e9d  JMP 0x1000600d
+10005ea2  PUSH 0x0
+10005ea4  PUSH 0x100511b7
+10005ea9  PUSH 0x37a
+10005eae  PUSH 0x10051354
+10005eb3  PUSH 0x10051390
+10005eb8  PUSH 0x3d
+10005eba  CALL 0x1002c240
+10005ebf  MOV EAX,dword ptr [ESP + 0x28]
+10005ec3  ADD ESP,0x18
+10005ec6  TEST EAX,EAX
+10005ec8  JMP 0x10005d67
+10005ecd  PUSH 0x0
+10005ecf  PUSH 0x100511b7
+10005ed4  PUSH 0x386
+10005ed9  PUSH 0x10051354
+10005ede  PUSH 0x10051390
+10005ee3  PUSH 0x3d
+10005ee5  CALL 0x1002c240
+10005eea  MOV EAX,dword ptr [ESP + 0x28]
+10005eee  ADD ESP,0x18
+10005ef1  TEST EAX,EAX
+10005ef3  JMP 0x10005d67
+10005ef8  CMP dword ptr [ESP + 0x14],EDI
+10005efc  MOV dword ptr [ESP + 0x1c],EDI
+10005f00  JLE 0x10005e7b
+10005f06  JMP 0x10005f10
+10005f10  MOV ECX,dword ptr [ESP + 0x10]
+10005f14  MOV EDX,EDI
+10005f16  CALL 0x10014710
+10005f1b  PUSH 0x100
+10005f20  LEA EDX,[ESP + 0x3c]
+10005f24  MOV ECX,EBP
+10005f26  MOV ESI,EAX
+10005f28  CALL 0x1002f140
+10005f2d  TEST EAX,EAX
+10005f2f  JZ 0x10005fae
+10005f31  TEST byte ptr [ESP + 0x18],0x2
+10005f36  JZ 0x10005f70
+10005f38  FILD dword ptr [ESP + 0x1c]
+10005f3c  LEA EDX,[ESI + 0x10]
+10005f3f  PUSH EDX
+10005f40  LEA EAX,[ESI + 0xc]
+10005f43  FMUL float ptr [ESP + 0x24]
+10005f47  PUSH EAX
+10005f48  LEA ECX,[ESI + 0x8]
+10005f4b  PUSH ECX
+10005f4c  FADD float ptr [ESP + 0x30]
+10005f50  ADD ESI,0x4
+10005f53  PUSH ESI
+10005f54  LEA EDX,[ESP + 0x48]
+10005f58  FSTP float ptr [ESI + -0x4]
+10005f5b  PUSH 0x1005142c
+10005f60  PUSH EDX
+10005f61  CALL 0x1004421c
+10005f66  ADD ESP,0x18
+10005f69  CMP EAX,0x4
+10005f6c  JZ 0x10005f98
+10005f6e  JMP 0x10005f93
+10005f70  LEA EAX,[ESI + 0x10]
+10005f73  PUSH EAX
+10005f74  LEA ECX,[ESI + 0xc]
+10005f77  PUSH ECX
+10005f78  LEA EDX,[ESI + 0x8]
+10005f7b  PUSH EDX
+10005f7c  LEA EAX,[ESI + 0x4]
+10005f7f  PUSH EAX
+10005f80  PUSH ESI
+10005f81  LEA ECX,[ESP + 0x4c]
+10005f85  PUSH 0x1005141c
+10005f8a  PUSH ECX
+10005f8b  CALL 0x1004421c
+10005f90  ADD ESP,0x1c
+10005f93  CMP EAX,0x5
+10005f96  JNZ 0x10005fd9
+10005f98  MOV EAX,dword ptr [ESP + 0x14]
+10005f9c  INC EDI
+10005f9d  CMP EDI,EAX
+10005f9f  MOV dword ptr [ESP + 0x1c],EDI
+10005fa3  JL 0x10005f10
+10005fa9  JMP 0x10005e7b
+10005fae  PUSH 0x0
+10005fb0  PUSH 0x100511b7
+10005fb5  PUSH 0x35b
+10005fba  PUSH 0x10051354
+10005fbf  PUSH 0x10051390
+10005fc4  PUSH 0x3d
+10005fc6  CALL 0x1002c240
+10005fcb  MOV EAX,dword ptr [ESP + 0x28]
+10005fcf  ADD ESP,0x18
+10005fd2  TEST EAX,EAX
+10005fd4  JMP 0x10005d67
+10005fd9  PUSH 0x0
+10005fdb  PUSH 0x100511b7
+10005fe0  PUSH 0x369
+10005fe5  PUSH 0x10051354
+10005fea  PUSH 0x10051390
+10005fef  PUSH 0x3d
+10005ff1  CALL 0x1002c240
+10005ff6  MOV EAX,dword ptr [ESP + 0x28]
+10005ffa  ADD ESP,0x18
+10005ffd  TEST EAX,EAX
+10005fff  JMP 0x10005d67
+10006004  MOV ECX,dword ptr [ESP + 0x10]
+10006008  CALL 0x10005150
+1000600d  MOV EAX,dword ptr [ESP + 0x10]
+10006011  POP ESI
+10006012  MOV ECX,dword ptr [ESP + 0x134]
+10006019  XOR ECX,dword ptr [ESP + 0x138]
+10006020  POP EDI
+10006021  POP EBP
+10006022  POP EBX
+10006023  CALL 0x1004414e
+10006028  ADD ESP,0x12c
+1000602e  RET 0x4
+
+===== FUN_10015fb0 @ 10015fb0 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+
+int __fastcall FUN_10015fb0(undefined4 param_1,int *param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  float *pfVar2;
+  int iVar3;
+  bool bVar4;
+  uint unaff_retaddr;
+  int local_11c;
+  int local_118;
+  float local_114;
+  float local_110;
+  int local_10c;
+  byte local_108 [4];
+  char local_104 [4];
+  char local_100 [252];
+  uint local_4;
+  
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  local_11c = 0;
+  local_110 = 0.0;
+  local_114 = 0.0;
+  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+  if (iVar1 == 0) {
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x22f,&DAT_100511b7,0);
+    if (local_11c != 0) {
+      geCamera_Destroy(&local_11c);
+      return 0;
+    }
+  }
+  else {
+    iVar1 = __strnicmp(local_104,"Keys",4);
+    if (iVar1 == 0) {
+      iVar1 = _sscanf(local_100,"%d %d %d %d",&local_118,param_2,local_108,param_3);
+      if (iVar1 == 4) {
+        iVar1 = *param_2;
+        if ((iVar1 == 0) || ((0 < iVar1 && (iVar1 < 3)))) {
+          local_11c = FUN_100143a0();
+          if (local_11c == 0) {
+            geErrorLog_AddExplicit
+                      (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x245,&DAT_100511b7,0);
+            if (local_11c != 0) {
+              geCamera_Destroy(&local_11c);
+              return 0;
+            }
+          }
+          else {
+            if ((local_108[0] & 2) == 0) {
+LAB_1001622a:
+              local_10c = 0;
+              if (0 < local_118) {
+                do {
+                  iVar1 = local_10c;
+                  pfVar2 = (float *)FUN_10014710();
+                  iVar3 = geVFile_GetS(param_1,local_104,0x100);
+                  if (iVar3 == 0) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x253,&DAT_100511b7,0)
+                    ;
+                    bVar4 = local_11c == 0;
+                    goto LAB_100160c6;
+                  }
+                  if ((local_108[0] & 2) == 0) {
+                    iVar3 = _sscanf(local_104,"%f %f %f %f",pfVar2,pfVar2 + 1,pfVar2 + 2,pfVar2 + 3)
+                    ;
+                    if (iVar3 != 4) {
+                      geErrorLog_AddExplicit
+                                (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x262,&DAT_100511b7,
+                                 0);
+                      bVar4 = local_11c == 0;
+                      goto LAB_100160c6;
+                    }
+                  }
+                  else {
+                    *pfVar2 = (float)local_10c * local_114 + local_110;
+                    iVar3 = _sscanf(local_104,"%f %f %f",pfVar2 + 1);
+                    if (iVar3 != 3) {
+                      geErrorLog_AddExplicit
+                                (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x25b,&DAT_100511b7,
+                                 0);
+                      bVar4 = local_11c == 0;
+                      goto LAB_100160c6;
+                    }
+                  }
+                  local_10c = iVar1 + 1;
+                } while (local_10c < local_118);
+              }
+              if ((*param_2 != 1) && (*param_2 != 2)) {
+                return local_11c;
+              }
+              FUN_100158d0(local_11c);
+              return local_11c;
+            }
+            iVar1 = geVFile_GetS(param_1,local_104,0x100);
+            if (iVar1 == 0) {
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x24a,&DAT_100511b7,0);
+              if (local_11c != 0) {
+                geCamera_Destroy(&local_11c);
+                return 0;
+              }
+            }
+            else {
+              iVar1 = _sscanf(local_104,"%f %f",&local_110,&local_114);
+              if (iVar1 == 2) goto LAB_1001622a;
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x24c,&DAT_100511b7,0);
+              if (local_11c != 0) {
+                geCamera_Destroy(&local_11c);
+                return 0;
+              }
+            }
+          }
+        }
+        else {
+          geErrorLog_AddExplicit
+                    (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x242,&DAT_100511b7,0);
+          if (local_11c != 0) {
+            geCamera_Destroy(&local_11c);
+            return 0;
+          }
+        }
+      }
+      else {
+        geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x236,&DAT_100511b7,0)
+        ;
+        bVar4 = local_11c == 0;
+LAB_100160c6:
+        if (!bVar4) {
+          geCamera_Destroy(&local_11c);
+        }
+      }
+      return 0;
+    }
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x232,&DAT_100511b7,0);
+    if (local_11c != 0) {
+      geCamera_Destroy(&local_11c);
+    }
+  }
+  return 0;
+}
+
+
+--- DISASSEMBLY ---
+10015fb0  SUB ESP,0x11c
+10015fb6  MOV EAX,[0x100aa8f0]
+10015fbb  XOR EAX,dword ptr [ESP + 0x11c]
+10015fc2  PUSH EBX
+10015fc3  PUSH EBP
+10015fc4  PUSH EDI
+10015fc5  XOR EDI,EDI
+10015fc7  MOV EBX,EDX
+10015fc9  PUSH 0x100
+10015fce  LEA EDX,[ESP + 0x28]
+10015fd2  MOV dword ptr [ESP + 0x128],EAX
+10015fd9  MOV EBP,ECX
+10015fdb  MOV dword ptr [ESP + 0x10],EDI
+10015fdf  MOV dword ptr [ESP + 0x1c],EDI
+10015fe3  MOV dword ptr [ESP + 0x18],EDI
+10015fe7  CALL 0x1002f140
+10015fec  TEST EAX,EAX
+10015fee  JNZ 0x10016027
+10015ff0  PUSH EDI
+10015ff1  PUSH 0x100511b7
+10015ff6  PUSH 0x22f
+10015ffb  PUSH 0x10052158
+10016000  PUSH 0x10051390
+10016005  PUSH 0x3d
+10016007  CALL 0x1002c240
+1001600c  MOV EAX,dword ptr [ESP + 0x24]
+10016010  ADD ESP,0x18
+10016013  CMP EAX,EDI
+10016015  JZ 0x1001606f
+10016017  LEA ECX,[ESP + 0xc]
+1001601b  CALL 0x10001260
+10016020  XOR EAX,EAX
+10016022  JMP 0x1001637a
+10016027  PUSH 0x4
+10016029  LEA EAX,[ESP + 0x28]
+1001602d  PUSH 0x10051414
+10016032  PUSH EAX
+10016033  CALL 0x10045c94
+10016038  ADD ESP,0xc
+1001603b  TEST EAX,EAX
+1001603d  JZ 0x10016076
+1001603f  PUSH EDI
+10016040  PUSH 0x100511b7
+10016045  PUSH 0x232
+1001604a  PUSH 0x10052158
+1001604f  PUSH 0x10051390
+10016054  PUSH 0x3d
+10016056  CALL 0x1002c240
+1001605b  MOV EAX,dword ptr [ESP + 0x24]
+1001605f  ADD ESP,0x18
+10016062  CMP EAX,EDI
+10016064  JZ 0x1001606f
+10016066  LEA ECX,[ESP + 0xc]
+1001606a  CALL 0x10001260
+1001606f  XOR EAX,EAX
+10016071  JMP 0x1001637a
+10016076  PUSH ESI
+10016077  MOV ESI,dword ptr [ESP + 0x130]
+1001607e  PUSH ESI
+1001607f  LEA ECX,[ESP + 0x28]
+10016083  PUSH ECX
+10016084  PUSH EBX
+10016085  LEA EDX,[ESP + 0x20]
+10016089  PUSH EDX
+1001608a  LEA EAX,[ESP + 0x3c]
+1001608e  PUSH 0x10051450
+10016093  PUSH EAX
+10016094  CALL 0x1004421c
+10016099  ADD ESP,0x18
+1001609c  CMP EAX,0x4
+1001609f  JZ 0x100160d8
+100160a1  PUSH EDI
+100160a2  PUSH 0x100511b7
+100160a7  PUSH 0x236
+100160ac  PUSH 0x10052158
+100160b1  PUSH 0x10051390
+100160b6  PUSH 0x3d
+100160b8  CALL 0x1002c240
+100160bd  MOV EAX,dword ptr [ESP + 0x28]
+100160c1  ADD ESP,0x18
+100160c4  CMP EAX,EDI
+100160c6  JZ 0x100160d1
+100160c8  LEA ECX,[ESP + 0x10]
+100160cc  CALL 0x10001260
+100160d1  XOR EAX,EAX
+100160d3  JMP 0x10016379
+100160d8  MOV EAX,dword ptr [EBX]
+100160da  CMP EAX,EDI
+100160dc  JZ 0x10016123
+100160de  JLE 0x100160ec
+100160e0  CMP EAX,0x2
+100160e3  JG 0x100160ec
+100160e5  MOV ECX,0x28
+100160ea  JMP 0x10016128
+100160ec  PUSH EDI
+100160ed  PUSH 0x100511b7
+100160f2  PUSH 0x242
+100160f7  PUSH 0x10052158
+100160fc  PUSH 0x10051390
+10016101  PUSH 0x3d
+10016103  CALL 0x1002c240
+10016108  MOV EAX,dword ptr [ESP + 0x28]
+1001610c  ADD ESP,0x18
+1001610f  CMP EAX,EDI
+10016111  JZ 0x100160d1
+10016113  LEA ECX,[ESP + 0x10]
+10016117  CALL 0x10001260
+1001611c  XOR EAX,EAX
+1001611e  JMP 0x10016379
+10016123  MOV ECX,0x10
+10016128  MOV EDX,dword ptr [ESP + 0x14]
+1001612c  CALL 0x100143a0
+10016131  CMP EAX,EDI
+10016133  MOV dword ptr [ESP + 0x10],EAX
+10016137  JNZ 0x10016174
+10016139  PUSH EDI
+1001613a  PUSH 0x100511b7
+1001613f  PUSH 0x245
+10016144  PUSH 0x10052158
+10016149  PUSH 0x10051390
+1001614e  PUSH 0x3d
+10016150  CALL 0x1002c240
+10016155  MOV EAX,dword ptr [ESP + 0x28]
+10016159  ADD ESP,0x18
+1001615c  CMP EAX,EDI
+1001615e  JZ 0x100160d1
+10016164  LEA ECX,[ESP + 0x10]
+10016168  CALL 0x10001260
+1001616d  XOR EAX,EAX
+1001616f  JMP 0x10016379
+10016174  TEST byte ptr [ESP + 0x24],0x2
+10016179  JZ 0x1001622a
+1001617f  PUSH 0x100
+10016184  LEA EDX,[ESP + 0x2c]
+10016188  MOV ECX,EBP
+1001618a  CALL 0x1002f140
+1001618f  TEST EAX,EAX
+10016191  JNZ 0x100161ce
+10016193  PUSH EDI
+10016194  PUSH 0x100511b7
+10016199  PUSH 0x24a
+1001619e  PUSH 0x10052158
+100161a3  PUSH 0x10051390
+100161a8  PUSH 0x3d
+100161aa  CALL 0x1002c240
+100161af  MOV EAX,dword ptr [ESP + 0x28]
+100161b3  ADD ESP,0x18
+100161b6  CMP EAX,EDI
+100161b8  JZ 0x100160d1
+100161be  LEA ECX,[ESP + 0x10]
+100161c2  CALL 0x10001260
+100161c7  XOR EAX,EAX
+100161c9  JMP 0x10016379
+100161ce  LEA ECX,[ESP + 0x18]
+100161d2  PUSH ECX
+100161d3  LEA EDX,[ESP + 0x20]
+100161d7  PUSH EDX
+100161d8  LEA EAX,[ESP + 0x30]
+100161dc  PUSH 0x10051448
+100161e1  PUSH EAX
+100161e2  CALL 0x1004421c
+100161e7  ADD ESP,0x10
+100161ea  CMP EAX,0x2
+100161ed  JZ 0x1001622a
+100161ef  PUSH EDI
+100161f0  PUSH 0x100511b7
+100161f5  PUSH 0x24c
+100161fa  PUSH 0x10052158
+100161ff  PUSH 0x10051390
+10016204  PUSH 0x3d
+10016206  CALL 0x1002c240
+1001620b  MOV EAX,dword ptr [ESP + 0x28]
+1001620f  ADD ESP,0x18
+10016212  CMP EAX,EDI
+10016214  JZ 0x100160d1
+1001621a  LEA ECX,[ESP + 0x10]
+1001621e  CALL 0x10001260
+10016223  XOR EAX,EAX
+10016225  JMP 0x10016379
+1001622a  CMP dword ptr [ESP + 0x14],EDI
+1001622e  MOV dword ptr [ESP + 0x20],EDI
+10016232  JLE 0x100162fd
+10016238  JMP 0x10016240
+10016240  MOV ECX,dword ptr [ESP + 0x10]
+10016244  MOV EDX,EDI
+10016246  CALL 0x10014710
+1001624b  PUSH 0x100
+10016250  LEA EDX,[ESP + 0x2c]
+10016254  MOV ECX,EBP
+10016256  MOV ESI,EAX
+10016258  CALL 0x1002f140
+1001625d  TEST EAX,EAX
+1001625f  JZ 0x10016311
+10016265  TEST byte ptr [ESP + 0x24],0x2
+1001626a  LEA ECX,[ESI + 0xc]
+1001626d  LEA EDX,[ESI + 0x8]
+10016270  PUSH ECX
+10016271  PUSH EDX
+10016272  JZ 0x100162c9
+10016274  FILD dword ptr [ESP + 0x28]
+10016278  ADD ESI,0x4
+1001627b  PUSH ESI
+1001627c  LEA EAX,[ESP + 0x34]
+10016280  FMUL float ptr [ESP + 0x24]
+10016284  PUSH 0x1005143c
+10016289  PUSH EAX
+1001628a  FADD float ptr [ESP + 0x30]
+1001628e  FSTP float ptr [ESI + -0x4]
+10016291  CALL 0x1004421c
+10016296  ADD ESP,0x14
+10016299  CMP EAX,0x3
+1001629c  JZ 0x100162e5
+1001629e  PUSH 0x0
+100162a0  PUSH 0x100511b7
+100162a5  PUSH 0x25b
+100162aa  PUSH 0x10052158
+100162af  PUSH 0x10051390
+100162b4  PUSH 0x3d
+100162b6  CALL 0x1002c240
+100162bb  MOV EAX,dword ptr [ESP + 0x28]
+100162bf  ADD ESP,0x18
+100162c2  TEST EAX,EAX
+100162c4  JMP 0x100160c6
+100162c9  LEA EAX,[ESI + 0x4]
+100162cc  PUSH EAX
+100162cd  PUSH ESI
+100162ce  LEA ECX,[ESP + 0x38]
+100162d2  PUSH 0x1005142c
+100162d7  PUSH ECX
+100162d8  CALL 0x1004421c
+100162dd  ADD ESP,0x18
+100162e0  CMP EAX,0x4
+100162e3  JNZ 0x1001633c
+100162e5  MOV EAX,dword ptr [ESP + 0x14]
+100162e9  INC EDI
+100162ea  CMP EDI,EAX
+100162ec  MOV dword ptr [ESP + 0x20],EDI
+100162f0  JL 0x10016240
+100162f6  MOV ESI,dword ptr [ESP + 0x130]
+100162fd  MOV EAX,dword ptr [EBX]
+100162ff  DEC EAX
+10016300  JZ 0x10016367
+10016302  DEC EAX
+10016303  JNZ 0x10016375
+10016305  MOV EDX,dword ptr [ESP + 0x10]
+10016309  PUSH EDX
+1001630a  MOV EDX,0x1
+1001630f  JMP 0x1001636e
+10016311  PUSH 0x0
+10016313  PUSH 0x100511b7
+10016318  PUSH 0x253
+1001631d  PUSH 0x10052158
+10016322  PUSH 0x10051390
+10016327  PUSH 0x3d
+10016329  CALL 0x1002c240
+1001632e  MOV EAX,dword ptr [ESP + 0x28]
+10016332  ADD ESP,0x18
+10016335  TEST EAX,EAX
+10016337  JMP 0x100160c6
+1001633c  PUSH 0x0
+1001633e  PUSH 0x100511b7
+10016343  PUSH 0x262
+10016348  PUSH 0x10052158
+1001634d  PUSH 0x10051390
+10016352  PUSH 0x3d
+10016354  CALL 0x1002c240
+10016359  MOV EAX,dword ptr [ESP + 0x28]
+1001635d  ADD ESP,0x18
+10016360  TEST EAX,EAX
+10016362  JMP 0x100160c6
+10016367  MOV EAX,dword ptr [ESP + 0x10]
+1001636b  PUSH EAX
+1001636c  XOR EDX,EDX
+1001636e  MOV ECX,dword ptr [ESI]
+10016370  CALL 0x100158d0
+10016375  MOV EAX,dword ptr [ESP + 0x10]
+10016379  POP ESI
+1001637a  MOV ECX,dword ptr [ESP + 0x124]
+10016381  XOR ECX,dword ptr [ESP + 0x128]
+10016388  POP EDI
+10016389  POP EBP
+1001638a  POP EBX
+1001638b  CALL 0x1004414e
+10016390  ADD ESP,0x11c
+10016396  RET 0x4
+
+===== FUN_10014720 @ 10014720 =====
+
+float10 __fastcall FUN_10014720(int param_1,int param_2)
+
+{
+  return (float10)*(float *)(*(int *)(param_1 + 4) * param_2 + 8 + param_1);
+}
+
+
+--- DISASSEMBLY ---
+10014720  MOV EAX,dword ptr [ECX + 0x4]
+10014723  IMUL EAX,EDX
+10014726  FLD float ptr [EAX + ECX*0x1 + 0x8]
+1001472a  RET
+
+===== FUN_100163d0 @ 100163d0 =====
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+int __fastcall FUN_100163d0(undefined4 param_1,uint *param_2,uint *param_3)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  float *pfVar4;
+  int iVar5;
+  float *pfVar6;
+  float fVar7;
+  float *pfVar8;
+  float fVar9;
+  float *pfVar10;
+  int local_18;
+  float local_14;
+  float local_10;
+  float local_c;
+  float *local_8;
+  uint *local_4;
+  
+  local_4 = param_2;
+  iVar3 = geVFile_Read(param_1,&local_18,4);
+  if (iVar3 == 0) {
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\vkframe.cpp",0x2a5,
+               "Failure to read binary VKFrame header",0);
+    return 0;
+  }
+  if (local_18 < 0) {
+    geErrorLog_AddExplicit(0xffffffff,&DAT_100511a8,"Actor\\vkframe.cpp",0x2aa,"Bad Blocksize",0);
+    return 0;
+  }
+  pfVar4 = (float *)geRam_Allocate(local_18);
+  local_8 = pfVar4;
+  iVar3 = geVFile_Read(param_1,pfVar4,local_18);
+  if (iVar3 == 0) {
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\vkframe.cpp",0x2b1,
+               "Failure to read binary VKFrame header",0);
+    return 0;
+  }
+  local_14 = *pfVar4;
+  uVar2 = (uint)local_14 >> 8;
+  *param_2 = (uint)local_14 >> 0x10 & 0xff;
+  *param_3 = (uint)local_14 & 1;
+  fVar9 = pfVar4[1];
+  if (0xff < (uVar2 & 0xff)) {
+    geRam_Free_(pfVar4);
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\vkframe.cpp",0x2bd,"Bad Compression Flag",0);
+    return 0;
+  }
+  uVar1 = *param_2;
+  if (uVar1 == 0) {
+    iVar3 = 0x10;
+  }
+  else {
+    if (((int)uVar1 < 1) || (2 < (int)uVar1)) {
+      geRam_Free_(pfVar4);
+      geErrorLog_AddExplicit
+                (0xffffffff,&DAT_100511a8,"Actor\\vkframe.cpp",0x2cb,"Bad InterpolationType",0);
+      return 0;
+    }
+    iVar3 = 0x28;
+  }
+  iVar5 = FUN_100143a0();
+  if (iVar5 == 0) {
+    geRam_Free_(pfVar4);
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\vkframe.cpp",0x2d3,"Failed to allocate tkarray",0);
+    return 0;
+  }
+  pfVar10 = pfVar4 + 2;
+  pfVar6 = (float *)FUN_10014710();
+  if ((uVar2 & 2) == 0) {
+    fVar7 = fVar9;
+    pfVar8 = pfVar6;
+    if (0 < (int)fVar9) {
+      do {
+        *pfVar8 = *pfVar10;
+        pfVar10 = pfVar10 + 1;
+        fVar7 = (float)((int)fVar7 - 1);
+        pfVar8 = (float *)((int)pfVar8 + iVar3);
+      } while (fVar7 != 0.0);
+    }
+  }
+  else {
+    local_14 = (float)(int)fVar9;
+    local_c = *pfVar10;
+    local_10 = pfVar4[3];
+    pfVar10 = pfVar4 + 4;
+    pfVar8 = pfVar6;
+    for (fVar7 = _DAT_100598d4; fVar7 < local_14; fVar7 = fVar7 + _DAT_1005118c) {
+      *pfVar8 = local_10 * fVar7 + local_c;
+      pfVar8 = (float *)((int)pfVar8 + iVar3);
+    }
+  }
+  if (0 < (int)fVar9) {
+    pfVar6 = pfVar6 + 1;
+    do {
+      *pfVar6 = *pfVar10;
+      pfVar6[1] = pfVar10[1];
+      pfVar4 = pfVar10 + 2;
+      pfVar10 = pfVar10 + 3;
+      fVar9 = (float)((int)fVar9 - 1);
+      pfVar6[2] = *pfVar4;
+      pfVar6 = (float *)((int)pfVar6 + iVar3);
+      pfVar4 = local_8;
+    } while (fVar9 != 0.0);
+  }
+  if ((*local_4 == 1) || (*local_4 == 2)) {
+    FUN_100158d0(iVar5);
+  }
+  geRam_Free_(pfVar4);
+  return iVar5;
+}
+
+
+--- DISASSEMBLY ---
+100163d0  SUB ESP,0x20
+100163d3  PUSH ESI
+100163d4  PUSH EDI
+100163d5  MOV EDI,EDX
+100163d7  PUSH 0x4
+100163d9  LEA EDX,[ESP + 0x14]
+100163dd  MOV dword ptr [ESP + 0x28],EDI
+100163e1  MOV ESI,ECX
+100163e3  CALL 0x1002f160
+100163e8  TEST EAX,EAX
+100163ea  JNZ 0x10016415
+100163ec  PUSH EAX
+100163ed  PUSH 0x10052194
+100163f2  PUSH 0x2a5
+100163f7  PUSH 0x10052158
+100163fc  PUSH 0x100511a8
+10016401  PUSH -0x1
+10016403  CALL 0x1002c240
+10016408  ADD ESP,0x18
+1001640b  POP EDI
+1001640c  XOR EAX,EAX
+1001640e  POP ESI
+1001640f  ADD ESP,0x20
+10016412  RET 0x4
+10016415  MOV EAX,dword ptr [ESP + 0x10]
+10016419  TEST EAX,EAX
+1001641b  JGE 0x10016447
+1001641d  PUSH 0x0
+1001641f  PUSH 0x100514a8
+10016424  PUSH 0x2aa
+10016429  PUSH 0x10052158
+1001642e  PUSH 0x100511a8
+10016433  PUSH -0x1
+10016435  CALL 0x1002c240
+1001643a  ADD ESP,0x18
+1001643d  POP EDI
+1001643e  XOR EAX,EAX
+10016440  POP ESI
+10016441  ADD ESP,0x20
+10016444  RET 0x4
+10016447  PUSH EBX
+10016448  PUSH EBP
+10016449  PUSH EAX
+1001644a  CALL 0x1002c4e0
+1001644f  MOV EBP,EAX
+10016451  MOV EAX,dword ptr [ESP + 0x1c]
+10016455  ADD ESP,0x4
+10016458  PUSH EAX
+10016459  MOV EDX,EBP
+1001645b  MOV ECX,ESI
+1001645d  MOV dword ptr [ESP + 0x2c],EBP
+10016461  CALL 0x1002f160
+10016466  TEST EAX,EAX
+10016468  JNZ 0x10016495
+1001646a  PUSH EAX
+1001646b  PUSH 0x10052194
+10016470  PUSH 0x2b1
+10016475  PUSH 0x10052158
+1001647a  PUSH 0x100511a8
+1001647f  PUSH -0x1
+10016481  CALL 0x1002c240
+10016486  ADD ESP,0x18
+10016489  POP EBP
+1001648a  POP EBX
+1001648b  POP EDI
+1001648c  XOR EAX,EAX
+1001648e  POP ESI
+1001648f  ADD ESP,0x20
+10016492  RET 0x4
+10016495  MOV EAX,dword ptr [EBP]
+10016498  MOV EDX,dword ptr [ESP + 0x34]
+1001649c  MOV ECX,EAX
+1001649e  SHR ECX,0x10
+100164a1  MOVZX ECX,CL
+100164a4  MOVZX EBX,AH
+100164a7  MOV dword ptr [ESP + 0x1c],EAX
+100164ab  AND EAX,0x1
+100164ae  CMP EBX,0xff
+100164b4  MOV dword ptr [EDI],ECX
+100164b6  MOV dword ptr [EDX],EAX
+100164b8  MOV EDX,dword ptr [EBP + 0x4]
+100164bb  MOV dword ptr [ESP + 0x10],EDX
+100164bf  JLE 0x100164f3
+100164c1  PUSH EBP
+100164c2  CALL 0x1002c520
+100164c7  PUSH 0x0
+100164c9  PUSH 0x10051490
+100164ce  PUSH 0x2bd
+100164d3  PUSH 0x10052158
+100164d8  PUSH 0x100511a8
+100164dd  PUSH -0x1
+100164df  CALL 0x1002c240
+100164e4  ADD ESP,0x1c
+100164e7  POP EBP
+100164e8  POP EBX
+100164e9  POP EDI
+100164ea  XOR EAX,EAX
+100164ec  POP ESI
+100164ed  ADD ESP,0x20
+100164f0  RET 0x4
+100164f3  MOV EAX,dword ptr [EDI]
+100164f5  TEST EAX,EAX
+100164f7  JZ 0x10016539
+100164f9  JLE 0x10016507
+100164fb  CMP EAX,0x2
+100164fe  JG 0x10016507
+10016500  MOV EDI,0x28
+10016505  JMP 0x1001653e
+10016507  PUSH EBP
+10016508  CALL 0x1002c520
+1001650d  PUSH 0x0
+1001650f  PUSH 0x10051478
+10016514  PUSH 0x2cb
+10016519  PUSH 0x10052158
+1001651e  PUSH 0x100511a8
+10016523  PUSH -0x1
+10016525  CALL 0x1002c240
+1001652a  ADD ESP,0x1c
+1001652d  POP EBP
+1001652e  POP EBX
+1001652f  POP EDI
+10016530  XOR EAX,EAX
+10016532  POP ESI
+10016533  ADD ESP,0x20
+10016536  RET 0x4
+10016539  MOV EDI,0x10
+1001653e  MOV ECX,EDI
+10016540  CALL 0x100143a0
+10016545  TEST EAX,EAX
+10016547  MOV dword ptr [ESP + 0x14],EAX
+1001654b  JNZ 0x1001657f
+1001654d  PUSH EBP
+1001654e  CALL 0x1002c520
+10016553  PUSH 0x0
+10016555  PUSH 0x1005145c
+1001655a  PUSH 0x2d3
+1001655f  PUSH 0x10052158
+10016564  PUSH 0x100511a8
+10016569  PUSH -0x1
+1001656b  CALL 0x1002c240
+10016570  ADD ESP,0x1c
+10016573  POP EBP
+10016574  POP EBX
+10016575  POP EDI
+10016576  XOR EAX,EAX
+10016578  POP ESI
+10016579  ADD ESP,0x20
+1001657c  RET 0x4
+1001657f  XOR EDX,EDX
+10016581  MOV ECX,EAX
+10016583  LEA ESI,[EBP + 0x8]
+10016586  CALL 0x10014710
+1001658b  TEST BL,0x2
+1001658e  MOV EDX,EAX
+10016590  MOV ECX,EDX
+10016592  JZ 0x10016633
+10016598  FILD dword ptr [ESP + 0x10]
+1001659c  MOV EAX,dword ptr [ESI]
+1001659e  ADD ESI,0x4
+100165a1  MOV dword ptr [ESP + 0x24],EAX
+100165a5  MOV EAX,dword ptr [ESI]
+100165a7  FSTP float ptr [ESP + 0x1c]
+100165ab  FLD float ptr [0x100598d4]
+100165b1  MOV dword ptr [ESP + 0x20],EAX
+100165b5  FLD float ptr [0x100598d4]
+100165bb  ADD ESI,0x4
+100165be  FCOMP float ptr [ESP + 0x1c]
+100165c2  FNSTSW AX
+100165c4  TEST AH,0x5
+100165c7  JP 0x100165ef
+100165c9  LEA ESP,[ESP]
+100165d0  FLD float ptr [ESP + 0x20]
+100165d4  FMUL ST1
+100165d6  FADD float ptr [ESP + 0x24]
+100165da  FSTP float ptr [ECX]
+100165dc  ADD ECX,EDI
+100165de  FADD float ptr [0x1005118c]
+100165e4  FCOM float ptr [ESP + 0x1c]
+100165e8  FNSTSW AX
+100165ea  TEST AH,0x5
+100165ed  JNP 0x100165d0
+100165ef  FSTP ST0
+100165f1  MOV ECX,dword ptr [ESP + 0x10]
+100165f5  TEST ECX,ECX
+100165f7  JLE 0x10016620
+100165f9  LEA EAX,[EDX + 0x4]
+100165fc  LEA ESP,[ESP]
+10016600  MOV EDX,ESI
+10016602  MOV EBP,dword ptr [EDX]
+10016604  MOV EBX,EAX
+10016606  MOV dword ptr [EBX],EBP
+10016608  MOV EBP,dword ptr [EDX + 0x4]
+1001660b  MOV dword ptr [EBX + 0x4],EBP
+1001660e  MOV EDX,dword ptr [EDX + 0x8]
+10016611  ADD ESI,0xc
+10016614  ADD EAX,EDI
+10016616  DEC ECX
+10016617  MOV dword ptr [EBX + 0x8],EDX
+1001661a  JNZ 0x10016600
+1001661c  MOV EBP,dword ptr [ESP + 0x28]
+10016620  MOV EAX,dword ptr [ESP + 0x2c]
+10016624  MOV EAX,dword ptr [EAX]
+10016626  DEC EAX
+10016627  JZ 0x1001664e
+10016629  DEC EAX
+1001662a  JNZ 0x10016660
+1001662c  MOV EDX,0x1
+10016631  JMP 0x10016650
+10016633  MOV EAX,dword ptr [ESP + 0x10]
+10016637  TEST EAX,EAX
+10016639  JLE 0x100165f1
+1001663b  JMP 0x10016640
+10016640  MOV EBX,dword ptr [ESI]
+10016642  MOV dword ptr [ECX],EBX
+10016644  ADD ESI,0x4
+10016647  ADD ECX,EDI
+10016649  DEC EAX
+1001664a  JNZ 0x10016640
+1001664c  JMP 0x100165f1
+1001664e  XOR EDX,EDX
+10016650  MOV ECX,dword ptr [ESP + 0x14]
+10016654  MOV EAX,dword ptr [ESP + 0x34]
+10016658  PUSH ECX
+10016659  MOV ECX,dword ptr [EAX]
+1001665b  CALL 0x100158d0
+10016660  PUSH EBP
+10016661  CALL 0x1002c520
+10016666  MOV EAX,dword ptr [ESP + 0x18]
+1001666a  ADD ESP,0x4
+1001666d  POP EBP
+1001666e  POP EBX
+1001666f  POP EDI
+10016670  POP ESI
+10016671  ADD ESP,0x20
+10016674  RET 0x4
+
+===== FUN_10006080 @ 10006080 =====
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+int __fastcall FUN_10006080(undefined4 param_1,uint *param_2,uint *param_3)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint *_Memory;
+  int iVar3;
+  float *pfVar4;
+  float fVar5;
+  float *pfVar6;
+  float fVar7;
+  float *pfVar8;
+  int local_28;
+  float local_24;
+  uint local_20;
+  uint *local_1c;
+  float local_18;
+  float *local_14;
+  uint *local_10;
+  float local_c;
+  float local_8;
+  float local_4;
+  
+  local_10 = param_2;
+  iVar2 = geVFile_Read(param_1,&local_28,4);
+  if (iVar2 == 0) {
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\QKFrame.cpp",0x3d7,
+               "Failure to read binary QKFrame header",0);
+    return 0;
+  }
+  if (local_28 < 0) {
+    geErrorLog_AddExplicit(0xffffffff,&DAT_100511a8,"Actor\\QKFrame.cpp",0x3dc,"Bad Blocksize",0);
+    return 0;
+  }
+  _Memory = (uint *)geRam_Allocate(local_28);
+  local_1c = _Memory;
+  iVar2 = geVFile_Read(param_1,_Memory,local_28);
+  if (iVar2 == 0) {
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\QKFrame.cpp",0x3e3,
+               "Failure to read binary QKFrame header",0);
+    return 0;
+  }
+  uVar1 = *_Memory;
+  *param_2 = uVar1 >> 0x10 & 0xff;
+  local_20 = uVar1 >> 8 & 0xff;
+  *param_3 = uVar1 & 1;
+  fVar7 = (float)_Memory[1];
+  local_24 = fVar7;
+  if (local_20 < 0x100) {
+    uVar1 = *param_2;
+    if ((uVar1 == 0) || (uVar1 == 1)) {
+      iVar2 = 0x14;
+    }
+    else {
+      if (uVar1 != 2) {
+        geRam_Free_(_Memory);
+        geErrorLog_AddExplicit
+                  (0xffffffff,&DAT_100511a8,"Actor\\QKFrame.cpp",0x3ff,"Bad InterpolationType",0);
+        return 0;
+      }
+      iVar2 = 0x24;
+    }
+    iVar3 = FUN_100143a0();
+    if (iVar3 != 0) {
+      pfVar8 = (float *)(_Memory + 2);
+      pfVar4 = (float *)FUN_10014710();
+      if ((local_20 & 2) == 0) {
+        fVar5 = fVar7;
+        pfVar6 = pfVar4;
+        local_14 = pfVar4;
+        if (0 < (int)fVar7) {
+          do {
+            *pfVar6 = *pfVar8;
+            pfVar8 = pfVar8 + 1;
+            fVar5 = (float)((int)fVar5 - 1);
+            pfVar6 = (float *)((int)pfVar6 + iVar2);
+          } while (fVar5 != 0.0);
+        }
+      }
+      else {
+        local_24 = (float)(int)local_24;
+        local_14 = (float *)*pfVar8;
+        local_18 = (float)_Memory[3];
+        pfVar8 = (float *)(_Memory + 4);
+        pfVar6 = pfVar4;
+        for (fVar5 = _DAT_100598d4; fVar5 < local_24; fVar5 = fVar5 + _DAT_1005118c) {
+          *pfVar6 = local_18 * fVar5 + (float)local_14;
+          pfVar6 = (float *)((int)pfVar6 + iVar2);
+        }
+      }
+      if ((local_20 & 1) == 0) {
+        if (0 < (int)fVar7) {
+          pfVar4 = pfVar4 + 1;
+          do {
+            *pfVar4 = *pfVar8;
+            pfVar4[1] = pfVar8[1];
+            pfVar4[2] = pfVar8[2];
+            pfVar6 = pfVar8 + 3;
+            pfVar8 = pfVar8 + 4;
+            fVar7 = (float)((int)fVar7 - 1);
+            pfVar4[3] = *pfVar6;
+            pfVar4 = (float *)((int)pfVar4 + iVar2);
+            _Memory = local_1c;
+          } while (fVar7 != 0.0);
+        }
+      }
+      else {
+        local_c = *pfVar8;
+        local_8 = pfVar8[1];
+        local_4 = pfVar8[2];
+        pfVar8 = pfVar8 + 3;
+        if (0 < (int)fVar7) {
+          pfVar4 = pfVar4 + 1;
+          do {
+            local_14 = (float *)*pfVar8;
+            geQuaternion_SetFromAxisAngle(pfVar4,&local_c,local_14);
+            pfVar8 = pfVar8 + 1;
+            pfVar4 = (float *)((int)pfVar4 + iVar2);
+            fVar7 = (float)((int)fVar7 - 1);
+            _Memory = local_1c;
+          } while (fVar7 != 0.0);
+        }
+      }
+      if (*local_10 == 1) {
+        FUN_10005150();
+      }
+      else if (*local_10 == 2) {
+        FUN_10005050();
+      }
+      geRam_Free_(_Memory);
+      return iVar3;
+    }
+    geRam_Free_(_Memory);
+    geErrorLog_AddExplicit
+              (0xffffffff,&DAT_100511a8,"Actor\\QKFrame.cpp",0x407,"Failed to allocate tkarray",0);
+    return 0;
+  }
+  geRam_Free_(_Memory);
+  geErrorLog_AddExplicit
+            (0xffffffff,&DAT_100511a8,"Actor\\QKFrame.cpp",0x3ef,"Bad Compression Flag",0);
+  return 0;
+}
+
+
+--- DISASSEMBLY ---
+10006080  SUB ESP,0x2c
+10006083  PUSH ESI
+10006084  PUSH EDI
+10006085  MOV EDI,EDX
+10006087  PUSH 0x4
+10006089  LEA EDX,[ESP + 0x10]
+1000608d  MOV dword ptr [ESP + 0x28],EDI
+10006091  MOV ESI,ECX
+10006093  CALL 0x1002f160
+10006098  TEST EAX,EAX
+1000609a  JNZ 0x100060c5
+1000609c  PUSH EAX
+1000609d  PUSH 0x100514b8
+100060a2  PUSH 0x3d7
+100060a7  PUSH 0x10051354
+100060ac  PUSH 0x100511a8
+100060b1  PUSH -0x1
+100060b3  CALL 0x1002c240
+100060b8  ADD ESP,0x18
+100060bb  POP EDI
+100060bc  XOR EAX,EAX
+100060be  POP ESI
+100060bf  ADD ESP,0x2c
+100060c2  RET 0x4
+100060c5  MOV EAX,dword ptr [ESP + 0xc]
+100060c9  TEST EAX,EAX
+100060cb  JGE 0x100060f7
+100060cd  PUSH 0x0
+100060cf  PUSH 0x100514a8
+100060d4  PUSH 0x3dc
+100060d9  PUSH 0x10051354
+100060de  PUSH 0x100511a8
+100060e3  PUSH -0x1
+100060e5  CALL 0x1002c240
+100060ea  ADD ESP,0x18
+100060ed  POP EDI
+100060ee  XOR EAX,EAX
+100060f0  POP ESI
+100060f1  ADD ESP,0x2c
+100060f4  RET 0x4
+100060f7  PUSH EBX
+100060f8  PUSH EBP
+100060f9  PUSH EAX
+100060fa  CALL 0x1002c4e0
+100060ff  MOV EBX,EAX
+10006101  MOV EAX,dword ptr [ESP + 0x18]
+10006105  ADD ESP,0x4
+10006108  PUSH EAX
+10006109  MOV EDX,EBX
+1000610b  MOV ECX,ESI
+1000610d  MOV dword ptr [ESP + 0x24],EBX
+10006111  CALL 0x1002f160
+10006116  TEST EAX,EAX
+10006118  JNZ 0x10006145
+1000611a  PUSH EAX
+1000611b  PUSH 0x100514b8
+10006120  PUSH 0x3e3
+10006125  PUSH 0x10051354
+1000612a  PUSH 0x100511a8
+1000612f  PUSH -0x1
+10006131  CALL 0x1002c240
+10006136  ADD ESP,0x18
+10006139  POP EBP
+1000613a  POP EBX
+1000613b  POP EDI
+1000613c  XOR EAX,EAX
+1000613e  POP ESI
+1000613f  ADD ESP,0x2c
+10006142  RET 0x4
+10006145  MOV EAX,dword ptr [EBX]
+10006147  MOV EDX,dword ptr [ESP + 0x40]
+1000614b  MOV ECX,EAX
+1000614d  SHR ECX,0x10
+10006150  MOVZX ECX,CL
+10006153  MOV dword ptr [EDI],ECX
+10006155  MOVZX ECX,AH
+10006158  MOV dword ptr [ESP + 0x1c],EAX
+1000615c  AND EAX,0x1
+1000615f  CMP ECX,0xff
+10006165  MOV dword ptr [EDX],EAX
+10006167  MOV EBP,dword ptr [EBX + 0x4]
+1000616a  MOV dword ptr [ESP + 0x1c],ECX
+1000616e  MOV dword ptr [ESP + 0x18],EBP
+10006172  JLE 0x100061a6
+10006174  PUSH EBX
+10006175  CALL 0x1002c520
+1000617a  PUSH 0x0
+1000617c  PUSH 0x10051490
+10006181  PUSH 0x3ef
+10006186  PUSH 0x10051354
+1000618b  PUSH 0x100511a8
+10006190  PUSH -0x1
+10006192  CALL 0x1002c240
+10006197  ADD ESP,0x1c
+1000619a  POP EBP
+1000619b  POP EBX
+1000619c  POP EDI
+1000619d  XOR EAX,EAX
+1000619f  POP ESI
+100061a0  ADD ESP,0x2c
+100061a3  RET 0x4
+100061a6  MOV EAX,dword ptr [EDI]
+100061a8  SUB EAX,0x0
+100061ab  JZ 0x100061ec
+100061ad  DEC EAX
+100061ae  JZ 0x100061ec
+100061b0  DEC EAX
+100061b1  JZ 0x100061e5
+100061b3  PUSH EBX
+100061b4  CALL 0x1002c520
+100061b9  PUSH 0x0
+100061bb  PUSH 0x10051478
+100061c0  PUSH 0x3ff
+100061c5  PUSH 0x10051354
+100061ca  PUSH 0x100511a8
+100061cf  PUSH -0x1
+100061d1  CALL 0x1002c240
+100061d6  ADD ESP,0x1c
+100061d9  POP EBP
+100061da  POP EBX
+100061db  POP EDI
+100061dc  XOR EAX,EAX
+100061de  POP ESI
+100061df  ADD ESP,0x2c
+100061e2  RET 0x4
+100061e5  MOV EDI,0x24
+100061ea  JMP 0x100061f1
+100061ec  MOV EDI,0x14
+100061f1  MOV EDX,EBP
+100061f3  MOV ECX,EDI
+100061f5  CALL 0x100143a0
+100061fa  TEST EAX,EAX
+100061fc  MOV dword ptr [ESP + 0x10],EAX
+10006200  JNZ 0x10006234
+10006202  PUSH EBX
+10006203  CALL 0x1002c520
+10006208  PUSH 0x0
+1000620a  PUSH 0x1005145c
+1000620f  PUSH 0x407
+10006214  PUSH 0x10051354
+10006219  PUSH 0x100511a8
+1000621e  PUSH -0x1
+10006220  CALL 0x1002c240
+10006225  ADD ESP,0x1c
+10006228  POP EBP
+10006229  POP EBX
+1000622a  POP EDI
+1000622b  XOR EAX,EAX
+1000622d  POP ESI
+1000622e  ADD ESP,0x2c
+10006231  RET 0x4
+10006234  XOR EDX,EDX
+10006236  MOV ECX,EAX
+10006238  LEA ESI,[EBX + 0x8]
+1000623b  CALL 0x10014710
+10006240  MOV EDX,EAX
+10006242  TEST byte ptr [ESP + 0x1c],0x2
+10006247  MOV dword ptr [ESP + 0x28],EDX
+1000624b  MOV ECX,EDX
+1000624d  JZ 0x100062ee
+10006253  FILD dword ptr [ESP + 0x18]
+10006257  MOV EAX,dword ptr [ESI]
+10006259  ADD ESI,0x4
+1000625c  MOV dword ptr [ESP + 0x28],EAX
+10006260  MOV EAX,dword ptr [ESI]
+10006262  FSTP float ptr [ESP + 0x18]
+10006266  FLD float ptr [0x100598d4]
+1000626c  MOV dword ptr [ESP + 0x24],EAX
+10006270  FLD float ptr [0x100598d4]
+10006276  ADD ESI,0x4
+10006279  FCOMP float ptr [ESP + 0x18]
+1000627d  FNSTSW AX
+1000627f  TEST AH,0x5
+10006282  JP 0x100062a3
+10006284  FLD float ptr [ESP + 0x24]
+10006288  FMUL ST1
+1000628a  FADD float ptr [ESP + 0x28]
+1000628e  FSTP float ptr [ECX]
+10006290  ADD ECX,EDI
+10006292  FADD float ptr [0x1005118c]
+10006298  FCOM float ptr [ESP + 0x18]
+1000629c  FNSTSW AX
+1000629e  TEST AH,0x5
+100062a1  JNP 0x10006284
+100062a3  FSTP ST0
+100062a5  TEST byte ptr [ESP + 0x1c],0x1
+100062aa  JZ 0x10006306
+100062ac  MOV EAX,dword ptr [ESI]
+100062ae  MOV ECX,dword ptr [ESI + 0x4]
+100062b1  ADD ESI,0x4
+100062b4  ADD ESI,0x4
+100062b7  MOV dword ptr [ESP + 0x30],EAX
+100062bb  MOV EAX,dword ptr [ESI]
+100062bd  ADD ESI,0x4
+100062c0  TEST EBP,EBP
+100062c2  MOV dword ptr [ESP + 0x34],ECX
+100062c6  MOV dword ptr [ESP + 0x38],EAX
+100062ca  JLE 0x10006336
+100062cc  LEA EBX,[EDX + 0x4]
+100062cf  NOP
+100062d0  MOV ECX,dword ptr [ESI]
+100062d2  MOV EDX,ECX
+100062d4  MOV dword ptr [ESP + 0x28],ECX
+100062d8  PUSH EDX
+100062d9  LEA EDX,[ESP + 0x34]
+100062dd  MOV ECX,EBX
+100062df  CALL 0x1002b670
+100062e4  ADD ESI,0x4
+100062e7  ADD EBX,EDI
+100062e9  DEC EBP
+100062ea  JNZ 0x100062d0
+100062ec  JMP 0x10006332
+100062ee  TEST EBP,EBP
+100062f0  JLE 0x100062a5
+100062f2  MOV EAX,EBP
+100062f4  MOV EDX,dword ptr [ESI]
+100062f6  MOV dword ptr [ECX],EDX
+100062f8  ADD ESI,0x4
+100062fb  ADD ECX,EDI
+100062fd  DEC EAX
+100062fe  JNZ 0x100062f4
+10006300  MOV EDX,dword ptr [ESP + 0x28]
+10006304  JMP 0x100062a5
+10006306  TEST EBP,EBP
+10006308  JLE 0x10006336
+1000630a  LEA EAX,[EDX + 0x4]
+1000630d  MOV ECX,EBP
+1000630f  NOP
+10006310  MOV EDX,ESI
+10006312  MOV EBP,dword ptr [EDX]
+10006314  MOV EBX,EAX
+10006316  MOV dword ptr [EBX],EBP
+10006318  MOV EBP,dword ptr [EDX + 0x4]
+1000631b  MOV dword ptr [EBX + 0x4],EBP
+1000631e  MOV EBP,dword ptr [EDX + 0x8]
+10006321  MOV dword ptr [EBX + 0x8],EBP
+10006324  MOV EDX,dword ptr [EDX + 0xc]
+10006327  ADD ESI,0x10
+1000632a  ADD EAX,EDI
+1000632c  DEC ECX
+1000632d  MOV dword ptr [EBX + 0xc],EDX
+10006330  JNZ 0x10006310
+10006332  MOV EBX,dword ptr [ESP + 0x20]
+10006336  MOV EAX,dword ptr [ESP + 0x2c]
+1000633a  MOV EAX,dword ptr [EAX]
+1000633c  DEC EAX
+1000633d  JZ 0x10006353
+1000633f  DEC EAX
+10006340  JNZ 0x1000635c
+10006342  MOV ECX,dword ptr [ESP + 0x40]
+10006346  MOV EDX,dword ptr [ESP + 0x10]
+1000634a  MOV ECX,dword ptr [ECX]
+1000634c  CALL 0x10005050
+10006351  JMP 0x1000635c
+10006353  MOV ECX,dword ptr [ESP + 0x10]
+10006357  CALL 0x10005150
+1000635c  PUSH EBX
+1000635d  CALL 0x1002c520
+10006362  MOV EAX,dword ptr [ESP + 0x14]
+10006366  ADD ESP,0x4
+10006369  POP EBP
+1000636a  POP EBX
+1000636b  POP EDI
+1000636c  POP ESI
+1000636d  ADD ESP,0x2c
+10006370  RET 0x4
+

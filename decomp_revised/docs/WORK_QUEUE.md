@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- 143 EXE functions have address-specific behavior notes; function activity is
+- 144 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
@@ -29,7 +29,7 @@ research can continue without redoing the old project review or recent audits.
   playable mission.
 - The user requires every rescue mission and map/mechanic to remain in scope,
   with a cross-platform desktop port and macOS as the first playable target.
-- Gas R BSP entities 265, 280, and 309 are joined to the explosion1, explosion2, and gasoff EVS definitions. ScriptActor queue pop/order and wait deadlines are mapped, alongside BModel button1 use handling, type-1 contact candidate checks, and shared BoundsTrigger overlap-pair → touch/touching/untouch dispatch. Live contact/selection, the conditional BModel reach, updater cadence, and original-game effect captures remain open. See the Gas R evidence linked in the scenario-loading README.
+- Gas R BSP entities 265, 280, and 309 are joined to the explosion1, explosion2, and gasoff EVS definitions. ScriptActor queue pop/order and wait deadlines are mapped, alongside BModel button1 use handling, type-1 contact candidate checks, and shared BoundsTrigger overlap-pair → touch/touching/untouch dispatch. The named-model motion join resolves button1's effective reach to 20 units. Live contact/selection, updater cadence, and original-game effect captures remain open. See the Gas R evidence linked in the scenario-loading README. The same retail Genesis.dll MOTN/PATH extent decode is now joined across Training and all seven rescue maps: 71 of 76 authored-gate BModels receive a static 48-unit reach; five motionless ladder/button models retain authored values. Per-map/entity results are in `tracker/evidence/scenario-loading/bmodel_reach_cross_map.md`, its JSON inventory, and the rescue coverage CSV. This closes only the static reach calculation; live contact and callback cadence remain open.
 - `tracker/rescue_mission_coverage.csv` explicitly tracks Training plus all
   seven campaign rescue missions. All eight load as geometry packages in the
   inspection viewer; none is yet a playable rescue port. `level_map_inventory.csv`
