@@ -79,3 +79,7 @@ The generated oracle JSON and provenance copied from the earlier work folder
 are ignored by Git and remain local; reproducing those numerical checks from a
 fresh clone requires supplying those same fixtures. The hash-pinned Ghidra
 pseudocode and all summary results are tracked in this repository.
+
+The shipped engine's BMP, GBSP, and actor-material registration routes are
+documented in
+[`genesis_render_asset_path.md`](genesis_render_asset_path.md).

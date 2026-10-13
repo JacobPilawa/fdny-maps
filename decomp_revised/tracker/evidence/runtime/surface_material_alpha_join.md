@@ -80,9 +80,13 @@ rescue maps; see
 [`scene_preview_collision_texture_diagnostics.md`](scene_preview_collision_texture_diagnostics.md).
 
 This establishes base RGB texture sampling and drawing, not exact Genesis
-presentation parity. The offscreen frame does not establish window/display
-behavior, and the exporter still omits lightmap shading and the face-level
-`texinfo.flags` / `texinfo.alpha` rendering rules.
+presentation parity. The shipped engine's BMP decoder, world bitmap-list
+registration, GBSP chunk checks, and puppet material registration now have
+hash-pinned traces; see
+[`genesis_render_asset_path.md`](genesis_render_asset_path.md). The offscreen
+frame does not establish window/display behavior, and the exporter still omits
+lightmap shading and the face-level `texinfo.flags` / `texinfo.alpha` rendering
+rules.
 
 ## Concrete port step
 
@@ -96,10 +100,11 @@ bitmap; do not infer a match by order.
 
 ## Evidence limits
 
-The EXE trace is hash-pinned and uses its imported API call boundary. A separate
-trace now analyzes the shipped `Genesis.dll` collision path, but not its surface
-or renderer implementation; see
-[`genesis_collision_path.md`](genesis_collision_path.md). The open RealityFactory
+The EXE trace is hash-pinned and uses its imported API call boundary. Traces
+now analyze shipped `Genesis.dll` collision and bitmap/resource paths, but not
+its surface drawing implementation; see
+[`genesis_collision_path.md`](genesis_collision_path.md) and
+[`genesis_render_asset_path.md`](genesis_render_asset_path.md). The open RealityFactory
 tree identifies itself as based on Genesis3D 1.1 with community changes, so its
 surface implementation is reference material and not automatically reusable
 code ([repository provenance](https://github.com/RealityFactory/Genesis3D)).
