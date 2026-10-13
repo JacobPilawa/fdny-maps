@@ -5,14 +5,17 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- The map-neutral Mac scene preview lists every locally exported BSP, starts from the authored player spawn, and uses recovered movement and BSP collision. A fresh collision/asset diagnostic now finds a walkable world-model floor and decodes every referenced texture on MBase and the six other campaign rescue maps (all seven campaign rescues); a five-second idle simulation settles on the floor in each. The report does not confirm visible OpenGL output because this shell has no display. The preview now reports texture upload errors and player grounded/position state, and `F` moves to the nearest floor below. The immediate MVP gate is a visible Mac launch with textured geometry and stable walking; then keep extending the same shared host with actors, scripts, tools, and mission flow.
+- The map-neutral Mac scene preview lists every locally exported BSP, starts from the authored player spawn, and uses recovered movement and BSP collision. Its falling-through cause is fixed: absent `RCS_BoundsTrigger.model` values no longer become model index 0 and disable the world BSP. Its red helper-surface overlay is also fixed by carrying over Training's `col_*` draw filter. All seven rescue maps pass the same collision-backed spawn and five-second grounded movement check. A macOS CGL offscreen run of the production OpenGL draw path reports all visible textures uploaded and varied framebuffer pixels on every map. This verifies scene rendering without a desktop window; actual window presentation and original-game material/lightmap parity remain open. The Bank preview bundle was rebuilt.
 
 - 223 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
+- Eight hash-pinned Genesis.dll collision functions are now decompiled and
+  recorded in the separate `tracker/genesis_function_reviews.csv` engine ledger.
+  They are not included in the EXE-only 223-function dashboard count.
 - The new `.lev`/`.rrf` loader pass adds thirteen address-specific function
   reviews across catalog parsing, resource tokenization, bitmap/model records,
   menu initialization, and briefing/resource requests. Its progress history
-  records 221 reviewed functions for the CSV-driven dashboard.
+  records 223 reviewed functions for the CSV-driven dashboard.
 - The entity-factory queue order is now mapped across a selected-level load:
   mode-1 EVS runs before World creation, WorldEntity appends BSP requests after
   the current pump's drain phase, and PlayerRescue requests are handled by a
@@ -43,9 +46,9 @@ research can continue without redoing the old project review or recent audits.
   package asset paths without case assumptions.
 - The standalone viewer loaded all 17 packages through the C++ loader with
   zero unresolved mesh texture paths. Fresh floor sweeps and idle movement
-  checks pass on all six rescue maps other than MBase plus MBase; BMP decode succeeds for every
-  unique texture file on those packages. The visible desktop GL path remains
-  unverified in the no-display shell. See
+  checks pass on all seven rescue maps; BMP decode succeeds for every unique
+  texture file. Offscreen CGL render checks now confirm OpenGL texture upload
+  and varied framebuffer output on all seven. See
   `tracker/evidence/runtime/scene_preview_collision_texture_diagnostics.md`.
 - The user requires every rescue mission and map/mechanic to remain in scope,
   with a cross-platform desktop port and macOS as the first playable target.
@@ -80,10 +83,9 @@ research can continue without redoing the old project review or recent audits.
 
 ## Next tasks, in order
 
-1. **Visible Mac exploration MVP.** Use the current texture-upload and
-   grounded-position diagnostics to verify the rebuilt app on a desktop session.
-   Fix any observed GL upload/render or player collision mismatch until a rescue
-   map visibly renders its textures and supports stable walking.
+1. **Desktop presentation check.** The offscreen render and collision gates now
+   pass. Confirm the rebuilt Bank bundle through its interactive macOS window,
+   then refine camera framing, movement feel, and visible light/material detail.
 2. **Runtime catalog/resource resolver.** The `.lev`/`.rrf` loader trace is
    recorded in `tracker/evidence/scenario-loading/lev_rrf_catalog_loader_trace_fresh.md`.
    Implement catalog-selected `SceneData` creation with explicit case aliases for
@@ -150,3 +152,5 @@ research can continue without redoing the old project review or recent audits.
 - `tracker/function_reviews.csv` and `tracker/progress_history.csv`: function
   review activity. `dashboard/index.html` reads these CSVs when opened; update
   the CSV data to show progress without regenerating the HTML.
+- `tracker/genesis_function_reviews.csv`: hash-pinned Genesis.dll engine
+  decompilation ledger; separate from the EXE-only dashboard activity count.

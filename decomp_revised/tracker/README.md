@@ -7,6 +7,7 @@ This directory keeps the progress evidence that feeds the local dashboard.
 - `legacy_crosswalk.csv` joins prior indexed decompiler exports to current exact entry addresses. These are address-only joins: the prior index does not bind every export to a verified EXE hash. Legacy C-like exports are evidence artifacts, not recovered original source.
 - `milestones.csv` tracks project outcomes separately from function counts.
 - `function_reviews.csv` binds reviewed EXE functions to fresh pseudocode and behavior notes; these entries appear as `triaged` in the function atlas.
+- `genesis_function_reviews.csv` separately tracks hash-pinned Genesis.dll engine functions reviewed for this port. These are not included in the EXE-only function dashboard count.
 - `progress_history.csv` stores cumulative review snapshots for the dashboard time series.
 - `genesis_api_crosswalk.csv` tracks selected EXE imports and their callers into Genesis.
 - `level_map_inventory.csv` tracks all catalog entries and local BSP variants, their rescue-object counts, file hashes, and current typed-export status.
@@ -17,6 +18,7 @@ This directory keeps the progress evidence that feeds the local dashboard.
 - `victim_resource_crosswalk.csv` joins every authored victim type to `victims.srf`, `rescue.rrf`, local ACT-file availability, unknown-type fallback, runtime renderer model IDs/ACT paths, and the material-variant rule. Regenerate it with `python3 tools/build_victim_resource_crosswalk.py` after refreshing map exports.
 - `actor_asset_inventory.csv` records hash-pinned ACT decode coverage, mesh/texture/motion counts, material slots, resolved actor sound cues, and separate declared-resource versus runtime-renderer ACT paths. It also records the source-mapped per-model material cycling rule. Regenerate it with `python3 tools/export_victim_actors.py`; decoded review JSON/OBJ/PNG assets stay in ignored `.local/actor_exports/`.
 - `evidence/genesis-boundary/` and `evidence/runtime-loop/` hold hash-pinned query outputs, pseudocode, and instruction evidence.
+- `evidence/runtime/genesis_collision_path.md` and `evidence/genesis-boundary/genesis_collision_functions.c` record the shipped Genesis.dll point-trace and swept-hull BSP paths.
 - `evidence/fire-spread/` holds fresh hash-pinned FireRescue random-spread,
   spray suppression, HoseSpray contact, exposure-volume, Player message, and
   burn/passout traces. Selected earlier code and the tagged suppression oracle

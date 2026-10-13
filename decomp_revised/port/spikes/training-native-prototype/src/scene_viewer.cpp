@@ -1,6 +1,9 @@
 #include <SDL.h>
 #if defined(__APPLE__)
 #include <OpenGL/gl.h>
+#define GL_GLEXT_PROTOTYPES 1
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #endif
@@ -32,6 +35,75 @@ std::string str(J value) { return value && json_object_get_type(value) == json_t
 #include "core.h"
 
 namespace {
+#if defined(__APPLE__)
+struct HeadlessOpenGL {
+    CGLPixelFormatObj pixelFormat = nullptr;
+    CGLContextObj context = nullptr;
+    GLuint framebuffer = 0;
+    GLuint colorTexture = 0;
+    GLuint depthBuffer = 0;
+
+    void create(int width, int height) {
+        CGLPixelFormatAttribute attributes[] = {
+            kCGLPFAAllowOfflineRenderers, static_cast<CGLPixelFormatAttribute>(1),
+            kCGLPFAColorSize, static_cast<CGLPixelFormatAttribute>(24),
+            kCGLPFAAlphaSize, static_cast<CGLPixelFormatAttribute>(8),
+            kCGLPFADepthSize, static_cast<CGLPixelFormatAttribute>(24),
+            static_cast<CGLPixelFormatAttribute>(0),
+        };
+        GLint formats = 0;
+        CGLError error = CGLChoosePixelFormat(attributes, &pixelFormat, &formats);
+        if (error != kCGLNoError || formats == 0)
+            throw std::runtime_error("CGL could not choose an offscreen pixel format: " + std::to_string(error));
+        error = CGLCreateContext(pixelFormat, nullptr, &context);
+        if (error != kCGLNoError)
+            throw std::runtime_error("CGL could not create an offscreen context: " + std::to_string(error));
+        error = CGLSetCurrentContext(context);
+        if (error != kCGLNoError)
+            throw std::runtime_error("CGL could not activate its offscreen context: " + std::to_string(error));
+
+        glGenTextures(1, &colorTexture);
+        glBindTexture(GL_TEXTURE_2D, colorTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glGenFramebuffersEXT(1, &framebuffer);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTexture, 0);
+        glGenRenderbuffersEXT(1, &depthBuffer);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthBuffer);
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, width, height);
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthBuffer);
+        GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+            throw std::runtime_error("CGL offscreen framebuffer is incomplete: " + std::to_string(status));
+        GLenum glError = glGetError();
+        if (glError != GL_NO_ERROR)
+            throw std::runtime_error("CGL offscreen framebuffer setup failed with OpenGL error " + std::to_string(glError));
+    }
+
+    const char* version() const {
+        return reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    }
+
+    void destroy() {
+        if (context && CGLGetCurrentContext() == context) {
+            if (depthBuffer) glDeleteRenderbuffersEXT(1, &depthBuffer);
+            if (framebuffer) glDeleteFramebuffersEXT(1, &framebuffer);
+            if (colorTexture) glDeleteTextures(1, &colorTexture);
+            CGLSetCurrentContext(nullptr);
+        }
+        if (context) CGLDestroyContext(context);
+        if (pixelFormat) CGLDestroyPixelFormat(pixelFormat);
+        context = nullptr;
+        pixelFormat = nullptr;
+        framebuffer = colorTexture = depthBuffer = 0;
+    }
+
+    ~HeadlessOpenGL() { destroy(); }
+};
+#endif
+
 struct SceneMesh {
     int model = 0;
     std::vector<float> positions, uvs;
@@ -73,6 +145,10 @@ std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& te
     meshes.reserve(size_t(count(groups)));
     for (int i = 0; i < count(groups); ++i) {
         J group = at(groups, i);
+        // These named BSP materials are collision/helper surfaces. Training's
+        // existing renderer omits them from the visible world; collision.json
+        // remains the source for their physical behavior.
+        if (str(field(group, "texture")).rfind("col_", 0) == 0) continue;
         SceneMesh mesh;
         mesh.model = integer(field(group, "model"));
         J positions = field(group, "positions"), uvs = field(group, "uvs");
@@ -139,6 +215,28 @@ void clearTextures(std::vector<SceneMesh>& meshes) {
     std::set<GLuint> textures;
     for (const auto& mesh : meshes) if (mesh.texture) textures.insert(mesh.texture);
     for (GLuint texture : textures) glDeleteTextures(1, &texture);
+}
+
+std::filesystem::path saveRenderCheckFrame(const std::filesystem::path& package,
+                                           const std::vector<uint8_t>& bottomUpPixels,
+                                           int width, int height) {
+    std::vector<uint8_t> topDownPixels(bottomUpPixels.size());
+    const size_t rowBytes = size_t(width) * 4;
+    for (int y = 0; y < height; ++y) {
+        std::copy_n(bottomUpPixels.data() + size_t(height - 1 - y) * rowBytes, rowBytes,
+                    topDownPixels.data() + size_t(y) * rowBytes);
+    }
+    SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormatFrom(topDownPixels.data(), width, height, 32,
+                                                              width * 4, SDL_PIXELFORMAT_RGBA32);
+    if (!surface) throw std::runtime_error(std::string("Cannot allocate render-check image: ") + SDL_GetError());
+    std::filesystem::path output = package;
+    output += ".render-check.bmp";
+    int saveResult = SDL_SaveBMP(surface, output.string().c_str());
+    std::string error = SDL_GetError();
+    SDL_FreeSurface(surface);
+    if (saveResult != 0)
+        throw std::runtime_error("Cannot save render-check image " + output.string() + ": " + error);
+    return output;
 }
 
 void renderScene(const std::vector<SceneMesh>& meshes, const SceneData& scene,
@@ -208,7 +306,8 @@ void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes
     std::cout << "Scene: " << scene.key() << " (" << scene.sourceFile() << ")\n"
               << "BSP SHA-256: " << scene.sourceSha256() << "\n"
               << "Entities: " << count(scene.entities())
-              << ", mesh groups: " << meshes.size()
+              << ", render groups: " << meshes.size() << "/" << count(field(scene.worldMesh(), "groups"))
+              << " (" << count(field(scene.worldMesh(), "groups")) - int(meshes.size()) << " collision/helper groups skipped)"
               << ", collision models: " << count(field(scene.collision(), "models"))
               << ", nodes: " << count(field(scene.collision(), "nodes"))
               << ", leaves: " << count(field(scene.collision(), "leafs")) << "\n"
@@ -220,8 +319,7 @@ void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes
     for (const auto& error : textures.errors) std::cout << "  texture error: " << error << "\n";
 }
 
-void printSpawnCollision(const SceneData& scene, V spawn) {
-    Collision collision(scene.collision());
+void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) {
     Hit floorHit;
     Player player;
     player.p = spawn;
@@ -238,13 +336,28 @@ void printSpawnCollision(const SceneData& scene, V spawn) {
     for (int frame = 0; frame < 300; ++frame) player.step(1.f / 60.f, 0.f, 0.f, 0.f, false, false, false, collision);
     std::cout << "Idle fall trace (5s): position (" << player.p.x << ", " << player.p.y << ", " << player.p.z
               << "), grounded=" << (player.ground ? "yes" : "no") << "\n";
+    std::cout << "Disabled collision/render models: ";
+    if (collision.disabled.empty()) std::cout << "none";
+    else {
+        bool first = true;
+        for (int model : collision.disabled) {
+            if (!first) std::cout << ", ";
+            std::cout << model;
+            first = false;
+        }
+    }
+    std::cout << "\n";
 }
 
-int run(const std::filesystem::path& package, bool inspectOnly) {
+int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck) {
     SceneData scene = SceneData::load(package);
+#if defined(__APPLE__)
+    if (!inspectOnly && !renderCheck && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+#else
     if (!inspectOnly && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+#endif
         throw std::runtime_error(SDL_GetError());
-    if (!inspectOnly) {
+    if (!inspectOnly && !renderCheck) {
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -252,8 +365,16 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
 
     SDL_Window* window = nullptr;
     SDL_GLContext context = nullptr;
+#if defined(__APPLE__)
+    HeadlessOpenGL headlessContext;
+#endif
     std::vector<SceneMesh> meshes;
     try {
+#if defined(__APPLE__)
+        if (renderCheck) {
+            headlessContext.create(1280, 800);
+        } else
+#endif
         if (!inspectOnly) {
             window = SDL_CreateWindow(("FDNY scene preview — " + scene.key()).c_str(),
                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800,
@@ -274,7 +395,16 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
         for (int i = 0; i < count(entities); ++i) {
             J entity = at(entities, i);
             std::string entityClass = str(field(entity, "class"));
-            if (entityClass == "RCS_BoundsTrigger") collision.disabled.insert(integer(field(entity, "model")));
+            if (entityClass == "RCS_BoundsTrigger") {
+                J model = field(entity, "model");
+                // Missing model data converts to 0 through json-c's integer accessor.
+                // Model 0 is the complete world BSP, so a trigger without an explicit
+                // brush-model reference must never disable world rendering/collision.
+                if (model && json_object_get_type(model) == json_type_int) {
+                    int modelIndex = integer(model);
+                    if (modelIndex > 0) collision.disabled.insert(modelIndex);
+                }
+            }
             if (entityClass == "RCS_PlayerRescue" || entityClass == "RCS_PlayerHose") {
                 spawn = parseVector(property(entity, "ZZ_location"), parseVector(property(entity, "location"), spawn));
                 yaw = parseFloat(property(entity, "C_Heading"), yaw) * .01745329251994329577f;
@@ -293,8 +423,57 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
         if (foundPlayer) std::cout << "Spawn: " << spawn.x << ", " << spawn.y << ", " << spawn.z << "\n";
         else std::cout << "Spawn: fallback near world-model bounds (no player entity found)\n";
         if (inspectOnly) {
-            printSpawnCollision(scene, spawn);
+            printSpawnCollision(scene, spawn, collision);
             return 0;
+        }
+
+        if (renderCheck) {
+            int width = 1280, height = 800;
+#if !defined(__APPLE__)
+            SDL_GL_GetDrawableSize(window, &width, &height);
+#else
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, headlessContext.framebuffer);
+#endif
+            if (width < 1 || height < 1) throw std::runtime_error("Hidden OpenGL window has no drawable size");
+            renderScene(meshes, scene, collision,
+                        {spawn.x, spawn.y + 70.f, spawn.z}, yaw, 0.f, width, height);
+            glFinish();
+#if defined(__APPLE__)
+            glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
+#else
+            glReadBuffer(GL_BACK);
+#endif
+            glPixelStorei(GL_PACK_ALIGNMENT, 1);
+            std::vector<uint8_t> frame(size_t(width) * size_t(height) * 4);
+            glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frame.data());
+            GLenum glError = glGetError();
+            std::set<uint32_t> colors;
+            size_t nonBackgroundPixels = 0;
+            for (size_t i = 0; i + 3 < frame.size(); i += 4) {
+                uint32_t rgba = (uint32_t(frame[i]) << 24) | (uint32_t(frame[i + 1]) << 16) |
+                                (uint32_t(frame[i + 2]) << 8) | uint32_t(frame[i + 3]);
+                colors.insert(rgba);
+                if (rgba != 0x141a1fff) ++nonBackgroundPixels;
+            }
+            auto imagePath = saveRenderCheckFrame(package, frame, width, height);
+            std::cout << "Render check: " << textureSummary.uploadedFiles << "/"
+                      << textureSummary.uniqueFiles << " textures uploaded; "
+                      << colors.size() << " distinct framebuffer colors; " << nonBackgroundPixels
+                      << " non-background pixels; frame saved to " << imagePath.string();
+#if defined(__APPLE__)
+            std::cout << "; OpenGL " << (headlessContext.version() ? headlessContext.version() : "unknown");
+#endif
+            if (glError != GL_NO_ERROR) std::cout << "; OpenGL error " << glError;
+            std::cout << "\n";
+            clearTextures(meshes);
+#if defined(__APPLE__)
+            headlessContext.destroy();
+#endif
+            SDL_GL_DeleteContext(context);
+            SDL_DestroyWindow(window);
+            SDL_Quit();
+            return glError == GL_NO_ERROR && textureSummary.failedFiles == 0 &&
+                   textureSummary.uploadedFiles == textureSummary.uniqueFiles ? 0 : 1;
         }
 
         Player player;
@@ -390,16 +569,21 @@ int run(const std::filesystem::path& package, bool inspectOnly) {
 int main(int argc, char** argv) {
     try {
         bool inspectOnly = false;
+        bool renderCheck = false;
         std::filesystem::path package;
         for (int i = 1; i < argc; ++i) {
             std::string argument(argv[i]);
             if (argument == "--help") {
-                std::cout << "Usage: fdny-scene-viewer [scene-export-directory] [--inspect]\n"
+                std::cout << "Usage: fdny-scene-viewer [scene-export-directory] [--inspect | --render-check]\n"
                           << "Without a directory, loads the bundled MBase scene (or .local/exports/mbase in the project).\n";
                 return 0;
             }
             if (argument == "--inspect") {
                 inspectOnly = true;
+                continue;
+            }
+            if (argument == "--render-check") {
+                renderCheck = true;
                 continue;
             }
             if (!package.empty()) throw std::runtime_error("Only one scene export directory may be supplied.");
@@ -421,7 +605,9 @@ int main(int argc, char** argv) {
         if (package.empty()) {
             throw std::runtime_error("No scene supplied. Pass a scene-export directory or launch the bundled app with its MBase data.");
         }
-        return run(package, inspectOnly);
+        if (inspectOnly && renderCheck)
+            throw std::runtime_error("Choose either --inspect or --render-check.");
+        return run(package, inspectOnly, renderCheck);
     } catch (const std::exception& error) {
         std::cerr << "Scene viewer: " << error.what() << "\n";
         return 1;
