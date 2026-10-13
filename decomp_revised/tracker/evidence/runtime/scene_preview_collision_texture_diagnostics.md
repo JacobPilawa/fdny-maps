@@ -7,15 +7,18 @@ Updated: 2026-10-13
 The user reported that the interactive scene preview loads a level but the player
 falls through it and the geometry has no textures. This trace checks whether the
 current exported rescue packages contain floor collision and decodable texture
-assets, and adds runtime reporting for the OpenGL upload path.
+assets, and verifies the shared viewer's actual OpenGL drawing path.
 
 ## Reproduction method
 
-Rebuilt `fdny-scene-viewer` from the checked-in C++ source and ran each package
-with `--inspect`. Inspect mode decodes the unique BMP files, probes the authored
-player spawn using the same swept hull as the player, and simulates five seconds
-of idle movement through the production `Player::step` and `Collision::trace`
-code. It does not create an OpenGL context or present a window.
+Rebuilt `fdny-scene-viewer` from the C++ source and ran each package with both
+`--inspect` and `--render-check`. Inspect mode decodes the unique BMP files,
+probes the authored player spawn using the same swept hull as the player, and
+simulates five seconds of idle movement through the production `Player::step`
+and `Collision::trace` code. Render-check creates a macOS CGL OpenGL 2.1
+offscreen context, then invokes the same `renderScene` path as the interactive
+viewer, reads back the framebuffer, and counts distinct colors and drawn pixels.
+It verifies texture sampling/drawing without requiring a desktop display.
 
 ## Current results
 
@@ -29,12 +32,48 @@ code. It does not create an OpenGL context or present a window.
 | Subway A | `b33b67a01e0a2c144033f1da5c9c627b197d0a413b3b13190dd8531b63881f7e` | 81/81 | `(-85, 35, 1948)` | `(-85, -37.9, 1948)`, up normal | grounded at `y=-37.8` |
 | Oil Rig A | `c63ff7e6a7e41a6df15f572bc1c327cbc6ecbe934a17cf1c5a136c2a7d7e36c1` | 71/71 | `(-632, 952, -620)` | `(-632, 838.1, -620)`, up normal | grounded at `y=838.4` |
 
-The six campaign rescue-map packages other than MBase and MBase itself (all
-seven required campaign rescue maps) resolve their referenced BMPs, and the
-current C++ collision path finds a walkable floor and settles on each map in
-this headless simulation. For world model 0, the origin is zero, so the
-previously noted local-bounds broad-phase risk for translated submodels does
-not explain the reported world-floor fall-through.
+All seven rescue maps resolve their referenced BMPs, and the current C++
+collision path finds a walkable floor and settles on each map in this simulation.
+The first test used a fresh `Collision` object and therefore missed the
+interactive viewer's disabled-model list; that diagnostic bug is fixed below.
+
+## Root causes and corrections
+
+Two preview defects caused the reported behavior:
+
+1. `RCS_BoundsTrigger` entities in these BSP exports have no `model` field.
+   Both viewers converted that missing JSON value to integer zero and inserted
+   world BSP model 0 into `collision.disabled`. That removed the main world
+   from collision, so the player fell through, and from drawing, so the scene
+   appeared empty. The map-neutral viewer and Training workbench now disable a
+   trigger model only when an explicit positive integer model index exists.
+   `--inspect` now reports through the same collision instance used to load the
+   scene, including its disabled-model state.
+2. The map-neutral renderer was drawing `col_*` helper/collision surfaces in
+   debug colors. The existing Training renderer already omitted these groups.
+   The shared viewer now applies the same `col_*` draw filter while retaining
+   collision data independently.
+
+Neither issue came from missing BSP bitmap joins or the alpha-resource route.
+The pixel readback below verifies that the existing base texture pipeline is
+now reaching the OpenGL sampler and draw calls.
+
+## OpenGL framebuffer results
+
+| Map | Visible BSP groups | Textures uploaded | Distinct framebuffer colors | Non-background pixels |
+| --- | ---: | ---: | ---: | ---: |
+| MBase | 77/95 | 60/60 | 93,703 | 958,411 |
+| Bank | 373/497 | 101/101 | 70,542 | 1,024,000 |
+| Bar R | 140/192 | 67/67 | 70,696 | 1,024,000 |
+| Gas R | 355/361 | 120/120 | 142,644 | 1,024,000 |
+| Boat A | 163/182 | 73/73 | 124,880 | 1,000,068 |
+| Subway A | 317/384 | 76/76 | 91,951 | 1,024,000 |
+| Oil Rig A | 76/81 | 69/69 | 129,290 | 878,701 |
+
+Each render-check completed with a nonempty, highly varied framebuffer and all
+textures assigned to visible groups uploaded. `col_*` helper groups are counted
+but omitted from drawing. A sample Bank frame is saved locally as
+`.local/exports/bank.render-check.png`; generated frames are not committed.
 
 ## Changes made to the preview
 
@@ -48,14 +87,20 @@ not explain the reported world-floor fall-through.
   below them, providing a recovery control during map inspection.
 - `--inspect` now reports the player spawn's collision state, floor hit, and
   idle movement result.
+- BoundsTrigger collision suppression now requires an explicit positive model
+  index, so a missing field cannot disable world model 0.
+- The renderer skips `col_*` helper surfaces, matching the existing Training
+  draw path.
+- `--render-check` now exercises the real OpenGL scene draw path offscreen and
+  counts texture uploads, distinct framebuffer colors, and drawn pixels.
 
 ## Limits and next check
 
-The shell used for this work has no interactive display. The inspect results
-prove the exported BSP collision route and BMP decoding, but do not prove that
-OpenGL textures appear in a desktop window. Interactive startup now prints the
-actual OpenGL upload count/errors and exposes that count in the title. The next
-visible checkpoint is the rebuilt Mac preview bundle; if the title shows all
-textures uploaded and `grounded` while the scene still appears gray or the player
-continues below the floor, capture that title state and a scene screenshot so
-we can target the renderer or platform GL behavior separately.
+The offscreen check exercises the production OpenGL draw function, but does not
+verify window presentation, mouse capture, or the user's packaged launch path.
+The Bank app bundle was rebuilt from this source. Lighting/lightmaps, exact
+Genesis material/alpha behavior, texture filtering, actors, scripts, and
+gameplay parity remain open; this is a corrected textured scene-inspection
+MVP, not a complete rescue port. See
+[`genesis_collision_path.md`](genesis_collision_path.md) for the original
+engine collision boundary and Training oracle parity results.

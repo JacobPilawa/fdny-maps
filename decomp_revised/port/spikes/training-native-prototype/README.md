@@ -72,9 +72,13 @@ as `./Open FDNY Scene Preview.command bank`. The executable and selected scene
 are assembled into a local app bundle before launch; the launcher invokes the
 binary from Terminal so it uses the desktop display session.
 
-The `--render-check` argument renders two hidden frames and reports how many
-Training mesh groups and textures loaded. It is a smoke check, not a gameplay
-parity test.
+For the map-neutral viewer, run `--render-check` to upload the scene's BMPs,
+render the authored spawn view, report framebuffer coverage, and save a BMP
+capture beside the scene package as `<package>.render-check.bmp`. On macOS this
+uses an offscreen CGL framebuffer, so the check works even when the process has
+no desktop display. It verifies the actual OpenGL draw path and is not a
+gameplay parity test. The separate Training executable has its own
+`--render-check` smoke check for Training actors and fire.
 
 ## Local assets
 
