@@ -68,6 +68,18 @@ There are two alpha-related data paths, and they should not be conflated:
    TEXDATA as 24-bit RGB BMPs, so it also discards any alpha channel during
    conversion (the original indexed RGB texels are retained).
 
+A data audit of the copied raw rescue.rrf (SHA-256
+8ab12b7c148c4d984a912525e432967556c9267af5a1b0ea86451ed1ee123f33) sharpens
+that boundary. It contains 114 ROC_ALPHA_TEXTURE records (113 distinct
+numeric keys, 110 distinct base paths, 44 with a second alpha path); every
+base path is under Data/Sprites. Case-insensitive basename comparison found
+zero matches against the BSP TEXTURES names in MBase, Bank, Bar R, Gas R, Boat
+A, Subway A, and Oil Rig A. This supports treating rescue.rrf as sprite,
+effect, and HUD resources in the port. The numeric key's consumer is still
+not proven, so no BSP association is inferred from coincidentally overlapping
+integer values. The hash-pinned Direct3D upload and draw boundary is in
+[d3ddrv_render_path.md](d3ddrv_render_path.md).
+
 Neither alpha path explained the reported flat scene: the face-to-BSP-texture
 join was complete, and alpha controls coverage/transparency rather than
 selecting the base RGB image. The renderer trace found the actual failures
