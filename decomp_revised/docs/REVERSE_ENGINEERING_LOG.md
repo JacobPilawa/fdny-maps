@@ -193,3 +193,7 @@ ledger now contains 104 functions; the main EXE has 5,812 defined function
 boundaries. Training remains in scope alongside all seven rescue missions; the
 shared suppression path applies across scenarios, while mission-specific data
 and runtime parity remain to be mapped. The HTML dashboard was not changed.
+
+## 2026-10-13 — FireRescue terminal visual update gate
+
+Fresh Ghidra tracing linked suppression state `+0x70` to the embedded actor callback state at `+0x4C`. State 5 branches directly to the callback epilogue before its alpha/effect update path. Named and saved the alpha, sprite-disable, and visual-effects helpers; added the address-specific audit and corrected the `+0x1C8` field description. The exact render-side disappearance/fade and callback ordering remain open. No native gameplay behavior was changed and no dashboard HTML was edited.

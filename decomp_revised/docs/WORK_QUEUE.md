@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- 104 EXE functions have address-specific behavior notes; function activity is
+- 107 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.

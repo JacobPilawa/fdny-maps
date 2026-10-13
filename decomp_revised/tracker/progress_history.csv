@@ -24,3 +24,4 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-13T06:36:32Z,93,Resolved the fourth FireRescue setsize duration argument and clock conversion; added explicit coverage for Training and every campaign rescue map.
 2026-10-13T07:04:39Z,99,Mapped random FireRescue child spread and its vtable proximity/exposure caller; traced message 0x7531 through Player fire accumulation and strict passout threshold. Added two missing Ghidra function boundaries.
 2026-10-13T07:20:45Z,104,"Mapped fresh spray suppression, recovered the FireRescue message receiver and HoseSpray update boundaries, and audited the reusable C++ state transition."
+2026-10-13T07:29:43Z,107,"Mapped FireRescue terminal state to the actor callback early return; distinguished the cleared +0x1C8 byte from the +0x104 sprayed flag and left render disappearance open."

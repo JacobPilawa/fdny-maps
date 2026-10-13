@@ -93,10 +93,13 @@ if intensity < 0: intensity = 0
 The final comparison is strict against 0.1. If the fifth argument `finalize` is
 nonzero and the stored intensity is below that threshold, the routine changes
 mode `+0x70` to 5, increments `Fires Doused`, stops the loop sound referenced
-at `+0x114` when present, and clears recently-sprayed byte `+0x1C8`. On every
-non-mode-5 update, it sets byte `+0x104`. This routine does not directly turn
-off the fire visual or its animations; any such presentation transition belongs
-to another update path and remains to be traced.
+at `+0x114` when present, and clears byte `+0x1C8` (its field meaning is not
+yet established). On every non-mode-5 update, it sets recently-sprayed byte
+`+0x104`. `UpdateFireRescueActor` reads the same mode through its embedded
+subobject at `+0x4C`; mode 5 returns before that callback updates fire alpha,
+size/color, or effects. This still does not establish whether already-created
+flames disappear immediately or how the renderer handles terminal mode; see
+[the visual terminal-state audit](visual-terminal-state.md).
 
 The receiver `DispatchFireRescueSprayMessage` (`0x00449A40`) was another
 missing Ghidra boundary. FireRescue primary vtable slot `+0x08` at `0x004E1788`
