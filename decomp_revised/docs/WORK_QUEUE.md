@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- 174 EXE functions have address-specific behavior notes; function activity is
+- 178 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
@@ -70,9 +70,9 @@ research can continue without redoing the old project review or recent audits.
    intent of the two trailing `moveto` timing values, the external
    scheduler/cadence for `UpdateFireRescueActor`, and the ten `S_Script`
    event-command semantics. The VictimRescue `roam` path is statically mapped;
-   continue with `setskin`, numeric-only victim script values, alternate-spot
-   runtime factory admission, and victim update cadence without narrowing
-   mission scope.
+   continue with runtime capture of Bar R's unhandled `setskin 2` fields,
+   numeric-only victim script values, alternate-spot factory admission, and
+   victim update cadence without narrowing mission scope.
 4. **Build one complete rescue path, then cover every rescue mission.** MBase
    is first for loader integration; `bank`, `bar_r`, `gas_r`, `boat_a`,
    `subway_a`, and `oil_rig_a` remain required campaign scenarios. Include

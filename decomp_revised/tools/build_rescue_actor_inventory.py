@@ -245,7 +245,7 @@ def build() -> tuple[list[dict[str, str]], dict, str]:
         lines.append(f"| `{item['map_key']}` | {'; '.join(parts) or '—'} |")
     lines += [
         "",
-        "The static route for `roam <number>` is documented in [victim_roam_behavior.md](victim_roam_behavior.md). Numeric-only values (for example Boat B `500` and Gas R `100`) remain unresolved, and Training's `pickup:` literals are retained as data without being treated as roam commands.",
+        "The static route for `roam <number>` is documented in [victim_roam_behavior.md](victim_roam_behavior.md). Numeric-only values (for example Boat B `500` and Gas R `100`) remain unresolved; Training's `pickup:` literals are retained as data. Bar R's three `setskin 2` literals have no matching shared or VictimRescue command branch in the pinned EXE, as documented in the same report.",
         "",
         "The CSV contains one row per entity, explicit locations/resource types,",
         "keyframe size/time pairs, script fields, and the full ordered epair list.",

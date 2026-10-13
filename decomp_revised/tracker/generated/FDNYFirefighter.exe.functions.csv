@@ -190,7 +190,7 @@ FDNYFirefighter.exe,0040c280,28,FUN_0040c280,Global,false,false,__cdecl,int __cd
 FDNYFirefighter.exe,0040c2d0,29,FUN_0040c2d0,Global,false,false,__thiscall,"undefined __thiscall FUN_0040c2d0(void * this, undefined4 param_1, undefined4 param_2)"
 FDNYFirefighter.exe,0040c2f0,22,FUN_0040c2f0,Global,false,false,__thiscall,"int __thiscall FUN_0040c2f0(void * this, char * param_1)"
 FDNYFirefighter.exe,0040c330,9,FUN_0040c330,Global,false,false,__thiscall,"undefined __thiscall FUN_0040c330(void * this, undefined4 * param_1)"
-FDNYFirefighter.exe,0040c360,29,FUN_0040c360,Global,false,false,__thiscall,"bool __thiscall FUN_0040c360(void * this, char * param_1)"
+FDNYFirefighter.exe,0040c360,29,CompareStringObjectCaseInsensitive,Global,false,false,__thiscall,"bool __thiscall CompareStringObjectCaseInsensitive(void * this, char * param_1)"
 FDNYFirefighter.exe,0040c380,481,FUN_0040c380,Global,false,false,__cdecl,byte __cdecl FUN_0040c380(void * param_1)
 FDNYFirefighter.exe,0040c570,307,FUN_0040c570,Global,false,false,__cdecl,"void * __cdecl FUN_0040c570(void * param_1, uint param_2)"
 FDNYFirefighter.exe,0040c6e0,197,FUN_0040c6e0,Global,false,false,__stdcall,void * __stdcall FUN_0040c6e0(void * param_1)
@@ -1089,7 +1089,7 @@ FDNYFirefighter.exe,00459b40,52,FUN_00459b40,Global,false,false,__cdecl,"undefin
 FDNYFirefighter.exe,00459b80,88,FUN_00459b80,Global,false,false,__fastcall,undefined __fastcall FUN_00459b80(float * param_1)
 FDNYFirefighter.exe,00459be0,72,FUN_00459be0,Global,false,false,__thiscall,"undefined4 __thiscall FUN_00459be0(void * this, float * param_1, float param_2)"
 FDNYFirefighter.exe,00459c30,35,FUN_00459c30,Global,false,false,__thiscall,"undefined __thiscall FUN_00459c30(void * this, float param_1)"
-FDNYFirefighter.exe,00459c70,42,FUN_00459c70,Global,false,false,__thiscall,"undefined __thiscall FUN_00459c70(void * this, float * param_1)"
+FDNYFirefighter.exe,00459c70,42,MeasurePointOffsetAlignmentAngle,Global,false,false,__thiscall,"float __thiscall MeasurePointOffsetAlignmentAngle(void * this, float * param_1)"
 FDNYFirefighter.exe,00459dd0,85,FUN_00459dd0,Global,false,false,__thiscall,"undefined __thiscall FUN_00459dd0(void * this, int param_1)"
 FDNYFirefighter.exe,00459e40,89,FUN_00459e40,Global,false,false,__thiscall,"undefined __thiscall FUN_00459e40(void * this, int * param_1)"
 FDNYFirefighter.exe,00459ea0,29,FUN_00459ea0,Global,false,false,__cdecl,undefined __cdecl FUN_00459ea0(int param_1)
@@ -1450,7 +1450,7 @@ FDNYFirefighter.exe,004799b0,47,FUN_004799b0,Global,false,false,__fastcall,undef
 FDNYFirefighter.exe,004799e0,1679,FUN_004799e0,Global,false,false,__cdecl,"undefined4 __cdecl FUN_004799e0(uint param_1, undefined4 param_2, int * param_3, char param_4)"
 FDNYFirefighter.exe,0047a070,184,FUN_0047a070,Global,false,false,__stdcall,uint __stdcall FUN_0047a070(int * param_1)
 FDNYFirefighter.exe,0047a130,183,FUN_0047a130,Global,false,false,__stdcall,uint __stdcall FUN_0047a130(int * param_1)
-FDNYFirefighter.exe,0047a1f0,10036,FUN_0047a1f0,Global,false,false,__thiscall,"undefined4 __thiscall FUN_0047a1f0(void * this, int * param_1)"
+FDNYFirefighter.exe,0047a1f0,10036,DispatchSharedScriptActorCommand,Global,false,false,__thiscall,"undefined4 __thiscall DispatchSharedScriptActorCommand(void * this, int * param_1)"
 FDNYFirefighter.exe,0047c930,91,FUN_0047c930,Global,false,false,__thiscall,"int __thiscall FUN_0047c930(void * this, byte * param_1, byte * param_2)"
 FDNYFirefighter.exe,0047c990,146,FUN_0047c990,Global,false,false,__thiscall,"int __thiscall FUN_0047c990(void * this, byte * param_1)"
 FDNYFirefighter.exe,0047ca50,123,FUN_0047ca50,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_0047ca50(void * this, undefined4 * param_1)"
@@ -1781,10 +1781,10 @@ FDNYFirefighter.exe,0048fd10,193,FUN_0048fd10,Global,false,false,__thiscall,"und
 FDNYFirefighter.exe,0048fde0,27,FUN_0048fde0,Global,false,false,__cdecl,undefined __cdecl FUN_0048fde0(void * param_1)
 FDNYFirefighter.exe,0048fe00,30,FUN_0048fe00,Global,false,false,__fastcall,undefined __fastcall FUN_0048fe00(undefined4 * param_1)
 FDNYFirefighter.exe,0048fe20,122,FUN_0048fe20,Global,false,false,__cdecl,"bool __cdecl FUN_0048fe20(int param_1, undefined4 * param_2)"
-FDNYFirefighter.exe,0048fea0,144,FUN_0048fea0,Global,false,false,__cdecl,"bool __cdecl FUN_0048fea0(int param_1, undefined4 * param_2, undefined4 * param_3, char param_4)"
+FDNYFirefighter.exe,0048fea0,144,IsWorldSegmentClear,Global,false,false,__cdecl,"bool __cdecl IsWorldSegmentClear(int param_1, undefined4 * param_2, undefined4 * param_3, char param_4)"
 FDNYFirefighter.exe,0048ff30,196,FUN_0048ff30,Global,false,false,__cdecl,"undefined4 __cdecl FUN_0048ff30(undefined4 * param_1, float param_2, undefined4 * param_3)"
 FDNYFirefighter.exe,00490000,294,FUN_00490000,Global,false,false,__cdecl,"undefined4 __cdecl FUN_00490000(undefined4 * param_1, undefined4 * param_2, float param_3, undefined4 * param_4, undefined4 * param_5)"
-FDNYFirefighter.exe,00490130,33,FUN_00490130,Global,false,false,__cdecl,"undefined __cdecl FUN_00490130(undefined4 * param_1, undefined4 * param_2, char param_3)"
+FDNYFirefighter.exe,00490130,33,CheckActiveWorldSegmentClearance,Global,false,false,__cdecl,"bool __cdecl CheckActiveWorldSegmentClearance(float * param_1, float * param_2, char param_3)"
 FDNYFirefighter.exe,00490190,10,FUN_00490190,Global,false,false,__fastcall,undefined __fastcall FUN_00490190(undefined4 * param_1)
 FDNYFirefighter.exe,004901a0,62,FUN_004901a0,Global,false,false,__fastcall,int __fastcall FUN_004901a0(int * param_1)
 FDNYFirefighter.exe,004901e0,55,FUN_004901e0,Global,false,false,__thiscall,"undefined __thiscall FUN_004901e0(void * this, undefined4 param_1, undefined4 param_2)"
@@ -1909,7 +1909,7 @@ FDNYFirefighter.exe,00496d00,198,FUN_00496d00,Global,false,false,__thiscall,"und
 FDNYFirefighter.exe,00496dd0,904,FUN_00496dd0,Global,false,false,__thiscall,"undefined __thiscall FUN_00496dd0(void * this, float param_1, float param_2, float param_3, float param_4)"
 FDNYFirefighter.exe,00497300,465,FUN_00497300,Global,false,false,__cdecl,"void * __cdecl FUN_00497300(void * param_1, int param_2, int param_3)"
 FDNYFirefighter.exe,004977b0,80,FUN_004977b0,Global,false,false,__cdecl,"void * __cdecl FUN_004977b0(void * param_1, int param_2)"
-FDNYFirefighter.exe,00497aa0,156,FUN_00497aa0,Global,false,false,__stdcall,float10 __stdcall FUN_00497aa0(void)
+FDNYFirefighter.exe,00497aa0,156,ComputeVectorAngleDegrees,Global,false,false,__thiscall,"float __thiscall ComputeVectorAngleDegrees(void * this, float * other)"
 FDNYFirefighter.exe,00497be0,155,FUN_00497be0,Global,false,false,__cdecl,void * __cdecl FUN_00497be0(void * param_1)
 FDNYFirefighter.exe,00497c80,328,FUN_00497c80,Global,false,false,__cdecl,"float * __cdecl FUN_00497c80(float * param_1, float * param_2, float * param_3, float param_4)"
 FDNYFirefighter.exe,00497de0,14,FUN_00497de0,Global,false,false,__thiscall,"undefined __thiscall FUN_00497de0(void * this, undefined1 param_1)"
