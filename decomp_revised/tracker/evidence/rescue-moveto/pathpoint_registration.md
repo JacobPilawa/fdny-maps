@@ -31,14 +31,14 @@ Binary: `FDNYFirefighter.exe`, SHA-256
 2. `InitializeAndRegisterScriptActor` (`0x0046E320`) stores the supplied name
    string at the embedded ScriptActor offset `+0x24`, copies two supplied
    32-bit values to `+0x28` and `+0x2C`, and adds the actor to the ScriptEngine.
-   The identity field is directly confirmed by `FindPathPointByName`
-   (`0x00470C50`), which compares a requested string with each actor's
-   `+0x24` name.
+   The identity field is directly confirmed by `FindScriptActorByName`
+   (`0x00470C50`), which compares a requested string with each registered
+   ScriptActor's `+0x24` name. PathPoint is one class using the shared registry.
 3. `ScriptEngineAddActor` (`0x00470DD0`) logs “added actor to ScriptEngine”
    and stores the pointer in the actor array at `+0x7C`, reusing an empty slot
    or growing the array. The array length is at `+0x80`.
 4. `SetFireRescuePathPointMove` (`0x00448A90`) calls
-   `FindPathPointByName` with the `moveto` target, so the authored `mortar1`
+   `FindScriptActorByName` with the `moveto` target, so the authored `mortar1`
    value reaches the exact registry lookup used by the MBase command.
 5. `ScriptEngineRemoveActor` (`0x0046E190`) forwards actor destruction to the
    registry removal helper, which clears the matching slot.
