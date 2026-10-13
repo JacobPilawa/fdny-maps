@@ -73,6 +73,7 @@ def main() -> int:
     columns = [
         "victim_type", "resolved_victim_type", "map_entity_count", "map_file_count", "map_keys",
         "victims_srf_model", "runtime_actor_model_ids", "runtime_actor_model_selection",
+        "runtime_actor_act_paths", "runtime_material_variant_rule",
         "rescue_rrf_act_path", "act_file_exists",
         "mapping_status",
     ]
@@ -88,10 +89,16 @@ def main() -> int:
                 model_id = definitions[default_type]
             runtime_model_ids = str(model_id) if model_id is not None else ""
             runtime_model_selection = "fixed" if model_id is not None else "unresolved"
+            runtime_models = [model_id] if model_id is not None else []
             if model_id == 14:
                 runtime_model_ids = "11;12;13"
                 runtime_model_selection = "11 + random() % 3 (FUN_0045B690)"
+                runtime_models = [11, 12, 13]
             act_path = model_paths.get(model_id, "") if model_id is not None else ""
+            runtime_actor_act_paths = ";".join(
+                f"{runtime_id}={model_paths[runtime_id]}"
+                for runtime_id in runtime_models if runtime_id in model_paths
+            )
             local_ref = act_path.split("/", 1)[1] if act_path.casefold().startswith("data/") else act_path
             local_act = files_by_casefold.get(local_ref.casefold()) if local_ref else None
             if victim_type in observed and victim_type not in definitions and resolved_type:
@@ -118,6 +125,13 @@ def main() -> int:
                 "victims_srf_model": model_id if model_id is not None else "",
                 "runtime_actor_model_ids": runtime_model_ids,
                 "runtime_actor_model_selection": runtime_model_selection,
+                "runtime_actor_act_paths": runtime_actor_act_paths,
+                "runtime_material_variant_rule": (
+                    "per-model round-robin material index copied to slot 0 (FUN_0045D5B0)"
+                    if victim_type in observed and runtime_models
+                    else "unresolved_renderer_model" if victim_type in observed
+                    else "not_established_for_unreferenced_actor_type"
+                ),
                 "rescue_rrf_act_path": act_path,
                 "act_file_exists": "yes" if local_act else "no" if act_path else "",
                 "mapping_status": status,

@@ -28,12 +28,26 @@ Reuse source-backed mechanics directly where their inputs match. Do not rewrite 
 | `fire_entity.h`, `fire_size.h`, `fire_contact.h`, `fire_suppression.h`, `fire_update.h`, `fire_effects.h`, `fire_message_queue.h`, `extinguisher_contacts.h`, `extinguisher_pose.h` | Reuse the fire/equipment mechanics; source-check each call boundary during extraction | MBase has 11 `RCS_FireRescue` entities, and every rescue BSP in the inventory has this class. These modules contain behavior components independent of map entity IDs; rendering and scheduling are host responsibilities. |
 | `victim_pickup.h`, `victim_rescue.h`, `victim_release_frame.h`, `victim_release.h`, `victim_transactions.h`, `victim_proximity.h`, `victim_status.h`, `victim_exit.h` | Reuse the rescue state transitions, but remove Training-only wrappers and zone inputs | MBase has five `RCS_VictimRescue` entities. The core pickup/message transaction has explicit injected services; several adjacent structs still carry `Training` names or assumptions about Training's actor flags, radius, and exit-zone setup. |
 | `actor_pose.h`, `actor_animation.h`, `motion.h`, `actor_render_flags.h`, `fire_renderer.h`, `actor_renderer.h`, `sprite_animation.h` | Reuse the animation/pose logic; keep rendering behind a portable service | These are not tied to one mission's entity IDs. `actor_renderer.h` and `fire_renderer.h` use OpenGL, while the formats they consume come from extracted JSON and actor assets. Cross-platform build and a generic ACT/BSP data path remain necessary. |
-| `scripts.h` | Reuse its parser and event binding as a starting point; fix level and scheduler inputs | It hard-codes `LEVEL=training`, consumes a generated Training script bundle, and advances queued actors once per host frame. Its own comments say this approximates the original owner scheduler. MBase's `exec rescue.evs`, `setashdensity`, and `moveto` commands are a concrete next compatibility check. |
+| `scripts.h` | Reuse its parser and event binding as a starting point; fix level and scheduler inputs | It hard-codes `LEVEL=training`, consumes a generated Training script bundle, and advances queued actors once per host frame. Its own comments say this approximates the original owner scheduler. MBase's shared `exec rescue.evs`, `setashdensity`, and FireRescue `moveto` command are now mapped to pinned binary entry points; handler cadence and mission integration remain open. |
 | `core.h`, `startup.h`, `spawn_queue.h`, `world_startup.h`, `model_floor.h`, `entity_id_registry.h`, `zones.h` | Reuse data structures selectively; define a shared scene-data interface first | Startup and collision read prototype-specific JSON shapes. `startup.h` has a fixed entity factory list and reports unknown `RCS_` classes as Training errors. `zones.h` stores Training-named zone state. They need catalog-driven inputs and explicit handling for other entity classes. |
 | `training_hose_interaction.h`, `training_liftable_sequence.h`, `training_hose_interaction` host wiring, Training door/asset checks | Keep as Training-specific evidence and fixtures; generalize only when a rescue scene needs the same contract | These contain valuable source mappings, but current checks pin Training model IDs, actor data, door counts, hose argument 25, or level-specific sequence assumptions. MBase does contain BModels, valves, and hose references, so specific shared behavior may still promote after comparison. |
 | `main.cpp`, `assets.h`, `ui.h`, generated `assets/training/` | Do not use as the new game-wide bootstrap unchanged | `main.cpp` loads Training JSON, picks Training actors and interactions, initializes `TrainingZones`, and owns a large monolithic loop. `assets.h` resolves only Training data. `ui.h` uses Apple CoreText/CoreGraphics. The generated scene data is local and must be regenerated for another BSP. |
 
 The MBase overlap is substantial: its BSP includes a rescue player, fires, victims, bounds triggers, BModels, PropModels, and EscapeArrow entities. That aligns with many gameplay systems already present in the prototype. The exporter now produces MBase geometry, collision, entity, and texture data; this proves data extraction, not that the Training host creates MBase actors correctly or that all missions share identical entity and script contracts.
+
+## Fresh suppression check
+
+The copied `fire_suppression.h` remains reusable for the nonlinear strength
+transition, strict below-0.1 terminal condition, doused statistic, and sound
+stop. Fresh Ghidra confirms the native calculation takes frame delta from
+`DAT_00502B04`; the C++ method's `dt` input must be wired to that same source.
+The native function carries contact xyz in its ABI but does not use them in the
+strength calculation. The port's immediate visual/animation shutdown is not a
+direct store in the native suppression routine, so its presentation timing
+needs a separate comparison before parity is claimed. The old same-hash
+suppression oracle is preserved under
+[`reference/legacy-evidence/fire-spread/`](../reference/legacy-evidence/fire-spread/README.md)
+for reconciliation; it was not run during this source-mapping pass.
 
 ## Integration path
 

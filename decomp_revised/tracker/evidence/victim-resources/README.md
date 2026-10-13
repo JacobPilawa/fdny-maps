@@ -28,3 +28,8 @@ original victim behavior/resource definition follow separate paths; see
 [`fatman_model_selection.md`](fatman_model_selection.md). The direct
 `vic_fatty.act` RRF mapping therefore does not by itself prove that this
 constructor renders that ACT.
+
+The same constructor's per-model material cursor and slot-zero override are
+mapped in [`victim_material_variants.md`](victim_material_variants.md). That
+report also keeps the declared resource ACT separate from the runtime renderer
+ACT paths.

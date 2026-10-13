@@ -48,3 +48,6 @@ model 14 to `data/acts/vic_fatty.act`. Preserve that source mapping in the
 asset inventory, but keep it distinct from the IDs used by this victim
 constructor. Whether another code path actually instantiates
 `vic_fatty.act` remains open.
+
+The selected model's concrete RRF ACT path and per-model material cycling are
+recorded separately in [`victim_material_variants.md`](victim_material_variants.md).

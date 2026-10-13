@@ -87,6 +87,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     columns = [
         "victim_type", "resolved_victim_type", "resource_resolution", "model_id",
         "runtime_actor_model_ids", "runtime_actor_model_selection", "resource_act_path", "source_sha256",
+        "runtime_actor_act_paths", "runtime_material_variant_rule",
         "source_file_exists", "map_entity_count", "map_file_count", "used_maps",
         "beckon_sound_ids", "rescue_sound_id", "beckon_delay_min", "beckon_delay_max",
         "speech_names", "referenced_sound_paths", "missing_sound_paths",
@@ -147,6 +148,8 @@ def main() -> int:
             "model_id": str(model_id) if model_id is not None else "",
             "runtime_actor_model_ids": cross.get("runtime_actor_model_ids", ""),
             "runtime_actor_model_selection": cross.get("runtime_actor_model_selection", ""),
+            "runtime_actor_act_paths": cross.get("runtime_actor_act_paths", ""),
+            "runtime_material_variant_rule": cross.get("runtime_material_variant_rule", ""),
             "resource_act_path": resource_path or "",
             "source_sha256": "",
             "source_file_exists": "no",

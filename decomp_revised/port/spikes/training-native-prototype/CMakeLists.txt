@@ -15,6 +15,13 @@ target_link_libraries(fdny-training PRIVATE PkgConfig::SDL PkgConfig::JSON OpenG
 target_compile_options(fdny-training PRIVATE -ffp-contract=off -Wno-deprecated-declarations)
 target_compile_definitions(fdny-training PRIVATE FDNY_ASSETS="${CMAKE_CURRENT_SOURCE_DIR}/assets/training")
 
+# Level-neutral BSP preview that consumes any package produced by
+# tools/export_gbsp_scene.py. It shares the recovered collision/player code
+# without booting the Training-specific host in main.cpp.
+add_executable(fdny-scene-viewer src/scene_viewer.cpp)
+target_link_libraries(fdny-scene-viewer PRIVATE PkgConfig::SDL PkgConfig::JSON OpenGL::GL)
+target_compile_options(fdny-scene-viewer PRIVATE -ffp-contract=off -Wno-deprecated-declarations)
+
 if(APPLE)
   find_library(CORETEXT_FRAMEWORK CoreText REQUIRED)
   find_library(COREGRAPHICS_FRAMEWORK CoreGraphics REQUIRED)

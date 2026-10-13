@@ -1,5 +1,7 @@
 #pragma once
-// 00448970: spray strength reduction, final hose douse and host callbacks.
+// 00448970: recovered strength transition and optional hose finalization.
+// Native frame delta is DAT_00502B04; the host must pass its matching value.
+// Native contact xyz are ABI inputs but do not affect this arithmetic.
 struct FireSuppression {
  float strength=1,sprayTime=1;int state=0;bool sprayed=false,flameEnabled=true,hasSound=false;
  void spray(float dt,float influence,bool terminal,

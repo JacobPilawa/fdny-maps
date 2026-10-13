@@ -7,12 +7,20 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-12T20:53:37Z,48,"Closed the level-choice to active-level path and mapped its EVS loader, mode branches, delayed callback, and script statement dispatch"
 2026-10-12T21:00:34Z,51,"Mapped level collection construction, ordinal lookup, and parser append helper; confirmed all 351 selected raw inputs match the pinned snapshot"
 2026-10-12T21:07:57Z,55,"Mapped Training BoundsTrigger script registration, ScriptActor command dispatch, and touch-command classification"
-2026-10-12T21:11:11Z,58,"Mapped Player escape command branch through carried-victim rescue completion; dashboard refresh deferred to a larger batch"
-2026-10-12T21:12:04Z,59,"Added the common ScriptActor command router to the Training touch-command path; dashboard still shows the prior larger batch"
+2026-10-12T21:11:11Z,58,Mapped Player escape command branch through carried-victim rescue completion; dashboard refresh deferred to a larger batch
+2026-10-12T21:12:04Z,59,Added the common ScriptActor command router to the Training touch-command path; dashboard still shows the prior larger batch
 2026-10-12T21:16:16Z,60,Resolved the EVS mode-1 statement filter: only statements beginning with set or exec continue to ScriptActor dispatch; dashboard refresh deferred
 2026-10-12T21:24:36Z,64,"Tied Training selection to a data\\maps\\training.bsp World spawn request; it strongly matches the WorldEntity BSP loader, with factory dispatch still open"
-2026-10-12T21:38:49Z,66,"Resolved the selected World request through its registered factory to WorldEntity and the BSP loader"
-2026-10-12T21:46:21Z,66,"Proved catalog parser and selector share the +0x6AC collection; mapped zero-based ordinal use in the menu"
+2026-10-12T21:38:49Z,66,Resolved the selected World request through its registered factory to WorldEntity and the BSP loader
+2026-10-12T21:46:21Z,66,Proved catalog parser and selector share the +0x6AC collection; mapped zero-based ordinal use in the menu
 2026-10-13T00:02:06Z,67,Mapped 0045B690 victim resource initialization: unknown-type default fallback and model-14 branch.
 2026-10-13T00:13:54Z,71,Resolved unknown victim type fallback through the ordered victims.srf resource catalog; boy1 selects boy/model 11/vic_boy.act
 2026-10-13T00:22:08Z,78,Mapped model-14 renderer actor selection to IDs 11-13 and traced separate victim resource configuration
+2026-10-13T00:27:07Z,81,Mapped victim material-index cycling per renderer model ID and ACT paths
+2026-10-13T05:43:26Z,86,"Mapped MBase FireRescue moveto/setsize dispatch, named PathPoint lookup, path movement setup, and timed vector-key handling; saved five fresh pseudocode reviews"
+2026-10-13T05:50:03Z,90,Mapped MBase PathPoint A_Name through entity initialization into the ScriptEngine registry used by FireRescue moveto; saved four fresh pseudocode reviews
+2026-10-13T06:00:09Z,92,Mapped FireRescue state-4 update and the trailing moveto values into generated timed-key timestamps; scheduler and author-facing timing intent remain open.
+2026-10-13T06:15:36Z,93,"Mapped FireRescue timed-vector key interpolation in the callback; state-4 route motion has an internal data-to-position path, while the external dispatcher remains open."
+2026-10-13T06:36:32Z,93,Resolved the fourth FireRescue setsize duration argument and clock conversion; added explicit coverage for Training and every campaign rescue map.
+2026-10-13T07:04:39Z,99,Mapped random FireRescue child spread and its vtable proximity/exposure caller; traced message 0x7531 through Player fire accumulation and strict passout threshold. Added two missing Ghidra function boundaries.
+2026-10-13T07:20:45Z,104,"Mapped fresh spray suppression, recovered the FireRescue message receiver and HoseSpray update boundaries, and audited the reusable C++ state transition."
