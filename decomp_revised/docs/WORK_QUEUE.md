@@ -7,6 +7,21 @@ research can continue without redoing the old project review or recent audits.
 
 - The map-neutral Mac scene preview lists every locally exported BSP, starts from the authored player spawn, and uses recovered movement and BSP collision. Its falling-through cause is fixed: absent `RCS_BoundsTrigger.model` values no longer become model index 0 and disable the world BSP. Its red helper-surface overlay is also fixed by carrying over Training's `col_*` draw filter. All seven rescue maps pass the same collision-backed spawn and five-second grounded movement check. A macOS CGL offscreen run of the production OpenGL draw path reports all visible textures uploaded and varied framebuffer pixels on every map. This verifies scene rendering without a desktop window; actual window presentation and original-game material/lightmap parity remain open. The Bank preview bundle was rebuilt.
 
+- The map-neutral preview now builds typed victim actors from the BSP's
+  victim/alternate-spot records and hash-pinned ACT resource crosswalk. It
+  selects initial motions/material variants, preserves the two victim spawn
+  phases, registers alternate spots, and dispatches the five native spawn
+  script fields. Authored `roam` commands now use the traced origin radius,
+  FireRescue obstacle spheres, victim-box sweep, floor-height probes,
+  player-relative target gates, random fallback, and walk selection. Static
+  `H_Radius` seeds fire obstacle radii while its retail UserData binding is
+  still unproven; victim callback cadence, all-class RNG ordering, and exact
+  engine turning/movement remain open. The preview still lacks shared
+  EVS/contact scheduling, fire state updates, carried-body presentation,
+  rescue exits, and door updates. Source/evidence are in `scene_viewer.cpp`,
+  `tools/export_victim_actors.py`, and
+  `tracker/evidence/runtime/preview_rescue_actor_slice.md`.
+
 - 223 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - Twenty-five hash-pinned Genesis.dll collision, GBSP, bitmap, and
@@ -67,10 +82,14 @@ research can continue without redoing the old project review or recent audits.
   counts reconcile to the level inventory. Raw epairs and positions are
   retained for map-neutral spawn conversion; current-hash code confirms the
   VictimRescue and VictimAltSpot factory path and registration-before-spawn order.
-- Victim `roam <number>` now traces from the class-specific ScriptActor fallback
+- Victim `roam <number>` traces from the class-specific ScriptActor fallback
   through obstacle collection, initial-position checks, animation selection,
-  target selection, and state-7 movement. `forcespawnspot` selects from the
-  victim's registered spawn list. The actor inventory summarizes the exact
+  target selection, and state-7 movement. Obstacle kind 6 is tied to
+  `RCS_FireRescue`, and its virtual radius getter reads root `+0x88`; the static
+  host uses authored `H_Radius` pending proof of the retail UserData binding.
+  The viewer now uses the source-derived candidate/retry/player gates and fire
+  clearances. `forcespawnspot` selects from the victim's registered spawn list.
+  The actor inventory summarizes the exact
   non-empty victim script values across every BSP; the alternate-spot name
   resolver joins all 45 authored spots to a victim on the same BSP. Numeric-only
   fields and update cadence remain unresolved. The current-hash factory trace confirms alternate-spot registration before victim spawn selection across the authored rescue BSPs. See
@@ -88,18 +107,23 @@ research can continue without redoing the old project review or recent audits.
 
 ## Next tasks, in order
 
-1. **Desktop presentation check.** The offscreen render and collision gates now
-   pass. Confirm the rebuilt Bank bundle through its interactive macOS window,
-   then refine camera framing, movement feel, and visible light/material detail.
+1. **Desktop actor check.** The rebuilt Bank bundle includes the map and
+   decoded victim ACT assets. Confirm victim placement, motion, and contact
+   pickup in the interactive macOS window. Record the map/camera when a base
+   texture binding still appears wrong; the current audit found no proven
+   face-to-texture index mismatch. Lighting, lightmaps, alpha, and window
+   presentation parity remain visual follow-ups.
 2. **Runtime catalog/resource resolver.** The `.lev`/`.rrf` loader trace is
    recorded in `tracker/evidence/scenario-loading/lev_rrf_catalog_loader_trace_fresh.md`.
    Implement catalog-selected `SceneData` creation with explicit case aliases for
    BSP, briefing, EVS, actors, motions, sounds, and textures. Retain the original
    resource spelling and source hash on each resolved row.
-3. **Promote the viewer into the shared host.** Extract reusable startup,
-   movement, collision, renderer, and asset loading from the Training
-   `main.cpp`; keep the current Training executable as a regression fixture.
-   No map name or Training assumption belongs in the shared loader.
+3. **Promote the viewer into the shared host.** The viewer now loads actors,
+   starts the traced victim roam update, and applies proximity pickup. Extract
+   reusable startup, movement, collision, renderer, and asset loading from the
+   Training `main.cpp`; keep the current Training executable as a regression
+   fixture. Reconcile the ported roam behavior with exact native turn and move
+   helpers; no map name or Training assumption belongs in the shared loader.
 4. **Wire rescue entities and script startup.** Derive common typed player,
    fire, victim, bounds-trigger, BModel, prop, and exit records from the raw
    ordered epairs. Preserve unknown classes and properties. Trace MBase's
@@ -121,7 +145,8 @@ research can continue without redoing the old project review or recent audits.
    Player identity/recipient route is now mapped, and every rescue mission and
    stage remains in scope.
 5. **Build one complete rescue path, then cover every rescue mission.** MBase
-   is first for loader integration; `bank`, `bar_r`, `gas_r`, `boat_a`,
+   is first for loader integration; complete survivor carry/release/exit and
+   shared doors before `bank`, `bar_r`, `gas_r`, `boat_a`,
    `subway_a`, and `oil_rig_a` remain required campaign scenarios. Include
    Training as a required catalog scenario. Reach visible actors, fire state,
    tool interaction, victim rescue, and mission completion for each while

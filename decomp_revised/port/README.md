@@ -20,7 +20,12 @@ systems and catalog-driven startup are the remaining integration work.
 - `spikes/training-native-prototype/src/scene_data.h` and
   `scene_viewer.cpp` provide a level-neutral package loader and BSP
   geometry/movement preview. All 17 local packages load with zero unresolved
-  texture paths. The preview does not yet create fires/victims or run scripts.
+  texture paths. The preview now creates typed rescue victims from exported
+  ACT assets, applies authored spawn alternatives and initial motions, moves
+  six-motion victims with `roam` commands through collision-checked waypoints,
+  and applies the source-mapped proximity pickup state. The roam target chooser
+  is still an MVP approximation; fire, EVS dispatch, doors, exits, and mission
+  completion are not connected to this host yet.
 
 ## Main port checkpoints
 

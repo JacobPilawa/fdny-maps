@@ -12,6 +12,7 @@ import csv
 import hashlib
 import json
 import re
+import struct
 import sys
 from pathlib import Path
 
@@ -100,6 +101,24 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def write_bmp(path: Path, width: int, height: int, rgba: bytes) -> None:
+    """Write a 24-bit BMP beside the review PNG for SDL's built-in loader."""
+    stride = (width * 3 + 3) & ~3
+    pixels = bytearray()
+    for y in range(height - 1, -1, -1):
+        row = bytearray()
+        for x in range(width):
+            offset = (y * width + x) * 4
+            red, green, blue = rgba[offset:offset + 3]
+            row.extend((blue, green, red))
+        row.extend(b"\0" * (stride - width * 3))
+        pixels.extend(row)
+    header = b"BM" + struct.pack("<IHHI", 54 + len(pixels), 0, 0, 54)
+    dib = struct.pack("<IiiHHIIiiII", 40, width, height, 1, 24, 0,
+                      len(pixels), 2835, 2835, 0, 0)
+    path.write_bytes(header + dib + pixels)
 
 
 def main() -> int:
@@ -202,6 +221,7 @@ def main() -> int:
                 bitmap = body_vfs.data[entry.offset:entry.offset + entry.size]
                 width, height, rgba = act.decode_gebm(bitmap)
                 act.write_png(args.output / f"{stem}_{entry.name}.png", width, height, rgba)
+                write_bmp(args.output / f"{stem}_{entry.name}.bmp", width, height, rgba)
 
             translation = interpolation_modes(motions, "translation")
             rotation = interpolation_modes(motions, "rotation")
