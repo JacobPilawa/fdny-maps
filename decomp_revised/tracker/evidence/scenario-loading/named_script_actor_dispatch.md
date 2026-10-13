@@ -72,17 +72,30 @@ files remain in scope.
 
 ## Player identity boundary
 
-The named recipient is resolved from the runtime ScriptEngine registry; the
-text `player` alone does not identify a C++ class. A PlayerHose initializer
-(`00466D60`, logging `hose\\PlayerHoseEnt.cpp`) calls
-`InitializeAndRegisterScriptActor` for the ScriptActor at the initializer's
-`param_1 + 0x50` word offset using the identity `Player`. Separately, the Player
-constructor (`00453D50`) installs a ScriptActor vtable at object `+0x140` whose
-slot `+4` points to `00451870`, the Player script handler. These observations do
-not yet prove which object a particular mission's `tell player ...` resolves
-to, whether a duplicate name is registered, or whether the returned object's
-handler reaches `00451870`. The first-match behavior of the registry makes that
-identity/order check necessary.
+The rescue-map recipient is statically identified as `RCS_PlayerRescue`:
+
+- `InitializePlayerRescueEntity` (`0044D550`) passes the embedded ScriptActor
+  at entity `+0x140` (`param_1 + 0x50` words) to
+  `InitializeAndRegisterScriptActor` with the exact name `Player`.
+- The Player constructor (`00453D50`) installs the ScriptActor vtable at object
+  `+0x140`; its address point at `004E1C40` has `00451870` in slot `+0x04`, the
+  Player script-command handler.
+- The distinct `PlayerHose` initializer (`00466D60`) also registers `Player`.
+  Hash-checked inventory of all 17 retail BSPs finds exactly one
+  `RCS_PlayerRescue` and no `RCS_PlayerHose` in each rescue-map/stage BSP; the
+  four hose-map BSPs contain one `RCS_PlayerHose` and no PlayerRescue. There
+  are no exact `Player` epair values in the BSPs. See the generated
+  [map/class inventory](../../rescue_exit_trigger_inventory.md).
+- Remaining direct references to the `Player` string are file/tree readers,
+  save serialization, a Player-name lookup for a hint command, or constructor
+  data; they do not add another literal-name registration. Among the callers
+  of `InitializeAndRegisterScriptActor`, the two literal-name initializers are
+  PlayerRescue and PlayerHose.
+
+This resolves the authored rescue maps' static successful-path class-to-handler
+route through the WorldEntity factory and spawn queue. It does not observe a
+live map load, runtime failure behavior, registry insertion order, or the frame
+on which a script command is delivered.
 
 ## What this establishes and what remains open
 
@@ -92,20 +105,20 @@ lookup reaches that object's ScriptActor dispatcher, which passes unhandled
 commands to the target-specific vtable slot `+4` with the parsed command
 pointer.
 
-**Open:** the exact runtime target and registration order for `player`; the
-map-specific effects of Boat A's `explodeb` and Subway A's `subdoor`
-self-commands; equality between the checked command argument and forwarded context, plus runtime completion of Oil Rig's
-`finalexitloadmap`; plus actor-specific acceptance and timing. Bank, Boat A, Bar R, Gas R,
-and the statically resolved Oil Rig stage targets have their named BModel
-routes mapped. Map-specific runtime effects, cadence, and visual timing remain
-open; static routing is not evidence of port parity.
+**Open:** runtime factory admission, registry insertion order and command
+delivery timing; the map-specific effects of Boat A's `explodeb` and Subway A's
+`subdoor` self-commands; equality between the checked command argument and
+forwarded context, plus runtime completion of Oil Rig's `finalexitloadmap`.
+Bank, Boat A, Bar R, Gas R, and the statically resolved Oil Rig stage targets
+have their named BModel routes mapped. Map-specific runtime effects, cadence,
+and visual timing remain open; static routing is not evidence of port parity.
 
 ## Next bounded trace
 
 The direct named BModel `open` routes in Bank, Boat A, Bar R, Gas R, and Oil Rig
 are joined to their authored child models in [bmodel_rescue_targets.md](bmodel_rescue_targets.md).
-Next, trace the producer of the context string stored at EverGame+0x660 and verify Oil Rig's runtime stage
-handoff, then trace Subway A's `subdoor` self-command route through its class
-handler. Resolve Player registration/order for Training and each rescue
-mission that uses `tell player ...`; Training
+Next, trace the producer of the context string stored at EverGame+0x660 and
+verify Oil Rig's runtime stage handoff, then trace Subway A's `subdoor`
+self-command route through its class handler. Obtain a live startup/event trace
+for factory admission and command delivery across the rescue maps; Training
 remains in scope alongside all seven campaign rescues.

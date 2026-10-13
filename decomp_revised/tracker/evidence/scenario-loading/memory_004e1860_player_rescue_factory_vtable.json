@@ -1,0 +1,11 @@
+{
+  "program": "FDNYFirefighter.exe",
+  "sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+  "address": "004E1860",
+  "length": 40,
+  "hex": "f0f2430070f643008040450060f643005243535f506c617965725265736375650000000000000000",
+  "decoded_vtable_words": ["0043F2F0", "0043F670", "00454080", "0043F660"],
+  "class_name": "RCS_PlayerRescue",
+  "factory_slot_offset": "0x08",
+  "factory_function": "00454080"
+}

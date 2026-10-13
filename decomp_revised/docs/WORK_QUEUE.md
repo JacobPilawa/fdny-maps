@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- 185 EXE functions have address-specific behavior notes; function activity is
+- 191 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
@@ -16,7 +16,7 @@ research can continue without redoing the old project review or recent audits.
 - The ScriptActor name registry is shared across classes. `tell`'s first value
   is the case-insensitive actor name and the second is its command. Bank's
   `tell vault open` reaches the BModel ScriptActor handler; the handler's
-  `open` branch changes BModel command state or queues an open action. The per-frame update maps state 3/4 progression, child-model motion, and one-shot timed command dispatch. A new map ledger joins 10 named `open` targets to their BSP actors across Bank, Boat A, Bar R, and Gas R; runtime cadence, visible timing, and the concrete `Player` registry match remain open.
+  `open` branch changes BModel command state or queues an open action. The per-frame update maps state 3/4 progression, child-model motion, and one-shot timed command dispatch. A new map ledger joins 10 named `open` targets to their BSP actors across Bank, Boat A, Bar R, and Gas R; the static PlayerRescue factory path is now mapped; runtime cadence, visible timing, and live execution remain open.
 - Subway A now has a static entity-to-handler trace for 17 automatic door BModels and 25 broken-door sound BoundsTriggers; all 51 animation children and all trigger collision models resolve. Sound-name lookup, deferred playback, sample/stream FMOD calls, and the 3D-attribute API are traced, and `SubDoor`/`Zapp3d` join to hash-pinned 3D-buffer definitions and WAVs. The resource-gate path and min/max-distance setter are statically mapped; runtime audibility/falloff and the remaining Subway rescue mechanics remain open. See `tracker/evidence/scenario-loading/subway_a_interaction_path.md`.
 - The old C++ Training workbench remains useful as the source-backed gameplay
   implementation base. It is still a Training host, not a game-wide runtime;
@@ -48,6 +48,16 @@ research can continue without redoing the old project review or recent audits.
   resolver joins all 45 authored spots to a victim on the same BSP. Numeric-only
   fields, runtime factory admission, and update cadence remain unresolved. See
   `tracker/evidence/scenario-loading/victim_roam_behavior.md`.
+- The shared victim pickup path now maps contact overlap through Message Mapper
+  message `0x7532`, the Player's empty-carry gate, and the VictimRescue `pickup`
+  event. The shared escape/release path updates rescue statistics and victim
+  state, then applies final-exit gates. A generated 17-BSP inventory records 40
+  authored exit triggers, joins all 40 `C_Model` values to named BSP models, and
+  records Boat, Subway, and Oil Rig stage destinations. `tell player` now traces through the static PlayerRescue factory and handler path;
+  trigger/update cadence and live mission parity remain open. See
+  `tracker/evidence/scenario-loading/victim_pickup_message_path.md`,
+  `tracker/evidence/scenario-loading/rescue_completion_and_exit_path.md`, and
+  `tracker/rescue_exit_trigger_inventory.md`.
 
 ## Next tasks, in order
 
@@ -72,7 +82,9 @@ research can continue without redoing the old project review or recent audits.
    event-command semantics. The VictimRescue `roam` path is statically mapped;
    continue with runtime capture of Bar R's unhandled `setskin 2` fields,
    numeric-only victim script values, alternate-spot factory admission, and
-   victim update cadence without narrowing mission scope.
+   victim update cadence; resolve the named `player` actor registration/order
+   and Player ScriptActor recipient for every rescue scenario without narrowing
+   mission scope.
 4. **Build one complete rescue path, then cover every rescue mission.** MBase
    is first for loader integration; `bank`, `bar_r`, `gas_r`, `boat_a`,
    `subway_a`, and `oil_rig_a` remain required campaign scenarios. Include

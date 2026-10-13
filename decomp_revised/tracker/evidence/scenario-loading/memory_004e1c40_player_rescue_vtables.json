@@ -1,0 +1,13 @@
+{
+  "program": "FDNYFirefighter.exe",
+  "sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+  "address": "004E1C40",
+  "length": 48,
+  "hex": "70254500701845006040450070cb4000703a450090db4900f0d7490020fe440060d74900d07b400050d5440060f64300",
+  "script_actor_vtable_address_point": "004E1C40",
+  "script_actor_command_slot_offset": "0x04",
+  "script_actor_command_function": "00451870",
+  "player_root_vtable_address_point": "004E1C48",
+  "player_root_init_slot_offset": "0x20",
+  "player_root_init_function": "0044D550"
+}
