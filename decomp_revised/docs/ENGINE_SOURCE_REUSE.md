@@ -1,12 +1,12 @@
 # Genesis3D source and reuse assessment
 
-Checked 2026-10-12. This is an engine-boundary research note, not an implementation or a license conclusion.
+Checked 2026-10-13. This is an engine-boundary research note, not an implementation or a license conclusion.
 
 ## What is available
 
 The public [RealityFactory/Genesis3D repository](https://github.com/RealityFactory/Genesis3D) contains substantial C engine code grouped into Actor, Engine, Entities, Math, Physics, VFile, and World areas. Its README says it is based on Genesis3D 1.1, released in 1999, with community changes. The source tree also includes `Engine/Drivers` directories for `D3D7xDrv`, `D3DDrv`, `OpenGl`, and `WireFrame`. These are useful comparison sources for API behavior, layouts, algorithms, data formats, and legacy renderer interfaces.
 
-A focused comparison note at [`public_driver_comparison.md`](../tracker/evidence/driver-boundary/public_driver_comparison.md) records what the public tree does and does not establish. The public `Engine/Drivers/Dcommon.h` declares `DriverHook` and a driver table version of 100/3; FDNY's pinned `Genesis.dll` checks for 101/1. The interface is useful for understanding the legacy boundary, but it is not an ABI-compatible drop-in on current evidence. An ecosystem search found Styx3D, whose README identifies it as a Jet3D rework and leaves SDL3/software-driver work incomplete; Jet3D is the separate Genesis3D 2.x C++ line, so Styx3D is not evidence of a ready Genesis3D 1.1 driver port. No source was copied.
+A focused comparison note at [`public_driver_comparison.md`](../tracker/evidence/driver-boundary/public_driver_comparison.md) records what the public tree does and does not establish. The public `Engine/Drivers/Dcommon.h` declares a `geBoolean` hook taking `DRV_Driver **`, marks the callback convention `_fastcall`, and gives the table version 100/3; FDNY's pinned `Genesis.dll` checks for 101/1. The hook shape and table declaration help interpret the boundary, but the version mismatch and unverified slot layout prevent treating it as an ABI-compatible drop-in. The public community header contains later additions through the early 2000s, and its D3D leaf implementation remains uninspected at a pinned revision. An ecosystem search found Styx3D, whose README identifies it as a Jet3D rework and leaves SDL3/software-driver work incomplete; Jet3D is the separate Genesis3D 2.x C++ line, so Styx3D is not evidence of a ready Genesis3D 1.1 driver port. No source was copied.
 
 The pinned FDNY EXE imports 116 symbols from `Genesis.dll`; that DLL exports 536 names. The names include `geWorld_Collision`, actor operations, transforms, sound, and `geVFile` operations. The local import/export inventories are the authority for which APIs this game actually uses. The checked-in `D3DDrv.dll` exports only `DriverHook` and imports DirectDraw. Raw Genesis instructions show `FUN_10023950` loading candidates, resolving `DriverHook`, checking table fields at `+4/+8` for 101 and 1, and invoking enumeration methods `+0x14/+0x18`. The EXE calls `geEngine_SetDriverAndMode` during startup; its wrapper invokes `FUN_10025E00`, reloads the selected DLL, validates the hook table, calls method `+0x20`, and retains the handle. The wrapper's table `+0xA8` call applies the six engine fog settings to the active driver. The individual fields and downstream D3DDrv method semantics remain open. See [`selected_driver_initialization_trace.md`](../tracker/evidence/driver-boundary/selected_driver_initialization_trace.md) and [`driverhook_caller_table_trace.md`](../tracker/evidence/driver-boundary/driverhook_caller_table_trace.md).
 
@@ -15,7 +15,7 @@ The pinned FDNY EXE imports 116 symbols from `Genesis.dll`; that DLL exports 536
 - No exact Genesis3D 1.1 build identity or source match has been proved for FDNY's `Genesis.dll`.
 - The public driver directory names do not establish that any checked-in driver matches FDNY's `D3DDrv.dll`; no binary/source identity or drop-in compatibility has been verified.
 - The public source is a community-modified Genesis3D 1.1 tree; file-name or API overlap does not prove matching implementation, binary layout, or driver behavior.
-- The community source includes modifications; matching function names do not prove matching implementation or binary layout.
+- The public `Dcommon.h` is a community-modified header; matching hook names and pointer shape do not prove field offsets, calling convention at every caller, matching implementation, or binary layout.
 - The source tree is not a drop-in cross-platform runtime. FDNY-specific modifications, dependencies, and its graphics/audio/platform services still need comparison.
 - The focused search found no FDNY-specific recovered Genesis or driver source.
 
@@ -23,7 +23,7 @@ The current [official Genesis3D site](https://genesis3d.com/) states that Genesi
 
 ## Next comparison
 
-The driver table version comparison is now mapped. Next compare the game's imported `geWorld_Collision`, `geActor`, `geVFile`, `geCamera`, and `geEngine` callsites against public headers and implementation where those details affect port behavior. Record exact source revision, signatures, structure fields, binary-version differences, and direct callsite behavior. Use public source to form hypotheses; confirm them against FDNY's pinned modules. Keep renderer migration separate from gameplay semantics. The current decision is to replace the graphics/platform boundary with a cross-platform renderer and use public Genesis3D source as an API, data-layout, and algorithm reference.
+The driver version comparison and public hook prototype are now mapped; the public D3D leaf ABI remains unresolved. Next compare the game's imported `geWorld_Collision`, `geActor`, `geVFile`, `geCamera`, and `geEngine` callsites against public headers and implementation where those details affect port behavior. Record exact source revision, signatures, structure fields, binary-version differences, and direct callsite behavior. Use public source to form hypotheses; confirm them against FDNY's pinned modules. Keep renderer migration separate from gameplay semantics. The current decision is to replace the graphics/platform boundary with a cross-platform renderer and use public Genesis3D source as an API, data-layout, and algorithm reference.
 
 ## First callsite comparison
 

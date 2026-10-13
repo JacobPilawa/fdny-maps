@@ -34,6 +34,32 @@ cmake -S . -B build
 cmake --build build -j 4
 ```
 
+## Map-neutral rescue scene preview
+
+The separate `fdny-scene-viewer` target loads any exported BSP package through
+the shared `SceneData` loader. It uses the recovered player movement and BSP
+collision code and does not start Training's scripts, fire/victim systems, or
+mission flow. From the project root, build it with:
+
+```sh
+cmake -S port/spikes/training-native-prototype -B port/spikes/training-native-prototype/.local/build-scene-viewer
+cmake --build port/spikes/training-native-prototype/.local/build-scene-viewer --target fdny-scene-viewer -j 4
+```
+
+Then launch a map (the local MBase package is already exported in this
+workspace):
+
+```sh
+port/spikes/training-native-prototype/.local/build-scene-viewer/fdny-scene-viewer .local/exports/mbase
+```
+
+Use WASD to move, mouse to look, Space or right mouse to jump, C to crouch,
+and Escape to release or recapture the mouse. Replace `mbase` with any key in
+`.local/exports/` to inspect another map. Run the same command with `--inspect`
+to load and inventory a package without opening a window. A fresh checkout
+must first copy the retail inputs locally and export the desired BSP with
+`tools/export_gbsp_scene.py`.
+
 The `--render-check` argument renders two hidden frames and reports how many
 Training mesh groups and textures loaded. It is a smoke check, not a gameplay
 parity test.

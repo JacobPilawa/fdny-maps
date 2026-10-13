@@ -1,9 +1,9 @@
-victim_type,resolved_victim_type,map_entity_count,map_file_count,map_keys,victims_srf_model,runtime_actor_model_ids,runtime_actor_model_selection,rescue_rrf_act_path,act_file_exists,mapping_status
-boy,boy,4,3,bank;boat_a;boat_b,11,11,fixed,data/acts/vic_boy.act,yes,mapped_by_srf_and_rrf
-boy1,boy,1,1,subway_b,11,11,fixed,data/acts/vic_boy.act,yes,runtime_fallback_first_srf_entry
-dog,dog,2,2,oil_rig_B;subway_b,16,16,fixed,data/acts/vic_dog.act,yes,mapped_by_srf_and_rrf
-fatman,fatman,13,7,bank;bar_r;boat_a;boat_b;oil_rig_C;subway_a;subway_b,14,11;12;13,11 + random() % 3 (FUN_0045B690),data/acts/vic_fatty.act,yes,mapped_by_srf_and_rrf
-girl,girl,7,4,bank;boat_a;boat_b;oil_rig_a,15,15,fixed,data/acts/vic_girl.act,yes,mapped_by_srf_and_rrf
-herodown,herodown,0,0,,30,30,fixed,data/acts/vic_HeroDown.act,yes,defined_not_used_by_bsp_victim_entity
-man,man,27,12,bank;bar_r;boat_b;gas_r;mbase;oil_rig_a;oil_rig_B;oil_rig_C;oil_rig_D;subway_a;subway_b;training,12,12,fixed,data/acts/vic_man.act,yes,mapped_by_srf_and_rrf
-woman,woman,17,10,bank;bar_r;boat_b;gas_r;oil_rig_a;oil_rig_B;oil_rig_C;oil_rig_D;subway_a;subway_b,13,13,fixed,data/acts/vic_woman.act,yes,mapped_by_srf_and_rrf
+victim_type,resolved_victim_type,map_entity_count,map_file_count,map_keys,victims_srf_model,runtime_actor_model_ids,runtime_actor_model_selection,runtime_actor_act_paths,runtime_material_variant_rule,rescue_rrf_act_path,act_file_exists,mapping_status
+boy,boy,4,3,bank;boat_a;boat_b,11,11,fixed,11=data/acts/vic_boy.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_boy.act,yes,mapped_by_srf_and_rrf
+boy1,boy,1,1,subway_b,11,11,fixed,11=data/acts/vic_boy.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_boy.act,yes,runtime_fallback_first_srf_entry
+dog,dog,2,2,oil_rig_B;subway_b,16,16,fixed,16=data/acts/vic_dog.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_dog.act,yes,mapped_by_srf_and_rrf
+fatman,fatman,13,7,bank;bar_r;boat_a;boat_b;oil_rig_C;subway_a;subway_b,14,11;12;13,11 + random() % 3 (FUN_0045B690),11=data/acts/vic_boy.act;12=data/acts/vic_man.act;13=data/acts/vic_woman.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_fatty.act,yes,mapped_by_srf_and_rrf
+girl,girl,7,4,bank;boat_a;boat_b;oil_rig_a,15,15,fixed,15=data/acts/vic_girl.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_girl.act,yes,mapped_by_srf_and_rrf
+herodown,herodown,0,0,,30,30,fixed,30=data/acts/vic_HeroDown.act,not_established_for_unreferenced_actor_type,data/acts/vic_HeroDown.act,yes,defined_not_used_by_bsp_victim_entity
+man,man,27,12,bank;bar_r;boat_b;gas_r;mbase;oil_rig_a;oil_rig_B;oil_rig_C;oil_rig_D;subway_a;subway_b;training,12,12,fixed,12=data/acts/vic_man.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_man.act,yes,mapped_by_srf_and_rrf
+woman,woman,17,10,bank;bar_r;boat_b;gas_r;oil_rig_a;oil_rig_B;oil_rig_C;oil_rig_D;subway_a;subway_b,13,13,fixed,13=data/acts/vic_woman.act,per-model round-robin material index copied to slot 0 (FUN_0045D5B0),data/acts/vic_woman.act,yes,mapped_by_srf_and_rrf

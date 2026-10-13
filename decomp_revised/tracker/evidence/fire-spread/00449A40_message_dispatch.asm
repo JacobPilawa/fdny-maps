@@ -1,0 +1,21 @@
+00449a40: CMP dword ptr [ECX + 0x70],0x5 
+00449a44: PUSH ESI 
+00449a45: JZ 0x00449a79 
+00449a47: CMP dword ptr [ESP + 0x8],0x7530 
+00449a4f: JNZ 0x00449a79 
+00449a51: MOV EAX,dword ptr [ESP + 0xc] 
+00449a55: MOV EDX,dword ptr [EAX + 0xc] 
+00449a58: MOV ESI,dword ptr [EAX] 
+00449a5a: PUSH 0x0 
+00449a5c: PUSH EDX 
+00449a5d: SUB ESP,0xc 
+00449a60: MOV EDX,ESP 
+00449a62: MOV dword ptr [EDX],ESI 
+00449a64: MOV ESI,dword ptr [EAX + 0x4] 
+00449a67: MOV dword ptr [EDX + 0x4],ESI 
+00449a6a: MOV EAX,dword ptr [EAX + 0x8] 
+00449a6d: MOV dword ptr [ESP + 0x1c],ESP 
+00449a71: MOV dword ptr [EDX + 0x8],EAX 
+00449a74: CALL 0x00448970 
+00449a79: POP ESI 
+00449a7a: RET 0x8 

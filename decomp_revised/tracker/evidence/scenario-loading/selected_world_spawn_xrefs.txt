@@ -11,7 +11,7 @@ World factory dispatch:
 - 0042AB00 resolves "World" through 00429C00 and stores the returned descriptor pointer in request +0x0C. The queued request carries command 0x2711 and the selected BSP path.
 - Queue drain 0049C670 reads request +0x0C and calls descriptor virtual slot +8. Factory 0049E300 allocates and constructs the WorldEntity through 0049E240, which stores the BSP path at object +0x24.
 - The WorldEntity initialization slot +0x20 resolves to 0049E4D0. It reads object +0x24 and invokes the BSP loader 00495210.
-- This closes the static factory-dispatch gap for the successful path. The preserved queue/factory decompilations are in reference/previous-work/decomp/evidence/entity-queues/ and startup-world/; a consolidated address-by-address trace is in world_factory_resolution.md.
+- This closes the static factory-dispatch gap for the successful path. The preserved queue/factory decompilations are in decomp/evidence/entity-queues/ and startup-world/; a consolidated address-by-address trace is in world_factory_resolution.md.
 
 WorldEntity load method:
 - 0049E4D0 has a data-table reference at 004E4478, slot +0x18 in the table at 004E4460; its source strings identify ROCWorldEntity / WorldEntity.cpp.

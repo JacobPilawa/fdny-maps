@@ -1,8 +1,8 @@
 # Rescue actor resource map
 
 Status: **all defined victim ACTs decode locally; the unknown-type fallback
-and constructor model selection are source-mapped; runtime resource binding
-and material selection remain to implement.**
+and constructor model/material selection are source-mapped; runtime loading
+and material-to-surface binding remain to implement and validate.**
 
 ## Recovered resource chain
 
@@ -42,6 +42,21 @@ use elsewhere remains open. The generated inventories now keep the declared
 resource ACT and runtime actor model selection in separate columns. See
 [`fatman_model_selection.md`](../tracker/evidence/victim-resources/fatman_model_selection.md).
 
+The renderer model IDs resolve through `rescue.rrf` to concrete ACT paths.
+For `fatman`, the selected runtime paths are `vic_boy.act`, `vic_man.act`, and
+`vic_woman.act`, while the original `fatman` record continues to supply its
+victim behavior and audio configuration. The generated inventory records both
+the declared resource ACT and the runtime renderer ACT paths.
+
+`FUN_0045D5B0` also cycles a material index separately for each selected model
+ID. It advances the cached index, wraps it when it reaches that ACT's material
+count, and copies each selected material onto actor material slot 0. For the
+three renderer models used by the model-14 branch, the decoded ACTs expose
+three material slots each. This maps the variant-selection rule, while the
+mapping from ACT material records to rendered surface indices still needs
+confirmation. See
+[`victim_material_variants.md`](../tracker/evidence/victim-resources/victim_material_variants.md).
+
 ## Reuse and implementation
 
 The existing C++ actor-pose and animation code consumes decoded actor JSON and
@@ -69,9 +84,11 @@ images. All exported actor tracks use interpolation mode 1 for both rotation
 and translation, which is within the current `ActorPose` mode handling. This
 establishes that the existing pose evaluator's input shape is reusable; it is
 not yet an original-runtime parity result. The material records retain opaque
-`bitmapId` values, and the original mapping from those IDs to skin/material
-selection still needs to be confirmed. The compact inventory records each
-material slot, bitmap ID, and numbered embedded bitmap entry for follow-up.
+`bitmapId` values. Ghidra maps per-model material-index cycling and the
+slot-zero override, while the mapping from ACT material entries to rendered
+geometry surfaces and bitmap-loading behavior still needs confirmation. The
+compact inventory records each material slot, bitmap ID, and numbered
+embedded bitmap entry for that follow-up.
 
 Victim sound cues are also joined from `victims.srf` through `sound.rrf`. The
 seven actor definitions reference 20 unique WAV paths. They were missing from
