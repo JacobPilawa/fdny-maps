@@ -302,3 +302,82 @@ counts and entity-level joins are in
 live contacts, candidate selection/order, callback cadence, input handling, and
 visible effect parity remain open. No dashboard HTML or native gameplay code
 changed.
+
+## 2026-10-13 — Subway A self-bound door events traced
+
+Mapped the Subway A EVS `subdoor` and `brokendoor` variables through the shared
+ScriptActor parser. Fresh Ghidra analysis now shows the parser turns colon
+event syntax into `onmsgappend`, and the common dispatcher stores or appends
+those command lists in the ScriptActor event table. The event lookup later
+routes contact-generated `touch` and `untouch` keys to the stored commands. The
+newly named helpers are `SetScriptActorEventCommands` (0046F6F0) and
+`AppendScriptActorEventCommands` (0046F820); both now have saved Ghidra comments
+and pseudocode exports.
+
+Joined the event definitions to Subway A's BSP: 17 `RCS_BModel` actors bind
+`*subdoor` with 100-unit authored reach and 51 resolved animated child-model
+references; each model motion ends at 1.0. Their touch route applies time scale
+4, issues `playsnd SubDoor`, and opens the BModel; untouch issues the sound
+command and closes it. Twenty-five `RCS_BoundsTrigger` records bind
+`*brokendoor` to `playsnd Zapp3d`; all collision models resolve. The existing
+BoundsTrigger initializer is now named `InitializeBoundsTriggerEntity`
+(00441040). Exact actor indices and `ZZ_location` coordinates are in
+`subway_a_interaction_inventory.json` and the static route is in
+`subway_a_interaction_path.md`.
+
+Extended the same route through `playsnd`: `HandlePlaySoundCommand` (00477AF0)
+uses the executing ScriptActor name, `FindScriptActorSoundOrigin` (00477740)
+resolves it through the shared actor registry (`<console>` aliases to
+`player`), and `HandleActorSpatialSoundCommand` (004778C0) samples the actor
+position before submitting the sound and owner to `GetOrCreateSpatialSoundInstance`
+(004749A0). This statically anchors `SubDoor` to each named door and `Zapp3d`
+to each named BoundsTrigger. Four fresh pseudocode exports and saved Ghidra
+comments preserve the route. The pool behavior is mapped, while playback,
+attenuation, and audible timing remain open.
+
+The contact-to-event and event-to-command paths are statically joined. Actual
+overlap, callback ordering/cadence, audible output, and visual timing have not
+been captured. This advances one Subway A mechanic; all rescue missions and
+Training remain in scope, and no mission or port is marked complete. The EXE
+function-review ledger now contains 150 functions. No dashboard HTML or native
+gameplay code changed.
+
+
+## 2026-10-13 — Subway A sound resources traced to FMOD calls
+
+Extended the static `playsnd` chain through resource resolution and audio
+playback. Fresh Ghidra labels and comments now name the sound-tree lookup
+(`FindSoundResourceNodeByName`, 0049F5B0), sound resource resolution
+(`ResolveSoundResourceByName`, 0049F850), sample/stream start
+(`StartFMODSampleOrStream`, 004A00F0), playback dispatch/defer
+(`DispatchOrQueueSoundPlayback`, 004A0BE0), deferred queue drain
+(`DrainQueuedSoundRequests`, 004A0D60), sound-instance registration
+(`ConfigureAndRegisterSoundInstance`, 004A12F0), 3D update
+(`UpdateSound3DAttributes`, 004A10D0), and FMOD attribute wrapper
+(`SetFMOD3DAttributes`, 0049F350). Eight current pseudocode exports back the
+function-review entries.
+
+Extended `audit_subway_a_interactions.py` to join the EVS `playsnd` names to
+`Data/ResDefs/sound.rrf` and hash-resolve each audio file. `SubDoor` maps to
+`ROC_SOUND_BUFFER3D 200 1000` and `Data/Snd/subdoor.wav`; `Zapp3d` maps to
+`ROC_SOUND_BUFFER3D 200 1000` and `Data/Snd/spark1.wav`. The source hashes and
+sound-definition hash are recorded in `subway_a_interaction_inventory.json`.
+The two numeric resource arguments are preserved as authored; their exact
+falloff meaning is not claimed. The FMOD 3D-attribute call is gated by a byte
+copied from the resolved resource, and the resource-parser mapping of that byte
+remains open. Runtime contact, playback, falloff, and audible timing still
+require capture. This advances only one Subway A mechanic; every rescue and
+Training remain in scope, and no mission or port is marked complete.
+
+The EXE function-review ledger now contains 158 functions. The CSV-based
+progress history was updated; `dashboard/index.html` was left untouched and
+continues to read tracker data when opened.
+
+
+## 2026-10-13 — Subway A sound parser and distance fields resolved
+
+Followed the sound definitions through the EXE resource parser. `LoadResourceDefinitionsFile` (0049B3B0) dispatches the `ROC_SOUND_BUFFER2D` token with type 0 and `ROC_SOUND_BUFFER3D` with type 1 to `ParseSoundBufferDefinition` (0049B140). The 3D parser consumes two numeric tokens and forwards them with the path/type byte through `FindOrCreateSoundResourceByName` (0049FDA0). `InitializeFMODSoundResource` (004A0210) stores the type byte at resource+9 for non-MP3 samples and loads them with `FSOUND_Sample_Load`; the MP3 path uses `FSOUND_Stream_OpenFile`. Playback copies resource+9 to the instance, where `UpdateSound3DAttributes` gates `FSOUND_3D_SetAttributes`.
+
+`SetFMODSampleMinMaxDistance` (004A0040) calls `FSOUND_Sample_SetMinMaxDistance(sample, first, second)`. Caller assembly and parser dataflow preserve source token order, so Subway A's `SubDoor` and `Zapp3d` entries configure minimum distance 200 and maximum distance 1000. Their WAV file hashes, sound-definition hash, and EVS/BSP joins are in `subway_a_interaction_inventory.json`; callsite evidence is in `sound_rrf_type_and_distance_assembly.md`.
+
+This resolves the static resource flag and numeric-field mapping. It does not capture collision timing, actual FMOD falloff/audibility on macOS, or visual parity, and only covers this Subway mechanic. Five fresh function reviews were added; the ledger now contains 163 functions. `dashboard/index.html` and gameplay code remain unchanged.

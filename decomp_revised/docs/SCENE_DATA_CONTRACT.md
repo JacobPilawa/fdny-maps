@@ -46,6 +46,14 @@ through higher numbered fields. The shared loader should therefore allow an
 absent trigger model and collect BModel children as a sparse list. Field
 presence does not prove identical values or behavior.
 
+[`rescue_actor_inventory.csv`](../tracker/rescue_actor_inventory.csv) provides
+an entity-level companion for all 17 BSPs: 430 FireRescue, 71 VictimRescue, 45
+VictimAltSpot, 13 PlayerRescue, and five PathPoint records. It retains each
+source hash, entity index, authored location/type, fire keyframe values,
+script epairs, and the complete ordered epair list. The counts reconcile with
+the level inventory. These are spawn inputs; runtime factory admission and
+behavior still need their own evidence.
+
 ## Runtime contract to implement
 
 The eventual catalog loader should resolve an entry to a `SceneData` value containing:

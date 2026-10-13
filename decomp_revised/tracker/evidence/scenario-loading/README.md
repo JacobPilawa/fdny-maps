@@ -83,3 +83,62 @@ motionless ladders/button retain authored values. Per-map counts, retail DLL
 parser evidence, and runtime limits are in
 [the cross-map reach audit](bmodel_reach_cross_map.md), with exact model and
 entity joins in [the JSON inventory](bmodel_reach_asset_inventory.json).
+
+## Subway A automatic door and broken-door touch routes
+
+Seventeen Subway A BModels bind the shared `subdoor` script: contact touch sets
+speed 4, plays `SubDoor`, and opens the child models; untouch plays the sound
+and closes them. Twenty-five BoundsTriggers bind `brokendoor` to the `Zapp3d`
+touch sound. The parser's `touch:` event registration now maps through the
+shared ScriptActor event table to the BModel and BoundsTrigger contact event
+handlers. All 51 door child-motion references and all 25 trigger collision
+models resolve to map model records. The [entity-level report](subway_a_interaction_path.md)
+and [JSON inventory](subway_a_interaction_inventory.json) preserve locations
+and model joins. `playsnd` resolves the executing ScriptActor's registered
+actor name and submits the sound with that actor's position to the shared sound
+instance manager. Runtime contact, timing, audible result, and parity remain
+open.
+
+The Subway A sound names also join to `sound.rrf`: `SubDoor` uses
+`ROC_SOUND_BUFFER3D 200 1000` with `Data/Snd/subdoor.wav`, and `Zapp3d` uses the
+same resource kind/arguments with `Data/Snd/spark1.wav`. Fresh EXE analysis
+traces both definitions through the parser: the 3D type sets the resource flag
+that enables FMOD 3D attributes, and the first/second numeric values reach
+`FSOUND_Sample_SetMinMaxDistance` as minimum/maximum distances. The sound route
+also covers lookup, deferred playback, sample/stream start, and conditional
+FMOD 3D-attribute updates. See the five [resource-file parser](0049b3b0_load_resource_definitions_fresh.c),
+[sound-buffer parser](0049b140_parse_sound_buffer_definition_fresh.c),
+[resource creation](0049fda0_find_or_create_sound_resource_fresh.c),
+[FMOD resource initialization](004a0210_initialize_fmod_sound_resource_fresh.c), and
+[min/max-distance setter](004a0040_set_fmod_sample_min_max_distance_fresh.c) exports, plus the eight [resource lookup](0049f5b0_find_sound_resource_node_fresh.c),
+[resource resolve](0049f850_resolve_sound_resource_fresh.c),
+[playback start](004a00f0_start_fmod_sample_or_stream_fresh.c),
+[dispatch/queue](004a0be0_dispatch_or_queue_sound_fresh.c),
+[queue drain](004a0d60_drain_sound_queue_fresh.c),
+[3D update](004a10d0_update_sound_3d_attributes_fresh.c),
+[FMOD 3D call](0049f350_set_fmod_3d_attributes_fresh.c), and
+[instance registration](004a12f0_configure_sound_instance_fresh.c) pseudocode
+exports. Runtime contact, actual audibility/falloff, and visual parity still
+need capture. The parser type bytes and numeric argument order are preserved
+in [the assembly note](sound_rrf_type_and_distance_assembly.md).
+
+## Map-wide rescue actor data
+
+The new [`rescue_actor_inventory.csv`](../../rescue_actor_inventory.csv)
+indexes 564 authored player, fire, victim, alternate-victim-spot, and PathPoint
+entities across all 17 local BSPs. It preserves each source hash and full
+ordered epairs. The [summary](rescue_actor_inventory.md) gives per-map counts;
+the [JSON index](rescue_actor_inventory.json) carries the same totals and map
+hashes. Its 430 fire and 71 victim records reconcile with
+`level_map_inventory.csv`; this records authored data and does not assert that
+the runtime factory spawns every record.
+
+The inventory now also reports the exact non-empty victim `S_Script*` values
+by BSP. The static `roam <number>` route is mapped from the shared
+ScriptActor fallback through obstacle collection, candidate validation,
+target selection, and state-7 movement; `forcespawnspot` is mapped through the
+victim's registered spawn-spot list. See [victim_roam_behavior.md](victim_roam_behavior.md)
+and its fresh pseudocode exports. Numeric-only script values, the
+`setskin` behavior, victim update cadence, factory admission, and runtime parity
+remain open. The alternate-spot handler and all 45 authored same-BSP victim
+name links are mapped; see the spawn-spot section in the behavior report.
