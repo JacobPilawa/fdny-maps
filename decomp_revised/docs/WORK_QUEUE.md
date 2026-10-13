@@ -18,6 +18,10 @@ research can continue without redoing the old project review or recent audits.
   `tracker/evidence/scenario-loading/entity_factory_queue_update_order.md`.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
+  A fresh renderer trace now follows BSP world creation and `.rrf` bitmap / alpha
+  records through the VFile layer into `geBitmap_CreateFromFile` and engine/world
+  registration. This provides the original resource boundary for the preview;
+  exact surface material joining and visible desktop GL behavior remain open.
   FireRescue random spread, suppression, both hose/message contact routes,
   proximity gating, exposure dispatch, and the player burn/passout receiver
   now have fresh address-specific evidence; callback cadence and runtime
