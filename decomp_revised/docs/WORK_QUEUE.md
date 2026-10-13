@@ -7,9 +7,9 @@ research can continue without redoing the old project review or recent audits.
 
 - The map-neutral Mac scene preview lists every locally exported BSP, starts from the authored player spawn, and uses recovered movement and BSP collision. A fresh collision/asset diagnostic now finds a walkable world-model floor and decodes every referenced texture on MBase and the six other campaign rescue maps (all seven campaign rescues); a five-second idle simulation settles on the floor in each. The report does not confirm visible OpenGL output because this shell has no display. The preview now reports texture upload errors and player grounded/position state, and `F` moves to the nearest floor below. The immediate MVP gate is a visible Mac launch with textured geometry and stable walking; then keep extending the same shared host with actors, scripts, tools, and mission flow.
 
-- 221 EXE functions have address-specific behavior notes; function activity is
+- 223 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
-- The new `.lev`/`.rrf` loader pass adds eleven address-specific function
+- The new `.lev`/`.rrf` loader pass adds thirteen address-specific function
   reviews across catalog parsing, resource tokenization, bitmap/model records,
   menu initialization, and briefing/resource requests. Its progress history
   records 221 reviewed functions for the CSV-driven dashboard.
