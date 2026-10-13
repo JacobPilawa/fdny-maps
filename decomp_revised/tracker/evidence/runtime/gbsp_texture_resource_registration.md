@@ -9,6 +9,14 @@ This follows the renderer's bitmap resource registration around BSP world
 creation. It is separate from the portable scene preview's SDL/OpenGL texture
 upload and does not prove the preview's GL draw path is visually correct.
 
+This pass reuses the existing hash-pinned decompilation files
+[`00495210_bsp_world_loader.c`](../genesis-boundary/00495210_bsp_world_loader.c),
+[`00494ad0_texture_bitmap_loader.c`](../genesis-boundary/00494ad0_texture_bitmap_loader.c),
+and [`00493460_bitmap_file_loader.c`](../genesis-boundary/00493460_bitmap_file_loader.c).
+It ties those already reviewed functions to the `.rrf` record parsers and the
+post-world resource pass; those three function reviews were not duplicated in
+the tracker.
+
 ## BSP load and resource handoff
 
 `00495210` receives a BSP path, probes it through `004097F0` (the same
