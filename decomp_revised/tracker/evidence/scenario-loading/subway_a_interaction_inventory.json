@@ -1,0 +1,1771 @@
+{
+  "bindings": [
+    {
+      "actor_name": "door9",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 18,
+              "model_index": 16,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door22",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 17,
+              "model_index": 15,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door21",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 28,
+              "model_index": 26,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door32",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 274,
+      "entity_name": "RCS_BModel27",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "2206 -456 -1912",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door11",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 23,
+              "model_index": 21,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door27",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 22,
+              "model_index": 20,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door26",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 24,
+              "model_index": 22,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door28",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 275,
+      "entity_name": "RCS_BModel29",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "2537 -456 -2498",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door12",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 12,
+              "model_index": 10,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door40",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 11,
+              "model_index": 9,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door39",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 13,
+              "model_index": 11,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door41",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 293,
+      "entity_name": "RCS_BModel34",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1696 -456 -3136",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door13",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 10,
+              "model_index": 8,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door38",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 9,
+              "model_index": 7,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door37",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 30,
+              "model_index": 28,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door44",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 294,
+      "entity_name": "RCS_BModel35",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1696 -456 -2572",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door16",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 41,
+              "model_index": 39,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door55",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 40,
+              "model_index": 38,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door54",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 42,
+              "model_index": 40,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door56",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 309,
+      "entity_name": "RCS_BModel41",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1772 -449 885",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door17",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 38,
+              "model_index": 36,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door52",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 37,
+              "model_index": 35,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door51",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 39,
+              "model_index": 37,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door53",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 310,
+      "entity_name": "RCS_BModel42",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1709 -449 1449",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door18",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 35,
+              "model_index": 33,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door49",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 34,
+              "model_index": 32,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door48",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 36,
+              "model_index": 34,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door50",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 311,
+      "entity_name": "RCS_BModel43",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "2076 -449 1490",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door19",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 32,
+              "model_index": 30,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door46",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 31,
+              "model_index": 29,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door45",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 33,
+              "model_index": 31,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door47",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 312,
+      "entity_name": "RCS_BModel44",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "2138 -449 926",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door20",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 55,
+              "model_index": 53,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door67",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 54,
+              "model_index": 52,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door66",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 56,
+              "model_index": 54,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door68",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 329,
+      "entity_name": "RCS_BModel48",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1531 -437 -217",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door21",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 52,
+              "model_index": 50,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door64",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 51,
+              "model_index": 49,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door63",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 53,
+              "model_index": 51,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door65",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 330,
+      "entity_name": "RCS_BModel49",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1581 -438 342",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door24",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 67,
+              "model_index": 65,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door79",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 66,
+              "model_index": 64,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door78",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 68,
+              "model_index": 66,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door80",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 345,
+      "entity_name": "RCS_BModel55",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1053 -439 -1305",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door25",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 64,
+              "model_index": 62,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door76",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 63,
+              "model_index": 61,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door75",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 65,
+              "model_index": 63,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door77",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 346,
+      "entity_name": "RCS_BModel56",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1508 -439 -965",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door35",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 75,
+              "model_index": 73,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door94",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 74,
+              "model_index": 72,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door93",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 76,
+              "model_index": 74,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door95",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 387,
+      "entity_name": "RCS_BModel72",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "2968 -528 28",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door22",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 79,
+              "model_index": 77,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door118",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 78,
+              "model_index": 76,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door117",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 80,
+              "model_index": 78,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door119",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 405,
+      "entity_name": "RCS_BModel78",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1873 -457 -3403",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door14",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 85,
+              "model_index": 83,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door112",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 84,
+              "model_index": 82,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door111",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 86,
+              "model_index": 84,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door113",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 413,
+      "entity_name": "RCS_BModel81",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1696 -456 -4244",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door15",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 83,
+              "model_index": 81,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door110",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 82,
+              "model_index": 80,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door109",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 88,
+              "model_index": 86,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door116",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 414,
+      "entity_name": "RCS_BModel82",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1696 -456 -3680",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "door23",
+      "animation_models": [
+        {
+          "model_entities": [
+            {
+              "entity_index": 90,
+              "model_index": 88,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door121",
+          "slot": 0
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 89,
+              "model_index": 87,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door120",
+          "slot": 1
+        },
+        {
+          "model_entities": [
+            {
+              "entity_index": 91,
+              "model_index": 89,
+              "motion_max_end_time": 1.0,
+              "motion_record_present": true
+            }
+          ],
+          "model_name": "door122",
+          "slot": 2
+        }
+      ],
+      "classname": "RCS_BModel",
+      "entity_index": 420,
+      "entity_name": "RCS_BModel84",
+      "hit_points": 0.0,
+      "liftable": 0.0,
+      "location": "1872 -456 -4512",
+      "reach": 100.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 5,
+            "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+          },
+          "event_name": "subdoor",
+          "property": "S_Script01",
+          "value": "*subdoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 237,
+          "model_index": 235,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor24",
+      "entity_index": 515,
+      "entity_name": "RCS_BoundsTrigger16",
+      "location": "2020 -558 -4233",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor1",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 6,
+          "model_index": 4,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor26",
+      "entity_index": 517,
+      "entity_name": "RCS_BoundsTrigger17",
+      "location": "2020 -558 -3682",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor2",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 7,
+          "model_index": 5,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor27",
+      "entity_index": 519,
+      "entity_name": "RCS_BoundsTrigger18",
+      "location": "2020 -558 -3130",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor3",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 8,
+          "model_index": 6,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor28",
+      "entity_index": 521,
+      "entity_name": "RCS_BoundsTrigger19",
+      "location": "2017 -558 -2572",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor4",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 15,
+          "model_index": 13,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor29",
+      "entity_index": 523,
+      "entity_name": "RCS_BoundsTrigger20",
+      "location": "1879 -558 -2362",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor5",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 16,
+          "model_index": 14,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor30",
+      "entity_index": 525,
+      "entity_name": "RCS_BoundsTrigger21",
+      "location": "2341 -558 -2719",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor6",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 19,
+          "model_index": 17,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor31",
+      "entity_index": 527,
+      "entity_name": "RCS_BoundsTrigger22",
+      "location": "2225 -558 -2473",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor7",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 20,
+          "model_index": 18,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor32",
+      "entity_index": 529,
+      "entity_name": "RCS_BoundsTrigger23",
+      "location": "2521 -558 -1936",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor8",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 21,
+          "model_index": 19,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor33",
+      "entity_index": 531,
+      "entity_name": "RCS_BoundsTrigger24",
+      "location": "2401 -558 -1691",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor9",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 25,
+          "model_index": 23,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor34",
+      "entity_index": 533,
+      "entity_name": "RCS_BoundsTrigger25",
+      "location": "2191 -558 -1569",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor10",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 26,
+          "model_index": 24,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor35",
+      "entity_index": 535,
+      "entity_name": "RCS_BoundsTrigger26",
+      "location": "2297 -558 -1315",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor11",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 27,
+          "model_index": 25,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor36",
+      "entity_index": 537,
+      "entity_name": "RCS_BoundsTrigger27",
+      "location": "2231 -558 -758",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor12",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 45,
+          "model_index": 43,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor37",
+      "entity_index": 539,
+      "entity_name": "RCS_BoundsTrigger28",
+      "location": "1976 -558 -797",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor13",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 46,
+          "model_index": 44,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor38",
+      "entity_index": 541,
+      "entity_name": "RCS_BoundsTrigger29",
+      "location": "2073 -558 -547",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor14",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 47,
+          "model_index": 45,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor39",
+      "entity_index": 543,
+      "entity_name": "RCS_BoundsTrigger30",
+      "location": "1810 -558 -955",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor15",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 48,
+          "model_index": 46,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor40",
+      "entity_index": 545,
+      "entity_name": "RCS_BoundsTrigger31",
+      "location": "1700 -558 -1214",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor16",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 49,
+          "model_index": 47,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor41",
+      "entity_index": 547,
+      "entity_name": "RCS_BoundsTrigger32",
+      "location": "1246 -558 -1537",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor17",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 50,
+          "model_index": 48,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor42",
+      "entity_index": 549,
+      "entity_name": "RCS_BoundsTrigger33",
+      "location": "972 -558 -1578",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor18",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 57,
+          "model_index": 55,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor43",
+      "entity_index": 551,
+      "entity_name": "RCS_BoundsTrigger34",
+      "location": "1706 -485 -539",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor19",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 58,
+          "model_index": 56,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor44",
+      "entity_index": 553,
+      "entity_name": "RCS_BoundsTrigger35",
+      "location": "1716 -497 -449",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor20",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 59,
+          "model_index": 57,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor45",
+      "entity_index": 555,
+      "entity_name": "RCS_BoundsTrigger36",
+      "location": "1879 -478 -239",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor21",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 60,
+          "model_index": 58,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor46",
+      "entity_index": 557,
+      "entity_name": "RCS_BoundsTrigger37",
+      "location": "1913 -482 318",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor22",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 61,
+          "model_index": 59,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor47",
+      "entity_index": 559,
+      "entity_name": "RCS_BoundsTrigger38",
+      "location": "1805 -512 578",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor23",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 62,
+          "model_index": 60,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor48",
+      "entity_index": 561,
+      "entity_name": "RCS_BoundsTrigger39",
+      "location": "1976 -558 671",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    },
+    {
+      "actor_name": "brokendoor24",
+      "classname": "RCS_BoundsTrigger",
+      "collision_model_entities": [
+        {
+          "entity_index": 69,
+          "model_index": 67,
+          "motion_max_end_time": null,
+          "motion_record_present": false
+        }
+      ],
+      "collision_model_name": "BrokenDoor49",
+      "entity_index": 564,
+      "entity_name": "RCS_BoundsTrigger42",
+      "location": "1862 -558 1695",
+      "reach": 35.0,
+      "script_bindings": [
+        {
+          "event_definition": {
+            "line": 3,
+            "text": "set brokendoor (touch: playsnd Zapp3d)"
+          },
+          "event_name": "brokendoor",
+          "property": "S_Script01",
+          "value": "*brokendoor"
+        }
+      ]
+    }
+  ],
+  "event_definitions": {
+    "brokendoor": {
+      "line": 3,
+      "text": "set brokendoor (touch: playsnd Zapp3d)"
+    },
+    "subdoor": {
+      "line": 5,
+      "text": "set subdoor (cmd [touch: [settimescale 4, playsnd SubDoor, open], untouch: [playsnd SubDoor, close]])"
+    }
+  },
+  "inputs": {
+    "bsp_file": "subway_a.bsp",
+    "bsp_sha256": "b33b67a01e0a2c144033f1da5c9c627b197d0a413b3b13190dd8531b63881f7e",
+    "evs_file": "subway_a.evs",
+    "evs_sha256": "3d1678fde90c1b434d07423bc1fd9adec62c7b2fb079a9ad3e346494e9567989",
+    "motion_record_count": 184,
+    "sound_definitions_file": "sound.rrf",
+    "sound_definitions_sha256": "433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333"
+  },
+  "interpretation": "This is a static join of EVS variable bindings to same-map BSP actors and %Model% records. Runtime contacts, sound playback, animation appearance, and event timing are not observed by this inventory.",
+  "schema_version": 1,
+  "sound_resources": [
+    {
+      "command_name": "SubDoor",
+      "definition": {
+        "definition_file": "inputs/original/Data/ResDefs/sound.rrf",
+        "line": 153,
+        "name": "SubDoor",
+        "parameters": [
+          "200",
+          "1000"
+        ],
+        "resource_type": "ROC_SOUND_BUFFER3D",
+        "source_path": "data\\snd\\subdoor.wav"
+      },
+      "source_file": "inputs/original/Data/Snd/subdoor.wav",
+      "source_sha256": "2d5259e3c8818a01e7e57d8b039dd2347e03cb05a3a9608bba18be3ca51d337e"
+    },
+    {
+      "command_name": "Zapp3d",
+      "definition": {
+        "definition_file": "inputs/original/Data/ResDefs/sound.rrf",
+        "line": 119,
+        "name": "Zapp3d",
+        "parameters": [
+          "200",
+          "1000"
+        ],
+        "resource_type": "ROC_SOUND_BUFFER3D",
+        "source_path": "data\\snd\\spark1.wav"
+      },
+      "source_file": "inputs/original/Data/Snd/spark1.wav",
+      "source_sha256": "7a23bd198f920cabc9365a37bf04d0a820aa0eda7a086f002a63d17305ee55f4"
+    }
+  ],
+  "summary": {
+    "brokendoor_bounds_trigger_entities": 25,
+    "brokendoor_collision_model_links_resolved": 25,
+    "subdoor_animation_model_references": 51,
+    "subdoor_animation_model_references_with_motion": 51,
+    "subdoor_bmodel_entities": 17,
+    "unresolved_model_links": 0
+  },
+  "unresolved_model_links": []
+}

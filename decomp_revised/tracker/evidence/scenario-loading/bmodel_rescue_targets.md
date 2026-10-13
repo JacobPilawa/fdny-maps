@@ -48,3 +48,5 @@ The class command handler and per-frame animation/event update are documented in
 
 This report covers named BModel `tell <name> open` targets. Subway A's `subdoor` uses self-commands, and Oil Rig C sends `turnon` to three `RCS_MiscEmitter` actors through the shared EVS; see [MiscEmitter command-handler evidence](004420f0_misc_emitter_dispatch.md). Training, MBase, and the other rescue-map systems still need their own interaction traces.
 
+Subway A's self-command path is now joined to its concrete map actors: 17 BModels bind `*subdoor` for shared `touch`/`untouch` open/close behavior, and 25 BoundsTriggers bind `*brokendoor` for a touch sound cue. The event registration/parser route and all actor/model links are documented in [the Subway A interaction report](subway_a_interaction_path.md) and [its entity inventory](subway_a_interaction_inventory.json). This still leaves the rest of Subway A's rescue mechanics and runtime event timing open.
+

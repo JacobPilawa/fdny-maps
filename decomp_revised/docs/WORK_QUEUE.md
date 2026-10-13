@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- 144 EXE functions have address-specific behavior notes; function activity is
+- 174 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
@@ -17,6 +17,7 @@ research can continue without redoing the old project review or recent audits.
   is the case-insensitive actor name and the second is its command. Bank's
   `tell vault open` reaches the BModel ScriptActor handler; the handler's
   `open` branch changes BModel command state or queues an open action. The per-frame update maps state 3/4 progression, child-model motion, and one-shot timed command dispatch. A new map ledger joins 10 named `open` targets to their BSP actors across Bank, Boat A, Bar R, and Gas R; runtime cadence, visible timing, and the concrete `Player` registry match remain open.
+- Subway A now has a static entity-to-handler trace for 17 automatic door BModels and 25 broken-door sound BoundsTriggers; all 51 animation children and all trigger collision models resolve. Sound-name lookup, deferred playback, sample/stream FMOD calls, and the 3D-attribute API are traced, and `SubDoor`/`Zapp3d` join to hash-pinned 3D-buffer definitions and WAVs. The resource-gate path and min/max-distance setter are statically mapped; runtime audibility/falloff and the remaining Subway rescue mechanics remain open. See `tracker/evidence/scenario-loading/subway_a_interaction_path.md`.
 - The old C++ Training workbench remains useful as the source-backed gameplay
   implementation base. It is still a Training host, not a game-wide runtime;
   Training remains a required catalog target and regression case alongside all seven campaign rescues.
@@ -34,6 +35,19 @@ research can continue without redoing the old project review or recent audits.
   seven campaign rescue missions. All eight load as geometry packages in the
   inspection viewer; none is yet a playable rescue port. `level_map_inventory.csv`
   and `scene_load_coverage.csv` cover the other catalog entries and all 17 BSPs.
+- `tracker/rescue_actor_inventory.csv` maps 564 authored player, fire, victim,
+  alternate-victim-spot, and PathPoint entities across all 17 BSPs. Fire/victim
+  counts reconcile to the level inventory. Raw epairs and positions are
+  retained for map-neutral spawn conversion; this is authored data, not proof
+  of runtime factory admission.
+- Victim `roam <number>` now traces from the class-specific ScriptActor fallback
+  through obstacle collection, initial-position checks, animation selection,
+  target selection, and state-7 movement. `forcespawnspot` selects from the
+  victim's registered spawn list. The actor inventory summarizes the exact
+  non-empty victim script values across every BSP; the alternate-spot name
+  resolver joins all 45 authored spots to a victim on the same BSP. Numeric-only
+  fields, runtime factory admission, and update cadence remain unresolved. See
+  `tracker/evidence/scenario-loading/victim_roam_behavior.md`.
 
 ## Next tasks, in order
 
@@ -55,7 +69,10 @@ research can continue without redoing the old project review or recent audits.
    Determine the remaining PathPoint field meanings, the exact authoring/runtime
    intent of the two trailing `moveto` timing values, the external
    scheduler/cadence for `UpdateFireRescueActor`, and the ten `S_Script`
-   event-command semantics.
+   event-command semantics. The VictimRescue `roam` path is statically mapped;
+   continue with `setskin`, numeric-only victim script values, alternate-spot
+   runtime factory admission, and victim update cadence without narrowing
+   mission scope.
 4. **Build one complete rescue path, then cover every rescue mission.** MBase
    is first for loader integration; `bank`, `bar_r`, `gas_r`, `boat_a`,
    `subway_a`, and `oil_rig_a` remain required campaign scenarios. Include
@@ -91,5 +108,5 @@ research can continue without redoing the old project review or recent audits.
 - `tracker/level_map_inventory.csv`: catalog and BSP relationship, entity
   counts, file hashes, and exporter coverage.
 - `tracker/function_reviews.csv` and `tracker/progress_history.csv`: function
-  review activity. The dashboard can read these CSVs live; HTML refreshes are
-  occasional and must not displace reverse-engineering work.
+  review activity. `dashboard/index.html` reads these CSVs when opened; update
+  the CSV data to show progress without regenerating the HTML.
