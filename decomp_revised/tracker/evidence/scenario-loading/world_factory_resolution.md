@@ -20,11 +20,11 @@ The result is pinned to `FDNYFirefighter.exe` SHA-256 `4b3b4dc1cc0b05bcb42c8e27a
    | `+0x0C` | `0043F660` |
 
    The bytes at file offset `0xE44B0` are `F0 F2 43 00 70 F6 43 00 00 E3 49 00 60 F6 43 00`. This independently confirms that descriptor virtual slot `+0x08` points to `0049E300` in the hash-pinned copy.
-4. Queue drain `0049C670` takes the factory pointer from request `+0x0C` and calls its virtual slot `+0x08`, passing the request. It registers the returned object and runs the ordered initialization passes.
+4. Queue drain `ProcessEntitySpawnQueue` (`0049C670`) takes the factory pointer from request `+0x0C` and calls its virtual slot `+0x08`, passing the request. It registers each returned object and collects the entities for batch initialization. It then calls root entity vtable slot `+0x20` on every collected object, followed by slot `+0x24` on every object. Fresh pseudocode and disassembly are in [`0049c670_entity_spawn_queue_fresh.c`](0049c670_entity_spawn_queue_fresh.c) and [`0049c670_entity_spawn_queue_fresh.asm`](0049c670_entity_spawn_queue_fresh.asm).
 5. Factory `0049E300` allocates a `0x30`-byte object and constructs it with `0049E240`. That constructor installs primary vtable `004E4458` and copies the request path into object field `+0x24`.
 6. WorldEntity's primary vtable entry at `004E4478` (slot `+0x20` from `004E4458`) is `0049E4D0`. The queue's first initialization pass invokes slot `+0x20`; `0049E4D0` reads `this+0x24` and passes the path to BSP loader `00495210`.
 
-Thus the selected `World` request creates a `WorldEntity`, and the staged object's initialization loads the selected BSP. `0049E4D0` then enumerates BSP entities and submits their factory requests through the same spawn queue.
+Thus the selected `World` request creates a `WorldEntity`, and the staged object's initialization loads the selected BSP. `0049E4D0` then enumerates BSP entities and submits their factory requests through the same spawn queue. The `+0x20` then `+0x24` batch order is shared across entity classes; for example, `RCS_MiscEmitter` initialization at `004424D0` registers its authored actor name and applies `S_Script` bindings during the first pass.
 
 ## Evidence provenance and limits
 

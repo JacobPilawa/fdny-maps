@@ -24,4 +24,10 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-13T06:36:32Z,93,Resolved the fourth FireRescue setsize duration argument and clock conversion; added explicit coverage for Training and every campaign rescue map.
 2026-10-13T07:04:39Z,99,Mapped random FireRescue child spread and its vtable proximity/exposure caller; traced message 0x7531 through Player fire accumulation and strict passout threshold. Added two missing Ghidra function boundaries.
 2026-10-13T07:20:45Z,104,"Mapped fresh spray suppression, recovered the FireRescue message receiver and HoseSpray update boundaries, and audited the reusable C++ state transition."
-2026-10-13T07:29:43Z,107,"Mapped FireRescue terminal state to the actor callback early return; distinguished the cleared +0x1C8 byte from the +0x104 sprayed flag and left render disappearance open."
+2026-10-13T07:29:43Z,107,Mapped FireRescue terminal state to the actor callback early return; distinguished the cleared +0x1C8 byte from the +0x104 sprayed flag and left render disappearance open.
+2026-10-13T08:18:11Z,111,"Recovered the missed BModel initialization boundary; mapped Bank vault actor registration, BModel open/close dispatch, and corrected the shared ScriptActor registry and Subway self-command evidence."
+2026-10-13T08:30:41Z,112,Recovered the BModel per-frame virtual update boundary; mapped Bank vault open/close animation progression and one-shot timed command dispatch. Runtime cadence and visible timing remain open.
+2026-10-13T08:36:32Z,112,"Clarified the shared ScriptActor context bridge used by EVS parsing and BModel timed events; mapped 10 authored named BModel open targets across Bank, Boat A, Bar R, and Gas R."
+2026-10-13T08:52:03Z,113,Mapped RCS_MiscEmitter command handler and Oil Rig authored rescue interactions; later BSP audit resolves them as stage-local in the sequential A-D mission.
+2026-10-13T08:56:01Z,114,Mapped Oil Rig C-stage MiscEmitter name registration through the world spawn queue initializer and class handler.
+2026-10-13T09:18:35Z,115,Mapped Oil Rig A-D stage-local interactions and traced finalexitloadmap through the pending level-load update into the World loader; map-key field identity and runtime stage completion remain open.

@@ -5,7 +5,7 @@ research can continue without redoing the old project review or recent audits.
 
 ## Current state
 
-- 107 EXE functions have address-specific behavior notes; function activity is
+- 112 EXE functions have address-specific behavior notes; function activity is
   tracked separately from source recovery and port parity.
 - The four code-bearing PE inputs have fresh hash-pinned inventories. The
   level-loading chain and a partial Genesis/D3D driver boundary are mapped.
@@ -13,6 +13,10 @@ research can continue without redoing the old project review or recent audits.
   proximity gating, exposure dispatch, and the player burn/passout receiver
   now have fresh address-specific evidence; callback cadence and runtime
   parity remain open.
+- The ScriptActor name registry is shared across classes. `tell`'s first value
+  is the case-insensitive actor name and the second is its command. Bank's
+  `tell vault open` reaches the BModel ScriptActor handler; the handler's
+  `open` branch changes BModel command state or queues an open action. The per-frame update maps state 3/4 progression, child-model motion, and one-shot timed command dispatch. A new map ledger joins 10 named `open` targets to their BSP actors across Bank, Boat A, Bar R, and Gas R; runtime cadence, visible timing, and the concrete `Player` registry match remain open.
 - The old C++ Training workbench remains useful as the source-backed gameplay
   implementation base. It is still a Training host, not a game-wide runtime;
   Training remains a required catalog target and regression case alongside all seven campaign rescues.
@@ -44,8 +48,8 @@ research can continue without redoing the old project review or recent audits.
    fire, victim, bounds-trigger, BModel, prop, and exit records from the raw
    ordered epairs. Preserve unknown classes and properties. Trace MBase's
    EVS/shared-EVS commands and original callback cadence before dispatching.
-   `moveto` now traces through FireRescue command parsing, named PathPoint
-   lookup, state-4 update, timed-key generation, and visual vector interpolation. The PathPoint initializer
+   `moveto` now traces through FireRescue command parsing, shared ScriptActor
+   name lookup, state-4 update, timed-key generation, and visual vector interpolation. Bank's `vault open` command now maps from map EVS through the shared registry to the BModel-specific handler. The PathPoint initializer
    passes its authored name into the ScriptActor field searched by that lookup.
    Determine the remaining PathPoint field meanings, the exact authoring/runtime
    intent of the two trailing `moveto` timing values, the external

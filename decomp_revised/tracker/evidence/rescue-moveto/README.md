@@ -58,10 +58,12 @@ Binary: `FDNYFirefighter.exe`, SHA-256
   target and normalized displacement, calculates distance divided by the first numeric value when it is positive, copies
   the two trailing numeric values to object offsets `+0xB0/+0xB4`, clears two
   counters, and enters state 4. Ghidra now labels it `SetFireRescuePathPointMove`.
-- `FUN_00470C50` iterates a registry at `this+0x7C` with count at `this+0x80`
+- `FUN_00470C50` iterates the shared ScriptActor registry at `this+0x7C` with count at `this+0x80`
   and compares the requested name case-insensitively with each object's name
   string reached through `+0x24`. It returns the matching registry entry or
-  null. Ghidra now labels it `FindPathPointByName`.
+  null. Ghidra now labels it `FindScriptActorByName`; PathPoint movement is one
+  consumer of this name registry, alongside named `tell` dispatch and script
+  binding.
 - MBase supplies operands `1`, `10`, and `120`. Operand 1 is used as the
   positive divisor in the distance calculation. The trailing values 10 and 120
   are consumed in `AdvanceFireRescuePathMotion`: each float value is multiplied
