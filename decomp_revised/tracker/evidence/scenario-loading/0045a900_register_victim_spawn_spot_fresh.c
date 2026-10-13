@@ -1,10 +1,5 @@
-/* Fresh Ghidra decompilation: RegisterVictimSpawnSpot at 0x0045a900; FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 
-
-/* Allocates a 16-byte record containing XYZ plus the authored radius and appends its pointer to the
-   victim's spawn-spot list at +0x200/+0x204. The victim constructor calls this with the victim's
-   initial location and radius; another code reference is at 0x0045991F, whose containing function
-   is not currently defined. */
+/* RegisterVictimSpawnSpot */
 
 void __thiscall RegisterVictimSpawnSpot(void *this,undefined4 *param_1,undefined4 param_2)
 

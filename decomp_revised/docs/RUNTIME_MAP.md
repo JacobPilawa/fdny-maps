@@ -112,6 +112,20 @@ The fixed-offset BoundsTrigger lead at `0046269D` is not an update-scheduler mat
 
 No EXE function-review count changed (66 remains); the dashboard HTML was untouched. No game launch or build was run.
 
+## 2026-10-13 — Victim factories and spawn-spot ordering
+
+Fresh analysis of the pinned EXE confirms that the RCS_VictimRescue factory is registered immediately before RCS_VictimAltSpot. WorldEntity queues matching BSP records by registry iteration, and the spawn queue creates them before two complete root-vtable passes. Victims create their runtime actors in pass +0x20; the later VictimAltSpot entries resolve A_Victim and append alternate XYZ/heading records. Only after that entire pass does pass +0x24 choose victim positions and dispatch S_Script01-S_Script05. The spawn index comes from the shared pseudo-random float helper, scaled to count minus 0.01 and converted toward zero.
+
+The hash-checked inventory joins all 45 alternate spots to victims and records 71 VictimRescue entities across bank, bar_r, boat_a/b, gas_r, mbase, oil_rig_a-d, subway_a/b, and Training. All 17 BSP assets remain covered by the broader inventory. Evidence and map counts are in [victim_spawn_factory_and_order.md](../tracker/evidence/scenario-loading/victim_spawn_factory_and_order.md). Runtime callback cadence, failure paths, and visual parity remain open.
+
+## 2026-10-13 — Player loadout commands mapped
+
+The current-hash Player handler maps axe, extinguisher, and goggles to inventory slots 1, 2, and 3. Equip creates a tool object, stores it, and attempts selection; select requires an existing object and respects the active item's can-deactivate callback. The 13 BSPs with PlayerRescue entities author ordered loadout commands across all seven catalog rescues, five linked stages, and Training. The shared rescue.evs adds conditional goggles plus select axe on maps that execute it; Gas R has its own EVS and authored axe/extinguisher commands. The existing native HoseItemSelection component already models the same slot layout and switch gate, while its host still starts with a hardcoded axe. See [player_loadout_command_path.md](../tracker/evidence/scenario-loading/player_loadout_command_path.md).
+
+## 2026-10-13 — Per-level entity-factory queue order
+
+Fresh vtable and instruction evidence maps the entity-factory service: `0042B1A0` appends a non-null request to its linked queue, and `00429520` dispatches the nested queue pump `0049C670` when `ProcessEverGameUpdate` runs. A selected-level update executes mode-1 EVS before queuing World; the same update later pumps World. `WorldEntityLoad` enqueues BSP entities during the pump's initialization pass, after its initial drain phase, so PlayerRescue is instantiated on a subsequent pump invocation. On maps that execute shared `rescue.evs`, the early Player-targeted tells run before Player registration and are dropped. The full mode-0 pass follows four WorldEntity slot `+0x14` calls, but their timing relative to the later pump and the final selected tool remain open. See [entity_factory_queue_update_order.md](../tracker/evidence/scenario-loading/entity_factory_queue_update_order.md).
+
 ## Next queries
 
 - Trace direct writers and indirect registration paths into the selected context's `+0x94/+0x98` pre-frame array; compare stored element types with FireRescue and Player vtables. `FUN_0042D8C0` is mapped as a guarded alternate input/camera pass.

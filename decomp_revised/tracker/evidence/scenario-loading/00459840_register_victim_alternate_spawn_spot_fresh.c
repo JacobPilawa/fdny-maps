@@ -1,14 +1,7 @@
-/* Fresh Ghidra decompilation: RegisterVictimAlternateSpawnSpot at 0x00459840; FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 
-
-/* Summary: Resolves and registers an alternate victim spawn spot.
-
-   Algorithm: Reads A_Victim, searches the world list for a type-2 entity whose registered name
-   matches, then registers the authored XYZ and B_Heading on that victim and marks the spot handled.
-
-   Parameters: this is the RCS_VictimAltSpot instance.
-
-   Returns: no meaningful value; updates the target victim and handled flag. */
+/* VictimAltSpot first-pass handler: finds the VictimRescue whose registered name matches A_Victim,
+   appends the alternate XYZ and heading to that victim's spawn-spot list, then marks this spot
+   handled. */
 
 void __fastcall RegisterVictimAlternateSpawnSpot(int param_1)
 

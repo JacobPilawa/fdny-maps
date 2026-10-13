@@ -31,3 +31,5 @@ Thus the selected `World` request creates a `WorldEntity`, and the staged object
 Fresh, hash-pinned outputs in this workspace cover `0042B4E0`, `0042AB00`, `00429C00`, `0049D130`, `0049E240`, and `0049E4D0`. Preserved same-binary Ghidra exports for descriptor construction, queue drain, and the World factory are in the root archive at `../../../../decomp/evidence/{entity-dispatch,entity-bootstrap,entity-queues,startup-world}/`. The current EXE bytes at the factory vtable were read directly and match the pinned hash. The WorldEntity vtable bytes are saved in `memory_004e4460_world_entity_vtable.json`.
 
 This is a static successful-path reconstruction, not a runtime trace. It does not establish runtime timing, failure-path behavior, or full Training parity.
+
+For rescue BSPs, descriptor iteration also orders VictimRescue before VictimAltSpot; the two queue passes therefore register alternate spots before victim spawn selection. See [victim_spawn_factory_and_order.md](victim_spawn_factory_and_order.md) for the current-hash class factories, vtables, map counts, and pseudorandom selection helper chain.

@@ -157,3 +157,15 @@ and its fresh pseudocode exports. Numeric-only script values, the
 `setskin` behavior, victim update cadence, factory admission, and runtime parity
 remain open. The alternate-spot handler and all 45 authored same-BSP victim
 name links are mapped; see the spawn-spot section in the behavior report.
+
+## Victim factory and spawn ordering
+
+The current-hash factory route, all-map victim and alternate-spot counts, and registration-before-selection order are documented in [victim_spawn_factory_and_order.md](victim_spawn_factory_and_order.md).
+
+## Player loadout command path
+
+The map-authored and shared-EVS equip/select route, item-slot mappings, native C++ reuse, and all rescue BSP loadout commands are documented in [player_loadout_command_path.md](player_loadout_command_path.md).
+
+The selected-level request and nested map-entity queues now establish that the mode-1 EVS pass precedes World construction, while BSP entity requests are left pending until a later queue-pump invocation. This shows why first-pass `tell player` loadout commands cannot reach Player and narrows the remaining loadout-order gap to the WorldEntity four-callback schedule. See [entity_factory_queue_update_order.md](entity_factory_queue_update_order.md).
+
+MBase's own `tell player (setashdensity 0)` is different: mode 1 skips that `tell`, so it is first eligible during the delayed mode-0 load. The setter and density-field contract are mapped, and prior ash-pool analysis is reused; whether that delayed command runs after Player registration remains open. See [mbase_ash_density_command.md](mbase_ash_density_command.md).

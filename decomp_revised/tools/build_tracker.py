@@ -25,7 +25,9 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(
+            stream, fieldnames=fieldnames, extrasaction="ignore", lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -212,9 +214,16 @@ def build() -> dict[str, object]:
             raise ValueError(f"review is not a fresh EXE function boundary: {address}")
         if review["sha256"] != current_exe_rows[address]["sha256"]:
             raise ValueError(f"review hash does not match current EXE snapshot: {address}")
-        evidence_path = ROOT / review["evidence_path"]
-        if not evidence_path.is_file():
-            raise ValueError(f"review evidence file is missing: {review['evidence_path']}")
+        evidence_paths = [
+            path.strip()
+            for path in review["evidence_path"].split(";")
+            if path.strip()
+        ]
+        if not evidence_paths:
+            raise ValueError(f"review has no evidence path: {address}")
+        for evidence_path in evidence_paths:
+            if not (ROOT / evidence_path).is_file():
+                raise ValueError(f"review evidence file is missing: {evidence_path}")
 
     progress_history = read_csv(TRACKER / "progress_history.csv")
     parsed_history = [

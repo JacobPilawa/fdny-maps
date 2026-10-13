@@ -1,8 +1,6 @@
-/* Fresh Ghidra MCP capture from FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. Captured 2026-10-13. */
-
 
 /* Summary: Drain queued map-entity factory requests and run ordered initialization passes.
-   
+
    Algorithm:
    - Remove each staged request, call the stored entity-class factory through descriptor vtable slot
    +0x08, register the returned object with the world entity manager, and collect the object pointer
@@ -10,14 +8,14 @@
    - After the queue is empty, call root entity vtable slot +0x20 once for every collected entity.
    - Then call root entity vtable slot +0x24 once for every collected entity.
    - Release the temporary entity-pointer array.
-   
+
    Parameters:
    - ECX points to the queue-processing context. The decompiler models stack parameters
    incompletely; the function ends with RET 8, so do not treat the current prototype as complete.
-   
+
    Returns: No stable return value is established; the return value is not used by the mapped caller
    path.
-   
+
    Evidence:
    - This is the world spawn-queue drain documented in
    tracker/evidence/scenario-loading/world_factory_resolution.md.
@@ -47,7 +45,7 @@ void __fastcall ProcessEntitySpawnQueue(int param_1)
   void *pvStack_c;
   undefined1 *puStack_8;
   undefined4 local_4;
-  
+
   puStack_8 = &LAB_004d4698;
   pvStack_c = ExceptionList;
   local_28 = 0x10;
@@ -122,5 +120,3 @@ void __fastcall ProcessEntitySpawnQueue(int param_1)
   ExceptionList = pvStack_c;
   return;
 }
-
-
