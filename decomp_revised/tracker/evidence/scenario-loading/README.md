@@ -23,7 +23,7 @@ Function 00470150 substitutes *ME using the ScriptActor context, sends the parse
 
 This proves a static Training asset-to-ScriptActor dispatch path and a command-presence check. It does not prove that a particular entity is instantiated, that its touch condition becomes true, or what later code means by the flag at +0x164.
 
-Raw vtable and instruction inspection maps the BoundsTrigger-specific path: root slot +0x48 (`00440CE0`) checks overlap and appends pairs at root +0x100; root slot +0x14 reaches the embedded ScriptActor updater, whose slot 0 (`00440DC0`) passes that list to `00470840` for `touch`/`touching`/`untouch` dispatch and then rotates and clears it. Shared manager registration checks root mask `0xFFEB` against filter `0x20`; BoundsTrigger type 8 is therefore eligible for the manager list that dispatches root slot +0x48. Per-instance list membership remains unverified. The updater's dynamic caller, its order relative to contact production, and runtime cadence remain open. The `+0x164` flag is a separate later model-flag path: `0044FCE0` calls `00440F50` during carry/reset, and `004504C0` calls it for eligible final-exit triggers. See [training_touch_dispatch_boundary.md](training_touch_dispatch_boundary.md).
+Raw vtable and instruction inspection maps the BoundsTrigger-specific path: root slot +0x48 (`00440CE0`) checks overlap and appends pairs at root +0x100; root slot +0x14 reaches the embedded ScriptActor updater, whose slot 0 (`00440DC0`) passes that list to `00470840` for `touch`/`touching`/`untouch` dispatch and then rotates and clears it. Shared manager registration checks root mask `0xFFEB` against filter `0x20`. The successful factory/spawn path is traced for Gas R BoundsTrigger instances and admits them to the type-8 list; live overlap and event firing remain unobserved. The updater's dynamic caller, its order relative to contact production, and runtime cadence remain open. The `+0x164` flag is a separate later model-flag path: `0044FCE0` calls `00440F50` during carry/reset, and `004504C0` calls it for eligible final-exit triggers. See [training_touch_dispatch_boundary.md](training_touch_dispatch_boundary.md).
 
 The selector's initial ordinal is also traced: scene child 2 opens through `0042D3E0`, which invokes selector slot 0 at `0042F600`; that method seeds from the active record or probes for a valid catalog ordinal. Full details are in [selector_initial_ordinal_resolution.md](selector_initial_ordinal_resolution.md).
 
@@ -47,3 +47,24 @@ The `.evs` files are CRLF ASCII. The selected-level loader first reads `Data\\Ma
 ## Next trace
 
 Identify the dynamic caller of the BoundsTrigger embedded ScriptActor updater and the WorldEntity slot `+0x14` caller. Resolve the concrete registry object and dispatch order for Training's `tell player escape`. The selector initializer, parser-to-selector collection link, World factory path, four-invocation delayed mode-0 load, and mode-1 filter are mapped. See [worldentity_callback_dispatch_boundary.md](worldentity_callback_dispatch_boundary.md), [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md), and [level_to_evs_static_trace.md](level_to_evs_static_trace.md).
+
+## Shared rescue contact manager
+
+Fresh Ghidra boundaries now map entity admission, type-list registration, and the nine-list contact dispatcher. The reusable BModel and BoundsTrigger routes join Gas R entity data through successful factory/spawn admission to candidate and touch handling; runtime contact, updater schedule, and event timing remain open. See [rescue_contact_manager_route.md](rescue_contact_manager_route.md).
+
+## Shared EVS variables and Gas R
+
+The Gas R script's state gate, *firespread text expansion, actor-context
+once guard, and nested command queues are traced in
+[gas_r_script_variable_queue_path.md](gas_r_script_variable_queue_path.md).
+Fresh Ghidra exports are saved beside that report. Queue insertion, pop-first
+order, one-command-per-update pumping, and wait deadlines are mapped. External
+callback cadence and actual runtime event firing remain unresolved. The Gas R
+BModel `button1` use-mode, candidate-query, and event-to-command path is mapped
+through the shared Player selection and ScriptActor dispatcher; see
+[gas_r_button1_use_path.md](gas_r_button1_use_path.md). Its live contact,
+selection, and event timing remain unobserved. Gas R BoundsTrigger entities 265
+and 280 now join through successful factory/spawn admission to the shared
+overlap-pair producer and `touch` / `touching` / `untouch` converter. Their live
+contacts and the updater caller remain unresolved. Fresh pseudocode and assembly exports are saved for
+`00440CE0`, `00440DC0`, and `00470840`.

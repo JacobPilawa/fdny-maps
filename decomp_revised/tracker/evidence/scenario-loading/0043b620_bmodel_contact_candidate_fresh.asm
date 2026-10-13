@@ -1,0 +1,63 @@
+; Fresh Ghidra instruction listing captured 2026-10-13.
+; Binary: FDNYFirefighter.exe
+; SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e
+; Address: 0043B620 (CheckBModelContactCandidate)
+; Analysis output, not recovered original source.
+0043b620: SUB ESP,0x8 
+0043b623: PUSH EDI 
+0043b624: MOV EDI,ECX 
+0043b626: MOV ECX,dword ptr [EDI + 0x1c4] 
+0043b62c: MOV EAX,0x1 
+0043b631: CMP ECX,EAX 
+0043b633: JL 0x0043b6bf 
+0043b639: PUSH EBX 
+0043b63a: MOV EBX,dword ptr [ESP + 0x14] 
+0043b63e: CMP dword ptr [EBX + 0x18],EAX 
+0043b641: PUSH ESI 
+0043b642: JNZ 0x0043b6bd 
+0043b644: MOV EAX,dword ptr [EBX] 
+0043b646: MOV ECX,EBX 
+0043b648: CALL dword ptr [EAX + 0xc] 
+0043b64b: MOV ESI,EAX 
+0043b64d: TEST ESI,ESI 
+0043b64f: JZ 0x0043b6bd 
+0043b651: MOV ECX,dword ptr [EDI + 0xec] 
+0043b657: MOV EDX,dword ptr [ECX + 0x30] 
+0043b65a: MOV ECX,EDI 
+0043b65c: MOV dword ptr [ESP + 0x18],EDX 
+0043b660: CALL 0x0043aff0 
+0043b665: TEST AL,AL 
+0043b667: JZ 0x0043b682 
+0043b669: FLD float ptr [ESP + 0x18] 
+0043b66d: FCOMP float ptr [0x004e0bbc] 
+0043b673: FNSTSW AX 
+0043b675: TEST AH,0x5 
+0043b678: JP 0x0043b682 
+0043b67a: MOV dword ptr [ESP + 0x18],0x42400000 
+0043b682: MOV EAX,dword ptr [ESP + 0x18] 
+0043b686: PUSH EAX 
+0043b687: LEA ECX,[ESI + 0x1c] 
+0043b68a: PUSH ECX 
+0043b68b: LEA EDX,[ESI + 0x10] 
+0043b68e: PUSH EDX 
+0043b68f: PUSH ESI 
+0043b690: LEA ECX,[EDI + 0x240] 
+0043b696: CALL 0x004817a0 
+0043b69b: TEST AL,AL 
+0043b69d: JZ 0x0043b6bd 
+0043b69f: LEA EAX,[ESP + 0xc] 
+0043b6a3: PUSH EAX 
+0043b6a4: MOV ECX,EBX 
+0043b6a6: CALL 0x0049d350 
+0043b6ab: MOV ECX,dword ptr [EAX + 0x4] 
+0043b6ae: MOV EDX,dword ptr [EAX] 
+0043b6b0: PUSH ECX 
+0043b6b1: PUSH EDX 
+0043b6b2: LEA ECX,[EDI + 0x160] 
+0043b6b8: CALL 0x004901e0 
+0043b6bd: POP ESI 
+0043b6be: POP EBX 
+0043b6bf: POP EDI 
+0043b6c0: ADD ESP,0x8 
+0043b6c3: RET 0x4 
+

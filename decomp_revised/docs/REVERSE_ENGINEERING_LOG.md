@@ -197,3 +197,68 @@ and runtime parity remain to be mapped. The HTML dashboard was not changed.
 ## 2026-10-13 — FireRescue terminal visual update gate
 
 Fresh Ghidra tracing linked suppression state `+0x70` to the embedded actor callback state at `+0x4C`. State 5 branches directly to the callback epilogue before its alpha/effect update path. Named and saved the alpha, sprite-disable, and visual-effects helpers; added the address-specific audit and corrected the `+0x1C8` field description. The exact render-side disappearance/fade and callback ordering remain open. No native gameplay behavior was changed and no dashboard HTML was edited.
+
+## 2026-10-13 — Gas R script state and queue path mapped
+
+Fresh Ghidra traces now link the Gas R EVS's ordered set statements to the
+shared variable table, show *firespread expanded while the later explosion2
+command is parsed, and map the GasIsOn equality gate and actor-context once
+guard. The common que command now traces to the ScriptActor queue array
+insertion helper. The queue consumer/cadence, mission-specific BoundsTrigger
+bindings, and live event/parity capture remain open. The new evidence, fresh
+C/assembly exports, and review ledger rows are stored under
+tracker/evidence/scenario-loading/ and tracker/.
+
+## 2026-10-13 — Gas R ScriptActor queue and wait scheduler mapped
+
+Fresh Ghidra work traced queue insertion through head removal and stable
+compaction, then through the one-command pump in the ScriptActor update gate.
+The common wait command parses a float duration, scales seconds by 1000, adds
+the current game clock, and stores a deadline. The updater pauses that actor's
+queue until expiry and then can process one command. BSP entities 265, 280,
+and 309 now join the shared explosion1, explosion2, and gasoff scripts to
+their authored BoundsTrigger/BModel properties. External updater cadence,
+actual contact/use firing, and visual timing remain runtime gaps. No dashboard
+HTML or gameplay implementation was changed.
+
+## 2026-10-13 — Gas R button1 use event mapped
+
+Reused the archived Training BModel selection audit and refreshed the rescue
+interaction seam in the active Ghidra program. Entity 309's `use` property
+selects generic BModel use mode 2 because `G_Liftable=0`; its interaction
+vtable exposes the axis-box candidate query and dispatches the `use` event
+without entering the mode-1 carry path. Fresh decompilation and assembly now
+cover the BModel action/query handlers, event-presence lookup, event command
+iteration, and nested `cmd` dispatch. Joined the authored `gasoff` macro to
+its six FireRescue size commands and `GasIsOn=0`. Live input selection, update
+cadence, and effect parity remain open. The Ghidra program was saved; no
+dashboard HTML or native gameplay code changed.
+
+## 2026-10-13 — Gas R BoundsTrigger contact dispatch mapped
+
+Fresh Ghidra pseudocode and assembly now cover the BoundsTrigger candidate
+overlap test (`00440CE0`), the embedded ScriptActor contact updater
+(`00440DC0`), and shared contact conversion (`00470840`). The authored Gas R
+triggers 265 and 280 join to the shared pair-list route, which maps new,
+persistent, and removed pairs to `touch`, `touching`, and `untouch`. The
+per-instance manager registration, dynamic updater caller/order, and runtime
+cadence remain open. While reconciling the reused BModel selection work, the
+`0043DB40` prototype was corrected: the shared Player scan at `00459350`
+passes one query-interface output slot, so the prior extra stack parameter was
+removed. Updated fresh pseudocode and Ghidra comments were saved. No dashboard
+HTML or native gameplay code changed.
+
+## 2026-10-13 — Shared rescue contact manager mapped
+
+Reused the archived Training contact and selection audits, then defined and
+saved current Ghidra boundaries for CheckBModelContactCandidate
+(0043B620), RegisterContactManagerEntity (0049BC90), and
+DispatchEntityContactLists (0049BD20). The fresh manager pseudocode maps
+entity category registration, inactive-member removal, nine type-list walks,
+and root slot +0x48 callbacks. This joins Gas R button1 to the shared
+type-1 candidate path and its BModel contact updater; entity 309's authored
+reach is 20 with hit points 2 and G_Liftable=0, while the embedded motion
+endpoint needed to settle the conditional 48-unit override remains undecoded.
+The common BoundsTrigger path is documented alongside it. Exact Gas R
+instance membership, updater order/cadence, and live effects remain open. No
+dashboard HTML or native gameplay code changed.

@@ -31,3 +31,10 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-13T08:52:03Z,113,Mapped RCS_MiscEmitter command handler and Oil Rig authored rescue interactions; later BSP audit resolves them as stage-local in the sequential A-D mission.
 2026-10-13T08:56:01Z,114,Mapped Oil Rig C-stage MiscEmitter name registration through the world spawn queue initializer and class handler.
 2026-10-13T09:18:35Z,115,Mapped Oil Rig A-D stage-local interactions and traced finalexitloadmap through the pending level-load update into the World loader; map-key field identity and runtime stage completion remain open.
+2026-10-13T09:39:26Z,116,Mapped the pending request block fields and the map-name source consumed by the BSP loader; equality with the separately checked finalexitloadmap argument and runtime stage completion remain open.
+2026-10-13T09:59:13Z,125,"Mapped Gas R global set/if state, firespread expansion, actor-context once guard, and nested queue insertion; BoundsTrigger binding, queue consumption/cadence, and runtime event parity remain open."
+2026-10-13T10:09:05Z,129,"Mapped FIFO-like ScriptActor queue pop/compaction, one-command-per-update dispatch, and wait deadlines from seconds scaled by 1000; updater cadence and original event capture remain open."
+2026-10-13T10:19:04Z,134,"Mapped Gas R button1 generic use mode, interaction query, and use-event command dispatch; reused the Training selection audit and added five fresh Ghidra reviews."
+2026-10-13T10:31:51Z,137,Mapped Gas R BoundsTrigger overlap pairs through touch/touching/untouch dispatch; corrected the BModel query signature from its shared Player callsite and added three fresh Ghidra reviews.
+2026-10-13T10:49:58Z,140,"Mapped shared contact-manager entity registration, inactive cleanup, nine type-list traversal, and BModel type-1 candidate checks; reused the archived Training scheduler audit and added three fresh Ghidra boundaries."
+2026-10-13T11:10:24Z,143,"Mapped the successful Gas R BModel and BoundsTrigger factory/spawn admission path into type-specific contact lists; added three factory reviews. Live overlap, event timing, updater scheduling, and conditional reach remain open."
