@@ -83,8 +83,8 @@ authored map data select behavior; the loader should contain no `Training` or
    systems, and recover the original scheduling/callback order.
 5. Resolve ACT/SRF/texture/model resources and decode MOTIONS. The currently
    used victim ACTs have all been decoded to local review assets; connect the
-   resource catalog to victim creation, while resolving `boy1` from its
-   original lookup behavior. Then add BModel, door, tool, sound, and
+   resource catalog to victim creation, and resolve the configured default
+   that the original uses for unknown `D_Type` values. Then add BModel, door, tool, sound, and
    mission-flow behavior as their source contracts are established.
 6. Validate the rescue campaign first, then the remaining hose and catalog
    maps, menus, results, and platform builds. Record scenario status per map;
