@@ -29,6 +29,14 @@ The selector's initial ordinal is also traced: scene child 2 opens through `0042
 
 Player handler `00451870` contains the `escape` branch through `004513A0` to `00451160`, which completes rescue only when the Player carries a victim. The `tell` branch reaches `00475560`: its first value is the target actor name, its second value is the command, and lookup-success dispatch enters `00470150`. Bank's `vault` target is tied to the BModel-specific `open` handler at `0043E680` and per-frame animation/timed-event update at `0043DC60`; the shared route also covers 10 named `open` targets across Bank, Boat A, Bar R, and Gas R. See [bank_vault_open_dispatch.md](bank_vault_open_dispatch.md), [bmodel_update.md](bmodel_update.md), and the [rescue target inventory](bmodel_rescue_targets.md). For Training, the particular registry object named `player` and its order relative to the Player handler remain unresolved. The separate `004752A0` → `00472270` chain belongs to `help`. See [training_tell_recipient_boundary.md](training_tell_recipient_boundary.md).
 
+## Shared rescue pickup path
+
+The shared VictimRescue overlap callback, Message Mapper route, Player carry gate,
+and `pickup` event dispatch are documented in
+[victim_pickup_message_path.md](victim_pickup_message_path.md). The report combines
+fresh Ghidra exports with selectively reused Training-era evidence and keeps all
+seven campaign rescue maps, Training, and all 17 BSP assets in scope.
+
 ## Training data anchors
 
 The copied manifest identifies Training as `level: training`, title `Training`, resource definition `data\\resdefs\\rescue.rrf`, music `ebtwist.mp3`, time `500`, and map coordinates `(52, 43)`. Relevant copied-file hashes from `inputs/original/manifest.csv`:

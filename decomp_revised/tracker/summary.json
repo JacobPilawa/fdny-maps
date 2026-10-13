@@ -33,13 +33,13 @@
       "imported_libraries": "9",
       "image_base": "0x00400000",
       "entry_va": "0x004BA0CC",
-      "function_records": 6109,
-      "defined_functions": 5822,
-      "body_function_candidates": 5822,
+      "function_records": 6111,
+      "defined_functions": 5824,
+      "body_function_candidates": 5824,
       "packed_function_candidates": 0,
       "external_functions": 287,
       "thunks": 59,
-      "legacy_exported_functions": 769
+      "legacy_exported_functions": 771
     },
     {
       "binary": "fmod.dll",
@@ -82,20 +82,20 @@
   ],
   "totals": {
     "binary_count": 4,
-    "function_records": 7965,
-    "defined_functions": 7502,
-    "body_function_candidates": 7503,
+    "function_records": 7967,
+    "defined_functions": 7504,
+    "body_function_candidates": 7505,
     "packed_function_candidates": 1,
     "external_functions": 462,
     "old_exe_defined_functions": 5807,
-    "fresh_exe_defined_functions": 5822,
+    "fresh_exe_defined_functions": 5824,
     "old_unique_export_addresses": 871,
-    "old_export_addresses_matching_fresh_exe": 770,
-    "old_export_addresses_without_exact_fresh_entry": 101,
+    "old_export_addresses_matching_fresh_exe": 772,
+    "old_export_addresses_without_exact_fresh_entry": 99,
     "stale_report_export_addresses": 840,
     "stale_report_matched_addresses": 737,
     "copied_legacy_export_files": 3115,
-    "reviewed_exe_functions": 178
+    "reviewed_exe_functions": 185
   },
   "scope_note": "Function totals are Ghidra-defined boundaries from this binary snapshot. They are not a completeness claim or source-recovery percentage."
 }
