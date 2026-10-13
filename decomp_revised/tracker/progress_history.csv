@@ -57,3 +57,4 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-13T15:07:53Z,206,"Traced shared Player equip/select commands from ordered BSP epairs and rescue.evs through inventory slots, item creation, and the reusable native selection gate."
 2026-10-13T15:31:00Z,208,Mapped the entity-factory service vtables and per-update queue-pump order; the initial shared rescue.evs Player tells precede Player registration and are dropped.
 2026-10-13T15:50:37Z,210,Mapped MBase setashdensity through the Player command handler to the clamped +0x5b0 scalar; reused prior ash-pool analysis. Delayed mode-0 delivery relative to Player registration remains open.
+2026-10-13T16:17:04Z,221,Reviewed 11 new catalog/resource-loader functions and tied RRF bitmap/alpha records to the previously mapped BSP texture registration path.
