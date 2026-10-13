@@ -15,3 +15,4 @@ timestamp_utc,reviewed_exe_functions,note
 2026-10-12T21:46:21Z,66,"Proved catalog parser and selector share the +0x6AC collection; mapped zero-based ordinal use in the menu"
 2026-10-13T00:02:06Z,67,Mapped 0045B690 victim resource initialization: unknown-type default fallback and model-14 branch.
 2026-10-13T00:13:54Z,71,Resolved unknown victim type fallback through the ordered victims.srf resource catalog; boy1 selects boy/model 11/vic_boy.act
+2026-10-13T00:22:08Z,78,Mapped model-14 renderer actor selection to IDs 11-13 and traced separate victim resource configuration

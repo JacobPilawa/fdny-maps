@@ -85,7 +85,8 @@ def interpolation_modes(motions: list[dict], channel: str) -> set[int]:
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     columns = [
-        "victim_type", "resolved_victim_type", "resource_resolution", "model_id", "resource_act_path", "source_sha256",
+        "victim_type", "resolved_victim_type", "resource_resolution", "model_id",
+        "runtime_actor_model_ids", "runtime_actor_model_selection", "resource_act_path", "source_sha256",
         "source_file_exists", "map_entity_count", "map_file_count", "used_maps",
         "beckon_sound_ids", "rescue_sound_id", "beckon_delay_min", "beckon_delay_max",
         "speech_names", "referenced_sound_paths", "missing_sound_paths",
@@ -144,6 +145,8 @@ def main() -> int:
             "resolved_victim_type": resolved_victim_type,
             "resource_resolution": resource_resolution,
             "model_id": str(model_id) if model_id is not None else "",
+            "runtime_actor_model_ids": cross.get("runtime_actor_model_ids", ""),
+            "runtime_actor_model_selection": cross.get("runtime_actor_model_selection", ""),
             "resource_act_path": resource_path or "",
             "source_sha256": "",
             "source_file_exists": "no",

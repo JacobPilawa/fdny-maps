@@ -55,3 +55,7 @@ recorded in [`ACTOR_RESOURCE_MAP.md`](ACTOR_RESOURCE_MAP.md) and
 The copied parser is SHA-256
 `28e91021e34c0cb663aaaeae4a2533fa20b83d53eb06a8207568a724d19e21cc`; it is
 the fuller of two archived copies and preserves serialized `bitmapId` values.
+Follow-up Ghidra work resolved the `boy1` type through the first-entry
+fallback and traced the model-14 constructor to renderer model IDs 11–13.
+The remaining actor work is implementing the source-mapped selection and
+resolving material/skin bindings; see [`ACTOR_RESOURCE_MAP.md`](ACTOR_RESOURCE_MAP.md).

@@ -61,6 +61,7 @@ decoded motion/texture inventory are recorded in
 crosswalk generator and actor exporter now model the first-entry fallback
 explicitly and record both the authored type and resolved resource type.
 
-The special model-14 replacement path in `FUN_0045B690` remains separate:
-`fatman` may resolve through model 14 and then be replaced by a random model
-from 11 through 13. Its final appearance selection still needs its own trace.
+The model-14 replacement path is traced separately in
+[`fatman_model_selection.md`](fatman_model_selection.md): the renderer actor
+uses `11 + random() % 3`, while the original victim resource record remains
+available to the per-victim behavior/config initializer.

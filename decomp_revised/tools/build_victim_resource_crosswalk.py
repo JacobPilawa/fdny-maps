@@ -72,7 +72,8 @@ def main() -> int:
     all_types = sorted(set(definitions) | set(observed), key=str.casefold)
     columns = [
         "victim_type", "resolved_victim_type", "map_entity_count", "map_file_count", "map_keys",
-        "victims_srf_model", "rescue_rrf_act_path", "act_file_exists",
+        "victims_srf_model", "runtime_actor_model_ids", "runtime_actor_model_selection",
+        "rescue_rrf_act_path", "act_file_exists",
         "mapping_status",
     ]
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -85,6 +86,11 @@ def main() -> int:
             if model_id is None and victim_type in observed and default_type is not None:
                 resolved_type = default_type
                 model_id = definitions[default_type]
+            runtime_model_ids = str(model_id) if model_id is not None else ""
+            runtime_model_selection = "fixed" if model_id is not None else "unresolved"
+            if model_id == 14:
+                runtime_model_ids = "11;12;13"
+                runtime_model_selection = "11 + random() % 3 (FUN_0045B690)"
             act_path = model_paths.get(model_id, "") if model_id is not None else ""
             local_ref = act_path.split("/", 1)[1] if act_path.casefold().startswith("data/") else act_path
             local_act = files_by_casefold.get(local_ref.casefold()) if local_ref else None
@@ -110,6 +116,8 @@ def main() -> int:
                 "map_file_count": len(per_map),
                 "map_keys": ";".join(sorted(per_map, key=str.casefold)),
                 "victims_srf_model": model_id if model_id is not None else "",
+                "runtime_actor_model_ids": runtime_model_ids,
+                "runtime_actor_model_selection": runtime_model_selection,
                 "rescue_rrf_act_path": act_path,
                 "act_file_exists": "yes" if local_act else "no" if act_path else "",
                 "mapping_status": status,
