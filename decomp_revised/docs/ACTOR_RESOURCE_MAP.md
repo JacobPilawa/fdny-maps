@@ -66,10 +66,14 @@ matched byte-for-byte. The 20 referenced victim voice paths now resolve. The
 versioned input manifest records every extracted file's size and SHA-256; the
 retail audio is not checked in.
 
-One authored type remains unresolved: `subway_b` contains a victim whose
-`D_Type` is `boy1`, absent from `victims.srf`; the exporter records this as
-unresolved rather than substituting `boy`. Preserve `D_Type` and the unresolved
-case in `SceneData` until the game's resource lookup/fallback is established.
+One authored type has no matching resource definition: `subway_b` contains one
+victim whose `D_Type` is `boy1`, absent from `victims.srf`. A same-hash Ghidra
+export of `FUN_0045B690` confirms the runtime logs unknown victim types and
+continues with its resource manager's configured default type. The exact
+default type/model returned for `boy1` remains open, so do not assume it aliases
+`boy`. Preserve the authored `D_Type`, then reproduce the verified default
+lookup once its configured target is identified. The selected evidence is in
+[`victim-resources/`](../tracker/evidence/victim-resources/).
 The next implementation step is a data-driven actor catalog and victim
 renderer that selects the mapped ACT from each entity type instead of always
 loading `vic_man`. Motion lists also differ by actor: the dog has three motions,
@@ -77,4 +81,6 @@ the fat victim four, and the human actors six. The runtime must resolve
 semantic motion names from each ACT and the original victim behavior, rather
 than assuming each actor has the Training man's six motion indices. Actor pose,
 animation timing, and victim state transitions remain shared across every
-rescue map.
+rescue map. `FUN_0045B690` also special-cases resolved model ID 14 to a random
+ID from 11 through 13; verify that resource/model behavior before porting the
+`fatman` appearance path.
