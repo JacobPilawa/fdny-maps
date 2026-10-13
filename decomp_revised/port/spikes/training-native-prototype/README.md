@@ -54,9 +54,14 @@ port/spikes/training-native-prototype/.local/build-scene-viewer/fdny-scene-viewe
 ```
 
 Use WASD to move, mouse to look, Space or right mouse to jump, C to crouch,
-and Escape to release or recapture the mouse. Replace `mbase` with any key in
+F to snap to the nearest walkable collision floor below the player, and Escape
+to release or recapture the mouse. The window title reports texture uploads,
+grounded/falling state, and the current player position. Replace `mbase` with any key in
 `.local/exports/` to inspect another map. Run the same command with `--inspect`
-to load and inventory a package without opening a window. A fresh checkout
+to decode and inventory a package, probe the authored spawn against the BSP
+collision hull, and simulate five seconds of idle movement without opening a
+window. Interactive startup also prints the texture paths that fail during
+image decoding or OpenGL upload instead of silently falling back to gray. A fresh checkout
 must first copy the retail inputs locally and export the desired BSP with
 `tools/export_gbsp_scene.py`.
 
