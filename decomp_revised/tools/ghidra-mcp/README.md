@@ -12,3 +12,7 @@ The GUI launcher was attempted in this environment with Java 21 and Java 25; mac
 ## Current status, 2026-10-12
 
 The headless GhidraMCP service answered a read-only connection check and reported FDNYFirefighter.exe at the project-pinned input path. The project lock belongs to a live Java listener on 127.0.0.1:8089. A second server launch failed to acquire that lock, so do not start another instance or remove the lock. Read-only function queries were completed against the active listener. The restricted shell cannot reach loopback directly; use the configured MCP bridge after trusting/reloading the workspace, or use the approved local query route already established for this project.
+
+## Persistent project re-opened, 2026-10-13
+
+The active saved project is `analysis/ghidra/FDNYPort.gpr`, containing four programs: `FDNYFirefighter.exe`, `Genesis.dll`, `D3DDrv.dll`, and packed `fmod.dll`. In the current MCP session, `open_project` followed by `load_program_from_project(path="/FDNYFirefighter.exe")` loaded the saved EXE analysis, including its named BModel and BoundsTrigger function boundaries. `save_program("FDNYFirefighter.exe")` succeeded, confirming writes persist to this project. Use this saved-project path for future work. A direct `load_program(file=...)` import created a transient program with no save location; its `save_program` call failed, so do not use that route when persistence is needed.

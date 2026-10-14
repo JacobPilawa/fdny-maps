@@ -37,6 +37,11 @@ and `pickup` event dispatch are documented in
 fresh Ghidra exports with selectively reused Training-era evidence and keeps all
 seven campaign rescue maps, Training, and all 17 BSP assets in scope.
 
+The current shared port follows the generation-checked `0x7532` route and both
+Player gates. Its same-frame delivery approximation and the BoundsTrigger
+touch/touching/untouch order plus authored visual gate are recorded in
+[victim_contact_message_port_2026-10-14.md](victim_contact_message_port_2026-10-14.md).
+
 The common `escape`, `finalexit`, and `finalexitloadmap` routes are documented in
 [rescue_completion_and_exit_path.md](rescue_completion_and_exit_path.md), with
 the generated [17-BSP exit trigger inventory](../../rescue_exit_trigger_inventory.md).
@@ -67,6 +72,11 @@ Identify the dynamic caller of the BoundsTrigger embedded ScriptActor updater an
 
 Fresh Ghidra boundaries now map entity admission, type-list registration, and the nine-list contact dispatcher. The reusable BModel and BoundsTrigger routes join Gas R entity data through successful factory/spawn admission to candidate and touch handling; runtime contact, updater schedule, and event timing remain open. See [rescue_contact_manager_route.md](rescue_contact_manager_route.md).
 
+The world-actor PropModel producer and its ScriptActor touch-pair drain are
+traced and ported for shared rescue maps. Current scope, ACT resource coverage,
+the Training extinguisher touch macro, and remaining view-leaf/cadence gaps are
+in [propmodel_world_actor_port_2026-10-14.md](propmodel_world_actor_port_2026-10-14.md).
+
 ## Shared EVS variables and Gas R
 
 The Gas R script's state gate, *firespread text expansion, actor-context
@@ -83,6 +93,11 @@ and 280 now join through successful factory/spawn admission to the shared
 overlap-pair producer and `touch` / `touching` / `untouch` converter. Their live
 contacts and the updater caller remain unresolved. Fresh pseudocode and assembly exports are saved for
 `00440CE0`, `00440DC0`, and `00470840`.
+
+The expanded `gasoff` macro's six FireRescue size commands now reach the
+shared viewer's retail-shaped `setsize` timed-size handler; its host clock and
+callback cadence are provisional. See
+[firerescue_setsize_script_port.md](firerescue_setsize_script_port.md).
 
 The Gas R `button1` model join is now resolved: BSP `%Model%` index 91 has no
 entry in the map's `MOTIONS` chunk. With no child motion, the executable's
@@ -165,6 +180,10 @@ The current-hash factory route, all-map victim and alternate-spot counts, and re
 ## Player loadout command path
 
 The map-authored and shared-EVS equip/select route, item-slot mappings, native C++ reuse, and all rescue BSP loadout commands are documented in [player_loadout_command_path.md](player_loadout_command_path.md).
+
+The shared viewer's held-extinguisher contact path, four-point sampling,
+message-30000 suppression, camera-parent approximation, and remaining render
+gaps are documented in [extinguisher_scene_viewer_runtime.md](extinguisher_scene_viewer_runtime.md).
 
 The selected-level request and nested map-entity queues now establish that the mode-1 EVS pass precedes World construction, while BSP entity requests are left pending until a later queue-pump invocation. This shows why first-pass `tell player` loadout commands cannot reach Player and narrows the remaining loadout-order gap to the WorldEntity four-callback schedule. See [entity_factory_queue_update_order.md](entity_factory_queue_update_order.md).
 

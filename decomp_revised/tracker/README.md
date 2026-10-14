@@ -20,7 +20,7 @@ This directory keeps the progress evidence that feeds the local dashboard.
 - `victim_resource_crosswalk.csv` joins every authored victim type to `victims.srf`, `rescue.rrf`, local ACT-file availability, unknown-type fallback, runtime renderer model IDs/ACT paths, and the material-variant rule. Regenerate it with `python3 tools/build_victim_resource_crosswalk.py` after refreshing map exports.
 - `actor_asset_inventory.csv` records hash-pinned ACT decode coverage, mesh/texture/motion counts, material slots, resolved actor sound cues, and separate declared-resource versus runtime-renderer ACT paths. It also records the source-mapped per-model material cycling rule. Regenerate it with `python3 tools/export_victim_actors.py`; decoded review JSON/OBJ/PNG assets stay in ignored `.local/actor_exports/`.
 - `evidence/genesis-boundary/` and `evidence/runtime-loop/` hold hash-pinned query outputs, pseudocode, and instruction evidence.
-- `genesis_function_reviews.csv` and `evidence/genesis-boundary/` record 25 hash-pinned shipped Genesis.dll collision, GBSP, bitmap, and actor-material functions. See `evidence/runtime/genesis_collision_path.md` and `evidence/runtime/genesis_render_asset_path.md` for interpretation and limits.
+- `genesis_function_reviews.csv` and `evidence/genesis-boundary/` record 37 hash-pinned shipped Genesis.dll functions, including the collision, GBSP, bitmap, actor-material, and MOTN/PATH sampling pipeline. See the linked runtime and genesis-boundary evidence for interpretation and limits.
 - `evidence/fire-spread/` holds fresh hash-pinned FireRescue random-spread,
   spray suppression, HoseSpray contact, exposure-volume, Player message, and
   burn/passout traces. Selected earlier code and the tagged suppression oracle

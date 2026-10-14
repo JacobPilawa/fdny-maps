@@ -15,6 +15,11 @@ __pycache__/
 /.codex/config.toml
 /port/spikes/training-native-prototype/assets/training/
 /port/spikes/training-native-prototype/build/
+/port/spikes/training-native-prototype/build-fdny-current/
 /reference/previous-work/
 /reference/previous-work/decomp/evidence/ghidra/fdny.rep/
 /reference/previous-work/decomp/evidence/ghidra/genesis/
+
+# Local Ghidra project containers (evidence exports remain tracked).
+/analysis/*.gpr
+/analysis/*.rep/

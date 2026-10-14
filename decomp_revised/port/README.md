@@ -23,9 +23,19 @@ systems and catalog-driven startup are the remaining integration work.
   texture paths. The preview now creates typed rescue victims from exported
   ACT assets, applies authored spawn alternatives and initial motions, moves
   six-motion victims with `roam` commands through collision-checked waypoints,
-  and applies the source-mapped proximity pickup state. The roam target chooser
-  is still an MVP approximation; fire, EVS dispatch, doors, exits, and mission
-  completion are not connected to this host yet.
+  and applies the source-mapped proximity pickup state. It now bundles the
+  selected map's EVS includes and referenced WAVs, dispatches BModel and
+  BoundsTrigger contact events, runs `open`/`close`/`settimescale`, and samples
+  per-owner retail PATHs into render and collision. Authored Player
+  `oxyon`/`oxyoff` commands now drive shared oxygen drain/refill state and the
+  mapped argument-0 passout route; oxygen UI, opaque engine effects, and retail
+  callback timing remain open. Subway A's touch doors,
+  broken-door `Zapp3d` trigger, and Bank's named vault console route pass
+  synthetic interaction checks. Authored `makezone` commands also build named
+  map zones from trigger bounds. The roam target chooser is still an MVP
+  approximation; contact scheduling, exits, fire state, carried-victim
+  presentation, full mission completion, and retail callback/audio timing
+  remain open.
 
 ## Main port checkpoints
 

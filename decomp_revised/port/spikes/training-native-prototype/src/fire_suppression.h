@@ -1,9 +1,10 @@
 #pragma once
+#include <cstdint>
 // 00448970: recovered strength transition and optional hose finalization.
 // Native frame delta is DAT_00502B04; the host must pass its matching value.
 // Native contact xyz are ABI inputs but do not affect this arithmetic.
 struct FireSuppression {
- float strength=1,sprayTime=1;int state=0;bool sprayed=false,flameEnabled=true,hasSound=false;
+ float strength=1,sprayTime=1;int state=0;bool sprayed=false,hasSound=false;uint8_t unknownByte1C8=1;
  void spray(float dt,float influence,bool terminal,
  const std::function<void()>& countDoused,const std::function<void()>& stopSound){
   if(state==5)return;
@@ -13,7 +14,7 @@ struct FireSuppression {
   // x87 invalid arithmetic stores its negative quiet NaN, including 0/0.
   if(std::isnan(value)){uint32_t bits=0xffc00000u;std::memcpy(&strength,&bits,4);}
   if(value<0)strength=0;
-  if(terminal&&double(strength)<.1){state=5;countDoused();if(hasSound)stopSound();flameEnabled=false;}
+  if(terminal&&double(strength)<.1){state=5;countDoused();if(hasSound)stopSound();unknownByte1C8=0;}
   sprayed=true;
  }
 };

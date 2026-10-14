@@ -2,6 +2,15 @@
 
 Updated: 2026-10-13
 
+> **Historical render-filter results:** The group counts and sample frame below
+> predate the source cleanup. The old hard-coded class/model BoundsTrigger
+> suppression and `col_*` texture-prefix filter were removed. The shared viewer
+> now applies the authored per-model `ModelSetFlags` state for resolved
+> BoundsTriggers; see [`trigger_brush_render_visibility.md`](trigger_brush_render_visibility.md).
+> `Collision::disabled` still excludes authored trigger brush models from
+> player-solid collision; it does not suppress rendering. Rebuild and capture
+> again before treating the old render counts or appearance as current.
+
 ## Question
 
 The user reported that the interactive scene preview loads a level but the player
@@ -50,9 +59,11 @@ Two preview defects caused the reported behavior:
    `--inspect` now reports through the same collision instance used to load the
    scene, including its disabled-model state.
 2. The map-neutral renderer was drawing `col_*` helper/collision surfaces in
-   debug colors. The existing Training renderer already omitted these groups.
-   The shared viewer now applies the same `col_*` draw filter while retaining
-   collision data independently.
+   debug colors. A texture-prefix draw filter was added as a temporary visual
+   workaround, then removed from both render hosts because texture names are
+   not evidence of retail visibility semantics. Those surfaces now use the
+   ordinary draw path; authored face material behavior must determine their
+   appearance.
 
 Neither issue came from missing BSP bitmap joins or the alpha-resource route.
 The pixel readback below verifies that the existing base texture pipeline is
@@ -70,9 +81,10 @@ now reaching the OpenGL sampler and draw calls.
 | Subway A | 317/384 | 76/76 | 91,951 | 1,024,000 |
 | Oil Rig A | 76/81 | 69/69 | 129,290 | 878,701 |
 
-Each render-check completed with a nonempty, highly varied framebuffer and all
-textures assigned to visible groups uploaded. `col_*` helper groups are counted
-but omitted from drawing. A sample Bank frame is saved locally as
+Each historical render-check completed with a nonempty, highly varied
+framebuffer. At that time `col_*` helper groups were counted but omitted from
+drawing. These results do not describe current source after filter removal. A
+sample Bank frame is saved locally as
 `.local/exports/bank.render-check.png`; generated frames are not committed.
 
 ## Changes made to the preview
@@ -89,18 +101,34 @@ but omitted from drawing. A sample Bank frame is saved locally as
   idle movement result.
 - BoundsTrigger collision suppression now requires an explicit positive model
   index, so a missing field cannot disable world model 0.
-- The renderer skips `col_*` helper surfaces, matching the existing Training
-  draw path.
+- Historical: a `col_*` texture-prefix render filter was used during the first
+  textured-preview fix. It is removed from current source; do not reintroduce
+  it as a visibility rule.
 - `--render-check` now exercises the real OpenGL scene draw path offscreen and
   counts texture uploads, distinct framebuffer colors, and drawn pixels.
 
-## Limits and next check
+## Limits and current Bank check
 
-The offscreen check exercises the production OpenGL draw function, but does not
-verify window presentation, mouse capture, or the user's packaged launch path.
-The Bank app bundle was rebuilt from this source. Lighting/lightmaps, exact
-Genesis material/alpha behavior, texture filtering, actors, scripts, and
-gameplay parity remain open; this is a corrected textured scene-inspection
-MVP, not a complete rescue port. See
-[`genesis_collision_path.md`](genesis_collision_path.md) for the original
-engine collision boundary and Training oracle parity results.
+The fresh Bank build's offscreen check exercised the production draw function,
+submitted 497/497 world mesh groups, decoded/uploaded 105/105 textures, and
+produced 70,542 framebuffer colors with 1,024,000 non-background pixels. It
+does not verify window presentation or match the user's exact interactive
+camera view. The visible dark obstruction remains unmatched. Original
+Genesis material/alpha behavior, lighting/lightmaps, texture filtering, actors,
+scripts, and gameplay parity remain open; this is not a complete rescue port.
+See the genesis collision path evidence for the original engine collision
+boundary and Training oracle parity results.
+
+## Current source audit (2026-10-13)
+
+The shared viewer submits exported mesh groups through the ordinary draw loop,
+subject to the per-model flag gate. BoundsTrigger contact and collision
+handling are separate from that render path. A fresh out-of-tree macOS build
+and focused `--trigger-render-check 106` on the current source reproduced the
+forced-visible versus flags-zero comparison (1,024,000 changed pixels), so the
+current source gate suppresses Training's red hint brush when it receives the
+retail initialization value. This check validates the port's flag path, not
+the shipped renderer's interpretation of `ModelSetFlags(0)`. The Bank
+start-view investigation remains open: identify the exact surface, preserve
+its face material data, and implement the behavior established by the retail
+renderer.

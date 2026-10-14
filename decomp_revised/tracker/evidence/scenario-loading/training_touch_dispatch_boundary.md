@@ -35,6 +35,16 @@ BoundsTrigger setup at `00441040` checks whether the authored `touch` list conta
 
 The helper writes a mode to `+0x165` and may update Genesis model flags. These are later model-flag consumers; they are separate from the contact list and event-dispatch path above. The flag alone does not prove that a touch action has fired.
 
+Fresh `00440DC0` evidence shows its secondary model-flag update is gated by the
+embedded ScriptActor byte `+0x141` (BoundsTrigger root `+0x165`). When enabled,
+the retail phase writes a boolean flag on for `[500,600)`, `[700,800)`, and
+`[900,1000)` milliseconds modulo 1000, and off in the intervening windows.
+`00441040` initializes the resolved trigger model with flags zero. The shared
+viewer mirrors this authored model state, with per-render-frame SDL sampling
+kept provisional because the retail callback cadence and exact clock source
+remain unresolved. See
+[`trigger_brush_render_visibility.md`](../runtime/trigger_brush_render_visibility.md).
+
 ## Provenance and next work
 
 - The pinned raw-copy EXE supplied the instruction and vtable checks for `00440CE0`, `00440DC0`, constructors, and table entries in this pass.

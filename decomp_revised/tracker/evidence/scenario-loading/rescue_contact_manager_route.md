@@ -132,6 +132,15 @@ one-frame latency, or a fixed update cadence from these local routes.
 Additional BoundsTrigger evidence is in
 [training_touch_dispatch_boundary.md](training_touch_dispatch_boundary.md).
 
+This updater caveat concerns the BoundsTrigger ScriptActor's contact-pair
+drain. Victim overlap uses the separate Message Mapper: the preserved
+same-hash owner-service trace maps owner `+0x3BC` to message drain `0049B610`,
+which `00429520` calls after all four manager callbacks, including contact
+manager `+0xE0`. A `0x7532` submitted by VictimRescue during that pass therefore
+reaches its mapped receiver later in the same owner invocation. This does not
+resolve the BoundsTrigger child updater's caller or player/render-frame order;
+see [the victim contact/message integration note](victim_contact_message_port_2026-10-14.md).
+
 ## Fresh Ghidra exports
 
 - `004297e0_entity_class_factory_registration_fresh.c` and `.asm`

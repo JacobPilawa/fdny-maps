@@ -3,8 +3,8 @@
 
 This exporter preserves every chunk payload and emits typed geometry,
 collision, entity, and texture tables. It decodes base-level indexed textures
-and projects world-mesh UVs; lightmaps, visibility data, and MOTIONS remain
-explicit follow-ups.
+and projects world-mesh UVs. The retail Genesis MOTN/PATH 0.F2 records are
+decoded to motions.json while their original bytes remain preserved.
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from pathlib import Path
 
 from gbsp_v15 import chunk_dicts, parse_entities, read_gbsp
 from extract_gbsp_typedefs import extract_typedefs
+from decode_gbsp_motions import decode_gbsp_motions
 
 
 def records(payload: bytes, fmt: str, label: str) -> list[tuple]:
@@ -227,10 +228,27 @@ def world_mesh(geometry: dict, texture_files: list[str]) -> dict:
             group = grouped.setdefault(key, {
                 "model": model_id, "texture": texture["name"],
                 "texture_index": texture_id, "texture_file": texture_files[texture_id],
-                "positions": [], "uvs": [],
+                "positions": [], "uvs": [], "face_spans": [],
             })
             start, count = face["first_vert"], face["num_verts"]
             polygon = [indices[i] for i in range(start, start + count)]
+            first_triangle = len(group["positions"]) // 9
+            triangle_count = max(0, len(polygon) - 2)
+            group["face_spans"].append({
+                "face_id": face_id,
+                "first_triangle": first_triangle,
+                "triangle_count": triangle_count,
+                "texinfo_id": face["texinfo"],
+                "texinfo_flags": info["flags"],
+                "texinfo_alpha": info["alpha"],
+                "face_light": info["face_light"],
+                "reflective_scale": info["reflective_scale"],
+                "mip_map_bias": info["mip_map_bias"],
+                "light_ofs": face["light_ofs"],
+                "light_width": face["light_width"],
+                "light_height": face["light_height"],
+                "light_types": face["light_types"],
+            })
             # Genesis BSP faces are convex polygons; the Training prototype's
             # asset builder triangulated each polygon as a fan from vertex 0.
             for corner in range(1, len(polygon) - 1):
@@ -247,6 +265,68 @@ def world_mesh(geometry: dict, texture_files: list[str]) -> dict:
                     group["uvs"].extend((u, v))
 
     return {"groups": list(grouped.values())}
+
+
+def validate_world_mesh(mesh: dict, geometry: dict) -> dict[str, int]:
+    """Check that face spans preserve the source faces and fan-triangle layout."""
+    faces, models = geometry["faces"], geometry["models"]
+    texinfo = geometry["texinfo"]
+    seen_faces: list[tuple[int, int]] = []
+    triangle_count = 0
+    for group_index, group in enumerate(mesh["groups"]):
+        model_id = group["model"]
+        texture_id = group["texture_index"]
+        if model_id < 0 or model_id >= len(models):
+            raise ValueError(f"world mesh group {group_index} has invalid model {model_id}")
+        model = models[model_id]
+        expected_faces = [
+            face_id for face_id in range(model["first_face"], model["first_face"] + model["num_faces"])
+            if texinfo[faces[face_id]["texinfo"]]["texture"] == texture_id
+        ]
+        spans = group["face_spans"]
+        if [span["face_id"] for span in spans] != expected_faces:
+            raise ValueError(f"world mesh group {group_index} face identity/order does not match model source")
+
+        expected_first_triangle = 0
+        for span in spans:
+            face_id = span["face_id"]
+            face = faces[face_id]
+            info = texinfo[face["texinfo"]]
+            expected_triangles = max(0, face["num_verts"] - 2)
+            expected_fields = {
+                "first_triangle": expected_first_triangle,
+                "triangle_count": expected_triangles,
+                "texinfo_id": face["texinfo"],
+                "texinfo_flags": info["flags"],
+                "texinfo_alpha": info["alpha"],
+                "face_light": info["face_light"],
+                "reflective_scale": info["reflective_scale"],
+                "mip_map_bias": info["mip_map_bias"],
+                "light_ofs": face["light_ofs"],
+                "light_width": face["light_width"],
+                "light_height": face["light_height"],
+                "light_types": face["light_types"],
+            }
+            for key, expected in expected_fields.items():
+                if span[key] != expected:
+                    raise ValueError(f"face {face_id} span field {key} does not match source geometry")
+            expected_first_triangle += expected_triangles
+            triangle_count += expected_triangles
+            seen_faces.append((model_id, face_id))
+
+        if len(group["positions"]) != expected_first_triangle * 9:
+            raise ValueError(f"world mesh group {group_index} positions disagree with its face spans")
+        if len(group["uvs"]) != expected_first_triangle * 6:
+            raise ValueError(f"world mesh group {group_index} UVs disagree with its face spans")
+
+    expected_model_faces = [
+        (model_id, face_id)
+        for model_id, model in enumerate(models)
+        for face_id in range(model["first_face"], model["first_face"] + model["num_faces"])
+    ]
+    if sorted(seen_faces) != sorted(expected_model_faces):
+        raise ValueError("world mesh face spans do not cover the model face ranges exactly once")
+    return {"face_spans": len(seen_faces), "triangles": triangle_count}
 
 
 def write_bmp24(path: Path, width: int, height: int, indices: bytes, palette: bytes) -> None:
@@ -304,6 +384,7 @@ def export_textures(payloads: dict[int, bytes], textures: list[dict], texture_fi
 
 def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
     raw, chunks, payloads = read_gbsp(bsp_path)
+    source_sha256 = hashlib.sha256(raw).hexdigest()
     header = decode_header(payloads[0])
     if header["tag"] != "GBSP":
         raise ValueError(f"unexpected GBSP tag {header['tag']!r}")
@@ -319,6 +400,12 @@ def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
     epairs = parse_entities(payloads[16])
     entities = entity_records(epairs)
     classes = Counter(e["class"] for e in entities)
+    motions = decode_gbsp_motions(payloads.get(24, b""), source_sha256)
+    motion_paths = sum(len(record["paths"]) for record in motions["records"])
+    motion_channels = sum(
+        int(path["rotation"]["present"]) + int(path["translation"]["present"])
+        for record in motions["records"] for path in record["paths"]
+    )
 
     # Bounds and indices are checked before these arrays feed a renderer or
     # collision runtime; unknown/opaque payloads remain available in chunks/.
@@ -348,16 +435,19 @@ def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
     collision = decode_collision(models, nodes, bnodes, leafs, leaf_sides, planes)
     texture_files = safe_texture_files(geometry["textures"])
     mesh = world_mesh(geometry, texture_files)
+    mesh_counts = validate_world_mesh(mesh, geometry)
     texture_manifest = export_textures(payloads, geometry["textures"], texture_files, out_dir)
     geometry["format_notes"] = [
         "Texinfo and lightmap references are retained for parity work.",
-        "MOTIONS, visibility, and lightmap payloads are preserved as raw chunks; their binary encodings are not decoded here.",
+        "MOTN 0.F0 and PATH 0.F2 key values are decoded in motions.json from the retail Genesis.dll reader behavior; chunk 24 is also preserved byte-for-byte.",
+        "Other PATH encodings and opaque MOTN event/name-array structures remain undecoded.",
         "World mesh UVs use the current Genesis3D Surface.c projection and were compared against all 121 Training mesh groups.",
     ]
     (out_dir / "world_mesh.json").write_text(json.dumps(mesh, indent=2) + "\n", encoding="utf-8")
     (out_dir / "geometry.json").write_text(json.dumps(geometry, indent=2) + "\n", encoding="utf-8")
     (out_dir / "collision.json").write_text(json.dumps(collision, indent=2) + "\n", encoding="utf-8")
     (out_dir / "entities.json").write_text(json.dumps(entities, indent=2) + "\n", encoding="utf-8")
+    (out_dir / "motions.json").write_text(json.dumps(motions, indent=2) + "\n", encoding="utf-8")
     typedefs = extract_typedefs(epairs)
     (out_dir / "typedefs.json").write_text(json.dumps({"typedefs": typedefs}, indent=2) + "\n", encoding="utf-8")
     (out_dir / "texture_manifest.json").write_text(json.dumps(texture_manifest, indent=2) + "\n", encoding="utf-8")
@@ -365,7 +455,7 @@ def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
     report = {
         "format": "fdny-gbsp-v15-scene-v2",
         "source_file": bsp_path.name,
-        "source_sha256": hashlib.sha256(raw).hexdigest(),
+        "source_sha256": source_sha256,
         "source_bytes": len(raw),
         "header": header,
         "chunks": chunk_dicts(chunks),
@@ -374,15 +464,21 @@ def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
             "leafs": len(leafs), "leaf_sides": len(leaf_sides), "planes": len(planes),
             "faces": len(faces), "vertices": len(vertices), "vertex_indices": len(indices),
             "textures": len(geometry["textures"]), "mesh_groups": len(mesh["groups"]),
+            "mesh_face_spans": mesh_counts["face_spans"],
+            "mesh_triangles": mesh_counts["triangles"],
             "texinfo": len(texinfo),
             "entities": len(entities), "typedefs": len(typedefs),
+            "motion_records": motions["declared_count"], "motion_paths": motion_paths,
+            "motion_channels": motion_channels,
         },
         "entity_classes": dict(sorted(classes.items())),
         "outputs": ["geometry.json", "world_mesh.json", "collision.json", "entities.json",
-                    "typedefs.json", "texture_manifest.json", "textures/"]
+                    "motions.json", "typedefs.json", "texture_manifest.json", "textures/"]
                    + (["chunks/"] if keep_raw_chunks else []),
-        "open_decoders": ["texture mip-chain semantics", "LIGHTDATA", "VISDATA", "MOTIONS"],
-        "source_identity_note": "Chunk sizes match Genesis3D 1.1 reference structures; exact FDNY Genesis.dll identity is not established.",
+        "open_decoders": ["texture mip-chain semantics", "LIGHTDATA", "VISDATA",
+                           "non-F2 PATH variants", "MOTN event/name-array runtime use",
+                           "render-time lightmap and face-material state"],
+        "source_identity_note": "MOTN/PATH key decoding is pinned to the copied FDNY Genesis.dll SHA-256 recorded in motions.json; no public map-explorer implementation is used.",
     }
     (out_dir / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return report

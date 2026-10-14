@@ -4,19 +4,55 @@ set -eu
 PROJECT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 SCENE_KEY=${1:-mbase}
 BUILD_DIR="$PROJECT_ROOT/port/spikes/training-native-prototype/.local/build-scene-viewer"
-PACKAGE_DIR="$PROJECT_ROOT/.local/exports/$SCENE_KEY"
 ACTOR_ASSETS_DIR="$PROJECT_ROOT/.local/actor_exports"
 APP_DIR="$PROJECT_ROOT/.local/FDNY Scene Preview.app"
 
-if [ ! -d "$PACKAGE_DIR" ]; then
-    printf 'Scene package not found: %s\n' "$PACKAGE_DIR" >&2
-    printf 'Export it first with tools/export_gbsp_scene.py.\n' >&2
+if [ "$SCENE_KEY" = "rescue-all" ]; then
+    PACKAGE_KEYS="training mbase bar_r gas_r bank boat_a subway_a oil_rig_a boat_b subway_b oil_rig_b oil_rig_c oil_rig_d"
+    DEFAULT_SCENE_KEY="training"
+else
+    PACKAGE_KEYS="$SCENE_KEY"
+    DEFAULT_SCENE_KEY="$SCENE_KEY"
+fi
+
+for map_key in $PACKAGE_KEYS; do
+    package_dir="$PROJECT_ROOT/.local/exports/$map_key"
+    if [ ! -d "$package_dir" ]; then
+        printf 'Scene package not found: %s\n' "$package_dir" >&2
+        printf 'Export it first with tools/export_gbsp_scene.py.\n' >&2
+        exit 1
+    fi
+done
+
+DEFAULT_PACKAGE_DIR="$PROJECT_ROOT/.local/exports/$DEFAULT_SCENE_KEY"
+if [ ! -d "$DEFAULT_PACKAGE_DIR" ]; then
+    printf 'Default scene package not found: %s\n' "$DEFAULT_PACKAGE_DIR" >&2
     exit 1
 fi
 
 if [ ! -f "$ACTOR_ASSETS_DIR/vic_man_0.bmp" ]; then
     python3 "$PROJECT_ROOT/tools/export_victim_actors.py"
 fi
+python3 "$PROJECT_ROOT/tools/export_equipment_actors.py"
+python3 "$PROJECT_ROOT/tools/export_propmodel_actors.py"
+python3 "$PROJECT_ROOT/tools/export_goggles_sprites.py"
+python3 "$PROJECT_ROOT/tools/export_fire_direction_sprites.py"
+python3 "$PROJECT_ROOT/tools/export_fire_sprites.py"
+
+ORIGINAL_ROOT="$PROJECT_ROOT/inputs/original"
+for map_key in $PACKAGE_KEYS; do
+    package_dir="$PROJECT_ROOT/.local/exports/$map_key"
+    map_evs="$ORIGINAL_ROOT/Data/Maps/$map_key.evs"
+    if [ ! -f "$map_evs" ]; then
+        map_evs=$(find "$ORIGINAL_ROOT/Data/Maps" -maxdepth 1 -type f -iname "$map_key.evs" -print -quit)
+    fi
+    if [ -n "$map_evs" ] && [ -f "$map_evs" ]; then
+        python3 "$PROJECT_ROOT/tools/export_evs_bundle.py" \
+            --map-key "$map_key" \
+            --original-root "$ORIGINAL_ROOT" \
+            --scene-package "$package_dir"
+    fi
+done
 if [ ! -f "$ACTOR_ASSETS_DIR/vic_man_0.bmp" ]; then
     printf 'Decoded victim ACT assets not found under %s\n' "$ACTOR_ASSETS_DIR" >&2
     exit 1
@@ -28,8 +64,20 @@ cmake --build "$BUILD_DIR" --target fdny-scene-viewer -j 4
 rm -rf "$APP_DIR"
 mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 cp "$BUILD_DIR/fdny-scene-viewer" "$APP_DIR/Contents/MacOS/fdny-scene-viewer"
-ditto "$PACKAGE_DIR" "$APP_DIR/Contents/Resources/scene"
+ditto "$DEFAULT_PACKAGE_DIR" "$APP_DIR/Contents/Resources/scene"
 ditto "$ACTOR_ASSETS_DIR" "$APP_DIR/Contents/Resources/actor_exports"
+
+if [ "$SCENE_KEY" = "rescue-all" ]; then
+    mkdir -p "$APP_DIR/Contents/Resources/scenes"
+    for map_key in $PACKAGE_KEYS; do
+        ditto "$PROJECT_ROOT/.local/exports/$map_key" \
+            "$APP_DIR/Contents/Resources/scenes/$map_key"
+    done
+    python3 "$PROJECT_ROOT/tools/build_rescue_mission_catalog.py" \
+        --level-file "$ORIGINAL_ROOT/Data/ResDefs/thegame.lev" \
+        --scenes-dir "$APP_DIR/Contents/Resources/scenes" \
+        --output "$APP_DIR/Contents/Resources/rescue_missions.json"
+fi
 
 cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,5 +110,10 @@ printf 'APPL????' > "$APP_DIR/Contents/PkgInfo"
 
 plutil -lint "$APP_DIR/Contents/Info.plist"
 printf '\nBuilt app: %s\n' "$APP_DIR"
-printf 'Bundled scene: %s\n' "$SCENE_KEY"
+if [ "$SCENE_KEY" = "rescue-all" ]; then
+    printf 'Bundled rescue packages: %s\n' "$PACKAGE_KEYS"
+    printf 'Default launch: source-ordered rescue mission chooser\n'
+else
+    printf 'Bundled scene: %s\n' "$SCENE_KEY"
+fi
 printf 'Bundled victim ACT assets: %s\n' "$ACTOR_ASSETS_DIR"

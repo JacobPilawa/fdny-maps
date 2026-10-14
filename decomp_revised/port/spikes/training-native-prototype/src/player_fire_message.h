@@ -18,7 +18,7 @@ struct PlayerFireMessageResult {
 // remain outside this transaction.
 //
 // Required Ops methods:
-//   turnTowardFire()
+//   markFireDirection()
 //   readClock() -> uint32_t
 //   triggerPain(Random&)
 //   addSeriousBurns()
@@ -31,7 +31,9 @@ inline PlayerFireMessageResult handlePlayerFireMessage7531(
     if (player.state == 6)
         return {true, false, {}}; // 0045165B..00451663
 
-    ops.turnTowardFire(); // vector-facing helper and 0044BB00
+    // Retail 0044BB00 records directional burn-indicator state on the Player;
+    // it does not steer the view or movement heading.
+    ops.markFireDirection();
 
     const uint32_t now = ops.readClock(); // [00502AFC], after facing
     const bool deadlineUpdated = updatePlayerPainDeadline(

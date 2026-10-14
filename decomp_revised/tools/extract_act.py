@@ -392,27 +392,69 @@ def decode_gebm(data: bytes) -> tuple[int, int, bytes]:
         width, height = r.take("BB")
     else:
         width, height = r.take("HH")
-    if flags & 2:
-        raise ValueError("color-keyed GeBm is not yet supported")
-    if pixel_format != 1 or not (flags & 8):
-        raise ValueError(f"expected paletted actor bitmap, got format {pixel_format}, flags 0x{flags:02x}")
+    if flags & 4:
+        raise ValueError("GeBm alpha sidecars are not yet supported")
 
-    palette_flags = r.take("B")
-    palette_format = palette_flags & 0x1F
-    palette_size = 256 if palette_flags & 0x20 else r.take("B")
-    if palette_flags & 0x40:
-        raise ValueError("compressed GeBm palette is not supported")
-    bytes_per_pixel = 3 if palette_format in (9, 10, 11) else 4
-    palette = [raw_color(palette_format, r.bytes(bytes_per_pixel)) for _ in range(palette_size)]
+    color_key = None
+    if flags & 2:
+        if pixel_format != 10:
+            raise ValueError(f"unsupported color-keyed GeBm pixel format {pixel_format}")
+        color_key_bytes = r.bytes(3)
+        color_key = raw_color(pixel_format, color_key_bytes)[:3]
+
+    palette: list[tuple[int, int, int, int]] = []
+    if flags & 8:
+        if pixel_format != 1:
+            raise ValueError(f"unsupported paletted GeBm pixel format {pixel_format}")
+        palette_flags = r.take("B")
+        palette_format = palette_flags & 0x1F
+        palette_size = 256 if palette_flags & 0x20 else r.take("B")
+        if palette_flags & 0x40:
+            raise ValueError("compressed GeBm palette is not supported")
+        if palette_format not in range(9, 20):
+            raise ValueError(f"unsupported GeBm palette pixel format {palette_format}")
+        bytes_per_palette_entry = 3 if palette_format in (9, 10, 11) else 4
+        palette = [
+            raw_color(palette_format, r.bytes(bytes_per_palette_entry))
+            for _ in range(palette_size)
+        ]
+        bytes_per_pixel = 1
+    elif pixel_format == 10:
+        # Genesis pixel format 10 is 24-bit BGR in memory. Ghidra's shipped
+        # gePixelFormat_BytesPerPel / gePixelFormat_GetPixel path reads a
+        # three-byte color key using the same format when flags bit 1 is set.
+        bytes_per_pixel = 3
+    else:
+        raise ValueError(f"unsupported GeBm pixel format {pixel_format}, flags 0x{flags:02x}")
 
     mip_flags = r.take("B")
     mip = mip_flags & 0xF
     if mip != 0 or mip > maximum_mip or mip_flags & 0x30:
         raise ValueError(f"unsupported GeBm mip flags 0x{mip_flags:02x}")
-    indices = r.bytes(width * height)
+    if maximum_mip != 0:
+        raise ValueError(f"multi-level GeBm mip chain is not supported (max mip {maximum_mip})")
+    pixels = r.bytes(width * height * bytes_per_pixel)
     rgba = bytearray()
-    for index in indices:
-        rgba.extend(palette[index] if index < len(palette) else (0, 0, 0, 0))
+    if palette:
+        for index in pixels:
+            rgba.extend(palette[index] if index < len(palette) else (0, 0, 0, 0))
+    else:
+        for offset in range(0, len(pixels), 3):
+            pixel = pixels[offset:offset + 3]
+            color = raw_color(pixel_format, pixel)
+            if color_key is not None and color[:3] == color_key:
+                rgba.extend((*color[:3], 0))
+            else:
+                rgba.extend(color)
+
+    # The retail reader consumes the next level marker after each mip. For
+    # these single-level ACT images 0x0f terminates the chain (low nibble 15).
+    end_marker = r.take("B")
+    if end_marker != 0x0F or r.offset != len(data):
+        raise ValueError(
+            f"unsupported GeBm tail: marker 0x{end_marker:02x}, "
+            f"{len(data) - r.offset} trailing bytes"
+        )
     return width, height, bytes(rgba)
 
 
