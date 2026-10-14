@@ -2,8 +2,8 @@
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* Algorithm: FireRescue vtable slot +0x48 points here. Skip mode 5 or an exposure-record count
-   outside [0,3], obtain candidate position via its interface slot +0x0C, compute and round maximum
-   absolute axis separation, then call UpdateFireRescueProximityAndSpread. At separation <=500,
+   outside [0,3], obtain candidate position via its interface slot +0x0C, compute maximum absolute
+   axis separation and convert it toward zero, then call UpdateFireRescueProximityAndSpread. At separation <=500,
    calculate ComputeFireVolumeFalloff and weight it by intensity; attenuate by 0.1 if the world
    visibility query fails. Store the FireRescue pointer and influence, then send Player message
    0x7531.

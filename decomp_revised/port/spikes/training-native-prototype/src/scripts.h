@@ -1,4 +1,6 @@
 #pragma once
+#include <algorithm>
+#include <cctype>
 #include <deque>
 #include <sstream>
 // Interpreter for the Training EVS commands, using the preserved scripts verbatim.
@@ -14,16 +16,17 @@ struct Scripts{
  std::function<void(std::string,float)> hint;
  std::function<bool(int,std::string)> host;
  std::function<int(std::string)> findEntity;
- explicit Scripts(J bundle){auto sources=field(bundle,"sources");for(int i=0;i<count(sources);i++){auto source=at(sources,i);auto path=str(field(source,"path"));files[path.substr(path.find_last_of('/')+1)]=str(field(source,"text"));}variables["LEVEL"]="training";variables["DIFFICULTY"]="1";}
+ static std::string foldFile(std::string value){std::transform(value.begin(),value.end(),value.begin(),[](unsigned char c){return static_cast<char>(std::tolower(c));});return value;}
+ explicit Scripts(J bundle){auto sources=field(bundle,"sources");for(int i=0;i<count(sources);i++){auto source=at(sources,i);auto path=str(field(source,"path"));files[foldFile(path.substr(path.find_last_of('/')+1))]=str(field(source,"text"));}variables["LEVEL"]="training";variables["DIFFICULTY"]="1";}
  void report(std::string command,std::string source){auto key=source+":"+command;if(reported.insert(key).second)std::cerr<<"Unimplemented EVS: "<<key<<"\n";}
  // 00471310 -> 0047A130 -> 004799E0: the early file pass admits only
  // top-level set/exec lines. Nested exec files inherit this mode.
  void loadLevel(std::string file,int entity,bool definitions){bool previous=definitionsOnly;definitionsOnly=definitions;try{run("exec "+file,entity,"level",0,true);}catch(...){definitionsOnly=previous;throw;}definitionsOnly=previous;}
  void run(std::string raw,int entity,std::string source,int depth=0,bool startup=false){
  auto command=unwrap(raw);if(command.empty()||command=="<null>")return;if(depth>64){report(command,source);return;}
- auto [verb,args]=token(command);auto colon=verb.find(':');if(colon!=std::string::npos){std::string event=verb.substr(0,colon);if(startup)bindings[entity].push_back({event,args,source});else run(args,entity,source+"/event",depth+1);return;}
+ auto [verb,args]=token(command);auto colon=verb.find(':');if(colon!=std::string::npos){std::string event=verb.substr(0,colon);if(startup)bindings[entity].push_back({event,args,source});else{std::string body=trim(args);run(!body.empty()&&body.front()=='['?"cmd "+body:body,entity,source+"/event",depth+1);}return;}
  if(verb=="set"){auto [name,value]=token(args);variables[name]=unwrap(value);return;}
- if(verb=="exec"){auto file=files.find(args);if(file==files.end()){report(command,source);return;}std::istringstream lines(file->second);std::string line;int number=0;while(std::getline(lines,line)){number++;auto text=trim(line);if(text.rfind("//",0)==0||text.rfind(";",0)==0)continue;auto first=token(text).first;if(definitionsOnly&&first!="set"&&first!="exec")continue;run(line,entity,args+":"+std::to_string(number),depth+1,true);}return;}
+ if(verb=="exec"){auto file=files.find(foldFile(args));if(file==files.end()){report(command,source);return;}std::istringstream lines(file->second);std::string line;int number=0;while(std::getline(lines,line)){number++;auto text=trim(line);if(text.rfind("//",0)==0||text.rfind(";",0)==0)continue;auto first=token(text).first;if(definitionsOnly&&first!="set"&&first!="exec")continue;run(line,entity,args+":"+std::to_string(number),depth+1,true);}return;}
  if(verb.size()>1&&verb[0]=='*'){auto name=verb.substr(1);auto it=variables.find(name);if(it==variables.end())report(command,source);else run(it->second,entity,source+"/*"+name,depth+1,startup);return;}
  if(verb=="if"||verb=="ifnot"){auto [name,rest]=token(args);auto [wanted,body]=token(rest);auto value=variables.count(name)?variables[name]:"0";bool equal=false;for(auto& v:splitList(unwrap(wanted)))if(value==v)equal=true;if(equal==(verb=="if"))run(body,entity,source+"/condition",depth+1,startup);return;}
  if(verb=="once"){auto key=std::to_string(entity)+":"+source;if(once.insert(key).second)run(args,entity,source+"/once",depth+1,startup);return;}
@@ -37,7 +40,7 @@ struct Scripts{
  if(verb=="inc"||verb=="dec"){variables[args]=std::to_string(std::stoi(variables.count(args)?variables[args]:"0")+(verb=="inc"?1:-1));return;}
  if(!host(entity,command))report(command,source);
  }
- void dispatch(int entity,std::string event){auto copy=bindings[entity];for(auto& binding:copy)if(binding.event==event)run(binding.command,entity,binding.source);}
+ void dispatch(int entity,std::string event){auto copy=bindings[entity];for(auto& binding:copy)if(binding.event==event){std::string body=trim(binding.command);run(!body.empty()&&body.front()=='['?"cmd "+body:body,entity,binding.source);}}
  void startupEntity(J e){int entity=integer(field(e,"index"));auto props=field(e,"properties");for(int i=1;i<=10;i++){char key[24];snprintf(key,sizeof(key),"S_Script%02d",i);run(str(field(props,key)),entity,std::to_string(entity)+":"+key,0,true);}}
  // 00470740 checks the absolute wait deadline and removes at most one queued
  // command per ScriptActor update. The per-entity primitive lets a reconstructed

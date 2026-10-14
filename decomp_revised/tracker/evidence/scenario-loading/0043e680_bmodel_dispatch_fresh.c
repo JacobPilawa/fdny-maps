@@ -16,9 +16,10 @@
    
    Evidence:
    BModelEntityConstructor (0x0043F340) installs the ScriptActor vtable at 0x004E0DF0; slot +4 at
-   0x004E0DF4 points here. Bank's named BModel vault receives tell vault open. The animation/update
-   completion route is not yet proven. Subway A installs open/close as self-commands and has no tell
-   subdoor open. See tracker/evidence/scenario-loading/bank_vault_open_dispatch.md and
+   0x004E0DF4 points here. Bank's named BModel vault receives tell vault open. The static animation
+   route is established by UpdateBModelEntity at 0x0043DC60; its callback cadence remains unknown.
+   Subway A installs open/close as self-commands and has no tell subdoor open. See
+   tracker/evidence/scenario-loading/bank_vault_open_dispatch.md and
    named_script_actor_dispatch.md. EXE SHA-256
    4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 

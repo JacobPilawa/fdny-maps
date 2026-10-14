@@ -2,9 +2,11 @@
 #include "view_update.h"
 
 // 004612B0 builds and orthogonalizes a local frame from position/direction.
-// ExtinguisherTool's constructor supplies (-30,-18,40) and (.2,-1,.1); its
-// ACT has no motion tracks. The frame is parented to the tool follower at
-// object +0x98, which follows the player at +0x34A4.
+// Extinguisher setup 00461830 supplies (-30,-18,40) and (.2,-1,.1) and calls
+// 0045F660, which creates a +0x98 follower under Player+0x34A4 for that setup
+// object. The exact relationship from this setup object to the visible retail
+// ACT draw root is still open; this component models its source-shaped action
+// pose, not the first-person mesh attachment.
 struct ExtinguisherPose {
  struct MotionPose {float phase;V direction,position;};
  struct CallbackState {bool active=false;uint32_t cooldown=0,start=0,end=0;V position{},direction{};};

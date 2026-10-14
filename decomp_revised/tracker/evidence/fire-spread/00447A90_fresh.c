@@ -1,8 +1,9 @@
 /* Current Ghidra output; FDNYFirefighter.exe SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e */
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Algorithm: After the FireRescue eligibility, size, and deadline gates, compare a uniform [0,1)
-   draw with intensity at +0x128. On success, sample radial distance
+/* Algorithm: After the pointer-at-root-+0x48 / pointed-to-+4 gate (embedded A_Name string length;
+   see fire_name_gate.md), size, and deadline gates,
+   compare a uniform [0,1) draw with intensity at +0x128. On success, sample radial distance
    0.5*min(sizeX,sizeZ)*(1+U*intensity) and angle [0,2*pi), sweep a +/-1 box downward 200 units from
    20 units above the origin, then factory-create and register an RCS_FireRescue child with timed
    size keys. A failed probability roll sets +0x124 to now+500; a geometry miss does not set this

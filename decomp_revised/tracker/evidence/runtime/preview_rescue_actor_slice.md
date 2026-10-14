@@ -36,8 +36,11 @@ the authored origin as the roam center. The second chooses among the authored
 origin and linked alternate spots, floor places the actor, assigns its
 per-model material, and dispatches only `S_Script01..05`. Fatman model choice,
 spawn-spot selection, and roam animation selection consume the shared preview
-RNG in their corresponding victim phases. Other classes' random draws are not
-yet integrated, so this does not claim retail seed-for-seed parity.
+RNG in their corresponding victim phases. The viewer advances FireRescue
+smoke/sprite setup and named-loop draws before the victim first pass, then
+consumes each victim's initial sound-controller deadline before model/motion
+selection. Other classes' random draws are not yet integrated, so this does not
+claim retail seed-for-seed parity.
 
 `roam <number>` now uses the native candidate rejection sequence: radius from
 the original authored origin, actor-box world sweep, nearby fire-obstacle

@@ -58,6 +58,56 @@ current world. `FUN_10010EC0` updates a puppet material, unregisters the prior
 bitmap when changed, then registers the replacement. This is the engine-side
 path needed for later actor texture integration.
 
+## Embedded ACT GeBm textures
+
+The shared ACT exporter now handles the embedded bitmap variants used by the
+PropModel resources referenced across the rescue packages. A fresh read-only
+Ghidra disassembly of the same hash-pinned DLL confirms that
+`geBitmap_CreateFromFile` (`0x1001B930`) reads the GeBm image flags, pixel
+format, and mip-info through `0x10017870`. The helper uses flag bit 0 for
+packed power-of-two dimensions, bit 5 for byte-sized explicit dimensions,
+bit 3 for a palette, bit 1 for a color key, and bit 2 for a recursive alpha
+sidecar. When the color-key bit is set, it reads
+`gePixelFormat_BytesPerPel(format)` bytes after the dimensions and converts
+that value with `gePixelFormat_GetPixel`. It then leaves the first level
+marker for `geBitmap_CreateFromFile`, which reads each uncompressed mip
+payload until a marker's low nibble exceeds the maximum mip number.
+
+The copied ACT assets confirm two active layouts in this map-wide PropModel
+set: indexed format 1 with palette flag `0x09`, and 24-bit format 10 with
+flags `0x01`, `0x03`, or `0x22`. Format 10 stores B/G/R bytes; keyed examples
+store a three-byte key after the dimensions, followed by a zero level marker,
+the image payload, and the `0x0f` single-level terminator. The checked-in
+`extract_act.py` decoder handles those cases and retains decoded RGBA beside
+the inspection PNG/BMP files, so keyed texels reach OpenGL with alpha. Alpha
+sidecar bitmaps, compressed palettes, Paeth-filtered levels, and mip chains
+beyond level zero remain unsupported. The ACT source mapping and layout
+counts are recorded in
+[`propmodel_world_actor_port_2026-10-14.md`](../scenario-loading/propmodel_world_actor_port_2026-10-14.md).
+
+The relevant Ghidra instructions from this DLL hash are retained here; the
+color-key branch calls `gePixelFormat_BytesPerPel`, reads that many bytes,
+and converts them with `gePixelFormat_GetPixel`:
+
+```text
+1001787d  push 3
+1001787f  lea edx,[esp+0x14]
+10017883  mov ecx,edi
+10017885  call geVFile_Read
+100178a9  shr edx,4             ; mip-info high nibble -> maximum mip
+100178b5  test cl,8              ; palette flag
+100178d1  test cl,1              ; packed dimensions
+10017910  test cl,0x20            ; byte-sized explicit dimensions
+1001797d  test byte ptr [esp+0xb],2 ; color-key flag
+10017984  mov ecx,[esi+0x10]     ; pixel format
+10017987  call gePixelFormat_BytesPerPel
+100179a6  call geVFile_Read      ; read key in that pixel format
+100179c6  call gePixelFormat_GetPixel
+```
+
+The viewer's ACT render check confirms the decoded asset upload path works on
+macOS, but does not prove identical retail alpha/depth behavior.
+
 ## Name lookup and unresolved material join
 
 `geWorld_GetBitmapByName` (`0x1003CFC0`) delegates to `FUN_1003AC10`, which

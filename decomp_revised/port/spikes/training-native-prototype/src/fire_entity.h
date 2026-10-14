@@ -26,8 +26,8 @@ struct FireEntity {
  }
  void spray(float dt,float influence,bool terminal,const std::function<void()>& countDoused,const std::function<void()>& stopSound){
   suppression.spray(dt,influence,terminal,countDoused,stopSound);
-  // Immediate visual shutdown is a port-side approximation; native 00448970
-  // sets FireRescue mode/stat/sound fields but does not write these visual flags.
-  if(!suppression.flameEnabled){visual.enabled=false;for(auto& a:visual.animations)a.active=false;}
+  // Native 00448970 clears byte +0x1C8 but its meaning is unverified. It does
+  // not directly disable the render helpers; terminal presentation remains a
+  // separate callback/renderer lifecycle question.
  }
 };

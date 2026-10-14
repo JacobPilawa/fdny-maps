@@ -1,0 +1,869 @@
+# Retail Genesis path sampling decompiler export
+
+Source program: `Genesis.dll`, SHA-256 `5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643`.
+Addresses are Ghidra virtual addresses. FUN names remain descriptive labels pending full type recovery.
+The final sampler sections were normalized from the retail instruction listing
+to spell out known helper arguments and curve weights; they are evidence-based
+reconstructions, not recovered original source code. Earlier sections retain
+the Ghidra decompiler output.
+
+
+===== geQuaternionKeys_CreateFromFile @ 10005A00 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+
+int __fastcall FUN_10005a00(undefined4 param_1,int *param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  float *pfVar2;
+  int iVar3;
+  bool bVar4;
+  uint unaff_retaddr;
+  int local_12c;
+  int local_128;
+  uint local_124;
+  int local_120;
+  float local_11c;
+  float local_118;
+  undefined4 local_114;
+  undefined1 local_110 [4];
+  undefined1 local_10c [4];
+  undefined1 local_108 [4];
+  char local_104 [4];
+  char local_100 [252];
+  uint local_4;
+
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  local_118 = 0.0;
+  local_11c = 0.0;
+  local_12c = 0;
+  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+  if (iVar1 == 0) {
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x32b,&DAT_100511b7,0);
+    if (local_12c != 0) {
+      geCamera_Destroy(&local_12c);
+      return 0;
+    }
+  }
+  else {
+    iVar1 = __strnicmp(local_104,"Keys",4);
+    if (iVar1 == 0) {
+      iVar1 = _sscanf(local_100,"%d %d %d %d",&local_128,param_2,&local_124,param_3);
+      if (iVar1 == 4) {
+        iVar1 = *param_2;
+        if (((iVar1 == 0) || (iVar1 == 1)) || (iVar1 == 2)) {
+          if ((int)local_124 < 0x100) {
+            if (((iVar1 == 0) || (iVar1 == 1)) || (iVar1 == 2)) {
+              local_12c = FUN_100143a0();
+              if (local_12c != 0) {
+                if ((local_124 & 2) != 0) {
+                  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+                  if (iVar1 == 0) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x34f,&DAT_100511b7,0)
+                    ;
+                    if (local_12c == 0) {
+                      return 0;
+                    }
+                    geCamera_Destroy(&local_12c);
+                    return 0;
+                  }
+                  iVar1 = _sscanf(local_104,"%f %f",&local_118,&local_11c);
+                  if (iVar1 != 2) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x351,&DAT_100511b7,0)
+                    ;
+                    if (local_12c == 0) {
+                      return 0;
+                    }
+                    geCamera_Destroy(&local_12c);
+                    return 0;
+                  }
+                }
+                if ((local_124 & 0xfffffffd) == 0) {
+                  local_120 = 0;
+                  if (0 < local_128) {
+                    do {
+                      iVar1 = local_120;
+                      pfVar2 = (float *)FUN_10014710();
+                      iVar3 = geVFile_GetS(param_1,local_104,0x100);
+                      if (iVar3 == 0) {
+                        geErrorLog_AddExplicit
+                                  (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x35b,
+                                   &DAT_100511b7,0);
+                        bVar4 = local_12c == 0;
+                        goto LAB_10005d67;
+                      }
+                      if ((local_124 & 2) == 0) {
+                        iVar3 = _sscanf(local_104,"%f %f %f %f %f",pfVar2,pfVar2 + 1,pfVar2 + 2,
+                                        pfVar2 + 3,pfVar2 + 4);
+LAB_10005f93:
+                        if (iVar3 != 5) {
+                          geErrorLog_AddExplicit
+                                    (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x369,
+                                     &DAT_100511b7,0);
+                          bVar4 = local_12c == 0;
+                          goto LAB_10005d67;
+                        }
+                      }
+                      else {
+                        *pfVar2 = (float)local_120 * local_11c + local_118;
+                        iVar3 = _sscanf(local_104,"%f %f %f %f",pfVar2 + 1,pfVar2 + 2,pfVar2 + 3,
+                                        pfVar2 + 4);
+                        if (iVar3 != 4) goto LAB_10005f93;
+                      }
+                      local_120 = iVar1 + 1;
+                    } while (local_120 < local_128);
+                  }
+                }
+                else if ((local_124 & 0xfffffffd) == 1) {
+                  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+                  if (iVar1 == 0) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x372,&DAT_100511b7,0)
+                    ;
+                    bVar4 = local_12c == 0;
+LAB_10005d67:
+                    if (!bVar4) {
+                      geCamera_Destroy(&local_12c);
+                    }
+                  }
+                  else {
+                    iVar1 = _sscanf(local_104,"%f %f %f",local_110,local_10c,local_108);
+                    if (iVar1 == 3) {
+                      local_120 = 0;
+                      if (0 < local_128) {
+                        do {
+                          iVar1 = local_120;
+                          pfVar2 = (float *)FUN_10014710();
+                          iVar3 = geVFile_GetS(param_1,local_104,0x100);
+                          if (iVar3 == 0) {
+                            geErrorLog_AddExplicit
+                                      (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x37a,
+                                       &DAT_100511b7,0);
+                            bVar4 = local_12c == 0;
+                            goto LAB_10005d67;
+                          }
+                          if ((local_124 & 2) == 0) {
+                            iVar3 = _sscanf(local_104,"%f %f",pfVar2,&local_114);
+LAB_10005e54:
+                            if (iVar3 != 2) {
+                              geErrorLog_AddExplicit
+                                        (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x386,
+                                         &DAT_100511b7,0);
+                              bVar4 = local_12c == 0;
+                              goto LAB_10005d67;
+                            }
+                          }
+                          else {
+                            *pfVar2 = (float)local_120 * local_11c + local_118;
+                            iVar3 = _sscanf(local_104,"%f",&local_114);
+                            if (iVar3 != 1) goto LAB_10005e54;
+                          }
+                          geQuaternion_SetFromAxisAngle(pfVar2 + 1,local_110,local_114);
+                          local_120 = iVar1 + 1;
+                        } while (local_120 < local_128);
+                      }
+                      goto LAB_10005e7b;
+                    }
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x375,&DAT_100511b7,0)
+                    ;
+                    if (local_12c != 0) {
+                      geCamera_Destroy(&local_12c);
+                      return 0;
+                    }
+                  }
+                  return 0;
+                }
+LAB_10005e7b:
+                if (*param_2 == 1) {
+                  FUN_10005150();
+                  return local_12c;
+                }
+                if (*param_2 == 2) {
+                  FUN_10005050();
+                  return local_12c;
+                }
+                return local_12c;
+              }
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x34a,&DAT_100511b7,0);
+              if (local_12c != 0) {
+                geCamera_Destroy(&local_12c);
+                return 0;
+              }
+            }
+            else {
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x347,&DAT_100511b7,0);
+              if (local_12c != 0) {
+                geCamera_Destroy(&local_12c);
+                return 0;
+              }
+            }
+          }
+          else {
+            geErrorLog_AddExplicit
+                      (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x337,&DAT_100511b7,0);
+            if (local_12c != 0) {
+              geCamera_Destroy(&local_12c);
+              return 0;
+            }
+          }
+        }
+        else {
+          geErrorLog_AddExplicit
+                    (0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x334,&DAT_100511b7,0);
+          if (local_12c != 0) {
+            geCamera_Destroy(&local_12c);
+            return 0;
+          }
+        }
+      }
+      else {
+        geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x331,&DAT_100511b7,0)
+        ;
+        if (local_12c != 0) {
+          geCamera_Destroy(&local_12c);
+          return 0;
+        }
+      }
+    }
+    else {
+      geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\QKFrame.cpp",0x32d,&DAT_100511b7,0);
+      if (local_12c != 0) {
+        geCamera_Destroy(&local_12c);
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+
+===== geTranslationKeys_CreateFromFile @ 10015FB0 =====
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+
+int __fastcall FUN_10015fb0(undefined4 param_1,int *param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  float *pfVar2;
+  int iVar3;
+  bool bVar4;
+  uint unaff_retaddr;
+  int local_11c;
+  int local_118;
+  float local_114;
+  float local_110;
+  int local_10c;
+  byte local_108 [4];
+  char local_104 [4];
+  char local_100 [252];
+  uint local_4;
+
+  local_4 = DAT_100aa8f0 ^ unaff_retaddr;
+  local_11c = 0;
+  local_110 = 0.0;
+  local_114 = 0.0;
+  iVar1 = geVFile_GetS(param_1,local_104,0x100);
+  if (iVar1 == 0) {
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x22f,&DAT_100511b7,0);
+    if (local_11c != 0) {
+      geCamera_Destroy(&local_11c);
+      return 0;
+    }
+  }
+  else {
+    iVar1 = __strnicmp(local_104,"Keys",4);
+    if (iVar1 == 0) {
+      iVar1 = _sscanf(local_100,"%d %d %d %d",&local_118,param_2,local_108,param_3);
+      if (iVar1 == 4) {
+        iVar1 = *param_2;
+        if ((iVar1 == 0) || ((0 < iVar1 && (iVar1 < 3)))) {
+          local_11c = FUN_100143a0();
+          if (local_11c == 0) {
+            geErrorLog_AddExplicit
+                      (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x245,&DAT_100511b7,0);
+            if (local_11c != 0) {
+              geCamera_Destroy(&local_11c);
+              return 0;
+            }
+          }
+          else {
+            if ((local_108[0] & 2) == 0) {
+LAB_1001622a:
+              local_10c = 0;
+              if (0 < local_118) {
+                do {
+                  iVar1 = local_10c;
+                  pfVar2 = (float *)FUN_10014710();
+                  iVar3 = geVFile_GetS(param_1,local_104,0x100);
+                  if (iVar3 == 0) {
+                    geErrorLog_AddExplicit
+                              (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x253,&DAT_100511b7,0)
+                    ;
+                    bVar4 = local_11c == 0;
+                    goto LAB_100160c6;
+                  }
+                  if ((local_108[0] & 2) == 0) {
+                    iVar3 = _sscanf(local_104,"%f %f %f %f",pfVar2,pfVar2 + 1,pfVar2 + 2,pfVar2 + 3)
+                    ;
+                    if (iVar3 != 4) {
+                      geErrorLog_AddExplicit
+                                (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x262,&DAT_100511b7,
+                                 0);
+                      bVar4 = local_11c == 0;
+                      goto LAB_100160c6;
+                    }
+                  }
+                  else {
+                    *pfVar2 = (float)local_10c * local_114 + local_110;
+                    iVar3 = _sscanf(local_104,"%f %f %f",pfVar2 + 1);
+                    if (iVar3 != 3) {
+                      geErrorLog_AddExplicit
+                                (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x25b,&DAT_100511b7,
+                                 0);
+                      bVar4 = local_11c == 0;
+                      goto LAB_100160c6;
+                    }
+                  }
+                  local_10c = iVar1 + 1;
+                } while (local_10c < local_118);
+              }
+              if ((*param_2 != 1) && (*param_2 != 2)) {
+                return local_11c;
+              }
+              FUN_100158d0(local_11c);
+              return local_11c;
+            }
+            iVar1 = geVFile_GetS(param_1,local_104,0x100);
+            if (iVar1 == 0) {
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x24a,&DAT_100511b7,0);
+              if (local_11c != 0) {
+                geCamera_Destroy(&local_11c);
+                return 0;
+              }
+            }
+            else {
+              iVar1 = _sscanf(local_104,"%f %f",&local_110,&local_114);
+              if (iVar1 == 2) goto LAB_1001622a;
+              geErrorLog_AddExplicit
+                        (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x24c,&DAT_100511b7,0);
+              if (local_11c != 0) {
+                geCamera_Destroy(&local_11c);
+                return 0;
+              }
+            }
+          }
+        }
+        else {
+          geErrorLog_AddExplicit
+                    (0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x242,&DAT_100511b7,0);
+          if (local_11c != 0) {
+            geCamera_Destroy(&local_11c);
+            return 0;
+          }
+        }
+      }
+      else {
+        geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x236,&DAT_100511b7,0)
+        ;
+        bVar4 = local_11c == 0;
+LAB_100160c6:
+        if (!bVar4) {
+          geCamera_Destroy(&local_11c);
+        }
+      }
+      return 0;
+    }
+    geErrorLog_AddExplicit(0x3d,"ERR_PATH_FILE_READ","Actor\\vkframe.cpp",0x232,&DAT_100511b7,0);
+    if (local_11c != 0) {
+      geCamera_Destroy(&local_11c);
+    }
+  }
+  return 0;
+}
+
+
+===== gePath_Sample @ 1000E380 =====
+
+/* __fastcall gePath_Sample,12 */
+
+void __fastcall gePath_Sample(int param_1,undefined4 *param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  byte bVar2;
+  undefined4 *puVar3;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined1 local_10 [16];
+
+                    /* 0xe380  242  @gePath_Sample@12 */
+  if ((*(byte *)(param_1 + 0x40) & 1) != 0) {
+    FUN_1000dd90();
+  }
+  bVar2 = *(byte *)(param_1 + 0x40) >> 1 & 1;
+  iVar1 = FUN_1000e260(bVar2,param_3,local_10);
+  if (iVar1 == 1) {
+    geQuaternion_ToMatrix(local_10,param_2);
+  }
+  else {
+    puVar3 = param_2;
+    for (iVar1 = 0xc; iVar1 != 0; iVar1 = iVar1 + -1) {
+      *puVar3 = 0;
+      puVar3 = puVar3 + 1;
+    }
+    param_2[8] = 0x3f800000;
+    param_2[4] = 0x3f800000;
+    *param_2 = 0x3f800000;
+  }
+  iVar1 = FUN_1000e260(bVar2,param_3,&local_1c);
+  if (iVar1 == 1) {
+    param_2[9] = local_1c;
+    param_2[10] = local_18;
+    param_2[0xb] = local_14;
+    return;
+  }
+  param_2[0xb] = 0;
+  param_2[10] = 0;
+  param_2[9] = 0;
+  return;
+}
+
+
+===== gePath_ChannelSample @ 1000E260 =====
+
+undefined4 FUN_1000e260(float param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  float fVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int *unaff_ESI;
+  float10 fVar5;
+
+  if (*unaff_ESI == 0) {
+    return 0;
+  }
+  iVar2 = geActor_GetBody();
+  if (iVar2 == 0) {
+    return 0;
+  }
+  fVar5 = (float10)FUN_1000e1e0(param_2,unaff_ESI[2],unaff_ESI[3]);
+  fVar1 = (float)fVar5;
+  if (((float)unaff_ESI[6] < fVar1 == ((float)unaff_ESI[6] == fVar1)) ||
+     ((float)unaff_ESI[7] <= fVar1)) {
+    iVar3 = FUN_10014520(fVar1);
+    iVar4 = iVar3 + 1;
+    if (iVar3 < 0) {
+      if (param_1 == 0.0) {
+        iVar3 = 0;
+      }
+      else {
+        iVar3 = iVar2 + -1;
+      }
+    }
+    if (iVar2 <= iVar4) {
+      if (param_1 == 0.0) {
+        iVar4 = iVar2 + -1;
+      }
+      else {
+        iVar4 = 0;
+      }
+    }
+    unaff_ESI[4] = iVar3;
+    unaff_ESI[5] = iVar4;
+    fVar5 = (float10)FUN_10014720();
+    unaff_ESI[6] = (int)(float)fVar5;
+    param_1 = (float)fVar5;
+    fVar5 = (float10)FUN_10014720();
+    unaff_ESI[7] = (int)(float)fVar5;
+  }
+  else {
+    param_1 = (float)unaff_ESI[6];
+    fVar5 = (float10)(float)unaff_ESI[7];
+    iVar3 = unaff_ESI[4];
+    iVar4 = unaff_ESI[5];
+  }
+  if (iVar3 == iVar4) {
+    param_1 = 0.0;
+  }
+  else {
+    param_1 = (float)(((float10)fVar1 - (float10)param_1) / (fVar5 - (float10)param_1));
+  }
+  iVar2 = unaff_ESI[1];
+  FUN_10014710(param_1,param_3);
+  FUN_10014710();
+  (*(code *)(&PTR_LAB_1005f048)[iVar2])();
+  return 1;
+}
+
+
+===== gePath_RotationKeyModeToSampler @ 1000DB80 =====
+
+undefined4 FUN_1000db80(void)
+
+{
+  int in_EAX;
+
+  if (in_EAX != 0) {
+    if (in_EAX == 1) {
+      return 4;
+    }
+    if (in_EAX == 2) {
+      return 5;
+    }
+  }
+  return 3;
+}
+
+
+===== gePath_TranslationKeyModeToSampler @ 1000DB40 =====
+
+undefined4 FUN_1000db40(void)
+
+{
+  int in_EAX;
+
+  if (in_EAX != 0) {
+    if (in_EAX == 1) {
+      return 1;
+    }
+    if (in_EAX == 2) {
+      return 2;
+    }
+  }
+  return 0;
+}
+
+
+===== geTranslationKey_Precompute @ 100158D0 =====
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void __fastcall FUN_100158d0(int param_1,int param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  float *pfVar2;
+  float *pfVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  float fVar10;
+  float fVar11;
+  float fVar12;
+  int iVar13;
+  int iVar14;
+  int iVar15;
+  int iVar16;
+  float *pfVar17;
+  int local_44;
+
+  pfVar17 = (float *)0x0;
+  iVar13 = geActor_GetBody(param_3);
+  if (0 < iVar13) {
+    pfVar17 = (float *)FUN_10014710();
+  }
+  if (param_2 == 0) {
+    local_44 = param_1;
+    if (iVar13 < 3) {
+      local_44 = 0;
+    }
+    iVar14 = 0;
+    if (0 < iVar13) {
+      do {
+        fVar4 = pfVar17[iVar14 * 10];
+        iVar1 = iVar14 + 1;
+        iVar16 = iVar14 + -1;
+        if (iVar14 == 0) {
+          if (local_44 == 1) {
+            iVar16 = iVar13 + -2;
+            fVar5 = fVar4 - (pfVar17[iVar13 * 10 + -10] - pfVar17[iVar16 * 10]);
+          }
+          else {
+            fVar5 = *pfVar17;
+            iVar16 = 0;
+          }
+        }
+        else {
+          fVar5 = pfVar17[iVar16 * 10];
+        }
+        iVar15 = iVar1;
+        if (iVar1 == iVar13) {
+          iVar15 = 1;
+          if (local_44 != 1) {
+            iVar15 = iVar13 + -1;
+            goto LAB_100159a9;
+          }
+          fVar6 = (pfVar17[10] - *pfVar17) + fVar4;
+        }
+        else {
+LAB_100159a9:
+          fVar6 = pfVar17[iVar15 * 10];
+        }
+        pfVar2 = pfVar17 + iVar16 * 10 + 1;
+        fVar7 = pfVar2[1];
+        fVar8 = pfVar2[2];
+        fVar9 = pfVar17[iVar14 * 10 + 2];
+        fVar10 = pfVar17[iVar14 * 10 + 3];
+        pfVar3 = pfVar17 + iVar15 * 10 + 1;
+        fVar11 = pfVar3[1];
+        fVar12 = pfVar3[2];
+        if (local_44 == 1) {
+LAB_10015ab5:
+          fVar9 = *pfVar3 - *pfVar2;
+          fVar11 = fVar11 - fVar7;
+          fVar12 = fVar12 - fVar8;
+          fVar7 = _DAT_1005118c / ((fVar6 - fVar4) + (fVar4 - fVar5));
+          fVar6 = (fVar6 - fVar4) * fVar7;
+          pfVar17[iVar14 * 10 + 7] = fVar9 * fVar6;
+          pfVar17[iVar14 * 10 + 8] = fVar11 * fVar6;
+          pfVar17[iVar14 * 10 + 9] = fVar12 * fVar6;
+          fVar7 = fVar7 * (fVar4 - fVar5);
+          pfVar17[iVar14 * 10 + 4] = fVar7 * fVar9;
+          pfVar17[iVar14 * 10 + 5] = fVar11 * fVar7;
+          pfVar17[iVar14 * 10 + 6] = fVar12 * fVar7;
+        }
+        else if (iVar14 == 0) {
+          pfVar17[4] = *pfVar3 - pfVar17[iVar14 * 10 + 1];
+          pfVar17[5] = fVar11 - fVar9;
+          pfVar17[6] = fVar12 - fVar10;
+          pfVar17[7] = pfVar17[4];
+          pfVar17[8] = pfVar17[5];
+          pfVar17[9] = pfVar17[6];
+        }
+        else {
+          if (iVar14 != iVar13 + -1) goto LAB_10015ab5;
+          pfVar17[iVar14 * 10 + 4] = pfVar17[iVar14 * 10 + 1] - *pfVar2;
+          pfVar17[iVar14 * 10 + 5] = fVar9 - fVar7;
+          pfVar17[iVar14 * 10 + 6] = fVar10 - fVar8;
+          pfVar17[iVar14 * 10 + 7] = pfVar17[iVar14 * 10 + 4];
+          pfVar17[iVar14 * 10 + 8] = pfVar17[iVar14 * 10 + 5];
+          pfVar17[iVar14 * 10 + 9] = pfVar17[iVar14 * 10 + 6];
+        }
+        iVar14 = iVar1;
+      } while (iVar1 < iVar13);
+    }
+  }
+  else if (0 < iVar13) {
+    pfVar17 = pfVar17 + 9;
+    do {
+      pfVar17[-2] = 0.0;
+      pfVar17[-1] = 0.0;
+      *pfVar17 = 0.0;
+      pfVar17[-5] = 0.0;
+      pfVar17[-4] = 0.0;
+      pfVar17[-3] = 0.0;
+      pfVar17 = pfVar17 + 10;
+      iVar13 = iVar13 + -1;
+    } while (iVar13 != 0);
+    return;
+  }
+  return;
+}
+
+
+===== geQuaternionKey_Precompute @ 10004F90 =====
+
+void FUN_10004f90(void)
+
+{
+  float fVar1;
+  float fVar2;
+  float *unaff_ESI;
+  float local_20;
+  float local_1c;
+  float local_18;
+  float local_14;
+  float local_10;
+  float local_c;
+  float local_8;
+  float local_4;
+
+  FUN_1002bf10(&local_10);
+  FUN_1002bf40(&local_20);
+  FUN_1002bce0(&local_10);
+  FUN_1002bce0(&local_20);
+  fVar1 = local_20 * local_20 + local_1c * local_1c + local_18 * local_18 + local_14 * local_14;
+  fVar2 = local_10 * local_10 + local_c * local_c + local_8 * local_8 + local_4 * local_4;
+  if (fVar2 < fVar1 != (fVar2 == fVar1)) {
+    unaff_ESI[1] = -unaff_ESI[1];
+    unaff_ESI[2] = -unaff_ESI[2];
+    unaff_ESI[3] = -unaff_ESI[3];
+    *unaff_ESI = -*unaff_ESI;
+  }
+  return;
+}
+
+
+===== geQuaternion_Slerp @ 1002BB60 =====
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void __fastcall FUN_1002bb60(float *param_1,float *param_2,float param_3,float *param_4)
+
+{
+  float fVar1;
+  float10 fVar2;
+  float10 fVar3;
+  float10 fVar4;
+
+  fVar1 = param_2[1] * param_1[1] +
+          *param_1 * *param_2 + param_2[2] * param_1[2] + param_2[3] * param_1[3];
+  if (fVar1 + _DAT_1005118c <= (float)_DAT_10054950) {
+    param_4[1] = -param_1[2];
+    param_4[2] = param_1[1];
+    param_4[3] = -*param_1;
+    fVar2 = (float10)_DAT_1005118c;
+    *param_4 = param_1[3];
+    fVar2 = (float10)fsin((fVar2 - (float10)param_3) * (float10)_DAT_10054958);
+    fVar3 = (float10)fsin((float10)param_3 * (float10)_DAT_10054958);
+    param_4[1] = (float)(fVar2 * (float10)param_1[1] + fVar3 * (float10)param_4[1]);
+    param_4[2] = (float)(fVar2 * (float10)param_1[2] + fVar3 * (float10)param_4[2]);
+    param_4[3] = (float)(fVar2 * (float10)param_1[3] + fVar3 * (float10)param_4[3]);
+    *param_4 = (float)(fVar3 * (float10)*param_4 + fVar2 * (float10)*param_1);
+    return;
+  }
+  if ((float)_DAT_10054950 < _DAT_1005118c - fVar1) {
+    fVar2 = (float10)FUN_10044e30();
+    fVar3 = (float10)fsin(fVar2);
+    if ((float10)_DAT_10054950 <= fVar3) {
+      fVar4 = (float10)fsin(((float10)_DAT_1005118c - (float10)param_3) * (float10)(float)fVar2);
+      fVar4 = fVar4 * (float10)(float)((float10)_DAT_1005118c / fVar3);
+      fVar2 = (float10)fsin((float10)(float)fVar2 * (float10)param_3);
+      fVar2 = fVar2 * (float10)(float)((float10)_DAT_1005118c / fVar3);
+      goto LAB_1002bbe3;
+    }
+  }
+  fVar4 = (float10)_DAT_1005118c - (float10)param_3;
+  fVar2 = (float10)param_3;
+LAB_1002bbe3:
+  param_4[1] = (float)(fVar4 * (float10)param_1[1] + fVar2 * (float10)param_2[1]);
+  param_4[2] = (float)(fVar4 * (float10)param_1[2] + fVar2 * (float10)param_2[2]);
+  param_4[3] = (float)(fVar4 * (float10)param_1[3] + fVar2 * (float10)param_2[3]);
+  *param_4 = (float)(fVar2 * (float10)*param_2 + fVar4 * (float10)*param_1);
+  return;
+}
+
+
+===== geRotation_SampleMode1 @ 10004E30 =====
+
+/* Created as a function from the sampler dispatch table at 1005F048. */
+
+void __fastcall geRotation_SampleMode1(int param_1,int param_2,float param_3,undefined4 *param_4)
+
+{
+  if (param_1 == param_2) {
+    *param_4 = *(undefined4 *)(param_1 + 4);
+    param_4[1] = *(undefined4 *)(param_1 + 8);
+    param_4[2] = *(undefined4 *)(param_1 + 0xc);
+    param_4[3] = *(undefined4 *)(param_1 + 0x10);
+    return;
+  }
+  FUN_1002bb60((float *)(param_1 + 4),(float *)(param_2 + 4),param_3,(float *)param_4);
+  return;
+}
+
+
+===== geRotation_SampleMode2 @ 10004E60 =====
+
+/* Created as a function from the sampler dispatch table at 1005F048. */
+
+void __fastcall geRotation_SampleMode2(int param_1,int param_2,float param_3,undefined4 *param_4)
+
+{
+  undefined1 auStack_20 [16];
+  undefined1 auStack_10 [16];
+
+  if (param_1 == param_2) {
+    *param_4 = *(undefined4 *)(param_1 + 4);
+    param_4[1] = *(undefined4 *)(param_1 + 8);
+    param_4[2] = *(undefined4 *)(param_1 + 0xc);
+    param_4[3] = *(undefined4 *)(param_1 + 0x10);
+    return;
+  }
+  geQuaternion_Slerp((float *)(param_1 + 4),(float *)(param_2 + 4),param_3,(float *)auStack_10);
+  geQuaternion_Slerp((float *)(param_1 + 0x14),(float *)(param_2 + 0x14),param_3,(float *)auStack_20);
+  param_3 = 2.0 * (1.0 - param_3) * param_3;
+  geQuaternion_Slerp((float *)auStack_10,(float *)auStack_20,param_3,(float *)param_4);
+  return;
+}
+
+
+===== geTranslation_SampleMode1 @ 100157F0 =====
+
+/* Created as a function from the sampler dispatch table at 1005F048. */
+
+void __fastcall geTranslation_SampleMode1(int param_1,int param_2,float param_3,float *param_4)
+
+{
+  float t2;
+  float t3;
+  float h01;
+  float h00;
+
+  if (param_1 == param_2) {
+    *param_4 = *(float *)(param_1 + 4);
+    param_4[1] = *(float *)(param_1 + 8);
+    param_4[2] = *(float *)(param_1 + 0xc);
+    return;
+  }
+  t2 = param_3 * param_3;
+  t3 = param_3 * t2;
+  h01 = 3.0 * t2 - 2.0 * t3;
+  h00 = 1.0 - h01;
+  *param_4 = h00 * *(float *)(param_1 + 4);
+  param_4[1] = h00 * *(float *)(param_1 + 8);
+  param_4[2] = h00 * *(float *)(param_1 + 0xc);
+  *param_4 += h01 * *(float *)(param_2 + 4);
+  param_4[1] += h01 * *(float *)(param_2 + 8);
+  param_4[2] += h01 * *(float *)(param_2 + 0xc);
+  *param_4 += (param_3 - 2.0 * t2 + t3) * *(float *)(param_1 + 0x1c);
+  param_4[1] += (param_3 - 2.0 * t2 + t3) * *(float *)(param_1 + 0x20);
+  param_4[2] += (param_3 - 2.0 * t2 + t3) * *(float *)(param_1 + 0x24);
+  *param_4 += (t3 - t2) * *(float *)(param_2 + 0x10);
+  param_4[1] += (t3 - t2) * *(float *)(param_2 + 0x14);
+  param_4[2] += (t3 - t2) * *(float *)(param_2 + 0x18);
+  return;
+}
+
+
+===== gePath_WrapLoopTime @ 1000E1E0 =====
+
+/* The loop flag is the first argument in EAX; this helper normalizes sample
+   time against first/last channel key times before the sampler is invoked. */
+
+float10 FUN_1000e1e0(float param_1,float param_2,float param_3)
+
+{
+  int in_EAX;
+  float10 fVar1;
+
+  if (in_EAX != 0) {
+    if (param_1 < param_2) {
+      fVar1 = (float10)FUN_100442ea();
+      return fVar1 + (float10)param_2 + (float10)param_3;
+    }
+    if (param_3 <= param_1) {
+      if (param_3 < param_2 + _DAT_10051c20) {
+        return (float10)param_2;
+      }
+      fVar1 = (float10)FUN_100442ea();
+      return fVar1 + (float10)param_2;
+    }
+  }
+  return (float10)param_1;
+}
+

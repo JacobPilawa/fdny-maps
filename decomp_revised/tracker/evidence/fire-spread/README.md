@@ -29,15 +29,38 @@ database; it is now defined with its observed `__thiscall` prototype and
 documented. The callback calls `0x00448320` at `0x0044844C`, and the latter
 calls `0x00447A90` at `0x0044838E`.
 
+### PlayerRescue candidate and eligibility fields
+
+FireRescue's callback asks candidate vtable slot `+0x0C` for a position
+buffer. Current-hash PlayerRescue vtable bytes and constructor evidence map
+that slot to thunk `0049DB90`; the archived body export routes it to
+`0049D790`, which transforms the origin at object `+0x24` and returns XYZ at
+`+0x68`. The viewer now uses its movement origin through an explicit adapter.
+The getter implementation, fourth float used by exposure, and exact host
+transform alignment remain open. See
+[`player_rescue_candidate_getter.md`](player_rescue_candidate_getter.md).
+
+The spread checks in `00448320` and `00447A90` read the length at `+4` of the
+reference-counted string pointer stored at FireRescue root `+0x48`. Constructor
+`0046F930` initializes it to a shared empty string. The retail initializer
+`00448D60` copies UserData `A_Name` at root `+0x78+4` into this slot when the
+name pointer is present. Thus the gate is exactly a nonempty-name check,
+although root `+0x48` is a separate string object rather than an alias of
+UserData. Dynamic children have their generated `A_Name` slot zeroed and keep
+the empty string, so they do not spread recursively. The viewer applies this
+gate to authored fires and generated children. See
+[`fire_name_gate.md`](fire_name_gate.md) and the retail disassembly excerpt.
+
 ### Exposure callback and proximity bookkeeping
 
 `DispatchFireRescueExposureUpdate` skips FireRescue mode 5 and callbacks after
 four exposure records. It asks the candidate object's vtable slot `+0x0C` for
 its position, compares the candidate and FireRescue origins at `+0x7C/+0x80/+0x84`,
-and rounds the largest absolute axis difference. The direct instructions show
+and truncates the largest absolute axis difference toward zero through
+`004B9400`. The direct instructions show
 that max-axis metric; it is not Euclidean distance.
 
-`UpdateFireRescueProximityAndSpread` stores that rounded distance at
+`UpdateFireRescueProximityAndSpread` stores that truncated distance at
 FireRescue `+0x120`. On entry/exit across 750 units it adjusts global
 `DAT_00502B90`, and on every qualifying callback whose new distance is
 strictly below 750 it calls the random-spread routine. Thus spread attempts are
@@ -69,12 +92,18 @@ The Player vtable message handler `DispatchPlayerMessage` (`0x00453A70`)
 routes `0x7531` payload word 0 as the FireRescue pointer and word 1 as the
 influence. It obtains the fire source point from the embedded visual subobject
 at `+0x12C`, then calls `ApplyPlayerFireExposure` (`0x00451640`). That
-routine returns in Player state 6; otherwise it turns toward the fire, applies
-the `RC_Pain` sound/stat deadline on its separate clock gate, and accumulates
-`1.2 * frameDelta * influence` in Player `+0x3538`. A strict extended-value
-comparison above 1.0 invokes the passout handler. The saved disassembly trace
-preserves the current-clock addition hidden from Ghidra's C-like output and the
-float-store versus extended-precision comparison.
+routine returns in Player state 6; otherwise it computes a fire-relative angle
+and passes it to `0044BB00`. That method sets one of four directional
+burn-indicator bytes at Player `+0x353C..+0x353F`; it does not change camera or
+movement yaw. The Player updater reads and clears those bytes while gating burn
+cooling, and `00456090` maps them to four HUD child effects. The port now
+records those sectors and applies the cooling gate, but the child effects'
+screen placement and visual style remain unimplemented. The handler then
+applies the `RC_Pain` sound/stat deadline on its separate clock gate and
+accumulates `1.2 * frameDelta * influence` in Player `+0x3538`. A strict
+extended-value comparison above 1.0 invokes the passout handler. The saved
+disassembly trace preserves the current-clock addition hidden from Ghidra's
+C-like output and the float-store versus extended-precision comparison.
 
 ### Spray suppression and contact routes
 
@@ -123,11 +152,11 @@ hose call requests final dousing.
 
 The earlier C++ `FireSuppression` component already captures the nonlinear
 intensity update and terminal/stat/sound state changes, so it is worth reusing.
-Its `dt` argument must be supplied from the native frame-delta equivalent. Its
-`FireEntity::spray` wrapper's immediate `flameEnabled`/animation shutdown is a
-port-side choice, not a direct write in `0x00448970`; compare the visual update
-before treating that timing as source-matched. The copied 679 KiB suppression
-oracle is tagged with the same EXE hash and is preserved for a later focused
+Its `dt` argument must be supplied from the native frame-delta equivalent. The
+shared wrapper no longer immediately disables sprites on terminal state:
+`0x00448970` sets mode 5 and clears byte `+0x1C8`, but the byte's meaning and
+the visual lifecycle remain unresolved. The copied 679 KiB suppression oracle
+is tagged with the same EXE hash and is preserved for a later focused
 reconciliation; it was not rerun in this pass.
 
 Fresh exports and instruction listings for the suppression routine, message
@@ -137,8 +166,8 @@ Selected old exports and the hash-tagged old oracle/model are preserved in
 
 ### Random child placement and shape
 
-`ProcessFireRescueSpread` first checks an actor/definition field, current size
-X `>= 0.01`, and the deadline at `+0x124` against the global game clock. Its
+`ProcessFireRescueSpread` first checks the name gate, current size X `>= 0.01`,
+and the deadline at `+0x124` against the global game clock. Its
 first uniform draw is compared with the FireRescue value at `+0x128`. A failed
 roll sets `+0x124 = now + 500`; a later geometry miss does not update that
 deadline in this routine.
@@ -169,9 +198,17 @@ key time and the proximity counter. The x87 instruction trace is preserved in
 the exact zero-count x87 case and cross-system RNG ordering still need runtime
 parity work.
 
-The current evidence proves the native code path and formulas, not how often
-the original runtime dispatches the exposure callback. Collision/visibility
-semantics remain partly inside Genesis3D.
+The dispatch route is now statically joined through the shared contact manager:
+normal owner update `0x0042AEA0` calls manager collection `0x00429520`, which
+invokes contact manager `0x0049BD20`. That manager walks active entities and,
+for each category bit on the active root, calls its `+0x48` callback against
+the matching type list. FireRescue's constructor marks category bit 1, and its
+primary `+0x48` entry is the exposure/spread callback above; PlayerRescue roots
+are type 1. This closes the static callback traversal and candidate-list
+category, not the rendered-frame cadence or relative ordering with FireRescue
+Think, message delivery, and RNG-consuming systems. The viewer still lacks the
+shared manager lists, so it cannot claim original spread/exposure timing.
+Collision/visibility semantics remain partly inside Genesis3D.
 
 Fresh, hash-pinned pseudocode is saved as `00447A90_fresh.c`,
 `00448320_fresh.c`, `004483A0_fresh.c`, `0044A7A0_fresh.c`,

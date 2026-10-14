@@ -1,8 +1,12 @@
 # Rescue actor resource map
 
-Status: **all defined victim ACTs decode locally; the unknown-type fallback
-and constructor model/material selection are source-mapped; runtime loading
-and material-to-surface binding remain to implement and validate.**
+Status: **all defined victim ACT assets currently decode for inspection; the
+unknown-type fallback and constructor model/material selection are
+source-mapped; runtime loading and material-to-surface binding remain to
+implement and validate. The inherited ACT decoder is near-identical to the
+legacy map explorer parser, so its output is provisional until the serialized
+format is independently checked against the retail Genesis.dll and raw ACT
+inputs.**
 
 ## Recovered resource chain
 
@@ -67,10 +71,15 @@ directly. Those are Training-specific resource bindings, while the pose,
 animation, and rescue state transitions can remain shared behind an actor
 definition selected from `D_Type`.
 
-The previous `FDNY_trackdown` work contains a reusable ACT parser at
+The previous `FDNY_trackdown` work contains an ACT parser at
 `decomp/tools/extract_act.py`; it was copied into this clean project as
-[`tools/extract_act.py`](../tools/extract_act.py). The parser reads nested
-Genesis VFS files, BODY geometry, motions, and paletted GeBm textures. The new
+[`tools/extract_act.py`](../tools/extract_act.py). Hash comparison shows that
+copy is byte-identical to the archived file and 99.8% line-similar to
+`map_explorer/source/tools/extract_act.py`. This is inherited asset-inspection
+code, not an independently derived retail port. Its current output is useful
+for locating candidate resources, while the parser/layout needs independent
+retail validation. It reads nested Genesis VFS files, BODY geometry, motions,
+and paletted GeBm textures. The new
 [`tools/export_victim_actors.py`](../tools/export_victim_actors.py) resolves
 definitions through `victims.srf` and `rescue.rrf`, writes decoded JSON/OBJ/PNG
 review assets under ignored `.local/actor_exports/`, and refreshes the compact

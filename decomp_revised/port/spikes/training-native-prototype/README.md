@@ -59,19 +59,68 @@ to release or recapture the mouse. Six-motion survivors run authored `roam`
 commands through a collision-checked waypoint approximation and are picked up
 automatically on contact using the recovered proximity bounds and message
 `0x7532` state transition. The window title reports survivor count and who is
-carried. Replace `mbase` with any key in
+carried, plus the selected tool. The authored PlayerRescue loadout populates
+axe/extinguisher/goggles slots; press **1/2/3** to select an equipped slot.
+Those keys are viewer controls. Left-click with the axe selected to queue its
+retail +100 ms ACTION gate, then play the exported ACT `swing` track and attempt
+the source-shaped BModel sweep when the sampled animation clock crosses 0.275
+seconds. The retail crossing is previous time `<0.275` and new time `>0.275`;
+the port uses rendered-frame `dt` as its clock. The provisional Axe root is
+lowered so this exported swing stays in the viewport through the hit window;
+retail hand placement and the reported backward-facing pose remain open. An
+onscreen hint and title report whether the swing hit the world, found an
+eligible breakable, or chopped a named target. Eligible BModels receive their
+authored `chop` and `break` events and open their PATH when hit points reach
+zero. ACT-to-retail animation mapping, frame cadence, camera-frame mapping,
+candidate order, and the backward-facing hand pose remain provisional. With
+the extinguisher selected, hold the left mouse button to run the source-derived sampled contact and suppression path;
+its decoded ACT now draws from a camera-relative first-person root. The axe
+also draws in the first-person view. These presentation offsets, model scale,
+and depth behavior are provisional because retail draw roots remain open. With
+goggles selected, the retail top/bottom visor masks draw, and left-click scans
+nearby actors for the 8.5-second heatpulse window. Scripted hints draw in an
+onscreen panel. Fire contact reaches the recovered Player pain/burn/passout
+handler and bundled chatter sounds; exposure currently uses the preview's
+30-unit hull radius as provisional candidate padding. Fire callback cadence,
+goggle tint, exact Axe hit timing/sounds, and the passout animation remain
+provisional or open. If a rescue map has no final exit zone, delivery now
+force-reselects the first populated equipment slot. Authored Boat A→B, Subway
+A→B, and Oil Rig A→B→C→D exit commands now load sibling scene packages after
+their remaining-survivor gate. Retail's separate pending-context string
+identity and live transition contact/timing remain open.
+BModel `touch`/`untouch` events now drive per-owner retail PATH motion;
+Subway A doors open/close, Bank `*Door` actors respond to contact, and Bank's
+console opens the named vault. Press **E** or **Space** near a scripted console
+to use it. Press **M** to inspect every BModel PATH in a renderer-only overlay;
+it does not change gameplay collision. Press **N** to clear inspection without
+resetting gameplay motion. BoundsTrigger models start with the retail zero
+model-flag state; enabled final-exit triggers pulse through the mapped
+visibility windows. The render-bit interpretation and host update cadence are
+still provisional. Authored AABB contacts and player-solid collision remain
+separate from visibility. Replace `mbase` with any key in
 `.local/exports/` to inspect another map. Run the same command with `--inspect`
 to decode and inventory a package, probe the authored spawn against the BSP
 collision hull, and simulate five seconds of idle movement without opening a
-window. Interactive startup also prints the texture paths that fail during
-image decoding or OpenGL upload instead of silently falling back to gray. A fresh checkout
+window. `--interaction-check` runs the headless Subway A and Bank
+event/command/PATH checks, including Subway A's broken-door `Zapp3d` trigger.
+Authored BoundsTrigger `makezone` commands also build named map zones from
+their brush bounds for the rescue-exit runtime. The shared script host also
+routes FireRescue `setsize x y z duration` commands into the recovered timed
+size track; Gas R's authored `button1 -> gasoff` script uses this path, though
+live button use and original-game effect parity remain unverified.
+Interactive startup also prints the texture paths
+that fail during image decoding or OpenGL upload instead of silently falling
+back to gray. A fresh checkout
 must first copy the retail inputs locally and export the desired BSP with
 `tools/export_gbsp_scene.py`. The app builder also runs
 `tools/export_victim_actors.py` if ACT assets are missing, converts their
 bitmaps to SDL-readable BMP files, and bundles `.local/actor_exports` beside
 the selected map. These asset exports remain local-only and are not committed.
-The original roam target selection and callback timing, EVS dispatch, door
-motion, carried-victim presentation, and rescue-exit completion remain open.
+The original roam target selection and callback timing, contact callback
+cadence, exact door/trigger bounds, FMOD-equivalent audio, carried-victim
+presentation, and rescue-exit completion remain open. Interaction checks
+inject events at authored bounds; live desktop contact and retail timing parity
+have not been captured.
 
 For a desktop launch, double-click the project-root `Open FDNY Scene Preview.command`.
 Its macOS map picker lists exported BSP packages and opens the selected one in
@@ -85,7 +134,10 @@ render the authored spawn view and visible victim actors, report framebuffer cov
 capture beside the scene package as `<package>.render-check.bmp`. On macOS this
 uses an offscreen CGL framebuffer, so the check works even when the process has
 no desktop display. It verifies the actual OpenGL draw path and is not a
-gameplay parity test. The separate Training executable has its own
+gameplay parity test. To compare a trigger model with its flags forced on and
+with the retail initialization value of zero, run
+`--trigger-render-check <BoundsTrigger entity index>`; it saves both BMP frames
+beside the package and reports changed pixels. The separate Training executable has its own
 `--render-check` smoke check for Training actors and fire.
 
 ## Local assets

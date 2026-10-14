@@ -12,7 +12,7 @@
 namespace BModelAxeHit {
 struct State {
     uint32_t hitpoints{};       // BModel data pointer +0x34
-    uint32_t scriptActor{};     // BModel data pointer +0x38; only null accepts chop
+    uint32_t liftable{};        // RCS_BModel UserData +0x38 (G_Liftable)
     float strikeTime{};         // BModel +0x1EC
     uint32_t rootAddress{};     // PE32 receiver identity, used for service-call comparison
 };
@@ -40,7 +40,7 @@ inline Result invoke(State& state, const Services& services) {
     // equal to either double constant, so boundary neighbors are the right tests.
     constexpr double low = -1.0e-28;
     constexpr double high = 1.0e-28;
-    if (state.hitpoints == 0 || state.scriptActor != 0 ||
+    if (state.hitpoints == 0 || state.liftable != 0 ||
         !(state.strikeTime <= low || high <= state.strikeTime)) {
         return result;
     }

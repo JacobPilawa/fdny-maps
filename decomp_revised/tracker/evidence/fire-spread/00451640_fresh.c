@@ -1,17 +1,20 @@
-/* Current Ghidra output; FDNYFirefighter.exe SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e */
+/* Ghidra decompilation, manually reconciled with callee 0044BB00;
+   FDNYFirefighter.exe SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e */
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Algorithm: Return when Player state +0x18C is 6. Otherwise turn toward fireSource. When unsigned
-   game clock exceeds Player +0x390, request RC_Pain, set the next pain deadline using the shared
-   RNG range 1000..2500 plus current clock, and increment Serious Burns. Independently accumulate
-   1.2 * frameDelta * exposureInfluence into Player +0x3538; a strict extended-precision comparison
-   above 1.0 calls 0x00450FB0 with 1.
+/* Algorithm: Return when Player state +0x18C is 6. Otherwise calculate a fire-relative angle and
+   call 0044BB00, which writes one directional burn-indicator byte; it does not steer camera or
+   movement heading. When unsigned game clock exceeds Player +0x390, request RC_Pain, set the next
+   pain deadline using the shared RNG range 1000..2500 plus current clock, and increment Serious
+   Burns. Independently accumulate 1.2 * frameDelta * exposureInfluence into Player +0x3538; a
+   strict extended-precision comparison above 1.0 calls 0x00450FB0 with 1.
    
    Parameters: this is the Player; fireSource is the source position; exposureInfluence is the
    FireRescue message value.
    
-   Returns: void; updates facing, pain deadline/stat, burn accumulator, and may trigger passout. The
-   current-clock addition is visible in assembly but omitted by the C-like decompilation. */
+   Returns: void; updates directional indicator state, pain deadline/stat, burn accumulator, and may
+   trigger passout. The current-clock addition is visible in assembly but omitted by the C-like
+   decompilation. */
 
 void __thiscall ApplyPlayerFireExposure(void *this,float *fireSource,float exposureInfluence)
 

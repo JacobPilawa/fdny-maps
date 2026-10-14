@@ -1,13 +1,14 @@
 #pragma once
+#include <filesystem>
 // Original texture IDs (rescue.rrf), constructor UVs (0047F850),
 // geometry (0044A840), frame timing/opacity and shipped driver blend state.
 struct FireRenderer {
  std::map<int,GLuint> textures;
  static constexpr float uv[4][2]={{0,.01f},{.99f,.01f},{.99f,.99f},{0,.99f}};
- void load(){
+ void load(const std::filesystem::path& spriteRoot){
   for(int group=0;group<2;group++)for(int frame=0;frame<19;frame++){
    char filename[64];snprintf(filename,sizeof(filename),group?"fflame%04d.bmp":"lflame-%02d.bmp",frame);
-   auto path=assetDirectory()+"/fire-sprites/"+filename;auto surface=SDL_LoadBMP(path.c_str());if(!surface)throw std::runtime_error("Cannot load fire image "+path);
+   auto file=spriteRoot/filename;auto path=file.string();auto surface=SDL_LoadBMP(path.c_str());if(!surface)throw std::runtime_error("Cannot load fire image "+path);
    auto rgba=SDL_ConvertSurfaceFormat(surface,SDL_PIXELFORMAT_ABGR8888,0);SDL_FreeSurface(surface);if(!rgba)throw std::runtime_error(SDL_GetError());
    GLuint texture;glGenTextures(1,&texture);glBindTexture(GL_TEXTURE_2D,texture);glPixelStorei(GL_UNPACK_ALIGNMENT,4);
    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,rgba->w,rgba->h,0,GL_RGBA,GL_UNSIGNED_BYTE,rgba->pixels);SDL_FreeSurface(rgba);

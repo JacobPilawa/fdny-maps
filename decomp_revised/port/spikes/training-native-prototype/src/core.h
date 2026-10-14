@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <optional>
 struct V{float x=0,y=0,z=0;float& operator[](int i){return i==0?x:i==1?y:z;} float operator[](int i)const{return i==0?x:i==1?y:z;}};
 V vec(J j){return {num(at(j,0)),num(at(j,1)),num(at(j,2))};}
@@ -6,12 +7,15 @@ V operator+(V a,V b){return {a.x+b.x,a.y+b.y,a.z+b.z};} V operator-(V a,V b){ret
 float dot(V a,V b){return float((double)a.x*b.x+(double)a.y*b.y+(double)a.z*b.z);} float length(V a){return std::sqrt(dot(a,a));}
 #include "motion.h"
 struct Hit{V point,normal;float distance=99999;int model=-1;};
+struct CollisionModelBounds{int index=0,root=0;size_t sourceOrder=0;V origin{},mins{},maxs{};};
 struct Collision{
- J data;std::set<int> disabled;std::map<int,float> angles;std::map<int,Pose> poses;
+ J data;std::set<int> disabled;std::map<int,float> angles;std::map<int,Pose> poses;std::map<int,V> modelOrigins;std::vector<CollisionModelBounds> collisionModels;std::vector<const CollisionModelBounds*> staticModelsByMinX,dynamicModels,candidateScratch;std::set<int> dynamicModelIndices;
+ float modelAngle(int model){auto it=angles.find(model);return it==angles.end()?0.f:it->second;}
  V rotate(V p,V origin,float a){if(a==0)return p;float c=std::cos(a),sn=std::sin(a);V v=p-origin;return origin+V{c*v.x+sn*v.z,v.y,-sn*v.x+c*v.z};}
- V transform(V p,V origin,int model,bool inverse){auto it=poses.find(model);if(it==poses.end())return rotate(p,origin,inverse?-angles[model]:angles[model]);Pose pose=it->second;if(inverse){p=p-pose.translation;pose.rotation.x=-pose.rotation.x;pose.rotation.y=-pose.rotation.y;pose.rotation.z=-pose.rotation.z;}V result=rotateQ(p-origin,pose.rotation)+origin;return inverse?result:result+pose.translation;}
- V transformNormal(V n,int model){auto it=poses.find(model);return it==poses.end()?rotate(n,{},angles[model]):rotateQ(n,it->second.rotation);}
- explicit Collision(J d):data(d){}
+ V transform(V p,V origin,int model,bool inverse){auto it=poses.find(model);if(it==poses.end())return rotate(p,origin,inverse?-modelAngle(model):modelAngle(model));Pose pose=it->second;if(inverse){p=p-pose.translation;pose.rotation.x=-pose.rotation.x;pose.rotation.y=-pose.rotation.y;pose.rotation.z=-pose.rotation.z;}V result=rotateQ(p-origin,pose.rotation)+origin;return inverse?result:result+pose.translation;}
+ V transformNormal(V n,int model){auto it=poses.find(model);return it==poses.end()?rotate(n,{},modelAngle(model)):rotateQ(n,it->second.rotation);}
+ explicit Collision(J d):data(d){auto sourceModels=field(data,"models");collisionModels.reserve(count(sourceModels));for(int i=0;i<count(sourceModels);i++){auto source=at(sourceModels,i);CollisionModelBounds model;model.index=integer(field(source,"index"));model.root=integer(field(source,"root"));model.sourceOrder=size_t(i);model.origin=vec(field(source,"origin"));model.mins=vec(field(source,"mins"));model.maxs=vec(field(source,"maxs"));modelOrigins[model.index]=model.origin;collisionModels.push_back(model);}staticModelsByMinX.reserve(collisionModels.size());candidateScratch.reserve(collisionModels.size());for(const auto& model:collisionModels)staticModelsByMinX.push_back(&model);std::sort(staticModelsByMinX.begin(),staticModelsByMinX.end(),[](const auto* a,const auto* b){return a->mins.x==b->mins.x?a->sourceOrder<b->sourceOrder:a->mins.x<b->mins.x;});}
+ void setPose(int model,Pose pose){poses[model]=pose;if(!dynamicModelIndices.insert(model).second)return;auto found=std::find_if(collisionModels.begin(),collisionModels.end(),[&](const auto& candidate){return candidate.index==model;});if(found==collisionModels.end())return;dynamicModels.push_back(&*found);}
  void leaves(int index,V mn,V mx,std::vector<int>& out){
  if(index<0){out.push_back(-index-1);return;} auto n=at(field(data,"nodes"),index);auto p=at(field(data,"planes"),integer(field(n,"plane")));V normal=vec(field(p,"normal"));float d=num(field(p,"distance"));
  V near,far;for(int i=0;i<3;i++){near[i]=normal[i]>=0?mn[i]:mx[i];far[i]=normal[i]>=0?mx[i]:mn[i];}
@@ -22,15 +26,14 @@ struct Collision{
  // Port of the recovered Genesis convex-leaf sweep; original evidence in evidence/collision.ts.
  bool trace(V start,V delta,V mn,V mx,Hit& best){
  V end=start+delta,bmn,bmx;for(int i=0;i<3;i++){bmn[i]=std::min(start[i]+mn[i],end[i]+mn[i])-1;bmx[i]=std::max(start[i]+mx[i],end[i]+mx[i])+1;}
- auto models=field(data,"models");bool found=false;
- for(int m=0;m<count(models);m++){
- auto model=at(models,m);int mi=integer(field(model,"index"));if(disabled.count(mi))continue;
- V origin=vec(field(model,"origin"));float angle=angles[mi];V lo=vec(field(model,"mins")),hi=vec(field(model,"maxs"));
+ bool found=false;
+ auto traceModel=[&](const CollisionModelBounds& model){int mi=model.index;if(disabled.count(mi))return;
+ V origin=model.origin;float angle=modelAngle(mi);V lo=model.mins,hi=model.maxs;
  if(angle!=0||poses.count(mi)){V a{1e9,1e9,1e9},b{-1e9,-1e9,-1e9};for(int bits=0;bits<8;bits++){V corner;for(int i=0;i<3;i++)corner[i]=(bits&(1<<i))?hi[i]:lo[i];corner=transform(corner,origin,mi,false);for(int i=0;i<3;i++){a[i]=std::min(a[i],corner[i]);b[i]=std::max(b[i],corner[i]);}}lo=a;hi=b;}
- bool overlap=true;for(int i=0;i<3;i++)if(bmx[i]<lo[i]||bmn[i]>hi[i])overlap=false;if(!overlap)continue;
+ bool overlap=true;for(int i=0;i<3;i++)if(bmx[i]<lo[i]||bmn[i]>hi[i])overlap=false;if(!overlap)return;
  V localStart=transform(start,origin,mi,true),localEnd=transform(end,origin,mi,true),localMin,localMax;
  for(int i=0;i<3;i++){localMin[i]=std::min(localStart[i]+mn[i],localEnd[i]+mn[i])-1;localMax[i]=std::max(localStart[i]+mx[i],localEnd[i]+mx[i])+1;}
- std::vector<int> ids;leaves(integer(field(model,"root")),localMin,localMax,ids);
+ std::vector<int> ids;leaves(model.root,localMin,localMax,ids);
  Hit modelBest;modelBest.distance=9999;bool modelFound=false;
  for(int id:ids){auto leaf=at(field(data,"leafs"),id);int ns=integer(field(leaf,"num_sides"));if(!(integer(field(leaf,"contents"))&integer(field(data,"contents_mask")))||!ns)continue;
  bool committed=false;float previousDistance=modelBest.distance;
@@ -47,17 +50,17 @@ struct Collision{
  };visit(localStart,localEnd,0,true);
  }
  if(modelFound){V difference=modelBest.point-start;double distance=std::sqrt(double(difference.z)*difference.z+double(difference.y)*difference.y+double(difference.x)*difference.x);if(distance<best.distance){best=modelBest;found=true;}}
- }return found;
+ };
+ candidateScratch.clear();for(const auto* model:staticModelsByMinX){if(model->mins.x>bmx.x)break;if(dynamicModelIndices.count(model->index))continue;if(model->maxs.x<bmn.x||model->maxs.y<bmn.y||model->mins.y>bmx.y||model->maxs.z<bmn.z||model->mins.z>bmx.z)continue;candidateScratch.push_back(model);}for(const auto* model:dynamicModels)candidateScratch.push_back(model);std::sort(candidateScratch.begin(),candidateScratch.end(),[](const auto* a,const auto* b){return a->sourceOrder<b->sourceOrder;});for(const auto* model:candidateScratch)traceModel(*model);return found;
  }
  // Genesis.dll 10038470 / 100363F0: null-hull BSP point trace.
  // Global contact survives traces that enter solid without crossing a plane.
  V rayPoint{},rayNormal{};bool raySide=false;
  bool tracePoint(V start,V end,int contents,int flags,Hit& best){
- if(!(flags&2))return false;bool found=false;auto models=field(data,"models");
- for(int m=0;m<count(models);m++){
- auto model=at(models,m);int mi=integer(field(model,"index"));if(disabled.count(mi))continue;
- V origin=vec(field(model,"origin")),lo=vec(field(model,"mins")),hi=vec(field(model,"maxs"));
- if(angles[mi]!=0||poses.count(mi)){V a{1e9,1e9,1e9},b{-1e9,-1e9,-1e9};for(int bits=0;bits<8;bits++){V v;for(int i=0;i<3;i++)v[i]=(bits&(1<<i))?hi[i]:lo[i];v=transform(v,origin,mi,false);for(int i=0;i<3;i++){a[i]=std::min(a[i],v[i]);b[i]=std::max(b[i],v[i]);}}lo=a;hi=b;}
+ if(!(flags&2))return false;bool found=false;
+ for(const auto& model:collisionModels){int mi=model.index;if(disabled.count(mi))continue;
+ V origin=model.origin,lo=model.mins,hi=model.maxs;
+ if(modelAngle(mi)!=0||poses.count(mi)){V a{1e9,1e9,1e9},b{-1e9,-1e9,-1e9};for(int bits=0;bits<8;bits++){V v;for(int i=0;i<3;i++)v[i]=(bits&(1<<i))?hi[i]:lo[i];v=transform(v,origin,mi,false);for(int i=0;i<3;i++){a[i]=std::min(a[i],v[i]);b[i]=std::max(b[i],v[i]);}}lo=a;hi=b;}
  bool overlap=true;for(int i=0;i<3;i++)if(std::max(start[i],end[i])+2<lo[i]||std::min(start[i],end[i])-2>hi[i])overlap=false;if(!overlap)continue;
  bool set=false;std::function<bool(V,V,int)> visit=[&](V front,V back,int index){
  if(index<0)return bool(integer(field(at(field(data,"leafs"),-index-1),"contents"))&contents);
@@ -68,12 +71,12 @@ struct Collision{
  if(visit(front,split,integer(at(children,side))))return true;
  if(visit(split,back,integer(at(children,!side)))){if(!set){rayPoint=split;rayNormal=normal;raySide=side;set=true;}return true;}return false;
  };
- if(visit(transform(start,origin,mi,true),transform(end,origin,mi,true),integer(field(model,"root")))){
+ if(visit(transform(start,origin,mi,true),transform(end,origin,mi,true),model.root)){
  rayPoint=transform(rayPoint,origin,mi,false);rayNormal=transformNormal(rayNormal,mi);V v=rayPoint-start;float dist=float(std::sqrt(double(v.z)*v.z+double(v.y)*v.y+double(v.x)*v.x));if(dist<best.distance){best={rayPoint,raySide?rayNormal*-1:rayNormal,dist,mi};found=true;}}
  if(flags&8)break;
  }return found;
  }
- bool solid(V p,V mn,V mx){std::vector<int> ids;auto models=field(data,"models");for(int m=0;m<count(models);m++){auto model=at(models,m);if(disabled.count(integer(field(model,"index"))))continue;V point=transform(p,vec(field(model,"origin")),integer(field(model,"index")),true);ids.clear();leaves(integer(field(model,"root")),point+mn,point+mx,ids);for(int id:ids){auto leaf=at(field(data,"leafs"),id);int ns=integer(field(leaf,"num_sides"));if(!(integer(field(leaf,"contents"))&integer(field(data,"contents_mask")))||!ns)continue;bool inside=true;for(int s=0;s<ns;s++){auto ls=at(field(data,"leaf_sides"),integer(field(leaf,"first_side"))+s);auto plane=at(field(data,"planes"),integer(field(ls,"plane")));float sign=integer(field(ls,"side"))?-1:1;V n=vec(field(plane,"normal"))*sign;float d=num(field(plane,"distance"))*sign;for(int i=0;i<3;i++)d-=n[i]*(n[i]>0?mn[i]:mx[i]);if(dot(n,point)-d>=0){inside=false;break;}}if(inside)return true;}}return false;}
+ bool solid(V p,V mn,V mx){std::vector<int> ids;for(const auto& model:collisionModels){if(disabled.count(model.index))continue;V point=transform(p,model.origin,model.index,true);ids.clear();leaves(model.root,point+mn,point+mx,ids);for(int id:ids){auto leaf=at(field(data,"leafs"),id);int ns=integer(field(leaf,"num_sides"));if(!(integer(field(leaf,"contents"))&integer(field(data,"contents_mask")))||!ns)continue;bool inside=true;for(int s=0;s<ns;s++){auto ls=at(field(data,"leaf_sides"),integer(field(leaf,"first_side"))+s);auto plane=at(field(data,"planes"),integer(field(ls,"plane")));float sign=integer(field(ls,"side"))?-1:1;V n=vec(field(plane,"normal"))*sign;float d=num(field(plane,"distance"))*sign;for(int i=0;i<3;i++)d-=n[i]*(n[i]>0?mn[i]:mx[i]);if(dot(n,point)-d>=0){inside=false;break;}}if(inside)return true;}}return false;}
 };
 struct Player{
  V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false;float cooldown=0,ashDensity=1.f;

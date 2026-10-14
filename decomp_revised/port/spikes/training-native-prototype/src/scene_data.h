@@ -34,6 +34,15 @@ public:
         scene.collision_ = read(scene.root_ / "collision.json");
         scene.entities_ = read(scene.root_ / "entities.json");
         scene.textureManifest_ = read(scene.root_ / "texture_manifest.json");
+        const auto scriptsPath = scene.root_ / "scripts.json";
+        if (std::filesystem::is_regular_file(scriptsPath))
+            scene.scripts_ = read(scriptsPath);
+        const auto soundsPath = scene.root_ / "sounds.json";
+        if (std::filesystem::is_regular_file(soundsPath))
+            scene.sounds_ = read(soundsPath);
+        const auto motionPath = scene.root_ / "motions.json";
+        if (std::filesystem::is_regular_file(motionPath))
+            scene.motions_ = read(motionPath);
 
         const std::string format = stringField(scene.report_.get(), "format");
         if (format != "fdny-gbsp-v15-scene-v2")
@@ -69,6 +78,9 @@ public:
     json_object* collision() const { return collision_.get(); }
     json_object* entities() const { return entities_.get(); }
     json_object* textureManifest() const { return textureManifest_.get(); }
+    json_object* scripts() const { return scripts_.get(); }
+    json_object* sounds() const { return sounds_.get(); }
+    json_object* motions() const { return motions_.get(); }
 
     // Resolve each path component without assuming the host filesystem's
     // case-sensitivity. The returned path preserves the spelling on disk.
@@ -113,7 +125,7 @@ public:
 private:
     std::filesystem::path root_;
     std::string key_, sourceFile_, sourceSha256_;
-    SceneJson report_, geometry_, worldMesh_, collision_, entities_, textureManifest_;
+    SceneJson report_, geometry_, worldMesh_, collision_, entities_, textureManifest_, scripts_, sounds_, motions_;
 
     static std::string fold(std::string value) {
         std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {

@@ -9,8 +9,8 @@ struct ExtinguisherEffects {
 
  // 00449A40 accepts the four-word message-30000 contact and calls the fire
  // suppression path with terminal=false. Route and generation validation
- // stay with the message-queue owner; FireEntity::spray retains its visual
- // side effects after the source-matched suppression update.
+ // stay with the message-queue owner; terminal visual lifecycle is not
+ // synthesized by FireEntity::spray because its retail meaning is unresolved.
  template<class Fire>
  static bool deliverContact(uint32_t message,const void* payload,float dt,Fire& fire){
   if(message!=ExtinguisherContacts::messageId)return false;

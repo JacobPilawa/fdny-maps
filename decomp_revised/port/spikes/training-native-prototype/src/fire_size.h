@@ -7,13 +7,21 @@ struct FireSize {
  void setKey(int i,V value,uint32_t when){keys[i]={true,when,value};}
  void add(V value,uint32_t when,uint32_t now){
   if(first<0){first=available();setKey(first,value,when);return;}
-  int target=first;
+  int target;
   if(now<=when){
    if(next<0){next=available();target=next;}
    else if(int32_t(when)<int32_t(keys[next].time)){setKey(first,size,now);setKey(next,value,when);return;}
    else target=available();
-  }
+  }else target=available();
   setKey(target,value,when);
+ }
+ // 00447920 clears the FireRescue timed-vector track, anchors the current
+ // dimensions at game-clock + 10, then adds the requested future dimensions.
+ void setMotion(V target,uint32_t targetTime,uint32_t now){
+  for(auto& key:keys)key.active=false;
+  first=next=-1;
+  add(size,now+10u,now);
+  add(target,targetTime,now);
  }
  void update(uint32_t now){
   if(first<0)return;

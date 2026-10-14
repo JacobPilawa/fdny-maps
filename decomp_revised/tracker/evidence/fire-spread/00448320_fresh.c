@@ -1,12 +1,14 @@
 /* Current Ghidra output; FDNYFirefighter.exe SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e */
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* Algorithm: Receives the rounded maximum-axis separation from DispatchFireRescueExposureUpdate. If
-   the FireRescue eligibility field is set, update DAT_00502B90 when the stored +0x120 distance
+/* Algorithm: Receives the truncated integer maximum-axis separation from DispatchFireRescueExposureUpdate. If
+   the pointer stored at FireRescue root +0x48 has a nonzero word at pointed-to +4 (the embedded
+   name string length populated from UserData A_Name; see fire_name_gate.md), update
+   DAT_00502B90 when the stored +0x120 distance
    crosses the 750-unit boundary. Store the latest distance and call ProcessFireRescueSpread when
    the new distance is strictly below 750.
    
-   Parameters: this is the FireRescue object; param_1 is the rounded proximity distance.
+   Parameters: this is the FireRescue object; param_1 is the proximity distance converted toward zero.
    
    Returns: void; updates proximity bookkeeping and may attempt randomized spread. */
 

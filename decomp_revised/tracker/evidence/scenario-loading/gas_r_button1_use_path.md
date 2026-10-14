@@ -103,6 +103,13 @@ appears in the player's live candidate list, that the original game dispatches
 the event on a particular input, or that the resulting fire changes match a
 port.
 
+The shared viewer now implements the class-generic FireRescue `setsize`
+command used by the expanded `gasoff` macro, so its six size commands reach
+the existing timed-size/render path before the script sets `GasIsOn` to `0`.
+This is a port capability, not a live interaction result: the button's
+selection/use input and original-game effects remain uncaptured. See
+[the FireRescue `setsize` port note](firerescue_setsize_script_port.md).
+
 ## Fresh Ghidra evidence
 
 - `0043c670_bmodel_init_fresh.c` and `0043c670_bmodel_init.asm`

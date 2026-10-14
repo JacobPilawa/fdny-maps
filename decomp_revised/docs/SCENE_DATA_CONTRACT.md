@@ -17,7 +17,12 @@ source-hash-pinned GBSP v15 package. All 17 BSP files currently in
   texture info, texture records, sky references, and related index arrays.
 - `world_mesh.json`: triangulated material groups. Each group retains model
   index, original texture name, texture index, a portable texture file path,
-  positions, and projected UVs.
+  positions, projected UVs, and ordered `face_spans`. A face span maps its
+  source face ID to the group's first triangle/count and retains the source
+  TEXINFO ID, flags, alpha, face-light/reflective/mip values, and FACES
+  lightmap offset, dimensions, and four light-type bytes. The C++ scene loader
+  validates this correspondence and keeps the metadata on each mesh; the
+  current renderer still draws only positions, UVs, and the base texture.
 - `collision.json`: models, nodes, leaves, leaf sides, planes, and the
   prototype's current contents mask.
 - `entities.json`: class/name/property lookup plus the original ordered epair
