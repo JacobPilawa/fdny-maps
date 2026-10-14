@@ -3,10 +3,24 @@
 Updated 2026-10-14. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
 
+## Active glitch investigation (2026-10-14)
+
+The user's dirty-space report now has a source-mapped candidate: PlayerRescue's
+`0043F810` collision callback can copy a downward floor-sweep hit into Player
+origin. The Axe hit point stays local to the strike routine, and its hit scan
+does not directly parent the Axe to a survivor or fire. Two Axe model variants
+and their sampled transforms remain a possible visual-duplication seam. No
+retail runtime repro has been captured; see
+[`dirty_space_axe_warp_trace_2026-10-14.md`](../tracker/evidence/scenario-loading/dirty_space_axe_warp_trace_2026-10-14.md).
+Next, compare one reproducible episode against the floor-probe and Axe model
+paths before changing gameplay code.
+
 ## Delegated audit ledger
 
 | Agent | Scope | Files | Status |
 |---|---|---|---|
+| `axe_collision_research` | Read-only Axe sweep, candidate list, and model-transform audit for dirty-space copies | `dirty_space_axe_warp_trace_2026-10-14.md`; pinned Ghidra exports | Complete; hit point is stack-local, direct Axe targets are type-4 objects, and the Axe stays parented to the Player on the reviewed path |
+| `player_warp_research` | Read-only Player movement collision and stale-coordinate audit | `dirty_space_axe_warp_trace_2026-10-14.md`; pinned vtable bytes and Ghidra exports | Complete; vtable slot `+0x38` reaches `0043F810`, whose downward floor hit can snap Player origin; no stale-coordinate restore found |
 | `axe_pose_sound_audit` | Retail Axe facing, swing direction, and sound playback trigger | Read-only saved Ghidra exports and copied-EXE disassembly | Complete; retail registers AxeSwing/AxeHitWood/AxeHitOther/WoodDoorBreak, but the playback trigger and final camera-space pose remain open |
 | `ext_hud_damage_audit` | Training extinguisher pickup, retail hint window, and damage feedback | Read-only pinned executable audit and current viewer source | Complete; `ext1` is a touch PropModel whose event drain remains open; retail constructs a GUI hint widget; generic damage overlay remains unresolved |
 | `retail_hint_gui_render_trace` | Trace the retail Player hint widget's render callback, text assets, layout, and styling | `tracker/evidence/scenario-loading/player_hint_widget_render_trace.md`; hash-pinned headless Ghidra | Complete; widget bounds and color markup are verified; font use and exact panel/draw path remain open |
