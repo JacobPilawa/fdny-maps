@@ -101,8 +101,78 @@ ring around the parent fire. At full strength the point can be about half to
 one full smaller fire-width away; at half strength the range is narrower. The
 candidate starts above the ground. The game sweeps a small box downward about
 200 units and accepts it only if it finds a surface close to the candidate.
-The child is then aligned to that surface. If the sweep misses, no child is
-made.
+The child is queued at the candidate and its separate floor-alignment setting
+may adjust the final position. If the sweep misses, no child is made.
+
+#### The placement equation, with an example
+
+Use these names for the random choices:
+
+- `F = (x, y, z)` is the parent fire’s origin.
+- `sx` and `sz` are its current horizontal dimensions.
+- `h` is its current strength, normally between 0 and 1.
+- `U` means a fresh random number from 0 up to, but not including, 1.
+- `θ` is a random angle around the fire.
+
+The spread attempt first passes a separate chance roll when `U0 ≤ h`. If it
+passes, placement uses another random draw:
+
+```text
+m = min(sx, sz)
+R = m / 2
+v = U1 * h
+r = R * (1 + v)
+θ = random angle from 0 to 2π
+candidate = (x + r*cos(θ), y + 20, z + r*sin(θ))
+```
+
+So the child is picked around the **side** of the source fire, not directly at
+its center. `R` is half the smaller horizontal dimension. The extra factor
+`(1 + v)` expands that distance by up to the parent’s strength. The radius is
+chosen uniformly across that interval; it is not weighted toward the outside
+the way a uniform random point over a filled disk would be.
+
+For example, suppose the fire origin is `(1000, 200, 3000)`, its horizontal
+dimensions are `80` by `120`, and its strength is `0.6`. Then `R = 40`. If
+`U1 = 0.5`, `v = 0.3` and `r = 52`. If `θ = 60°`, the candidate is roughly
+`(1026, 220, 3045)`. That is only the candidate: the world collision check
+still has to accept it before a child is queued.
+
+#### What “sweep down 200 units” means
+
+The candidate begins 20 units above the parent origin. The sweep moves a small
+box straight down, with no horizontal travel:
+
+```text
+start = (candidate.x, parent.y + 20, candidate.z)
+end   = start + (0, -200, 0)
+      = (candidate.x, parent.y - 180, candidate.z)
+```
+
+The box extends 1 unit in each direction from its center. The source accepts a
+hit only when it is at least `0.001` below the candidate and its X and Z
+coordinates are each within `0.1` of the candidate. This is a collision query
+to check the space under the chosen spot; it is not a rule that compares the
+child’s height with the parent’s floor.
+
+**Does that mean a child can only land lower than its parent? No.** The first
+sweep only travels down from 20 units above the parent’s origin. It can hit a
+surface that is lower than the start but still as much as roughly 20 units
+above the parent origin. A surface higher than the sweep’s start cannot be
+found by that first downward query.
+
+There is also a separate floor-alignment step in the saved child-setup trace,
+which maps the generated child’s `L_FloorMe` flag to on. That step starts a
+point trace 50 units above the child’s candidate and goes down 400 units. On a
+hit, it places the fire’s visual origin 3 units above the hit and tilts it to
+match the surface. Since this is a second query with a different start point,
+it can potentially move the final child onto a higher surface than the first
+query’s hit. For the example above, that second trace starts around `y = 270`,
+or 70 units above the parent origin. The exact surface chosen in stacked or
+unusual geometry depends on the game engine’s collision rules and has not been
+confirmed in a live run. The safe conclusion is: the first check searches
+downward only, but it does not prove that the final child must be below the
+parent.
 
 The routine checks for a usable surface. It does **not** check whether that
 surface is wood, fabric, or another fuel type. No fuel/material test appears
@@ -113,6 +183,22 @@ The random child gets its own size animation: it takes about 0.75–3 seconds to
 reach its peak, then another 1–6 seconds to collapse toward a thin remnant.
 That size track is not proof that the actor is deleted at that moment; cleanup
 and exact on-screen disappearance are still open questions.
+
+The peak shape is also randomized. Using `v` from the placement equation and
+fresh random multipliers `U(a,b)`:
+
+```text
+b      = (10 + 90*(1 - v)) * U(0.9, 1.1)
+peak X = b * (0.25 + 0.75*v) * U(0.9, 1.1)
+peak Y = (10 + 30*v) * U(0.8, 1.2)
+peak Z = b
+```
+
+The child begins at zero size, grows to `(peak X, peak Y, peak Z)`, then ends
+its size track at `(0, 0, peak Z/4)`. Its shape is generated from this separate
+formula; it is not simply a smaller copy of the parent. The times are random
+too: `Tgrow = U(750, 3000)` milliseconds, then `Ttail = U(1000, 6000)` more
+milliseconds before the final size key.
 
 ### Can a child spread again? Is there a child limit?
 
@@ -132,6 +218,16 @@ than 12 such fires, the next wait is shortened in proportion to the count; at
 timing; it is not a maximum number of children. The game may have other actor
 or mission limits outside this routine, and the complete actor cleanup path
 has not been mapped.
+
+In the source calculation, if `N` is the shared count and `T` is the child’s
+growth-plus-collapse time, the usual positive-count case is:
+
+```text
+next wait = T * min(1, N / 12)
+```
+
+For example, `N = 6` gives about half of `T`; `N ≥ 12` gives all of `T`.
+`N` counts named fires near the player, not the children made by this parent.
 
 ## How ordinary fire burns the player
 
@@ -154,6 +250,26 @@ The game also checks visibility between the player and the fire. If that check
 reports an obstruction, the ordinary-fire exposure is reduced to one tenth of
 its unblocked value. The code therefore treats cover as strong protection,
 but not as guaranteed complete protection.
+
+The traced falloff can be summarized with a few simple equations. Let `W` and
+`D` be the fire’s current horizontal width and depth, `P` the player padding,
+and `(dx, dy, dz)` the player’s offset from the fire. Then:
+
+```text
+base radius = (W + D) / 2
+effective radius R = base radius + P
+weighted distance q = sqrt(dx² + (2*dy)² + dz²)
+spatial falloff = scale * (R - q) / R, when q ≤ R; otherwise 0
+burn influence = spatial falloff * (0.25 + 0.75*h)
+if visibility is blocked: burn influence *= 0.1
+```
+
+`scale` is a current fire-effect value. The current retail trace has not
+settled the player-padding value, so these equations explain the shape of the
+rule rather than giving a guaranteed safe distance. The doubled `dy` is the
+important geometric detail: 45 units of vertical separation counts like 90
+units of horizontal separation. The influence also fades toward the edge; it
+does not stay at full strength across the whole oval.
 
 Accepted exposure adds to a burn buildup. At maximum influence, the source
 formula adds about 1.2 buildup points per second; passing out occurs when the
@@ -190,6 +306,11 @@ matters: spray must intersect the fire’s influence area. The mapped
 extinguisher path samples several points down its spray direction, while the
 carried hose checks its current contact point. Exact extinguisher aim and
 frame timing have not been confirmed in a live retail capture.
+
+For example, if the value reaching the suppression routine is `0.5`, the
+curve turns that into `0.75` of the maximum response; an input of `1.0` gives
+the maximum response of `1.0`. These numbers describe the suppression
+routine’s input and output, not how close the nozzle is in world units.
 
 One odd code detail deserves a caveat: the response curve is strongest when
 the value it receives is near 1, and it falls again for values above 1. An
@@ -271,6 +392,9 @@ not proof of full gameplay parity.
 ## Research notes behind this guide
 
 - [Current fire exposure, random spread, and suppression trace](../tracker/evidence/fire-spread/README.md)
+- [Fresh random-child spread pseudocode](../tracker/evidence/fire-spread/00447A90_fresh.c)
+- [Measured downward sweep and spread timing](../tracker/evidence/fire-spread/00447A90_spread_assembly_excerpt.asm)
+- [Fire floor-alignment implementation](../port/spikes/training-native-prototype/src/fire_floor.h)
 - [Why random children do not recursively spread](../tracker/evidence/fire-spread/fire_name_gate.md)
 - [How the nearby-fire count changes retry timing](../tracker/evidence/fire-spread/proximity_count_port_2026-10-15.md)
 - [When spread children join the world update](../tracker/evidence/fire-spread/fire_contact_pass_order_port_2026-10-15.md)
