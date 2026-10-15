@@ -124,7 +124,7 @@ and selection gates; callback timing and live behavior have not been verified.
 [victim roam and RescueBot report](../tracker/evidence/scenario-loading/victim_roam_behavior.md),
 [saved selector pseudocode](../reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-routing/00455230_FUN_00455230.c).
 
-### Survivor roaming: each victim has an authored 3D roam sphere
+### Survivor roaming: an authored 3D boundary for victims told to roam
 
 A script command such as `roam 1000` stores a roam distance for that victim.
 When the game tests a new destination, it measures the 3D straight-line
@@ -143,20 +143,34 @@ Being inside the roam sphere still does not guarantee a valid destination: the
 game also sweeps the victim's body, avoids recorded fire obstacles, and checks
 nearby floor heights.
 
+Roam activation is a separate step. In the traced entry path, an authored
+`roam <number>` script command calls `StartVictimRoam`, which sets numeric
+state 7 and immediately tests four nearby start offsets. If all four fail, it
+logs that the victim is stuck and returns it to state 4. No player-distance
+test appears in that command handler or startup routine, and the audit has not
+found a nearby-player trigger that starts roaming. Some map victims have a
+`roam` command; others do not. The preserved Training victim scripts use
+pickup events and contain no `roam` command. This is the confirmed path, not
+proof that every possible indirect state change in the full game has been
+traced.
+
 The roaming AI has other distance tests with different jobs:
 
 - At 432 units, it checks the Player against the victim's **current roam
   target**, not against the victim. Passing that check lets the AI consider
   player-relative choices, subject to facing and visibility tests.
 - It picks a new roam target when it gets within about 72 units of the current
-target.
+  target.
 - Candidate generation also has short movement lengths and other branches;
 those values are step choices, not the victim's full roam radius.
 
 **Evidence:** [victim roam behavior](../tracker/evidence/scenario-loading/victim_roam_behavior.md),
+[fresh script dispatcher](../tracker/evidence/scenario-loading/0045cdb0_dispatch_victim_rescue_script_fresh.c),
+[fresh roam startup](../tracker/evidence/scenario-loading/0045c7f0_start_victim_roam_fresh.c),
 [fresh candidate validator](../tracker/evidence/scenario-loading/0045ab40_validate_victim_roam_candidate_fresh.c),
 [fresh target updater](../tracker/evidence/scenario-loading/0045ae50_update_victim_roam_target_fresh.c),
-[authored victim script inventory](../tracker/evidence/scenario-loading/rescue_actor_inventory.md).
+[authored victim script inventory](../tracker/evidence/scenario-loading/rescue_actor_inventory.md),
+[Training victim roam boundary](../reference/previous-work/decomp/evidence/victim-ai-audit/training-pickup-flow.md).
 
 ### Roaming near fires: a separate 3D clearance sphere
 
