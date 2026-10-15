@@ -80,6 +80,13 @@ struct Collision{
 };
 struct Player{
  V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false;float cooldown=0,ashDensity=1.f;
+ // Retail Player fields: +0x12C is a transient upward-contact latch,
+ // +0x3400 is the oxygen/burn-gated safe-position snapshot, and +0x534 is
+ // the separate reset checkpoint. The retail constructor zeros the snapshot
+ // and seeds the checkpoint from the starting frame.
+ bool collisionLatch=false;
+ V safePosition3400{},checkpointPosition{};
+ float checkpointYaw=0.f;
  // 00451870 stores setrescuebot at Player+0x32e4; unset is retained until
  // the authored command runs, so an unrecovered constructor default is not assumed.
  std::optional<bool> rescueBotEnabled;
@@ -88,6 +95,7 @@ struct Player{
  V maxs()const{return {30,crouch?25.f:85.f,30};}
  // PlayerRescue Think -> IntegrateVelocity 0x0049DBC0 -> collision callback 0x0043F810.
  void step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
+ collisionLatch=false;
  cooldown=std::max(0.f,cooldown-dt);if(crouchEdge){if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}else if(ground)crouch=true;}
  float speed=crouch?260:400;float cp=climbing?std::cos(pitch):1,sp=climbing?std::sin(pitch):0;V wish{-std::sin(yaw)*cp*forward+std::cos(yaw)*strafe,sp*forward,-std::cos(yaw)*cp*forward-std::sin(yaw)*strafe};float len=length(wish);if(len>0){wish=wish*(speed/std::max(1.f,len));double weight=std::pow((ground||climbing)?.2:.95,27*dt);v.x=float(wish.x*(1-weight)+v.x*weight);v.z=float(wish.z*(1-weight)+v.z*weight);if(climbing)v.y=float(wish.y*(1-weight)+v.y*weight);}
  bool wasClimbing=climbing;float drag=(ground||climbing)?1000:0;if(jump){if(crouch){if(jumpEdge&&!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;delta={};return;}if((ground||climbing)&&cooldown==0){if(climbing){climbing=false;v.y=400;}else v.y+=400;cooldown=.5;}}
@@ -95,7 +103,7 @@ struct Player{
  V clipped=acceleration;bool stepped=false;
  for(int attempt=0;attempt<5;attempt++){Hit h;if(!c.trace(p,delta,{-30,-30,-30},maxs(),h))break;bool didStep=false;
  if(!stepped&&h.normal.y<=.9){Hit t;V up{0,16,0},horizontal{delta.x,0,delta.z};if(!c.trace(p,up,{-30,-30,-30},maxs(),t)&&!c.trace(p+up,horizontal,{-30,-30,-30},maxs(),t)){Hit landing;if(c.trace(p+up+horizontal,{0,-17,0},{-30,-30,-30},maxs(),landing)){p=landing.point;stepped=didStep=true;}}}
- if(!didStep){if(h.normal.y>=.5)ground=true;V inverse=h.normal*-1;float inward=dot(v,inverse);if(inward>0)v=v-inverse*inward;inward=dot(acceleration,inverse);if(inward>0)clipped=clipped-inverse*inward;delta=v*dt+clipped*(.5f*dt*dt);}
+ if(!didStep){if(h.normal.y>=.5){ground=true;collisionLatch=true;}V inverse=h.normal*-1;float inward=dot(v,inverse);if(inward>0)v=v-inverse*inward;inward=dot(acceleration,inverse);if(inward>0)clipped=clipped-inverse*inward;delta=v*dt+clipped*(.5f*dt*dt);}
  if(attempt==4){if(h.normal.y>=.5)ground=true;else{v={};delta={};}}
  }p=p+delta;
  }

@@ -32,23 +32,39 @@ dispatches the victim's `rescue` event, updates rescue statistics, clears carry
 state, and evaluates the mapped final-exit gate. Trigger contact in the
 interactive loop dispatches the authored touch binding through this EVS path.
 
-The same headless `--rescue-check` passes on Training, MBase, Bar R, Gas R,
-Bank, Boat A, Subway A, and Oil Rig A. Each run injects one carried victim and
-dispatches its first authored `touch` escape binding. These checks cover each
-primary rescue package's EVS startup and the shared transaction; they do not
-simulate natural contact or complete a mission. The bundled MBase app binary
-also passes the check against its packaged scene and actor assets.
+The packaged headless `--rescue-check` passes on Training, MBase, Bar R, Gas R,
+Bank, Boat A, Subway A, and Oil Rig A. It iterates every authored victim on
+each primary map, queues the mapped Player pickup message `0x7532`, then
+dispatches an authored `touch` binding for `tell player escape`. Each check
+requires the rescue count to reach the authored victim total, every victim to
+finish in state 6 with actor flags `0x400`, and the carried-victim pointer to
+clear. The verified counts are Training 2/2, MBase 5/5, Bar R 6/6, Gas R 7/7,
+Bank 6/6, Boat A 9/9, Subway A 6/6, and Oil Rig A 3/3. These checks exercise
+the primary packages' EVS startup and shared pickup/release transaction; they
+do not simulate natural travel/contact, retail callback scheduling, the
+five-minute mission objective, linked-stage progression, visual/audio parity,
+or full mission completion. To keep the check headless, it loads ACT data but
+skips renderer/OpenGL texture setup.
 
-`fdny-scene-viewer .local/exports/mbase --rescue-check` injects a carried first
-victim at the center of authored BoundsTrigger 159 (`escape1`, bounds center
-`(1906, -124, -2788)`) and dispatches that trigger's `touch`. The check passes
-with the victim in state 6, actor flags
-`0x400`, carry cleared, and `rescued=1/5`; floor placement returns
-`(1912.28, -214.9, -2668.16)` for the current package. It checks the authored
-EVS binding and connected release transaction, not natural player contact,
-original callback scheduling, carried-body rendering, audiovisual parity,
-or completion of MBase's full mission. To keep the test headless, it loads ACT
-data but skips renderer/OpenGL texture setup.
+The packaged MBase check uses authored BoundsTrigger 159 (`escape1`, bounds
+center `(1906, -124, -2788)`) as its escape binding. After the fifth release,
+the MBase exit gate reaches `messageGate=1`; the map has no authored
+`finalexit` or `finalexitloadmap` binding and no enabled final-exit trigger.
+The no-zone branch calls `0044C360`, which is not evidence of a mission outro.
+Individual release placement is exercised by the transaction, but the all-five
+check's acceptance criterion is the count/state/flag/carry result rather than
+a particular floor-placement coordinate.
+
+## Plain-language explanation
+
+The harness asks the same mapped Player message used for picking up a victim,
+then directly dispatches the map's authored escape trigger. That proves each
+victim can pass through the shared pickup and release code when the relevant
+events are supplied. It does not prove the player can walk to victims, reach
+the trigger naturally, or finish the mission on time. MBase has no authored
+final exit; rescuing all five opens a message/input gate and refreshes the
+inventory, but the retail meaning of that branch as a mission ending is not
+verified.
 
 ## Shared final-exit gates
 
@@ -62,9 +78,11 @@ to Player `+0x3438` or show a claimed retail outro.
 
 The `finalexit` command reaches `HandleFinalExitCommand` (`0x00450A00`). It computes `total victims - field +0x3530 - rescued count +0x352c`. A zero result sets `+0x3438` and calls `0x0044C360`; otherwise the remaining-count value is forwarded to `0x004564C0` with `7.0`. This path is authored on Bank and Boat B.
 
+The viewer now follows both branches: an incomplete exit shows the remaining count for seven seconds, while a complete exit sets the shared gate and refreshes the first owned inventory slot through the existing `refreshSelectedItem` adapter. The complete branch does not add a success hint; the source trace does not show one. The controlled rescue check dispatches authored final-exit triggers before and after the last release to verify the timer, gate, and item reselection.
+
 The `finalexitloadmap` command reaches `HandlePlayerFinalExitLoadMap` (`0x00450A70`). It checks `data\\maps\\<key>.bsp`, applies the same remaining-victim gate, and, when accepted, queues a pending level request with `data\\resdefs\\rescue.rrf`. The pending-level update and World loader route are statically mapped in [the pending-level evidence](evergame_pending_load_update.md). Equality between the checked key and the forwarded pending map-name context, runtime stage handoff, and transition timing are still open.
 
-The shared viewer now has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. The adapter uses the command key because the retail helper's separate forwarded context has not been proven equal. Package loading and primary-rescue synthetic release checks pass, but live exit contact, trigger enable timing, retail request identity, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
+The shared viewer has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. A controlled `--rescue-check` dispatches all six authored `finalexitloadmap` touch bindings after all victims are rescued, verifies that each key loads a matching sibling package, and confirms the command remains gated after the first rescue. All 13 bundled rescue/stage packages pass their rescue checks. The adapter uses the command key because the retail helper's separate forwarded context has not been proven equal. Live exit contact, trigger enable timing, retail request identity, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
 
 ## Current uncertainty and next trace
 

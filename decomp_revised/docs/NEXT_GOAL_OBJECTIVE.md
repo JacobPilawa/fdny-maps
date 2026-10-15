@@ -23,22 +23,53 @@ not a Training-only remake or a separate visual preview.
 ## Current state to verify
 
 - The project now has a map-neutral scene host and a rescue mission selector.
-  The last recorded package loaded all eight retail rescue choices and 13
-  rescue/stage packages. Controlled checks covered Training and the seven
-  campaign rescue maps; they do not prove ordinary retail scheduling or full
-  mission parity. The current rescue-all packaged executable SHA-256 is
-  `5bbb5190739afcd26c219e961bd75bd128d463fed91d445d9a68fca083d76dff`.
-  The packaged catalog check loads all eight rescue choices, and the existing
-  synthetic rescue check passes on each primary rescue package. Packaged
-  interaction checks for Bank and Subway A also pass their controlled door and
-  trigger routes. These checks do not exercise oxygen or ordinary live contact
-  scheduling.
+  The package set loads all eight retail rescue choices and 13 rescue/stage
+  packages. The current rescue-all packaged executable SHA-256 is
+  `440b04d12211b499332ab6e7c4fb6d44fa929ff7a70abba623fb9710982476f5`.
+  Global EVS variable names and `if` value comparisons now follow retail's
+  case-insensitive behavior; the bundled 13-package rescue checks resolve the
+  authored mixed-case bonus references.
+  Packaged `--rescue-check` drives every authored victim on each of the eight
+  primary maps through a mapped pickup message and an authored escape touch.
+  These controlled transactions do not prove natural travel/contact,
+  scheduling, full mission completion, or retail parity. Bank and Subway A
+  also pass controlled door and trigger checks.
 - The shared port has grounded BSP movement/collision, authored victim spawn
   and roaming behavior, contact pickup, rescue/exit transactions, fire state
   and suppression paths, equipment/goggles previews, script dispatch,
   BoundsTrigger/PropModel/BModel contact, and PATH-driven door state. Continue
   generalizing these into a complete rescue flow. Keep controlled or synthetic
   checks distinct from interactive retail comparisons.
+- The shared runtime's clock and extended-precision paths now use portable
+  128-bit arithmetic, with native and forced-fallback macOS builds. A native
+  arithmetic parity harness passed 210,000 comparisons, and the fallback build
+  passed controlled rescue checks on all 13 rescue/stage/Training packages.
+  Linux and Windows builds and interactive behavior remain unverified. See
+  `tracker/evidence/runtime/cmake_platform_boundary_2026-10-15.md`.
+- The shared FireRescue host now resolves authored `moveto` PathPoints and
+  advances the source actor using the mapped distance/progress rule. For the
+  authored MBase and Gas R routes, it now applies the verified `H_Radius/2`
+  visual-update gate for no-`C_Model` fires. Deferred route-trail FireRescue
+  creation remains open: retail creates those children through a later generic
+  spawn drain, but per-instance deactivation/reuse and recurring update
+  ownership are unresolved. FireRescue child creation and its `0x7531` handler
+  now run at the host's post-candidate spawn/message boundary. Factory evidence
+  shows BModel, BoundsTrigger, and PropModel candidates precede FireRescue in
+  retail, while the host still evaluates FireRescue first; exact callback and
+  ScriptActor drain order remains open. See
+  `tracker/evidence/scenario-loading/contact_manager_factory_order_audit_2026-10-15.md`.
+  Trailing timing-key effects, exact transform/floor behavior, and callback
+  cadence remain open.
+  Named-fire spread now maintains retail's per-fire previous proximity and
+  shared nearby-fire counter transitions during the ordered contact pass;
+  already-counted terminal fires stay counted while resident. Teardown/reuse, full candidate
+  membership, and natural spread timing remain open. See
+  `tracker/evidence/fire-spread/proximity_count_port_2026-10-15.md`.
+  Current-hash PlayerRescue getter
+  disassembly confirms `Player::p` is the retail candidate origin; the fourth
+  fire-exposure value and callback cadence remain open. See
+  `tracker/evidence/rescue-moveto/README.md` and
+  `tracker/evidence/fire-spread/player_rescue_candidate_getter.md`.
 - The user reports Bank framerate now seems sorted. Treat that usability issue
   as resolved by report; retail-versus-port frame-time parity is still
   unmeasured. The Training red trigger-volume render gate has been corrected
@@ -48,27 +79,107 @@ not a Training-only remake or a separate visual preview.
   authored `oxyon`/`oxyoff` commands occur across all seven campaign rescues
   and linked stages. Retail initializes the resource at 1.0, delays drain by
   700 ms, removes 0.05 every three seconds, refills at frame delta × 0.1, and
-  routes depletion through Player passout argument 0. The shared viewer now
+  routes depletion through Player passout argument 0. The shared viewer
   implements those commands, resource/timer state, warning gate, and the
-  argument-0 passout route. Retail update cadence, oxygen gauge/status
-  rendering, and subordinate oxygen effects remain open. See
-  `tracker/evidence/scenario-loading/player_oxygen_resource_and_script_path_2026-10-14.md`.
+  argument-0 passout route. It draws the gauge and needle from bundled retail
+  sprite bitmaps, and packaged `--oxygen-hud-render-check` passes. Retail
+  visual/blend parity remains open. The one-shot `RC_OxygenLow` warning now
+  plays the source RRF's `RC_OxygenLow0`/`o2low.wav` through the shared audio
+  path, bundled in all 13 rescue/stage packages. The separate `+0x2160` effect
+  now uses the source-mapped resource-702 shield animation and
+  `VisorUpDown`/`VisorLock` sounds; its timing and overlay were checked from a
+  packaged scene. The low-oxygen orange gauge overlay is also source-mapped and
+  ported; the host maps its controller range to a small alpha ramp as an
+  approximation. The category-volume portions of selectors 4/5 now drive the
+  shared mixer's groups 1 and 2; the manager flag, separate streamed music
+  channel, retail audio/blend parity, warning blend behavior, and update cadence
+  remain open. Player-owned `Breathe` and
+  `OxyRelease` sound events are also ported and bundled in all 13 packages;
+  mixer output parity remains open. See
+  `tracker/evidence/scenario-loading/player_oxygen_resource_and_script_path_2026-10-14.md`
+  and
+  `tracker/evidence/scenario-loading/player_oxygen_low_warning_sound_port_2026-10-15.md`
+  and
+  `tracker/evidence/scenario-loading/player_oxygen_breathe_release_sound_port_2026-10-15.md`
+  and
+  `tracker/evidence/scenario-loading/player_oxygen_visor_effect_port_2026-10-15.md`.
+  See `tracker/evidence/scenario-loading/player_oxygen_audio_category_mix_port_2026-10-15.md`.
+  See `tracker/evidence/scenario-loading/player_oxygen_low_warning_visual_port_2026-10-15.md`.
 - Victim pickup, rescue, and authored exits now have shared transaction paths.
   Carry presentation has no source-backed Player-relative body transform yet.
-  The existing passout/drop helper is not wired into the viewer; its mapped
-  carried-victim drop is on the timed Player state-6 completion route. The
-  viewer lacks Player position `+0x3400` mapping and required passout host
-  callbacks, including cleanup and status services. Held-tool pose/audio, HUD
-  details, damage feedback, fog, and engine timing also remain open or
-  provisional. Use the current work queue for specific scope and avoid
-  reopening items already marked resolved without new evidence.
+  The independent Player status icon now uses retail resource 55 and its
+  source-traced center-to-corner animation; the packaged render and rescue
+  checks pass across all 13 Training/rescue packages. Blend, callback cadence,
+  and carried-body presentation remain open. See
+  `tracker/evidence/scenario-loading/player_victim_pickup_status_hud_2026-10-15.md`.
+  Retail `finalexit` success now opens the exit gate and refreshes the first
+  owned item; incomplete `finalexit` and `finalexitloadmap` hints last seven
+  seconds. Bank/Boat B and linked-stage checks verify these gates in controlled
+  fixtures. Natural exit contact, transition context identity, and retail
+  timing remain open; see
+  `tracker/evidence/scenario-loading/rescue_completion_and_exit_path.md`.
+  State-6 recovery now waits strictly beyond 1000 ms and runs the existing
+  passout/drop transaction. The viewer maps the separate safe snapshot `+0x3400`
+  and reset checkpoint `+0x534`, their oxygen-gated writers, carried-victim
+  drop, floor placement, and status message. The one-second camera blend now
+  runs through the source-shaped view helper; equipped-item offsets, callback
+  cadence, and retail render parity remain unverified. Global mode is fixed at
+  0, so mode-2
+  HeroDown spawning is unsupported. The eight-map check exercises a controlled
+  passout/drop/reset/re-pickup, not natural fire/oxygen recovery or retail
+  parity. See
+  `tracker/evidence/scenario-loading/player_passout_recovery_port_2026-10-14.md`.
+  Controlled `finalexitloadmap` checks now exercise all six authored touch
+  bindings, verify the remaining-survivor gate, and load each requested sibling
+  package; all 13 bundled rescue/stage packages pass `--rescue-check`. Natural
+  exit contact, trigger timing, pending context identity, and full staged
+  mission completion remain open. See
+  `tracker/evidence/scenario-loading/rescue_stage_transition_port_2026-10-14.md`.
+  Held-tool pose/audio, other HUD details, damage feedback, fog, and engine timing
+  also remain open or provisional. Use the current work queue for specific scope
+  and avoid reopening items already marked resolved without new evidence.
+- The active dirty-space glitch subgoal concerns the original retail game's
+  Player/Axe coordinate flow in invalid or out-of-bounds areas on MBase, Boat,
+  and Gas Station, following the user's report of an Axe visual near victims
+  or spreading fire and an apparent Player warp. Source evidence maps a Player
+  downward-sweep hit writing to canonical translation, an Axe sweep derived
+  from Player frame `+0x34A4`, and Axe-transform detachment after a successful
+  world hit. Convex world-model leaf volumes with contents intersecting mask
+  `0x43` reach a nominal 128-unit envelope past reported bounds on all four map
+  groups, within small floating-point differences. Same-family GBSPLib source
+  deliberately builds outside solid leaves; its padded root bounds serve
+  frustum culling and do not alone cause collision. The retail model-bound
+  broadphase and leaf planes still need to be involved, and the incident match
+  remains unknown. A collision latch
+  `+0x12C` can gate an explicit Player `escape` checkpoint capture, but no
+  direct Axe-hit-to-Player write or matching retail runtime trace is
+  established. Axe also has two model children: root gate `+0x1FC` starts
+  false, and ordinary first-time selection activates only the model-1
+  secondary. The only direct primary-gate caller found is the duplicate
+  `equip axe` path; Boat A/B startup scripts each author one Axe equip. If that
+  later path enables model 6, a world hit with no accepted candidate can leave
+  the detached primary visible at its cached transform while model 1 stays
+  attached. This is conditional source behavior, with runtime gate state
+  unknown. The Axe candidate scan does not use a hit
+  BModel as the Axe parent or write Player coordinates; the reviewed Boat
+  Axe-eligible BModels have no authored `chop`/`break` handlers. Runtime script
+  attachments remain open. Boat B's hook/ladder remain additional conditional
+  candidates.
+  Do not implement a behavioral workaround until the retail coordinate write
+  that matches the report is observed. See
+  `tracker/evidence/scenario-loading/dirty_space_axe_warp_trace_2026-10-14.md`
+  and the active glitch section in `docs/WORK_QUEUE.md`.
 - The public GitHub mirror is
   `https://github.com/JacobPilawa/fdny-maps`, with the active project under
-  `decomp_revised/` and the older `decomp/` preserved. The October 14 sync
-  reconciles the local work after `e785aec`; all 607 files from that remote
-  snapshot were present locally. Use `python3 tools/sync_github.py` to compare
-  and add `--push` to publish through the correct subdirectory mapping.
-  Retail inputs and Ghidra project containers remain local and ignored.
+  `decomp_revised/` and the older `decomp/` preserved. A read-only check on
+  2026-10-14 found remote `main` at `367b8c762adf639f13b1afec4c7ae3b7fa3a9d19`;
+  this checkout has no remote and its local snapshot `a9e5c49` records the
+  earlier `d830a4c` baseline. The expanded local trace and handoff edits are
+  not on GitHub. A prior publish was rejected by automatic review, and the
+  restriction is not confirmed resolved, so do not retry or work around it.
+  When resolved, use `python3 tools/sync_github.py` to compare and publish
+  through the correct subdirectory mapping. Retail inputs and Ghidra project
+  containers remain local and ignored.
 
 ## How to continue
 

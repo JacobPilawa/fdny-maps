@@ -1,8 +1,13 @@
 #pragma once
+#include "wide_integer.h"
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <stdexcept>
 // Finite binary floating-point operations with the x87 64-bit significand.
 // Every operation rounds to nearest, ties to even; no host long-double dependency.
 struct Extended {
- using U=__uint128_t;
+ using U=WideUInt128;
  uint64_t m=0;int e=0;bool negative=false; // value = signed m * 2^e
  static int width(U n){int w=0;while(n){n>>=1;w++;}return w;}
  static Extended pack(U n,int exponent,bool sign=false){

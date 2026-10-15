@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
 import struct
 from collections import Counter
@@ -199,6 +200,11 @@ def safe_texture_files(textures: list[dict]) -> list[str]:
     return files
 
 
+def float32(value: float) -> float:
+    """Round like Genesis' cached single-precision vertex projection."""
+    return struct.unpack("<f", struct.pack("<f", value))[0]
+
+
 def world_mesh(geometry: dict, texture_files: list[str]) -> dict:
     """Build triangle groups from GBSP faces with stable material identity."""
     grouped: dict[tuple[int, int], dict] = {}
@@ -228,10 +234,29 @@ def world_mesh(geometry: dict, texture_files: list[str]) -> dict:
             group = grouped.setdefault(key, {
                 "model": model_id, "texture": texture["name"],
                 "texture_index": texture_id, "texture_file": texture_files[texture_id],
-                "positions": [], "uvs": [], "face_spans": [],
+                "positions": [], "uvs": [], "lightmap_uvs": [], "face_spans": [],
             })
             start, count = face["first_vert"], face["num_verts"]
             polygon = [indices[i] for i in range(start, start + count)]
+            projected = []
+            for vertex_id in polygon:
+                point = vertices[vertex_id]
+                raw_u = float32(sum(point[i] * info["u_vec"][i] for i in range(3)))
+                raw_v = float32(sum(point[i] * info["v_vec"][i] for i in range(3)))
+                projected.append((raw_u, raw_v))
+            projected_by_vertex = dict(zip(polygon, projected))
+
+            has_lightmap = (face["light_ofs"] >= 0 and face["light_width"] > 0 and
+                            face["light_height"] > 0 and projected)
+            if has_lightmap:
+                # Genesis Surface.c floors the raw projection minimum to a
+                # 16-unit grid, then D3DDrv adds 8 and divides by 16 to reach
+                # the center of a light sample. Convert that texel coordinate
+                # to this OpenGL viewer's normalized, top-left-source UV space.
+                min_light_u = math.floor(min(u for u, _ in projected) / 16.0) * 16.0
+                min_light_v = math.floor(min(v for _, v in projected) / 16.0) * 16.0
+            else:
+                min_light_u = min_light_v = 0.0
             first_triangle = len(group["positions"]) // 9
             triangle_count = max(0, len(polygon) - 2)
             group["face_spans"].append({
@@ -255,14 +280,26 @@ def world_mesh(geometry: dict, texture_files: list[str]) -> dict:
                 for vertex_id in (polygon[0], polygon[corner], polygon[corner + 1]):
                     point = vertices[vertex_id]
                     group["positions"].extend(point)
-                    raw_u = sum(point[i] * info["u_vec"][i] for i in range(3))
-                    raw_v = sum(point[i] * info["v_vec"][i] for i in range(3))
+                    base_u = sum(point[i] * info["u_vec"][i] for i in range(3))
+                    base_v = sum(point[i] * info["v_vec"][i] for i in range(3))
                     # Public Genesis Surface.c uses dot products, inverse
                     # DrawScale, Shift and texture dimensions. V is flipped
                     # for the SDL/OpenGL bitmap convention used by the port.
-                    u = (raw_u / scale_u + info["shift"][0]) / texture["width"]
-                    v = 1.0 - (raw_v / scale_v + info["shift"][1]) / texture["height"]
+                    u = (base_u / scale_u + info["shift"][0]) / texture["width"]
+                    v = 1.0 - (base_v / scale_v + info["shift"][1]) / texture["height"]
                     group["uvs"].extend((u, v))
+                    if has_lightmap:
+                        raw_u, raw_v = projected_by_vertex[vertex_id]
+                        # The retail handle's mip shift cancels when its
+                        # texel coordinate is normalized against the matching
+                        # face dimensions used by this viewer. Genesis and
+                        # D3DDrv preserve increasing source rows, so keep V
+                        # positive when uploading those rows unchanged.
+                        light_u = float32((raw_u - min_light_u + 8.0) / (16.0 * face["light_width"]))
+                        light_v = float32((raw_v - min_light_v + 8.0) / (16.0 * face["light_height"]))
+                        group["lightmap_uvs"].extend((light_u, light_v))
+                    else:
+                        group["lightmap_uvs"].extend((0.0, 0.0))
 
     return {"groups": list(grouped.values())}
 
@@ -318,6 +355,8 @@ def validate_world_mesh(mesh: dict, geometry: dict) -> dict[str, int]:
             raise ValueError(f"world mesh group {group_index} positions disagree with its face spans")
         if len(group["uvs"]) != expected_first_triangle * 6:
             raise ValueError(f"world mesh group {group_index} UVs disagree with its face spans")
+        if len(group["lightmap_uvs"]) != expected_first_triangle * 6:
+            raise ValueError(f"world mesh group {group_index} lightmap UVs disagree with its face spans")
 
     expected_model_faces = [
         (model_id, face_id)
@@ -439,12 +478,14 @@ def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
     texture_manifest = export_textures(payloads, geometry["textures"], texture_files, out_dir)
     geometry["format_notes"] = [
         "Texinfo and lightmap references are retained for parity work.",
+        "lightdata.bin preserves the full LIGHTDATA chunk; world_mesh.json lightmap_uvs contains Genesis-grid-derived normalized OpenGL coordinates.",
         "MOTN 0.F0 and PATH 0.F2 key values are decoded in motions.json from the retail Genesis.dll reader behavior; chunk 24 is also preserved byte-for-byte.",
         "Other PATH encodings and opaque MOTN event/name-array structures remain undecoded.",
         "World mesh UVs use the current Genesis3D Surface.c projection and were compared against all 121 Training mesh groups.",
     ]
     (out_dir / "world_mesh.json").write_text(json.dumps(mesh, indent=2) + "\n", encoding="utf-8")
     (out_dir / "geometry.json").write_text(json.dumps(geometry, indent=2) + "\n", encoding="utf-8")
+    (out_dir / "lightdata.bin").write_bytes(payloads.get(20, b""))
     (out_dir / "collision.json").write_text(json.dumps(collision, indent=2) + "\n", encoding="utf-8")
     (out_dir / "entities.json").write_text(json.dumps(entities, indent=2) + "\n", encoding="utf-8")
     (out_dir / "motions.json").write_text(json.dumps(motions, indent=2) + "\n", encoding="utf-8")
@@ -472,7 +513,7 @@ def export(bsp_path: Path, out_dir: Path, keep_raw_chunks: bool = True) -> dict:
             "motion_channels": motion_channels,
         },
         "entity_classes": dict(sorted(classes.items())),
-        "outputs": ["geometry.json", "world_mesh.json", "collision.json", "entities.json",
+        "outputs": ["geometry.json", "world_mesh.json", "lightdata.bin", "collision.json", "entities.json",
                     "motions.json", "typedefs.json", "texture_manifest.json", "textures/"]
                    + (["chunks/"] if keep_raw_chunks else []),
         "open_decoders": ["texture mip-chain semantics", "LIGHTDATA", "VISDATA",

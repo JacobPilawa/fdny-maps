@@ -8,16 +8,23 @@ inline std::string trim(std::string s){auto a=s.find_first_not_of(" \t\r\n");if(
 inline std::string unwrap(std::string s){s=trim(s);while(s.size()>1&&((s.front()=='('&&s.back()==')')||(s.front()=='['&&s.back()==']'))){int depth=0;bool whole=true;for(size_t i=0;i<s.size()-1;i++){if(s[i]=='('||s[i]=='[')depth++;if(s[i]==')'||s[i]==']')depth--;if(!depth){whole=false;break;}}if(!whole)break;s=trim(s.substr(1,s.size()-2));}return s;}
 inline std::vector<std::string> splitList(std::string s){std::vector<std::string> out;int depth=0;size_t start=0;for(size_t i=0;i<s.size();i++){if(s[i]=='('||s[i]=='[')depth++;if(s[i]==')'||s[i]==']')depth--;if(s[i]==','&&!depth){out.push_back(trim(s.substr(start,i-start)));start=i+1;}}out.push_back(trim(s.substr(start)));return out;}
 inline std::pair<std::string,std::string> token(std::string s){s=trim(s);size_t i=0;if(!s.empty()&&(s[0]=='('||s[0]=='[')){int depth=0;for(;i<s.size();i++){if(s[i]=='('||s[i]=='[')depth++;if(s[i]==')'||s[i]==']')depth--;if(!depth){i++;break;}}}else{i=s.find_first_of(" \t\r\n");if(i==std::string::npos)i=s.size();}return {s.substr(0,i),trim(s.substr(i))};}
+struct CaseInsensitiveVariableLess{
+ bool operator()(const std::string& left,const std::string& right)const{
+  return std::lexicographical_compare(left.begin(),left.end(),right.begin(),right.end(),
+   [](unsigned char a,unsigned char b){return std::tolower(a)<std::tolower(b);});
+ }
+};
 struct Scripts{
  struct Queued{int entity;std::string command,source;bool startup=false;};
  struct ActorQueue{std::deque<Queued> commands;uint32_t waitUntil=0;bool waiting=false;};
  struct Binding{std::string event,command,source;};
- uint32_t timeMs=0;bool definitionsOnly=false;std::map<std::string,std::string> variables;std::map<std::string,std::string> files;std::map<int,std::vector<Binding>> bindings;std::map<int,ActorQueue> actorQueues;std::set<std::string> once,reported;
+ uint32_t timeMs=0;bool definitionsOnly=false;std::map<std::string,std::string,CaseInsensitiveVariableLess> variables;std::map<std::string,std::string> files;std::map<int,std::vector<Binding>> bindings;std::map<int,ActorQueue> actorQueues;std::set<std::string> once,reported;
  std::function<void(std::string,float)> hint;
  std::function<bool(int,std::string)> host;
  std::function<int(std::string)> findEntity;
  static std::string foldFile(std::string value){std::transform(value.begin(),value.end(),value.begin(),[](unsigned char c){return static_cast<char>(std::tolower(c));});return value;}
  explicit Scripts(J bundle){auto sources=field(bundle,"sources");for(int i=0;i<count(sources);i++){auto source=at(sources,i);auto path=str(field(source,"path"));files[foldFile(path.substr(path.find_last_of('/')+1))]=str(field(source,"text"));}variables["LEVEL"]="training";variables["DIFFICULTY"]="1";}
+ static bool equalInsensitive(const std::string& left,const std::string& right){CaseInsensitiveVariableLess less;return !less(left,right)&&!less(right,left);}
  void report(std::string command,std::string source){auto key=source+":"+command;if(reported.insert(key).second)std::cerr<<"Unimplemented EVS: "<<key<<"\n";}
  // 00471310 -> 0047A130 -> 004799E0: the early file pass admits only
  // top-level set/exec lines. Nested exec files inherit this mode.
@@ -28,7 +35,7 @@ struct Scripts{
  if(verb=="set"){auto [name,value]=token(args);variables[name]=unwrap(value);return;}
  if(verb=="exec"){auto file=files.find(foldFile(args));if(file==files.end()){report(command,source);return;}std::istringstream lines(file->second);std::string line;int number=0;while(std::getline(lines,line)){number++;auto text=trim(line);if(text.rfind("//",0)==0||text.rfind(";",0)==0)continue;auto first=token(text).first;if(definitionsOnly&&first!="set"&&first!="exec")continue;run(line,entity,args+":"+std::to_string(number),depth+1,true);}return;}
  if(verb.size()>1&&verb[0]=='*'){auto name=verb.substr(1);auto it=variables.find(name);if(it==variables.end())report(command,source);else run(it->second,entity,source+"/*"+name,depth+1,startup);return;}
- if(verb=="if"||verb=="ifnot"){auto [name,rest]=token(args);auto [wanted,body]=token(rest);auto value=variables.count(name)?variables[name]:"0";bool equal=false;for(auto& v:splitList(unwrap(wanted)))if(value==v)equal=true;if(equal==(verb=="if"))run(body,entity,source+"/condition",depth+1,startup);return;}
+ if(verb=="if"||verb=="ifnot"){auto [name,rest]=token(args);auto [wanted,body]=token(rest);auto value=variables.count(name)?variables[name]:"0";bool equal=false;for(auto& v:splitList(unwrap(wanted)))if(equalInsensitive(value,v))equal=true;if(equal==(verb=="if"))run(body,entity,source+"/condition",depth+1,startup);return;}
  if(verb=="once"){auto key=std::to_string(entity)+":"+source;if(once.insert(key).second)run(args,entity,source+"/once",depth+1,startup);return;}
  if(verb=="cmd"){int index=0;for(auto part:splitList(unwrap(args))){auto origin=source+"/"+std::to_string(index++);run(part,entity,origin,depth+1,startup);}return;}
  if(verb=="que"){int index=0;auto& queue=actorQueues[entity];for(auto part:splitList(unwrap(args))){auto origin=source+"/"+std::to_string(index++);queue.commands.push_back({entity,part,origin,startup});}return;}

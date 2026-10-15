@@ -18,27 +18,39 @@ the body at `0049D790`.
 
 ## Getter body and port adapter
 
-The preserved `0049DB90` thunk export routes to `0049D790`. The historical
-body export transforms local origin through the object transform at `+0x24`,
-stores the resulting XYZ at `+0x68..+0x70`, and returns that buffer. This
-matches the kind of world-space point used by the viewer's Player movement
-origin, so the shared spread adapter now passes `Player::p` through an
-explicit `playerRescueCandidateWorldOrigin()` seam.
+Current-hash disassembly shows `0049DB90` jumping to `0049D790`. The body
+transforms local origin through the object transform at `+0x24`, stores the
+resulting XYZ at `+0x68..+0x70`, and returns that buffer. For the PlayerRescue
+root, local origin is its world translation at `+0x4C..+0x54`. The Player
+floor-hit writer at `0043F810` updates that canonical translation and mirrors
+the derived origin cache. The viewer's `Player::p` is its canonical movement
+origin, so `playerRescueCandidateWorldOrigin()` returns it directly. Retail
+and host collision bounds also agree (`(-30,-30,-30)` to `(30,85,30)`, with
+the source crouch height at 25); no position or hull adjustment is indicated.
 
 Classification:
 
 - **Verified current hash:** `004483A0` requests candidate slot `+0x0C`; the
   PlayerRescue root vtable address point is `004E1C48`; its slot `+0x0C` is
   `0049DB90`; `00453D50` installs that vtable.
-- **Corroborated by archived decompilation:** `0049DB90 -> 0049D790`; the
-  body transforms the object origin and returns XYZ at `+0x68`.
-- **Still open:** a current-hash body export for `0049DB90/0049D790`, the
-  fourth float read by the exposure path, its initialization, and exact
-  alignment between retail transform origin and viewer movement origin.
+- **Verified by current-hash disassembly:** `0049DB90 -> 0049D790`; the body
+  transforms local origin through root transform `+0x24` and returns XYZ from
+  the cache at `+0x68..+0x70`.
+- **Corroborated by field writers:** Player translation `+0x4C..+0x54` is
+  canonical; `0043F810` refreshes the derived origin cache after writing it.
+- **Still open:** the fourth value read by the exposure path and its
+  initialization, callback cadence, and relative order with other updates.
+  These do not change the mapped candidate position.
 
-No Ghidra instance was available during this audit, so the getter body was not
-refreshed from the active executable. The shared viewer now calls its
-source-shaped `0x7531` fire-exposure handler from the ordinary frame loop.
-This adapter and call site do not establish retail exposure callback cadence
-or the required fourth-float value; see
+The shared viewer now calls its source-shaped `0x7531` fire-exposure handler
+from the ordinary frame loop. This adapter and call site do not establish
+retail exposure callback cadence or the required fourth-float value; see
 [`player_hud_goggles_equipment_fire_viewer_runtime.md`](../scenario-loading/player_hud_goggles_equipment_fire_viewer_runtime.md).
+
+## Plain-language explanation
+
+Retail asks the PlayerRescue actor for the world position of the middle of its
+root frame. That point is the same translation the viewer already stores in
+`Player::p`, so the port can pass `Player::p` directly. The position alignment
+is now source-backed; the exact callback timing and one separate exposure
+value are still unknown.

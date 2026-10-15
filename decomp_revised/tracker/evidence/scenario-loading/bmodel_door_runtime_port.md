@@ -256,10 +256,15 @@ timing or retail callback cadence.
 - ScriptActor queue advancement is provisionally once per rendered frame. The
   retail updater processes at most one queued command per callback, but the
   callback scheduler and its cadence remain unresolved.
-- The contact box is reconstructed by unioning the exported child model
-  AABBs. The overlap formula and reach gate are source-backed, but the exact
-  retail BModel bound-construction path (including helper `0043B7A0`, if it is
-  the relevant initializer) has not yet been mapped against this union.
+- The host contact box unions each exported child-model AABB. The new
+  [bound-construction audit](bmodel_contact_bound_construction_2026-10-15.md)
+  confirms that retail `0043B7A0` also unions per-child model min/max values,
+  then converts the pair through `004819A0` before contact helper
+  `004817A0` uses root `+0x240`. The exporter carries the corresponding raw
+  GBSP `MODELS` fields into `collision.json`, so the host matches the source
+  inputs under the asset/runtime-field join. The Genesis runtime values and
+  final 52-byte box conversion have not been captured completely; direct use
+  of the raw union remains a contact-box approximation.
 - BoundsTrigger contact uses each `C_Model` collision model's exported AABB
   and authored `E_Reach`. The overlap helper is source-mapped, but live Player
   contacts and exact world bounds have not been captured in the game. The host

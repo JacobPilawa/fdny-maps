@@ -4,6 +4,7 @@
 #include <json-c/json.h>
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cmath>
 #include <cstdint>
@@ -32,6 +33,7 @@ struct SceneAudio {
         V source{};
         V listener{};
         float yaw = 0.f;
+        int channelGroup = 0;
         bool ownerAware = false;
         bool looping = false;
     };
@@ -40,6 +42,9 @@ struct SceneAudio {
     SDL_AudioSpec output{};
     std::map<std::string, Sample> samples;
     std::vector<Voice> voices;
+    // Raw retail sound-instance category IDs from +0x14. The oxygen visor
+    // selector changes categories 1 and 2; streamed music uses a separate channel.
+    std::array<float, 3> soundGroupGains{1.f, 1.f, 1.f};
     bool loaded = false;
 
     static std::string fold(std::string value) {
@@ -63,8 +68,9 @@ struct SceneAudio {
             if (!voice.sample) continue;
             const size_t sampleFrames = voice.sample->stereoPcm.size() / (2 * sizeof(int16_t));
             if (sampleFrames == 0) continue;
-            const float leftGain = self->channelGain(voice, false);
-            const float rightGain = self->channelGain(voice, true);
+            const float groupGain = self->soundGroupGainForVoice(voice);
+            const float leftGain = self->channelGain(voice, false) * groupGain;
+            const float rightGain = self->channelGain(voice, true) * groupGain;
             const auto* sourceSamples = reinterpret_cast<const int16_t*>(voice.sample->stereoPcm.data());
             for (size_t frame = 0; frame < outputFrames; ++frame) {
                 if (voice.frameOffset >= sampleFrames) {
@@ -176,18 +182,41 @@ struct SceneAudio {
     }
 
     // Preserve the original convenience API for unowned one-shot sounds.
-    void play(const std::string& name, V source, V listener, float yaw) {
-        startVoice(0, false, name, source, listener, yaw, false);
+    void play(const std::string& name, V source, V listener, float yaw, int channelGroup) {
+        startVoice(0, false, name, source, listener, yaw, channelGroup, false);
     }
 
     // Owner-aware equivalents mirror the retail script sound manager's key.
-    void playOwned(int owner, const std::string& name, V source, V listener, float yaw) {
-        startVoice(owner, true, name, source, listener, yaw, false);
+    void playOwned(int owner, const std::string& name, V source, V listener, float yaw,
+                   int channelGroup) {
+        startVoice(owner, true, name, source, listener, yaw, channelGroup, false);
     }
 
-    void loopOwned(int owner, const std::string& name, V source, V listener, float yaw) {
+    void loopOwned(int owner, const std::string& name, V source, V listener, float yaw,
+                   int channelGroup) {
         // Deliberately append a voice every call: retail can accumulate duplicate loops.
-        startVoice(owner, true, name, source, listener, yaw, true);
+        startVoice(owner, true, name, source, listener, yaw, channelGroup, true);
+    }
+
+    bool setSoundGroupGain(int channelGroup, float gain) {
+        if (channelGroup < 1 || channelGroup > 2) return false;
+        const float boundedGain = std::clamp(gain, 0.f, 1.f);
+        if (device) SDL_LockAudioDevice(device);
+        soundGroupGains[static_cast<size_t>(channelGroup)] = boundedGain;
+        if (device) SDL_UnlockAudioDevice(device);
+        return true;
+    }
+
+    bool applyOxygenVisorCategorySelector(int selector, float attenuatedCategory2Gain) {
+        if (selector == 4) return setSoundGroupGain(2, attenuatedCategory2Gain);
+        if (selector == 5)
+            return setSoundGroupGain(1, 1.f) && setSoundGroupGain(2, 1.f);
+        return false;
+    }
+
+    float soundGroupGainForVoice(const Voice& voice) const {
+        if (voice.channelGroup < 1 || voice.channelGroup > 2) return 1.f;
+        return soundGroupGains[static_cast<size_t>(voice.channelGroup)];
     }
 
     void updateOwned(int owner, const std::string& name, V source, V listener, float yaw) {
@@ -200,6 +229,17 @@ struct SceneAudio {
                 voice.listener = listener;
                 voice.yaw = yaw;
             }
+        }
+        SDL_UnlockAudioDevice(device);
+    }
+
+    void updateOwnedListeners(V listener, float yaw) {
+        if (!device) return;
+        SDL_LockAudioDevice(device);
+        for (Voice& voice : voices) {
+            if (!voice.ownerAware) continue;
+            voice.listener = listener;
+            voice.yaw = yaw;
         }
         SDL_UnlockAudioDevice(device);
     }
@@ -221,6 +261,7 @@ struct SceneAudio {
         }
         voices.clear();
         samples.clear();
+        soundGroupGains = {1.f, 1.f, 1.f};
         loaded = false;
     }
 
@@ -256,8 +297,12 @@ private:
     }
 
     void startVoice(int owner, bool ownerAware, const std::string& name,
-                    V source, V listener, float yaw, bool looping) {
+                    V source, V listener, float yaw, int channelGroup, bool looping) {
         if (!device) return;
+        if (channelGroup < 1 || channelGroup > 2) {
+            std::cerr << "Unsupported scene sound group " << channelGroup << " for " << name << "\n";
+            return;
+        }
         const std::string key = fold(name);
         auto found = samples.find(key);
         if (found == samples.end()) {
@@ -274,6 +319,7 @@ private:
         voice.source = source;
         voice.listener = listener;
         voice.yaw = yaw;
+        voice.channelGroup = channelGroup;
         voices.push_back(std::move(voice));
         SDL_UnlockAudioDevice(device);
     }
