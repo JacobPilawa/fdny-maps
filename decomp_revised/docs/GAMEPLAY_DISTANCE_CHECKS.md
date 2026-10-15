@@ -164,6 +164,57 @@ The roaming AI has other distance tests with different jobs:
 - Candidate generation also has short movement lengths and other branches;
 those values are step choices, not the victim's full roam radius.
 
+#### What the 432-unit check means for the victim's behavior
+
+Think of roaming as a series of short waypoints, not as the victim constantly
+chasing or fleeing the Player. A victim only enters this roaming state when a
+script tells it to with a command such as `roam 1000`. It moves toward its
+current waypoint; when it gets close enough (about 72 units), it chooses the
+next one.
+
+When choosing that next waypoint, the AI measures the straight-line 3D distance
+from the Player to the **current waypoint**. In formula form, the 432-unit gate
+is:
+
+```text
+distance_squared = (player.x - target.x)²
+                 + (player.y - target.y)²
+                 + (player.z - target.z)²
+compare distance_squared with 432² (= 186,624)
+```
+
+So this is a true spherical distance check: it uses all three coordinates. It
+does not measure 432 units from the victim's body, and it is not three separate
+“within 432 on X, Y, and Z” checks. Being inside the sphere merely lets the AI
+consider a Player-relative direction. Two more tests must pass:
+
+1. The victim must be facing the Player within a 45-degree angle, measured from
+   one of the victim's orientation vectors. The code proves that it checks an
+   orientation cone; which model axis is visibly “forward” still needs a
+   runtime check.
+2. A world collision query must find a clear segment between the current roam
+   waypoint and the Player. A wall or other blocking geometry can make this
+   test fail even when the Player is close.
+
+If the Player is outside 432 units, the victim is not in the right facing cone,
+or the segment is blocked, the AI falls back to a direction based on its last
+roam step. It does not turn toward the Player merely because the Player is
+nearby. When the gates do pass, the first candidate is a 12-unit step aimed
+from the current waypoint toward the Player. Later branch checks can keep that
+step aimed toward the Player or reverse it so it points away. In the traced
+branch, carrying-state and the Player's own facing angle affect that choice; an
+additional internal float comparison can also reverse it, and its exact
+meaning has not been resolved. The evidence therefore supports both toward and
+away steps, but not a simple rule that victims always chase or always flee.
+
+The chosen step is still only a candidate. The game checks that it stays
+inside the victim's authored roam boundary, does not collide with the world,
+clears nearby fire obstacles, and has suitable floor under the destination.
+Rejected candidates are adjusted and retried; if normal choices fail, the AI
+can switch to its short random-step mode. The reverse-engineered trace is
+static analysis of the pinned executable; exact callback timing and the
+victim's visible forward axis have not been confirmed in a live game capture.
+
 **Evidence:** [victim roam behavior](../tracker/evidence/scenario-loading/victim_roam_behavior.md),
 [fresh script dispatcher](../tracker/evidence/scenario-loading/0045cdb0_dispatch_victim_rescue_script_fresh.c),
 [fresh roam startup](../tracker/evidence/scenario-loading/0045c7f0_start_victim_roam_fresh.c),
