@@ -19,9 +19,16 @@ systems and catalog-driven startup are the remaining integration work.
   See the [native C++ reuse audit](../docs/NATIVE_CODE_REUSE_AUDIT.md).
 - `spikes/training-native-prototype/src/scene_data.h` and
   `scene_viewer.cpp` provide a level-neutral package loader and BSP
-  geometry/movement preview. All 17 local packages load with zero unresolved
-  texture paths. The preview now creates typed rescue victims from exported
-  ACT assets, applies authored spawn alternatives and initial motions, moves
+  geometry/movement preview. Its CMake dependency discovery supports pkg-config,
+  CMake packages, or standard include/library paths. The shared runtime now
+  has portable 128-bit arithmetic; both native and forced-fallback builds and
+  all 13 rescue/stage checks pass on macOS. Linux and Windows builds remain
+  unverified here. The CoreText Training workbench remains Apple-only. All 17
+  local packages load with zero unresolved texture paths. See the
+  [platform portability audit](../tracker/evidence/runtime/cmake_platform_boundary_2026-10-15.md)
+  for verification and remaining OS gates. The preview now creates typed
+  rescue victims from exported ACT assets, applies authored spawn alternatives
+  and initial motions, moves
   six-motion victims with `roam` commands through collision-checked waypoints,
   and applies the source-mapped proximity pickup state. It now bundles the
   selected map's EVS includes and referenced WAVs, dispatches BModel and

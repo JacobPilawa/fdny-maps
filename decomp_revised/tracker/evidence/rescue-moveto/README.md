@@ -5,6 +5,34 @@ scene export. This maps the authored command into the beginning of the native
 FireRescue path-motion setup. It maps the path updater and the two trailing values into generated timed-key timestamps.
 The callback schedule and exact author-facing timing terms remain open.
 
+## Current shared-host port (2026-10-15)
+
+The shared EVS host now resolves the named `RCS_PathPoint` through its
+case-insensitive `A_Name` registry and advances the original FireRescue along
+the mapped direction at the rate computed from the first operand. On the
+authored MBase and Gas R routes, the source updates that fire's visible position
+only after progress advances by more than half its `H_Radius`; the host now
+preserves this threshold and still moves to the endpoint on completion. These
+routes have no `C_Model`, so the initializer's threshold field is directly
+mapped to `H_Radius`. See
+[`00448D60_h_radius_threshold.asm`](00448D60_h_radius_threshold.asm). The two
+trailing operands are retained as inputs but are not yet used to build retail's
+timed visual keys.
+
+The pinned updater also builds FireRescue-shaped configs and submits deferred
+map-entity spawn requests as the source actor advances. The later generic
+spawn-queue drain (`0049C670`) performs object creation and manager
+registration. A follow-up maps the FireRescue factory, handle assignment, and
+the limits of its pool/update lifecycle in
+[`deferred_child_lifecycle_2026-10-15.md`](deferred_child_lifecycle_2026-10-15.md).
+The queued actor's recurring update, per-entity deactivation, reuse, and
+emission behavior are not fully mapped, so the host does not spawn trail
+actors. Exact transform/floor behavior for the moved source fire and the
+external callback cadence also remain open. The packaged MBase and gas_r
+`--rescue-check` commands complete
+without an `Unimplemented EVS` report, but those controlled rescue transactions
+do not exercise or establish natural route timing or retail parity.
+
 ## Authored input
 
 `inputs/original/Data/Maps/mbase.evs` contains:
@@ -136,6 +164,10 @@ unknown. Fresh pseudocode is `0044AE80_fresh.c`.
   [`pathpoint_registration.md`](pathpoint_registration.md).
 - The meanings of the two values copied to PathPoint offsets `+0x28/+0x2C`
   remain unresolved.
+- For a FireRescue initializer with a non-null `C_Model`, the first component
+  used by the `00449340` progress gate is derived through a separate model path;
+  that branch is not yet mapped. The authored `moveto` fires in MBase and Gas R
+  have no `C_Model`.
 - The precise script `tell` argument/target delivery behavior. The separate
   player handler maps `setashdensity`; this trace begins at the FireRescue
   command function identified by the `moveto` string reference.
@@ -143,3 +175,13 @@ unknown. Fresh pseudocode is `0044AE80_fresh.c`.
 This finding informs both the MBase first slice and rescue maps such as `gas_r`
 that also contain authored `RCS_PathPoint` entries. Do not hard-code `mortar1`
 or these entity indexes into the shared scene loader.
+
+## Plain-language explanation
+
+MBase tells one fire to move toward a named point when the level starts. The
+viewer now finds that point by name and moves the original fire in steps after
+it has traveled more than half its authored radius, then reaches the endpoint.
+The original game also queues additional FireRescue entities along the route
+for a later generic spawn drain. Their eventual world setup, ownership,
+lifetime, and timing still need to be ported, so this does not establish full
+FireRescue route parity.

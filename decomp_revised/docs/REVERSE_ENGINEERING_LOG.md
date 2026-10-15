@@ -538,10 +538,17 @@ Added a first shared-host implementation of the current-hash proximity-spread
 path. The source trace is `004483A0` (FireRescue primary `+0x48` contact
 callback) → `00448320` (max-axis proximity and 750-unit bookkeeping) →
 `00447A90` (intensity roll, child placement, and timed size keys). The viewer
-rebuilds the nearby-fire count for its one-player scene, attempts spread
-after player movement, uses the BSP world sweep, and queues children until
-the current fire iteration is complete. This follows the mapped owner order
-where the contact manager finishes before the staged factory queue drains.
+now keeps each named fire's previous proximity distance and updates a shared
+nearby-fire count as callbacks run in candidate order; this replaces the
+earlier frame-by-frame recount. It attempts spread after player movement, uses
+the BSP world sweep, and queues children until the contact pass completes.
+Already-counted mode-5 fires remain counted while resident, as retail skips
+their callback until cleanup. The implementation is bounded to the viewer's stable
+single-Player fire list; teardown, reuse, and full candidate membership remain
+open. This follows the mapped owner order where the contact manager finishes
+before the staged factory queue drains. Details and the exact transition
+instructions are in
+[`proximity_count_port_2026-10-15.md`](../tracker/evidence/fire-spread/proximity_count_port_2026-10-15.md).
 
 The fresh, hash-pinned `00447A90` export establishes the strict size/deadline
 gates, failed-roll retry at `now+500`, radius and angle draws, sweep from

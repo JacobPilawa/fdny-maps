@@ -14,6 +14,10 @@ The callback, distance gates, random-placement geometry, child creation, timed
 keys, and retry schedule below were checked again against the active hash-pinned
 program; current Ghidra exports are saved beside this note.
 
+The authored-fire initializer's `FireBurn1`–`FireBurn3` selection, WAV resource
+definitions, and shared viewer loop-audio port are tracked in
+[`firerescue_loop_audio_port_2026-10-15.md`](firerescue_loop_audio_port_2026-10-15.md).
+
 ## Current call path
 
 ```text
@@ -34,10 +38,12 @@ calls `0x00447A90` at `0x0044838E`.
 FireRescue's callback asks candidate vtable slot `+0x0C` for a position
 buffer. Current-hash PlayerRescue vtable bytes and constructor evidence map
 that slot to thunk `0049DB90`; the archived body export routes it to
-`0049D790`, which transforms the origin at object `+0x24` and returns XYZ at
-`+0x68`. The viewer now uses its movement origin through an explicit adapter.
-The getter implementation, fourth float used by exposure, and exact host
-transform alignment remain open. See
+`0049D790`. Current-hash disassembly confirms that the body transforms local
+origin through root transform `+0x24` and returns XYZ at `+0x68..+0x70`.
+Player's local origin is canonical translation `+0x4C..+0x54`; its floor-hit
+writer refreshes the derived cache after updating that translation. The viewer
+uses the matching movement origin, `Player::p`, through an explicit adapter.
+The fourth float used by exposure and callback cadence remain open. See
 [`player_rescue_candidate_getter.md`](player_rescue_candidate_getter.md).
 
 The spread checks in `00448320` and `00447A90` read the length at `+4` of the
@@ -122,13 +128,15 @@ if intensity < 0: intensity = 0
 The final comparison is strict against 0.1. If the fifth argument `finalize` is
 nonzero and the stored intensity is below that threshold, the routine changes
 mode `+0x70` to 5, increments `Fires Doused`, stops the loop sound referenced
-at `+0x114` when present, and clears byte `+0x1C8` (its field meaning is not
-yet established). On every non-mode-5 update, it sets recently-sprayed byte
-`+0x104`. `UpdateFireRescueActor` reads the same mode through its embedded
+at `+0x114` when present, and clears byte `+0x1C8`. A fresh field trace maps
+that byte to the visual component's `+0x9C` enabled flag. On every
+non-mode-5 update, the routine sets recently-sprayed byte `+0x104`.
+`UpdateFireRescueActor` reads the same mode through its embedded
 subobject at `+0x4C`; mode 5 returns before that callback updates fire alpha,
-size/color, or effects. This still does not establish whether already-created
-flames disappear immediately or how the renderer handles terminal mode; see
-[the visual terminal-state audit](visual-terminal-state.md).
+size/color, or effects. The visual helper also returns with the component
+disabled, stopping later child updates and polygon submissions. This does not
+clear child active bits or establish when already-submitted polygons disappear;
+see [the visual terminal-state audit](visual-terminal-state.md).
 
 The receiver `DispatchFireRescueSprayMessage` (`0x00449A40`) was another
 missing Ghidra boundary. FireRescue primary vtable slot `+0x08` at `0x004E1788`
@@ -150,14 +158,14 @@ remaining-intensity/effect-timer gate controls its hose-hit effect path. Thus
 both tools reduce the same intensity through the same function, but only this
 hose call requests final dousing.
 
-The earlier C++ `FireSuppression` component already captures the nonlinear
-intensity update and terminal/stat/sound state changes, so it is worth reusing.
-Its `dt` argument must be supplied from the native frame-delta equivalent. The
-shared wrapper no longer immediately disables sprites on terminal state:
-`0x00448970` sets mode 5 and clears byte `+0x1C8`, but the byte's meaning and
-the visual lifecycle remain unresolved. The copied 679 KiB suppression oracle
-is tagged with the same EXE hash and is preserved for a later focused
-reconciliation; it was not rerun in this pass.
+The shared `FireSuppression` component captures the nonlinear intensity update
+and terminal/stat/sound state changes. Its `dt` argument must be supplied from
+the native frame-delta equivalent. `FireEntity::spray` now maps the cleared
+`+0x1C8` visual-component flag to `FireVisual.enabled`, stopping subsequent
+native child-sprite draws and animation updates. No child destruction, alpha
+fade, or immediate removal of submitted geometry is synthesized. The copied
+679 KiB suppression oracle is tagged with the same EXE hash; it now checks the
+component gate through the entity wrapper.
 
 Fresh exports and instruction listings for the suppression routine, message
 receiver, hose contact helper, and HoseSpray update are saved beside this note.
@@ -210,6 +218,14 @@ Think, message delivery, and RNG-consuming systems. The viewer still lacks the
 shared manager lists, so it cannot claim original spread/exposure timing.
 Collision/visibility semantics remain partly inside Genesis3D.
 
+The owner pass calls the contact manager before the entity-spawn queue and the
+mapped-message drain. This means a spread child created from a FireRescue
+contact cannot join that same pass's contact candidates. The viewer now
+snapshots the fire candidate count before it creates queued children and uses
+that count for Player exposure dispatch. The narrow port correction and its
+remaining timing limits are recorded in
+[`fire_contact_pass_order_port_2026-10-15.md`](fire_contact_pass_order_port_2026-10-15.md).
+
 Fresh, hash-pinned pseudocode is saved as `00447A90_fresh.c`,
 `00448320_fresh.c`, `004483A0_fresh.c`, `0044A7A0_fresh.c`,
 `00453A70_fresh.c`, and `00451640_fresh.c`. The two assembly traces preserve
@@ -228,6 +244,21 @@ The Ghidra export of `ApplyPlayerFireExposure` hides an implicit current-clock
 addition and the extended-precision threshold comparison; its assembly trace is
 the authority for those details.
 
+## Plain-language explanation
+
+The fire system asks the player actor for a world-space contact point. The
+source getter returns the Player frame's own origin, and the shared viewer
+already keeps that same point as `Player::p`. This closes the origin-alignment
+question without changing the collision hull; contact timing and one separate
+exposure input still need source or runtime evidence.
+
 Fixed-path `moveto` deposits and the separate `setsize` command are tracked in
 [`../rescue-moveto/README.md`](../rescue-moveto/README.md). Random nearby
-spread is a distinct mechanic and must be covered too.
+spread is a distinct mechanic and must be covered too. The shared spread
+population changes as each named fire crosses the 750-unit boundary; it is not
+a fresh count of whichever fires appear active. In the viewer, root `+0x120`
+is represented by a per-fire previous-distance field and the aggregate count
+advances during the candidate pass. A previously counted fire in terminal
+mode 5 stays counted until cleanup in the retail lifecycle; the viewer keeps
+it resident until scene reload. See
+[`proximity_count_port_2026-10-15.md`](proximity_count_port_2026-10-15.md).

@@ -11,7 +11,8 @@ struct FireEntity {
   dividerCycle++;if(dividerCycle>3)dividerCycle=0;update.divider=uint8_t(dividerCycle);
   visual.initialize(shared,smoke,now);
   soundChoice=named?int(shared.range(0,2.999f)):-1;
-  suppression.strength=1;suppression.sprayed=false;suppression.hasSound=named;suppression.sprayTime=sprayTime;
+  suppression.strength=1;suppression.sprayed=false;suppression.hasSound=named;
+  suppression.visualComponentEnabled=1;suppression.sprayTime=sprayTime;
   visual.position=authored;visual.sizes.add({float(double(radius)*.75),float(double(height)*.25),float(double(radius)*.75)},now,now);
   origin={authored.x,float(double(authored.y)+4),authored.z};
   if(floor)floor(visual);if(named)playLoop(soundChoice);
@@ -26,8 +27,8 @@ struct FireEntity {
  }
  void spray(float dt,float influence,bool terminal,const std::function<void()>& countDoused,const std::function<void()>& stopSound){
   suppression.spray(dt,influence,terminal,countDoused,stopSound);
-  // Native 00448970 clears byte +0x1C8 but its meaning is unverified. It does
-  // not directly disable the render helpers; terminal presentation remains a
-  // separate callback/renderer lifecycle question.
+  // Root +0x1C8 aliases the visual component's +0x9C enabled byte. The retail
+  // visual updater returns while disabled, so stop future child updates/draws.
+  visual.enabled=suppression.visualComponentEnabled!=0;
  }
 };

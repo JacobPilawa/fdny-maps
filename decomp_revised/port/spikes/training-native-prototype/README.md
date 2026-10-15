@@ -11,23 +11,41 @@ systems needed to run them. Training is a validation fixture and a source of
 reusable gameplay code. Promote that behavior behind a shared scene/runtime
 contract, while retaining evidence for each component and its data assumptions.
 
-## Build and launch on this Mac
+## Native build
 
-Install CMake, SDL2, json-c, and a C++17 compiler. With Homebrew:
+From the repository root, build the map-neutral `fdny-scene-viewer` target with
+SDL2, json-c, OpenGL, and C++17. The shared runtime has portable 128-bit
+arithmetic, using a compiler's native type when available and a two-word
+fallback otherwise. CMake checks pkg-config, CMake
+package targets, and standard include/library paths for SDL2 and json-c. The
+native and forced-fallback builds are verified on macOS. Linux GCC/Clang and
+Windows/MSVC builds have not yet been run. Install the development packages
+for the target system, then run:
+
+```sh
+cmake -S port/spikes/training-native-prototype -B build-native
+cmake --build build-native --target fdny-scene-viewer
+```
+
+The older `fdny-training` workbench target is built on macOS, where its
+Training-specific menu uses CoreText/CoreGraphics. On macOS, Homebrew provides
+the local dependencies. From the repository root:
 
 ```sh
 brew install cmake sdl2 json-c
-./run.sh
+cmake -S port/spikes/training-native-prototype -B port/spikes/training-native-prototype/.local/build
+cmake --build port/spikes/training-native-prototype/.local/build -j 4
 ```
 
-The command configures and builds into `build/`, then attempts to open a window.
-The current Codex shell compiled the binary but SDL reported that its video
-driver had no displays, so interactive launch remains unverified here.
+`./run.sh` also builds and launches the Training workbench on macOS. The current
+Codex shell has previously compiled the binary, while SDL reported that its
+video driver had no displays; interactive launch remains unverified there.
 Press Escape to release or recapture the mouse. Use WASD to move, mouse to look,
 Space or right mouse to jump, Shift to use, C to crouch, 1 to select the axe,
 2 to select the extinguisher, and left mouse to use the active tool.
 
-To build separately without starting the window:
+To build the macOS workbench separately without starting its window, run these
+commands from the workbench directory:
 
 ```sh
 cmake -S . -B build

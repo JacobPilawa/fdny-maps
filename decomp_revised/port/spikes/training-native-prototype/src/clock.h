@@ -2,14 +2,15 @@
 #include <cstdint>
 #include <cmath>
 #include <algorithm>
+#include "wide_integer.h"
 // Integer arithmetic preserves the original x87 64-bit significand on ARM,
 // where long double has the same precision as double. A double intermediate
 // rounded 702.999999999999994 to 703 before the original truncating conversion.
-using ClockWide=__int128;
-inline ClockWide clockRound(ClockWide value,int precision=64){bool negative=value<0;unsigned __int128 n=negative?-value:value;int bits=0;for(auto k=n;k;k>>=1)bits++;int shift=bits-precision;if(shift<=0)return value;auto quotient=n>>shift,remainder=n-(quotient<<shift),half=(static_cast<unsigned __int128>(1)<<(shift-1));if(remainder>half||(remainder==half&&(quotient&1)))quotient++;ClockWide result=ClockWide(quotient<<shift);return negative?-result:result;}
+using ClockWide=WideInt128;
+inline ClockWide clockRound(ClockWide value,int precision=64){bool negative=value.isNegative();WideUInt128 n=value.magnitude();int bits=0;for(auto k=n;k;k>>=1)bits++;int shift=bits-precision;if(shift<=0)return value;auto quotient=n>>shift,remainder=n-(quotient<<shift),half=(WideUInt128(1)<<(shift-1));if(remainder>half||(remainder==half&&(quotient&1)))quotient++;return ClockWide(quotient<<shift,negative);}
 inline ClockWide clockFixed(double value){return ClockWide(std::ldexp(value,60));}
 inline float clockFloat(ClockWide value,int scale=60){return float(std::ldexp(double(clockRound(value,24)),-scale));}
-inline ClockWide clockReciprocal(ClockWide divisor){ClockWide numerator=ClockWide(1)<<120;ClockWide q=numerator/divisor;int bits=0;for(auto n=q;n;n>>=1)bits++;int shift=std::max(0,bits-64);ClockWide den=divisor<<shift;ClockWide result=numerator/den,remainder=numerator%den;if(remainder*2>den||(remainder*2==den&&(result&1)))result++;return result<<shift;}
+inline ClockWide clockReciprocal(ClockWide divisor){WideUInt128 numerator=WideUInt128(1)<<120;WideUInt128 denominator=divisor.magnitude();WideUInt128 q=numerator/denominator;int bits=0;for(auto n=q;n;n>>=1)bits++;int shift=std::max(0,bits-64);WideUInt128 den=denominator<<shift;WideUInt128 result=numerator/den,remainder=numerator%den;if(remainder*2>den||(remainder*2==den&&(result&1)))result++;return ClockWide(result<<shift);}
 // Original clock update 0042BF70, including its stall correction sign.
 struct GameClock {
  uint32_t previous=0,current=0,origin=0,reserved=0;

@@ -74,6 +74,7 @@ J load(const char* name){auto p=assetDirectory()+"/"+name;auto j=json_object_fro
 #include "victim_frame_ops.h"
 #include "victim_release.h"
 #include "player_rescue_deadline.h"
+#include "player_passout.h"
 #include "victim_transactions.h"
 #include "victim_status.h"
 #include "carry_entity_mode.h"
@@ -220,6 +221,37 @@ int main(int argc,char** argv){try{
   requestedSeed=uint32_t(parsed);hasRequestedSeed=true;
  }
  if(argc>1&&std::string(argv[1])=="--asset-path"){std::cout<<assetDirectory()<<"\n";return 0;}
+ if(argc>1&&std::string(argv[1])=="--player-passout-recovery-check"){
+  PlayerPassoutState state;state.state=6;state.failedAt=0xfffffff0u;
+  int mismatches=0;
+  const uint32_t atStart=state.failedAt;
+  const uint32_t at1000=state.failedAt+1000u;
+  const uint32_t at1001=state.failedAt+1001u;
+  if(playerPassoutRecoveryDue(state,at1000))mismatches++;
+  if(!playerPassoutRecoveryDue(state,at1001))mismatches++;
+  if(playerPassoutViewFactor(state,atStart)!=1.f)mismatches++;
+  if(playerPassoutViewFactor(state,at1000)!=0.f)mismatches++;
+  if(!(playerPassoutViewFactor(state,at1001)<0.f))mismatches++;
+  FrameTransform root;root.position={10.f,20.f,30.f};
+  Follower follower;follower.position={10.f,90.f,30.f};follower.previous=follower.position;
+  follower.held=true;follower.flags=0x2e;follower.threshold={20.f,1000.f,20.f};
+  follower.settling={.05f,0.f,.05f};follower.smoothing={0.f,.05f,0.f};
+  auto startView=ViewUpdate::transition(root,{}, {}, {},{0.f,-20.f,-30.f},
+      {-60.f,1000.f,0.f},70.f,playerPassoutViewFactor(state,atStart),0.f,0.f,follower,false);
+  auto endView=ViewUpdate::transition(root,{}, {}, {},{0.f,-20.f,-30.f},
+      {-60.f,1000.f,0.f},70.f,playerPassoutViewFactor(state,at1000),0.f,0.f,follower,false);
+  if(startView.world.position.x!=10.f||startView.world.position.y!=90.f||
+     startView.world.position.z!=30.f)mismatches++;
+  if(endView.world.position.x!=10.f||endView.world.position.y!=70.f||
+     endView.world.position.z!=0.f)mismatches++;
+  if(!(endView.world.axis[2].x<0.f&&endView.world.axis[2].y>0.f&&
+       endView.world.axis[2].z>0.f))mismatches++;
+  state.state=3;
+  if(playerPassoutRecoveryDue(state,state.failedAt+5000u))mismatches++;
+  std::cout<<"Player passout view/recovery: factors 1→0, view endpoints, recovery after 1000 ms, unsigned clock wrap and state gate; mismatches="
+           <<mismatches<<" (retail timing rule, no outer scheduler claim)\n";
+  return mismatches?57:0;
+ }
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-check")return checkBModelContact();
  if(argc>1&&std::string(argv[1])=="--throw-scalar-check")return checkThrowScalarOracle();
  if(argc>1&&std::string(argv[1])=="--bmodel-contact-asset-check")return checkTrainingBModelContactAssets();
@@ -939,10 +971,11 @@ int main(int argc,char** argv){try{
  if(argc>1&&std::string(argv[1])=="--fire-suppression-check"){
  auto fixture=json_object_from_file((assetDirectory()+"/../../evidence/fire-suppression-oracle.json").c_str());if(!fixture)throw std::runtime_error("Missing fire suppression evidence");auto samples=field(fixture,"samples");int mismatches=0;
  auto fromBits=[](J value){uint32_t bits=uint32_t(json_object_get_uint64(value));float f;std::memcpy(&f,&bits,4);return f;};
- for(int i=0;i<count(samples);i++){auto sample=at(samples,i);FireSuppression fire;fire.strength=fromBits(field(sample,"strength_bits"));fire.sprayTime=fromBits(field(sample,"spray_time_bits"));fire.state=integer(field(sample,"initial_state"));fire.hasSound=true;int doused=0,stopped=0;fire.spray(fromBits(field(sample,"dt_bits")),fromBits(field(sample,"influence_bits")),integer(field(sample,"terminal")),[&]{doused++;},[&]{stopped++;});uint32_t bits;std::memcpy(&bits,&fire.strength,4);
- // The archived oracle names raw byte +0x1C8 `flame_enabled`; its semantic
- // meaning is unresolved, so compare it as an unknown byte only.
- if(bits!=uint32_t(json_object_get_uint64(field(sample,"result_bits")))||fire.state!=integer(field(sample,"state"))||fire.sprayed!=bool(integer(field(sample,"sprayed")))||fire.unknownByte1C8!=uint8_t(integer(field(sample,"flame_enabled")))||doused!=integer(field(sample,"doused"))||stopped!=integer(field(sample,"stopped"))){mismatches++;if(mismatches<6)std::cout<<"Fire spray mismatch "<<i<<" result="<<bits<<" expected="<<json_object_get_uint64(field(sample,"result_bits"))<<"\n";}}
+ for(int i=0;i<count(samples);i++){auto sample=at(samples,i);FireEntity entity;entity.visual.enabled=true;auto& fire=entity.suppression;fire.strength=fromBits(field(sample,"strength_bits"));fire.sprayTime=fromBits(field(sample,"spray_time_bits"));fire.state=integer(field(sample,"initial_state"));fire.hasSound=true;fire.visualComponentEnabled=1;int doused=0,stopped=0;entity.spray(fromBits(field(sample,"dt_bits")),fromBits(field(sample,"influence_bits")),integer(field(sample,"terminal")),[&]{doused++;},[&]{stopped++;});uint32_t bits;std::memcpy(&bits,&fire.strength,4);
+ // The archived oracle's `flame_enabled` name labels raw root +0x1C8; the
+ // field map identifies that byte as the visual component's +0x9C gate.
+ bool visualGateMismatch=entity.visual.enabled!=(fire.visualComponentEnabled!=0);
+ if(bits!=uint32_t(json_object_get_uint64(field(sample,"result_bits")))||fire.state!=integer(field(sample,"state"))||fire.sprayed!=bool(integer(field(sample,"sprayed")))||fire.visualComponentEnabled!=uint8_t(integer(field(sample,"flame_enabled")))||visualGateMismatch||doused!=integer(field(sample,"doused"))||stopped!=integer(field(sample,"stopped"))){mismatches++;if(mismatches<6)std::cout<<"Fire spray mismatch "<<i<<" result="<<bits<<" expected="<<json_object_get_uint64(field(sample,"result_bits"))<<"\n";}}
  std::cout<<"Fire suppression: "<<count(samples)<<" original spray/douse calls; mismatches="<<mismatches<<"\n";return mismatches?19:0;
  }
  if(argc>1&&std::string(argv[1])=="--genesis-transform-check"){

@@ -1,6 +1,6 @@
 # Authored fog helper to render-driver path
 
-Updated 2026-10-13. Evidence is pinned to the retail executable SHA-256
+Updated 2026-10-15. Evidence is pinned to the retail executable SHA-256
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` at
 `inputs/original/binaries/FDNYFirefighter.exe`. A Ghidra instance was not
 running during this follow-up; the persisted Ghidra decompilations cited below
@@ -47,14 +47,52 @@ objdump -d --start-address=0x0049c960 --stop-address=0x0049d130 inputs/original/
 objdump -d --start-address=0x00464900 --stop-address=0x00464a20 inputs/original/binaries/FDNYFirefighter.exe
 ```
 
+## Plain-language explanation
+
+Mission scripts change fog over two seconds. Enabling fog targets a start
+distance of 1, the authored end distance, and the authored RGB values.
+Disabling fog moves the distances to 1990 and 2000 while preserving color, then
+turns the driver setting off at the end of that transition. The camera far clip
+tracks the current end distance plus 20. Before calling the renderer, retail
+truncates each interpolated color channel and clears its lower four bits, so a
+script value of 50 reaches the driver as 48.
+
+## Selected D3D driver behavior
+
+The pinned `D3DDrv.dll` SHA-256 is
+`7727baabe0cc941cf63e4088cf140dbc9389e0d451bd1ac30a053c2e7c9d49e7`.
+Its table slot `+0xA8` points to `0x10003690`, which stores the incoming
+start/end distances and three color channels. The callback at `0x1000800f`
+sets render state 28 from the enable flag and render state 34 from the packed
+color. Microsoft's [Direct3D render-state enumeration](https://learn.microsoft.com/en-us/windows/win32/direct3d9/d3drenderstatetype)
+names these values `D3DRS_FOGENABLE` and `D3DRS_FOGCOLOR`.
+
+The vertex preparation path at `0x10007910` uses the stored start/end and a
+transformed vertex depth to write fog alpha. It follows a linear ramp from
+fully visible at the start distance to fully fogged at the end distance, with
+the result bounded to 0–255. The selected driver receives channels in RGB
+order. The current end field is `+0xF0`, and the far-clip update adds the
+`20.0` float at `0x004E1604`.
+
+This matches Microsoft's documented [linear vertex fog](https://learn.microsoft.com/en-us/windows/win32/direct3d9/vertex-fog),
+whose start/end distances are in camera space. The OpenGL implementation uses the compatibility
+pipeline's linear fog for camera-space depth. It remains a renderer-port
+approximation because no retail frame has been compared pixel-for-pixel.
+
 ## Port implications and limits
 
-The viewer currently has no authored fog state or fog rendering. The trace
-supports routing `fogenable`/`fogdisable` through shared runtime state and
-applying it during rendering. It does not yet identify the five authored
-values' semantic names, Genesis/D3D driver range conventions, the visual result
-on the shipped driver, update cadence, or interpolation edge timing. Those
-remain provisional; do not assign guessed OpenGL fog meanings to the values.
+The shared scene viewer routes `fogenable` and `fogdisable` through a
+five-value fog state, advances its two-second interpolation, applies retail's
+RGB quantization during world rendering, and sets camera far clipping to
+current end plus 20. It resolves the authored `*DefaultFogParams` operand.
+Packaged rescue checks assert the startup fog targets for Bank, Boat A, and
+Boat B. Gas R's trigger-owned inside/outside commands use the same host state.
+
+The port starts its current tuple at zero because the retail object's
+constructor defaults have not yet been traced. Exact frame scheduling, the
+initial tuple, and pixel-level output parity remain open. When a transition
+passes through equal start/end values, the OpenGL renderer adjusts end by
+0.001 units to avoid a degenerate fog ramp.
 
 Fog is a separate renderer feature from Training's red trigger brushes. The
 brushes are authored `col_red` BSP models; absence of fog can affect scene

@@ -41,6 +41,10 @@ The current shared port follows the generation-checked `0x7532` route and both
 Player gates. Its same-frame delivery approximation and the BoundsTrigger
 touch/touching/untouch order plus authored visual gate are recorded in
 [victim_contact_message_port_2026-10-14.md](victim_contact_message_port_2026-10-14.md).
+Factory registration evidence establishes the relative BModel, BoundsTrigger,
+PropModel, FireRescue, and VictimRescue callback order; the host still splits
+those candidate scans and leaves class-specific drain timing open. See
+[contact_manager_factory_order_audit_2026-10-15.md](contact_manager_factory_order_audit_2026-10-15.md).
 
 The common `escape`, `finalexit`, and `finalexitloadmap` routes are documented in
 [rescue_completion_and_exit_path.md](rescue_completion_and_exit_path.md), with
@@ -113,6 +117,13 @@ motionless ladders/button retain authored values. Per-map counts, retail DLL
 parser evidence, and runtime limits are in
 [the cross-map reach audit](bmodel_reach_cross_map.md), with exact model and
 entity joins in [the JSON inventory](bmodel_reach_asset_inventory.json).
+
+Retail `0043B7A0` unions the child model object's min/max fields and passes the
+aggregate through `004819A0` before BModel contact uses root `+0x240`. The host
+unions the corresponding exported GBSP `MODELS` bounds. The input fields align
+through the exporter, while the Genesis runtime field join and final box
+conversion remain unverified; see the
+[BModel bound-construction audit](bmodel_contact_bound_construction_2026-10-15.md).
 
 ## Subway A automatic door and broken-door touch routes
 

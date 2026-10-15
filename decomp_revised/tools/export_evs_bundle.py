@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bundle a map's authored EVS sources and referenced WAV effects."""
+"""Bundle a map's authored EVS sources and referenced WAV sounds."""
 from __future__ import annotations
 
 import argparse
@@ -77,7 +77,7 @@ def collect_sources(entry: Path, original_root: Path) -> list[dict]:
 
 
 def sound_names(sources: list[dict], entities_path: Path) -> set[str]:
-    pattern = re.compile(r"\b(?:playsnd|loopsnd|stopsnd)\s+([A-Za-z0-9_#.-]+)", re.IGNORECASE)
+    pattern = re.compile(r"\b(?:playsnd|loopsnd|stopsnd|ambientsnd)\s+([A-Za-z0-9_#.-]+)", re.IGNORECASE)
     texts = [source["text"] for source in sources]
     if entities_path.is_file():
         entities = json.loads(entities_path.read_text(encoding="utf-8"))
@@ -116,6 +116,16 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # sets directly, outside EVS sound-command references.
     wanted.update(f"RC_Pain{i}" for i in range(4))
     wanted.update(f"RC_PassOut{i}" for i in range(3))
+    # Player status update 00458400 dispatches RC_OxygenLow once below 0.25;
+    # its one-entry chatter set is advanced and played by 00489110.
+    wanted.add("RC_OxygenLow0")
+    # The Player sound tables configure these shared 2D resources outside EVS:
+    # 00451560 plays Breathe/OxyRelease around oxygen depletion/recovery, while
+    # 00455AB0/00455F60 play the visor transition and lock events.
+    wanted.update(("Breathe", "OxyRelease", "VisorUpDown", "VisorLock"))
+    # FireRescue initializer 00448D60 selects one of these three named 3D loop
+    # sounds for each authored fire; the choice is made outside EVS.
+    wanted.update(("FireBurn1", "FireBurn2", "FireBurn3"))
     sounds_dir = scene_package / "sounds"
     sounds_dir.mkdir(parents=True, exist_ok=True)
     sound_rows = []

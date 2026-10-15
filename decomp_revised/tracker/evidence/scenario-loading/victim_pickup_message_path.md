@@ -34,7 +34,14 @@ The earlier work also maps escape from the Training exit through Player handler 
 - The candidate entity type value `1` is preserved as an observed gate; the static Player message route supports the pickup interpretation, but a live original-game capture has not been made.
 - The callback and message code are statically mapped; delivery within the same owner invocation is verified when the producer runs in the contact-manager pass. Rendered-frame cadence and Player update order remain unresolved.
 - Training's `pickup:` script syntax is an authored event case. The 17-BSP inventory and all-mission rescue coverage remain the broader port scope.
-- Pickup sets the victim's Genesis actor flags to zero, which suppresses its normal world-render submission; state 5 also skips the victim child updater. This render behavior is implemented through the existing flag filter. The visible meaning of Player status key `RC_VictPick` and any Player-relative carried-body transform are not established. No audio, rescue timing, or original-versus-port parity is inferred from these static paths.
+- Pickup sets the victim's Genesis actor flags to zero, which suppresses its normal world-render submission; state 5 also skips the victim child updater. This render behavior is implemented through the existing flag filter. Status action 1 now maps the resource-55 screen cue; the consumer behind `RC_VictPick` and any Player-relative carried-body transform remain unresolved. No audio, rescue timing, or original-versus-port parity is inferred from these static paths.
+
+## Plain-language explanation
+
+The pickup message is delivered to the Player only when its message gate is open and it is not already carrying someone. Accepting it marks the victim as carried, runs the map-authored pickup event, and updates Player status; resource 55 now supplies the source-traced on-screen pickup cue. The cue's status-key consumer and the carried person's Player-relative body pose remain unresolved.
+
+The resource 55 sprite and its center-to-corner keyframe animation are documented
+in [player_victim_pickup_status_hud_2026-10-15.md](player_victim_pickup_status_hud_2026-10-15.md).
 
 ## Fresh pseudocode exports
 

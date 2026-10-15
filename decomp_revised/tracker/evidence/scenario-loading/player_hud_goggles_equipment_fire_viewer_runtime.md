@@ -14,9 +14,10 @@ duration to the object at Player `+0x5F4` through `004564C0`. The hint setup
 stores the duration, prepares two time-dependent values, clears an existing
 GUI text state, then constructs the text widget at `+0x6D8` with the rectangle
 `(120, 40)..(520, 440)` in the 640x480 UI coordinate space. The function also
-passes two style/mode values of `2`. This establishes a real onscreen text
-widget route; the native panel's font, exact popup style, transitions and
-display timing are still approximations.
+passes two style/mode values of `2`. The Player widget is linked to resource
+1020 (`font1.bmp` plus its alpha map), with a 16x24 cell grid and source
+glyph order. The meaning of mode `2`, text placement, and the hint's effective
+child tint remain under review.
 
 Goggles constructor `00462A60` binds resource 300 (`goggtop.bmp`) and resource
 301 (`goggbott.bmp`) and creates 640x32 rectangles at source coordinates
@@ -63,12 +64,15 @@ threshold.
 
 ## Native implementation and limits
 
-`scene_viewer.cpp` now draws an onscreen bitmap-font hint panel, the two retail
-goggles mask sprites, the equipment ACTs, and Player fire exposure. The small
-font and panel appearance are approximations; the authored text and duration
-still come from the script callback. The app bundler copies hash-recorded
-equipment and goggles assets from `inputs/original/` and includes the seven
-retail pain/passout sounds in each selected map's sound package.
+`scene_viewer.cpp` now draws Player hints from the copied retail 1020 font and
+alpha atlases, parses the source color markup, and uses the strict authored
+start/end timing on ordinary no-wrap ticks. It omits the prior synthetic dark
+panel, which is absent from the examined hint text path. The source rectangle
+is used, while centering, wrapping, mode `2`, and tick rollover remain open.
+The same viewer draws the two retail goggles mask sprites, equipment ACTs, and
+Player fire exposure. The app bundler copies hash-recorded equipment, goggles,
+and hint-font assets from `inputs/original/` and includes the seven retail
+pain/passout sounds in each selected map's sound package.
 
 Fire spatial falloff uses the retail vertically-compressed ellipsoid formula,
 the live FireVisual X/Z size, fire intensity weighting, world-visibility

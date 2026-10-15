@@ -74,7 +74,10 @@ The textured-polygon handler at 0x10007910 transforms the incoming stream into
 driver vertices. It scales texture coordinates using the base texture
 dimensions and mip level; conditionally uses vertex alpha depending on raw
 flags; then obtains the cached texture surface and submits the converted
-vertices. The +0x80 callback follows a related textured-vertex route.
+vertices. The +0x80 callback follows a related textured-vertex route. A
+follow-up hash-pinned Genesis-to-driver trace maps the BSP face descriptor and
+dynamic RGB lightdata callback through this slot; see
+[`genesis_face_lightmap_driver_handoff_2026-10-15.md`](genesis_face_lightmap_driver_handoff_2026-10-15.md).
 
 BeginScene checks that a D3D device exists, resets frame counters, checks the
 texture cache, clears the requested buffers, begins the D3D scene, and sets

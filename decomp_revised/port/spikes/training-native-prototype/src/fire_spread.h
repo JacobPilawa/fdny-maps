@@ -24,6 +24,16 @@ struct FireSpreadAttempt {
 struct FireSpread {
     using Sweep = std::function<bool(V start, V delta, V mins, V maxs, V& point)>;
 
+    static void updateNearbyCount(int previousDistance, int distance,
+                                  int& nearbyFireCount) {
+        // 00448320 maintains one shared population counter from each named
+        // FireRescue's previous +0x120 distance. Exactly 750 is inside.
+        const bool wasNearby = previousDistance <= 750;
+        const bool isNearby = distance <= 750;
+        if (wasNearby == isNearby) return;
+        nearbyFireCount += isNearby ? 1 : -1;
+    }
+
     static int proximityDistance(V fireOrigin, V candidateOrigin) {
         const float largest = std::max({std::abs(candidateOrigin.x - fireOrigin.x),
                                         std::abs(candidateOrigin.y - fireOrigin.y),

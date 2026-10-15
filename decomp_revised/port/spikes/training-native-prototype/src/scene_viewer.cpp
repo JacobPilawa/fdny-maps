@@ -1,11 +1,10 @@
 #include <SDL.h>
 #if defined(__APPLE__)
-#include <OpenGL/gl.h>
 #define GL_GLEXT_PROTOTYPES 1
+#endif
+#include <SDL_opengl.h>
+#if defined(__APPLE__)
 #include <OpenGL/OpenGL.h>
-#include <OpenGL/glext.h>
-#else
-#include <GL/gl.h>
 #endif
 #include <json-c/json.h>
 
@@ -58,6 +57,8 @@ bool jsonNumber(J value) {
 }
 
 #include "core.h"
+#include "head_motion.h"
+#include "view_update.h"
 #include "victim_roam_motion.h"
 #include "bmodel_contact.h"
 #include "extended.h"
@@ -86,8 +87,10 @@ bool jsonNumber(J value) {
 #include "fire_visual.h"
 #include "fire_render_state.h"
 #include "fire_entity.h"
+#include "victim_pickup_hud_renderer.h"
 #include "fire_floor.h"
 #include "fire_renderer.h"
+#include "fog_state.h"
 #include "fire_direction_renderer.h"
 #include "fire_contact.h"
 #include "fire_spread.h"
@@ -108,7 +111,9 @@ bool jsonNumber(J value) {
 #include "extinguisher_effects.h"
 #include "goggles_scan.h"
 #include "goggles_renderer.h"
+#include "oxygen_hud_renderer.h"
 #include "scripts.h"
+#include "world_startup.h"
 #include "scene_audio.h"
 #include "hose_item_selection.h"
 
@@ -195,14 +200,49 @@ struct SceneFaceSpan {
     int lightOffset = -1;
     int lightWidth = 0;
     int lightHeight = 0;
+    int lightStyleCount = 0;
     std::array<int, 4> lightTypes{};
+    std::vector<uint8_t> lightSamples;
+    int lightmapAtlasX = 0;
+    int lightmapAtlasY = 0;
+    bool lightmapAtlasAssigned = false;
+    std::array<int, 4> uploadedLightStyleScales{};
+    bool hasUploadedLightStyleScales = false;
+};
+
+struct LightStyleState {
+    std::array<std::string, 24> sequences{};
+    std::array<size_t, 24> cursors{};
+    std::array<int, 24> scales{};
+
+    void set(int style, std::string sequence) {
+        if (style < 1 || style >= int(sequences.size())) return;
+        if (sequence.size() > 60) sequence.resize(60);
+        sequences[size_t(style)] = std::move(sequence);
+    }
+
+    void advance() {
+        for (size_t style = 0; style < sequences.size(); ++style) {
+            const std::string& sequence = sequences[style];
+            if (sequence.empty()) {
+                cursors[style] = 0;
+                continue;
+            }
+            // FUN_10032E30 advances first, wrapping when the next byte is NUL.
+            cursors[style] = (cursors[style] + 1) % sequence.size();
+            const int character = static_cast<unsigned char>(sequence[cursors[style]]);
+            scales[style] = int(double(character - 96) * (256.0 / 27.0));
+        }
+    }
 };
 
 struct SceneMesh {
     int model = 0;
-    std::vector<float> positions, uvs;
+    std::vector<float> positions, uvs, lightmapUvs;
     std::vector<SceneFaceSpan> faceSpans;
     GLuint texture = 0;
+    GLuint lightmapAtlasTexture = 0;
+    bool hasLightmappedFaces = false;
     V boundsCenter{}, boundsMin{}, boundsMax{};
     float boundsRadius = 0.f;
 };
@@ -212,6 +252,7 @@ struct TextureLoadSummary {
     int uniqueFiles = 0;
     int decodedFiles = 0;
     int uploadedFiles = 0;
+    int uploadedFaceLightmaps = 0;
     int failedFiles = 0;
     std::vector<std::string> errors;
 };
@@ -319,6 +360,20 @@ bool parseFireRescueSizeCommand(const std::string& arguments, V& size, float& du
     return true;
 }
 
+bool parseFireRescueMoveCommand(const std::string& arguments, std::string& target,
+                               float& divisor, float& firstKeyOffset,
+                               float& secondKeyOffset) {
+    auto [targetToken, values] = token(arguments);
+    target = unwrap(targetToken);
+    if (target.empty()) return false;
+    std::istringstream input(values);
+    if (!(input >> divisor >> firstKeyOffset >> secondKeyOffset)) return false;
+    std::string extra;
+    if (input >> extra) return false;
+    return std::isfinite(divisor) && std::isfinite(firstKeyOffset) &&
+           std::isfinite(secondKeyOffset);
+}
+
 struct VictimActorAsset {
     SceneJson data;
     std::unique_ptr<VictimRenderer> renderer;
@@ -411,7 +466,7 @@ struct PreviewPlayerFireOps {
         if (!audio || !lastPainChoice) return;
         *lastPainChoice = shared.soundIndex(4, *lastPainChoice);
         audio->play("RC_Pain" + std::to_string(*lastPainChoice), playerPosition, playerPosition,
-                    yaw);
+                    yaw, 1);
     }
     void addSeriousBurns() {
         if (seriousBurns) ++*seriousBurns;
@@ -429,12 +484,12 @@ struct PreviewPlayerFireOps {
                       << "," << playerPosition.z << "\n";
         struct PassoutOps {
             PreviewPlayerFireOps& host;
-            void playPassoutMotion(uint32_t playerSubobjectOffset) {
-                // The viewer has no Player ACT pose to drive yet. Preserve the
-                // source-mapped +0x454 / +0x430 choice without inventing one.
+            void requestPassoutSoundInstance(uint32_t playerSoundOffset) {
+                // Preserve the source-mapped +0x454 / +0x430 configured
+                // sound-instance choice; its definitions are not in sound.rrf.
                 if (host.cameraAudit)
-                    std::cout << "passout motion adapter open offset=0x" << std::hex
-                              << playerSubobjectOffset << std::dec << "\n";
+                    std::cout << "passout sound adapter open offset=0x" << std::hex
+                              << playerSoundOffset << std::dec << "\n";
             }
             void playChatterSet(const char* setName, bool enabled) {
                 if (!enabled || std::string(setName) != "RC_PassOut" ||
@@ -442,7 +497,7 @@ struct PreviewPlayerFireOps {
                 *host.lastPassoutChoice = host.random->soundIndex(
                     3, *host.lastPassoutChoice);
                 host.audio->play("RC_PassOut" + std::to_string(*host.lastPassoutChoice),
-                                 host.playerPosition, host.playerPosition, host.yaw);
+                                 host.playerPosition, host.playerPosition, host.yaw, 1);
             }
             uint32_t readClock() const { return host.now; }
             uint32_t readSelectedItemIndex() const { return host.selectedItemIndex; }
@@ -477,15 +532,39 @@ struct PreviewVictim {
 };
 
 struct PreviewFire {
+    struct PathMotion {
+        int targetEntity = -1;
+        bool active = false;
+        V start{}, target{}, direction{};
+        float distance = 0.f, progress = 0.f, rate = 0.f;
+        float lastVisualProgress = 0.f, updateThreshold = 0.f;
+        bool updateThresholdMapped = false;
+        // Retail stores these as inputs to generated visual-key timestamps.
+        // The route trail/key factory is not ported yet.
+        float firstKeyOffset = 0.f, secondKeyOffset = 0.f;
+    } pathMotion;
     int entity = -1;
     std::string label;
     std::string authoredName;
+    bool floorMe = false;
+    float routeVisualUpdateThreshold = 0.f;
+    bool routeVisualUpdateThresholdMapped = false;
     // 0046F930 initializes the root +0x48 name string empty. FireRescue init
     // fills it from A_Name, so an absent or empty name keeps this gate closed.
     bool spreadNameGateEnabled = false;
+    // FireRescue root +0x120 starts at float 99999. Retail updates the shared
+    // proximity population from this prior value on each eligible callback.
+    int lastSpreadProximity = 99999;
     uint32_t nextSpreadAttempt = 0;
     FireEntity runtime;
+    bool loopSoundStarted = false;
+    V lastLoopSoundSource{};
 };
+
+const char* fireLoopSoundName(int choice) {
+    static constexpr const char* names[] = {"FireBurn1", "FireBurn2", "FireBurn3"};
+    return choice >= 0 && choice < 3 ? names[choice] : nullptr;
+}
 
 struct PreviewPlayerLoadout {
     HoseItemSelection::State items;
@@ -685,6 +764,94 @@ std::filesystem::path locateGogglesSprites(const SceneData& scene) {
     throw std::runtime_error("Cannot find copied retail goggles textures under actor_exports/goggles or inputs/original/Data/sprites");
 }
 
+std::filesystem::path locateOxygenHudSprites(const SceneData& scene) {
+    auto hasOxygenTextures = [](const std::filesystem::path& candidate) {
+        return std::filesystem::is_regular_file(candidate / "oxygauge.bmp") &&
+               std::filesystem::is_regular_file(candidate / "oxygauge_a.bmp") &&
+               std::filesystem::is_regular_file(candidate / "oxyneedle.bmp") &&
+               std::filesystem::is_regular_file(candidate / "oxyneedle_a.bmp") &&
+               std::filesystem::is_regular_file(candidate / "shield.bmp") &&
+               std::filesystem::is_regular_file(candidate / "shield_a.bmp");
+    };
+    if (const char* overridePath = std::getenv("FDNY_GAME_DATA_DIR")) {
+        const std::filesystem::path overrideRoot = overridePath;
+        for (const auto& candidate : {overrideRoot / "sprites", overrideRoot / "Sprites",
+                                      overrideRoot / "Data" / "sprites",
+                                      overrideRoot / "Data" / "Sprites"})
+            if (hasOxygenTextures(candidate)) return candidate;
+        throw std::runtime_error("FDNY_GAME_DATA_DIR has no oxygen HUD/visor texture pairs: " +
+                                 overrideRoot.string());
+    }
+    if (const char* overridePath = std::getenv("FDNY_ACTOR_ASSETS_DIR")) {
+        const std::filesystem::path candidate = std::filesystem::path(overridePath) / "oxygen";
+        if (hasOxygenTextures(candidate)) return candidate;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {root / "actor_exports" / "oxygen",
+                                      root.parent_path() / "actor_exports" / "oxygen"})
+            if (hasOxygenTextures(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "inputs" / "original" / "Data" / "Sprites",
+                 root / "inputs" / "original" / "Data" / "sprites",
+                 root / "inputs" / "original" / "data" / "Sprites",
+                 root / "inputs" / "original" / "data" / "sprites"})
+            if (hasOxygenTextures(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    throw std::runtime_error("Cannot find copied oxygen HUD/visor textures under "
+                             "actor_exports/oxygen or inputs/original/Data/Sprites");
+}
+
+std::filesystem::path locateVictimPickupHudSprites(const SceneData& scene) {
+    auto hasVictimPickupTexture = [](const std::filesystem::path& candidate) {
+        return std::filesystem::is_regular_file(candidate / "rescuing.bmp") &&
+               std::filesystem::is_regular_file(candidate / "rescuing_a.bmp");
+    };
+    if (const char* overridePath = std::getenv("FDNY_GAME_DATA_DIR")) {
+        const std::filesystem::path overrideRoot = overridePath;
+        for (const auto& candidate : {overrideRoot / "sprites", overrideRoot / "Sprites",
+                                      overrideRoot / "Data" / "sprites",
+                                      overrideRoot / "Data" / "Sprites"})
+            if (hasVictimPickupTexture(candidate)) return candidate;
+        throw std::runtime_error("FDNY_GAME_DATA_DIR has no rescuing texture pair: " +
+                                 overrideRoot.string());
+    }
+    if (const char* overridePath = std::getenv("FDNY_ACTOR_ASSETS_DIR")) {
+        const std::filesystem::path candidate =
+            std::filesystem::path(overridePath) / "victim-feedback";
+        if (hasVictimPickupTexture(candidate)) return candidate;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "actor_exports" / "victim-feedback",
+                 root.parent_path() / "actor_exports" / "victim-feedback"})
+            if (hasVictimPickupTexture(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "inputs" / "original" / "Data" / "Sprites",
+                 root / "inputs" / "original" / "Data" / "sprites",
+                 root / "inputs" / "original" / "data" / "Sprites",
+                 root / "inputs" / "original" / "data" / "sprites"})
+            if (hasVictimPickupTexture(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    throw std::runtime_error("Cannot find copied rescuing HUD textures under "
+                             "actor_exports/victim-feedback or inputs/original/Data/Sprites");
+}
+
 std::filesystem::path locateFireDirectionSprites(const SceneData& scene) {
     auto hasFireDirectionPair = [](const std::filesystem::path& candidate) {
         return std::filesystem::is_regular_file(candidate / "fireprox.bmp") &&
@@ -835,6 +1002,17 @@ std::vector<PreviewFire> loadPreviewFires(const SceneData& scene, Collision& col
         const V authored = parseVector(property(entity, "ZZ_location"),
                                        parseVector(property(entity, "location"), {}));
         const bool floorMe = parseFloat(property(entity, "L_FloorMe"), 0.f) != 0.f;
+        preview.floorMe = floorMe;
+        // The authored `moveto` fires in MBase and Gas R have no C_Model. In
+        // that initializer branch, 00448D60 writes
+        // (H_Radius,H_Height,H_Radius) to root[+0x108..+0x110]. Preserve the
+        // +0x108 value consumed by the half-threshold gate in 00449340. The
+        // model-derived branch is not fully mapped, so leave it on the
+        // continuous host update path until its first component is resolved.
+        const std::string fireModel = property(entity, "C_Model");
+        preview.routeVisualUpdateThresholdMapped = fireModel.empty() || fireModel == "<null>";
+        preview.routeVisualUpdateThreshold =
+            parseFloat(property(entity, "H_Radius"), 0.f) * 0.5f;
         const bool named = !preview.authoredName.empty();
         // 00448D60 copies UserData A_Name (root+0x78+4) into the embedded
         // subobject string at root+0x48 when the pointer is present. The
@@ -850,11 +1028,46 @@ std::vector<PreviewFire> loadPreviewFires(const SceneData& scene, Collision& col
             [&](FireVisual& visual) {
                 if (floorMe) FireFloor::alignInWorld(visual, collision);
             },
-            [](int) { /* named loop selection is source-mapped; audio routing remains open */ });
+            [](int) { /* start after SceneAudio loads the bundled FireBurn resources */ });
         preview.runtime.visual.sizeUpdate(now);
         fires.push_back(std::move(preview));
     }
     return fires;
+}
+
+void startPreviewFireLoopSounds(std::vector<PreviewFire>& fires, SceneAudio& audio,
+                               V listener, float yaw) {
+    if (!audio.device) return;
+    for (auto& fire : fires) {
+        const char* sound = fireLoopSoundName(fire.runtime.soundChoice);
+        if (!sound || fire.runtime.suppression.state == 5) continue;
+        // 00448D60 starts one of the FireBurn 3D loops at FireRescue root +0x7C.
+        audio.loopOwned(fire.entity, sound, fire.runtime.origin, listener, yaw, 2);
+        fire.loopSoundStarted = true;
+        fire.lastLoopSoundSource = fire.runtime.origin;
+    }
+}
+
+void updatePreviewFireLoopSounds(std::vector<PreviewFire>& fires, SceneAudio& audio,
+                                 V listener, float yaw) {
+    if (!audio.device) return;
+    for (auto& fire : fires) {
+        if (!fire.loopSoundStarted) continue;
+        const char* sound = fireLoopSoundName(fire.runtime.soundChoice);
+        if (!sound) continue;
+        if (fire.runtime.suppression.state == 5) {
+            audio.stopOwned(fire.entity, sound);
+            fire.loopSoundStarted = false;
+            continue;
+        }
+        const V source = fire.runtime.origin;
+        if (source.x != fire.lastLoopSoundSource.x ||
+            source.y != fire.lastLoopSoundSource.y ||
+            source.z != fire.lastLoopSoundSource.z) {
+            audio.updateOwned(fire.entity, sound, source, listener, yaw);
+            fire.lastLoopSoundSource = source;
+        }
+    }
 }
 
 int drawPreviewFires(std::vector<PreviewFire>& fires, FireRenderer& renderer, uint32_t now) {
@@ -868,11 +1081,45 @@ void updatePreviewFires(std::vector<PreviewFire>& fires, uint32_t now, float dt)
         fire.runtime.think(now, dt, [] {}, [] {}, [] {});
 }
 
+void updatePreviewFirePathMotion(std::vector<PreviewFire>& fires, Collision& collision,
+                                 uint32_t now, float dt) {
+    for (auto& fire : fires) {
+        auto& motion = fire.pathMotion;
+        if (!motion.active) continue;
+
+        // 00449340 accumulates route distance as frameDelta * root[+0xFC].
+        // For the authored no-C_Model FireRescue routes, 00448D60 sets
+        // root[+0x108] from H_Radius and 00449340 updates the source visual
+        // only after progress advances by more than half that value. Its
+        // callback cadence and deferred child-spawn drain remain open.
+        motion.progress += std::max(0.f, dt) * motion.rate;
+        const bool complete = motion.progress >= motion.distance;
+        if (!complete && motion.updateThresholdMapped &&
+            motion.progress - motion.lastVisualProgress <= motion.updateThreshold)
+            continue;
+
+        V next = complete ? motion.target : motion.start + motion.direction * motion.progress;
+        motion.lastVisualProgress = motion.progress;
+        const V previousVisual = fire.runtime.visual.position;
+        fire.runtime.visual.position = next;
+        if (fire.floorMe) FireFloor::alignInWorld(fire.runtime.visual, collision);
+
+        // FireRescue keeps the candidate origin and embedded visual point in
+        // separate fields. Preserve their authored offset while moving both.
+        const V visualDelta = fire.runtime.visual.position - previousVisual;
+        fire.runtime.origin = fire.runtime.origin + visualDelta;
+        fire.runtime.visual.sizes.changed = true;
+        fire.runtime.visual.sizeUpdate(now);
+        if (complete) motion.active = false;
+    }
+}
+
 V playerRescueCandidateWorldOrigin(const Player& player) {
     // VictimRescue, FireRescue, and PropModel callbacks ask the candidate
     // vtable at +0x0C. PlayerRescue maps that slot through 0049DB90 to the
-    // transform-origin getter. Player::p remains the current host adapter for
-    // that world point until its live frame alignment is recovered.
+    // transform-origin getter: local (0, 0, 0) through root transform +0x24,
+    // whose world position is the canonical translation at +0x4C..+0x54.
+    // Player::p stores that same movement origin in this host.
     return player.p;
 }
 
@@ -882,39 +1129,34 @@ struct QueuedSpreadFire {
     float sprayTime = 1.f;
 };
 
-void updatePreviewFireSpread(std::vector<PreviewFire>& fires, Collision& collision,
-                             Random& random, V playerPosition, uint32_t now,
-                             int& dividerCycle, int& nextDynamicEntity) {
-    // The native manager's global count tracks eligible fires that crossed
-    // the 750-unit boundary. Rebuilding it from the active host list is
-    // equivalent for this one-player scene and avoids stale pooled entries.
-    int nearbyCount = 0;
-    for (const auto& fire : fires) {
-        if (!fire.spreadNameGateEnabled || fire.runtime.suppression.state == 5) continue;
-        if (FireSpread::proximityDistance(fire.runtime.origin, playerPosition) <= 750)
-            ++nearbyCount;
-    }
+void queuePreviewFireSpreadForCandidate(PreviewFire& fire, Collision& collision,
+                                        Random& random, V playerPosition, uint32_t now,
+                                        int& nearbyCount,
+                                        std::vector<QueuedSpreadFire>& queued) {
+    if (!fire.spreadNameGateEnabled || fire.runtime.suppression.state == 5) return;
+    const int distance = FireSpread::proximityDistance(fire.runtime.origin, playerPosition);
+    FireSpread::updateNearbyCount(fire.lastSpreadProximity, distance, nearbyCount);
+    fire.lastSpreadProximity = distance;
+    if (distance >= 750) return; // 00448320: strict spread-attempt gate.
 
-    std::vector<QueuedSpreadFire> queued;
-    for (auto& fire : fires) {
-        if (!fire.spreadNameGateEnabled || fire.runtime.suppression.state == 5) continue;
-        const int distance = FireSpread::proximityDistance(fire.runtime.origin, playerPosition);
-        if (distance >= 750) continue; // 00448320: strict spread-attempt gate.
+    FireSpreadAttempt attempt = FireSpread::attempt(
+        fire.runtime.visual.sizes.size, fire.runtime.visual.position,
+        fire.runtime.suppression.strength, now, fire.nextSpreadAttempt,
+        nearbyCount, random,
+        [&](V start, V delta, V mins, V maxs, V& point) {
+            Hit hit;
+            if (!collision.trace(start, delta, mins, maxs, hit)) return false;
+            point = hit.point;
+            return true;
+        });
+    if (attempt.result == FireSpreadAttempt::Result::spawned && attempt.child)
+        queued.push_back({*attempt.child, fire.entity, fire.runtime.suppression.sprayTime});
+}
 
-        FireSpreadAttempt attempt = FireSpread::attempt(
-            fire.runtime.visual.sizes.size, fire.runtime.visual.position,
-            fire.runtime.suppression.strength, now, fire.nextSpreadAttempt,
-            nearbyCount, random,
-            [&](V start, V delta, V mins, V maxs, V& point) {
-                Hit hit;
-                if (!collision.trace(start, delta, mins, maxs, hit)) return false;
-                point = hit.point;
-                return true;
-            });
-        if (attempt.result == FireSpreadAttempt::Result::spawned && attempt.child)
-            queued.push_back({*attempt.child, fire.entity, fire.runtime.suppression.sprayTime});
-    }
-
+void drainPreviewFireSpawnQueue(std::vector<PreviewFire>& fires, Collision& collision,
+                                Random& random, uint32_t now, int& dividerCycle,
+                                int& nextDynamicEntity,
+                                const std::vector<QueuedSpreadFire>& queued) {
     // 00429520 drains the staged factory queue after 0049BD20 has completed
     // its contact traversal. Do the same here so a child never mutates the
     // active fire list while it is being visited.
@@ -1228,11 +1470,230 @@ void drawPreviewPropModels(const std::vector<PropModelInstance>& props,
     }
 }
 
-std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& textureSummary, bool uploadTextures) {
+std::vector<uint8_t> composeLightmap(const SceneFaceSpan& span, const LightStyleState& styles) {
+    const size_t sampleCount = size_t(span.lightWidth) * size_t(span.lightHeight);
+    if (span.lightStyleCount < 1 || span.lightStyleCount > 4 || sampleCount == 0 ||
+        span.lightSamples.size() != sampleCount * 3 * size_t(span.lightStyleCount))
+        return {};
+    for (int plane = 0; plane < span.lightStyleCount; ++plane)
+        if (span.lightTypes[size_t(plane)] < 0 || span.lightTypes[size_t(plane)] >= int(styles.scales.size()))
+            return {};
+    std::vector<uint8_t> composed(sampleCount * 3);
+    for (size_t sample = 0; sample < sampleCount; ++sample) {
+        for (size_t channel = 0; channel < 3; ++channel) {
+            int32_t accumulator = 0;
+            for (int plane = 0; plane < span.lightStyleCount; ++plane) {
+                const size_t offset = (size_t(plane) * sampleCount + sample) * 3 + channel;
+                const int value = span.lightSamples[offset];
+                const int style = span.lightTypes[size_t(plane)];
+                if (style == 0) {
+                    // Genesis copies style-zero RGB into Q8 accumulators.
+                    accumulator = value << 8;
+                } else if (plane == 0) {
+                    accumulator = value * styles.scales[size_t(style)];
+                } else {
+                    accumulator += value * styles.scales[size_t(style)];
+                }
+            }
+            const int output = std::clamp(accumulator >> 8, 0, 255);
+            composed[sample * 3 + channel] = uint8_t(output);
+        }
+    }
+    return composed;
+}
+
+std::vector<uint8_t> paddedLightmapPixels(const SceneFaceSpan& span,
+                                          const LightStyleState& styles) {
+    std::vector<uint8_t> pixels = composeLightmap(span, styles);
+    if (pixels.empty()) return {};
+    const int paddedWidth = span.lightWidth + 2;
+    const int paddedHeight = span.lightHeight + 2;
+    std::vector<uint8_t> padded(size_t(paddedWidth) * size_t(paddedHeight) * 3);
+    for (int y = -1; y <= span.lightHeight; ++y) {
+        const int sourceY = std::clamp(y, 0, span.lightHeight - 1);
+        for (int x = -1; x <= span.lightWidth; ++x) {
+            const int sourceX = std::clamp(x, 0, span.lightWidth - 1);
+            const size_t source = (size_t(sourceY) * size_t(span.lightWidth) + size_t(sourceX)) * 3;
+            const size_t destination = (size_t(y + 1) * size_t(paddedWidth) + size_t(x + 1)) * 3;
+            std::copy_n(pixels.begin() + source, 3, padded.begin() + destination);
+        }
+    }
+    return padded;
+}
+
+void uploadLightmapPixels(SceneFaceSpan& span, GLuint atlasTexture,
+                          const LightStyleState& styles, bool initial = false) {
+    if (!span.lightmapAtlasAssigned || !atlasTexture) return;
+    bool changed = initial || !span.hasUploadedLightStyleScales;
+    for (int plane = 0; plane < span.lightStyleCount; ++plane) {
+        const int style = span.lightTypes[size_t(plane)];
+        const int scale = styles.scales[size_t(style)];
+        if (span.uploadedLightStyleScales[size_t(plane)] != scale) changed = true;
+        span.uploadedLightStyleScales[size_t(plane)] = scale;
+    }
+    span.hasUploadedLightStyleScales = true;
+    if (!changed) return;
+    std::vector<uint8_t> pixels = paddedLightmapPixels(span, styles);
+    if (pixels.empty()) return;
+    glBindTexture(GL_TEXTURE_2D, atlasTexture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, span.lightmapAtlasX, span.lightmapAtlasY,
+                    span.lightWidth + 2, span.lightHeight + 2,
+                    GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    const GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+        throw std::runtime_error("OpenGL lightmap update failed with error " + std::to_string(error));
+}
+
+void buildLightmapAtlas(std::vector<SceneMesh>& meshes, TextureLoadSummary& textureSummary,
+                        bool uploadTextures, const LightStyleState& styles) {
+    struct Item {
+        size_t mesh = 0;
+        size_t span = 0;
+        int width = 0;
+        int height = 0;
+        int x = 0;
+        int y = 0;
+    };
+    std::vector<Item> items;
+    uint64_t totalArea = 0;
+    int maximumRectWidth = 1;
+    for (size_t meshIndex = 0; meshIndex < meshes.size(); ++meshIndex) {
+        auto& mesh = meshes[meshIndex];
+        for (size_t spanIndex = 0; spanIndex < mesh.faceSpans.size(); ++spanIndex) {
+            auto& span = mesh.faceSpans[spanIndex];
+            const bool stylesSupported = span.lightStyleCount > 0 && span.lightStyleCount <= 4 &&
+                std::all_of(span.lightTypes.begin(),
+                    span.lightTypes.begin() + span.lightStyleCount,
+                    [&](int style) { return style >= 0 && style < int(styles.scales.size()); });
+            const int64_t sampleBytes = int64_t(span.lightWidth) * span.lightHeight * 3 * span.lightStyleCount;
+            if (!uploadTextures || !stylesSupported || span.triangleCount <= 0 ||
+                span.lightWidth <= 0 || span.lightHeight <= 0 || sampleBytes <= 0 ||
+                sampleBytes != int64_t(span.lightSamples.size()) ||
+                mesh.lightmapUvs.size() != (mesh.positions.size() / 3) * 2)
+                continue;
+            Item item{meshIndex, spanIndex, span.lightWidth + 2, span.lightHeight + 2};
+            items.push_back(item);
+            totalArea += uint64_t(item.width) * uint64_t(item.height);
+            maximumRectWidth = std::max(maximumRectWidth, item.width);
+        }
+    }
+
+    if (!uploadTextures || items.empty()) return;
+
+    auto nextPowerOfTwo = [](uint64_t value) {
+        uint64_t result = 1;
+        while (result < value && result <= uint64_t(std::numeric_limits<int>::max()) / 2)
+            result <<= 1;
+        if (result < value) throw std::runtime_error("Lightmap atlas dimension overflow");
+        return int(result);
+    };
+    const uint64_t targetWidth = std::max<uint64_t>(maximumRectWidth + 4,
+        uint64_t(std::ceil(std::sqrt(double(totalArea)) * 2.0)));
+    const int atlasWidth = nextPowerOfTwo(targetWidth);
+    std::sort(items.begin(), items.end(), [](const Item& left, const Item& right) {
+        if (left.height != right.height) return left.height > right.height;
+        return left.width > right.width;
+    });
+    int cursorX = 2, cursorY = 2, rowHeight = 0;
+    for (auto& item : items) {
+        if (item.width + 2 > atlasWidth)
+            throw std::runtime_error("A face lightmap exceeds the shared atlas width");
+        if (cursorX + item.width > atlasWidth) {
+            cursorX = 2;
+            cursorY += rowHeight;
+            rowHeight = 0;
+        }
+        item.x = cursorX;
+        item.y = cursorY;
+        cursorX += item.width;
+        rowHeight = std::max(rowHeight, item.height);
+    }
+    const int atlasHeight = nextPowerOfTwo(uint64_t(cursorY + rowHeight + 2));
+    GLint maximumTextureSize = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maximumTextureSize);
+    if (maximumTextureSize <= 0 || atlasWidth > maximumTextureSize || atlasHeight > maximumTextureSize)
+        throw std::runtime_error("Face lightmap atlas exceeds the OpenGL texture-size limit");
+
+    std::vector<uint8_t> atlas(size_t(atlasWidth) * size_t(atlasHeight) * 3, 255);
+    for (const auto& item : items) {
+        auto& mesh = meshes[item.mesh];
+        auto& span = mesh.faceSpans[item.span];
+        const std::vector<uint8_t> padded = paddedLightmapPixels(span, styles);
+        if (padded.size() != size_t(item.width) * size_t(item.height) * 3)
+            throw std::runtime_error("Could not compose face lightmap " + std::to_string(span.faceId));
+        for (int row = 0; row < item.height; ++row) {
+            const size_t source = size_t(row) * size_t(item.width) * 3;
+            const size_t destination = (size_t(item.y + row) * size_t(atlasWidth) + size_t(item.x)) * 3;
+            std::copy_n(padded.begin() + source, size_t(item.width) * 3, atlas.begin() + destination);
+        }
+        span.lightmapAtlasX = item.x;
+        span.lightmapAtlasY = item.y;
+        span.lightmapAtlasAssigned = true;
+        mesh.hasLightmappedFaces = true;
+        for (int plane = 0; plane < span.lightStyleCount; ++plane)
+            span.uploadedLightStyleScales[size_t(plane)] =
+                styles.scales[size_t(span.lightTypes[size_t(plane)])];
+        span.hasUploadedLightStyleScales = true;
+        const size_t firstVertex = size_t(span.firstTriangle) * 3;
+        const size_t vertexCount = size_t(span.triangleCount) * 3;
+        for (size_t vertex = firstVertex; vertex < firstVertex + vertexCount; ++vertex) {
+            const float u = std::clamp(mesh.lightmapUvs[vertex * 2], 0.f, 1.f);
+            const float v = std::clamp(mesh.lightmapUvs[vertex * 2 + 1], 0.f, 1.f);
+            mesh.lightmapUvs[vertex * 2] = (float(item.x + 1) + u * float(span.lightWidth)) /
+                                             float(atlasWidth);
+            mesh.lightmapUvs[vertex * 2 + 1] = (float(item.y + 1) + v * float(span.lightHeight)) /
+                                                 float(atlasHeight);
+        }
+        ++textureSummary.uploadedFaceLightmaps;
+    }
+
+    // Reserve the atlas origin as a white texel so unlit faces in a mixed
+    // mesh group pass through the multiply stage unchanged.
+    const float whiteU = .5f / float(atlasWidth);
+    const float whiteV = .5f / float(atlasHeight);
+    for (auto& mesh : meshes) {
+        for (const auto& span : mesh.faceSpans) {
+            if (span.lightmapAtlasAssigned) continue;
+            const size_t firstVertex = size_t(span.firstTriangle) * 3;
+            const size_t vertexCount = size_t(span.triangleCount) * 3;
+            for (size_t vertex = firstVertex; vertex < firstVertex + vertexCount; ++vertex) {
+                mesh.lightmapUvs[vertex * 2] = whiteU;
+                mesh.lightmapUvs[vertex * 2 + 1] = whiteV;
+            }
+        }
+    }
+
+    GLuint atlasTexture = 0;
+    glGenTextures(1, &atlasTexture);
+    if (!atlasTexture) throw std::runtime_error("OpenGL did not allocate a face lightmap atlas");
+    glBindTexture(GL_TEXTURE_2D, atlasTexture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, atlasWidth, atlasHeight, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, atlas.data());
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    const GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        glDeleteTextures(1, &atlasTexture);
+        throw std::runtime_error("OpenGL face lightmap atlas upload failed with error " +
+                                 std::to_string(error));
+    }
+    for (auto& mesh : meshes) mesh.lightmapAtlasTexture = atlasTexture;
+}
+
+std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& textureSummary,
+                                  bool uploadTextures, const LightStyleState& styles) {
     textureSummary.uploadAttempted = uploadTextures;
     std::vector<SceneMesh> meshes;
     std::map<std::string, GLuint> textureCache;
     std::set<std::string> seenFiles;
+    auto lightData = readSceneChunkBytes(scene, "lightdata.bin");
+    if (lightData.empty()) lightData = readSceneChunkBytes(scene, "chunks/20_lightdata.bin");
     J groups = field(scene.worldMesh(), "groups");
     meshes.reserve(size_t(count(groups)));
     for (int i = 0; i < count(groups); ++i) {
@@ -1245,8 +1706,19 @@ std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& te
             throw std::runtime_error("Invalid vertex or UV array in scene mesh group " + std::to_string(i));
         mesh.positions.reserve(size_t(count(positions)));
         mesh.uvs.reserve(size_t(count(uvs)));
+        J lightmapUvs = field(group, "lightmap_uvs");
+        if (lightmapUvs && (json_object_get_type(lightmapUvs) != json_type_array ||
+                           count(lightmapUvs) != count(positions) / 3 * 2))
+            throw std::runtime_error("Invalid lightmap UV array in scene mesh group " + std::to_string(i));
+        mesh.lightmapUvs.reserve(size_t(count(positions) / 3 * 2));
         for (int k = 0; k < count(positions); ++k) mesh.positions.push_back(num(at(positions, k)));
         for (int k = 0; k < count(uvs); ++k) mesh.uvs.push_back(num(at(uvs, k)));
+        for (int k = 0; k < count(positions) / 3 * 2; ++k) {
+            J uv = lightmapUvs ? at(lightmapUvs, k) : nullptr;
+            if (uv && (!jsonNumber(uv) || !std::isfinite(json_object_get_double(uv))))
+                throw std::runtime_error("Nonfinite lightmap UV in scene mesh group " + std::to_string(i));
+            mesh.lightmapUvs.push_back(num(uv));
+        }
         if (!mesh.positions.empty()) {
             const float infinity = std::numeric_limits<float>::infinity();
             mesh.boundsMin = {infinity, infinity, infinity};
@@ -1313,6 +1785,20 @@ std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& te
                         throw std::runtime_error("Invalid light type in scene mesh group " + std::to_string(i));
                     span.lightTypes[size_t(lightType)] = integer(at(lightTypes, lightType));
                 }
+                while (span.lightStyleCount < 4 &&
+                       span.lightTypes[size_t(span.lightStyleCount)] != 255)
+                    ++span.lightStyleCount;
+                if (span.lightOffset >= 0 && span.lightStyleCount > 0 &&
+                    span.lightWidth > 0 && span.lightHeight > 0 && !lightData.empty()) {
+                    const int64_t sampleBytes = int64_t(span.lightWidth) * span.lightHeight * 3 * span.lightStyleCount;
+                    const int64_t dataStart = int64_t(span.lightOffset) + 1;
+                    if (sampleBytes <= 0 || dataStart < 1 || dataStart > int64_t(lightData.size()) ||
+                        sampleBytes > int64_t(lightData.size()) - dataStart ||
+                        lightData[size_t(span.lightOffset)] != 0x01)
+                        throw std::runtime_error("Invalid LIGHTDATA span for face " + std::to_string(span.faceId));
+                    span.lightSamples.assign(lightData.begin() + dataStart,
+                                             lightData.begin() + dataStart + sampleBytes);
+                }
                 expectedFirstTriangle += span.triangleCount;
                 mesh.faceSpans.push_back(span);
             }
@@ -1370,6 +1856,7 @@ std::vector<SceneMesh> loadMeshes(const SceneData& scene, TextureLoadSummary& te
         }
         meshes.push_back(std::move(mesh));
     }
+    buildLightmapAtlas(meshes, textureSummary, uploadTextures, styles);
     return meshes;
 }
 
@@ -2082,18 +2569,35 @@ void runInteractionCheck(const SceneData& scene, J entities,
     bool foundClearContact = false;
     V contactPosition{};
     float bestContactDistanceSquared = std::numeric_limits<float>::infinity();
-    for (int offsetX = -120; offsetX <= 120; offsetX += 20) {
-        for (int offsetZ = -120; offsetZ <= 120; offsetZ += 20) {
-            for (float offsetY : {ladder.boundsMin.y + 30.f,
+    std::vector<float> xOffsets;
+    std::vector<float> zOffsets;
+    for (int offset = -120; offset <= 120; offset += 20) {
+        xOffsets.push_back(float(offset));
+        zOffsets.push_back(float(offset));
+    }
+    // Sample positions just beyond each horizontal face of the ladder model.
+    // The actor hull then clears the solid model by a small margin while its
+    // bounds still overlap the source-mapped E_Reach-expanded contact volume.
+    const float contactMargin = std::min(2.f, std::max(0.f, ladder.contactReach * 0.5f));
+    xOffsets.push_back(ladder.boundsMin.x - playerMaxs.x - contactMargin - ladderCenter.x);
+    xOffsets.push_back(ladder.boundsMax.x - playerMins.x + contactMargin - ladderCenter.x);
+    zOffsets.push_back(ladder.boundsMin.z - playerMaxs.z - contactMargin - ladderCenter.z);
+    zOffsets.push_back(ladder.boundsMax.z - playerMins.z + contactMargin - ladderCenter.z);
+    for (float offsetX : xOffsets) {
+        for (float offsetZ : zOffsets) {
+            for (float offsetY : {ladderCenter.y,
+                                  ladder.boundsMin.y + 30.f,
                                   (ladder.boundsMin.y + ladder.boundsMax.y) * .5f - 30.f,
                                   ladder.boundsMax.y - 80.f}) {
-                V candidate{ladderCenter.x + float(offsetX), offsetY,
-                            ladderCenter.z + float(offsetZ)};
+                V candidate{ladderCenter.x + offsetX, offsetY,
+                            ladderCenter.z + offsetZ};
                 const bool overlaps = BModelContact::overlapsExpanded(
                     ladder.boundsMin, ladder.boundsMax, candidate + playerMins,
                     candidate + playerMaxs, ladder.contactReach);
                 if (!overlaps || collision.solid(candidate, playerMins, playerMaxs)) continue;
-                const float distanceSquared = float(offsetX * offsetX + offsetZ * offsetZ);
+                const float distanceX = candidate.x - ladderCenter.x;
+                const float distanceZ = candidate.z - ladderCenter.z;
+                const float distanceSquared = distanceX * distanceX + distanceZ * distanceZ;
                 if (distanceSquared < bestContactDistanceSquared) {
                     contactPosition = candidate;
                     bestContactDistanceSquared = distanceSquared;
@@ -2140,13 +2644,17 @@ void runInteractionCheck(const SceneData& scene, J entities,
     if (player.climbing) throw std::runtime_error("Authored ladder untouch did not disable Player climbing");
 
     std::cout << "Interaction check: authored ladder entity " << ladderEntity
-              << " touch enabled Player climbing, upward Player::step moved " << climbedHeight
+              << " at (" << contactPosition.x << ", " << contactPosition.y << ", "
+              << contactPosition.z << ") touch enabled Player climbing, upward Player::step moved " << climbedHeight
               << " units, and untouch disabled climbing.\n";
 }
 
 void clearTextures(std::vector<SceneMesh>& meshes) {
     std::set<GLuint> textures;
-    for (const auto& mesh : meshes) if (mesh.texture) textures.insert(mesh.texture);
+    for (auto& mesh : meshes) {
+        if (mesh.texture) textures.insert(mesh.texture);
+        if (mesh.lightmapAtlasTexture) textures.insert(mesh.lightmapAtlasTexture);
+    }
     for (GLuint texture : textures) glDeleteTextures(1, &texture);
 }
 
@@ -2179,26 +2687,60 @@ struct RenderCounters {
     size_t submittedTriangles = 0;
 };
 
-void renderScene(const std::vector<SceneMesh>& meshes, const SceneData& scene,
+void renderScene(std::vector<SceneMesh>& meshes, const SceneData& scene,
                  const Collision& collision, const std::map<int, Pose>& inspectionPoses,
                  const PreviewWorldModelFlags& worldModelFlags,
+                 const RetailFogState& fogState,
+                 LightStyleState& lightStyles,
                  V camera, float yaw, float pitch,
-                 int width, int height, RenderCounters* counters = nullptr) {
+                 int width, int height, RenderCounters* counters = nullptr,
+                 const FrameTransform* cameraFrame = nullptr) {
+    lightStyles.advance();
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    const double nearPlane = 1.0, top = nearPlane * std::tan(60.0 * 3.141592653589793 / 360.0);
+    const double nearPlane = 1.0;
+    const double farPlane = fogState.cameraFarClip();
+    const double top = nearPlane * std::tan(60.0 * 3.141592653589793 / 360.0);
     const double right = top * (double(width) / double(std::max(height, 1)));
-    glFrustum(-right, right, -top, top, nearPlane, 30000.0);
+    glFrustum(-right, right, -top, top, nearPlane, farPlane);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glRotatef(-pitch * 57.29577951308232f, 1.f, 0.f, 0.f);
-    glRotatef(-yaw * 57.29577951308232f, 0.f, 1.f, 0.f);
+    if (cameraFrame) {
+        // Frame axes are local-to-world columns. Their transpose is the
+        // camera's world-to-view rotation, matching the retail view frame.
+        const auto& axis = cameraFrame->axis;
+        const GLfloat viewRotation[16] = {
+            axis[0].x, axis[1].x, axis[2].x, 0.f,
+            axis[0].y, axis[1].y, axis[2].y, 0.f,
+            axis[0].z, axis[1].z, axis[2].z, 0.f,
+            0.f, 0.f, 0.f, 1.f
+        };
+        glMultMatrixf(viewRotation);
+    } else {
+        glRotatef(-pitch * 57.29577951308232f, 1.f, 0.f, 0.f);
+        glRotatef(-yaw * 57.29577951308232f, 0.f, 1.f, 0.f);
+    }
     glTranslatef(-camera.x, -camera.y, -camera.z);
 
     glClearColor(.08f, .10f, .12f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (fogState.renderEnabled()) {
+        const auto color = fogState.normalizedColor();
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogfv(GL_FOG_COLOR, color.data());
+        glFogf(GL_FOG_START, fogState.current.start);
+        const float fogEnd = std::abs(fogState.current.end - fogState.current.start) < 0.001f
+            ? fogState.current.start + 0.001f : fogState.current.end;
+        glFogf(GL_FOG_END, fogEnd);
+        glEnable(GL_FOG);
+    } else {
+        glDisable(GL_FOG);
+    }
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     glEnableClientState(GL_VERTEX_ARRAY);
     bool textureCoordinatesEnabled = false;
@@ -2208,21 +2750,31 @@ void renderScene(const std::vector<SceneMesh>& meshes, const SceneData& scene,
     const float tanHorizontal = tanVertical * (float(width) / float(std::max(height, 1)));
     const float horizontalPlaneScale = 1.f / std::sqrt(1.f + tanHorizontal * tanHorizontal);
     const float verticalPlaneScale = 1.f / std::sqrt(1.f + tanVertical * tanVertical);
+    for (auto& mesh : meshes) {
+        if (!mesh.lightmapAtlasTexture) continue;
+        for (auto& span : mesh.faceSpans)
+            uploadLightmapPixels(span, mesh.lightmapAtlasTexture, lightStyles);
+    }
     auto outsideView = [&](const SceneMesh& mesh) {
         const V offset = mesh.boundsCenter - camera;
-        const float viewX = yawCos * offset.x - yawSin * offset.z;
-        const float yawDepth = yawSin * offset.x + yawCos * offset.z;
-        const float viewY = pitchCos * offset.y + pitchSin * yawDepth;
-        const float viewDepth = pitchSin * offset.y - pitchCos * yawDepth;
+        const float viewX = cameraFrame
+            ? dot(offset, cameraFrame->axis[0])
+            : yawCos * offset.x - yawSin * offset.z;
+        const float viewY = cameraFrame
+            ? dot(offset, cameraFrame->axis[1])
+            : pitchCos * offset.y + pitchSin * (yawSin * offset.x + yawCos * offset.z);
+        const float viewDepth = cameraFrame
+            ? -dot(offset, cameraFrame->axis[2])
+            : pitchSin * offset.y - pitchCos * (yawSin * offset.x + yawCos * offset.z);
         const float radius = mesh.boundsRadius;
-        if (viewDepth + radius < 1.f || viewDepth - radius > 30000.f) return true;
+        if (viewDepth + radius < float(nearPlane) || viewDepth - radius > float(farPlane)) return true;
         if ((viewX + viewDepth * tanHorizontal) * horizontalPlaneScale < -radius) return true;
         if ((viewDepth * tanHorizontal - viewX) * horizontalPlaneScale < -radius) return true;
         if ((viewY + viewDepth * tanVertical) * verticalPlaneScale < -radius) return true;
         if ((viewDepth * tanVertical - viewY) * verticalPlaneScale < -radius) return true;
         return false;
     };
-    for (const auto& mesh : meshes) {
+    for (auto& mesh : meshes) {
         if (!worldModelFlags.rendersNormally(mesh.model)) continue;
         float angle = 0.f;
         auto angleIt = collision.angles.find(mesh.model);
@@ -2282,6 +2834,22 @@ void renderScene(const std::vector<SceneMesh>& meshes, const SceneData& scene,
             }
         }
         glDrawArrays(GL_TRIANGLES, 0, GLsizei(mesh.positions.size() / 3));
+        if (mesh.hasLightmappedFaces && mesh.lightmapAtlasTexture &&
+            mesh.lightmapUvs.size() >= (mesh.positions.size() / 3) * 2) {
+            if (!textureCoordinatesEnabled) {
+                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                textureCoordinatesEnabled = true;
+            }
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, mesh.lightmapAtlasTexture);
+            glColor3f(1.f, 1.f, 1.f);
+            glVertexPointer(3, GL_FLOAT, 0, mesh.positions.data());
+            glTexCoordPointer(2, GL_FLOAT, 0, mesh.lightmapUvs.data());
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+            glDrawArrays(GL_TRIANGLES, 0, GLsizei(mesh.positions.size() / 3));
+            glDisable(GL_BLEND);
+        }
         glPopMatrix();
     }
     if (textureCoordinatesEnabled) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2292,8 +2860,21 @@ void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes
     J report = field(scene.report(), "counts");
     size_t triangles = 0;
     size_t faceSpans = 0;
+    size_t lightmapFaces = 0;
+    size_t lightmapPlanes = 0;
+    size_t lightmapBytes = 0;
+    size_t uploadedFaceLightmaps = 0;
     for (const auto& mesh : meshes) triangles += mesh.positions.size() / 9;
-    for (const auto& mesh : meshes) faceSpans += mesh.faceSpans.size();
+    for (const auto& mesh : meshes) {
+        faceSpans += mesh.faceSpans.size();
+        for (const auto& span : mesh.faceSpans) {
+            if (span.lightOffset < 0) continue;
+            ++lightmapFaces;
+            lightmapPlanes += size_t(span.lightStyleCount);
+            lightmapBytes += span.lightSamples.size();
+            if (span.lightmapAtlasAssigned) ++uploadedFaceLightmaps;
+        }
+    }
     std::cout << "Scene: " << scene.key() << " (" << scene.sourceFile() << ")\n"
               << "BSP SHA-256: " << scene.sourceSha256() << "\n"
               << "Entities: " << count(scene.entities())
@@ -2304,6 +2885,10 @@ void printInventory(const SceneData& scene, const std::vector<SceneMesh>& meshes
               << "BSP faces: " << integer(field(report, "faces"))
               << ", render triangles: " << triangles
               << ", face spans: " << faceSpans
+              << ", lightmap faces: " << lightmapFaces
+              << ", raw lightmap planes: " << lightmapPlanes
+              << ", lightmap bytes: " << lightmapBytes
+              << ", face lightmaps uploaded: " << uploadedFaceLightmaps
               << ", texture files: " << textures.decodedFiles << "/" << textures.uniqueFiles << " decoded"
               << (textures.uploadAttempted ? ", " + std::to_string(textures.uploadedFiles) + " uploaded" : ", GL upload skipped in inspect mode")
               << ", texture failures: " << textures.failedFiles << "\n";
@@ -2341,26 +2926,31 @@ void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) 
 }
 
 int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck,
-        bool interactionCheck, bool rescueCheck, int triggerRenderCheckEntity,
-        bool hintRenderCheck, bool fireDirectionRenderCheck, bool fireCameraAudit,
+        bool interactionCheck, bool rescueCheck, bool ambientAudioCheck,
+        int triggerRenderCheckEntity,
+        bool hintRenderCheck, bool fireDirectionRenderCheck, bool oxygenHudRenderCheck,
+        bool victimPickupHudRenderCheck,
+        bool fireCameraAudit,
         const std::string& equipmentOrientationCheck,
         std::string* nextRescueStage = nullptr, bool performanceAudit = false) {
+    const bool rescueDiagnostic = rescueCheck || ambientAudioCheck;
     auto logRescueStage = [&](const char* stage) {
         if (rescueCheck) std::cerr << "rescue-check: " << stage << std::endl;
+        else if (ambientAudioCheck) std::cerr << "scene-audio-check: " << stage << std::endl;
     };
     logRescueStage("enter");
     SceneData scene = SceneData::load(package);
     logRescueStage("scene loaded");
 #if defined(__APPLE__)
-    if (!inspectOnly && !renderCheck && !interactionCheck && !rescueCheck && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+    if (!inspectOnly && !renderCheck && !interactionCheck && !rescueDiagnostic && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
 #else
-    if (!inspectOnly && !interactionCheck && !rescueCheck && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+    if (!inspectOnly && !interactionCheck && !rescueDiagnostic && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
 #endif
         throw std::runtime_error(SDL_GetError());
-    if (rescueCheck && SDL_Init(SDL_INIT_TIMER) != 0)
+    if (rescueDiagnostic && SDL_Init(SDL_INIT_TIMER) != 0)
         throw std::runtime_error(SDL_GetError());
     logRescueStage("SDL initialized");
-    if (!inspectOnly && !renderCheck && !interactionCheck && !rescueCheck) {
+    if (!inspectOnly && !renderCheck && !interactionCheck && !rescueDiagnostic) {
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
@@ -2371,6 +2961,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
 #if defined(__APPLE__)
     HeadlessOpenGL headlessContext;
 #endif
+    LightStyleState lightStyles;
     std::vector<SceneMesh> meshes;
     std::map<std::string, std::unique_ptr<VictimActorAsset>> victimAssets;
     std::map<std::string, std::unique_ptr<EquipmentActorAsset>> equipmentAssets;
@@ -2380,6 +2971,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     std::map<int, size_t> propModelByEntity;
     std::vector<PreviewFire> fires;
     int fireDividerCycle = 0;
+    int nearbySpreadFireCount = 0;
     int nextDynamicFireEntity = 1000000;
     FireRenderer fireRenderer;
     bool fireRendererLoaded = false;
@@ -2387,6 +2979,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     bool fireDirectionRendererLoaded = false;
     GogglesRenderer gogglesRenderer;
     bool gogglesRendererLoaded = false;
+    OxygenHudRenderer oxygenHudRenderer;
+    bool oxygenHudRendererLoaded = false;
+    VictimPickupHudRenderer victimPickupHudRenderer;
+    bool victimPickupHudRendererLoaded = false;
     std::filesystem::path actorAssetRoot;
     VictimTransactionState rescueState;
     auto& carriedVictim = rescueState.player;
@@ -2396,7 +2992,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             headlessContext.create(1280, 800);
         } else
 #endif
-        if (!inspectOnly && !interactionCheck && !rescueCheck) {
+        if (!inspectOnly && !interactionCheck && !rescueDiagnostic) {
             window = SDL_CreateWindow(("FDNY scene preview — " + scene.key()).c_str(),
                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800,
                 SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
@@ -2408,7 +3004,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
 
         TextureLoadSummary textureSummary;
         logRescueStage("loading meshes");
-        meshes = loadMeshes(scene, textureSummary, !inspectOnly && !interactionCheck && !rescueCheck);
+        meshes = loadMeshes(scene, textureSummary,
+                            !inspectOnly && !interactionCheck && !rescueDiagnostic, lightStyles);
         logRescueStage("meshes loaded");
         Collision collision(scene.collision());
         PropModelPvs propModelPvs(scene.collision(),
@@ -2444,19 +3041,20 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             sampleBModelState(bmodel, collision);
         const uint32_t gameplayStart = SDL_GetTicks();
         Random gameplayRandom(gameplayStart);
-        if (!inspectOnly && (!interactionCheck || rescueCheck)) {
+        if (!inspectOnly && (!interactionCheck || rescueDiagnostic)) {
             logRescueStage("loading FireRescue actors");
             fires = loadPreviewFires(scene, collision, gameplayRandom, gameplayStart, fireDividerCycle);
+            nearbySpreadFireCount = 0;
             logRescueStage("FireRescue actors loaded");
             logRescueStage("loading victim actors");
             actorAssetRoot = locateVictimAssets(scene);
             victims = loadPreviewVictims(scene, collision, gameplayRandom, gameplayStart, actorAssetRoot,
-                                         victimAssets, !rescueCheck);
+                                         victimAssets, !rescueDiagnostic);
             for (const std::string stem : {"axe", "axel", "ext"}) {
                 const auto exportPath = actorAssetRoot / "equipment" / (stem + ".json");
                 if (std::filesystem::is_regular_file(exportPath)) {
                     equipmentAssets.emplace(stem, std::make_unique<EquipmentActorAsset>(
-                        actorAssetRoot / "equipment", stem, !rescueCheck));
+                        actorAssetRoot / "equipment", stem, !rescueDiagnostic));
                 } else {
                     std::cerr << "Equipment ACT export not found: " << exportPath
                               << " (run tools/export_equipment_actors.py)\n";
@@ -2473,7 +3071,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     continue;
                 }
                 propModelAssets.emplace(modelId, std::make_unique<EquipmentActorAsset>(
-                    actorAssetRoot / "props", stem, !rescueCheck));
+                    actorAssetRoot / "props", stem, !rescueDiagnostic));
             }
             for (size_t propIndex = 0; propIndex < propModels.size(); ++propIndex) {
                 auto& prop = propModels[propIndex];
@@ -2482,13 +3080,21 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             }
             logRescueStage("victim actors loaded");
         }
-        if (!inspectOnly && !interactionCheck && !rescueCheck) {
+        if (!inspectOnly && !interactionCheck && !rescueDiagnostic) {
             fireRenderer.load(actorAssetRoot / "fire-sprites");
             fireRendererLoaded = true;
             fireDirectionRenderer.load(locateFireDirectionSprites(scene));
             fireDirectionRendererLoaded = true;
             gogglesRenderer.load(locateGogglesSprites(scene));
             gogglesRendererLoaded = true;
+            if (oxygenHudRenderCheck) {
+                oxygenHudRenderer.load(locateOxygenHudSprites(scene));
+                oxygenHudRendererLoaded = true;
+            }
+            if (victimPickupHudRenderCheck) {
+                victimPickupHudRenderer.load(locateVictimPickupHudSprites(scene));
+                victimPickupHudRendererLoaded = true;
+            }
         }
         V spawn{};
         float yaw = 0.f;
@@ -2525,8 +3131,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         }
         Player player;
         player.p = spawn;
+        player.checkpointPosition = spawn;
+        player.checkpointYaw = yaw;
         PlayerPassoutState playerFireState;
         PlayerOxygenState playerOxygen;
+        PlayerOxygenVisorEffect playerOxygenVisorEffect;
         PlayerBurnCoolingState playerBurnState;
         uint32_t playerPainDeadline = 0;
         uint32_t playerSeriousBurns = 0;
@@ -2559,13 +3168,30 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         }
         if (playerEntityId >= 0) scriptActorIds.emplace("player", playerEntityId);
         SceneAudio sceneAudio;
-        if (!inspectOnly && !renderCheck && !interactionCheck && !rescueCheck) {
+        if (!inspectOnly && !renderCheck && !interactionCheck && !rescueDiagnostic) {
             sceneAudio.open();
             sceneAudio.load(scene);
         }
+        if (ambientAudioCheck) {
+            if (!sceneAudio.open())
+                throw std::runtime_error("Scene audio check could not open SDL's dummy audio device");
+            sceneAudio.load(scene);
+        }
+        startPreviewFireLoopSounds(fires, sceneAudio, player.p, yaw);
+        struct AmbientLoop {
+            int owner = 0;
+            std::string name;
+            V source{};
+        };
+        std::vector<AmbientLoop> ambientLoops;
+        int nextAmbientLoopOwner = -1000000;
         std::string activeHint;
         float activeHintRemaining = 0.f;
         HintOverlay hintOverlay;
+        RetailHintLifetime authoredHintLifetime;
+        std::string authoredHintText;
+        if (!inspectOnly && !interactionCheck && !rescueDiagnostic)
+            hintOverlay.load(actorAssetRoot / "hints");
         std::vector<std::pair<int, std::string>> soundDispatches;
         TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);
         VictimTransactionServices rescueServices;
@@ -2610,6 +3236,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             actor.state = victim.pickup.state;
             actor.worldActorFlags = victim.pickup.worldActorFlags;
             actor.animation = victim.animation;
+            actor.motionCount = uint32_t(victimAssets.at(victim.actorStem)->motionCount());
             setActorFrame(actor.frame, victim.spawn.selectedPosition, victim.facingDegrees);
             rescueState.actors.emplace(actor.entity, std::move(actor));
         }
@@ -2671,7 +3298,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (previousSelection != "goggles" && selected == "goggles")
                 gogglesScanPending = true; // 00462660(1) calls the goggles ACTION scan.
         };
+        RetailFogState fogState;
         std::unique_ptr<Scripts> scriptRuntime;
+        WorldStartup worldStartup;
+        bool worldStartupReady = false;
         if (scene.scripts()) {
             scriptRuntime = std::make_unique<Scripts>(scene.scripts());
             scriptRuntime->timeMs = SDL_GetTicks();
@@ -2679,6 +3309,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             scriptRuntime->hint = [&](std::string text, float seconds) {
                 activeHint = std::move(text);
                 activeHintRemaining = seconds;
+                authoredHintText = activeHint;
+                authoredHintLifetime.begin(scriptRuntime->timeMs, seconds);
                 std::cout << "Hint: " << activeHint << "\n";
             };
             scriptRuntime->findEntity = [&](std::string name) {
@@ -2691,6 +3323,32 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const std::string arguments = split == std::string::npos
                     ? std::string{} : trim(command.substr(split + 1));
                 auto owner = bmodelByEntity.find(entityId);
+                if (verb == "setlighttable") {
+                    std::istringstream styleArguments(arguments);
+                    int style = 0;
+                    std::string sequence;
+                    if (!(styleArguments >> style >> sequence) || style < 1 || style > 19)
+                        return false;
+                    lightStyles.set(style, std::move(sequence));
+                    return true;
+                }
+                if (verb == "fogenable") {
+                    std::string fogArguments = arguments;
+                    if (!fogArguments.empty() && fogArguments.front() == '*') {
+                        auto value = scriptRuntime->variables.find(fogArguments.substr(1));
+                        if (value == scriptRuntime->variables.end()) return false;
+                        fogArguments = value->second;
+                    }
+                    std::array<int32_t, 5> values{};
+                    if (!parseRetailFogEnableArguments(fogArguments, values)) return false;
+                    fogState.enable(values[0], values[1], values[2], values[3], values[4],
+                                    scriptRuntime->timeMs);
+                    return true;
+                }
+                if (verb == "fogdisable") {
+                    fogState.disable(scriptRuntime->timeMs);
+                    return true;
+                }
                 if (entityId == playerEntityId && verb == "climb") {
                     if (!player.climbing) {
                         player.climbing = true;
@@ -2704,10 +3362,17 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
                 if (entityId == playerEntityId && verb == "oxyon") {
                     startPlayerOxygenDrain(playerOxygen, scriptRuntime->timeMs);
+                    startPlayerOxygenVisorEffect(
+                        playerOxygenVisorEffect, scriptRuntime->timeMs, true);
+                    sceneAudio.playOwned(playerEntityId, "VisorUpDown", player.p, player.p, yaw, 1);
                     return true;
                 }
                 if (entityId == playerEntityId && verb == "oxyoff") {
                     stopPlayerOxygenDrain(playerOxygen);
+                    startPlayerOxygenVisorEffect(
+                        playerOxygenVisorEffect, scriptRuntime->timeMs, false);
+                    sceneAudio.playOwned(playerEntityId, "VisorUpDown", player.p, player.p, yaw, 1);
+                    sceneAudio.stopOwned(playerEntityId, "Breathe");
                     return true;
                 }
                 if (entityId == playerEntityId && verb == "equip") {
@@ -2742,6 +3407,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     return true;
                 }
                 if (entityId == playerEntityId && verb == "escape") {
+                    // 004513A0 snapshots the current Player transform and
+                    // heading only while the transient collision latch is set
+                    // and oxygen is strictly above 0.5.
+                    if (player.collisionLatch && playerOxygen.resource > 0.5f) {
+                        player.checkpointPosition = player.p;
+                        player.checkpointYaw = yaw;
+                    }
                     if (rescueTransactions) {
                         syncVictimsToRescueState();
                         if (rescueTransactions->escape()) {
@@ -2764,15 +3436,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         uint64_t(rescueState.exits.rescues);
                     const uint32_t remaining = accounted >= total ? 0u :
                         total - uint32_t(accounted);
-                    if (remaining == 0 && !enabledExitTriggers.empty()) {
+                    if (remaining == 0) {
                         rescueState.exits.messageGate = 1;
-                        activeHint = "All survivors rescued. Mission exit reached.";
-                    } else if (remaining == 1) {
+                        if (rescueServices.refreshSelectedItem)
+                            rescueServices.refreshSelectedItem();
+                        return true;
+                    }
+                    if (remaining == 1) {
                         activeHint = "There is still one survivor remaining.";
                     } else {
                         activeHint = "There are still " + std::to_string(remaining) + " survivors remaining.";
                     }
-                    activeHintRemaining = 6.f;
+                    activeHintRemaining = 7.f;
                     return true;
                 }
                 if (entityId == playerEntityId && verb == "finalexitloadmap") {
@@ -2786,7 +3461,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         activeHint = remaining == 1
                             ? "There is still one survivor remaining."
                             : "There are still " + std::to_string(remaining) + " survivors remaining.";
-                        activeHintRemaining = 6.f;
+                        activeHintRemaining = 7.f;
                         return true;
                     }
 
@@ -2827,12 +3502,43 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     if (owner != bmodelByEntity.end()) source = bmodelMotions[owner->second].sourcePosition;
                     if (verb == "playsnd") {
                         soundDispatches.emplace_back(entityId, soundName);
-                        sceneAudio.playOwned(entityId, soundName, source, player.p, yaw);
+                        sceneAudio.playOwned(entityId, soundName, source, player.p, yaw, 2);
                     } else if (verb == "loopsnd") {
-                        sceneAudio.loopOwned(entityId, soundName, source, player.p, yaw);
+                        sceneAudio.loopOwned(entityId, soundName, source, player.p, yaw, 2);
                     } else {
                         sceneAudio.stopOwned(entityId, soundName);
                     }
+                    return true;
+                }
+                if (verb == "ambientsnd") {
+                    // 0047A1F0 reads three coordinate operands and passes their
+                    // integer-cast values to 00475210. That helper converts the
+                    // integers back to float world coordinates and passes
+                    // optional mode 2; the sound dispatcher maps a non-null
+                    // mode to FMOD's normal-loop flag.
+                    std::string normalized = arguments;
+                    std::replace(normalized.begin(), normalized.end(), ',', ' ');
+                    std::istringstream values(normalized);
+                    std::string soundName, xText, yText, zText;
+                    if (!(values >> soundName >> xText >> yText >> zText) || soundName.empty())
+                        return false;
+                    auto retailCoordinate = [](const std::string& text, float& result) {
+                        char* end = nullptr;
+                        const float parsed = std::strtof(text.c_str(), &end);
+                        if (end == text.c_str() || !std::isfinite(parsed)) return false;
+                        const double integral = std::trunc(static_cast<double>(parsed));
+                        if (integral < double(std::numeric_limits<int32_t>::min()) ||
+                            integral > double(std::numeric_limits<int32_t>::max())) return false;
+                        result = static_cast<float>(static_cast<int32_t>(integral));
+                        return true;
+                    };
+                    V source;
+                    if (!retailCoordinate(xText, source.x) ||
+                        !retailCoordinate(yText, source.y) ||
+                        !retailCoordinate(zText, source.z)) return false;
+                    const int ambientOwner = nextAmbientLoopOwner--;
+                    ambientLoops.push_back({ambientOwner, soundName, source});
+                    sceneAudio.loopOwned(ambientOwner, soundName, source, player.p, yaw, 2);
                     return true;
                 }
                 auto propOwner = propModelByEntity.find(entityId);
@@ -2884,6 +3590,64 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         requestedSize, uint32_t(int32_t(targetClock)), now);
                     return true;
                 }
+                if (verb == "moveto") {
+                    auto fire = std::find_if(fires.begin(), fires.end(), [&](const PreviewFire& candidate) {
+                        return candidate.entity == entityId;
+                    });
+                    std::string targetName;
+                    float divisor = 0.f, firstKeyOffset = 0.f, secondKeyOffset = 0.f;
+                    if (fire == fires.end() ||
+                        !parseFireRescueMoveCommand(arguments, targetName, divisor,
+                                                    firstKeyOffset, secondKeyOffset))
+                        return false;
+
+                    // 00470C50 resolves the shared ScriptActor name registry
+                    // case-insensitively. Keep its first registered-name
+                    // behavior, then require that actor to be a PathPoint.
+                    auto registered = scriptActorIds.find(lower(targetName));
+                    if (registered == scriptActorIds.end()) return false;
+                    const int targetEntity = registered->second;
+                    bool isPathPoint = false;
+                    for (int i = 0; i < count(entities); ++i) {
+                        J candidate = at(entities, i);
+                        if (integer(field(candidate, "index")) == targetEntity) {
+                            isPathPoint = str(field(candidate, "class")) == "RCS_PathPoint";
+                            break;
+                        }
+                    }
+                    auto targetPosition = actorPositions.find(targetEntity);
+                    if (!isPathPoint || targetPosition == actorPositions.end()) return false;
+
+                    auto& motion = fire->pathMotion;
+                    if (motion.targetEntity == targetEntity) {
+                        std::cerr << "ERROR! Recursive PathPoint.\n";
+                        return true;
+                    }
+                    motion.targetEntity = targetEntity;
+                    motion.start = fire->runtime.visual.position;
+                    motion.target = targetPosition->second;
+                    const V displacement = motion.target - motion.start;
+                    const double distanceSquared =
+                        (double(displacement.x) * displacement.x +
+                         double(displacement.y) * displacement.y) +
+                        double(displacement.z) * displacement.z;
+                    motion.distance = float(std::sqrt(distanceSquared));
+                    motion.direction = motion.distance > 0.f
+                        ? displacement * (1.f / motion.distance) : V{};
+                    motion.progress = 0.f;
+                    motion.lastVisualProgress = 0.f;
+                    motion.updateThreshold = fire->routeVisualUpdateThreshold;
+                    motion.updateThresholdMapped = fire->routeVisualUpdateThresholdMapped;
+                    motion.rate = divisor > 0.f ? motion.distance / divisor : -divisor;
+                    motion.firstKeyOffset = firstKeyOffset;
+                    motion.secondKeyOffset = secondKeyOffset;
+                    if (!std::isfinite(motion.distance) || !std::isfinite(motion.rate)) {
+                        motion = {};
+                        return false;
+                    }
+                    motion.active = true;
+                    return true;
+                }
                 if (owner == bmodelByEntity.end()) return false;
                 auto& bmodel = bmodelMotions[owner->second];
                 if (verb == "addtimecmd") {
@@ -2931,7 +3695,17 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     scriptRuntime->startupEntity(entity);
             }
         }
-        if (playerEntityId >= 0 && !victims.empty()) {
+        auto advanceWorldStartup = [&](uint32_t now) {
+            if (!scriptRuntime || worldStartup.complete) return;
+            scriptRuntime->timeMs = now;
+            worldStartup.update(
+                [&] { scriptRuntime->loadLevel(scene.key() + ".evs", -1, false); },
+                [&] { worldStartupReady = true; });
+            if (worldStartupReady)
+                std::cout << "World startup EVS: delayed full pass completed after four host World updates; "
+                          << "retail callback cadence remains unverified.\n";
+        };
+        if (playerEntityId >= 0) {
             for (int i = 0; i < count(entities); ++i) {
                 J entity = at(entities, i);
                 const int id = integer(field(entity, "index"));
@@ -3012,7 +3786,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             };
             rescueServices.updateVictimStatus = [&](int action) {
-                if (action != 2 || !carriedVictim.carriedVictimEntity) return;
+                if (action == 1)
+                    victimPickupHudRenderer.begin(rescueServices.readClock());
+                if (action != 2) return;
+                victimPickupHudRenderer.hide();
+                if (!carriedVictim.carriedVictimEntity) return;
                 const int entity = *carriedVictim.carriedVictimEntity;
                 auto actor = rescueState.actors.find(entity);
                 if (actor == rescueState.actors.end()) return;
@@ -3030,7 +3808,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             rescueServices.updateStatistic = [&](const char* name, uint32_t value) {
                 updateSourceStatistic(&rescueStatistics[name], value);
             };
-            rescueServices.setRescueStatisticTotal = [](uint32_t) {};
+            rescueServices.setRescueStatisticTotal = [&](uint32_t total) {
+                rescueState.exits.total = total;
+            };
             rescueServices.reportUnzonedVictim = [](int) {};
             rescueServices.reportUnzonedExit = [](int) {};
             rescueServices.enableExitTrigger = [&](int entity) {
@@ -3044,11 +3824,211 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 HoseItemSelection::reselectFirst(playerLoadout.items, selectionResult);
                 noteGogglesSelection(previousSelection);
             };
+            rescueServices.passout.readPlayerPosition3400 = [&] {
+                return player.safePosition3400;
+            };
+            rescueServices.passout.writePlayerPosition4c = [&](V position) {
+                player.p = position;
+            };
+            rescueServices.passout.setVictimMotion = [&](int entity, uint32_t motion, float speed) {
+                auto runtimeActor = rescueState.actors.find(entity);
+                auto previewVictim = std::find_if(victims.begin(), victims.end(), [&](const PreviewVictim& item) {
+                    return item.spawn.entity == entity;
+                });
+                if (runtimeActor == rescueState.actors.end() || previewVictim == victims.end())
+                    throw std::runtime_error("Passout victim is missing its live actor adapter");
+                VictimActorAsset& actorAsset = *victimAssets.at(previewVictim->actorStem);
+                J motionData = at(field(actorAsset.data.get(), "motions"), int(motion));
+                const float end = num(field(motionData, "end"));
+                runtimeActor->second.animation.select(int(motion), 0.f, end, speed,
+                                                        uint32_t(SDL_GetTicks()));
+                previewVictim->animation = runtimeActor->second.animation;
+            };
+            rescueServices.passout.readCurrentEntities = [&] {
+                std::vector<PlayerHeroDownEntity> current;
+                current.reserve(rescueState.entities.size());
+                for (const auto& entity : rescueState.entities) {
+                    if (entity.type != 2) continue;
+                    auto actor = rescueState.actors.find(entity.entity);
+                    auto victim = std::find_if(victims.begin(), victims.end(), [&](const PreviewVictim& item) {
+                        return item.spawn.entity == entity.entity;
+                    });
+                    if (actor == rescueState.actors.end() || victim == victims.end()) continue;
+                    current.push_back({entity.type, victim->spawn.name, int(actor->second.state)});
+                }
+                return current;
+            };
+            // The viewer's current global mode adapter is source-default mode
+            // 0, so the mode-2 HeroDown spawn/count branch is unreachable.
+            // Keep an explicit failure if that unsupported mode is enabled.
+            rescueServices.passout.spawnHeroDown = [](const PlayerHeroDownSpawn&) {
+                throw std::runtime_error("Mode-2 HeroDown actor spawning is not mapped in this viewer");
+            };
+            rescueServices.passout.logFirefightersDown = [](int) {
+                throw std::runtime_error("Mode-2 firefighters-down logging is not mapped in this viewer");
+            };
+            rescueServices.passout.readCleanupState = [] { return uint32_t(0); };
+            rescueServices.passout.readCleanupCollectionCount = [] { return uint32_t(0); };
+            rescueServices.passout.reportCleanupArrayBounds = [] {
+                std::cerr << "Passout cleanup array bound reported by retail path\n";
+            };
+            rescueServices.passout.cleanupSubobjectMode = [] { return 0; };
+            rescueServices.passout.transitionCleanupSubobjectTo2 = [] {};
+            rescueServices.passout.refreshSelection = [&] {
+                rescueServices.refreshSelectedItem();
+            };
+            rescueServices.passout.resetPlayerView = [&] {
+                player.p = player.checkpointPosition;
+                player.safePosition3400 = player.checkpointPosition;
+                yaw = player.checkpointYaw;
+                player.v = {};
+                player.delta = {};
+                player.cooldown = 0.f;
+                player.ground = false;
+                player.crouch = false;
+                player.climbing = false;
+                player.collisionLatch = false;
+                playerFireState.state = 3;
+                playerIncapacitated = false;
+                placeModelOnFloor(player.p, {-30.f, -30.f, -30.f}, player.maxs(),
+                    [&](V start, V delta, V mins, V maxs, V& point) {
+                        Hit hit;
+                        if (!collision.trace(start, delta, mins, maxs, hit)) return false;
+                        point = hit.point;
+                        return true;
+                    }, [&] { std::cerr << "Passout reset could not find floor placement\n"; });
+            };
+            rescueServices.passout.finishRescueStatus = [&] {
+                if (rescueState.exits.total == std::numeric_limits<uint32_t>::max()) {
+                    rescueState.exits.total = uint32_t(rescueState.actors.size());
+                    rescueServices.setRescueStatisticTotal(rescueState.exits.total);
+                }
+                const uint32_t remaining = rescueState.exits.total -
+                    rescueState.exits.field3530 - rescueState.exits.rescues;
+                activeHint = remaining == 1
+                    ? "There's still one survivor remaining!"
+                    : "There are " + std::to_string(int32_t(remaining)) + " survivors left!";
+                activeHintRemaining = 5.f;
+                playerOxygen.displayedResource = 0.f;
+                playerOxygen.lowWarningPosted = true;
+            };
             rescueTransactions.reset(new VictimTransactions{
                 rescueState, rescueServices, zones, gameplayRandom});
         }
+        if ((interactionCheck || rescueDiagnostic || renderCheck) && scriptRuntime) {
+            // These diagnostics do not enter the interactive frame loop. Drive
+            // the source-mapped four WorldEntity callbacks so their EVS state
+            // matches the point after PlayerRescue registration.
+            for (int update = 0; update < 4; ++update)
+                advanceWorldStartup(uint32_t(SDL_GetTicks()));
+            if (!worldStartupReady)
+                throw std::runtime_error("Delayed full EVS pass did not complete after four World updates");
+        }
+        // A static render capture should show the authored settled fog target;
+        // the interactive viewer advances the same transition in real time.
+        if (renderCheck && fogState.transitioning)
+            fogState.update(fogState.transitionStartMs + RetailFogState::TransitionDurationMs);
+        if (rescueDiagnostic) {
+            RetailFogState fogTimingAudit;
+            fogTimingAudit.enable(0, 600, 50, 50, 50, 100);
+            fogTimingAudit.update(2100);
+            fogTimingAudit.disable(2100);
+            fogTimingAudit.update(4099);
+            const bool disableRampsBeforeTurningOff = fogTimingAudit.renderEnabled() &&
+                fogTimingAudit.transitioning &&
+                std::abs(fogTimingAudit.target.start - 1990.f) < 0.001f &&
+                std::abs(fogTimingAudit.target.end - 2000.f) < 0.001f &&
+                std::abs(fogTimingAudit.target.red - 50.f) < 0.001f;
+            fogTimingAudit.update(4100);
+            if (!disableRampsBeforeTurningOff || fogTimingAudit.renderEnabled() ||
+                fogTimingAudit.transitioning)
+                throw std::runtime_error("Fog disable did not stay enabled through its two-second transition");
+
+            if (scene.key() == "gas_r" && scriptRuntime) {
+                int insideFogTrigger = -1;
+                int outsideFogTrigger = -1;
+                for (const auto& [entity, bindings] : scriptRuntime->bindings) {
+                    for (const Scripts::Binding& binding : bindings) {
+                        const std::string command = lower(trim(binding.command));
+                        if (binding.event != "touch") continue;
+                        if (command == "fogenable 5 320 60 40 40") insideFogTrigger = entity;
+                        if (command == "fogdisable") outsideFogTrigger = entity;
+                    }
+                }
+                if (insideFogTrigger < 0 || outsideFogTrigger < 0)
+                    throw std::runtime_error("Gas R fog trigger bindings are missing");
+
+                const RetailFogState savedFog = fogState;
+                const float savedAshDensity = player.ashDensity;
+                const uint32_t savedScriptTime = scriptRuntime->timeMs;
+                scriptRuntime->dispatch(insideFogTrigger, "touch");
+                const uint32_t enabledAt = scriptRuntime->timeMs;
+                const bool insideTargetReached = fogState.targetEnabled && fogState.transitioning &&
+                    std::abs(fogState.target.start - 1.f) < 0.001f &&
+                    std::abs(fogState.target.end - 320.f) < 0.001f &&
+                    std::abs(fogState.target.red - 60.f) < 0.001f &&
+                    std::abs(fogState.target.green - 40.f) < 0.001f &&
+                    std::abs(fogState.target.blue - 40.f) < 0.001f;
+                fogState.update(enabledAt + RetailFogState::TransitionDurationMs);
+                const auto gasFogColor = fogState.normalizedColor();
+                const bool quantizedColorMatches =
+                    std::abs(gasFogColor[0] * 255.f - 48.f) < 0.01f &&
+                    std::abs(gasFogColor[1] * 255.f - 32.f) < 0.01f &&
+                    std::abs(gasFogColor[2] * 255.f - 32.f) < 0.01f;
+                scriptRuntime->timeMs = enabledAt + RetailFogState::TransitionDurationMs;
+                scriptRuntime->dispatch(outsideFogTrigger, "touch");
+                const bool outsideTargetReached = !fogState.targetEnabled && fogState.transitioning &&
+                    std::abs(fogState.target.start - 1990.f) < 0.001f &&
+                    std::abs(fogState.target.end - 2000.f) < 0.001f &&
+                    std::abs(fogState.target.red - 60.f) < 0.001f &&
+                    std::abs(fogState.target.green - 40.f) < 0.001f &&
+                    std::abs(fogState.target.blue - 40.f) < 0.001f;
+                fogState.update(enabledAt + 2 * RetailFogState::TransitionDurationMs - 1);
+                const bool enabledUntilTarget = fogState.renderEnabled();
+                fogState.update(enabledAt + 2 * RetailFogState::TransitionDurationMs);
+                const bool disabledAtTarget = !fogState.renderEnabled();
+                fogState = savedFog;
+                player.setAshDensity(savedAshDensity);
+                scriptRuntime->timeMs = savedScriptTime;
+                if (!insideTargetReached || !quantizedColorMatches || !outsideTargetReached ||
+                    !enabledUntilTarget || !disabledAtTarget)
+                    throw std::runtime_error("Gas R fog trigger did not preserve the retail fog transition");
+                std::cout << "Gas R fog trigger check: inside RGB quantized to 48/32/32; "
+                             "outside keeps fog active until the two-second transition ends.\n";
+            }
+
+            const bool expectsGoggles = scene.key() != "training" && scene.key() != "gas_r";
+            const bool expectsExtinguisher = scene.key() == "gas_r" ||
+                                             scene.key() == "oil_rig_b" ||
+                                             scene.key() == "oil_rig_c" ||
+                                             scene.key() == "oil_rig_d";
+            if (!playerLoadout.items.slots[1].present ||
+                playerLoadout.items.slots[2].present != expectsExtinguisher ||
+                playerLoadout.items.slots[3].present != expectsGoggles)
+                throw std::runtime_error("Delayed startup EVS did not produce the authored rescue loadout");
+            std::optional<float> expectedFogEnd;
+            if (scene.key() == "bank") expectedFogEnd = 600.f;
+            else if (scene.key() == "boat_a") expectedFogEnd = 1000.f;
+            else if (scene.key() == "boat_b") expectedFogEnd = 250.f;
+            if (expectedFogEnd && (!fogState.configured || !fogState.targetEnabled ||
+                !fogState.transitioning || std::abs(fogState.target.start - 1.f) > 0.001f ||
+                std::abs(fogState.target.end - *expectedFogEnd) > 0.001f ||
+                std::abs(fogState.target.red - 50.f) > 0.001f ||
+                std::abs(fogState.target.green - 50.f) > 0.001f ||
+                std::abs(fogState.target.blue - 50.f) > 0.001f))
+                throw std::runtime_error("Authored map fog command did not reach its expected target");
+            std::cout << "Startup loadout check: axe="
+                      << (playerLoadout.items.slots[1].present ? "yes" : "no")
+                      << ", extinguisher=" << (playerLoadout.items.slots[2].present ? "yes" : "no")
+                      << ", goggles=" << (playerLoadout.items.slots[3].present ? "yes" : "no")
+                      << ", selected=" << playerLoadout.selectedName()
+                      << " (controlled host check; retail callback order remains open).\n";
+            if (expectedFogEnd)
+                std::cout << "Startup fog check: end=" << *expectedFogEnd
+                          << ", RGB=50/50/50, two-second transition active.\n";
+        }
         printInventory(scene, meshes, textureSummary);
-        if (!inspectOnly && (!interactionCheck || rescueCheck)) {
+        if (!inspectOnly && (!interactionCheck || rescueDiagnostic)) {
             size_t roaming = std::count_if(victims.begin(), victims.end(), [](const PreviewVictim& victim) {
                 return victim.roaming;
             });
@@ -3073,9 +4053,169 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                   << ", touch bindings=" << touchBindings << ", use bindings=" << useBindings
                   << ", sound resources=" << (scene.sounds() ? count(field(scene.sounds(), "resources")) : 0) << "\n";
         std::cout << "Bounds triggers: " << boundsTriggers.size() << " loaded from authored C_Model bounds\n";
+        std::cout << "Ambient sound loops: " << ambientLoops.size()
+                  << " fixed-source EVS requests registered (loop and spatial rolloff use the shared host mixer)\n";
         std::cout << "Scene package path: " << scene.root().string() << "\n";
         std::cout << "Named zones: " << zones.groups.size() << " built from BoundsTrigger makezone commands\n";
         logRescueStage("scene startup complete");
+        if (ambientAudioCheck) {
+            const size_t expectedFireLoops = size_t(std::count_if(
+                fires.begin(), fires.end(), [](const PreviewFire& fire) {
+                    return fire.runtime.soundChoice >= 0;
+                }));
+            if (ambientLoops.empty() && expectedFireLoops == 0)
+                throw std::runtime_error("Scene audio check found no authored loop sources");
+            const V testListener = player.p + V{17.f, -2.f, 9.f};
+            const float testYaw = yaw + .25f;
+            sceneAudio.updateOwnedListeners(testListener, testYaw);
+            for (const auto& ambient : ambientLoops)
+                sceneAudio.updateOwned(ambient.owner, ambient.name, ambient.source,
+                                       testListener, testYaw);
+            size_t verifiedVoices = 0;
+            size_t spatialVoices = 0;
+            size_t verifiedFireLoops = 0;
+            if (!sceneAudio.applyOxygenVisorCategorySelector(4, playerOxygenVisorGroup2Gain))
+                throw std::runtime_error("Scene audio check could not apply oxygen-on sound selector 4");
+            SceneAudio::Voice categoryOneProbe;
+            categoryOneProbe.channelGroup = 1;
+            SceneAudio::Voice categoryTwoProbe;
+            categoryTwoProbe.channelGroup = 2;
+            bool verifiedGroupMix = false;
+            SDL_LockAudioDevice(sceneAudio.device);
+            verifiedGroupMix = std::abs(sceneAudio.soundGroupGainForVoice(categoryOneProbe) - 1.f) <= .001f &&
+                               std::abs(sceneAudio.soundGroupGainForVoice(categoryTwoProbe) -
+                                        playerOxygenVisorGroup2Gain) <= .001f;
+            for (const auto& ambient : ambientLoops) {
+                auto voice = std::find_if(sceneAudio.voices.begin(), sceneAudio.voices.end(),
+                    [&](const SceneAudio::Voice& candidate) {
+                        return candidate.ownerAware && candidate.owner == ambient.owner &&
+                               candidate.foldedName == SceneAudio::fold(ambient.name) &&
+                               candidate.sample && candidate.looping;
+                    });
+                if (voice == sceneAudio.voices.end()) continue;
+                if (voice->channelGroup != 2 ||
+                    std::abs(sceneAudio.soundGroupGainForVoice(*voice) -
+                             playerOxygenVisorGroup2Gain) > .001f) {
+                    SDL_UnlockAudioDevice(sceneAudio.device);
+                    throw std::runtime_error("Scene audio check found an incorrect retail sound group");
+                }
+                if (voice->sample->spatial) ++spatialVoices;
+                const auto near = [](float left, float right) {
+                    return std::abs(left - right) <= .001f;
+                };
+                if (!near(voice->source.x, ambient.source.x) ||
+                    !near(voice->source.y, ambient.source.y) ||
+                    !near(voice->source.z, ambient.source.z) ||
+                    !near(voice->listener.x, testListener.x) ||
+                    !near(voice->listener.y, testListener.y) ||
+                    !near(voice->listener.z, testListener.z) ||
+                    !near(voice->yaw, testYaw)) {
+                    SDL_UnlockAudioDevice(sceneAudio.device);
+                    throw std::runtime_error("Scene audio check found an incorrect source or listener update");
+                }
+                ++verifiedVoices;
+            }
+            for (const auto& fire : fires) {
+                const char* sound = fireLoopSoundName(fire.runtime.soundChoice);
+                if (!sound) continue;
+                auto voice = std::find_if(sceneAudio.voices.begin(), sceneAudio.voices.end(),
+                    [&](const SceneAudio::Voice& candidate) {
+                        return candidate.ownerAware && candidate.owner == fire.entity &&
+                               candidate.foldedName == SceneAudio::fold(sound) &&
+                               candidate.sample && candidate.looping;
+                    });
+                if (voice == sceneAudio.voices.end() || !voice->sample->spatial ||
+                    voice->channelGroup != 2 || voice->sample->minimumDistance != 200.f ||
+                    voice->sample->maximumDistance != 1200.f || !fire.loopSoundStarted ||
+                    std::abs(voice->source.x - fire.runtime.origin.x) > .001f ||
+                    std::abs(voice->source.y - fire.runtime.origin.y) > .001f ||
+                    std::abs(voice->source.z - fire.runtime.origin.z) > .001f ||
+                    std::abs(voice->listener.x - testListener.x) > .001f ||
+                    std::abs(voice->listener.y - testListener.y) > .001f ||
+                    std::abs(voice->listener.z - testListener.z) > .001f ||
+                    std::abs(voice->yaw - testYaw) > .001f) {
+                    SDL_UnlockAudioDevice(sceneAudio.device);
+                    throw std::runtime_error("Scene audio check found an invalid authored FireRescue loop");
+                }
+                ++verifiedFireLoops;
+            }
+            SDL_UnlockAudioDevice(sceneAudio.device);
+            if (!verifiedGroupMix)
+                throw std::runtime_error("Scene audio check found an incorrect category 1/2 mix gain");
+            if (verifiedVoices != ambientLoops.size())
+                throw std::runtime_error("Scene audio check could not resolve every ambient loop to a bundled voice");
+            if (spatialVoices != verifiedVoices)
+                throw std::runtime_error("Scene audio check found a non-3D sound resource for an ambient loop");
+            if (verifiedFireLoops != expectedFireLoops)
+                throw std::runtime_error("Scene audio check could not resolve each named fire to its bundled loop");
+            if (!sceneAudio.applyOxygenVisorCategorySelector(5, playerOxygenVisorGroup2Gain))
+                throw std::runtime_error("Scene audio check could not apply oxygen-off sound selector 5");
+            SDL_LockAudioDevice(sceneAudio.device);
+            const bool verifiedRestoredMix =
+                std::abs(sceneAudio.soundGroupGainForVoice(categoryOneProbe) - 1.f) <= .001f &&
+                std::abs(sceneAudio.soundGroupGainForVoice(categoryTwoProbe) - 1.f) <= .001f;
+            SDL_UnlockAudioDevice(sceneAudio.device);
+            if (!verifiedRestoredMix)
+                throw std::runtime_error("Scene audio check found that selector 5 did not restore category gains");
+            std::cout << "Authored FireRescue audio: " << verifiedFireLoops
+                      << " selected 3D loops verified with source, listener, and retail distance metadata.\n";
+            bool verifiedBoatTimedAudio = false;
+            if (scene.key() == "boat_b") {
+                auto button = std::find_if(bmodelMotions.begin(), bmodelMotions.end(),
+                    [](const PreviewBModelMotion& candidate) {
+                        return lower(candidate.authoredName) == "button";
+                    });
+                if (button == bmodelMotions.end() || !scriptRuntime)
+                    throw std::runtime_error("Boat B ambient audio check could not resolve the authored button BModel");
+                const int buttonEntity = button->entity;
+                const auto hasTimer = [&](float keyFrame, const std::string& command) {
+                    return std::any_of(button->timedCommands.begin(), button->timedCommands.end(),
+                        [&](const PreviewBModelTimedCommand& timer) {
+                            return timer.active && std::abs(timer.keyFrame - keyFrame) <= .001f &&
+                                   lower(timer.command) == command;
+                        });
+                };
+                if (!hasTimer(.1f, "loopsnd ambient2") ||
+                    !hasTimer(29.f, "stopsnd ambient2") || button->endTime <= 29.f)
+                    throw std::runtime_error("Boat B button did not register its authored Ambient2 PATH timers");
+
+                std::vector<PreviewBModelMotion> timedProbe{*button};
+                timedProbe.front().currentTime = timedProbe.front().startTime;
+                timedProbe.front().timeScale = 1.f;
+                timedProbe.front().motionState = 3;
+                auto dispatchTimedAudio = [&](int entityId, size_t timerIndex,
+                                              const std::string& command) {
+                    scriptRuntime->run(command, entityId,
+                        "BModel " + std::to_string(entityId) + "/timer " +
+                            std::to_string(timerIndex));
+                };
+                updateBModelStates(timedProbe, .15f, collision, player.p, dispatchTimedAudio);
+                auto hasBoatAmbientVoice = [&] {
+                    SDL_LockAudioDevice(sceneAudio.device);
+                    const bool found = std::any_of(sceneAudio.voices.begin(), sceneAudio.voices.end(),
+                        [&](const SceneAudio::Voice& voice) {
+                            return voice.ownerAware && voice.owner == buttonEntity &&
+                                   voice.foldedName == "ambient2" && voice.looping && voice.sample;
+                        });
+                    SDL_UnlockAudioDevice(sceneAudio.device);
+                    return found;
+                };
+                if (!hasBoatAmbientVoice() || timedProbe.front().timedCommands[0].active)
+                    throw std::runtime_error("Boat B 0.1 PATH timer did not start its Ambient2 loop");
+                updateBModelStates(timedProbe, 29.1f, collision, player.p, dispatchTimedAudio);
+                if (hasBoatAmbientVoice() || timedProbe.front().timedCommands[1].active)
+                    throw std::runtime_error("Boat B 29 PATH timer did not stop its Ambient2 loop");
+                verifiedBoatTimedAudio = true;
+            }
+            std::cout << "Scene audio check: " << verifiedVoices << " ambient and "
+                      << verifiedFireLoops << " FireRescue looping 3D voices passed";
+            if (verifiedBoatTimedAudio)
+                std::cout << "; Boat B Ambient2 PATH start/stop timers passed";
+            std::cout << ".\n";
+            sceneAudio.close();
+            SDL_Quit();
+            return 0;
+        }
         if (interactionCheck) {
             runInteractionCheck(scene, entities, bmodelMotions, boundsTriggers,
                                 soundDispatches, scriptRuntime.get(), collision, player);
@@ -3086,6 +4226,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 throw std::runtime_error("Rescue check requires EVS, a PlayerRescue entity, and at least one victim");
             int exitTrigger = -1;
             const PreviewBoundsTrigger* triggerBounds = nullptr;
+            std::vector<std::pair<int, const PreviewBoundsTrigger*>> finalExitTriggers;
+            std::vector<std::pair<int, const PreviewBoundsTrigger*>> stageExitTriggers;
             for (const auto& trigger : boundsTriggers) {
                 auto bindings = scriptRuntime->bindings.find(trigger.entity);
                 if (bindings == scriptRuntime->bindings.end()) continue;
@@ -3094,56 +4236,217 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         return binding.event == "touch" &&
                             scriptCallsPlayerCommand(binding.command, "escape");
                     });
-                if (escapeBinding) {
+                if (escapeBinding && exitTrigger < 0) {
                     exitTrigger = trigger.entity;
                     triggerBounds = &trigger;
-                    break;
                 }
+                const bool finalExitBinding = std::any_of(bindings->second.begin(), bindings->second.end(),
+                    [](const Scripts::Binding& binding) {
+                        return binding.event == "touch" &&
+                            scriptCallsPlayerCommand(binding.command, "finalexit");
+                    });
+                if (finalExitBinding) finalExitTriggers.emplace_back(trigger.entity, &trigger);
+                const bool stageBinding = std::any_of(bindings->second.begin(), bindings->second.end(),
+                    [](const Scripts::Binding& binding) {
+                        return binding.event == "touch" &&
+                            scriptCallsPlayerCommand(binding.command, "finalexitloadmap");
+                    });
+                if (stageBinding) stageExitTriggers.emplace_back(trigger.entity, &trigger);
             }
             if (exitTrigger < 0 || !triggerBounds)
                 throw std::runtime_error("Rescue check could not find an authored `touch: tell player escape` trigger");
-            auto& victim = victims.front();
-            auto actor = rescueState.actors.find(victim.spawn.entity);
-            if (actor == rescueState.actors.end())
-                throw std::runtime_error("Rescue check could not resolve the first victim actor");
             const V center = (triggerBounds->boundsMin + triggerBounds->boundsMax) * .5f;
             syncVictimsToRescueState();
-            player.p = actor->second.frame.position;
-            const VictimPickupBox playerBox = victimPickupBox(player, player.p);
-            const VictimProximityResult publication = publishVictimProximity(
-                actor->second.state, 1, &actor->second, victimMessages,
-                [&]() -> std::optional<VictimPickupBox> { return playerBox; },
-                [&] { return victim.pickupRadius; },
-                [&] { return actor->second.frame.position; },
-                [&] { return playerRescueMessageRoute; },
-                [] { std::cerr << "Victim message mapper has no free records\n"; });
-            VictimPickupMessageResult pickupResult = VictimPickupMessageResult::ignoredMessage;
-            victimMessages.drain(
-                [&](uint32_t route, uint32_t generation) -> FireMessageQueue::Receiver {
-                    if (rescueMessageRoutes.resolve(route, generation) != &rescueState.player)
-                        return {};
-                    return [&](uint32_t message, const void* payload) {
-                        if (message == 0x7532)
-                            pickupResult = rescueTransactions->receivePickupPayload(payload);
-                    };
-                }, [](const FireMessageQueue::Delivery&) {});
-            if (publication != VictimProximityResult::queued ||
-                pickupResult != VictimPickupMessageResult::accepted)
-                throw std::runtime_error("Mapped Player pickup message was not accepted");
-            syncRescueStateToVictims();
-            player.p = center;
-            if (!BModelContact::overlapsExpanded(triggerBounds->boundsMin, triggerBounds->boundsMax,
-                    center + V{-30.f, -30.f, -30.f}, center + V{30.f, 85.f, 30.f},
-                    triggerBounds->contactReach))
-                throw std::runtime_error("Rescue check player box does not overlap the selected exit bounds");
-            scriptRuntime->dispatch(exitTrigger, "touch");
-            if (carriedVictim.carriedVictimEntity || rescueState.exits.rescues != 1 ||
-                actor->second.state != 6 || actor->second.worldActorFlags != 0x400u)
-                throw std::runtime_error("Authored exit touch did not release and count the carried victim");
-            std::cout << "Rescue check: trigger " << exitTrigger << " dispatched `tell player escape`; victim "
-                      << actor->second.entity << " released at " << actor->second.frame.position.x << ", "
-                      << actor->second.frame.position.y << ", " << actor->second.frame.position.z
-                      << "; rescued=" << rescueState.exits.rescues << "/" << rescueState.exits.total << ".\n";
+            for (size_t index = 0; index < victims.size(); ++index) {
+                auto& victim = victims[index];
+                auto actor = rescueState.actors.find(victim.spawn.entity);
+                if (actor == rescueState.actors.end())
+                    throw std::runtime_error("Rescue check could not resolve victim actor " +
+                                             std::to_string(victim.spawn.entity));
+                player.p = actor->second.frame.position;
+                const VictimPickupBox playerBox = victimPickupBox(player, player.p);
+                const VictimProximityResult publication = publishVictimProximity(
+                    actor->second.state, 1, &actor->second, victimMessages,
+                    [&]() -> std::optional<VictimPickupBox> { return playerBox; },
+                    [&] { return victim.pickupRadius; },
+                    [&] { return actor->second.frame.position; },
+                    [&] { return playerRescueMessageRoute; },
+                    [] { std::cerr << "Victim message mapper has no free records\n"; });
+                VictimPickupMessageResult pickupResult = VictimPickupMessageResult::ignoredMessage;
+                victimMessages.drain(
+                    [&](uint32_t route, uint32_t generation) -> FireMessageQueue::Receiver {
+                        if (rescueMessageRoutes.resolve(route, generation) != &rescueState.player)
+                            return {};
+                        return [&](uint32_t message, const void* payload) {
+                            if (message == 0x7532)
+                                pickupResult = rescueTransactions->receivePickupPayload(payload);
+                        };
+                    }, [](const FireMessageQueue::Delivery&) {});
+                if (publication != VictimProximityResult::queued ||
+                    pickupResult != VictimPickupMessageResult::accepted)
+                    throw std::runtime_error("Mapped Player pickup message was not accepted for victim " +
+                                             std::to_string(victim.spawn.entity));
+                syncRescueStateToVictims();
+                if (index == 0) {
+                    // Exercise the newly wired timed recovery adapter once in
+                    // this controlled check: the safe snapshot is an explicit
+                    // test input, and the elapsed value crosses 1000 ms.
+                    player.safePosition3400 = player.p;
+                    const uint32_t passoutNow = uint32_t(SDL_GetTicks());
+                    playerFireState.state = 6;
+                    playerFireState.failedAt = passoutNow - 1001u;
+                    playerIncapacitated = true;
+                    if (playerPassoutRecoveryDue(playerFireState, passoutNow - 1u) ||
+                        !playerPassoutRecoveryDue(playerFireState, passoutNow))
+                        throw std::runtime_error("Passout recovery deadline did not use strict >1000 ms");
+                    if (rescueTransactions->passout(0) != VictimPassoutResult::dropped)
+                        throw std::runtime_error("Timed passout adapter did not drop the carried victim");
+                    syncRescueStateToVictims();
+                    if (carriedVictim.carriedVictimEntity || playerIncapacitated ||
+                        playerFireState.state != 3 ||
+                        actor->second.state != 4 || actor->second.worldActorFlags != 0x400u)
+                        throw std::runtime_error("Passout adapter did not restore Player and victim state");
+                    player.p = actor->second.frame.position;
+                    const VictimPickupBox retryPlayerBox = victimPickupBox(player, player.p);
+                    const VictimProximityResult retryPublication = publishVictimProximity(
+                        actor->second.state, 1, &actor->second, victimMessages,
+                        [&]() -> std::optional<VictimPickupBox> { return retryPlayerBox; },
+                        [&] { return victim.pickupRadius; },
+                        [&] { return actor->second.frame.position; },
+                        [&] { return playerRescueMessageRoute; },
+                        [] { std::cerr << "Victim message mapper has no free records\n"; });
+                    VictimPickupMessageResult retryResult = VictimPickupMessageResult::ignoredMessage;
+                    victimMessages.drain(
+                        [&](uint32_t route, uint32_t generation) -> FireMessageQueue::Receiver {
+                            if (rescueMessageRoutes.resolve(route, generation) != &rescueState.player)
+                                return {};
+                            return [&](uint32_t message, const void* payload) {
+                                if (message == 0x7532)
+                                    retryResult = rescueTransactions->receivePickupPayload(payload);
+                            };
+                        }, [](const FireMessageQueue::Delivery&) {});
+                    if (retryPublication != VictimProximityResult::queued ||
+                        retryResult != VictimPickupMessageResult::accepted)
+                        throw std::runtime_error("Dropped victim could not be picked up again");
+                    syncRescueStateToVictims();
+                }
+                player.p = center;
+                if (!BModelContact::overlapsExpanded(triggerBounds->boundsMin, triggerBounds->boundsMax,
+                        center + V{-30.f, -30.f, -30.f}, center + V{30.f, 85.f, 30.f},
+                        triggerBounds->contactReach))
+                    throw std::runtime_error("Rescue check player box does not overlap the selected exit bounds");
+                scriptRuntime->dispatch(exitTrigger, "touch");
+                const uint32_t expectedRescues = uint32_t(index + 1);
+                if (carriedVictim.carriedVictimEntity || rescueState.exits.rescues != expectedRescues ||
+                    actor->second.state != 6 || actor->second.worldActorFlags != 0x400u)
+                    throw std::runtime_error("Authored exit touch did not release and count victim " +
+                                             std::to_string(victim.spawn.entity));
+                if (scene.key() == "mbase" && index + 1 < victims.size() &&
+                    rescueState.exits.messageGate != 0)
+                    throw std::runtime_error("MBase exit gate closed before every victim was rescued");
+                if (index == 0 && index + 1 < victims.size()) {
+                    const uint32_t remaining = uint32_t(victims.size()) - expectedRescues;
+                    const std::string expectedFinalExitHint = remaining == 1
+                        ? "There is still one survivor remaining."
+                        : "There are still " + std::to_string(remaining) + " survivors remaining.";
+                    for (const auto& [finalExitEntity, finalExitBounds] : finalExitTriggers) {
+                        const V finalExitCenter =
+                            (finalExitBounds->boundsMin + finalExitBounds->boundsMax) * .5f;
+                        player.p = finalExitCenter;
+                        if (!BModelContact::overlapsExpanded(
+                                finalExitBounds->boundsMin, finalExitBounds->boundsMax,
+                                finalExitCenter + V{-30.f, -30.f, -30.f},
+                                finalExitCenter + V{30.f, 85.f, 30.f},
+                                finalExitBounds->contactReach))
+                            throw std::runtime_error("Final-exit fixture does not overlap an authored trigger");
+                        scriptRuntime->dispatch(finalExitEntity, "touch");
+                        if (activeHint != expectedFinalExitHint ||
+                            std::abs(activeHintRemaining - 7.f) > 0.001f ||
+                            rescueState.exits.messageGate != 0)
+                            throw std::runtime_error("Incomplete final exit did not show the seven-second rescue-count hint");
+                    }
+                    for (const auto& [stageEntity, stageBounds] : stageExitTriggers) {
+                        const V stageCenter = (stageBounds->boundsMin + stageBounds->boundsMax) * .5f;
+                        player.p = stageCenter;
+                        if (!BModelContact::overlapsExpanded(
+                                stageBounds->boundsMin, stageBounds->boundsMax,
+                                stageCenter + V{-30.f, -30.f, -30.f},
+                                stageCenter + V{30.f, 85.f, 30.f}, stageBounds->contactReach))
+                            throw std::runtime_error("Stage-gate fixture does not overlap an authored trigger");
+                        scriptRuntime->dispatch(stageEntity, "touch");
+                        if (!rescueStageRequest.empty() || activeHint != expectedFinalExitHint ||
+                            std::abs(activeHintRemaining - 7.f) > 0.001f)
+                            throw std::runtime_error("Stage exit bypassed the remaining-victim gate");
+                    }
+                }
+            }
+            const bool allReleased = std::all_of(victims.begin(), victims.end(), [&](const PreviewVictim& victim) {
+                auto actor = rescueState.actors.find(victim.spawn.entity);
+                return actor != rescueState.actors.end() && actor->second.state == 6 &&
+                       actor->second.worldActorFlags == 0x400u;
+            });
+            if (!allReleased || carriedVictim.carriedVictimEntity ||
+                rescueState.exits.rescues != victims.size() ||
+                rescueState.exits.total != victims.size())
+                throw std::runtime_error("Rescue check did not release every authored victim");
+            if (scene.key() == "mbase" &&
+                (rescueState.exits.messageGate != 1 || !enabledExitTriggers.empty()))
+                throw std::runtime_error("MBase did not reach its no-final-exit gate after all rescues");
+            for (const auto& [finalExitEntity, finalExitBounds] : finalExitTriggers) {
+                const V finalExitCenter =
+                    (finalExitBounds->boundsMin + finalExitBounds->boundsMax) * .5f;
+                player.p = finalExitCenter;
+                if (!BModelContact::overlapsExpanded(
+                        finalExitBounds->boundsMin, finalExitBounds->boundsMax,
+                        finalExitCenter + V{-30.f, -30.f, -30.f},
+                        finalExitCenter + V{30.f, 85.f, 30.f}, finalExitBounds->contactReach))
+                    throw std::runtime_error("Final-exit fixture does not overlap an authored trigger");
+                int firstOwnedSlot = -1;
+                int alternateOwnedSlot = -1;
+                for (int slot = 0; slot < playerLoadout.items.count && slot < 5; ++slot) {
+                    if (!playerLoadout.items.slots[size_t(slot)].present) continue;
+                    if (firstOwnedSlot < 0) firstOwnedSlot = slot;
+                    else if (slot != firstOwnedSlot) alternateOwnedSlot = slot;
+                }
+                if (firstOwnedSlot < 0 || alternateOwnedSlot < 0)
+                    throw std::runtime_error("Final-exit check needs two owned items to verify inventory refresh");
+                if (!playerLoadout.select(PreviewPlayerLoadout::nameForSlot(alternateOwnedSlot)))
+                    throw std::runtime_error("Final-exit check could not select its alternate owned item");
+                scriptRuntime->dispatch(finalExitEntity, "touch");
+                if (rescueState.exits.messageGate != 1 ||
+                    playerLoadout.items.selected != firstOwnedSlot)
+                    throw std::runtime_error("Successful final exit did not open the gate and reselect the first owned item");
+            }
+            for (const auto& [stageEntity, stageBounds] : stageExitTriggers) {
+                const V stageCenter = (stageBounds->boundsMin + stageBounds->boundsMax) * .5f;
+                player.p = stageCenter;
+                if (!BModelContact::overlapsExpanded(
+                        stageBounds->boundsMin, stageBounds->boundsMax,
+                        stageCenter + V{-30.f, -30.f, -30.f},
+                        stageCenter + V{30.f, 85.f, 30.f}, stageBounds->contactReach))
+                    throw std::runtime_error("Stage-completion fixture does not overlap its authored trigger");
+                rescueStageRequest.clear();
+                scriptRuntime->dispatch(stageEntity, "touch");
+                if (rescueStageRequest.empty())
+                    throw std::runtime_error("All-rescues stage command did not queue a linked package");
+                const auto nextPackage = package.parent_path() / rescueStageRequest;
+                SceneData nextScene = SceneData::load(nextPackage);
+                if (nextScene.key() != rescueStageRequest)
+                    throw std::runtime_error("Linked stage package key does not match its authored request");
+                std::cout << "Stage completion check: " << scene.key() << " trigger "
+                          << stageEntity << " -> " << nextScene.key() << " after all "
+                          << rescueState.exits.rescues
+                          << " rescues; linked package loaded (touch is controlled).\n";
+            }
+            std::cout << "Rescue check: " << victims.size()
+                      << " authored pickup/release transactions passed through trigger " << exitTrigger
+                      << "; rescued=" << rescueState.exits.rescues << "/" << rescueState.exits.total
+                      << "; one timed passout drop/reset/re-pickup passed";
+            if (scene.key() == "mbase")
+                std::cout << "; no-final-exit gate=1 (outro semantics unverified)";
+            if (!finalExitTriggers.empty())
+                std::cout << "; incomplete final-exit hints and successful inventory refresh passed";
+            std::cout << ". This is a synthetic transaction check, not natural travel or retail parity.\n";
             return 0;
         }
         if (inspectOnly) {
@@ -3177,6 +4480,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     : cameraRelativePoint(cameraFrame, 42.f, -5.f, 145.f);
                 auto captureTool = [&](bool halfTurn, float motionTime) {
                     renderScene(meshes, scene, collision, inspectionPoses, worldModelFlags,
+                                fogState, lightStyles,
                                 cameraPosition, yaw, 0.f, width, height);
                     drawPreviewPropModels(propModels, propModelAssets);
                     drawPreviewFires(fires, fireRenderer, SDL_GetTicks());
@@ -3281,6 +4585,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 auto captureTriggerFrame = [&](uint32_t flags) {
                     worldModelFlags.flags[target->modelIndex] = flags;
                     renderScene(meshes, scene, collision, inspectionPoses, worldModelFlags,
+                                fogState, lightStyles,
                                 camera, yaw, 0.f, width, height);
                     drawPreviewPropModels(propModels, propModelAssets);
                     drawPreviewFires(fires, fireRenderer, SDL_GetTicks());
@@ -3336,6 +4641,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 return glError == GL_NO_ERROR && changedPixels > 0 ? 0 : 1;
             }
             renderScene(meshes, scene, collision, inspectionPoses, worldModelFlags,
+                        fogState, lightStyles,
                         {spawn.x, spawn.y + 70.f, spawn.z}, yaw, 0.f, width, height);
             drawPreviewPropModels(propModels, propModelAssets);
             const int fireQuads = drawPreviewFires(fires, fireRenderer, SDL_GetTicks());
@@ -3352,9 +4658,92 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
                 return pixels;
             };
+            const std::vector<uint8_t> frameBeforeOxygen =
+                oxygenHudRenderCheck ? readFramebuffer() : std::vector<uint8_t>{};
+            glDisable(GL_FOG);
+            int oxygenVisorEffectLayers = 0;
+            size_t oxygenVisorEffectChangedPixels = 0;
+            std::vector<uint8_t> frameBeforeOxygenHud;
+            if (oxygenHudRenderCheck) {
+                const float oxygenWarningAtThreshold =
+                    playerOxygenWarningOverlayAmount(0.25f);
+                const float oxygenWarningAtHalfThreshold =
+                    playerOxygenWarningOverlayAmount(0.125f);
+                const float oxygenWarningAtZero =
+                    playerOxygenWarningOverlayAmount(0.f);
+                if (oxygenWarningAtThreshold != 0.f ||
+                    std::abs(oxygenWarningAtHalfThreshold - 0.05f) > 0.000001f ||
+                    std::abs(oxygenWarningAtZero - 0.1f) > 0.000001f)
+                    throw std::runtime_error("Oxygen warning layer amount did not match retail thresholds");
+                PlayerOxygenVisorEffect opening;
+                startPlayerOxygenVisorEffect(opening, 1000u, true);
+                int32_t openingY = 0;
+                if (!samplePlayerOxygenVisorEffect(opening, 1495u, openingY) || openingY != 240 ||
+                    samplePlayerOxygenVisorEffect(opening, opening.startAt, openingY) ||
+                    samplePlayerOxygenVisorEffect(opening, opening.endAt, openingY) ||
+                    completePlayerOxygenVisorEffect(opening, opening.endAt) !=
+                        PlayerOxygenVisorEffectCompletion::oxygenOn)
+                    throw std::runtime_error("Oxygen-on visor animation timing did not match retail bounds");
+                PlayerOxygenVisorEffect closing;
+                startPlayerOxygenVisorEffect(closing, 2000u, false);
+                int32_t closingY = 0;
+                if (!samplePlayerOxygenVisorEffect(
+                        closing, closing.startAt + (closing.endAt - closing.startAt) / 2u, closingY) ||
+                    closingY != 240 || completePlayerOxygenVisorEffect(closing, closing.endAt) !=
+                        PlayerOxygenVisorEffectCompletion::oxygenOff)
+                    throw std::runtime_error("Oxygen-off visor animation timing did not match retail bounds");
+                PlayerOxygenVisorEffect renderSample;
+                startPlayerOxygenVisorEffect(renderSample, 1000u, true);
+                oxygenVisorEffectLayers = oxygenHudRenderer.drawVisorEffect(
+                    renderSample, 1495u, width, height);
+                frameBeforeOxygenHud = readFramebuffer();
+            }
+            const int oxygenHudLayers = oxygenHudRenderCheck
+                ? oxygenHudRenderer.draw(
+                    0.125f, playerOxygenWarningOverlayAmount(0.125f), width, height) : 0;
+            const std::vector<uint8_t> frameBeforeVictimPickupHud =
+                victimPickupHudRenderCheck ? readFramebuffer() : std::vector<uint8_t>{};
+            int victimPickupHudLayers = 0;
+            size_t victimPickupHudChangedPixels = 0;
+            if (victimPickupHudRenderCheck) {
+                const auto start = VictimPickupHudRenderer::sample(0.f);
+                const auto midpoint = VictimPickupHudRenderer::sample(0.05f);
+                const auto expanded = VictimPickupHudRenderer::sample(0.1f);
+                const float halfwaySampleTime = float(uint32_t(1050)) * 0.001f;
+                const auto halfwayToCorner = VictimPickupHudRenderer::sample(halfwaySampleTime);
+                const auto settled = VictimPickupHudRenderer::sample(1.1f);
+                const auto afterEnd = VictimPickupHudRenderer::sample(1.2f);
+                if (start.left != 320 || start.right != 320 || start.top != 240 || start.bottom != 240 ||
+                    midpoint.left != 288 || midpoint.right != 352 || midpoint.top != 208 || midpoint.bottom != 272 ||
+                    expanded.left != 256 || expanded.right != 384 || expanded.top != 176 || expanded.bottom != 304 ||
+                    halfwayToCorner.left != 379 || halfwayToCorner.right != 475 ||
+                    halfwayToCorner.top != 90 || halfwayToCorner.bottom != 186 ||
+                    settled.left != 502 || settled.right != 566 || settled.top != 5 || settled.bottom != 69 ||
+                    afterEnd.left != settled.left || afterEnd.right != settled.right ||
+                    afterEnd.top != settled.top || afterEnd.bottom != settled.bottom)
+                    throw std::runtime_error("Victim pickup HUD keyframe interpolation did not match the retail track");
+                victimPickupHudRenderer.begin(0);
+                if (victimPickupHudRenderer.drawAtSeconds(0.f, width, height) != 0)
+                    throw std::runtime_error("Victim pickup HUD should begin at its zero-sized center keyframe");
+                victimPickupHudLayers = victimPickupHudRenderer.drawAtSeconds(
+                    halfwaySampleTime, width, height);
+                const auto frame = readFramebuffer();
+                for (size_t i = 0; i + 3 < frame.size(); i += 4) {
+                    if (frame[i] != frameBeforeVictimPickupHud[i] ||
+                        frame[i + 1] != frameBeforeVictimPickupHud[i + 1] ||
+                        frame[i + 2] != frameBeforeVictimPickupHud[i + 2] ||
+                        frame[i + 3] != frameBeforeVictimPickupHud[i + 3])
+                        ++victimPickupHudChangedPixels;
+                }
+                victimPickupHudRenderer.hide();
+                if (victimPickupHudRenderer.drawAtSeconds(1.1f, width, height) != 0)
+                    throw std::runtime_error("Victim pickup HUD remained visible after status action 2");
+            }
             std::vector<uint8_t> frameWithoutHint;
             if (hintRenderCheck) frameWithoutHint = readFramebuffer();
+            int hintGlyphs = 0;
             if (fireDirectionRenderCheck) {
+                glDisable(GL_FOG);
                 const auto before = readFramebuffer();
                 const std::array<uint8_t, 4> allSectors{{1, 1, 1, 1}};
                 const int iconsDrawn = fireDirectionRenderer.draw(allSectors, width, height);
@@ -3385,6 +4774,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 fireRenderer.release();
                 fireDirectionRenderer.release();
                 gogglesRenderer.release();
+                hintOverlay.release();
                 fireRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
@@ -3395,11 +4785,42 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 SDL_Quit();
                 return glError == GL_NO_ERROR && iconsDrawn == 4 && changedPixels > 0 ? 0 : 1;
             }
-            if (hintRenderCheck)
-                hintOverlay.draw("Press E or Space to use this console.", width, height);
+            if (hintRenderCheck) {
+                glDisable(GL_FOG);
+                RetailHintLifetime timingCheck;
+                timingCheck.begin(100, 1.f);
+                if (timingCheck.visible(100) || !timingCheck.visible(101) ||
+                    !timingCheck.visible(1099) || timingCheck.visible(1100))
+                    throw std::runtime_error("Retail hint visibility did not use strict start/end bounds");
+                const auto markupSample = HintOverlay::parse("^(228,0,0)TOO HOT!\nCOOL OFF FAST!");
+                if (markupSample.size() != 23 || markupSample[0].value != 'T' ||
+                    markupSample[0].color != std::array<uint8_t, 3>{{228, 0, 0}} ||
+                    markupSample[8].value != '\n' || markupSample[9].value != 'C')
+                    throw std::runtime_error("Retail hint color markup or newline parsing failed");
+                hintGlyphs = hintOverlay.draw("^(228,0,0)TOO HOT!\nCOOL OFF FAST!", width, height);
+            }
             auto frame = readFramebuffer();
             GLenum glError = glGetError();
             size_t hintChangedPixels = 0;
+            size_t oxygenHudChangedPixels = 0;
+            if (oxygenHudRenderCheck) {
+                for (size_t i = 0; i + 3 < frameBeforeOxygenHud.size(); i += 4) {
+                    if (frameBeforeOxygenHud[i] != frameBeforeOxygen[i] ||
+                        frameBeforeOxygenHud[i + 1] != frameBeforeOxygen[i + 1] ||
+                        frameBeforeOxygenHud[i + 2] != frameBeforeOxygen[i + 2] ||
+                        frameBeforeOxygenHud[i + 3] != frameBeforeOxygen[i + 3])
+                        ++oxygenVisorEffectChangedPixels;
+                }
+            }
+            if (oxygenHudRenderCheck) {
+                for (size_t i = 0; i + 3 < frame.size(); i += 4) {
+                    if (frame[i] != frameBeforeOxygenHud[i] ||
+                        frame[i + 1] != frameBeforeOxygenHud[i + 1] ||
+                        frame[i + 2] != frameBeforeOxygenHud[i + 2] ||
+                        frame[i + 3] != frameBeforeOxygenHud[i + 3])
+                        ++oxygenHudChangedPixels;
+                }
+            }
             if (hintRenderCheck) {
                 for (size_t i = 0; i + 3 < frame.size(); i += 4) {
                     if (frame[i] != frameWithoutHint[i] || frame[i + 1] != frameWithoutHint[i + 1] ||
@@ -3416,6 +4837,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (rgba != 0x141a1fff) ++nonBackgroundPixels;
             }
             auto imagePath = saveRenderCheckFrame(package, frame, width, height,
+                victimPickupHudRenderCheck ? ".victim-pickup-hud-render-check.bmp" :
+                oxygenHudRenderCheck ? ".oxygen-hud-render-check.bmp" :
                 hintRenderCheck ? ".hint-render-check.bmp" : ".render-check.bmp");
             std::cout << "Render check: " << textureSummary.uploadedFiles << "/"
                       << textureSummary.uniqueFiles << " textures uploaded; "
@@ -3423,7 +4846,17 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                       << " non-background pixels; FireRescue=" << fires.size() << " ("
                       << fireQuads << " sprite quads)";
             if (hintRenderCheck)
-                std::cout << "; hint overlay changed " << hintChangedPixels << " pixels";
+                std::cout << "; hint overlay drew " << hintGlyphs << " atlas glyphs and changed "
+                          << hintChangedPixels << " pixels";
+            if (oxygenHudRenderCheck)
+                std::cout << "; oxygen visor effect drew " << oxygenVisorEffectLayers
+                          << " layer and changed " << oxygenVisorEffectChangedPixels
+                          << " pixels; oxygen HUD drew " << oxygenHudLayers
+                          << " layers and changed " << oxygenHudChangedPixels << " pixels";
+            if (victimPickupHudRenderCheck)
+                std::cout << "; victim pickup HUD drew " << victimPickupHudLayers
+                          << " layer at t=1.05s and changed " << victimPickupHudChangedPixels
+                          << " pixels; source keyframes and hide action checked";
             std::cout << "; frame saved to " << imagePath.string();
 #if defined(__APPLE__)
             std::cout << "; OpenGL " << (headlessContext.version() ? headlessContext.version() : "unknown");
@@ -3436,8 +4869,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (prop.second->renderer) prop.second->renderer->release();
             fireRenderer.release();
             fireDirectionRenderer.release();
+            if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
+            if (victimPickupHudRendererLoaded) victimPickupHudRenderer.release();
+            hintOverlay.release();
             fireRendererLoaded = false;
             fireDirectionRendererLoaded = false;
+            oxygenHudRendererLoaded = false;
 #if defined(__APPLE__)
             headlessContext.destroy();
 #endif
@@ -3446,12 +4883,24 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             SDL_Quit();
             return glError == GL_NO_ERROR && textureSummary.failedFiles == 0 &&
                    textureSummary.uploadedFiles == textureSummary.uniqueFiles &&
-                   (!hintRenderCheck || hintChangedPixels > 0) ? 0 : 1;
+                   (!hintRenderCheck || (hintGlyphs > 0 && hintChangedPixels > 0)) &&
+                   (!oxygenHudRenderCheck ||
+                    (oxygenVisorEffectLayers == 1 && oxygenVisorEffectChangedPixels > 0 &&
+                     oxygenHudLayers == 3 && oxygenHudChangedPixels > 0)) &&
+                   (!victimPickupHudRenderCheck ||
+                    (victimPickupHudLayers == 1 && victimPickupHudChangedPixels > 0)) ? 0 : 1;
         }
 
+        oxygenHudRenderer.load(locateOxygenHudSprites(scene));
+        oxygenHudRendererLoaded = true;
+        victimPickupHudRenderer.load(locateVictimPickupHudSprites(scene));
+        victimPickupHudRendererLoaded = true;
         bool running = true, captured = true, jumpEdge = false;
         bool useEdge = false, sprayHeld = false, sprayPressed = false, sprayReleased = false;
         float pitch = 0.f;
+        HeadMotion passoutHeadMotion;
+        Follower passoutViewFollower;
+        bool passoutViewInitialized = false;
         bool previewMotionsPlaying = false;
         bool fireCameraAuditExposure = false;
         int fireCameraAuditEntity = -1;
@@ -3654,8 +5103,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             }
             uint32_t now = SDL_GetTicks();
             if (scriptRuntime) scriptRuntime->timeMs = now;
+            fogState.update(now);
+            advanceWorldStartup(now);
             float dt = std::min(.1f, float(now - previous) * .001f);
             previous = now;
+            bool passoutRecoveredThisFrame = false;
             if (!playerIncapacitated) {
                 PreviewPlayerFireOps oxygenOps;
                 oxygenOps.now = now;
@@ -3681,15 +5133,48 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         sprayReleased = false;
                     }
                 };
-                updatePlayerOxygen(playerOxygen, now, dt, [&] {
-                    oxygenOps.triggerPassout(playerFireState, 0);
-                });
-                if (updatePlayerOxygenWarning(playerOxygen))
-                    std::cout << "Player status key RC_OxygenLow asserted at "
-                              << playerOxygen.resource << "\n";
+                updatePlayerOxygen(playerOxygen, now, dt,
+                    [&] {
+                        sceneAudio.playOwned(playerEntityId, "Breathe", player.p, player.p, yaw, 1);
+                    },
+                    [&] {
+                        sceneAudio.playOwned(playerEntityId, "OxyRelease", player.p, player.p, yaw, 2);
+                    },
+                    [&] {
+                        oxygenOps.triggerPassout(playerFireState, 0);
+                    });
+            }
+            const auto visorCompletion =
+                completePlayerOxygenVisorEffect(playerOxygenVisorEffect, now);
+            if (visorCompletion == PlayerOxygenVisorEffectCompletion::oxygenOn) {
+                sceneAudio.playOwned(playerEntityId, "VisorLock", player.p, player.p, yaw, 1);
+                sceneAudio.applyOxygenVisorCategorySelector(4, playerOxygenVisorGroup2Gain);
+            } else if (visorCompletion == PlayerOxygenVisorEffectCompletion::oxygenOff) {
+                sceneAudio.applyOxygenVisorCategorySelector(5, playerOxygenVisorGroup2Gain);
+            }
+            // Retail calls the Player status updater before its state-6 branch,
+            // so the HUD keeps easing toward the last resource value during
+            // passout even though ordinary oxygen drain has stopped.
+            updatePlayerOxygenDisplay(playerOxygen);
+            if (updatePlayerOxygenWarning(playerOxygen)) {
+                // 00458400 raises RC_OxygenLow through 004897C0 with the
+                // sequential chatter path (00489110). The authored set has
+                // one sound, so this maps directly to its sole RRF resource.
+                sceneAudio.play("RC_OxygenLow0", player.p, player.p, yaw, 1);
+                std::cout << "Player status key RC_OxygenLow asserted at "
+                          << playerOxygen.displayedResource << "\n";
+            }
+            if (playerPassoutRecoveryDue(playerFireState, now) && rescueTransactions) {
+                // Retail 00451080 keeps state 6 through elapsed=1000 and calls
+                // 0044FF10(player, 0) on the first later Player update.
+                syncVictimsToRescueState();
+                rescueTransactions->passout(0);
+                syncRescueStateToVictims();
+                passoutRecoveredThisFrame = true;
             }
             updateBoundsTriggerModelFlags(now);
             updatePreviewFires(fires, now, dt);
+            updatePreviewFirePathMotion(fires, collision, now, dt);
             if (previewMotionsPlaying) {
                 previewMotionTime = std::min(bmodelMotionEnd, previewMotionTime + dt);
                 sampleBModelMotions(bmodelMotions, previewMotionTime, inspectionPoses);
@@ -3731,26 +5216,43 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (playerIncapacitated) forward = side = 0.f;
             const bool jumpDown = !playerIncapacitated && !usingConsole && (keys[SDL_SCANCODE_SPACE] != 0 ||
                 (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_RIGHT)));
-            player.step(dt, forward, side, yaw, jumpDown,
-                jumpEdge && !playerIncapacitated && !usingConsole, crouchEdge, collision, pitch);
+            if (!playerIncapacitated && !passoutRecoveredThisFrame) {
+                player.step(dt, forward, side, yaw, jumpDown,
+                    jumpEdge && !usingConsole, crouchEdge, collision, pitch);
+            }
+            sceneAudio.updateOwnedListeners(player.p, yaw);
+            updatePreviewFireLoopSounds(fires, sceneAudio, player.p, yaw);
             jumpEdge = false;
             const V playerContactPoint = playerRescueCandidateWorldOrigin(player);
-            if (!playerIncapacitated) {
-                updatePlayerBurnCooling(playerBurnState, dt, false, 0.f,
-                                        [](const auto&, const auto&) {});
+            if (!playerIncapacitated && !passoutRecoveredThisFrame) {
+                updatePlayerBurnCooling(playerBurnState, dt, player.collisionLatch,
+                    playerOxygen.resource,
+                    [&](const auto&, const auto&) {
+                        // 00452570's 00441E90 copies the three translation
+                        // DWORDs into the distinct +0x3400 safe snapshot.
+                        player.safePosition3400 = player.p;
+                    });
             }
-            updatePreviewFireSpread(fires, collision, gameplayRandom,
-                                    playerContactPoint, now,
-                                    fireDividerCycle, nextDynamicFireEntity);
-            int exposureRecords = 0;
-            int firstExposureFire = -1;
-            float firstExposureInfluence = 0.f;
-            if (!playerIncapacitated) {
+            std::vector<QueuedSpreadFire> pendingSpreadChildren;
+            std::vector<std::pair<int, float>> pendingFireExposureMessages;
+            // 004483A0 updates spread proximity and queues Player exposure in
+            // the same FireRescue callback. Defer this callback until after
+            // the earlier registered BModel, BoundsTrigger, and PropModel
+            // contact candidates have been collected below.
+            auto runFireContactPass = [&] {
+                const size_t fireContactCandidateCount = fires.size();
+                int exposureRecords = 0;
+                int firstExposureFire = -1;
+                float firstExposureInfluence = 0.f;
                 const V candidatePosition = playerContactPoint;
-                for (auto& fire : fires) {
-                    // Retail's four-record gate is FireRescue+0xB8, so each
-                    // fire owns its own candidate count. This host evaluates
-                    // one Player candidate per fire; a frame-wide cap would
+                for (size_t fireIndex = 0; fireIndex < fireContactCandidateCount; ++fireIndex) {
+                    auto& fire = fires[fireIndex];
+                    queuePreviewFireSpreadForCandidate(
+                        fire, collision, gameplayRandom, playerContactPoint, now,
+                        nearbySpreadFireCount, pendingSpreadChildren);
+                    // Retail's four-record gate is FireRescue+0xB8, so each fire
+                    // owns its own candidate count. This host evaluates one
+                    // Player candidate per fire; a frame-wide cap would
                     // incorrectly discard later FireRescue instances.
                     if (fire.runtime.suppression.state == 5) continue;
                     const auto unobstructedContact = PlayerFireContact::evaluate(
@@ -3787,91 +5289,59 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         firstExposureInfluence = contact.influence;
                     }
                     ++exposureRecords;
-                    PreviewPlayerFireOps fireOps;
-                    fireOps.now = now;
-                    fireOps.dt = dt;
-                    fireOps.playerPosition = player.p;
-                    fireOps.fireSource = fire.runtime.visual.position;
-                    fireOps.yaw = yaw;
-                    fireOps.pitch = pitch;
-                    fireOps.cameraAudit = fireCameraAudit;
-                    fireOps.directionalIndicators = &playerBurnState.directionalIndicators;
-                    fireOps.seriousBurns = &playerSeriousBurns;
-                    fireOps.lastPainChoice = &lastPainChoice;
-                    fireOps.lastPassoutChoice = &lastPassoutChoice;
-                    fireOps.selectedItemIndex = uint32_t(playerLoadout.items.selected);
-                    fireOps.incapacitated = &playerIncapacitated;
-                    fireOps.activeHint = &activeHint;
-                    fireOps.activeHintRemaining = &activeHintRemaining;
-                    fireOps.audio = &sceneAudio;
-                    fireOps.random = &gameplayRandom;
-                    fireOps.releaseSelectedItem = [&] {
-                        // The retail selected-item +0x1C callback is a no-op
-                        // for the Axe's child action state, and the preview
-                        // exposes no persistent state for goggles' release.
-                        // Extinguisher +0x1C is 00461590 and clears ACTION.
-                        if (playerLoadout.selectedName() == "extinguisher") {
-                            if (extinguisher.action.active && extinguisher.hasWorldFrame)
-                                extinguisher.action = ExtinguisherPose::endWindow(
-                                    extinguisher.action, now, extinguisher.worldFrame);
-                            sprayHeld = false;
-                            sprayPressed = false;
-                            sprayReleased = false;
-                        }
-                    };
-                    handlePlayerFireMessage7531(playerFireState, playerPainDeadline,
-                                                playerBurnState.accumulator, contact.influence,
-                                                gameplayRandom, fireOps);
-                    if (playerIncapacitated) break;
+                    // 004483A0 submits message 0x7531 during the contact pass;
+                    // 00429520 delivers mapped messages only after the contact
+                    // traversal and entity-spawn queue have finished.
+                    pendingFireExposureMessages.emplace_back(fire.entity, contact.influence);
                 }
-            }
-            if (fireCameraAudit) {
-                const bool exposedNow = exposureRecords != 0;
-                if (exposedNow != fireCameraAuditExposure) {
-                    std::cout << "fire-camera-audit exposure=" << (exposedNow ? "enter" : "leave")
-                              << " t=" << now
-                              << " entity=" << (exposedNow ? firstExposureFire : fireCameraAuditEntity)
-                              << " influence=" << (exposedNow ? firstExposureInfluence : 0.f)
-                              << " yaw=" << yaw << " pitch=" << pitch
-                              << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
-                              << "\n";
+                if (fireCameraAudit) {
+                    const bool exposedNow = exposureRecords != 0;
+                    if (exposedNow != fireCameraAuditExposure) {
+                        std::cout << "fire-camera-audit exposure=" << (exposedNow ? "enter" : "leave")
+                                  << " t=" << now
+                                  << " entity=" << (exposedNow ? firstExposureFire : fireCameraAuditEntity)
+                                  << " influence=" << (exposedNow ? firstExposureInfluence : 0.f)
+                                  << " yaw=" << yaw << " pitch=" << pitch
+                                  << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
+                                  << "\n";
+                    }
+                    fireCameraAuditExposure = exposedNow;
+                    fireCameraAuditEntity = exposedNow ? firstExposureFire : -1;
+                    if (fireCameraAuditNextSample == 0 ||
+                        static_cast<int32_t>(now - fireCameraAuditNextSample) >= 0) {
+                        fireCameraAuditNextSample = now + 250;
+                        const V auditCameraPosition{
+                            player.p.x, player.p.y + (player.crouch ? 10.f : 70.f), player.p.z};
+                        std::cout << "fire-camera-audit frame t=" << now
+                                  << " exposed=" << (exposedNow ? "yes" : "no")
+                                  << " entity=" << (exposedNow ? firstExposureFire : -1)
+                                  << " influence=" << (exposedNow ? firstExposureInfluence : 0.f)
+                                  << " yaw=" << yaw << " pitch=" << pitch
+                                  << " viewDelta=" << (yaw - fireCameraAuditSampleYaw) << ","
+                                  << (pitch - fireCameraAuditSamplePitch)
+                                  << " mouseAngleDelta=" << fireCameraAuditYawDelta << ","
+                                  << fireCameraAuditPitchDelta
+                                  << " mouseEvents=" << fireCameraAuditMouseEvents
+                                  << " captured=" << (captured ? "yes" : "no")
+                                  << " relative=" << (SDL_GetRelativeMouseMode() ? "yes" : "no")
+                                  << " focus=" << ((SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) ? "yes" : "no")
+                                  << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
+                                  << " velocity=" << player.v.x << "," << player.v.y << "," << player.v.z
+                                  << " delta=" << player.delta.x << "," << player.delta.y << "," << player.delta.z
+                                  << " ground=" << (player.ground ? "yes" : "no")
+                                  << " crouch=" << (player.crouch ? "yes" : "no")
+                                  << " incapacitated=" << (playerIncapacitated ? "yes" : "no")
+                                  << " input=" << forward << "," << side
+                                  << " camera=" << auditCameraPosition.x << ","
+                                  << auditCameraPosition.y << "," << auditCameraPosition.z << "\n";
+                        fireCameraAuditYawDelta = 0.f;
+                        fireCameraAuditPitchDelta = 0.f;
+                        fireCameraAuditMouseEvents = 0;
+                        fireCameraAuditSampleYaw = yaw;
+                        fireCameraAuditSamplePitch = pitch;
+                    }
                 }
-                fireCameraAuditExposure = exposedNow;
-                fireCameraAuditEntity = exposedNow ? firstExposureFire : -1;
-                if (fireCameraAuditNextSample == 0 ||
-                    static_cast<int32_t>(now - fireCameraAuditNextSample) >= 0) {
-                    fireCameraAuditNextSample = now + 250;
-                    const V auditCameraPosition{
-                        player.p.x, player.p.y + (player.crouch ? 10.f : 70.f), player.p.z};
-                    std::cout << "fire-camera-audit frame t=" << now
-                              << " exposed=" << (exposedNow ? "yes" : "no")
-                              << " entity=" << (exposedNow ? firstExposureFire : -1)
-                              << " influence=" << (exposedNow ? firstExposureInfluence : 0.f)
-                              << " yaw=" << yaw << " pitch=" << pitch
-                              << " viewDelta=" << (yaw - fireCameraAuditSampleYaw) << ","
-                              << (pitch - fireCameraAuditSamplePitch)
-                              << " mouseAngleDelta=" << fireCameraAuditYawDelta << ","
-                              << fireCameraAuditPitchDelta
-                              << " mouseEvents=" << fireCameraAuditMouseEvents
-                              << " captured=" << (captured ? "yes" : "no")
-                              << " relative=" << (SDL_GetRelativeMouseMode() ? "yes" : "no")
-                              << " focus=" << ((SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) ? "yes" : "no")
-                              << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
-                              << " velocity=" << player.v.x << "," << player.v.y << "," << player.v.z
-                              << " delta=" << player.delta.x << "," << player.delta.y << "," << player.delta.z
-                              << " ground=" << (player.ground ? "yes" : "no")
-                              << " crouch=" << (player.crouch ? "yes" : "no")
-                              << " incapacitated=" << (playerIncapacitated ? "yes" : "no")
-                              << " input=" << forward << "," << side
-                              << " camera=" << auditCameraPosition.x << ","
-                              << auditCameraPosition.y << "," << auditCameraPosition.z << "\n";
-                    fireCameraAuditYawDelta = 0.f;
-                    fireCameraAuditPitchDelta = 0.f;
-                    fireCameraAuditMouseEvents = 0;
-                    fireCameraAuditSampleYaw = yaw;
-                    fireCameraAuditSamplePitch = pitch;
-                }
-            }
+            };
             FrameTransform cameraFrame;
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);
             const float cameraCosPitch = std::cos(pitch), cameraSinPitch = std::sin(pitch);
@@ -3881,6 +5351,51 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 V{cameraSinYaw * cameraSinPitch, cameraCosPitch, cameraCosYaw * cameraSinPitch},
                 V{cameraSinYaw * cameraCosPitch, -cameraSinPitch, cameraCosYaw * cameraCosPitch}
             };
+            const bool playerMoving = !playerIncapacitated &&
+                std::sqrt(forward * forward + side * side) > 1e-7f;
+            const int playerViewState = playerIncapacitated
+                ? playerFireState.state : (player.crouch ? 4 : 3);
+            const int headMode = HeadMotion::viewMode(playerViewState, true, playerMoving);
+            const HeadMotion::Output headOffset = passoutHeadMotion.update(headMode, dt);
+            const bool usePassoutCamera = playerFireState.state == 6;
+            if (usePassoutCamera) {
+                if (!passoutViewInitialized) {
+                    // Seed the stateful follower from the camera the viewer was
+                    // already showing, then apply the retail transition frame.
+                    passoutViewFollower = Follower{};
+                    passoutViewFollower.flags = 0x2e;
+                    passoutViewFollower.threshold = {20.f, 1000.f, 20.f};
+                    passoutViewFollower.settling = {.05f, 0.f, .05f};
+                    passoutViewFollower.smoothing = {0.f, .05f, 0.f};
+                    passoutViewFollower.held = true;
+                    passoutViewFollower.position = cameraFrame.position;
+                    passoutViewFollower.previous = cameraFrame.position;
+                    passoutViewFollower.basis = cameraFrame.axis;
+                    passoutViewInitialized = true;
+                }
+                FrameTransform playerFrame;
+                playerFrame.position = player.p;
+                playerFrame.axis = {
+                    V{cameraCosYaw, 0.f, -cameraSinYaw},
+                    V{0.f, 1.f, 0.f},
+                    V{cameraSinYaw, 0.f, cameraCosYaw}
+                };
+                const float fraction = playerPassoutViewFactor(playerFireState, now);
+                // The selected items' live +0x1E4/+0x1F0 offsets are not yet
+                // exposed by this viewer; zero matches the unselected/default
+                // item and the traced static extinguisher setup.
+                const V itemViewOffset{}, itemAimOffset{};
+                const auto view = ViewUpdate::transition(
+                    playerFrame, {headOffset.x, headOffset.y, headOffset.z},
+                    itemViewOffset, itemAimOffset, {0.f, -20.f, -30.f},
+                    {-60.f, 1000.f, 0.f}, 70.f, fraction,
+                    pitch * 57.29577951308232f, dt, passoutViewFollower, false);
+                passoutViewFollower = view.follower;
+                cameraFrame.position = passoutViewFollower.position;
+                cameraFrame.axis = passoutViewFollower.basis;
+            } else {
+                passoutViewInitialized = false;
+            }
             const std::string selectedItem = playerLoadout.selectedName();
             if (selectedItem == "axe" && sprayPressed) {
                 // Retail Axe ACTION press (0045F8F0) sets global clock +100.
@@ -4134,6 +5649,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             }
             std::map<int, bool> currentBModelContacts;
+            std::vector<std::pair<int, std::string>> pendingBModelContactEvents;
             nearestUseEntity = -1;
             float nearestUseDistanceSquared = std::numeric_limits<float>::infinity();
             const V playerMinimum = player.p + V{-30.f, -30.f, -30.f};
@@ -4148,13 +5664,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         std::cout << "BModel contact touch: entity " << bmodel.entity
                                   << (bmodel.authoredName.empty() ? "" : " (" + bmodel.authoredName + ")")
                                   << " at PATH time " << bmodel.currentTime << "/" << bmodel.endTime << "\n";
-                        scriptRuntime->dispatch(bmodel.entity, "touch");
-                        std::cout << "BModel contact result: state " << bmodel.motionState
-                                  << ", speed " << bmodel.timeScale << ", PATH time "
-                                  << bmodel.currentTime << "/" << bmodel.endTime << "\n";
+                        pendingBModelContactEvents.emplace_back(bmodel.entity, "touch");
                     }
-                    if (inside) scriptRuntime->dispatch(bmodel.entity, "touching");
-                    if (!inside && wasInside) scriptRuntime->dispatch(bmodel.entity, "untouch");
+                    if (inside)
+                        pendingBModelContactEvents.emplace_back(bmodel.entity, "touching");
+                    if (!inside && wasInside)
+                        pendingBModelContactEvents.emplace_back(bmodel.entity, "untouch");
                     auto foundBindings = scriptRuntime->bindings.find(bmodel.entity);
                     bool hasUse = foundBindings != scriptRuntime->bindings.end() &&
                         std::any_of(foundBindings->second.begin(), foundBindings->second.end(),
@@ -4191,17 +5706,6 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 currentBoundsTriggerContacts[trigger.entity] = inside;
             }
             boundsTriggerContacts = std::move(currentBoundsTriggerContacts);
-            if (scriptRuntime) {
-                // 00470840 dispatches accumulated contacts in three event-type
-                // passes. Contact production is sampled per host frame here;
-                // the retail updater cadence is still unresolved.
-                for (const auto* trigger : boundsTriggerTouches)
-                    scriptRuntime->dispatch(trigger->entity, "touch");
-                for (const auto* trigger : boundsTriggerTouching)
-                    scriptRuntime->dispatch(trigger->entity, "touching");
-                for (const auto* trigger : boundsTriggerUntouches)
-                    scriptRuntime->dispatch(trigger->entity, "untouch");
-            }
             std::map<int, bool> currentPropModelContacts;
             std::vector<const PropModelInstance*> propModelTouches;
             std::vector<const PropModelInstance*> propModelTouching;
@@ -4223,7 +5727,55 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 currentPropModelContacts[prop.entity] = inside;
             }
             propModelContacts = std::move(currentPropModelContacts);
+            // The registered contact classes are traversed in this order by
+            // retail's contact manager: BModel, BoundsTrigger, PropModel,
+            // FireRescue, then VictimRescue. Keep the event drains below the
+            // contact pass; their retail scheduling cadence remains open.
+            runFireContactPass();
+            if (rescueTransactions && hasPlayerRescueMessageRoute) {
+                // VictimRescue is registered after FireRescue in the retail
+                // contact manager. Submit its 0x7532 records here, before the
+                // separate ScriptActor pair drains below. The relative timing
+                // of victim roam updates and this owner callback is unresolved.
+                syncVictimsToRescueState();
+                const VictimPickupBox playerBox{
+                    playerContactPoint, {-30.f, -30.f, -30.f}, player.maxs()};
+                for (auto& victim : victims) {
+                    auto actor = rescueState.actors.find(victim.spawn.entity);
+                    if (actor == rescueState.actors.end()) continue;
+                    publishVictimProximity(
+                        actor->second.state, 1, &actor->second, victimMessages,
+                        [&]() -> std::optional<VictimPickupBox> { return playerBox; },
+                        [&] { return victim.pickupRadius; },
+                        [&] { return actor->second.frame.position; },
+                        [&] { return playerRescueMessageRoute; },
+                        [] { std::cerr << "Victim message mapper has no free records\n"; });
+                }
+            }
             if (scriptRuntime) {
+                for (const auto& [entity, event] : pendingBModelContactEvents) {
+                    scriptRuntime->dispatch(entity, event);
+                    if (event == "touch") {
+                        const int eventEntity = entity;
+                        auto bmodel = std::find_if(bmodelMotions.begin(), bmodelMotions.end(),
+                            [eventEntity](const PreviewBModelMotion& candidate) {
+                                return candidate.entity == eventEntity;
+                            });
+                        if (bmodel != bmodelMotions.end())
+                            std::cout << "BModel contact result: state " << bmodel->motionState
+                                      << ", speed " << bmodel->timeScale << ", PATH time "
+                                      << bmodel->currentTime << "/" << bmodel->endTime << "\n";
+                    }
+                }
+                // 00470840 dispatches accumulated BoundsTrigger contacts in
+                // three event-type passes. Contact production is sampled per
+                // host frame; the retail updater cadence remains unresolved.
+                for (const auto* trigger : boundsTriggerTouches)
+                    scriptRuntime->dispatch(trigger->entity, "touch");
+                for (const auto* trigger : boundsTriggerTouching)
+                    scriptRuntime->dispatch(trigger->entity, "touching");
+                for (const auto* trigger : boundsTriggerUntouches)
+                    scriptRuntime->dispatch(trigger->entity, "untouch");
                 // 00470840 drains pair deltas in three passes: newly touching,
                 // still touching, then no longer touching. Keep that ordering
                 // even when a Player overlaps more than one PropModel.
@@ -4253,8 +5805,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     scriptRuntime->advanceEntity(prop.entity, now);
             }
             if (!rescueStageRequest.empty()) running = false;
-            activeHintRemaining = std::max(0.f, activeHintRemaining - dt);
-            if (activeHintRemaining == 0.f) activeHint.clear();
+            if (!authoredHintText.empty() && activeHint != authoredHintText)
+                authoredHintText.clear();
+            if (authoredHintText == activeHint && authoredHintLifetime.configured) {
+                if (now > authoredHintLifetime.startTick && !authoredHintLifetime.visible(now)) {
+                    activeHint.clear();
+                    activeHintRemaining = 0.f;
+                    authoredHintText.clear();
+                }
+            } else {
+                activeHintRemaining = std::max(0.f, activeHintRemaining - dt);
+                if (activeHintRemaining == 0.f) activeHint.clear();
+            }
             updateRoamingVictims(victims, collision, gameplayRandom, player, yaw,
                                  carriedVictim.carriedVictimEntity.has_value(), dt);
             if (gogglesScan.effectsActive)
@@ -4276,28 +5838,61 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
                 gogglesScanPending = false;
             }
+            // 00429520 finishes contact-manager callbacks before it drains the
+            // entity-spawn queue and then the mapped-message queue. FireRescue
+            // child creation and both message deliveries therefore wait until
+            // after the represented contact candidates. FireRescue and
+            // VictimRescue submissions now follow their registered class
+            // order; ScriptActor event-drain timing and render-frame cadence
+            // remain unresolved.
+            drainPreviewFireSpawnQueue(fires, collision, gameplayRandom, now,
+                                       fireDividerCycle, nextDynamicFireEntity,
+                                       pendingSpreadChildren);
+            for (const auto& [fireEntity, influence] : pendingFireExposureMessages) {
+                const int queuedFireEntity = fireEntity;
+                auto fire = std::find_if(fires.begin(), fires.end(), [&](const PreviewFire& candidate) {
+                    return candidate.entity == queuedFireEntity;
+                });
+                if (fire == fires.end()) continue;
+                PreviewPlayerFireOps fireOps;
+                fireOps.now = now;
+                fireOps.dt = dt;
+                fireOps.playerPosition = player.p;
+                fireOps.fireSource = fire->runtime.visual.position;
+                fireOps.yaw = yaw;
+                fireOps.pitch = pitch;
+                fireOps.cameraAudit = fireCameraAudit;
+                fireOps.directionalIndicators = &playerBurnState.directionalIndicators;
+                fireOps.seriousBurns = &playerSeriousBurns;
+                fireOps.lastPainChoice = &lastPainChoice;
+                fireOps.lastPassoutChoice = &lastPassoutChoice;
+                fireOps.selectedItemIndex = uint32_t(playerLoadout.items.selected);
+                fireOps.incapacitated = &playerIncapacitated;
+                fireOps.activeHint = &activeHint;
+                fireOps.activeHintRemaining = &activeHintRemaining;
+                fireOps.audio = &sceneAudio;
+                fireOps.random = &gameplayRandom;
+                fireOps.releaseSelectedItem = [&] {
+                    // The retail selected-item +0x1C callback is a no-op
+                    // for the Axe's child action state, and the preview
+                    // exposes no persistent state for goggles' release.
+                    // Extinguisher +0x1C is 00461590 and clears ACTION.
+                    if (playerLoadout.selectedName() == "extinguisher") {
+                        if (extinguisher.action.active && extinguisher.hasWorldFrame)
+                            extinguisher.action = ExtinguisherPose::endWindow(
+                                extinguisher.action, now, extinguisher.worldFrame);
+                        sprayHeld = false;
+                        sprayPressed = false;
+                        sprayReleased = false;
+                    }
+                };
+                // Keep draining queued records after passout: the retail
+                // Player handler itself ignores subsequent messages in state 6.
+                handlePlayerFireMessage7531(playerFireState, playerPainDeadline,
+                                            playerBurnState.accumulator, influence,
+                                            gameplayRandom, fireOps);
+            }
             if (rescueTransactions && hasPlayerRescueMessageRoute) {
-                // 0045A070 publishes 0x7532 through the message mapper; the
-                // Player receiver applies the +0x3438 and carry-empty gates.
-                // Retail 00429520 runs contact manager +0xE0 before mapped
-                // message drain +0x3BC/0049B610, so delivery occurs in that
-                // same owner invocation. This host drains after its candidate
-                // scan; mapping owner calls to render frames and Player update
-                // order remain unresolved.
-                syncVictimsToRescueState();
-                const VictimPickupBox playerBox{
-                    playerContactPoint, {-30.f, -30.f, -30.f}, player.maxs()};
-                for (auto& victim : victims) {
-                    auto actor = rescueState.actors.find(victim.spawn.entity);
-                    if (actor == rescueState.actors.end()) continue;
-                    publishVictimProximity(
-                        actor->second.state, 1, &actor->second, victimMessages,
-                        [&]() -> std::optional<VictimPickupBox> { return playerBox; },
-                        [&] { return victim.pickupRadius; },
-                        [&] { return actor->second.frame.position; },
-                        [&] { return playerRescueMessageRoute; },
-                        [] { std::cerr << "Victim message mapper has no free records\n"; });
-                }
                 victimMessages.drain(
                     [&](uint32_t route, uint32_t generation) -> FireMessageQueue::Receiver {
                         if (rescueMessageRoutes.resolve(route, generation) != &rescueState.player ||
@@ -4350,8 +5945,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             const auto performanceSceneStart = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
             renderScene(meshes, scene, collision, inspectionPoses, worldModelFlags,
-                        {player.p.x, player.p.y + (player.crouch ? 10.f : 70.f), player.p.z},
-                        yaw, pitch, width, height, performanceAudit ? &renderCounters : nullptr);
+                        fogState, lightStyles, cameraFrame.position, yaw, pitch, width, height,
+                        performanceAudit ? &renderCounters : nullptr,
+                        usePassoutCamera ? &cameraFrame : nullptr);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
@@ -4393,9 +5989,21 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 glClear(GL_DEPTH_BUFFER_BIT);
                 extinguisherAsset->second->renderer->drawBindPose(toolRoot);
             }
+            glDisable(GL_FOG);
             gogglesRenderer.drawVisor(selectedItem == "goggles", width, height);
             fireDirectionRenderer.draw(playerBurnState.directionalIndicators, width, height);
-            hintOverlay.draw(activeHint, width, height);
+            oxygenHudRenderer.drawVisorEffect(playerOxygenVisorEffect, now, width, height);
+            oxygenHudRenderer.draw(
+                playerOxygen.displayedResource,
+                playerOxygenWarningOverlayAmount(playerOxygen.displayedResource),
+                width, height);
+            victimPickupHudRenderer.draw(uint32_t(SDL_GetTicks()), width, height);
+            if (activeHint == authoredHintText && authoredHintLifetime.configured) {
+                if (authoredHintLifetime.visible(now))
+                    hintOverlay.draw(activeHint, width, height);
+            } else if (activeHintRemaining > 0.f) {
+                hintOverlay.draw(activeHint, width, height);
+            }
             const auto performanceOverlayEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
             const auto performanceSwapStart = performanceAudit
@@ -4459,6 +6067,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         if (fireRendererLoaded) fireRenderer.release();
         if (fireDirectionRendererLoaded) fireDirectionRenderer.release();
         if (gogglesRendererLoaded) gogglesRenderer.release();
+        if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
+        if (victimPickupHudRendererLoaded) victimPickupHudRenderer.release();
+        hintOverlay.release();
         SDL_GL_DeleteContext(context);
         SDL_DestroyWindow(window);
         sceneAudio.close();
@@ -4472,6 +6083,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         fireRenderer.release();
         fireDirectionRenderer.release();
         gogglesRenderer.release();
+        oxygenHudRenderer.release();
+        victimPickupHudRenderer.release();
         if (context) SDL_GL_DeleteContext(context);
         if (window) SDL_DestroyWindow(window);
         if (SDL_WasInit(SDL_INIT_VIDEO)) SDL_Quit();
@@ -4525,8 +6138,8 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
             return 0;
         }
         std::string nextStage;
-        const int result = run(currentPackage, false, false, false, false, -1,
-                               false, false, false, {}, &nextStage, performanceAudit);
+        const int result = run(currentPackage, false, false, false, false, false, -1,
+                               false, false, false, false, false, {}, &nextStage, performanceAudit);
         if (result != 0 || nextStage.empty()) return result;
         currentPackage = currentPackage.parent_path() / nextStage;
         std::cout << "Loading linked rescue package: " << currentPackage << "\n";
@@ -4611,13 +6224,19 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
 } // namespace
 
 int main(int argc, char** argv) {
+#if defined(SDL_MAIN_HANDLED)
+    SDL_SetMainReady();
+#endif
     try {
         bool inspectOnly = false;
         bool renderCheck = false;
         bool interactionCheck = false;
         bool rescueCheck = false;
+        bool ambientAudioCheck = false;
         bool hintRenderCheck = false;
         bool fireDirectionRenderCheck = false;
+        bool oxygenHudRenderCheck = false;
+        bool victimPickupHudRenderCheck = false;
         bool fireCameraAudit = false;
         bool victimRoamMathCheck = false;
         bool missionSelect = false;
@@ -4633,12 +6252,16 @@ int main(int argc, char** argv) {
                 std::cout << "Usage: fdny-scene-viewer [scene-export-directory] [--inspect | --render-check]\n"
                           << "       fdny-scene-viewer [scene-export-directory] --hint-render-check\n"
                           << "       fdny-scene-viewer [scene-export-directory] --fire-direction-render-check\n"
+                          << "       fdny-scene-viewer [scene-export-directory] --oxygen-hud-render-check\n"
+                          << "       fdny-scene-viewer [scene-export-directory] --victim-pickup-hud-render-check\n"
                           << "       fdny-scene-viewer [scene-export-directory] --fire-camera-audit\n"
                           << "       fdny-scene-viewer [scene-export-directory] --performance-audit\n"
                           << "       fdny-scene-viewer [scene-export-directory] --tool-orientation-check axe|axel|extinguisher\n"
                           << "       fdny-scene-viewer [scene-export-directory] --trigger-render-check ENTITY\n"
                           << "       fdny-scene-viewer [scene-export-directory] --interaction-check\n"
                           << "       fdny-scene-viewer [scene-export-directory] --rescue-check\n"
+                          << "       fdny-scene-viewer [scene-export-directory] --scene-audio-check\n"
+                          << "       fdny-scene-viewer [scene-export-directory] --ambient-audio-check (alias)\n"
                           << "       fdny-scene-viewer --mission-select\n"
                           << "       fdny-scene-viewer --mission-catalog-check\n"
                           << "       fdny-scene-viewer --mission-menu-render-check\n"
@@ -4663,6 +6286,16 @@ int main(int argc, char** argv) {
             if (argument == "--fire-direction-render-check") {
                 renderCheck = true;
                 fireDirectionRenderCheck = true;
+                continue;
+            }
+            if (argument == "--oxygen-hud-render-check") {
+                renderCheck = true;
+                oxygenHudRenderCheck = true;
+                continue;
+            }
+            if (argument == "--victim-pickup-hud-render-check") {
+                renderCheck = true;
+                victimPickupHudRenderCheck = true;
                 continue;
             }
             if (argument == "--fire-camera-audit") {
@@ -4696,6 +6329,10 @@ int main(int argc, char** argv) {
                 rescueCheck = true;
                 continue;
             }
+            if (argument == "--scene-audio-check" || argument == "--ambient-audio-check") {
+                ambientAudioCheck = true;
+                continue;
+            }
             if (argument == "--victim-roam-math-check") {
                 victimRoamMathCheck = true;
                 continue;
@@ -4715,15 +6352,15 @@ int main(int argc, char** argv) {
             if (!package.empty()) throw std::runtime_error("Only one scene export directory may be supplied.");
             package = argument;
         }
-        if (performanceAudit && (inspectOnly || renderCheck || interactionCheck || rescueCheck ||
+        if (performanceAudit && (inspectOnly || renderCheck || interactionCheck || rescueCheck || ambientAudioCheck ||
             hintRenderCheck || fireDirectionRenderCheck || !equipmentOrientationCheck.empty() ||
-            triggerRenderCheckEntity >= 0 || victimRoamMathCheck || missionCatalogCheck ||
+            oxygenHudRenderCheck || victimPickupHudRenderCheck || triggerRenderCheckEntity >= 0 || victimRoamMathCheck || missionCatalogCheck ||
             missionMenuRenderCheck))
             throw std::runtime_error("--performance-audit requires an interactive scene or mission selection");
         if (victimRoamMathCheck) {
-            if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck ||
+            if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck || ambientAudioCheck ||
                 hintRenderCheck || fireCameraAudit || !equipmentOrientationCheck.empty() ||
-                fireDirectionRenderCheck || triggerRenderCheckEntity >= 0)
+                fireDirectionRenderCheck || oxygenHudRenderCheck || victimPickupHudRenderCheck || triggerRenderCheckEntity >= 0)
                 throw std::runtime_error("--victim-roam-math-check cannot be combined with a scene or another diagnostic mode.");
             return runVictimRoamMotionCheck();
         }
@@ -4761,9 +6398,9 @@ int main(int argc, char** argv) {
             }
         }
         if (missionSelect) {
-            if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck ||
+            if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck || ambientAudioCheck ||
                 hintRenderCheck || fireDirectionRenderCheck || fireCameraAudit ||
-                !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0 ||
+                oxygenHudRenderCheck || victimPickupHudRenderCheck || !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0 ||
                 missionCatalogCheck || missionMenuRenderCheck ||
                 victimRoamMathCheck)
                 throw std::runtime_error("--mission-select cannot be combined with a scene or another mode");
@@ -4772,9 +6409,9 @@ int main(int argc, char** argv) {
             return runRescueMissionSelectionLoop(bundledResources, performanceAudit);
         }
         if (missionCatalogCheck || missionMenuRenderCheck) {
-            if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck ||
+            if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck || ambientAudioCheck ||
                 hintRenderCheck || fireDirectionRenderCheck || fireCameraAudit ||
-                !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0 ||
+                oxygenHudRenderCheck || victimPickupHudRenderCheck || !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0 ||
                 (missionCatalogCheck && missionMenuRenderCheck) || victimRoamMathCheck)
                 throw std::runtime_error("Mission catalog diagnostics cannot be combined with another scene or mode");
             if (bundledResources.empty())
@@ -4786,19 +6423,33 @@ int main(int argc, char** argv) {
         if (package.empty()) {
             throw std::runtime_error("No scene supplied. Pass a scene-export directory or launch the bundled app with its MBase data.");
         }
-        const int diagnosticModes = int(inspectOnly) + int(renderCheck) + int(interactionCheck) + int(rescueCheck);
+        const int diagnosticModes = int(inspectOnly) + int(renderCheck) + int(interactionCheck) +
+                                    int(rescueCheck) + int(ambientAudioCheck);
         if (diagnosticModes > 1)
-            throw std::runtime_error("Choose only one diagnostic mode: --inspect, --render-check, --interaction-check, or --rescue-check.");
+            throw std::runtime_error("Choose only one diagnostic mode: --inspect, --render-check, --interaction-check, --rescue-check, or --scene-audio-check.");
+        if (ambientAudioCheck && (hintRenderCheck || fireDirectionRenderCheck ||
+                                  oxygenHudRenderCheck || victimPickupHudRenderCheck || fireCameraAudit ||
+                                  !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0))
+            throw std::runtime_error("--scene-audio-check cannot be combined with render or camera diagnostics.");
         if (fireDirectionRenderCheck && (hintRenderCheck || !equipmentOrientationCheck.empty() ||
-                                         triggerRenderCheckEntity >= 0))
+                                         triggerRenderCheckEntity >= 0 || victimPickupHudRenderCheck))
             throw std::runtime_error("--fire-direction-render-check cannot be combined with hint, equipment, or trigger render checks.");
+        if (oxygenHudRenderCheck && (hintRenderCheck || fireDirectionRenderCheck ||
+                                     victimPickupHudRenderCheck || !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0))
+            throw std::runtime_error("--oxygen-hud-render-check cannot be combined with another specialized render check.");
+        if (victimPickupHudRenderCheck && (hintRenderCheck || fireDirectionRenderCheck || oxygenHudRenderCheck ||
+                                     !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0))
+            throw std::runtime_error("--victim-pickup-hud-render-check cannot be combined with another specialized render check.");
         const bool normalInteractiveRun = diagnosticModes == 0 &&
             triggerRenderCheckEntity < 0 && !hintRenderCheck &&
-            !fireDirectionRenderCheck && !fireCameraAudit &&
+            !fireDirectionRenderCheck && !oxygenHudRenderCheck && !victimPickupHudRenderCheck && !fireCameraAudit &&
             equipmentOrientationCheck.empty();
         if (normalInteractiveRun) return runRescueSceneChain(package, performanceAudit);
-        return run(package, inspectOnly, renderCheck, interactionCheck, rescueCheck,
-                   triggerRenderCheckEntity, hintRenderCheck, fireDirectionRenderCheck, fireCameraAudit,
+        if (ambientAudioCheck && SDL_setenv("SDL_AUDIODRIVER", "dummy", 1) != 0)
+            throw std::runtime_error("Could not select SDL's dummy audio driver for --scene-audio-check");
+        return run(package, inspectOnly, renderCheck, interactionCheck, rescueCheck, ambientAudioCheck,
+                   triggerRenderCheckEntity, hintRenderCheck, fireDirectionRenderCheck,
+                   oxygenHudRenderCheck, victimPickupHudRenderCheck, fireCameraAudit,
                    equipmentOrientationCheck, nullptr, performanceAudit);
     } catch (const std::exception& error) {
         std::cerr << "Scene viewer: " << error.what() << "\n";

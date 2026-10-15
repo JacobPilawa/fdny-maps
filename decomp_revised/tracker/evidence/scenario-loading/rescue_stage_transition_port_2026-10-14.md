@@ -50,3 +50,32 @@ every exit trigger enables at the retail point in the rescue flow, retail
 key/context identity, scene teardown/reinitialization side effects, transition
 timing, and full staged mission completion. No interactive run was performed
 for this checkpoint.
+
+## 2026-10-15 authored stage-exit check
+
+The shared `--rescue-check` now discovers every BoundsTrigger `touch` binding
+that calls `finalexitloadmap`. It dispatches each candidate once after the
+first victim is released and requires the retail remaining-victim gate to keep
+the stage request empty. After all victims are released, it dispatches each
+authored stage trigger, requires the command to queue a package, and loads that
+target with `SceneData` to verify that the requested key matches the package.
+
+All 13 bundled Training/rescue/stage packages pass `--rescue-check`. The six
+authored transition commands resolve as follows:
+
+- Boat A trigger 280 → Boat B.
+- Subway A triggers 562 and 568 → Subway B.
+- Oil Rig A trigger 67 → Oil Rig B.
+- Oil Rig B trigger 92 → Oil Rig C.
+- Oil Rig C trigger 362 → Oil Rig D.
+
+The MBase no-final-exit gate and all primary-map rescue counts continue to
+pass; `--mission-catalog-check` loads all eight retail rescue choices. The
+packaged and CMake viewer binaries match at SHA-256
+`a52df161eef336d0cd4768a8454da378551ab82f18e237dfe991fcea96f6f564`.
+
+This check directly dispatches controlled `touch` events at the authored
+bounds centers. It verifies the command's remaining-victim gate and the
+package handoff seam; it does not verify natural travel/contact, trigger enable
+timing, the retail key/context relationship, teardown state, or complete
+mission behavior across a live stage change.

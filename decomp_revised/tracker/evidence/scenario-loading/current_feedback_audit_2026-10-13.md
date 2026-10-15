@@ -40,6 +40,14 @@ user's interactive build displayed it at the time of the earlier report.
 **Still open:** interactive visibility/readability, font, panel style,
 transition, and exact retail lifetime remain unverified or approximate.
 
+**2026-10-15 follow-up:** the font and text draw route are now hash-pinned to
+resource 1020 (`font1.bmp` / `font1_a.bmp`), the 16x24 atlas, and the source
+glyph order. The shared viewer now uses that atlas, removes the synthetic
+panel, parses color markup, and applies the strict start/end lifetime on
+ordinary no-wrap ticks. Mode-2 alignment, tint layers, rollover, and a live
+retail comparison remain open; see
+[`player_hint_widget_render_trace.md`](player_hint_widget_render_trace.md).
+
 ## Goggles
 
 **Verified retail route:** constructor `00462A60` binds alpha resources 300/301
