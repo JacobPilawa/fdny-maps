@@ -84,11 +84,25 @@ are gradually catching fire.
 The random-spread code has several gates. The fire must still be active, have a
 nonempty map name, have some horizontal size, and be ready for another try. In
 addition, this check runs when the **player is within about 750 game units**
-of the fire. The distance check uses the largest difference on the X, Y, or Z
-axis. In plain terms, it is a box-like range around the player, not a normal
-straight-line distance between two fires. A check exactly 750 units away can
-update a shared nearby-fire count, but a spread roll needs to be closer than
-750.
+of the fire. The code compares the player's world position with the fire's
+origin, takes the absolute difference on each axis, and uses the largest one:
+
+```text
+spread-range distance = max(|player.x - fire.x|,
+                            |player.y - fire.y|,
+                            |player.z - fire.z|)
+```
+
+The spread roll needs this value to be **less than 750**. That means all three
+axis differences must be under 750. Geometrically, the allowed region is a
+cube extending 750 units in each direction from the fire, not a sphere with a
+750-unit straight-line radius. For example, offsets of `(700, 700, 700)` are
+inside this check even though their straight-line distance is about 1,212;
+an offset of `(750, 0, 0)` is on the boundary and does not qualify for a spread
+roll. A callback at exactly 750 can still update a shared nearby-fire count.
+Being inside the cube only makes the fire eligible to try: the fire must also
+be active and named, its retry timer must be ready, its strength chance must
+pass, and the placement sweep must find a surface.
 
 When the fire gets a spread roll, the chance is roughly its current strength:
 a full-strength fire passes the chance roll, and a half-strength fire
