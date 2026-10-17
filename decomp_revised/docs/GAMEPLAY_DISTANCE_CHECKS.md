@@ -156,7 +156,7 @@ traced.
 
 The roaming AI has other distance tests with different jobs:
 
-- At 432 units, it checks the Player against the victim's **current roam
+- Below 432 units, it checks the Player against the victim's **current roam
   target**, not against the victim. Passing that check lets the AI consider
   player-relative choices, subject to facing and visibility tests.
 - It picks a new roam target when it gets within about 72 units of the current
@@ -164,56 +164,98 @@ The roaming AI has other distance tests with different jobs:
 - Candidate generation also has short movement lengths and other branches;
 those values are step choices, not the victim's full roam radius.
 
-#### What the 432-unit check means for the victim's behavior
+#### How roaming responds to the Player
 
-Think of roaming as a series of short waypoints, not as the victim constantly
-chasing or fleeing the Player. A victim only enters this roaming state when a
-script tells it to with a command such as `roam 1000`. It moves toward its
-current waypoint; when it gets close enough (about 72 units), it chooses the
-next one.
+Think of roaming as the victim walking through a chain of short waypoints,
+not as a continuous chase or flee behavior. Only victims whose scripts start
+roaming (for example, `roam 1000`) enter this mode. The victim first moves
+toward its current waypoint. When the victim is within 72 units of that point,
+the AI picks the next waypoint. Each accepted waypoint usually advances the
+old one by about 12 units; the victim then walks toward it. The 72 and 12
+numbers describe waypoint timing and spacing, not the full roam area. The
+authored `roam N` value still bounds candidate locations inside a 3D sphere
+around the victim's original map position.
 
-When choosing that next waypoint, the AI measures the straight-line 3D distance
-from the Player to the **current waypoint**. In formula form, the 432-unit gate
-is:
+The number after `roam` is the roam boundary, not the walking speed. Startup
+stores a separate movement value of 36, which the movement code multiplies by
+the frame-time value. Since the retail callback cadence has not been recovered,
+36 should not be read as “36 units per second” or “36 units every frame.”
+
+When it is time to choose a waypoint, the AI first measures the 3D straight-line
+distance from the Player to the victim's **current waypoint**:
 
 ```text
-distance_squared = (player.x - target.x)²
-                 + (player.y - target.y)²
-                 + (player.z - target.z)²
-compare distance_squared with 432² (= 186,624)
+d² = (player.x - target.x)²
+   + (player.y - target.y)²
+   + (player.z - target.z)²
+player-relative branch is considered when d² < 432² (= 186,624)
 ```
 
-So this is a true spherical distance check: it uses all three coordinates. It
-does not measure 432 units from the victim's body, and it is not three separate
-“within 432 on X, Y, and Z” checks. Being inside the sphere merely lets the AI
-consider a Player-relative direction. Two more tests must pass:
+This is a spherical 3D check. It does not measure from the victim's body and
+does not test three independent 432-unit coordinate limits. As a result, the
+Player can be close to the victim but outside the sphere around the waypoint,
+or far from the victim while still inside the sphere around the waypoint.
+The comparison is strict, so a Player exactly 432 units away is outside this
+branch. Passing the check only opens the Player-relative branch; it does not by
+itself make the victim move toward or away from the Player.
 
-1. The victim must be facing the Player within a 45-degree angle, measured from
-   one of the victim's orientation vectors. The code proves that it checks an
-   orientation cone; which model axis is visibly “forward” still needs a
-   runtime check.
-2. A world collision query must find a clear segment between the current roam
-   waypoint and the Player. A wall or other blocking geometry can make this
-   test fail even when the Player is close.
+The branch then has two visibility/orientation gates:
 
-If the Player is outside 432 units, the victim is not in the right facing cone,
-or the segment is blocked, the AI falls back to a direction based on its last
-roam step. It does not turn toward the Player merely because the Player is
-nearby. When the gates do pass, the first candidate is a 12-unit step aimed
-from the current waypoint toward the Player. Later branch checks can keep that
-step aimed toward the Player or reverse it so it points away. In the traced
-branch, carrying-state and the Player's own facing angle affect that choice; an
-additional internal float comparison can also reverse it, and its exact
-meaning has not been resolved. The evidence therefore supports both toward and
-away steps, but not a simple rule that victims always chase or always flee.
+1. The victim must be facing the Player within 45 degrees. This angle is
+   measured from the victim's position using one of its orientation vectors.
+   The code confirms a 45-degree cone, but a live capture has not yet confirmed
+   which model axis visually points forward.
+2. A world-collision query must find a clear segment from the victim's current
+   waypoint to the Player. This query uses the waypoint as one endpoint, not
+   the victim's body. A blocking wall makes the AI use its fallback direction
+   even if the Player is within 432 units.
 
-The chosen step is still only a candidate. The game checks that it stays
-inside the victim's authored roam boundary, does not collide with the world,
-clears nearby fire obstacles, and has suitable floor under the destination.
-Rejected candidates are adjusted and retried; if normal choices fail, the AI
-can switch to its short random-step mode. The reverse-engineered trace is
-static analysis of the pinned executable; exact callback timing and the
-victim's visible forward axis have not been confirmed in a live game capture.
+If the 432 check, victim-facing check, or clear-segment check fails, the new
+candidate follows the direction of the victim's previous waypoint step. It
+does not turn toward the Player just because the Player is nearby.
+
+If those gates pass, the game starts with a nominal 12-unit candidate pointing
+from the current waypoint toward the Player. It then may reverse that
+candidate so it points away:
+
+| Condition after the 432/facing/visibility gates | Candidate direction |
+| --- | --- |
+| The Player is carrying a victim | Away from the Player |
+| The Player is less than 48 units from the current waypoint (`d² < 48² = 2,304`) | Away from the Player |
+| Otherwise, the Player is facing more than 45 degrees away from the current waypoint | Away from the Player |
+| None of those conditions applies | Toward the Player |
+
+So, in plain terms, a roaming victim can choose a waypoint toward you when
+you are within 432 units of its current waypoint, the victim faces you, the
+route from waypoint to you is clear, you are not carrying someone, you are at
+least 48 units away, and you are looking roughly toward that waypoint. If you
+are carrying a victim, very close to the waypoint, or looking away from it,
+the candidate points away instead. The position and angle checks use the
+current waypoint, while the victim-facing check uses the victim's position.
+
+There is also a 192-unit subcheck. After the 48-unit and Player-facing checks
+have left the candidate pointing toward the Player, if you are less than 192
+units from the waypoint, the code makes a random-number call but discards its
+returned value. No change to the candidate direction is visible in this path;
+the call appears to affect random-number state, not whether the victim chooses
+toward or away. This is separate from the 48- and 432-unit gates.
+
+Before the waypoint is accepted, the game sets the candidate's vertical
+component to zero, then checks the resulting point against the authored roam
+sphere, world collision, nearby fire obstacles, and floor-height probes. The
+vector is normalized before it is scaled to 12, so flattening can make the
+actual horizontal step shorter than 12 if the Player and waypoint differ in
+height. If a normal candidate fails, it tries a half-length alternative
+rotated 30 degrees, then another 60 degrees from that alternative in the
+opposite direction (net 30 degrees the other way from the first try). If both
+fail, it keeps the old waypoint and enables a short random-step mode; that mode
+tries a new 6-to-18 unit horizontal step on a later target update.
+
+This is static analysis of the pinned executable. Exact callback timing and
+the visible forward axis have not been confirmed in a live game capture, so
+the rules above describe what the code attempts, not a promise that every
+candidate produces visible motion. Collision and floor checks can reject a
+chosen direction.
 
 **Evidence:** [victim roam behavior](../tracker/evidence/scenario-loading/victim_roam_behavior.md),
 [fresh script dispatcher](../tracker/evidence/scenario-loading/0045cdb0_dispatch_victim_rescue_script_fresh.c),
