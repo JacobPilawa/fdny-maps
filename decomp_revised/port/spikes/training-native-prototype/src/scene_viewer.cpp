@@ -6152,7 +6152,7 @@ int runRescueMissionSelectionLoop(const std::filesystem::path& resourcesRoot,
     const auto choices = loadRescueMissionChoices(resourcesRoot);
     std::cout << "Rescue chooser loaded " << choices.size()
               << " retail .lev entries from " << resourcesRoot << ".\n";
-    while (chooseRescueTitleMenu()) {
+    while (chooseRescueTitleMenu(resourcesRoot / "menu" / "main.bmp")) {
         const auto selected = chooseRescueMission(choices);
         if (!selected) continue;
         const auto& choice = choices[*selected];
@@ -6186,10 +6186,11 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
     constexpr int height = 800;
     HeadlessOpenGL headless;
     headless.create(width, height);
+    const GLuint titleBackground = loadRetailMenuBitmap(resourcesRoot / "menu" / "main.bmp");
     std::vector<uint8_t> previous;
     std::vector<uint8_t> pixels(size_t(width) * size_t(height) * 4);
     size_t changedTransitions = 0;
-    drawRescueTitleMenu(width, height, 0);
+    drawRescueTitleMenu(width, height, 0, titleBackground);
     glFinish();
     glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -6197,7 +6198,7 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
     saveRenderCheckFrame("/private/tmp/fdny-rescue-title-menu", pixels,
                          width, height, ".bmp");
     previous = pixels;
-    drawRescueTitleMenu(width, height, 1);
+    drawRescueTitleMenu(width, height, 1, titleBackground);
     glFinish();
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     size_t titleChanged = 0;
@@ -6230,6 +6231,7 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
         previous = pixels;
     }
     const GLenum error = glGetError();
+    glDeleteTextures(1, &titleBackground);
     headless.destroy();
     if (error != GL_NO_ERROR)
         throw std::runtime_error("Mission chooser render check OpenGL error: " + std::to_string(error));

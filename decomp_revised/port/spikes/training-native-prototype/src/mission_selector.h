@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include <SDL.h>
+
 #include "hint_overlay.h"
 
 struct RescueMissionChoice {
@@ -88,10 +90,35 @@ inline void drawRescueMenuText(float x, float y, const std::string& text,
     glEnd();
 }
 
-// The retail menu constructor loads menu.rrf, but its menu art and interaction
-// semantics have not been reconstructed yet. This title screen is the native
-// port's entry point into the source-ordered rescue catalog.
-inline void drawRescueTitleMenu(int width, int height, size_t selected) {
+inline GLuint loadRetailMenuBitmap(const std::filesystem::path& bitmapPath) {
+    if (!std::filesystem::is_regular_file(bitmapPath))
+        throw std::runtime_error("Retail menu bitmap is missing: " + bitmapPath.string());
+    SDL_Surface* loaded = SDL_LoadBMP(bitmapPath.string().c_str());
+    if (!loaded)
+        throw std::runtime_error("Cannot load retail menu bitmap " + bitmapPath.string() + ": " + SDL_GetError());
+    SDL_Surface* rgba = SDL_ConvertSurfaceFormat(loaded, SDL_PIXELFORMAT_RGBA32, 0);
+    SDL_FreeSurface(loaded);
+    if (!rgba)
+        throw std::runtime_error(std::string("Cannot convert retail menu bitmap: ") + SDL_GetError());
+
+    GLuint texture = 0;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, rgba->w, rgba->h, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, rgba->pixels);
+    SDL_FreeSurface(rgba);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return texture;
+}
+
+// The authored retail title bitmap is used directly. Button placement and
+// input semantics remain port UI until the retail menu widgets are traced.
+inline void drawRescueTitleMenu(int width, int height, size_t selected, GLuint backgroundTexture) {
     glViewport(0, 0, width, height);
     glClearColor(.018f, .032f, .046f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -99,28 +126,38 @@ inline void drawRescueTitleMenu(int width, int height, size_t selected) {
                  GL_LINE_BIT | GL_DEPTH_BUFFER_BIT | GL_TEXTURE_BIT);
     glDisable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
     glOrtho(0, width, 0, height, -1, 1);
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
 
+    glDisable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, backgroundTexture);
+    const float targetAspect = 4.f / 3.f;
+    const float windowAspect = float(width) / float(std::max(height, 1));
+    float backgroundLeft = 0.f, backgroundBottom = 0.f;
+    float backgroundRight = float(width), backgroundTop = float(height);
+    if (windowAspect > targetAspect) {
+        const float contentWidth = float(height) * targetAspect;
+        backgroundLeft = (float(width) - contentWidth) * .5f;
+        backgroundRight = backgroundLeft + contentWidth;
+    } else {
+        const float contentHeight = float(width) / targetAspect;
+        backgroundBottom = (float(height) - contentHeight) * .5f;
+        backgroundTop = backgroundBottom + contentHeight;
+    }
+    glColor4f(1.f, 1.f, 1.f, 1.f);
     glBegin(GL_QUADS);
-    glColor4f(.028f, .046f, .062f, 1.f); glVertex2f(0.f, 0.f);
-    glColor4f(.055f, .075f, .086f, 1.f); glVertex2f(float(width), 0.f);
-    glColor4f(.018f, .031f, .046f, 1.f); glVertex2f(float(width), float(height));
-    glColor4f(.026f, .040f, .055f, 1.f); glVertex2f(0.f, float(height));
+    glTexCoord2f(0.f, 1.f); glVertex2f(backgroundLeft, backgroundBottom);
+    glTexCoord2f(1.f, 1.f); glVertex2f(backgroundRight, backgroundBottom);
+    glTexCoord2f(1.f, 0.f); glVertex2f(backgroundRight, backgroundTop);
+    glTexCoord2f(0.f, 0.f); glVertex2f(backgroundLeft, backgroundTop);
     glEnd();
-
-    const std::string heading = "FDNY FIRE RESCUE";
-    const float headingScale = std::clamp(float(width) / 330.f, 2.5f, 4.0f);
-    drawRescueMenuText((float(width) - heading.size() * 6.f * headingScale) * .5f,
-                       float(height) * .70f, heading, headingScale, .95f, .97f, .98f);
-    const std::string subtitle = "AMERICAN HERO";
-    const float subtitleScale = std::clamp(float(width) / 460.f, 2.0f, 3.0f);
-    drawRescueMenuText((float(width) - subtitle.size() * 6.f * subtitleScale) * .5f,
-                       float(height) * .62f, subtitle, subtitleScale, .82f, .87f, .88f);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
 
     const std::array<std::string, 2> labels = {"START RESCUE", "QUIT"};
     const float rowHeight = std::min(52.f, float(height) * .075f);
@@ -165,7 +202,7 @@ inline void drawRescueTitleMenu(int width, int height, size_t selected) {
     glPopAttrib();
 }
 
-inline bool chooseRescueTitleMenu() {
+inline bool chooseRescueTitleMenu(const std::filesystem::path& backgroundPath) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
         throw std::runtime_error(std::string("SDL title menu initialization failed: ") + SDL_GetError());
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
@@ -187,6 +224,7 @@ inline bool chooseRescueTitleMenu() {
         throw std::runtime_error("Cannot create title menu OpenGL context: " + message);
     }
     SDL_GL_SetSwapInterval(1);
+    const GLuint backgroundTexture = loadRetailMenuBitmap(backgroundPath);
 
     size_t selected = 0;
     std::optional<bool> result;
@@ -231,11 +269,12 @@ inline bool chooseRescueTitleMenu() {
         }
         int width = 1, height = 1;
         SDL_GL_GetDrawableSize(window, &width, &height);
-        drawRescueTitleMenu(width, height, selected);
+        drawRescueTitleMenu(width, height, selected, backgroundTexture);
         SDL_GL_SwapWindow(window);
         SDL_Delay(8);
     }
 
+    glDeleteTextures(1, &backgroundTexture);
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
