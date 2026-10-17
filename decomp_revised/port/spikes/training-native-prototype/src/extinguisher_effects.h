@@ -2,10 +2,10 @@
 #include "extinguisher_contacts.h"
 #include "extinguisher_pose.h"
 
-// RNG and timer portion of the emitter request in 00461F80. Particle drawing
-// is still a renderer task; this keeps its shared-stream draws in source order.
+// RNG and timer portion of the emitter request in 00461F80. The renderer
+// consumes the returned velocity at the contacted fire's frame origin.
 struct ExtinguisherEffects {
- struct SpawnRequest { V offset{}; };
+ struct SpawnRequest { V offset{}; bool requested=false; };
 
  // 00449A40 accepts the four-word message-30000 contact and calls the fire
  // suppression path with terminal=false. Route and generation validation
@@ -39,8 +39,10 @@ struct ExtinguisherEffects {
   float first=range(random,-50.f,50.f).asFloat();
   float height=range(random,100.f,400.f).asFloat();
   float last=range(random,-50.f,50.f).asFloat();
-  // 0042D280 receives the emitter offset as {last, height, first}.
+  // 0047F1B0 returns the particle's +0x7c velocity vector. 0042D280
+  // receives it as {last, height, first}; acceleration at +0x88 is zeroed.
   spawn.offset={last,height,first};
+  spawn.requested=true;
   return true;
  }
 };

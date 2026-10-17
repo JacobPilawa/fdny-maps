@@ -5,6 +5,16 @@ Ghidra evidence, and read-only subagent reviews. No source files were changed
 by the audit agents. No live Ghidra instance or interactive desktop capture
 was available in this session.
 
+## Superseding Axe resource correction (2026-10-17)
+
+The Axe conclusion below that ordinary selection uses primary model 6
+(`axel.act`) was later corrected. Fresh Ghidra tracing separates the root
+`+0x1FC` gate from each child's variant flag: ordinary first equip activates
+secondary model 1 (`axe.act`); duplicate `equip axe` enables model 6 as well.
+The shared port now matches this selection path. Neither the corrected asset
+mapping nor the earlier render checks establish the swing's retail camera-space
+direction. See [the 2026-10-17 equipment follow-up](equipment_action_pose_followup_2026-10-17.md).
+
 ## Packaged state at the original 2026-10-13 audit
 
 The latest CMake viewer and packaged Training app binary both have SHA-256

@@ -2,6 +2,266 @@
 
 Updated 2026-10-17. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
+The documented comparison-only GitHub mirror sync was attempted again at
+22:17 UTC but could not resolve `github.com`; no changes were published. The
+existing GitHub handoff note records a prior automatic-review rejection for
+pushes, so this checkpoint was not pushed.
+
+## Current priority (2026-10-17)
+
+The user asked to pause menu implementation and work on the other original
+priorities. Keep the existing retail-menu changes intact, but do not spend the
+next iteration on menu pages or selector parity. The user reports that
+extinguisher use appears inert and the Axe animation swings toward the player.
+Fresh Ghidra review separates the Axe root gate `+0x1FC` from each child's
+model-selection flag: ordinary first equip leaves the root gate off and uses
+secondary model 1 (`axe.act`); duplicate `equip axe` enables primary model 6
+(`axel.act`) as well. The port had incorrectly enabled that gate on the first
+equip and always drawn `axel.act`. This checkpoint corrects first-equip state,
+model selection, and animation playback; the reported swing direction remains
+open because the preview's guessed camera-space ActorInfo root has not been
+joined numerically to retail's Player view follower. Both ACTs have positive
+early local-Z track values, but each root attachment rotates the first sampled
+translation mostly toward negative actor-local Z: approximately `(0.66, 10.89,
+-11.62)` for default `axe.act`, and `(-0.60, 10.89, -11.62)` for `axel.act`.
+The preview's raw camera-frame root maps actor-local `-Z` onto its view ray,
+which points from the eye into the scene. The composed root translation
+therefore moves away from the camera, not toward it; a prior note reversed
+this sign. Root translation alone does not explain the reported toward-player
+swing. The sampled rotations can still move individual vertices toward the
+camera, so both signed per-vertex projections are now logged. The final
+retail Player-follower-to-ActorInfo matrix is still not joined, so no axis
+correction is justified. The signed projection correction and updated audit
+fields are recorded in
+[`axe_view_ray_sign_recheck_2026-10-17.md`](../tracker/evidence/runtime/axe_view_ray_sign_recheck_2026-10-17.md).
+The shared build also applies source-derived Axe view/aim offsets and uses one blended extinguisher pose for
+its visible ACT and fire contacts. Eligible
+extinguisher contacts now create a two-second host spray quad using the
+resource-14 texture pair declared by `rescue.rrf`; the manager link and exact
+`geWorld_AddPolyOnce` presentation remain unresolved, and no interactive hit
+has been confirmed. A packaged render diagnostic exposed a separate loader
+failure: SDL rejects the retail 8-bit `bsmoke.bmp` because ten pixels use
+undeclared palette indices 254/255. The asset exporter now converts both
+sprites to valid 24-bit copies while leaving source files untouched; the two
+missing smoke colors are padded black provisionally. A subsequent packaged
+diagnostic loads the scene and all 24 textures, but it does not confirm
+suppression. Fresh Axe tracing shows an identity component-local pose
+parented to the Player view follower with no authored Axe hand offset. Retail
+updates follower `+0x34A4` from the Player view frame at `+0x3460`; its target
+vector uses positive Z, while the Genesis camera world-transform relation is
+still unknown. Retail and port use the same component-frame-to-ActorInfo basis
+packing; a transpose or global basis-order fix is not supported. The Genesis
+attachment branch is now resolved: Axe BONE06 takes flag 0, which applies
+attachment × sampled rotation and attachment-transformed translation; default
+`axe.act` BONE01 also takes this branch. The shared `ActorPose` code matches
+both. The remaining Axe gaps are the
+camera-world-transform caller/numeric relation to Player view frame `+0x34A4`
+and the viewer's guessed `(35, -8, 140)` origin, so do not mark the swing
+report fixed or add a sign flip. The opt-in `--fire-camera-audit` also logs
+equipment-slot selection and left-button down/up edges, so a future capture
+can distinguish an input/selection failure from a missed contact. It logs the
+camera pose after `ViewUpdate` (head-motion phase/offset, Player eye base,
+follower start and final position, camera basis, and view ray). With Axe
+selected it samples the exact default ACT root-bone pose and per-vertex
+movement along that view ray through the current preview root. Extinguisher
+samples now include delivered influence and the source suppression response
+factor; the action frame includes all basis vectors. Capture is still needed
+to establish whether the points hit a fire. For the
+extinguisher, the retail `.006/.009/.006` values are follower smoothing rates;
+transform scale is unit, so multiplying contact offsets by those values would
+be incorrect. Current source review finds no deterministic input, queue, or
+suppression drop. A fresh field-base check confirms the existing alpha port:
+`UpdateFireRescueActor` receives the embedded actor at root `+0x24`, so actor
+`+0x104` aliases root suppression strength `+0x128`, and actor `+0xE0` aliases
+the root recently-sprayed byte `+0x104`. Retail and the port both double point
+influence before the quadratic response, which produces nearly zero
+suppression at a full-strength center contact; the formula is source-backed,
+but a live capture is still needed to tell this response from a missed contact.
+Fresh rendering traces also map the retail RGB override below strength 0.8: it
+blends `(0.9, 0.3, 0.1)` toward white across all four flame children. The
+shared renderer now applies that tint before recovery. Above the threshold,
+the port still uses white instead of retail's animated child RGB tracks, so
+pixel parity remains open. Raw pinned EXE globals confirm threshold `0.8` and
+vertex scale `255.0`; see
+[`visual-terminal-state.md`](../tracker/evidence/fire-spread/visual-terminal-state.md).
+The four points may still miss in a live scene because the contact frame's
+camera-space relation is provisional. Do not mark the extinguisher report
+fixed. A global camera correction could change map orientation, extinguisher
+contacts, goggles, and all held tools; a per-tool change could alter facing and
+swing path. The latest trace confirms the Player frame stores target-minus-
+position in `+Z`, while its screen meaning remains unresolved against Genesis
+camera world `+Z`/projection `-cameraZ` and the viewer's OpenGL view transform.
+The Player-follower-to-camera-to-ActorInfo matrix join is missing. Do not flip
+the frame yet; trace that join before changing Axe axes or extinguisher
+geometry. The catalog
+level-music path is now wired, including inherited tracks for linked stages
+and the oxygen volume change. Menu-track playback remains paused with menu
+work. Next priorities are retail rendering and mission lifecycle. See
+[`equipment_action_pose_followup_2026-10-17.md`](../tracker/evidence/scenario-loading/equipment_action_pose_followup_2026-10-17.md).
+The particle trace and current renderer limits are recorded in
+[`extinguisher_particle_render_trace_2026-10-17.md`](../tracker/evidence/scenario-loading/extinguisher_particle_render_trace_2026-10-17.md).
+The follower and Genesis camera trace is in
+[`equipment_view_frame_trace_2026-10-17.md`](../tracker/evidence/scenario-loading/equipment_view_frame_trace_2026-10-17.md).
+The newly traced retail camera-to-ActorInfo consumers are in
+[`retail_camera_actorinfo_context_trace_2026-10-17.md`](../tracker/evidence/runtime/retail_camera_actorinfo_context_trace_2026-10-17.md);
+they still do not connect the camera context's parent hierarchy to Player
+`+0x34A4`, so they support neither a global camera-axis flip nor a per-tool Axe
+turn.
+
+The follow-up constructor/caller trace narrows that gap: `00493AF0` creates a
+camera node parented to the scene/root object, while `00491EA0` receives its
+context from a camera descriptor. Player `0044F340` refreshes `+0x34A4` before
+updating a type-5 context record, but no pointer or descriptor assignment
+joins that record's `+0x40` parent chain to `+0x34A4`. A matched live matrix is
+still required before changing Axe axes or extinguisher contact direction.
+The source-shaped extinguisher math also makes a near-center-only hit weak:
+raw influence near `1` is doubled, then the fire applies
+`1-(1-influence)^2`, which approaches zero at delivered influence `2`. The
+other three sample points may still suppress the fire; their live eligibility
+and influence remain unknown. The stale Axe pose loop is fixed in source, but
+no current interactive capture confirms the user's remaining stationary
+camera report. Retail idle bob is two vertical units; substantially larger
+motion remains unresolved.
+
+The follow-up check of the user's bob/look report found no source-backed
+movement-gate mismatch: retail `00452570` compares the digital movement vector
+against binary64 `1e-7` at `0x004E1C10`, uses strafe weight `0.75`, and calls
+`0044F340` with active byte 1; the viewer uses the same values. Retail's
+directly applied head-motion records themselves reach +10/−5 vertical units.
+Do not rescale these records without a same-view retail runtime capture. The
+camera follower's runtime parent/matrix is still not joined to Genesis's camera
+context, so its visible bob remains a parity gap. The pitch sign is consistent
+with the renderer's backward `+Z` basis and visible `-Z` ray, but the user's
+mouse report needs an interactive check before it can be called resolved.
+The Axe swing is bounded by the ACT swing end time in the current source, and
+the rebuilt bundle contains that correction; user-perceived repeat behavior
+still needs an interactive check. The extinguisher path has no deterministic
+static drop, but contact placement still needs a `--fire-camera-audit` capture.
+See
+[`first_person_camera_axe_regression_2026-10-17.md`](../tracker/evidence/runtime/first_person_camera_axe_regression_2026-10-17.md).
+
+### Focused report recheck (2026-10-17)
+
+Fresh headless Ghidra work against EXE SHA-256
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`
+reconfirmed the camera consumer: vtable slot `004E3B50` points to
+`00491C60`, which supplies the stored Genesis camera and node transform to
+`geCamera_SetWorldSpaceXForm`. The transform parent/context chain still has no
+static or numeric join to Player view follower `+0x34A4`. The pseudocode is in
+[`retail_camera_context_trace_2026-10-17.c`](../tracker/evidence/runtime/retail_camera_context_trace_2026-10-17.c).
+The no-input port path contains only the source-authored ±2-unit idle breath
+after the stale Axe pose-loop fix; no further large-jostle cause is
+source-confirmed. Axe direction still depends on the unrecovered camera to
+ActorInfo matrix and guessed `(35, -8, 140)` origin. Extinguisher routing has
+no deterministic static drop, while center-only contacts can be weak under
+the retail equation. A fresh trace confirms the extinguisher local frame's
+direction negation and basis math match the port; its parent/world matrix is
+still provisional. No live camera/equipment audit log was available, so do
+not mark any of the three user reports fixed or add a global/per-tool sign
+change. Continue from the audit log when captured; retain menu work paused.
+
+### Current delegated audit ledger (2026-10-17)
+
+| Scope | Files / evidence reviewed | Status |
+| --- | --- | --- |
+| `bob_scale_audit` | `head_motion.h`, `scene_viewer.cpp`, retail `00452570`/`0044F340`/`00491140`/`00491460` | Complete, read-only; authored amplitudes and movement gate align; runtime scale unresolved |
+| `extinguisher_gap_next` | `scene_viewer.cpp`, retail `00461830`/`004614E0`/`00461590`/`00461F80`/`00481A60`/`00449A40`/`00448970` | Complete, read-only; no deterministic drop; contact placement still needs capture |
+| `axe_camera_basis` | Retail `00491C60`/`00491D70`/`00491D00`/`00495450`/`00492110`/`00492450`, Genesis camera API | Complete, read-only; camera and held-item matrix consumers traced; source hierarchy join still missing |
+| `idle_bob_trace` | `core.h`, `head_motion.h`, `view_update.h`, `scene_viewer.cpp`, prior idle-fall evidence | Complete, read-only; no persistent no-input physics oscillation; found Axe item-pose clock can keep cycling after its finite ACT |
+| `camera_idle_trace` | `scene_viewer.cpp`, `HeadMotion`, `ViewUpdate`, retail `00491140`/`00452570` | Complete, read-only; stale Axe pose loop is fixed in source; retail stationary idle is ±2 vertical units; remaining live camera scale/context unverified |
+| `axe_orientation_trace` | Ghidra callers/constructors `00491D70`/`00493AF0`/`004956C0`/`00498AC0`/`00493BD0`/`00491EA0`, Player `0044F340` | Complete, read-only; type-5 context helper is parented to the global scene owner, with no static pointer join to Player follower `+0x34A4`; preview's raw root maps the composed negative local-Z swing toward its view ray; retail ActorInfo link remains unresolved |
+| `camera_context_factory_followup` | Type-5 factory wrappers `00446D10`/`00464A20`, constructors `00446C40`/`00464660`, base `0049CBE0`/`0049D420`, context `004956C0`/`00493AF0`/`00495450` | Complete, read-only; both type-5 records create a helper camera context under the global scene owner; no link to Player follower found; owner ancestry/runtime identity remain open |
+| `extinguisher_effect_trace` | `ExtinguisherPose`, four-point sampler, queue/message 30000, fire contact and suppression | Complete, read-only; no deterministic drop; near-center influence can be doubled near 2 and yield near-zero retail response; live sample-to-fire intersection remains unknown |
+| `camera_trace_followup` | `head_motion.h`, `view_update.h`, `core.h`, post-ViewUpdate camera audit, retail camera context trace | Complete, read-only; no additional no-input oscillator found; idle breath is ±2 units; larger motion needs a live sample |
+| `axe_trace_followup` | retail camera/ActorInfo pseudocode, `equipment_view_frame_trace_2026-10-17.md`, `actor_pose.h` | Complete, read-only; no supported global or per-Axe rotation fix; numeric camera-to-ActorInfo join remains open |
+| `extinguisher_trace_followup` | `scene_viewer.cpp`, `extinguisher_pose.h`, `extinguisher_samples.h`, retail `004612B0` and vector helpers | Complete, read-only; local frame math matches port, no deterministic route loss; parent matrix and live intersections unknown |
+| `camera_axe_extinguisher_reaudit` | camera/Axe source, retail camera-to-ActorInfo trace, extinguisher contact/suppression path | Complete; confirmed Axe root translation projects away from the camera along the view ray; corrected audit labels to report both signs; stationary camera reset is in the packaged build; extinguisher still needs live contact evidence |
+
+### Current stopping checkpoint (2026-10-17)
+
+The current rescue-all macOS app was rebuilt with signed Axe depth diagnostics;
+the build-tree and packaged executables match at SHA-256
+`a5d3d4b169aa4389d2f300ce162b115645604485729f492eb86ef4f4a7093ac9`. The
+bundle includes the earlier stale-Axe-pose reset, but it has not been run
+interactively here. No gameplay audit log exists in the checked temporary
+locations; the saved `fdny-camera-audit*.log` files are Ghidra analysis logs,
+not player captures.
+
+Retail idle breathing is the only source-backed stationary camera oscillator
+found (±2 world units). The old repeated Axe item-pose clock is cleared before
+the next camera update in source and included in this package. If the camera
+still moves substantially after the player settles, the next evidence is a
+`camera-pose` capture from `--fire-camera-audit`.
+
+The Axe root translation projects away from the camera into the scene; the
+sampled rotations and whole-mesh displacement remain unmeasured in a live run.
+No global or per-tool orientation change is justified without the numeric
+retail view-follower-to-ActorInfo matrix. The extinguisher's local frame,
+contact dispatch, and suppression formula match the traced retail path, but
+live sample/fire intersection has not been captured. Those gaps affect whether
+the current symptoms can be attributed to the guessed preview frame or need a
+source-backed correction. Menu work remains paused.
+
+## Immediate regression follow-up (2026-10-17)
+
+The user reported a continuously swinging Axe, excessive view bob, and inverted
+vertical mouse look. The one-second `ItemViewPose` clock was being reused for
+ACT swing playback even though retail `axe.act`/`axel.act` swing tracks last
+about 3/2 seconds; the Axe clock is now monotonic and separate, so the ACT can
+reach its endpoint. The newly shared normal camera frame applied pitch with
+the wrong sign; the view roll now uses negative input pitch. Head-motion
+phases now initialize to the retail constructor's zero values. The source
+records themselves contain 10-unit movement amplitudes; do not scale them
+without a retail runtime comparison. The macOS rescue-all bundle builds at
+matching executable SHA-256
+`669bd58dcf34e0f534954c92f4c49e5dd4822c16543ec3b26678eb3d174a45ce`.
+Interactive feel and retail visual parity remain unverified; the Axe
+camera-to-ActorInfo attachment and its guessed camera-relative origin remain
+open. See
+[`first_person_camera_axe_regression_2026-10-17.md`](../tracker/evidence/runtime/first_person_camera_axe_regression_2026-10-17.md).
+
+## Stationary camera loop follow-up (2026-10-17)
+
+The latest stationary-camera report exposed a separate Axe lifecycle bug. The
+viewer continued `ItemViewPose::update` after the finite Axe ACT ended because
+`axeActionStarted` stayed true; the one-second pose clock wrapped and its
+hand offsets cycled through `ViewUpdate`. The port now clears the action,
+strike-pending flag, and pose on the first frame after `axeSwingActive` ends,
+before composing that frame's camera. This is a concrete port-side camera
+input fix, built in the rescue-all macOS app at matching executable SHA-256
+`761b4b044d47ca46c083e37fa2a3461a11b3ce0b2111c0e8ed402358435b5d43`.
+`git diff --check` passes. The idle `HeadMotion` mode still has the
+retail-authored 2-unit vertical breathing cycle. The spawn still falls to the
+floor rather than being snapped initially, and no gameplay capture has
+confirmed the user's remaining camera motion. Exact Axe held/release callback
+parity and retail camera hierarchy remain open. See
+[`first_person_camera_axe_regression_2026-10-17.md`](../tracker/evidence/runtime/first_person_camera_axe_regression_2026-10-17.md).
+
+## Camera, Axe direction, and extinguisher audit extension (2026-10-17)
+
+Corrected the earlier translation sign reading: the ACT root attachment moves
+the first sampled Axe translation toward actor-local `-Z`; the preview's raw
+camera root maps that axis onto the visible view ray. This makes the guessed
+preview root a plausible cause of the reported swing direction, while the
+retail camera-to-ActorInfo matrix remains unresolved. Fresh Ghidra tracing of
+both type-5 factories shows their shared helper camera context under the global
+scene-owner hierarchy; no static join to Player follower `+0x34A4` was found,
+and the global owner's ancestry/runtime identity remain open.
+
+`--fire-camera-audit` now samples the post-`ViewUpdate` camera and head-motion
+state, then measures the default Axe ACT root pose and each ACT vertex's
+displacement along the candidate view ray. Extinguisher lines include the full
+contact frame, doubled message influence, and expected response under the
+unchanged retail equation. These measurements are opt-in and add no gameplay
+correction. The rescue-all macOS app rebuilt successfully; build-tree and
+packaged executable SHA-256 are both
+`ea5f1bd5d5fb298ca2256be4ec21480edbf07e033480b555c732dda570de9349`.
+`git diff --check` passes. No interactive or retail-parity capture has been
+run; the remaining camera jostle, swing direction, and extinguisher contact
+are still open. See
+[`first_person_camera_axe_regression_2026-10-17.md`](../tracker/evidence/runtime/first_person_camera_axe_regression_2026-10-17.md)
+and
+[`extinguisher_scene_viewer_runtime.md`](../tracker/evidence/scenario-loading/extinguisher_scene_viewer_runtime.md).
 
 ## Active glitch investigation (2026-10-14)
 
@@ -119,13 +379,13 @@ the report is observed.
 | `victim_ai_gap` | Check whether the roam sweep bounds are truly model-specific | Read-only pinned Ghidra evidence and startup sources | Complete; correction: retail bounds are fixed at ±24, matching the viewer; no change needed |
 | `retail_held_item_orientation` | Recheck axe/ext first-person transforms against retail | `tracker/evidence/scenario-loading/held_item_and_fire_camera_followup_2026-10-14.md`; saved Ghidra decompilation; read-only | Complete; retail attached-pose writer/consumer is mapped, but exact camera-relative pose remains open; no source-backed root correction justified |
 | `fire_camera_rotation` | Recheck yaw/pitch writers and first-contact fire diagnostic | Same follow-up note; viewer source and pinned retail fire exports; read-only | Complete; fire path does not rotate retail or viewer camera; audit now records mouse deltas on the exposure-entry frame |
-| `held_variant_render_gate` | Retail Axe/axel resource selection and child render gates | Read-only Ghidra decompilation; `.local/ghidra/axe-pair-audit-runtime.log`; follow-up evidence note | Complete; retail active primary is model 6 axel and the selected port now draws it; secondary model visibility and final pose remain open |
+| `held_variant_render_gate` | Retail Axe/axel resource selection and child render gates | Read-only Ghidra decompilation; `.local/ghidra/axe-pair-audit-runtime.log`; follow-up evidence note | Superseded by 2026-10-17 reconciliation: root and child `+0x1FC` fields were conflated; ordinary first equip displays model 1 `axe.act`, while duplicate equip can enable model 6 `axel.act` |
 | `fire_camera_input_reaudit` | Recheck camera writers and separate heading from translation/pain feedback | Read-only viewer and hash-pinned retail exports; follow-up evidence note | Complete; fire has no yaw/pitch writer; opt-in audit now samples Player motion and camera position as well as mouse events; live capture remains needed |
-| `retail_held_pose_orientation` | Determine whether held ACT roots or retail matrices explain backward-facing tools | Read-only pinned Ghidra and ACT/root audit; `tracker/evidence/scenario-loading/held_item_and_fire_camera_followup_2026-10-14.md` | Complete; port camera roots are confirmed approximations; exact retail root remains open; selected Axe now draws source-mapped model 6 `axel.act` |
+| `retail_held_pose_orientation` | Determine whether held ACT roots or retail matrices explain backward-facing tools | Read-only pinned Ghidra and ACT/root audit; `tracker/evidence/scenario-loading/held_item_and_fire_camera_followup_2026-10-14.md` | Complete; port camera roots are confirmed approximations; exact retail root remains open; ordinary Axe model selection corrected to model 1 in the 2026-10-17 follow-up |
 | `viewer_camera_rotation_cause` | Trace camera angle writes, SDL relative input, and fire/pain view effects | Read-only viewer and pinned retail audit; same follow-up evidence note | Complete; no fire yaw/pitch writer; next live run needs mouse deltas plus SDL focus/relative-mode state |
 | `hand_orientation_audit` | Recheck current held-item facing against retail matrix evidence | Read-only source/ACT audit; `tracker/evidence/scenario-loading/held_item_and_fire_camera_followup_2026-10-14.md` | Complete; direct roots remain provisional and no axis change is source-supported; retail comparison needed |
 | `fire_camera_audit` | Recheck current fire-contact camera/input path | Read-only viewer and pinned retail audit; same follow-up evidence note | Complete; only captured SDL motion writes yaw/pitch; no live input trace to explain the reported turn |
-| `held_item_retail_transform` | Re-audit why Axe/ext models appear backward; determine whether current axis/root correction is retail-supported | Read-only hash-pinned Ghidra evidence and current viewer source | Complete; selected Axe asset is retail model 6, but live camera-space ActorInfo matrix is unresolved, so no axis flip or turn is source-justified |
+| `held_item_retail_transform` | Re-audit why Axe/ext models appear backward; determine whether current axis/root correction is retail-supported | Read-only hash-pinned Ghidra evidence and current viewer source | Complete; ordinary first equip uses model 1; live camera-space ActorInfo matrix is unresolved, so no axis flip or turn is source-justified |
 | `fire_camera_writer_audit` | Re-audit all yaw/pitch writers and fire/pain effects in the viewer and retail trace | Read-only current source and saved hash-pinned Ghidra evidence | Complete; SDL relative motion is the only viewer yaw/pitch writer and fire indicators do not rotate retail camera; live input/framing trace still needed |
 | `fire_exposure_crosswalk` | Compare viewer exposure candidate limit to retail FireRescue bookkeeping | Read-only saved hash-pinned `004483A0` decompilation and current source | Complete; retail limit belongs to each FireRescue instance; removed viewer-wide frame cap; single-fire damage inputs/cadence remain provisional |
 | `rescue_catalog_path` | Identify broad rescue selection/transition seam without inventing stage keys | Read-only package inventory, loader, and finalexitloadmap exports | Complete; chooser and stage sibling packages are wired from catalog/authored keys; retail context equality remains unproven |
@@ -133,7 +393,7 @@ the report is observed.
 | `held_tool_retail` | Recheck axe/extinguisher facing against retail matrix path | `held_item_and_fire_camera_followup_2026-10-14.md`, saved Ghidra/ACT notes | Complete; active Axe resource is verified, but camera-space matrix and hand placement are not recovered to support a pose correction |
 | `held_matrix_deeper` | Recheck retail equipment parent scale, view offsets, and ActorInfo matrix writer | Read-only pinned Ghidra exports and copied-EXE disassembly | Complete; parent scale `(0.006, 0.009, 0.006)` and initial Axe/ext view offsets are mapped; matrix still needs live ActorInfo floats |
 | `fire_camera_runtime` | Audit the reported fire-entry camera turn across SDL focus, relative mode, camera basis, and fire feedback | Read-only viewer and pinned retail evidence | Complete; no fire yaw/pitch write or camera-basis sign fault found; unfocused/stale SDL motion was a plausible input edge and now has a focus/relative-mode guard |
-| `held_tool_pose_audit` | Recheck current visible Axe/ext facing against the retail mode-2 matrix path | `scene_viewer.cpp`, `AuditHeldToolTransform.java`, held-tool follow-up note | Complete; `axel.act` selection and live matrix writer are confirmed; current direct roots/offsets remain unverified, no source-backed axis flip found |
+| `held_tool_pose_audit` | Recheck current visible Axe/ext facing against the retail mode-2 matrix path | `scene_viewer.cpp`, `AuditHeldToolTransform.java`, held-tool follow-up note | Complete; mode-2 matrix writer is confirmed; current direct roots/offsets remain unverified, and ordinary Axe selection is model 1 after the 2026-10-17 correction |
 | `fire_camera_path_audit` | Recheck angle writers and fire-entry event order | `scene_viewer.cpp`, `player_fire_message.h`, pinned retail fire exports, held-tool follow-up note | Complete; SDL relative motion is the sole angle writer; opt-in audit now marks pain/passout; live stationary-input trace is still needed |
 | `held_tool_orientation_delta` | Independently recheck backward-facing Axe/extinguisher pose against retail | Current viewer source, ACT assets, pinned Ghidra evidence; read-only | Complete; no source-backed axis/root correction, retail camera-space matrix and same-view capture remain open |
 | `victim_movement_verify` | Verify victim roam step and turn helpers against retail instructions | Saved hash-pinned Ghidra output; read-only | Complete; strict target-arrival gate and exponential 0.3-second half-life turn are verified and ported; callback cadence remains open |
@@ -143,25 +403,31 @@ the report is observed.
 | `victim_message_pump` follow-up | Map the owner `+0x3BC` message drain and its order after contact callbacks | Preserved same-hash Ghidra exports for `00429520`, `0049B610`, and `004DF8CC` | Complete; same `00429520` invocation drains messages submitted during its earlier `+0xE0` contact pass; outer rendered-frame and Player update order remain open |
 | `rescue_contact_gap` follow-up | Check final-exit enablement against BoundsTrigger contact semantics | `004504C0`, `00440F50`, `00440CE0`, `00470840`, authored exit inventory | Complete; exit availability is a model/render state, not a contact gate; persistent overlap remains `touching`, so no synthetic `touch` is source-supported |
 | `carry_presentation_trace` | Trace what retail displays while Player carries a VictimRescue actor | Same-hash EXE pickup/status exports, Genesis actor-render gate, `scene_viewer.cpp` | Complete; pickup hides and freezes the world victim; Player status key semantics are unresolved and no Player-relative carried-body transform was found |
-| `rescue_script_surface_followup` | Find broad missing authored Player/trigger behavior across campaign rescues | `00451870`, `00451560`, `00458400`, copied rescue actor inventory, shared host | Complete; all seven campaign rescues author oxygen toggles; shared oxygen state/commands, smoothed gauge/needle draw, resource-702 visor transition, child sounds, and category-volume selector effects are integrated; packaged visor/HUD, seven-map audio, catalog, and synthetic rescue checks pass, while the manager flag, separate music stream, retail blend/visual parity, warning, cadence, and fog pixel parity remain open |
+| `rescue_script_surface_followup` | Find broad missing authored Player/trigger behavior across campaign rescues | `00451870`, `00451560`, `00458400`, copied rescue actor inventory, shared host | Complete; all seven campaign rescues author oxygen toggles; shared oxygen state/commands, smoothed gauge/needle draw, resource-702 visor transition, child sounds, and category-volume selector effects are integrated; catalog MP3 music and oxygen stream gain are now wired; the manager flag, menu playback, audible parity, retail blend/visual parity, warning, cadence, and fog pixel parity remain open |
 | `victim_hazard_reactions_followup` | Recheck Player passout and carried-victim drop timing/integration | `00450FB0`, `00451080`, `0044FF10`, `0044CD10`, `victim_transactions.h`, `scene_viewer.cpp` | Complete; fire uses passout argument 1 and oxygen argument 0; the shared host wires the separate `+0x3400` safe snapshot, `+0x534` reset checkpoint, carried-victim drop, floor placement, status tail, and strict state-6 recovery delay. Eight controlled map checks cover drop/reset/re-pickup; natural hazard entry, retail scheduler cadence, mode-2 HeroDown, and live camera parity remain open. See `player_passout_recovery_port_2026-10-14.md`. |
-| `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, `lev_rrf_catalog_loader_trace_fresh.md`, `scene_audio.h` | Complete; catalog fields and four copied MP3 hashes are identified, and retail stream open/play helpers are traced; start/switch/stop/loop callers and cross-platform MP3 decoding remain open |
-| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h` | Complete; title/selector and stage commands exist, but `time:` consumer, objective HUD, expiry/results, and the `0044C360` outro meaning remain unverified |
-| `equipment_gap_audit` | Check held-tool rendering/action/audio against current evidence | Read-only; `extinguisher_scene_viewer_runtime.md`, equipment source headers, retail hash-pinned traces | Complete; extinguisher action/suppression runs and an emitter request is produced, but the request is not rendered; particle asset/placement and audio triggers remain open |
-| `menu_asset_audit` | Identify authentic retail main-menu assets and safe integration points | Read-only `menu.rrf`, local retail menu files, current selector | Complete; resource ID 10 is the 640x480 `main.bmp`; artwork is now bundled and rendered, while widget layout/flow remains open |
-| `menu_code_trace` | Recheck retail menu constructor, level selector update/handler, and state flow | Read-only same-hash exports and saved decompilation | Complete; selector title/bitmap/selection box and handler branches are mapped; exact UI dispatch, event meanings, coordinates, and transitions need more decompilation/runtime capture |
+| `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, level-loader and stream helpers, `scene_audio.h` | Complete; four MP3 assets and catalog choices are hash-pinned; selector-2 level start/loop and linked-stage `+0x0C` inheritance are traced and ported, with oxygen stream gain; menu-track startup, FMOD streaming behavior, and audible parity remain open |
+| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h` | Complete; `time:` is parsed into record +0x10 but no consumer is traced; completion/outro remain unresolved. Early rescue EVS `tell` loadout commands may precede Player registration and be dropped; ordering needs follow-up |
+| `equipment_gap_audit` | Check held-tool rendering/action/audio against current evidence | Read-only; `extinguisher_scene_viewer_runtime.md`, equipment source headers, retail hash-pinned traces | Complete; eligible particle requests draw provisional smoke; packaged SDL rejection of malformed source BMP is fixed by a local 24-bit conversion; natural hit/suppression remain unverified; Axe matrix remains open |
+| `axe_animation_trace` | Recheck reported Axe swing direction against the selected ACT and retail view transform | Read-only pinned retail/Ghidra trace; both Axe ACTs, `ItemViewPose`, `scene_viewer.cpp` | Complete; ordinary first equip uses model 1 `axe.act`, model 6 is duplicate-gated, and both have positive early local-Z motion; corrected asset mapping is integrated but camera-space direction remains open pending retail ActorInfo matrix values |
+| `extinguisher_failure_trace` | Trace why the shared extinguisher appears inert and find retail effect lifecycle | `00461F80`/pool trace, contact helpers, `scene_viewer.cpp` | Ongoing; no deterministic input/queue/suppression drop found; retail doubles influence before the quadratic response, so near-2 center-contact influence has little effect; retail RGB suppression tint is now ported; parent-frame/cadence and successful live contacts remain unresolved |
+| `axe_component_frame_followup` | Resolve the reported swing direction through the retail Player follower and Genesis actor/camera transforms | `equipment_view_frame_trace_2026-10-17.c`; `actor_camera_pose_trace_2026-10-17.c`; read-only headless Ghidra | Ongoing; ActorInfo basis packing and BONE06 attachment × sample composition match the port; retail Player frame stores target-minus-position at +Z, but its screen meaning and Player-to-camera-to-ActorInfo numeric join remain open, so no Axe flip is yet justified |
+| `menu_asset_audit` | Identify authentic retail main-menu assets and safe integration points | Read-only `menu.rrf`, local retail menu files, current selector | Complete; bitmap ID 10 title art and alpha texture ID 100 root labels are copied; exact root positions/actions are now traced |
+| `menu_code_trace` | Recheck retail menu constructor, level selector update/handler, and state flow | Read-only same-hash exports and saved decompilation | Complete; selector records/actions and root labels, bounds, click dispatch, and page indices are traced; page content, selector rendering, input producers, highlight timing, and menu sound semantics remain open |
+| `menu_root_widget_trace` | Pin the retail title control atlas, layout, callbacks, and activation visuals | Read-only Ghidra 12.0.4; fresh `.c` exports and menu bitmap/mask | Complete; action codes 0..3 map to children 1/4/3/8 at authored positions; native root labels are integrated, while secondary pages and exact highlight timing remain open |
 
 ## Current state
 
 - **2026-10-17 shared rescue front-end checkpoint:** the default macOS launcher
-  now builds the rescue-all app and opens a native title screen followed by
-  the source-ordered eight-entry rescue selector. It replaces the old
-  AppleScript picker for raw BSP directories; passing a map key still opens a
-  single package for development. The old launcher filename remains a
-  compatibility alias. The title uses original retail bitmap ID 10 from
-  `menu.rrf`; its actions and placement remain port UI. Retail's hash-pinned
-  `0042DEC0` constructor and `0042F500` catalog selection path are mapped, but
-  widget layout and interactions remain open. CMake and packaged binaries match at SHA-256
+  builds the rescue-all app and opens a native title screen followed by the
+  source-ordered eight-entry rescue selector. The title uses original retail
+  bitmap ID 10 and root-control alpha texture ID 100 with GAME/SCORES/OPTIONS/
+  EXIT labels and source-backed control positions. GAME currently bypasses the
+  career child page and opens the port-created rescue list; SCORES/OPTIONS
+  pages and full selector parity remain open. It replaces the old AppleScript
+  raw-BSP picker; passing a map key still opens one package for development.
+  The old launcher filename remains a compatibility alias. Retail's
+  hash-pinned `0042DEC0` constructor, `00430F00` root controls, `00430DF0`
+  action callback, and `0042F500` catalog handler are mapped. CMake and packaged binaries match at SHA-256
   `bcbd5e3803e036a2b9b2240ad81e8f162c04773f1104c9617182e6876fd29121`;
   catalog loading (8/8), offscreen title/selector rendering, and controlled
   rescue transactions (13/13) pass. These do not establish interactive launch,
@@ -170,17 +436,73 @@ the report is observed.
   an unverified no-final-exit path, not a proven outro. See
   [`rescue_front_end_entry_flow_port_2026-10-17.md`](../tracker/evidence/runtime/rescue_front_end_entry_flow_port_2026-10-17.md).
 
-- **2026-10-17 retail title-art checkpoint:** the rescue-all bundle now carries
-  the original 640x480 `main.bmp` registered as menu RRF resource 10, and the
-  native title page renders it at 4:3. This improves artwork fidelity but does
-  not establish retail widget placement or interaction. The title actions and
-  the rescue selector remain provisional until the selector object/vtable,
-  menu input/render dispatch, and state handlers are traced. See
+- **2026-10-17 retail menu asset checkpoint:** the earlier title-art build
+  carries the original 640x480 `main.bmp` registered as menu RRF resource 10.
+  The current root also draws rows from `mcontrols.bmp` plus its alpha mask at
+  source-backed positions. Its selected alpha and keyboard mapping remain
+  approximate; child page content and the rescue selector are still
+  provisional. See
   [`retail_main_menu_art_port_2026-10-17.md`](../tracker/evidence/runtime/retail_main_menu_art_port_2026-10-17.md).
   The rebuilt CMake and packaged executables match at SHA-256
   `b48789b0b0fdd5122eb7336b6579cdb1e2ad16d1e3a6d594f50691420693437e`;
   the existing offscreen menu check renders the retail title bitmap and eight
   mission rows, but does not establish retail behavior.
+
+- **2026-10-17 retail root-control checkpoint:** fresh same-hash traces map
+  `00430F00` to original label texture resource 100, 640x480 positions, and
+  action codes, with callback `00430DF0` routing actions 0/1/2/3 to menu
+  children 1/4/3/8. The macOS title now loads the paired `mcontrols.bmp` /
+  `mcontrols_a.bmp` assets and renders the GAME/SCORES/OPTIONS/EXIT rows at
+  their retail origins. The selected alpha treatment and key bindings remain
+  approximate; GAME still bypasses the career child page, SCORES/OPTIONS pages
+  are not ported, and the following eight-row list remains a selector parity
+  gap. CMake and packaged executable SHA-256
+  `5ce9e3141343f8655b115f4847b7407d34b79399b467a3cfceaac60d5a4e176f` match;
+  the bundled menu assets match their source hashes and `Info.plist` lints.
+  No render or interactive capture was run after this change. See
+  [`retail_menu_widget_trace_2026-10-17.md`](../tracker/evidence/runtime/retail_menu_widget_trace_2026-10-17.md).
+  The user clarified that retail matching applies to the menu and the broader
+  port; where decompilation or runtime evidence is missing, state which parity
+  gaps it affects rather than treating a plausible implementation as retail.
+  The user has now paused menu work while equipment, rendering, audio, and
+  mission lifecycle take priority.
+
+- **2026-10-17 held-equipment follow-up:** fresh Ghidra tracing separates the
+  Axe root gate from each child's model flag. Normal first equip uses model 1
+  (`axe.act`); duplicate `equip axe` can enable primary model 6 (`axel.act`).
+  The shared viewer no longer enables that gate on first equip and draws the
+  child ACTs selected by it, with the active child's `swing` track candidate.
+  This corrects asset/action mapping, but the user-reported toward-player swing
+  remains unresolved because the preview ActorInfo root is guessed and its
+  numeric basis relation to retail's Player view follower is unknown. Do not
+  apply a sign flip based on the current camera-root guess. For the
+  extinguisher, the verified retail action transition is 300 ms to enter and
+  1000 ms to return; eligible hits queue message 30000 and request a pool
+  particle. The shared viewer now draws a provisional two-second resource-14
+  smoke quad and logs selection, button edges, sample points, contact delivery,
+  and suppression strength/alpha in `--fire-camera-audit`. No deterministic
+  source failure was found, but an interactive successful contact remains
+  unverified. CMake `fdny-scene-viewer` and the packaged rescue-all app built
+  at matching SHA-256
+  `f8e006e636d1ef0101b0284904dc2927f98047c68bee7834a8e8885e8b6736f7` (linker
+  warning: Homebrew `json-c` targets macOS 27 while this build targets 13.3).
+  No interactive check or retail parity claim. See
+  [`equipment_action_pose_followup_2026-10-17.md`](../tracker/evidence/scenario-loading/equipment_action_pose_followup_2026-10-17.md).
+
+- **2026-10-17 extinguisher bundle-load follow-up:** the first packaged Axe
+  orientation diagnostic exposed a startup failure before the scene loaded:
+  SDL rejects retail `bsmoke.bmp` because its header declares 254 palette
+  entries while ten pixels use indices 254/255. The local exporter now
+  converts both source sprites to 24-bit BMP without changing retail inputs;
+  the two undeclared smoke colors are provisionally padded with black and
+  recorded in the generated manifest. After rebuilding, the packaged
+  `--tool-orientation-check axe` loaded the scene with 121/121 render groups
+  and 24/24 textures and saved the three port-only Axe frames. This verifies
+  asset loading and scene startup, not extinguisher contact/suppression or
+  retail visual parity. Build and packaged executable remain SHA-256
+  `f8e006e636d1ef0101b0284904dc2927f98047c68bee7834a8e8885e8b6736f7`; the
+  exported sprite hashes and limitations are in
+  [`extinguisher_particle_render_trace_2026-10-17.md`](../tracker/evidence/scenario-loading/extinguisher_particle_render_trace_2026-10-17.md).
 
 - **2026-10-15 portable wide-integer checkpoint:** `clock.h` and
   `extended.h` now use the shared `wide_integer.h`; the portable two-word
@@ -292,8 +614,8 @@ the report is observed.
   categories and applies the same mix to active voices. All seven authored
   ambient maps pass `--ambient-audio-check`, including the selector attenuation
   and restoration probe; MBase oxygen HUD render and all-eight-entry catalog
-  checks pass. The separate streamed music channel and captured retail audio
-  parity remain open. CMake and packaged app binaries match at SHA-256
+  checks pass. The separate streamed music channel was wired in a later
+  checkpoint; captured retail audio parity remains open. CMake and packaged app binaries match at SHA-256
   `c0581c9561d0e34e34e96e18732560836a1627869b36eddf98a671241df25b90`.
   See
   [`player_oxygen_audio_category_mix_port_2026-10-15.md`](../tracker/evidence/scenario-loading/player_oxygen_audio_category_mix_port_2026-10-15.md).
@@ -411,9 +733,9 @@ the report is observed.
   rectangle and rotation. The app builder exports and bundles the four retail
   sprite bitmaps; `--oxygen-hud-render-check` passes from a bundled scene and
   reports the visor effect, gauge layers, and low-oxygen overlay with changed
-  pixels. Category selectors 4/5 are ported through the shared mixer; the
-  manager flag, separate streamed music channel, warning/visor blend parity,
-  and Player cadence/order remain open. State-6
+  pixels. Category selectors 4/5 are ported through the shared mixer and
+  control level-music gain; the manager flag, warning/visor blend parity,
+  audible music parity, and Player cadence/order remain open. State-6
   recovery now uses the strict >1000 ms gate, mapped `+0x3400` safe snapshot,
   separate `+0x534` reset checkpoint, carried-victim drop, floor placement, and
   status tail. The host currently models constructor-default cleanup state and
@@ -527,12 +849,14 @@ the report is observed.
   Training executable hash is
   `b44840eced38f76a3639271ea593b77cbc856fe0614ed37b5b9341a441da8529`.
 
-- Held ACT rendering is not confirmed 1:1. Retail sets the Axe primary-active
-  byte when the item is selected; its primary child is configured as model 6
-  `axel.act`, and the parent gates that child's post-view update on the same
-  active byte. The viewer previously drew model 1 `axe.act` while selected;
-  it now draws `axel.act`, matching the active primary child's authored
-  resource. The camera-root candidate exposes its blade in the port ACT render.
+- Held ACT rendering is not confirmed 1:1. Correction from 2026-10-17 Ghidra
+  follow-up: this earlier interpretation conflated the Axe root gate with the
+  child's model-selection flag. Ordinary first equip leaves root gate `+0x1FC`
+  off and activates secondary model 1 `axe.act`; the duplicate-equip branch
+  enables primary model 6 `axel.act` as well. The shared viewer now follows
+  that gate for equip state, model choice, and action animation. The preview's
+  guessed camera-root candidate still maps early local-Z swing motion toward
+  the viewer; the retail camera-space ActorInfo matrix remains unresolved.
   Extinguisher still uses its direct camera-root candidate because that shows
   its label. Retail's exact camera-space ActorInfo matrix is not recovered:
   the mode-2 writer is mapped through `00497F70` → `00492110` → `00492450`,
@@ -991,8 +1315,9 @@ the report is observed.
    output alongside the gauge layers and low-warning overlay. The orange
    resource-12 warning face and its source controller formula are mapped; the
    host uses an approximate alpha ramp. Retail warning/visor blend parity and
-   category-volume effects of selectors 4/5 now control the viewer's group mix;
-   the manager flag and separate streamed music channel remain open. The
+  category-volume effects of selectors 4/5 now control the viewer's group mix;
+  the manager flag remains open; separate level-music gain is wired and
+  documented in the 2026-10-17 checkpoint. The
    source-triggered `RC_OxygenLow` one-entry chatter cue now plays its authored
    `RC_OxygenLow0`/`o2low.wav` resource through the shared audio mixer and is
    bundled in all 13 rescue/stage packages; retail mix/timing parity remains

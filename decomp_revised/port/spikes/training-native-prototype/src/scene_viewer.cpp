@@ -105,10 +105,12 @@ bool jsonNumber(J value) {
 #include "axe_strike_pose.h"
 #include "axe_world_collision.h"
 #include "bmodel_axe_hit.h"
+#include "item_view_pose.h"
 #include "extinguisher_pose.h"
 #include "extinguisher_samples.h"
 #include "extinguisher_contacts.h"
 #include "extinguisher_effects.h"
+#include "extinguisher_spray_renderer.h"
 #include "goggles_scan.h"
 #include "goggles_renderer.h"
 #include "oxygen_hud_renderer.h"
@@ -592,9 +594,15 @@ struct PreviewPlayerLoadout {
         const int slot = slotForName(name);
         if (slot == 0) return false;
         auto& item = items.slots[size_t(slot)];
-        if (item.present && slot != 1) return true;
+        if (item.present) {
+            if (slot != 1) return true;
+            // 0044D080's existing-Axe branch sets the root gate directly and
+            // returns; it does not create or select another Axe. The first
+            // equip must leave this gate clear so retail updates model 1.
+            items.axeGate.primaryChildEnabled = true;
+            return true;
+        }
         item.present = true;
-        if (slot == 1) items.axeGate.primaryChildEnabled = true;
         HoseItemSelection::Result result;
         HoseItemSelection::selectSlot(items, slot, false, result);
         return true;
@@ -616,6 +624,8 @@ struct PreviewExtinguisher {
     Follower follower;
     FrameTransform worldFrame;
     ExtinguisherPose::CallbackState action;
+    ExtinguisherPose::MotionPose localPose = ExtinguisherPose::idleMotion();
+    ExtinguisherPose::MotionPose activePose = ExtinguisherPose::idleMotion();
     float phase = 0.f;
     float charge = 1.f;
     bool followerInitialized = false;
@@ -889,6 +899,37 @@ std::filesystem::path locateFireDirectionSprites(const SceneData& scene) {
         root = parent;
     }
     throw std::runtime_error("Cannot find copied fire-direction textures under actor_exports/fire-direction or inputs/original/Data/Sprites");
+}
+
+std::filesystem::path locateExtinguisherSpraySprites(
+        const SceneData& scene, const std::filesystem::path& actorAssets) {
+    auto hasSprayPair = [](const std::filesystem::path& candidate) {
+        return std::filesystem::is_regular_file(candidate / "bsmoke.bmp") &&
+               std::filesystem::is_regular_file(candidate / "sm_alpha.bmp");
+    };
+    if (const char* overridePath = std::getenv("FDNY_GAME_DATA_DIR")) {
+        const std::filesystem::path root = overridePath;
+        for (const auto& candidate : {root / "sprites", root / "Sprites",
+                                      root / "Data" / "sprites", root / "Data" / "Sprites"})
+            if (hasSprayPair(candidate)) return candidate;
+        throw std::runtime_error("FDNY_GAME_DATA_DIR has no resource-14 extinguisher texture pair: " +
+                                 root.string());
+    }
+    const auto bundled = actorAssets / "extinguisher-spray";
+    if (hasSprayPair(bundled)) return bundled;
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "actor_exports" / "extinguisher-spray",
+                 root.parent_path() / "actor_exports" / "extinguisher-spray",
+                 root / "inputs" / "original" / "Data" / "sprites",
+                 root / "inputs" / "original" / "Data" / "Sprites"})
+            if (hasSprayPair(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    throw std::runtime_error("Cannot find rescue.rrf resource-14 particle textures "
+                             "under actor_exports/extinguisher-spray or copied game data");
 }
 
 std::vector<std::string> victimSpawnScripts(J entity) {
@@ -2932,7 +2973,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         bool victimPickupHudRenderCheck,
         bool fireCameraAudit,
         const std::string& equipmentOrientationCheck,
-        std::string* nextRescueStage = nullptr, bool performanceAudit = false) {
+        std::string* nextRescueStage = nullptr, bool performanceAudit = false,
+        const SceneAudio::MusicSelection* inheritedMusic = nullptr) {
     const bool rescueDiagnostic = rescueCheck || ambientAudioCheck;
     auto logRescueStage = [&](const char* stage) {
         if (rescueCheck) std::cerr << "rescue-check: " << stage << std::endl;
@@ -2975,6 +3017,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     int nextDynamicFireEntity = 1000000;
     FireRenderer fireRenderer;
     bool fireRendererLoaded = false;
+    ExtinguisherSprayRenderer extinguisherSprayRenderer;
+    bool extinguisherSprayRendererLoaded = false;
     FireDirectionRenderer fireDirectionRenderer;
     bool fireDirectionRendererLoaded = false;
     GogglesRenderer gogglesRenderer;
@@ -3083,6 +3127,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         if (!inspectOnly && !interactionCheck && !rescueDiagnostic) {
             fireRenderer.load(actorAssetRoot / "fire-sprites");
             fireRendererLoaded = true;
+            extinguisherSprayRenderer.load(
+                locateExtinguisherSpraySprites(scene, actorAssetRoot));
+            extinguisherSprayRendererLoaded = true;
             fireDirectionRenderer.load(locateFireDirectionSprites(scene));
             fireDirectionRendererLoaded = true;
             gogglesRenderer.load(locateGogglesSprites(scene));
@@ -3144,6 +3191,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         PreviewPlayerLoadout playerLoadout;
         PreviewExtinguisher extinguisher;
         AxeActionCallbacks::State axeActionState;
+        ItemViewPose::Result axeItemViewPose;
         bool axeSwingActive = false;
         bool axeActionStarted = false;
         float axeSwingElapsed = 0.f;
@@ -3170,13 +3218,22 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         SceneAudio sceneAudio;
         if (!inspectOnly && !renderCheck && !interactionCheck && !rescueDiagnostic) {
             sceneAudio.open();
-            sceneAudio.load(scene);
+            sceneAudio.load(scene, inheritedMusic);
         }
         if (ambientAudioCheck) {
             if (!sceneAudio.open())
                 throw std::runtime_error("Scene audio check could not open SDL's dummy audio device");
-            sceneAudio.load(scene);
+            sceneAudio.load(scene, inheritedMusic);
         }
+        auto startExtinguisherActionAudio = [&](bool middleAlreadyActive) {
+            sceneAudio.playOwned(playerEntityId, "ExtStart", player.p, player.p, yaw, 2);
+            if (!middleAlreadyActive)
+                sceneAudio.loopOwned(playerEntityId, "ExtMiddle", player.p, player.p, yaw, 2);
+        };
+        auto stopExtinguisherActionAudio = [&] {
+            sceneAudio.stopOwned(playerEntityId, "ExtMiddle");
+            sceneAudio.playOwned(playerEntityId, "ExtEnd", player.p, player.p, yaw, 2);
+        };
         startPreviewFireLoopSounds(fires, sceneAudio, player.p, yaw);
         struct AmbientLoop {
             int owner = 0;
@@ -4554,8 +4611,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 for (auto& prop : propModelAssets)
                     if (prop.second->renderer) prop.second->renderer->release();
                 fireRenderer.release();
+                extinguisherSprayRenderer.release();
                 fireDirectionRenderer.release();
                 fireRendererLoaded = false;
+                extinguisherSprayRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
                 headlessContext.destroy();
@@ -4629,8 +4688,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 for (auto& prop : propModelAssets)
                     if (prop.second->renderer) prop.second->renderer->release();
                 fireRenderer.release();
+                extinguisherSprayRenderer.release();
                 fireDirectionRenderer.release();
                 fireRendererLoaded = false;
+                extinguisherSprayRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
                 headlessContext.destroy();
@@ -4772,10 +4833,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 for (auto& prop : propModelAssets)
                     if (prop.second->renderer) prop.second->renderer->release();
                 fireRenderer.release();
+                extinguisherSprayRenderer.release();
                 fireDirectionRenderer.release();
                 gogglesRenderer.release();
                 hintOverlay.release();
                 fireRendererLoaded = false;
+                extinguisherSprayRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
                 headlessContext.destroy();
@@ -4868,11 +4931,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             for (auto& prop : propModelAssets)
                 if (prop.second->renderer) prop.second->renderer->release();
             fireRenderer.release();
+            extinguisherSprayRenderer.release();
             fireDirectionRenderer.release();
             if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
             if (victimPickupHudRendererLoaded) victimPickupHudRenderer.release();
             hintOverlay.release();
             fireRendererLoaded = false;
+            extinguisherSprayRendererLoaded = false;
             fireDirectionRendererLoaded = false;
             oxygenHudRendererLoaded = false;
 #if defined(__APPLE__)
@@ -4899,12 +4964,14 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         bool useEdge = false, sprayHeld = false, sprayPressed = false, sprayReleased = false;
         float pitch = 0.f;
         HeadMotion passoutHeadMotion;
-        Follower passoutViewFollower;
-        bool passoutViewInitialized = false;
+        Follower playerViewFollower;
+        bool playerViewInitialized = false;
         bool previewMotionsPlaying = false;
         bool fireCameraAuditExposure = false;
         int fireCameraAuditEntity = -1;
         uint32_t fireCameraAuditNextSample = 0;
+        uint32_t fireCameraAuditNextPoseSample = 0;
+        uint32_t extinguisherAuditNextSample = 0;
         float fireCameraAuditYawDelta = 0.f;
         float fireCameraAuditPitchDelta = 0.f;
         uint32_t fireCameraAuditMouseEvents = 0;
@@ -4965,7 +5032,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                   << "Doors respond to authored touch events; PATH preview does not activate a door or change collision.\n"
                   << "Gameplay BModel poses drive both rendering and collision; retail callback cadence remains unknown.\n";
         if (fireCameraAudit)
-            std::cout << "Fire camera audit is active: it logs mouse events and 250 ms view, movement, focus, and relative-mode samples.\n";
+            std::cout << "Fire camera audit is active: it logs mouse events, 250 ms view/movement samples, and extinguisher contact points and delivery while spraying.\n";
         if (performanceAudit)
             std::cout << "Performance audit is active: one-second CPU frame, world, overlay, swap, and visibility summaries will be printed.\n";
         while (running) {
@@ -5001,7 +5068,15 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         const int slot = int(event.key.keysym.sym - SDLK_0);
                         const char* name = PreviewPlayerLoadout::nameForSlot(slot);
                         const std::string previousSelection = playerLoadout.selectedName();
-                        if (playerLoadout.select(name)) {
+                        const bool selected = playerLoadout.select(name);
+                        if (fireCameraAudit)
+                            std::cout << "fire-camera-audit selection t=" << SDL_GetTicks()
+                                      << " requested=" << name
+                                      << " result=" << (selected ? "selected" : "not-equipped")
+                                      << " previous=" << previousSelection
+                                      << " current=" << playerLoadout.selectedName()
+                                      << "\n";
+                        if (selected) {
                             noteGogglesSelection(previousSelection);
                             activeHint = std::string("Selected ") + name;
                         }
@@ -5039,10 +5114,22 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !sprayHeld) {
                     sprayHeld = true;
                     sprayPressed = true;
+                    if (fireCameraAudit) {
+                        const Uint32 flags = SDL_GetWindowFlags(window);
+                        std::cout << "fire-camera-audit action-input t=" << SDL_GetTicks()
+                                  << " edge=down selected=" << playerLoadout.selectedName()
+                                  << " focus=" << ((flags & SDL_WINDOW_INPUT_FOCUS) ? "yes" : "no")
+                                  << " relative=" << (SDL_GetRelativeMouseMode() ? "yes" : "no")
+                                  << "\n";
+                    }
                 }
                 if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT && sprayHeld) {
                     sprayHeld = false;
                     sprayReleased = true;
+                    if (fireCameraAudit)
+                        std::cout << "fire-camera-audit action-input t=" << SDL_GetTicks()
+                                  << " edge=up selected=" << playerLoadout.selectedName()
+                                  << "\n";
                 }
                 if (event.type == SDL_MOUSEMOTION) {
                     const Uint32 windowFlags = SDL_GetWindowFlags(window);
@@ -5102,6 +5189,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             }
             uint32_t now = SDL_GetTicks();
+            extinguisherSprayRenderer.prune(now);
             if (scriptRuntime) scriptRuntime->timeMs = now;
             fogState.update(now);
             advanceWorldStartup(now);
@@ -5125,9 +5213,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 oxygenOps.random = &gameplayRandom;
                 oxygenOps.releaseSelectedItem = [&] {
                     if (playerLoadout.selectedName() == "extinguisher") {
-                        if (extinguisher.action.active && extinguisher.hasWorldFrame)
+                        if (extinguisher.action.active && extinguisher.hasWorldFrame) {
                             extinguisher.action = ExtinguisherPose::endWindow(
                                 extinguisher.action, now, extinguisher.worldFrame);
+                            stopExtinguisherActionAudio();
+                        }
                         sprayHeld = false;
                         sprayPressed = false;
                         sprayReleased = false;
@@ -5332,7 +5422,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                   << " crouch=" << (player.crouch ? "yes" : "no")
                                   << " incapacitated=" << (playerIncapacitated ? "yes" : "no")
                                   << " input=" << forward << "," << side
-                                  << " camera=" << auditCameraPosition.x << ","
+                                  << " cameraBase=" << auditCameraPosition.x << ","
                                   << auditCameraPosition.y << "," << auditCameraPosition.z << "\n";
                         fireCameraAuditYawDelta = 0.f;
                         fireCameraAuditPitchDelta = 0.f;
@@ -5342,6 +5432,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                 }
             };
+            const std::string selectedItem = playerLoadout.selectedName();
             FrameTransform cameraFrame;
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);
             const float cameraCosPitch = std::cos(pitch), cameraSinPitch = std::sin(pitch);
@@ -5358,45 +5449,187 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             const int headMode = HeadMotion::viewMode(playerViewState, true, playerMoving);
             const HeadMotion::Output headOffset = passoutHeadMotion.update(headMode, dt);
             const bool usePassoutCamera = playerFireState.state == 6;
+            if (!playerViewInitialized) {
+                playerViewFollower = Follower{};
+                playerViewFollower.flags = 0x2e;
+                playerViewFollower.threshold = {20.f, 1000.f, 20.f};
+                playerViewFollower.settling = {.05f, 0.f, .05f};
+                playerViewFollower.smoothing = {0.f, .05f, 0.f};
+                playerViewFollower.held = true;
+                playerViewFollower.position = cameraFrame.position;
+                playerViewFollower.previous = cameraFrame.position;
+                playerViewFollower.basis = cameraFrame.axis;
+                playerViewInitialized = true;
+            }
+            // The ACT swing is finite, but axeActionStarted used to remain
+            // set after its endpoint. That kept advancing ItemViewPose's
+            // one-second wrapping clock forever, feeding its hand offsets
+            // back into ViewUpdate and making the stationary camera cycle.
+            // The renderer clears axeSwingActive after the ACT endpoint; on
+            // the following frame, return the hand pose and action state to
+            // idle before passing its offsets into ViewUpdate.
+            if (selectedItem == "axe" && axeActionStarted && !axeSwingActive) {
+                axeStrikePending = false;
+                axeActionStarted = false;
+                axeSwingElapsed = 0.f;
+                axeItemViewPose = ItemViewPose::Result{};
+            }
+            const V followerStartPosition = playerViewFollower.position;
+            const V cameraBasePosition = cameraFrame.position;
+            FrameTransform playerFrame;
+            playerFrame.position = player.p;
+            playerFrame.axis = {
+                V{cameraCosYaw, 0.f, -cameraSinYaw},
+                V{0.f, 1.f, 0.f},
+                V{cameraSinYaw, 0.f, cameraCosYaw}
+            };
+            const V itemViewOffset = selectedItem == "axe" ? axeItemViewPose.viewOffset : V{};
+            const V itemAimOffset = selectedItem == "axe" ? axeItemViewPose.aimOffset : V{};
+            // ViewUpdate builds the Player frame's +Z backward basis. A
+            // positive input pitch means looking up, so its local-X roll must
+            // use the opposite sign to produce the same camera frame.
             if (usePassoutCamera) {
-                if (!passoutViewInitialized) {
-                    // Seed the stateful follower from the camera the viewer was
-                    // already showing, then apply the retail transition frame.
-                    passoutViewFollower = Follower{};
-                    passoutViewFollower.flags = 0x2e;
-                    passoutViewFollower.threshold = {20.f, 1000.f, 20.f};
-                    passoutViewFollower.settling = {.05f, 0.f, .05f};
-                    passoutViewFollower.smoothing = {0.f, .05f, 0.f};
-                    passoutViewFollower.held = true;
-                    passoutViewFollower.position = cameraFrame.position;
-                    passoutViewFollower.previous = cameraFrame.position;
-                    passoutViewFollower.basis = cameraFrame.axis;
-                    passoutViewInitialized = true;
-                }
-                FrameTransform playerFrame;
-                playerFrame.position = player.p;
-                playerFrame.axis = {
-                    V{cameraCosYaw, 0.f, -cameraSinYaw},
-                    V{0.f, 1.f, 0.f},
-                    V{cameraSinYaw, 0.f, cameraCosYaw}
-                };
                 const float fraction = playerPassoutViewFactor(playerFireState, now);
-                // The selected items' live +0x1E4/+0x1F0 offsets are not yet
-                // exposed by this viewer; zero matches the unselected/default
-                // item and the traced static extinguisher setup.
-                const V itemViewOffset{}, itemAimOffset{};
                 const auto view = ViewUpdate::transition(
                     playerFrame, {headOffset.x, headOffset.y, headOffset.z},
                     itemViewOffset, itemAimOffset, {0.f, -20.f, -30.f},
                     {-60.f, 1000.f, 0.f}, 70.f, fraction,
-                    pitch * 57.29577951308232f, dt, passoutViewFollower, false);
-                passoutViewFollower = view.follower;
-                cameraFrame.position = passoutViewFollower.position;
-                cameraFrame.axis = passoutViewFollower.basis;
+                    -pitch * 57.29577951308232f, dt, playerViewFollower, false);
+                playerViewFollower = view.follower;
             } else {
-                passoutViewInitialized = false;
+                const float viewHeight = playerViewState == 4 ? 10.f : 70.f;
+                const auto view = ViewUpdate::transition(
+                    playerFrame, {headOffset.x, headOffset.y, headOffset.z},
+                    itemViewOffset, itemAimOffset, {}, {}, viewHeight, 1.f,
+                    -pitch * 57.29577951308232f, dt, playerViewFollower,
+                    playerViewState == 4);
+                playerViewFollower = view.follower;
             }
-            const std::string selectedItem = playerLoadout.selectedName();
+            cameraFrame.position = playerViewFollower.position;
+            cameraFrame.axis = playerViewFollower.basis;
+            if (fireCameraAudit &&
+                (fireCameraAuditNextPoseSample == 0 ||
+                 static_cast<int32_t>(now - fireCameraAuditNextPoseSample) >= 0)) {
+                fireCameraAuditNextPoseSample = now + 250;
+                const V viewRay = cameraFrame.axis[2] * -1.f;
+                std::cout << "fire-camera-audit camera-pose t=" << now
+                          << " dt=" << dt
+                          << " selected=" << selectedItem
+                          << " moving=" << (playerMoving ? "yes" : "no")
+                          << " playerState=" << playerViewState
+                          << " headRequested=" << headMode
+                          << " headCurrent=" << passoutHeadMotion.currentMode
+                          << " headPhase=" << passoutHeadMotion.phaseX << ","
+                          << passoutHeadMotion.phaseY << "," << passoutHeadMotion.phaseZ
+                          << " headOffset=" << headOffset.x << "," << headOffset.y << "," << headOffset.z
+                          << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
+                          << " velocity=" << player.v.x << "," << player.v.y << "," << player.v.z
+                          << " input=" << forward << "," << side
+                          << " baseEye=" << cameraBasePosition.x << ","
+                          << cameraBasePosition.y << "," << cameraBasePosition.z
+                          << " followerBefore=" << followerStartPosition.x << ","
+                          << followerStartPosition.y << "," << followerStartPosition.z
+                          << " camera=" << cameraFrame.position.x << ","
+                          << cameraFrame.position.y << "," << cameraFrame.position.z
+                          << " cameraDelta=" << cameraFrame.position.x - cameraBasePosition.x << ","
+                          << cameraFrame.position.y - cameraBasePosition.y << ","
+                          << cameraFrame.position.z - cameraBasePosition.z
+                          << " cameraRight=" << cameraFrame.axis[0].x << ","
+                          << cameraFrame.axis[0].y << "," << cameraFrame.axis[0].z
+                          << " cameraUp=" << cameraFrame.axis[1].x << ","
+                          << cameraFrame.axis[1].y << "," << cameraFrame.axis[1].z
+                          << " cameraBack=" << cameraFrame.axis[2].x << ","
+                          << cameraFrame.axis[2].y << "," << cameraFrame.axis[2].z
+                          << " viewRay=" << viewRay.x << "," << viewRay.y << "," << viewRay.z
+                          << " axeAction=" << (axeActionStarted ? "yes" : "no")
+                          << " axeAnimation=" << (axeSwingActive ? "yes" : "no")
+                          << " axeTime=" << axeSwingElapsed
+                          << " itemPoseTime=" << axeItemViewPose.currentTime
+                          << " itemViewOffset=" << axeItemViewPose.viewOffset.x << ","
+                          << axeItemViewPose.viewOffset.y << "," << axeItemViewPose.viewOffset.z
+                          << " itemAimOffset=" << axeItemViewPose.aimOffset.x << ","
+                          << axeItemViewPose.aimOffset.y << "," << axeItemViewPose.aimOffset.z;
+                if (selectedItem == "axe") {
+                    auto axeAsset = equipmentAssets.find("axe");
+                    if (axeAsset != equipmentAssets.end() && axeAsset->second->renderer) {
+                        const auto& actor = *axeAsset->second;
+                        const bool animate = axeSwingActive && actor.swingMotion >= 0 &&
+                            axeSwingElapsed <= actor.swingEnd;
+                        const int motion = animate ? actor.swingMotion : -1;
+                        const float motionTime = animate ? axeSwingElapsed : 0.f;
+                        const auto currentJoints = actor.renderer->pose.joints(motion, motionTime);
+                        const auto bindJoints = actor.renderer->pose.joints(-1, 0.f);
+                        const J bones = field(actor.renderer->asset, "bones");
+                        int rootBone = -1;
+                        for (int index = 0; index < count(bones); ++index) {
+                            if (integer(field(at(bones, index), "parent")) < 0) {
+                                rootBone = index;
+                                break;
+                            }
+                        }
+                        if (rootBone >= 0) {
+                            const V localDelta = currentJoints[size_t(rootBone)].t -
+                                bindJoints[size_t(rootBone)].t;
+                            const ActorTransform previewRoot = rawToolRootFromCameraFrame(cameraFrame);
+                            const V worldDelta = previewRoot.rotate(localDelta);
+                            const V previewOrigin = cameraRelativePoint(cameraFrame, 35.f, -8.f, 140.f);
+                            const auto currentVertices = actor.renderer->pose.vertices(motion, motionTime);
+                            const auto bindVertices = actor.renderer->pose.vertices(-1, 0.f);
+                            double vertexAlongRayMin = 0.0, vertexAlongRayMax = 0.0,
+                                   vertexAlongRaySum = 0.0;
+                            double vertexTowardCameraMin = 0.0, vertexTowardCameraMax = 0.0,
+                                   vertexTowardCameraSum = 0.0;
+                            if (currentVertices.size() == bindVertices.size() && !currentVertices.empty()) {
+                                vertexAlongRayMin = std::numeric_limits<double>::infinity();
+                                vertexAlongRayMax = -std::numeric_limits<double>::infinity();
+                                vertexTowardCameraMin = std::numeric_limits<double>::infinity();
+                                vertexTowardCameraMax = -std::numeric_limits<double>::infinity();
+                                for (size_t vertex = 0; vertex < currentVertices.size(); ++vertex) {
+                                    const V delta = previewRoot.rotate(
+                                        currentVertices[vertex] - bindVertices[vertex]);
+                                    // viewRay points from the eye into the scene. Positive
+                                    // projection is away from the camera; its negation is
+                                    // motion toward the camera.
+                                    const double alongViewRay = double(delta.x) * viewRay.x +
+                                        double(delta.y) * viewRay.y + double(delta.z) * viewRay.z;
+                                    const double towardCamera = -alongViewRay;
+                                    vertexAlongRayMin = std::min(vertexAlongRayMin, alongViewRay);
+                                    vertexAlongRayMax = std::max(vertexAlongRayMax, alongViewRay);
+                                    vertexAlongRaySum += alongViewRay;
+                                    vertexTowardCameraMin = std::min(vertexTowardCameraMin, towardCamera);
+                                    vertexTowardCameraMax = std::max(vertexTowardCameraMax, towardCamera);
+                                    vertexTowardCameraSum += towardCamera;
+                                }
+                            }
+                            std::cout << " axeModel=" << actor.stem
+                                      << " axeMotion=" << motion
+                                      << " axeMotionEnd=" << actor.swingEnd
+                                      << " axeRootLocal=" << currentJoints[size_t(rootBone)].t.x << ","
+                                      << currentJoints[size_t(rootBone)].t.y << ","
+                                      << currentJoints[size_t(rootBone)].t.z
+                                      << " axeRootDeltaLocal=" << localDelta.x << ","
+                                      << localDelta.y << "," << localDelta.z
+                                      << " axeRootDeltaAlongViewRay=" << (worldDelta.x * viewRay.x +
+                                          worldDelta.y * viewRay.y + worldDelta.z * viewRay.z)
+                                      << " axeRootDeltaTowardCamera=" << -(worldDelta.x * viewRay.x +
+                                          worldDelta.y * viewRay.y + worldDelta.z * viewRay.z)
+                                      << " axeVertexDeltaAlongViewRay=" << vertexAlongRayMin << ","
+                                      << vertexAlongRayMax << ","
+                                      << (currentVertices.empty() ? 0.0 :
+                                          vertexAlongRaySum / double(currentVertices.size()))
+                                      << " axeVertexDeltaTowardCamera=" << vertexTowardCameraMin << ","
+                                      << vertexTowardCameraMax << ","
+                                      << (currentVertices.empty() ? 0.0 :
+                                          vertexTowardCameraSum / double(currentVertices.size()))
+                                      << " axePreviewOrigin=" << previewOrigin.x << ","
+                                      << previewOrigin.y << "," << previewOrigin.z
+                                      << " axeViewRayIntoScene=" << viewRay.x << ","
+                                      << viewRay.y << "," << viewRay.z;
+                        }
+                    }
+                }
+                std::cout << "\n";
+            }
             if (selectedItem == "axe" && sprayPressed) {
                 // Retail Axe ACTION press (0045F8F0) sets global clock +100.
                 // SDL ticks stand in for the retail clock, and this left-click
@@ -5409,6 +5642,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 axeSwingActive = false;
                 axeActionStarted = false;
                 axeSwingElapsed = 0.f;
+                axeItemViewPose = ItemViewPose::update(0.f, 1.f, 0.f, 7);
                 axeStrikePending = true;
                 axeFeedback = "waiting for action gate";
                 activeHint = "Axe: action queued";
@@ -5423,6 +5657,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     extinguisher.hasWorldFrame) {
                     extinguisher.action = ExtinguisherPose::endWindow(
                         extinguisher.action, now, extinguisher.worldFrame);
+                    stopExtinguisherActionAudio();
                 }
                 previousEquippedItem = selectedItem;
             }
@@ -5430,6 +5665,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 axeStrikePending = false;
                 axeActionStarted = false;
                 axeSwingActive = false;
+                axeSwingElapsed = 0.f;
+                axeItemViewPose = ItemViewPose::Result{};
             }
             axeActionState.primaryEnabled =
                 playerLoadout.items.axeGate.primaryChildEnabled ? 1 : 0;
@@ -5440,13 +5677,21 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 axeActionStarted = true;
                 axeSwingActive = true;
                 axeSwingElapsed = 0.f;
+                axeItemViewPose = ItemViewPose::update(0.f, 1.f, 0.f, 7);
                 axeStartedThisFrame = true;
+                sceneAudio.playOwned(playerEntityId, "AxeSwing", player.p, player.p, yaw, 2);
                 axeFeedback = "swinging";
                 activeHint = "Axe: swinging";
                 activeHintRemaining = 1.2f;
             }
             if (selectedItem == "axe" && axeActionStarted && !axeStartedThisFrame) {
                 const float priorAnimationTime = axeSwingElapsed;
+                axeItemViewPose = ItemViewPose::update(
+                    dt, 1.f, axeItemViewPose.currentTime,
+                    axeItemViewPose.animationFlag);
+                // The base item view-pose clock wraps after one second.
+                // The exported Axe swing ACT tracks last 2-3 seconds, so keep
+                // its animation and strike clock monotonic in a separate value.
                 axeSwingElapsed += dt;
                 // 0045FB90 stores prior time at Axe+0x340 and advanced time at
                 // +0x33c. 00460B90's paired comparisons admit exactly the
@@ -5502,6 +5747,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     activeHintRemaining = 1.5f;
                     std::cout << "Axe swing: no world collision on the provisional strike sweep.\n";
                 } else {
+                    // Retail 00460B90 stops the registered AxeSwing instance
+                    // after a world hit before it dispatches impact sounds.
+                    sceneAudio.stopOwned(playerEntityId, "AxeSwing");
                     ++axeWorldImpactCount;
                     const V contactPoint{worldResult.position[0], worldResult.position[1],
                                          worldResult.position[2]};
@@ -5542,6 +5790,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         };
                         const auto hitResult = BModelAxeHit::invoke(hitState, hitServices);
                         if (hitResult.flags == 0) continue;
+                        if ((hitResult.flags & 4u) == 0) {
+                            if ((hitResult.flags & 1u) != 0)
+                                sceneAudio.playOwned(playerEntityId, "WoodDoorBreak", player.p, player.p, yaw, 2);
+                            else if ((hitResult.flags & 2u) != 0)
+                                sceneAudio.playOwned(playerEntityId, "AxeHitWood", player.p, player.p, yaw, 2);
+                        }
                         bmodel.hitPoints = int(hitState.hitpoints);
                         std::cout << "Axe chopped BModel " << bmodel.entity
                                   << (bmodel.authoredName.empty() ? "" : " (" + bmodel.authoredName + ")")
@@ -5557,6 +5811,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         break; // Retail stops at the first accepted type-4 candidate.
                     }
                     if (!chopped) {
+                        // When retail's breakable candidate traversal exhausts,
+                        // 00460B90 plays the AxeHitOther instance.
+                        sceneAudio.playOwned(playerEntityId, "AxeHitOther", player.p, player.p, yaw, 2);
                         axeFeedback = "world hit: no eligible breakable";
                         activeHint = "Axe: no eligible breakable in reach";
                         activeHintRemaining = 1.5f;
@@ -5573,46 +5830,95 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     extinguisher.followerInitialized = true;
                 }
                 if (!extinguisher.hasWorldFrame) {
-                    extinguisher.worldFrame = ExtinguisherPose::world(extinguisher.follower);
+                    extinguisher.worldFrame = ExtinguisherPose::world(
+                        extinguisher.localPose, extinguisher.follower);
                     extinguisher.hasWorldFrame = true;
                 }
-                if (sprayPressed && extinguisher.hasWorldFrame)
+                if (sprayPressed && extinguisher.hasWorldFrame) {
+                    const bool middleAlreadyActive = extinguisher.action.active;
                     extinguisher.action = ExtinguisherPose::beginWindow(
                         extinguisher.action, now, extinguisher.worldFrame);
-                if (sprayReleased && extinguisher.action.active)
+                    startExtinguisherActionAudio(middleAlreadyActive);
+                }
+                if (sprayReleased && extinguisher.action.active) {
                     extinguisher.action = ExtinguisherPose::endWindow(
                         extinguisher.action, now, extinguisher.worldFrame);
+                    stopExtinguisherActionAudio();
+                }
             }
             sprayPressed = sprayReleased = false;
             if (extinguisherSelected) {
                 extinguisher.follower.update(cameraFrame.position, dt);
                 extinguisher.follower.basis = cameraFrame.axis;
-                if (!extinguisher.action.active) {
-                    extinguisher.worldFrame = ExtinguisherPose::world(extinguisher.follower);
-                    extinguisher.hasWorldFrame = true;
-                }
+                // 00461F80 samples the existing ActorInfo frame, then writes
+                // the next blended pose with 004612B0 at the end of Think.
+                // Keep that same local frame for both the mesh and contacts.
+                extinguisher.worldFrame = ExtinguisherPose::world(
+                    extinguisher.localPose, extinguisher.follower);
+                extinguisher.hasWorldFrame = true;
             }
             if (extinguisherSelected && extinguisher.action.active) {
-                const auto activePose = ExtinguisherPose::activeMotion(
-                    gameplayRandom, dt, extinguisher.phase, {-20.f, -20.f, 30.f});
-                extinguisher.phase = activePose.phase;
-                extinguisher.worldFrame = ExtinguisherPose::world(activePose, extinguisher.follower);
-                extinguisher.hasWorldFrame = true;
+                const FrameTransform contactFrame = extinguisher.worldFrame;
+                const bool traceExtinguisherFrame = fireCameraAudit &&
+                    (extinguisherAuditNextSample == 0 ||
+                     static_cast<int32_t>(now - extinguisherAuditNextSample) >= 0);
+                if (traceExtinguisherFrame) {
+                    extinguisherAuditNextSample = now + 250;
+                    std::cout << "fire-camera-audit extinguisher-frame t=" << now
+                              << " action=active held=" << (sprayHeld ? "yes" : "no")
+                              << " dt=" << dt << " charge=" << extinguisher.charge
+                              << " origin=" << contactFrame.position.x << ","
+                              << contactFrame.position.y << "," << contactFrame.position.z
+                              << " forward=" << -contactFrame.axis[1].x << ","
+                              << -contactFrame.axis[1].y << "," << -contactFrame.axis[1].z
+                              << " axis0=" << contactFrame.axis[0].x << ","
+                              << contactFrame.axis[0].y << "," << contactFrame.axis[0].z
+                              << " axis1=" << contactFrame.axis[1].x << ","
+                              << contactFrame.axis[1].y << "," << contactFrame.axis[1].z
+                              << " axis2=" << contactFrame.axis[2].x << ","
+                              << contactFrame.axis[2].y << "," << contactFrame.axis[2].z
+                              << "\n";
+                }
 
                 extinguisherContacts.reset();
                 float sampleMatrix[9];
                 for (int row = 0; row < 3; ++row)
                     for (int column = 0; column < 3; ++column)
-                        sampleMatrix[row * 3 + column] = extinguisher.worldFrame.axis[column][row];
+                        sampleMatrix[row * 3 + column] = contactFrame.axis[column][row];
                 const auto contactPoints = ExtinguisherSamples::points(
-                    sampleMatrix, extinguisher.worldFrame.position);
-                ExtinguisherEffects::SpawnRequest lastSpraySpawn;
+                    sampleMatrix, contactFrame.position);
                 for (auto& fire : fires) {
                     fire.runtime.visual.sizeUpdate(now);
-                    for (const V point : contactPoints) {
+                    for (size_t sample = 0; sample < contactPoints.size(); ++sample) {
+                        const V point = contactPoints[sample];
                         const float influence = FireContact::influence(
                             fire.runtime.visual.sizes.size, fire.runtime.visual.position,
                             point, 60.f, fire.runtime.alpha);
+                        const double deliveredInfluence = double(influence) + double(influence);
+                        const double suppressionResponse = 1.0 -
+                            (1.0 - deliveredInfluence) * (1.0 - deliveredInfluence);
+                        if (traceExtinguisherFrame) {
+                            std::cout << "fire-camera-audit extinguisher-sample t=" << now
+                                      << " fire=" << fire.entity << " sample=" << sample
+                                      << " point=" << point.x << "," << point.y << "," << point.z
+                                      << " fireOrigin=" << fire.runtime.visual.position.x << ","
+                                      << fire.runtime.visual.position.y << ","
+                                      << fire.runtime.visual.position.z
+                                      << " size=" << fire.runtime.visual.sizes.size.x << ","
+                                      << fire.runtime.visual.sizes.size.y << ","
+                                      << fire.runtime.visual.sizes.size.z
+                                      << " alpha=" << fire.runtime.alpha
+                                      << " influence=" << influence
+                                      << " deliveredInfluence=" << deliveredInfluence
+                                      << " suppressionResponse=" << suppressionResponse
+                                      << " expectedStrengthDelta=" <<
+                                          (fire.runtime.suppression.state == 5 ? 0.0 :
+                                           -double(dt) / double(fire.runtime.suppression.sprayTime) *
+                                               suppressionResponse)
+                                      << " eligible=" << (influence >= .001f ? "yes" : "no")
+                                      << " strength=" << fire.runtime.suppression.strength
+                                      << "\n";
+                        }
                         if (!(influence >= .001f)) continue;
                         const float strength = float(double(influence) + double(influence));
                         const bool appended = extinguisherContacts.append(
@@ -5624,12 +5930,22 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         if (appended) {
                             // The native contact is message 30000; effect deadlines
                             // and emitter offsets share the game's RNG stream.
+                            ExtinguisherEffects::SpawnRequest spraySpawn;
                             ExtinguisherEffects::afterContact(
                                 gameplayRandom, now, fire.runtime.suppression.strength,
-                                extinguisher.action.cooldown, true, lastSpraySpawn);
+                                extinguisher.action.cooldown, true, spraySpawn);
+                            if (spraySpawn.requested) {
+                                // FUN_00461F80 emits at FireRescue's +0x300 frame
+                                // origin. FireEntity::origin is the shared port's
+                                // current equivalent; the texture/quad mapping is
+                                // renderer-level and documented as provisional.
+                                extinguisherSprayRenderer.spawn(
+                                    spraySpawn, fire.runtime.origin, now);
+                            }
                         }
                     }
                 }
+                int extinguisherDelivered = 0;
                 fireMessages.drain(
                     [&](uint32_t route, uint32_t generation) -> FireMessageQueue::Receiver {
                         if (generation != 1) return {};
@@ -5638,15 +5954,59 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         });
                         if (target == fires.end()) return {};
                         return [&, target](uint32_t message, const void* payload) {
+                            const float before = target->runtime.suppression.strength;
                             ExtinguisherEffects::deliverContact(
                                 message, payload, dt, target->runtime);
+                            ++extinguisherDelivered;
+                            if (traceExtinguisherFrame) {
+                                std::cout << "fire-camera-audit extinguisher-delivery t=" << now
+                                          << " fire=" << target->entity << " message=" << message
+                                          << " strength=" << before << "->"
+                                          << target->runtime.suppression.strength
+                                          << " alpha=" << target->runtime.alpha << "\n";
+                            }
                         };
                     }, [](const FireMessageQueue::Delivery&) {});
+                if (traceExtinguisherFrame) {
+                    std::cout << "fire-camera-audit extinguisher-summary t=" << now
+                              << " contacts=" << extinguisherContacts.count
+                              << " delivered=" << extinguisherDelivered << "\n";
+                }
                 if (ExtinguisherPose::consumeCharge(extinguisher.charge, dt)) {
                     extinguisher.action = ExtinguisherPose::endWindow(
-                        extinguisher.action, now, extinguisher.worldFrame);
+                        extinguisher.action, now, contactFrame);
+                    stopExtinguisherActionAudio();
                     extinguisher.charge = 0.f;
                 }
+                const auto activePose = ExtinguisherPose::activeMotion(
+                    gameplayRandom, dt, extinguisher.phase, {-20.f, -20.f, 30.f});
+                extinguisher.phase = activePose.phase;
+                extinguisher.activePose = activePose;
+                const float progress = ExtinguisherPose::blendProgress(
+                    now, extinguisher.action.start, extinguisher.action.end);
+                extinguisher.localPose = extinguisher.action.active
+                    ? (progress < 1.f
+                        ? ExtinguisherPose::interpolate(
+                            ExtinguisherPose::idleMotion(), activePose, progress)
+                        : activePose)
+                    : ExtinguisherPose::interpolate(
+                        activePose, ExtinguisherPose::idleMotion(), progress);
+                extinguisher.worldFrame = ExtinguisherPose::world(
+                    extinguisher.localPose, extinguisher.follower);
+            } else if (extinguisherSelected) {
+                const uint32_t returnDuration = extinguisher.action.end - extinguisher.action.start;
+                const int32_t returnElapsed = static_cast<int32_t>(now - extinguisher.action.start);
+                if (returnDuration != 0 && returnElapsed >= 0 &&
+                    uint32_t(returnElapsed) < returnDuration) {
+                    const float progress = ExtinguisherPose::blendProgress(
+                        now, extinguisher.action.start, extinguisher.action.end);
+                    extinguisher.localPose = ExtinguisherPose::interpolate(
+                        extinguisher.activePose, ExtinguisherPose::idleMotion(), progress);
+                } else {
+                    extinguisher.localPose = ExtinguisherPose::idleMotion();
+                }
+                extinguisher.worldFrame = ExtinguisherPose::world(
+                    extinguisher.localPose, extinguisher.follower);
             }
             std::map<int, bool> currentBModelContacts;
             std::vector<std::pair<int, std::string>> pendingBModelContactEvents;
@@ -5947,45 +6307,53 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             renderScene(meshes, scene, collision, inspectionPoses, worldModelFlags,
                         fogState, lightStyles, cameraFrame.position, yaw, pitch, width, height,
                         performanceAudit ? &renderCounters : nullptr,
-                        usePassoutCamera ? &cameraFrame : nullptr);
+                        &cameraFrame);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
             drawPreviewFires(fires, fireRenderer, now);
+            extinguisherSprayRenderer.draw(now, cameraFrame);
             drawPreviewVictims(victims, victimAssets, now);
             // Goggles target billboards still use world depth. Draw them before
             // clearing depth for the first-person equipment models below.
             gogglesRenderer.draw(gogglesScan, now, yaw, pitch);
-            // The retail-selected primary Axe child is configured with ACT
-            // model 6 (axel.act); model 1 is the secondary child. When the
-            // Axe item is selected, its primary post-view callback is enabled.
-            auto axeAsset = equipmentAssets.find("axel");
-            if (selectedItem == "axe" && axeAsset != equipmentAssets.end() && axeAsset->second->renderer) {
-                // Model 6's port render exposes the axe head with the camera
-                // root. Retail's complete ActorInfo matrix is not mapped into
-                // camera coordinates yet, so placement remains provisional.
-                // Keep the exported swing's upward arc in the viewport around
-                // the source-mapped 0.275-second hit window.
+            // Retail first equip leaves the Axe root +0x1FC gate clear. Its
+            // secondary child (+0x648) then uses model 1 (axe.act); model 6
+            // (axel.act) is the primary child and is updated only after the
+            // duplicate-equip path sets that gate. The two children can both
+            // be active after that path.
+            auto axeSecondaryAsset = equipmentAssets.find("axe");
+            auto axePrimaryAsset = equipmentAssets.find("axel");
+            if (selectedItem == "axe" && axeSecondaryAsset != equipmentAssets.end() &&
+                axeSecondaryAsset->second->renderer) {
+                // Retail's complete ActorInfo matrix is not mapped into camera
+                // coordinates yet, so the preview root remains provisional.
                 ActorTransform axeRoot = rawToolRootFromCameraFrame(cameraFrame);
                 axeRoot.t = cameraRelativePoint(cameraFrame, 35.f, -8.f, 140.f);
-                const auto& actor = *axeAsset->second;
-                const bool animate = axeSwingActive && actor.swingMotion >= 0 &&
-                    axeSwingElapsed <= actor.swingEnd;
                 glClear(GL_DEPTH_BUFFER_BIT); // Held models render over the opaque world, with self-depth retained.
-                actor.renderer->draw(axeRoot, animate ? actor.swingMotion : -1,
-                                     animate ? axeSwingElapsed : 0.f);
-                if (axeSwingActive && !animate) axeSwingActive = false;
+                auto drawAxeChild = [&](EquipmentActorAsset& actor) {
+                    const bool animate = axeSwingActive && actor.swingMotion >= 0 &&
+                        axeSwingElapsed <= actor.swingEnd;
+                    actor.renderer->draw(axeRoot, animate ? actor.swingMotion : -1,
+                                         animate ? axeSwingElapsed : 0.f);
+                    return animate;
+                };
+                bool anyEnabledAxeMotion = drawAxeChild(*axeSecondaryAsset->second);
+                if (playerLoadout.items.axeGate.primaryChildEnabled &&
+                    axePrimaryAsset != equipmentAssets.end() && axePrimaryAsset->second->renderer)
+                    anyEnabledAxeMotion = drawAxeChild(*axePrimaryAsset->second) || anyEnabledAxeMotion;
+                if (axeSwingActive && !anyEnabledAxeMotion) axeSwingActive = false;
             }
             auto extinguisherAsset = equipmentAssets.find("ext");
             if (selectedItem == "extinguisher" && extinguisher.hasWorldFrame &&
                 extinguisherAsset != equipmentAssets.end() && extinguisherAsset->second->renderer) {
-                // The decoded extinguisher's labeled side faces the player
-                // with the direct root. Keep the visual mesh separate from
-                // the action/contact pose; exact retail placement/scale remain
-                // unverified.
-                ActorTransform toolRoot = rawToolRootFromCameraFrame(cameraFrame);
-                toolRoot.t = cameraRelativePoint(cameraFrame, 42.f, -5.f, 145.f);
-                scaleActorRoot(toolRoot, .25f); // Retail instance scale is not yet mapped.
+                // Retail samples fire from the extinguisher's transformed
+                // ActorInfo frame. Share that action frame with the visible
+                // ACT so the pictured nozzle and contact line move together.
+                // Component scale and camera-space attachment still need a
+                // retail runtime comparison.
+                ActorTransform toolRoot = actorRootFromFrame(extinguisher.worldFrame);
+                scaleActorRoot(toolRoot, .25f);
                 glClear(GL_DEPTH_BUFFER_BIT);
                 extinguisherAsset->second->renderer->drawBindPose(toolRoot);
             }
@@ -6065,6 +6433,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         for (auto& prop : propModelAssets)
             if (prop.second->renderer) prop.second->renderer->release();
         if (fireRendererLoaded) fireRenderer.release();
+        if (extinguisherSprayRendererLoaded) extinguisherSprayRenderer.release();
         if (fireDirectionRendererLoaded) fireDirectionRenderer.release();
         if (gogglesRendererLoaded) gogglesRenderer.release();
         if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
@@ -6081,6 +6450,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         for (auto& prop : propModelAssets)
             if (prop.second->renderer) prop.second->renderer->release();
         fireRenderer.release();
+        extinguisherSprayRenderer.release();
         fireDirectionRenderer.release();
         gogglesRenderer.release();
         oxygenHudRenderer.release();
@@ -6129,6 +6499,15 @@ int runVictimRoamMotionCheck() {
 
 int runRescueSceneChain(const std::filesystem::path& initialPackage,
                         bool performanceAudit = false) {
+    const SceneData initialScene = SceneData::load(initialPackage);
+    const std::string musicFile = SceneData::stringField(initialScene.music(), "file");
+    const std::string musicTrack = SceneData::stringField(initialScene.music(), "track");
+    std::optional<SceneAudio::MusicSelection> inheritedMusic;
+    // Retail copies the active level record's +0x0C music string into each
+    // pending linked-stage record before selector 2 starts the new level.
+    if (!musicFile.empty() && !musicTrack.empty())
+        inheritedMusic = SceneAudio::MusicSelection{musicTrack, initialScene.resolveAsset(musicFile)};
+
     std::filesystem::path currentPackage = initialPackage;
     std::set<std::string> visited;
     for (int stageCount = 0; stageCount < 16; ++stageCount) {
@@ -6139,7 +6518,8 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
         }
         std::string nextStage;
         const int result = run(currentPackage, false, false, false, false, false, -1,
-                               false, false, false, false, false, {}, &nextStage, performanceAudit);
+                               false, false, false, false, false, {}, &nextStage, performanceAudit,
+                               inheritedMusic ? &*inheritedMusic : nullptr);
         if (result != 0 || nextStage.empty()) return result;
         currentPackage = currentPackage.parent_path() / nextStage;
         std::cout << "Loading linked rescue package: " << currentPackage << "\n";
@@ -6152,15 +6532,23 @@ int runRescueMissionSelectionLoop(const std::filesystem::path& resourcesRoot,
     const auto choices = loadRescueMissionChoices(resourcesRoot);
     std::cout << "Rescue chooser loaded " << choices.size()
               << " retail .lev entries from " << resourcesRoot << ".\n";
-    while (chooseRescueTitleMenu(resourcesRoot / "menu" / "main.bmp")) {
-        const auto selected = chooseRescueMission(choices);
-        if (!selected) continue;
-        const auto& choice = choices[*selected];
-        std::cout << "Selected rescue mission catalog ordinal " << choice.catalogOrdinal
-                  << ": " << choice.key << " (" << choice.title << ")\n";
-        runRescueSceneChain(choice.scenePackage, performanceAudit);
+    size_t selectedTitleAction = 0;
+    for (;;) {
+        const auto action = chooseRescueTitleMenu(
+            resourcesRoot / "menu" / "main.bmp",
+            resourcesRoot / "menu" / "mcontrols.bmp",
+            resourcesRoot / "menu" / "mcontrols_a.bmp",
+            selectedTitleAction);
+        if (!action || *action == RescueTitleAction::Exit) return 0;
+        if (*action == RescueTitleAction::Game) {
+            const auto selected = chooseRescueMission(choices);
+            if (!selected) continue;
+            const auto& choice = choices[*selected];
+            std::cout << "Selected rescue mission catalog ordinal " << choice.catalogOrdinal
+                      << ": " << choice.key << " (" << choice.title << ")\n";
+            runRescueSceneChain(choice.scenePackage, performanceAudit);
+        }
     }
-    return 0;
 }
 
 int runRescueMissionCatalogCheck(const std::filesystem::path& resourcesRoot) {
@@ -6187,10 +6575,12 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
     HeadlessOpenGL headless;
     headless.create(width, height);
     const GLuint titleBackground = loadRetailMenuBitmap(resourcesRoot / "menu" / "main.bmp");
+    const GLuint titleControls = loadRetailMenuAlphaBitmap(
+        resourcesRoot / "menu" / "mcontrols.bmp", resourcesRoot / "menu" / "mcontrols_a.bmp");
     std::vector<uint8_t> previous;
     std::vector<uint8_t> pixels(size_t(width) * size_t(height) * 4);
     size_t changedTransitions = 0;
-    drawRescueTitleMenu(width, height, 0, titleBackground);
+    drawRescueTitleMenu(width, height, 0, titleBackground, titleControls);
     glFinish();
     glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -6198,7 +6588,7 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
     saveRenderCheckFrame("/private/tmp/fdny-rescue-title-menu", pixels,
                          width, height, ".bmp");
     previous = pixels;
-    drawRescueTitleMenu(width, height, 1, titleBackground);
+    drawRescueTitleMenu(width, height, 1, titleBackground, titleControls);
     glFinish();
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     size_t titleChanged = 0;
@@ -6231,6 +6621,7 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
         previous = pixels;
     }
     const GLenum error = glGetError();
+    glDeleteTextures(1, &titleControls);
     glDeleteTextures(1, &titleBackground);
     headless.destroy();
     if (error != GL_NO_ERROR)

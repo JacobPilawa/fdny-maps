@@ -6,9 +6,13 @@ struct FireUpdate {
  bool think(FireSuppression& fire,float dt,const std::function<void()>& light,
   const std::function<void()>& bookkeeping,const std::function<void()>& spread,
   const std::function<void()>& sizeUpdate,const std::function<void(float)>& scale,
-  const std::function<void(float)>& alpha){
+  const std::function<void(float)>& alpha,
+  const std::function<void(float)>& color = {}){
   if(fire.state==5)return false;
   light();
+  // 00449FE0 applies the current suppression-strength tint before its
+  // ordinary early-return gate and before recovery updates the strength.
+  if(color)color(fire.strength);
   if(!fire.sprayed&&fire.state!=4){divider=uint8_t(divider-1);if(divider!=0){sizeUpdate();return false;}}
   divider=3;bookkeeping();if(fire.state==4)spread();sizeUpdate();
   presentationScale=std::abs(double(fire.strength)-1.0)<=.001?1.f:float(int32_t(double(fire.strength)*10.f)*.1);

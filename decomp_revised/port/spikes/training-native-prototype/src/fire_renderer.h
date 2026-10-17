@@ -22,7 +22,11 @@ struct FireRenderer {
   for(int sprite=0;sprite<4;sprite++){
    auto& animation=visual.animations[sprite];if(!animation.active)continue;
    auto opacity=FireVisual::opacityBytes(now-animation.started,animation.rate,sprite==3?fire.glowAlpha:fire.alpha);
-   glBindTexture(GL_TEXTURE_2D,textures.at(visual.textureId(sprite)));glColor4ub(255,255,255,opacity[0]);
+   glBindTexture(GL_TEXTURE_2D,textures.at(visual.textureId(sprite)));
+   const auto& tint=fire.rgbOverride?fire.rgbTint:std::array<float,3>{1.f,1.f,1.f};
+   glColor4ub(uint8_t(std::clamp(int(tint[0]*255.f),0,255)),
+              uint8_t(std::clamp(int(tint[1]*255.f),0,255)),
+              uint8_t(std::clamp(int(tint[2]*255.f),0,255)),opacity[0]);
    glBegin(GL_QUADS);for(int v=0;v<4;v++){glTexCoord2f(uv[v][0],uv[v][1]);auto p=visual.placement.sprites[sprite].vertices[v];glVertex3f(p.x,p.y,p.z);}glEnd();drawn++;
   }
   glPopAttrib();return drawn;

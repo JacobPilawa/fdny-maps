@@ -23,7 +23,10 @@ struct HeadMotion {
   {10,10,12,16,1,1,1,.5f,0,1,16},
   {4,7,8,15,1,1,1,.5f,0,1,6}
  }};
- float phaseX=8,phaseY=15,phaseZ=4;
+ // 00491460 initializes the three phase accumulators at +0x3c/+0x40/+0x44
+ // to zero. Starting at arbitrary mid-cycle angles made the newly enabled
+ // normal-view bob jump immediately on entry.
+ float phaseX=0,phaseY=0,phaseZ=0;
  int currentMode=0;
  bool shakeActive=false,upwardTrend=false;
  float shakeAmplitude=0,shakePhase=0,shakeDuration=.1f;

@@ -1,5 +1,15 @@
 # Held-item orientation audit
 
+## Superseding Axe resource correction (2026-10-17)
+
+This historical audit and its 2026-10-14 follow-up incorrectly state that
+ordinary Axe selection uses primary model 6 (`axel.act`). Fresh Ghidra tracing
+found that the root gate and each child variant flag are separate: ordinary
+first equip leaves the root gate off and uses secondary model 1 (`axe.act`);
+the duplicate-equip path enables model 6 as well. The shared port now matches
+that path. The camera-space ActorInfo matrix and swing direction remain open;
+see [the 2026-10-17 equipment follow-up](equipment_action_pose_followup_2026-10-17.md).
+
 ## Retail evidence
 
 The audit uses the copied `inputs/original/binaries/FDNYFirefighter.exe`,

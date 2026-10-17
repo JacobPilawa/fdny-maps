@@ -10,6 +10,19 @@
 struct ExtinguisherPose {
  struct MotionPose {float phase;V direction,position;};
  struct CallbackState {bool active=false;uint32_t cooldown=0,start=0,end=0;V position{},direction{};};
+ static float blendProgress(uint32_t now,uint32_t start,uint32_t end){
+  const int32_t elapsed=static_cast<int32_t>(now-start);
+  const uint32_t duration=end-start;
+  if(elapsed<=0)return 0.f;
+  if(duration==0||uint32_t(elapsed)>=duration)return 1.f;
+  return float(elapsed)/float(duration);
+ }
+ static MotionPose idleMotion(){return {0.f,{.2f,-1.f,.1f},{-30.f,-18.f,40.f}};}
+ static MotionPose interpolate(MotionPose from,MotionPose to,float fraction){
+  auto lerp=[&](float a,float b){return float(double(a)+(double(b)-double(a))*double(fraction));};
+  return {to.phase,{lerp(from.direction.x,to.direction.x),lerp(from.direction.y,to.direction.y),lerp(from.direction.z,to.direction.z)},
+                   {lerp(from.position.x,to.position.x),lerp(from.position.y,to.position.y),lerp(from.position.z,to.position.z)}};
+ }
  static CallbackState beginWindow(CallbackState state,uint32_t tick,const FrameTransform& frame){
   state.active=true;state.cooldown=tick+100;state.start=tick;state.end=tick+300;
   state.position=frame.position;state.direction={-frame.axis[1].x,-frame.axis[1].y,-frame.axis[1].z};return state;
@@ -90,14 +103,15 @@ struct ExtinguisherPose {
   return frame;
  }
  static FrameTransform local(){
-  return fromVectors({-30,-18,40},{.2f,-1.f,.1f});
+  const auto pose=idleMotion();return fromVectors(pose.position,pose.direction);
  }
+ static FrameTransform local(MotionPose pose){return fromVectors(pose.position,pose.direction);}
  static FrameTransform world(const FrameTransform& toolFollower){
   FrameTransform frame=local();frame.parent=&toolFollower;return frame.world();
  }
  static FrameTransform world(MotionPose pose,const Follower& follower){
   FrameTransform parent;parent.axis=follower.basis;parent.position=follower.position;
-  FrameTransform frame=fromVectors(pose.position,pose.direction);frame.parent=&parent;return frame.world();
+  FrameTransform frame=local(pose);frame.parent=&parent;return frame.world();
  }
  static FrameTransform followerFrame(const Follower& follower){
   FrameTransform frame;frame.axis=follower.basis;frame.position=follower.position;return frame;
