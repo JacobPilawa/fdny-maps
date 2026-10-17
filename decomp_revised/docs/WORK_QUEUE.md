@@ -1,6 +1,6 @@
 # Work queue and current handoff
 
-Updated 2026-10-15. This file records the next decompilation and port tasks so
+Updated 2026-10-17. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
 
 ## Active glitch investigation (2026-10-14)
@@ -146,7 +146,28 @@ the report is observed.
 | `rescue_script_surface_followup` | Find broad missing authored Player/trigger behavior across campaign rescues | `00451870`, `00451560`, `00458400`, copied rescue actor inventory, shared host | Complete; all seven campaign rescues author oxygen toggles; shared oxygen state/commands, smoothed gauge/needle draw, resource-702 visor transition, child sounds, and category-volume selector effects are integrated; packaged visor/HUD, seven-map audio, catalog, and synthetic rescue checks pass, while the manager flag, separate music stream, retail blend/visual parity, warning, cadence, and fog pixel parity remain open |
 | `victim_hazard_reactions_followup` | Recheck Player passout and carried-victim drop timing/integration | `00450FB0`, `00451080`, `0044FF10`, `0044CD10`, `victim_transactions.h`, `scene_viewer.cpp` | Complete; fire uses passout argument 1 and oxygen argument 0; the shared host wires the separate `+0x3400` safe snapshot, `+0x534` reset checkpoint, carried-victim drop, floor placement, status tail, and strict state-6 recovery delay. Eight controlled map checks cover drop/reset/re-pickup; natural hazard entry, retail scheduler cadence, mode-2 HeroDown, and live camera parity remain open. See `player_passout_recovery_port_2026-10-14.md`. |
 
+| `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, `lev_rrf_catalog_loader_trace_fresh.md`, `scene_audio.h` | Complete; catalog fields and four copied MP3 hashes are identified, and retail stream open/play helpers are traced; start/switch/stop/loop callers and cross-platform MP3 decoding remain open |
+| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h` | Complete; title/selector and stage commands exist, but `time:` consumer, objective HUD, expiry/results, and the `0044C360` outro meaning remain unverified |
+| `equipment_gap_audit` | Check held-tool rendering/action/audio against current evidence | Read-only; `extinguisher_scene_viewer_runtime.md`, equipment source headers, retail hash-pinned traces | Complete; extinguisher action/suppression runs and an emitter request is produced, but the request is not rendered; particle asset/placement and audio triggers remain open |
+
 ## Current state
+
+- **2026-10-17 shared rescue front-end checkpoint:** the default macOS launcher
+  now builds the rescue-all app and opens a native title screen followed by
+  the source-ordered eight-entry rescue selector. It replaces the old
+  AppleScript picker for raw BSP directories; passing a map key still opens a
+  single package for development. The old launcher filename remains a
+  compatibility alias. The title text/layout is port UI: retail's
+  hash-pinned `0042DEC0` constructor is confirmed to load `menu.rrf`, but its
+  artwork and interactions remain untraced. Catalog selection uses the static
+  `0042F500` ordinal path. CMake and packaged binaries match at SHA-256
+  `bcbd5e3803e036a2b9b2240ad81e8f162c04773f1104c9617182e6876fd29121`;
+  catalog loading (8/8), offscreen title/selector rendering, and controlled
+  rescue transactions (13/13) pass. These do not establish interactive launch,
+  natural completion, or retail parity. Per-level `time:` fields are authored,
+  but timer/HUD/expiry/result handlers have not been traced; `0044C360` remains
+  an unverified no-final-exit path, not a proven outro. See
+  [`rescue_front_end_entry_flow_port_2026-10-17.md`](../tracker/evidence/runtime/rescue_front_end_entry_flow_port_2026-10-17.md).
 
 - **2026-10-15 portable wide-integer checkpoint:** `clock.h` and
   `extended.h` now use the shared `wide_integer.h`; the portable two-word

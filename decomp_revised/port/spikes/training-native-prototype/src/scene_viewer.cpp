@@ -2993,7 +2993,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         } else
 #endif
         if (!inspectOnly && !interactionCheck && !rescueDiagnostic) {
-            window = SDL_CreateWindow(("FDNY scene preview — " + scene.key()).c_str(),
+            window = SDL_CreateWindow(("FDNY Firefighters: American Hero — " + scene.key()).c_str(),
                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 800,
                 SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
             if (!window) throw std::runtime_error(SDL_GetError());
@@ -6152,7 +6152,9 @@ int runRescueMissionSelectionLoop(const std::filesystem::path& resourcesRoot,
     const auto choices = loadRescueMissionChoices(resourcesRoot);
     std::cout << "Rescue chooser loaded " << choices.size()
               << " retail .lev entries from " << resourcesRoot << ".\n";
-    while (const auto selected = chooseRescueMission(choices)) {
+    while (chooseRescueTitleMenu()) {
+        const auto selected = chooseRescueMission(choices);
+        if (!selected) continue;
         const auto& choice = choices[*selected];
         std::cout << "Selected rescue mission catalog ordinal " << choice.catalogOrdinal
                   << ": " << choice.key << " (" << choice.title << ")\n";
@@ -6187,6 +6189,25 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
     std::vector<uint8_t> previous;
     std::vector<uint8_t> pixels(size_t(width) * size_t(height) * 4);
     size_t changedTransitions = 0;
+    drawRescueTitleMenu(width, height, 0);
+    glFinish();
+    glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    saveRenderCheckFrame("/private/tmp/fdny-rescue-title-menu", pixels,
+                         width, height, ".bmp");
+    previous = pixels;
+    drawRescueTitleMenu(width, height, 1);
+    glFinish();
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    size_t titleChanged = 0;
+    for (size_t i = 0; i + 3 < pixels.size(); i += 4)
+        if (pixels[i] != previous[i] || pixels[i + 1] != previous[i + 1] ||
+            pixels[i + 2] != previous[i + 2] || pixels[i + 3] != previous[i + 3])
+            ++titleChanged;
+    if (!titleChanged)
+        throw std::runtime_error("Title menu selection highlight did not change the frame");
+    previous.clear();
     for (size_t selected = 0; selected < choices.size(); ++selected) {
         drawRescueMissionChooser(choices, selected, width, height);
         glFinish();
@@ -6212,9 +6233,11 @@ int runRescueMissionMenuRenderCheck(const std::filesystem::path& resourcesRoot) 
     headless.destroy();
     if (error != GL_NO_ERROR)
         throw std::runtime_error("Mission chooser render check OpenGL error: " + std::to_string(error));
-    std::cout << "Mission menu render check: " << choices.size() << " rows; "
+    std::cout << "Mission menu render check: title menu and " << choices.size() << " mission rows; "
+              << "title selection changed " << titleChanged << " pixels; "
               << changedTransitions << " selected-row transitions changed the frame; "
-              << "saved /private/tmp/fdny-rescue-mission-menu.bmp.\n";
+              << "saved /private/tmp/fdny-rescue-title-menu.bmp and "
+              << "/private/tmp/fdny-rescue-mission-menu.bmp.\n";
     return 0;
 #else
     (void)resourcesRoot;

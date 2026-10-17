@@ -5,11 +5,11 @@ the old C++ reconstruction with the locally generated Training scene data so
 the first Mac build can load the actual Training level and exercise the
 reconstructed player, fire, victim, door, and tool paths.
 
-This executable remains a partial Training reconstruction. The port itself
-must cover every rescue mission, every other selectable map, and the game
-systems needed to run them. Training is a validation fixture and a source of
-reusable gameplay code. Promote that behavior behind a shared scene/runtime
-contract, while retaining evidence for each component and its data assumptions.
+The separate `fdny-training` executable remains a partial Training
+reconstruction and regression fixture. The shared `fdny-scene-viewer` target
+is the playable port and packages all eight rescue choices when built through
+the default app workflow. Training remains in the bundle as a validation
+scenario alongside every campaign rescue.
 
 ## Native build
 
@@ -52,7 +52,7 @@ cmake -S . -B build
 cmake --build build -j 4
 ```
 
-## Map-neutral rescue scene preview
+## Shared rescue campaign app
 
 The separate `fdny-scene-viewer` target loads any exported BSP package through
 the shared `SceneData` loader. It uses recovered player movement and BSP
@@ -128,9 +128,10 @@ size track; Gas R's authored `button1 -> gasoff` script uses this path, though
 live button use and original-game effect parity remain unverified.
 Interactive startup also prints the texture paths
 that fail during image decoding or OpenGL upload instead of silently falling
-back to gray. A fresh checkout
-must first copy the retail inputs locally and export the desired BSP with
-`tools/export_gbsp_scene.py`. The app builder also runs
+back to gray. A fresh checkout must copy the retail inputs locally and export
+all 13 Training/rescue/stage packages for the default rescue-all bundle, or
+export one package and pass its key to the launcher for a development build.
+The app builder also runs
 `tools/export_victim_actors.py` if ACT assets are missing, converts their
 bitmaps to SDL-readable BMP files, and bundles `.local/actor_exports` beside
 the selected map. These asset exports remain local-only and are not committed.
@@ -140,12 +141,14 @@ presentation, and rescue-exit completion remain open. Interaction checks
 inject events at authored bounds; live desktop contact and retail timing parity
 have not been captured.
 
-For a desktop launch, double-click the project-root `Open FDNY Scene Preview.command`.
-Its macOS map picker lists exported BSP packages and opens the selected one in
-the viewer. The picker can be skipped from Terminal by passing a map key, such
-as `./Open FDNY Scene Preview.command bank`. The executable and selected scene
-are assembled into a local app bundle before launch; the launcher invokes the
-binary from Terminal so it uses the desktop display session.
+For a desktop launch, double-click the project-root
+`Open FDNY Firefighters.command`. It builds the rescue-all macOS bundle and
+opens the native title screen, then the eight-entry rescue mission selector.
+The old `Open FDNY Scene Preview.command` is retained as a compatibility alias.
+Pass a map key to either launcher, such as `./Open FDNY Firefighters.command
+bank`, to build and open one exported package directly for development. The
+interactive title/menu artwork and behavior are port UI until compared with
+the retail `menu.rrf` experience.
 
 For the map-neutral viewer, run `--render-check` to upload the scene's BMPs,
 render the authored spawn view and visible victim actors, report framebuffer coverage, and save a BMP
