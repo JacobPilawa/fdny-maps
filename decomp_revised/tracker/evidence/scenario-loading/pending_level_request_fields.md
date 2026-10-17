@@ -9,7 +9,7 @@ ProcessEverGameUpdate (0042AEA0) passes the address EverGame+0x660 to ProcessLev
 | +0x00 | Map-name string. 00403E40 reads this first field and appends .bsp; the result is sent to the BSP loader. | 0042AB00, 00403E40 |
 | +0x04 | Display/log label. 0042AB00 formats this into TEverGame: Loading level; setter copies the active record's +0x04 or seeds <Spawned Level>. | 0042AB00, 0042A260 |
 | +0x08 | Resource-definition path. The Player final-exit helper supplies data\\resdefs\\rescue.rrf; the loader uses this field when initializing World resources. | 0042A260, 0042AB00 |
-| +0x0C | Reference copied from active record +0x0C; semantic meaning not yet established. | 0042A260 |
+| +0x0C | Reference copied from active record +0x0C. In the level record this is the catalog `music:` string: 0042AEA0 passes active-record +0x0C to selector 2, which opens/plays that MP3. Linked map requests preserve the selected track through this copy. | 0042A260, 0042AEA0, 0042A730 |
 | +0x10 | Scalar copied from active record +0x10; no-active-record fallback is the bit pattern for 1200.0f. | 0042A260 |
 | +0x14 | Fallback-state byte. Setter sets it when no active record exists and clears it when copying active-record metadata. The loader consults it before the rescue resource-name check. | 0042A260, 0042AB00 |
 | +0x18 | Scalar copied from active record +0x18; fallback is zero. | 0042A260 |

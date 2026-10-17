@@ -30,11 +30,38 @@ Terminal mode therefore stops future component updates and child polygon submiss
 
 ## Corrected field interpretation
 
-The terminal suppression body clears root byte `+0x1C8`, which aliases the visual component enable byte at `+0x9C`. It separately sets recently-sprayed byte `+0x104` on a non-mode-5 update. Keep these fields distinct.
+The terminal suppression body clears root byte `+0x1C8`, which aliases the visual component enable byte at `+0x9C`. It separately sets recently-sprayed byte `+0x104` on a non-mode-5 update. `UpdateFireRescueActor` receives the embedded actor at root `+0x24`: actor `+0xE0` aliases that recently-sprayed byte, and actor `+0x104` aliases the root suppression-strength float at `+0x128`. The actor-relative strength value drives recovery, color, and the flame-alpha input; these offsets must not be confused with root-relative recently-sprayed `+0x104`.
 
 ## Port consequence
 
 `FireEntity::spray` now mirrors the source-backed component byte into `FireVisual.enabled`. This stops the native renderer and animation updater from submitting future fire child sprites after terminal suppression. It does not synthesize child destruction, an alpha fade, or immediate removal of already-submitted geometry.
+
+## Suppression-strength color follow-up (2026-10-17)
+
+Fresh headless Ghidra output for the same pinned executable is preserved in
+[`2026-10-17_fire_visual_color_paths.c`](2026-10-17_fire_visual_color_paths.c),
+[`2026-10-17_fire_sprite_color_paths.c`](2026-10-17_fire_sprite_color_paths.c),
+and [`2026-10-17_fire_color_helpers.c`](2026-10-17_fire_color_helpers.c).
+`UpdateFireRescueActor` applies an RGB override to four flame children while
+strength is below `_DAT_004E1680`; the raw image value at that address is
+`0.8f`. The color interpolates from `(0.9, 0.3, 0.1)` at zero strength to
+white at the threshold. At or above the threshold, retail clears the override
+flag and lets the animated child color track render. The child renderer
+multiplies its selected RGB by `_DAT_004E3524`; the pinned image value is
+`255.0f`, so the host's normalized byte tint is the equivalent input.
+
+The shared `FireEntity` now carries that four-sprite tint state and
+`FireRenderer` uses it while the override is active. It applies the color
+before the host's recovery step, matching the retail callback order. When the
+override is cleared, the port still draws white because its sprite renderer
+does not yet evaluate the retail child RGB animation tracks. This improves
+suppression feedback but does not verify that extinguisher contacts reach a
+fire, and it is not a pixel-parity check.
+
+The same audit corrected an earlier interpretation: actor-relative `+0x104`
+aliases root suppression strength `+0x128`; actor-relative `+0xE0` aliases
+root recently-sprayed byte `+0x104`. Recovery, tint, and alpha all read the
+strength field. No separate alpha-state change was made.
 
 ## Host verification
 

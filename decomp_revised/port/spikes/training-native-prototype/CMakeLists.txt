@@ -11,6 +11,7 @@ find_package(PkgConfig QUIET)
 if(PkgConfig_FOUND)
   pkg_check_modules(SDL2 QUIET IMPORTED_TARGET sdl2)
   pkg_check_modules(JSONC QUIET IMPORTED_TARGET json-c)
+  pkg_check_modules(MPG123 QUIET IMPORTED_TARGET libmpg123)
 endif()
 
 if(TARGET PkgConfig::SDL2)
@@ -32,6 +33,31 @@ else()
     target_link_libraries(fdny_sdl2 INTERFACE "${FDNY_SDL_LIBRARY}")
     set(FDNY_SDL_TARGET fdny_sdl2)
   endif()
+endif()
+
+if(TARGET PkgConfig::MPG123)
+  # Prefer a static decoder archive where one is installed so the macOS app
+  # does not acquire a Homebrew dylib runtime dependency.
+  find_file(FDNY_MPG123_STATIC_LIBRARY NAMES libmpg123.a HINTS ${MPG123_LIBRARY_DIRS})
+  if(FDNY_MPG123_STATIC_LIBRARY)
+    add_library(fdny_mpg123 STATIC IMPORTED)
+    set_target_properties(fdny_mpg123 PROPERTIES
+      IMPORTED_LOCATION "${FDNY_MPG123_STATIC_LIBRARY}"
+      INTERFACE_INCLUDE_DIRECTORIES "${MPG123_INCLUDE_DIRS}")
+    set(FDNY_MPG123_TARGET fdny_mpg123)
+  else()
+    set(FDNY_MPG123_TARGET PkgConfig::MPG123)
+  endif()
+else()
+  find_path(FDNY_MPG123_INCLUDE_DIR NAMES mpg123.h PATH_SUFFIXES mpg123)
+  find_library(FDNY_MPG123_LIBRARY NAMES mpg123)
+  if(NOT FDNY_MPG123_INCLUDE_DIR OR NOT FDNY_MPG123_LIBRARY)
+    message(FATAL_ERROR "libmpg123 development files were not found by pkg-config or standard paths")
+  endif()
+  add_library(fdny_mpg123 INTERFACE)
+  target_include_directories(fdny_mpg123 INTERFACE "${FDNY_MPG123_INCLUDE_DIR}")
+  target_link_libraries(fdny_mpg123 INTERFACE "${FDNY_MPG123_LIBRARY}")
+  set(FDNY_MPG123_TARGET fdny_mpg123)
 endif()
 
 if(TARGET PkgConfig::JSONC)
@@ -75,7 +101,7 @@ if(APPLE)
 
   add_executable(fdny-training src/main.cpp)
   target_link_libraries(fdny-training PRIVATE
-    ${FDNY_SDL_TARGET} ${FDNY_JSONC_TARGET} OpenGL::GL
+    ${FDNY_SDL_TARGET} ${FDNY_JSONC_TARGET} ${FDNY_MPG123_TARGET} OpenGL::GL
     ${CORETEXT_FRAMEWORK} ${COREGRAPHICS_FRAMEWORK})
   target_compile_definitions(fdny-training PRIVATE
     FDNY_ASSETS="${CMAKE_CURRENT_SOURCE_DIR}/assets/training")
@@ -85,7 +111,7 @@ endif()
 # Level-neutral BSP host for Training, rescue missions, and linked stages.
 add_executable(fdny-scene-viewer src/scene_viewer.cpp)
 target_link_libraries(fdny-scene-viewer PRIVATE
-  ${FDNY_SDL_TARGET} ${FDNY_JSONC_TARGET} OpenGL::GL)
+  ${FDNY_SDL_TARGET} ${FDNY_JSONC_TARGET} ${FDNY_MPG123_TARGET} OpenGL::GL)
 if(WIN32)
   # Use a regular console main without requiring the SDL2main shim.
   target_compile_definitions(fdny-scene-viewer PRIVATE SDL_MAIN_HANDLED=1)

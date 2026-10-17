@@ -34,6 +34,7 @@ def parse_catalog(path: Path) -> tuple[list[dict], str]:
             "key": key.casefold(),
             "title": current.get("title", key),
             "rrf": current.get("rrf", ""),
+            "music": current.get("music", ""),
         }
         if "time" in current:
             record["time"] = int(current["time"])

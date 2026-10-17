@@ -4,6 +4,18 @@ Reviewed 2026-10-14 against the current viewer source and saved, hash-pinned
 retail EXE audits. No live Ghidra instance was running, so this pass produced
 no fresh retail decompilation or screenshot.
 
+## Superseding Axe resource correction (2026-10-17)
+
+Several earlier sections below state that ordinary Axe selection activates
+primary model 6 (`axel.act`). A later same-hash Ghidra follow-up found that
+those sections conflated the Axe root gate at `+0x1FC` with each child's model
+variant flag. The root gate starts off; ordinary first equip activates
+secondary model 1 (`axe.act`). Only the duplicate `equip axe` branch sets the
+root gate, after which primary model 6 can be activated too. The shared port
+now follows this selection path. The final camera-space ActorInfo matrix and
+swing direction remain open; see
+[`equipment_action_pose_followup_2026-10-17.md`](equipment_action_pose_followup_2026-10-17.md).
+
 ## Fire-contact camera report
 
 The viewer's ordinary yaw and pitch assignments are in the captured SDL

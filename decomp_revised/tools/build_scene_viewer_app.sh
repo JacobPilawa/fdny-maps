@@ -41,6 +41,7 @@ python3 "$PROJECT_ROOT/tools/export_oxygen_sprites.py"
 python3 "$PROJECT_ROOT/tools/export_victim_feedback_sprites.py"
 python3 "$PROJECT_ROOT/tools/export_hint_font.py"
 python3 "$PROJECT_ROOT/tools/export_fire_sprites.py"
+python3 "$PROJECT_ROOT/tools/export_extinguisher_spray_sprites.py"
 
 ORIGINAL_ROOT="$PROJECT_ROOT/inputs/original"
 for map_key in $PACKAGE_KEYS; do
@@ -55,6 +56,11 @@ for map_key in $PACKAGE_KEYS; do
             --original-root "$ORIGINAL_ROOT" \
             --scene-package "$package_dir"
     fi
+    python3 "$PROJECT_ROOT/tools/export_level_music.py" \
+        --map-key "$map_key" \
+        --level-file "$ORIGINAL_ROOT/Data/ResDefs/thegame.lev" \
+        --original-root "$ORIGINAL_ROOT" \
+        --scene-package "$package_dir"
 done
 if [ ! -f "$ACTOR_ASSETS_DIR/vic_man_0.bmp" ]; then
     printf 'Decoded victim ACT assets not found under %s\n' "$ACTOR_ASSETS_DIR" >&2
@@ -73,6 +79,8 @@ ditto "$ACTOR_ASSETS_DIR" "$APP_DIR/Contents/Resources/actor_exports"
 if [ "$SCENE_KEY" = "rescue-all" ]; then
     mkdir -p "$APP_DIR/Contents/Resources/menu"
     cp "$ORIGINAL_ROOT/Data/menu/main.bmp" "$APP_DIR/Contents/Resources/menu/main.bmp"
+    cp "$ORIGINAL_ROOT/Data/menu/mcontrols.bmp" "$APP_DIR/Contents/Resources/menu/mcontrols.bmp"
+    cp "$ORIGINAL_ROOT/Data/menu/mcontrols_a.bmp" "$APP_DIR/Contents/Resources/menu/mcontrols_a.bmp"
     mkdir -p "$APP_DIR/Contents/Resources/scenes"
     for map_key in $PACKAGE_KEYS; do
         ditto "$PROJECT_ROOT/.local/exports/$map_key" \

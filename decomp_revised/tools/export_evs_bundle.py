@@ -126,6 +126,13 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # FireRescue initializer 00448D60 selects one of these three named 3D loop
     # sounds for each authored fire; the choice is made outside EVS.
     wanted.update(("FireBurn1", "FireBurn2", "FireBurn3"))
+    # Axe child ACTION and strike handlers register and play these named 2D
+    # instances outside EVS; their source-backed triggers are ported by the
+    # shared viewer.
+    wanted.update(("AxeSwing", "AxeHitWood", "AxeHitOther", "WoodDoorBreak"))
+    # Extinguisher ACTION callbacks 004614E0/00461590 start ExtStart, loop
+    # ExtMiddle, then stop the loop and play ExtEnd; these are not EVS commands.
+    wanted.update(("ExtStart", "ExtMiddle", "ExtEnd"))
     sounds_dir = scene_package / "sounds"
     sounds_dir.mkdir(parents=True, exist_ok=True)
     sound_rows = []

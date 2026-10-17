@@ -3,13 +3,17 @@
 // named loop playback and Think services remain explicit host callbacks.
 struct FireEntity {
  FireVisual visual;FireSuppression suppression;FireUpdate update;
+ // UpdateFireRescueActor reads actor-subobject +0x104, which aliases root
+ // +0x128 suppression strength, before passing this alpha input to +0xD0.
  V origin{};int soundChoice=-1;float alpha=1,glowAlpha=1;
+ std::array<float,3> rgbTint{1.f,1.f,1.f};bool rgbOverride=false;
  void initialize(Random& shared,uint32_t now,int& dividerCycle,V authored,
   float radius,float height,float sprayTime,bool named,bool smoke,
   const std::function<void(FireVisual&)>& floor,
   const std::function<void(int)>& playLoop){
   dividerCycle++;if(dividerCycle>3)dividerCycle=0;update.divider=uint8_t(dividerCycle);
   visual.initialize(shared,smoke,now);
+  rgbTint={1.f,1.f,1.f};rgbOverride=false;
   soundChoice=named?int(shared.range(0,2.999f)):-1;
   suppression.strength=1;suppression.sprayed=false;suppression.hasSound=named;
   suppression.visualComponentEnabled=1;suppression.sprayTime=sprayTime;
@@ -23,7 +27,17 @@ struct FireEntity {
  void think(uint32_t now,float dt,const std::function<void()>& light,
   const std::function<void()>& bookkeeping,const std::function<void()>& advanceRoute){
   update.think(suppression,dt,light,bookkeeping,advanceRoute,[&]{visual.sizeUpdate(now);},
-   [&](float scale){visual.sizes.scale={1,scale,1};},[&](float input){alpha=std::min(input,.999f);glowAlpha=std::min(float(double(alpha)*1.5),1.f);});
+   [&](float scale){visual.sizes.scale={1,scale,1};},
+   [&](float input){alpha=std::min(input,.999f);glowAlpha=std::min(float(double(alpha)*1.5),1.f);},
+   [&](float strength){
+    constexpr float threshold=.8f; // pinned retail _DAT_004E1680
+    if(strength>=threshold){rgbTint={1.f,1.f,1.f};rgbOverride=false;return;}
+    const float t=strength/threshold,remaining=1.f-t;
+    rgbTint={float(double(.9f)*remaining+double(t)),
+             float(double(.3f)*remaining+double(t)),
+             float(double(.1f)*remaining+double(t))};
+    rgbOverride=true;
+   });
  }
  void spray(float dt,float influence,bool terminal,const std::function<void()>& countDoused,const std::function<void()>& stopSound){
   suppression.spray(dt,influence,terminal,countDoused,stopSound);

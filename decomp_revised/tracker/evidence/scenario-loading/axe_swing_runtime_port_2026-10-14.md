@@ -41,16 +41,17 @@ be chopped.
 
 ## Port checkpoint
 
-`scene_viewer.cpp` maps left mouse down to Axe ACTION, uses the source-derived
-+100 ms deadline, starts the exported `axel.act` `swing` track after the
-deadline, and advances its local swing clock by rendered-frame `dt`. It runs
-the swept query only on the sampled strict 0.275-second crossing. The world
-query still adapts to the preview's `Collision::trace`; BModel candidate
-acceptance now uses the merged world-space child collision bounds expanded by
-8, matching the retail min/max AABB check instead of comparing against
-`ZZ_location`. Accepted targets receive authored `chop`/`break` dispatch;
-the hit leaf updates hit points and starts the target's existing `open` PATH
-on break.
+`scene_viewer.cpp` maps left mouse down to Axe ACTION and uses the
+source-derived +100 ms deadline. It advances the active child's exported
+`swing` track after that deadline: model 1 `axe.act` on ordinary first equip,
+and model 6 `axel.act` only when the duplicate-equip root gate is enabled. The
+local swing clock advances by rendered-frame `dt`. It runs the swept query
+only on the sampled strict 0.275-second crossing. The world query still adapts
+to the preview's `Collision::trace`; BModel candidate acceptance now uses the
+merged world-space child collision bounds expanded by 8, matching the retail
+min/max AABB check instead of comparing against `ZZ_location`. Accepted
+targets receive authored `chop`/`break` dispatch; the hit leaf updates hit
+points and starts the target's existing `open` PATH on break.
 
 The window hint and title now report Axe action/sweep outcomes (swinging, no
 world hit, world hit without an eligible breakable, or chopped target), so a
@@ -73,10 +74,11 @@ pass their existing synthetic release check; all five linked stage packages
 load with the current scene loader.
 
 **Inferred in the viewer:** left mouse is the Axe ACTION binding; SDL ticks and
-rendered-frame `dt` stand in for the retail clocks; the sampled `axel.act`
-`swing` track corresponds to the retail primary-child animation; the loaded
-scene's collision adapter represents the retail world; the merged BModel list
-represents retail type-4 candidate order.
+rendered-frame `dt` stand in for the retail clocks; the sampled exported
+`swing` track corresponds to the active child's ActorInfo clock (ordinary
+child model 1; gated primary model 6); the loaded scene's collision adapter
+represents the retail world; the merged BModel list represents retail type-4
+candidate order.
 
 **Verified in the port renderer:** lowering the provisional root keeps the
 sampled 0.30-second swing fully in frame, and the image changes relative to
@@ -93,3 +95,31 @@ render and is not a supported correction. A same-view retail comparison or
 live matrix sample is still required to solve the reported backward-facing
 view and claim 1:1 swing appearance. No interactive retail/user capture was
 performed for this checkpoint.
+
+## 2026-10-17 reported swing-direction follow-up
+
+The user reports that the Axe swing currently moves toward them. Follow-up
+Ghidra tracing found that two separate +0x1FC fields had been conflated:
+ordinary first equip leaves the Axe root gate clear, which activates secondary
+model 1 (`axe.act`); duplicate `equip axe` enables primary model 6
+(`axel.act`) too. The port had forced the root gate on during every first
+equip and always rendered model 6. It now keeps the gate clear on first equip,
+sets it only in the existing-Axe duplicate path, and draws/animates the child
+models selected by that gate.
+
+This is a source-backed asset/action-path correction, not yet a direction fix.
+Both ACTs have positive early local-Z track values, but their root attachment
+matrices rotate the first sampled translation mostly toward negative
+actor-local Z: about `(0.66, 10.89, -11.62)` for default model 1 `axe.act`, and
+`(-0.60, 10.89, -11.62)` for model 6 `axel.act`. At neutral yaw this
+translation projects positively along the OpenGL view ray into the scene,
+which is away from the camera. It therefore does not explain a toward-camera
+root movement; sampled rotation and other vertices may move camera-ward and
+change the silhouette. The final retail ActorInfo matrix and
+camera-to-Player-view-follower basis are still needed to settle the rendered
+pose. See the explicit sign calculation in
+[`axe_view_ray_sign_recheck_2026-10-17.md`](../runtime/axe_view_ray_sign_recheck_2026-10-17.md),
+and
+[`equipment_action_pose_followup_2026-10-17.md`](equipment_action_pose_followup_2026-10-17.md)
+and
+[`equipment_view_frame_trace_2026-10-17.md`](equipment_view_frame_trace_2026-10-17.md).

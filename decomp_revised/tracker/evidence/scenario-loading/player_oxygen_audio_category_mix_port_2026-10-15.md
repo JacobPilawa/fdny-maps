@@ -5,8 +5,9 @@
 When the player finishes turning oxygen on, retail lowers sound category 2 to
 30% and updates its separate streamed music channel. Turning oxygen off restores
 categories 1 and 2 and updates that music channel again. The shared viewer now
-applies the verified category-volume changes to active and newly started voices.
-It does not yet model the manager flag or separate streamed music channel.
+applies the verified category-volume changes to active and newly started voices,
+and applies the traced gain to its catalog-selected level MP3. The manager flag
+remains unmodeled.
 
 ## Retail trace
 
@@ -30,8 +31,11 @@ argument at `+0x14`. Source constructors establish these raw IDs:
   `playsnd`/`loopsnd`, and `ambientsnd` requests.
 
 The selectors also call `SetFMODChannelVolume` on the separate stream channel
-at manager `+0x690`. `SceneAudio` currently mixes bundled PCM voices and does
-not model the manager byte or expose that music stream.
+at manager `+0x690`. The shared host now decodes and loops the catalog-selected
+MP3 through a separate SDL-mixed channel; selector 4 applies integer volume
+76/255 to it and selector 5 restores full volume. The manager byte remains
+unmodeled. See the [level music port checkpoint](level_music_stream_port_2026-10-17.md)
+for stream-selection and linked-stage evidence.
 
 ## Port
 
@@ -60,9 +64,10 @@ selector 4, and both categories return to 1.0 after selector 5.
 - Packaged `--mission-catalog-check` loaded all eight retail rescue entries.
 - `git diff --check` passed before this note was written; rerun after final edits.
 
-These checks establish the viewer's category gain routing and category-volume
-selector changes. They do not establish audible output parity, the manager
-byte's effects, or the separate music stream's response.
+These historical checks establish the viewer's category gain routing and
+category-volume selector changes. They do not establish audible output parity
+or the manager byte's effects. MP3 selector wiring was added later and has not
+been checked through live playback.
 
 ## Evidence files
 

@@ -147,9 +147,12 @@ opens the native title screen, then the eight-entry rescue mission selector.
 The old `Open FDNY Scene Preview.command` is retained as a compatibility alias.
 Pass a map key to either launcher, such as `./Open FDNY Firefighters.command
 bank`, to build and open one exported package directly for development. The
-The title uses retail `menu.rrf` bitmap 10 (`main.bmp`). Its action buttons and
-the selector layout/flow remain provisional until the retail widget and input
-paths are traced.
+The title uses retail `menu.rrf` bitmap 10 (`main.bmp`) and resource 100
+(`mcontrols.bmp` plus its alpha mask) for the GAME/SCORES/OPTIONS/EXIT labels
+at source-backed positions. GAME currently opens the port-created eight-row
+rescue list, bypassing the retail career page; SCORES and OPTIONS pages are not
+ported. The root highlight and keyboard navigation remain approximate, and the
+retail single-record briefing/map selector still needs implementation.
 
 For the map-neutral viewer, run `--render-check` to upload the scene's BMPs,
 render the authored spawn view and visible victim actors, report framebuffer coverage, and save a BMP

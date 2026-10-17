@@ -29,14 +29,19 @@ are selected; tint, alpha conversion, and viewport aspect scaling are
 provisional. The target effect remains limited to the source-derived 8.5
 second scan window.
 
-The equipment audit confirms axe item constructor `00460A50` creates child
-actors and that the selected primary child loads model 6 (`axel.act`).
+The equipment audit confirms axe item constructor `00460A50` creates two child
+actors. Ordinary first equip leaves root gate `+0x1FC` clear and activates
+secondary model 1 (`axe.act`); the duplicate-equip path enables primary model
+6 (`axel.act`) too. The shared viewer now follows this gate for first equip
+and duplicate Axe handling.
 The extinguisher's `00461690` constructor uses model 2; its post-view update
-uses the selected-item follower and the separate action pose path. Ghidra does
-not yet establish the ACT child-to-motion mapping for the axe or the exact
-retail render transform/scale for either mesh. The viewer draws the active Axe
-ACT with its named `swing` motion after left-click. The extinguisher contact pose
-drives spraying. The shared helper `0045F660` attaches some equipment setup
+uses the selected-item follower and the separate action pose path. The retail
+action callback advances and samples the active child ActorInfo clock but
+does not explicitly choose a motion by name. The viewer advances that clock
+and samples the active model's exported `swing` track candidate after
+left-click. The retail render transform/scale for either mesh remains open.
+The extinguisher contact pose drives spraying. The shared helper `0045F660`
+attaches some equipment setup
 objects to Player `+0x34A4`, and extinguisher setup `00461830` calls it; the
 inventory constructors `00460A50` and `00461690` call common constructor
 `0045F7E0`. The retail attached-actor matrix writer and consumer are mapped,

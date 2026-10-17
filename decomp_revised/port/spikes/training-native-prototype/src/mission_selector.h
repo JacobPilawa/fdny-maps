@@ -22,6 +22,13 @@ struct RescueMissionChoice {
     std::filesystem::path scenePackage;
 };
 
+enum class RescueTitleAction : size_t {
+    Game = 0,
+    Scores = 1,
+    Options = 2,
+    Exit = 3,
+};
+
 inline std::vector<RescueMissionChoice> loadRescueMissionChoices(
     const std::filesystem::path& resourcesRoot) {
     const auto manifestPath = resourcesRoot / "rescue_missions.json";
@@ -116,9 +123,67 @@ inline GLuint loadRetailMenuBitmap(const std::filesystem::path& bitmapPath) {
     return texture;
 }
 
-// The authored retail title bitmap is used directly. Button placement and
-// input semantics remain port UI until the retail menu widgets are traced.
-inline void drawRescueTitleMenu(int width, int height, size_t selected, GLuint backgroundTexture) {
+inline GLuint loadRetailMenuAlphaBitmap(const std::filesystem::path& bitmapPath,
+                                        const std::filesystem::path& alphaPath) {
+    if (!std::filesystem::is_regular_file(bitmapPath))
+        throw std::runtime_error("Retail menu bitmap is missing: " + bitmapPath.string());
+    if (!std::filesystem::is_regular_file(alphaPath))
+        throw std::runtime_error("Retail menu alpha bitmap is missing: " + alphaPath.string());
+    SDL_Surface* loaded = SDL_LoadBMP(bitmapPath.string().c_str());
+    if (!loaded)
+        throw std::runtime_error("Cannot load retail menu bitmap " + bitmapPath.string() + ": " + SDL_GetError());
+    SDL_Surface* loadedAlpha = SDL_LoadBMP(alphaPath.string().c_str());
+    if (!loadedAlpha) {
+        SDL_FreeSurface(loaded);
+        throw std::runtime_error("Cannot load retail menu alpha bitmap " + alphaPath.string() + ": " + SDL_GetError());
+    }
+    if (loaded->w != loadedAlpha->w || loaded->h != loadedAlpha->h) {
+        SDL_FreeSurface(loadedAlpha);
+        SDL_FreeSurface(loaded);
+        throw std::runtime_error("Retail menu bitmap and alpha dimensions do not match");
+    }
+    SDL_Surface* rgba = SDL_ConvertSurfaceFormat(loaded, SDL_PIXELFORMAT_RGBA32, 0);
+    SDL_Surface* alphaRgba = SDL_ConvertSurfaceFormat(loadedAlpha, SDL_PIXELFORMAT_RGBA32, 0);
+    SDL_FreeSurface(loadedAlpha);
+    SDL_FreeSurface(loaded);
+    if (!rgba || !alphaRgba) {
+        if (alphaRgba) SDL_FreeSurface(alphaRgba);
+        if (rgba) SDL_FreeSurface(rgba);
+        throw std::runtime_error(std::string("Cannot convert retail menu bitmap or alpha: ") + SDL_GetError());
+    }
+
+    for (int y = 0; y < rgba->h; ++y) {
+        auto* colorRow = static_cast<uint8_t*>(rgba->pixels) + size_t(y) * size_t(rgba->pitch);
+        const auto* alphaRow = static_cast<const uint8_t*>(alphaRgba->pixels) +
+                               size_t(y) * size_t(alphaRgba->pitch);
+        for (int x = 0; x < rgba->w; ++x) {
+            const auto* mask = alphaRow + size_t(x) * 4;
+            colorRow[size_t(x) * 4 + 3] = uint8_t((unsigned(mask[0]) + unsigned(mask[1]) +
+                                                  unsigned(mask[2])) / 3u);
+        }
+    }
+    SDL_FreeSurface(alphaRgba);
+
+    GLuint texture = 0;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, rgba->w, rgba->h, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, rgba->pixels);
+    SDL_FreeSurface(rgba);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return texture;
+}
+
+// Retail 00430F00 places the four menu controls at y=440..472 in the
+// 640x480 surface. Their atlas rows and menu actions are source-backed;
+// the selected-control fade remains an approximation pending runtime capture.
+inline void drawRescueTitleMenu(int width, int height, size_t selected,
+                                GLuint backgroundTexture, GLuint controlsTexture) {
     glViewport(0, 0, width, height);
     glClearColor(.018f, .032f, .046f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -159,42 +224,29 @@ inline void drawRescueTitleMenu(int width, int height, size_t selected, GLuint b
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
 
-    const std::array<std::string, 2> labels = {"START RESCUE", "QUIT"};
-    const float rowHeight = std::min(52.f, float(height) * .075f);
-    const float rowPitch = std::min(64.f, float(height) * .092f);
-    const float rowTop = float(height) * .47f;
-    const float left = float(width) * .32f;
-    const float right = float(width) * .68f;
-    for (size_t i = 0; i < labels.size(); ++i) {
-        const float top = rowTop - float(i) * rowPitch;
-        const float bottom = top - rowHeight;
-        const bool isSelected = i == selected;
-        glColor4f(isSelected ? .48f : .08f, isSelected ? .075f : .105f,
-                  isSelected ? .075f : .13f, isSelected ? .96f : .78f);
+    const std::array<float, 4> buttonX = {50.f, 190.f, 346.f, 514.f};
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, controlsTexture);
+    const float scaleX = (backgroundRight - backgroundLeft) / 640.f;
+    const float scaleY = (backgroundTop - backgroundBottom) / 480.f;
+    for (size_t i = 0; i < buttonX.size(); ++i) {
+        const float left = backgroundLeft + buttonX[i] * scaleX;
+        const float right = left + 128.f * scaleX;
+        const float bottom = backgroundBottom + 8.f * scaleY;
+        const float top = backgroundBottom + 40.f * scaleY;
+        const float topV = float(i) * .25f;
+        const float bottomV = float(i + 1) * .25f;
+        const float alpha = i == selected ? 1.f : .72f;
+        glColor4f(1.f, 1.f, 1.f, alpha);
         glBegin(GL_QUADS);
-        glVertex2f(left, bottom); glVertex2f(right, bottom);
-        glVertex2f(right, top); glVertex2f(left, top);
+        glTexCoord2f(0.f, bottomV); glVertex2f(left, bottom);
+        glTexCoord2f(1.f, bottomV); glVertex2f(right, bottom);
+        glTexCoord2f(1.f, topV); glVertex2f(right, top);
+        glTexCoord2f(0.f, topV); glVertex2f(left, top);
         glEnd();
-        glColor4f(isSelected ? .95f : .28f, isSelected ? .42f : .34f,
-                  isSelected ? .22f : .38f, .9f);
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(left, bottom); glVertex2f(right, bottom);
-        glVertex2f(right, top); glVertex2f(left, top);
-        glEnd();
-        const float textScale = std::clamp(rowHeight / 10.f, 2.2f, 3.8f);
-        const float textX = (float(width) - labels[i].size() * 6.f * textScale) * .5f;
-        const float textY = bottom + (rowHeight - 7.f * textScale) * .5f;
-        drawRescueMenuText(textX, textY, labels[i], textScale,
-                           isSelected ? 1.f : .80f,
-                           isSelected ? .93f : .86f,
-                           isSelected ? .83f : .88f);
     }
-
-    const std::string controls = "UP DOWN SELECT    ENTER CONFIRM";
-    const float controlsScale = std::clamp(float(width) / 700.f, 1.6f, 2.2f);
-    drawRescueMenuText((float(width) - controls.size() * 6.f * controlsScale) * .5f,
-                       float(height) * .075f, controls, controlsScale,
-                       .68f, .76f, .78f);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
 
     glPopMatrix();
     glMatrixMode(GL_PROJECTION); glPopMatrix();
@@ -202,7 +254,11 @@ inline void drawRescueTitleMenu(int width, int height, size_t selected, GLuint b
     glPopAttrib();
 }
 
-inline bool chooseRescueTitleMenu(const std::filesystem::path& backgroundPath) {
+inline std::optional<RescueTitleAction> chooseRescueTitleMenu(
+    const std::filesystem::path& backgroundPath,
+    const std::filesystem::path& controlsPath,
+    const std::filesystem::path& controlsAlphaPath,
+    size_t& selected) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
         throw std::runtime_error(std::string("SDL title menu initialization failed: ") + SDL_GetError());
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
@@ -225,20 +281,34 @@ inline bool chooseRescueTitleMenu(const std::filesystem::path& backgroundPath) {
     }
     SDL_GL_SetSwapInterval(1);
     const GLuint backgroundTexture = loadRetailMenuBitmap(backgroundPath);
+    const GLuint controlsTexture = loadRetailMenuAlphaBitmap(controlsPath, controlsAlphaPath);
 
-    size_t selected = 0;
-    std::optional<bool> result;
+    selected = std::min(selected, size_t(3));
+    std::optional<RescueTitleAction> result;
     bool running = true;
     while (running && !result) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) { running = false; break; }
+            if (event.type == SDL_QUIT) {
+                result = RescueTitleAction::Exit;
+                running = false;
+                break;
+            }
             if (event.type == SDL_KEYDOWN && !event.key.repeat) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) { running = false; break; }
-                if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)
-                    selected = 1 - selected;
-                else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER)
-                    result = selected == 0;
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    result = RescueTitleAction::Exit;
+                    running = false;
+                    break;
+                }
+                if (event.key.keysym.sym == SDLK_UP)
+                    selected = (selected + 3) % 4;
+                else if (event.key.keysym.sym == SDLK_DOWN)
+                    selected = (selected + 1) % 4;
+                else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER) {
+                    if (selected == size_t(RescueTitleAction::Game)) result = RescueTitleAction::Game;
+                    else if (selected == size_t(RescueTitleAction::Exit)) result = RescueTitleAction::Exit;
+                    else std::cerr << "Retail SCORES/OPTIONS page is not ported yet.\n";
+                }
             }
             if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
                 int logicalWidth = 1, logicalHeight = 1, drawableWidth = 1, drawableHeight = 1;
@@ -248,37 +318,50 @@ inline bool chooseRescueTitleMenu(const std::filesystem::path& backgroundPath) {
                     drawableWidth / std::max(1, logicalWidth);
                 const int mouseY = drawableHeight - (event.type == SDL_MOUSEMOTION ? event.motion.y : event.button.y) *
                     drawableHeight / std::max(1, logicalHeight);
-                const float left = float(drawableWidth) * .32f;
-                const float right = float(drawableWidth) * .68f;
-                const float rowHeight = std::min(52.f, float(drawableHeight) * .075f);
-                const float rowPitch = std::min(64.f, float(drawableHeight) * .092f);
-                const float rowTop = float(drawableHeight) * .47f;
-                if (mouseX >= left && mouseX <= right) {
-                    for (size_t i = 0; i < 2; ++i) {
-                        const float top = rowTop - float(i) * rowPitch;
-                        if (mouseY <= top && mouseY >= top - rowHeight) {
-                            selected = i;
-                            if (event.type == SDL_MOUSEBUTTONDOWN &&
-                                event.button.button == SDL_BUTTON_LEFT)
-                                result = selected == 0;
-                            break;
+                const float targetAspect = 4.f / 3.f;
+                const float windowAspect = float(drawableWidth) / float(std::max(drawableHeight, 1));
+                float menuLeft = 0.f, menuBottom = 0.f;
+                float menuWidth = float(drawableWidth), menuHeight = float(drawableHeight);
+                if (windowAspect > targetAspect) {
+                    menuWidth = float(drawableHeight) * targetAspect;
+                    menuLeft = (float(drawableWidth) - menuWidth) * .5f;
+                } else {
+                    menuHeight = float(drawableWidth) / targetAspect;
+                    menuBottom = (float(drawableHeight) - menuHeight) * .5f;
+                }
+                const float scaleX = menuWidth / 640.f;
+                const float scaleY = menuHeight / 480.f;
+                const std::array<float, 4> buttonX = {50.f, 190.f, 346.f, 514.f};
+                const std::array<float, 4> buttonWidths = {100.f, 116.f, 128.f, 70.f};
+                const float menuX = (float(mouseX) - menuLeft) / scaleX;
+                const float menuYFromTop = 480.f - (float(mouseY) - menuBottom) / scaleY;
+                if (menuYFromTop >= 440.f && menuYFromTop <= 472.f) {
+                    for (size_t i = 0; i < buttonX.size(); ++i) {
+                        if (menuX < buttonX[i] || menuX > buttonX[i] + buttonWidths[i]) continue;
+                        selected = i;
+                        if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                            if (selected == size_t(RescueTitleAction::Game)) result = RescueTitleAction::Game;
+                            else if (selected == size_t(RescueTitleAction::Exit)) result = RescueTitleAction::Exit;
+                            else std::cerr << "Retail SCORES/OPTIONS page is not ported yet.\n";
                         }
+                        break;
                     }
                 }
             }
         }
         int width = 1, height = 1;
         SDL_GL_GetDrawableSize(window, &width, &height);
-        drawRescueTitleMenu(width, height, selected, backgroundTexture);
+        drawRescueTitleMenu(width, height, selected, backgroundTexture, controlsTexture);
         SDL_GL_SwapWindow(window);
         SDL_Delay(8);
     }
 
+    glDeleteTextures(1, &controlsTexture);
     glDeleteTextures(1, &backgroundTexture);
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    return result.value_or(false);
+    return result;
 }
 
 inline float drawRescueMissionChooser(const std::vector<RescueMissionChoice>& choices,

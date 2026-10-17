@@ -40,6 +40,9 @@ public:
         const auto soundsPath = scene.root_ / "sounds.json";
         if (std::filesystem::is_regular_file(soundsPath))
             scene.sounds_ = read(soundsPath);
+        const auto musicPath = scene.root_ / "music.json";
+        if (std::filesystem::is_regular_file(musicPath))
+            scene.music_ = read(musicPath);
         const auto motionPath = scene.root_ / "motions.json";
         if (std::filesystem::is_regular_file(motionPath))
             scene.motions_ = read(motionPath);
@@ -80,6 +83,7 @@ public:
     json_object* textureManifest() const { return textureManifest_.get(); }
     json_object* scripts() const { return scripts_.get(); }
     json_object* sounds() const { return sounds_.get(); }
+    json_object* music() const { return music_.get(); }
     json_object* motions() const { return motions_.get(); }
 
     // Resolve each path component without assuming the host filesystem's
@@ -125,7 +129,7 @@ public:
 private:
     std::filesystem::path root_;
     std::string key_, sourceFile_, sourceSha256_;
-    SceneJson report_, geometry_, worldMesh_, collision_, entities_, textureManifest_, scripts_, sounds_, motions_;
+    SceneJson report_, geometry_, worldMesh_, collision_, entities_, textureManifest_, scripts_, sounds_, music_, motions_;
 
     static std::string fold(std::string value) {
         std::transform(value.begin(), value.end(), value.begin(), [](unsigned char ch) {

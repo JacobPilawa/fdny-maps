@@ -17,13 +17,16 @@ behavior, retail presentation parity, and non-macOS builds remain open.
 - `spikes/training-native-prototype/src/scene_data.h` and
   `scene_viewer.cpp` provide a level-neutral package loader and BSP
   gameplay host. Its CMake dependency discovery supports pkg-config,
-  CMake packages, or standard include/library paths. The shared runtime now
+  CMake packages, or standard include/library paths for SDL2, json-c, and
+  libmpg123. The macOS app statically links mpg123 when an archive is
+  available; other build hosts may link their installed shared library. The
+  shared runtime now
   has portable 128-bit arithmetic; both native and forced-fallback builds and
   all 13 rescue/stage checks pass on macOS. Linux and Windows builds remain
   unverified here. The CoreText Training workbench remains Apple-only. All 17
   local packages load with zero unresolved texture paths. See the
   [platform portability audit](../tracker/evidence/runtime/cmake_platform_boundary_2026-10-15.md)
-  for verification and remaining OS gates. The preview now creates typed
+  for verification and remaining OS gates. The shared host creates typed
   rescue victims from exported ACT assets, applies authored spawn alternatives
   and initial motions, moves
   six-motion victims with `roam` commands through collision-checked waypoints,
@@ -32,8 +35,12 @@ behavior, retail presentation parity, and non-macOS builds remain open.
   BoundsTrigger contact events, runs `open`/`close`/`settimescale`, and samples
   per-owner retail PATHs into render and collision. Authored Player
   `oxyon`/`oxyoff` commands now drive shared oxygen drain/refill state and the
-  mapped argument-0 passout route; oxygen UI, opaque engine effects, and retail
-  callback timing remain open. Subway A's touch doors,
+  mapped argument-0 passout route. Rescue scenes load and loop the catalog-
+  selected retail MP3, including linked-stage inheritance, and oxygen applies
+  the traced separate music-channel gain. Playback uses predecoded PCM, so
+  FMOD stream timing and audible parity remain open; menu music is paused with
+  menu work. Oxygen UI, opaque engine effects, and callback timing remain open.
+  Subway A's touch doors,
   broken-door `Zapp3d` trigger, and Bank's named vault console route pass
   synthetic interaction checks. Authored `makezone` commands also build named
   map zones from trigger bounds. The roam target chooser is still an MVP

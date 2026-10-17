@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <json-c/json.h>
+#include <mpg123.h>
 
 #include <algorithm>
 #include <array>
@@ -9,8 +10,12 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
+#include <limits>
 #include <map>
+#include <mutex>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -18,6 +23,11 @@
 #include "scene_data.h"
 
 struct SceneAudio {
+    struct MusicSelection {
+        std::string track;
+        std::filesystem::path path;
+    };
+
     struct Sample {
         std::vector<uint8_t> stereoPcm;
         bool spatial = false;
@@ -42,6 +52,12 @@ struct SceneAudio {
     SDL_AudioSpec output{};
     std::map<std::string, Sample> samples;
     std::vector<Voice> voices;
+    // FMOD's +0x690 MP3 stream is independent from the sample-category voices.
+    // Decode the selected loop before playback; the real-time callback only mixes PCM.
+    std::vector<uint8_t> musicPcm;
+    size_t musicFrameOffset = 0;
+    float musicGain = 1.f;
+    std::string musicTrack;
     // Raw retail sound-instance category IDs from +0x14. The oxygen visor
     // selector changes categories 1 and 2; streamed music uses a separate channel.
     std::array<float, 3> soundGroupGains{1.f, 1.f, 1.f};
@@ -102,6 +118,26 @@ struct SceneAudio {
             ++writeIndex;
         }
         self->voices.resize(writeIndex);
+
+        const size_t musicFrames = self->musicPcm.size() / (2 * sizeof(int16_t));
+        if (musicFrames != 0) {
+            const auto* musicSamples = reinterpret_cast<const int16_t*>(self->musicPcm.data());
+            for (size_t frame = 0; frame < outputFrames; ++frame) {
+                if (self->musicFrameOffset >= musicFrames)
+                    self->musicFrameOffset %= musicFrames;
+                const size_t sourceIndex = self->musicFrameOffset * 2;
+                const size_t outputIndex = frame * 2;
+                outputSamples[outputIndex] = clampMix(
+                    static_cast<float>(outputSamples[outputIndex]) +
+                    static_cast<float>(musicSamples[sourceIndex]) * self->musicGain);
+                outputSamples[outputIndex + 1] = clampMix(
+                    static_cast<float>(outputSamples[outputIndex + 1]) +
+                    static_cast<float>(musicSamples[sourceIndex + 1]) * self->musicGain);
+                ++self->musicFrameOffset;
+            }
+            if (self->musicFrameOffset >= musicFrames)
+                self->musicFrameOffset %= musicFrames;
+        }
     }
 
     bool open() {
@@ -126,59 +162,64 @@ struct SceneAudio {
         return true;
     }
 
-    void load(const SceneData& scene) {
-        if (!device || loaded || !scene.sounds()) return;
-        SDL_LockAudioDevice(device);
-        json_object* resources = SceneData::field(scene.sounds(), "resources");
-        const size_t count = resources && json_object_get_type(resources) == json_type_array
-            ? json_object_array_length(resources) : 0;
-        for (size_t i = 0; i < count; ++i) {
-            json_object* resource = json_object_array_get_idx(resources, i);
-            const std::string name = SceneData::stringField(resource, "name");
-            const std::string relativePath = SceneData::stringField(resource, "file");
-            if (name.empty() || relativePath.empty()) continue;
-            const auto path = scene.resolveAsset(relativePath);
-            SDL_AudioSpec source{};
-            Uint8* wav = nullptr;
-            Uint32 wavLength = 0;
-            if (!SDL_LoadWAV(path.string().c_str(), &source, &wav, &wavLength)) {
-                std::cerr << "Scene sound failed to load " << relativePath << ": " << SDL_GetError() << "\n";
-                continue;
-            }
-            SDL_AudioCVT conversion{};
-            const int conversionNeeded = SDL_BuildAudioCVT(&conversion, source.format, source.channels,
-                                                           source.freq, output.format, output.channels,
-                                                           output.freq);
-            if (conversionNeeded < 0) {
-                std::cerr << "Scene sound format is unsupported for " << relativePath << "\n";
-                SDL_FreeWAV(wav);
-                continue;
-            }
-            Sample sample;
-            sample.stereoPcm.resize(size_t(wavLength) * size_t(std::max(conversion.len_mult, 1)));
-            std::memcpy(sample.stereoPcm.data(), wav, wavLength);
-            SDL_FreeWAV(wav);
-            size_t convertedLength = wavLength;
-            if (conversionNeeded != 0) {
-                conversion.buf = sample.stereoPcm.data();
-                conversion.len = static_cast<int>(wavLength);
-                if (SDL_ConvertAudio(&conversion) != 0) {
-                    std::cerr << "Scene sound conversion failed for " << relativePath << ": " << SDL_GetError() << "\n";
-                    continue;
+    void load(const SceneData& scene, const MusicSelection* inheritedMusic = nullptr) {
+        if (!device) return;
+        if (!loaded) {
+            if (scene.sounds()) {
+                SDL_LockAudioDevice(device);
+                json_object* resources = SceneData::field(scene.sounds(), "resources");
+                const size_t count = resources && json_object_get_type(resources) == json_type_array
+                    ? json_object_array_length(resources) : 0;
+                for (size_t i = 0; i < count; ++i) {
+                    json_object* resource = json_object_array_get_idx(resources, i);
+                    const std::string name = SceneData::stringField(resource, "name");
+                    const std::string relativePath = SceneData::stringField(resource, "file");
+                    if (name.empty() || relativePath.empty()) continue;
+                    const auto path = scene.resolveAsset(relativePath);
+                    SDL_AudioSpec source{};
+                    Uint8* wav = nullptr;
+                    Uint32 wavLength = 0;
+                    if (!SDL_LoadWAV(path.string().c_str(), &source, &wav, &wavLength)) {
+                        std::cerr << "Scene sound failed to load " << relativePath << ": " << SDL_GetError() << "\n";
+                        continue;
+                    }
+                    SDL_AudioCVT conversion{};
+                    const int conversionNeeded = SDL_BuildAudioCVT(&conversion, source.format, source.channels,
+                                                                   source.freq, output.format, output.channels,
+                                                                   output.freq);
+                    if (conversionNeeded < 0) {
+                        std::cerr << "Scene sound format is unsupported for " << relativePath << "\n";
+                        SDL_FreeWAV(wav);
+                        continue;
+                    }
+                    Sample sample;
+                    sample.stereoPcm.resize(size_t(wavLength) * size_t(std::max(conversion.len_mult, 1)));
+                    std::memcpy(sample.stereoPcm.data(), wav, wavLength);
+                    SDL_FreeWAV(wav);
+                    size_t convertedLength = wavLength;
+                    if (conversionNeeded != 0) {
+                        conversion.buf = sample.stereoPcm.data();
+                        conversion.len = static_cast<int>(wavLength);
+                        if (SDL_ConvertAudio(&conversion) != 0) {
+                            std::cerr << "Scene sound conversion failed for " << relativePath << ": " << SDL_GetError() << "\n";
+                            continue;
+                        }
+                        convertedLength = static_cast<size_t>(conversion.len_cvt);
+                    }
+                    sample.stereoPcm.resize(convertedLength);
+                    sample.spatial = SceneData::stringField(resource, "kind") == "3D";
+                    sample.minimumDistance = static_cast<float>(json_object_get_double(
+                        SceneData::field(resource, "minimum_distance")));
+                    sample.maximumDistance = static_cast<float>(json_object_get_double(
+                        SceneData::field(resource, "maximum_distance")));
+                    samples[fold(name)] = std::move(sample);
                 }
-                convertedLength = static_cast<size_t>(conversion.len_cvt);
+                SDL_UnlockAudioDevice(device);
             }
-            sample.stereoPcm.resize(convertedLength);
-            sample.spatial = SceneData::stringField(resource, "kind") == "3D";
-            sample.minimumDistance = static_cast<float>(json_object_get_double(
-                SceneData::field(resource, "minimum_distance")));
-            sample.maximumDistance = static_cast<float>(json_object_get_double(
-                SceneData::field(resource, "maximum_distance")));
-            samples[fold(name)] = std::move(sample);
+            // Voice records hold pointers into this map. Keep all loaded samples immutable afterward.
+            loaded = true;
         }
-        // Voice records hold pointers into this map. Keep all loaded samples immutable afterward.
-        loaded = true;
-        SDL_UnlockAudioDevice(device);
+        loadMusic(scene, inheritedMusic);
     }
 
     // Preserve the original convenience API for unowned one-shot sounds.
@@ -208,10 +249,35 @@ struct SceneAudio {
     }
 
     bool applyOxygenVisorCategorySelector(int selector, float attenuatedCategory2Gain) {
-        if (selector == 4) return setSoundGroupGain(2, attenuatedCategory2Gain);
-        if (selector == 5)
-            return setSoundGroupGain(1, 1.f) && setSoundGroupGain(2, 1.f);
+        if (selector == 4) {
+            const bool changed = setSoundGroupGain(2, attenuatedCategory2Gain);
+            if (!changed) return false;
+            // Retail computes int(0.3 * 255) = 76 for stream +0x690.
+            setMusicGain(float(int(attenuatedCategory2Gain * 255.f)) / 255.f);
+            return true;
+        }
+        if (selector == 5) {
+            const bool changed = setSoundGroupGain(1, 1.f) && setSoundGroupGain(2, 1.f);
+            if (!changed) return false;
+            setMusicGain(1.f);
+            return true;
+        }
         return false;
+    }
+
+    void setMusicGain(float gain) {
+        const float boundedGain = std::clamp(gain, 0.f, 1.f);
+        if (device) SDL_LockAudioDevice(device);
+        musicGain = boundedGain;
+        if (device) SDL_UnlockAudioDevice(device);
+    }
+
+    void stopMusic() {
+        if (device) SDL_LockAudioDevice(device);
+        musicPcm.clear();
+        musicFrameOffset = 0;
+        musicTrack.clear();
+        if (device) SDL_UnlockAudioDevice(device);
     }
 
     float soundGroupGainForVoice(const Voice& voice) const {
@@ -260,6 +326,10 @@ struct SceneAudio {
             device = 0;
         }
         voices.clear();
+        musicPcm.clear();
+        musicFrameOffset = 0;
+        musicTrack.clear();
+        musicGain = 1.f;
         samples.clear();
         soundGroupGains = {1.f, 1.f, 1.f};
         loaded = false;
@@ -268,6 +338,126 @@ struct SceneAudio {
     ~SceneAudio() { close(); }
 
 private:
+    static std::optional<MusicSelection> musicSelectionForScene(const SceneData& scene) {
+        const std::string relativePath = SceneData::stringField(scene.music(), "file");
+        const std::string requestedTrack = SceneData::stringField(scene.music(), "track");
+        if (relativePath.empty() || requestedTrack.empty()) return std::nullopt;
+        return MusicSelection{requestedTrack, scene.resolveAsset(relativePath)};
+    }
+
+    bool loadMusic(const SceneData& scene, const MusicSelection* inheritedMusic) {
+        std::optional<MusicSelection> selectedMusic = musicSelectionForScene(scene);
+        if (!selectedMusic && inheritedMusic) selectedMusic = *inheritedMusic;
+        if (!selectedMusic) {
+            stopMusic();
+            return false;
+        }
+        const std::string& requestedTrack = selectedMusic->track;
+        const std::filesystem::path& path = selectedMusic->path;
+        if (requestedTrack == musicTrack && !musicPcm.empty()) return true;
+
+        // Retail selector 2 stops/releases the previous stream before opening its replacement.
+        stopMusic();
+        static std::once_flag mpg123Initialization;
+        static int mpg123InitializationResult = MPG123_ERR;
+        std::call_once(mpg123Initialization, [] {
+            mpg123InitializationResult = mpg123_init();
+        });
+        if (mpg123InitializationResult != MPG123_OK) {
+            std::cerr << "MP3 music decoder initialization failed\n";
+            return false;
+        }
+
+        int error = MPG123_OK;
+        mpg123_handle* decoder = mpg123_new(nullptr, &error);
+        if (!decoder) {
+            std::cerr << "MP3 music decoder allocation failed: " << mpg123_plain_strerror(error) << "\n";
+            return false;
+        }
+        auto destroyDecoder = [&] { mpg123_delete(decoder); };
+        if (mpg123_open_fixed(decoder, path.string().c_str(), MPG123_STEREO,
+                              MPG123_ENC_SIGNED_16) != MPG123_OK) {
+            std::cerr << "MP3 music failed to open " << path.string() << ": "
+                      << mpg123_strerror(decoder) << "\n";
+            destroyDecoder();
+            return false;
+        }
+
+        long sourceRate = 0;
+        int sourceChannels = 0, sourceEncoding = 0;
+        if (mpg123_getformat(decoder, &sourceRate, &sourceChannels, &sourceEncoding) != MPG123_OK ||
+            sourceRate <= 0 || sourceChannels != 2 || sourceEncoding != MPG123_ENC_SIGNED_16) {
+            std::cerr << "MP3 music has an unsupported decoded format: " << path.string() << "\n";
+            destroyDecoder();
+            return false;
+        }
+
+        std::vector<uint8_t> decoded;
+        std::array<uint8_t, 64 * 1024> buffer{};
+        for (;;) {
+            size_t produced = 0;
+            const int status = mpg123_read(decoder, buffer.data(), buffer.size(), &produced);
+            decoded.insert(decoded.end(), buffer.data(), buffer.data() + produced);
+            if (status == MPG123_DONE) break;
+            if (status == MPG123_NEW_FORMAT) {
+                long nextRate = 0;
+                int nextChannels = 0, nextEncoding = 0;
+                if (mpg123_getformat(decoder, &nextRate, &nextChannels, &nextEncoding) != MPG123_OK ||
+                    nextRate != sourceRate || nextChannels != sourceChannels ||
+                    nextEncoding != sourceEncoding) {
+                    std::cerr << "MP3 music changes format mid-stream: " << path.string() << "\n";
+                    destroyDecoder();
+                    return false;
+                }
+                continue;
+            }
+            if (status != MPG123_OK) {
+                std::cerr << "MP3 music decode failed for " << path.string() << ": "
+                          << mpg123_strerror(decoder) << "\n";
+                destroyDecoder();
+                return false;
+            }
+        }
+        destroyDecoder();
+        if (decoded.empty()) {
+            std::cerr << "MP3 music decoded no audio: " << path.string() << "\n";
+            return false;
+        }
+
+        SDL_AudioCVT conversion{};
+        const int conversionNeeded = SDL_BuildAudioCVT(&conversion, AUDIO_S16SYS, 2,
+            static_cast<int>(sourceRate), output.format, output.channels, output.freq);
+        if (conversionNeeded < 0) {
+            std::cerr << "MP3 music format is unsupported by SDL: " << path.string() << "\n";
+            return false;
+        }
+        std::vector<uint8_t> converted(decoded.size() * size_t(std::max(conversion.len_mult, 1)));
+        std::memcpy(converted.data(), decoded.data(), decoded.size());
+        size_t convertedLength = decoded.size();
+        if (conversionNeeded != 0) {
+            if (decoded.size() > size_t(std::numeric_limits<int>::max())) {
+                std::cerr << "MP3 music decoded size exceeds SDL conversion limits: " << path.string() << "\n";
+                return false;
+            }
+            conversion.buf = converted.data();
+            conversion.len = static_cast<int>(decoded.size());
+            if (SDL_ConvertAudio(&conversion) != 0) {
+                std::cerr << "MP3 music conversion failed for " << path.string() << ": "
+                          << SDL_GetError() << "\n";
+                return false;
+            }
+            convertedLength = static_cast<size_t>(conversion.len_cvt);
+        }
+        converted.resize(convertedLength);
+        if (device) SDL_LockAudioDevice(device);
+        musicPcm = std::move(converted);
+        musicFrameOffset = 0;
+        musicTrack = requestedTrack;
+        if (device) SDL_UnlockAudioDevice(device);
+        std::cout << "Level music loop started: " << requestedTrack << "\n";
+        return true;
+    }
+
     static int16_t clampMix(float value) {
         return static_cast<int16_t>(std::clamp(value, -32768.f, 32767.f));
     }
