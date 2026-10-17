@@ -16,8 +16,10 @@ primary rescue packages, and the five linked-stage packages. The source-ordered
 selector exposes the eight rescue catalog entries; linked stages continue
 through their authored `finalexitloadmap` routes.
 
-The title-screen copy and layout are new port UI. They do not claim to reproduce
-retail artwork, menu commands, input semantics, transition timing, or audio.
+The title background now uses the retail `menu.rrf` bitmap ID 10
+(`main.bmp`). The action labels/placement and selector presentation remain
+port UI; no claim is made about retail menu commands, input semantics,
+transition timing, or audio.
 
 ## Retail evidence and limits
 

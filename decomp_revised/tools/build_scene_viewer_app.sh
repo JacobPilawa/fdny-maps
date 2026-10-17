@@ -71,6 +71,8 @@ ditto "$DEFAULT_PACKAGE_DIR" "$APP_DIR/Contents/Resources/scene"
 ditto "$ACTOR_ASSETS_DIR" "$APP_DIR/Contents/Resources/actor_exports"
 
 if [ "$SCENE_KEY" = "rescue-all" ]; then
+    mkdir -p "$APP_DIR/Contents/Resources/menu"
+    cp "$ORIGINAL_ROOT/Data/menu/main.bmp" "$APP_DIR/Contents/Resources/menu/main.bmp"
     mkdir -p "$APP_DIR/Contents/Resources/scenes"
     for map_key in $PACKAGE_KEYS; do
         ditto "$PROJECT_ROOT/.local/exports/$map_key" \

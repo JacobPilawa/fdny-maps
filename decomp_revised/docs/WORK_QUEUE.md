@@ -148,6 +148,8 @@ the report is observed.
 | `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, `lev_rrf_catalog_loader_trace_fresh.md`, `scene_audio.h` | Complete; catalog fields and four copied MP3 hashes are identified, and retail stream open/play helpers are traced; start/switch/stop/loop callers and cross-platform MP3 decoding remain open |
 | `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h` | Complete; title/selector and stage commands exist, but `time:` consumer, objective HUD, expiry/results, and the `0044C360` outro meaning remain unverified |
 | `equipment_gap_audit` | Check held-tool rendering/action/audio against current evidence | Read-only; `extinguisher_scene_viewer_runtime.md`, equipment source headers, retail hash-pinned traces | Complete; extinguisher action/suppression runs and an emitter request is produced, but the request is not rendered; particle asset/placement and audio triggers remain open |
+| `menu_asset_audit` | Identify authentic retail main-menu assets and safe integration points | Read-only `menu.rrf`, local retail menu files, current selector | Complete; resource ID 10 is the 640x480 `main.bmp`; artwork is now bundled and rendered, while widget layout/flow remains open |
+| `menu_code_trace` | Recheck retail menu constructor, level selector update/handler, and state flow | Read-only same-hash exports and saved decompilation | Complete; selector title/bitmap/selection box and handler branches are mapped; exact UI dispatch, event meanings, coordinates, and transitions need more decompilation/runtime capture |
 
 ## Current state
 
@@ -156,10 +158,10 @@ the report is observed.
   the source-ordered eight-entry rescue selector. It replaces the old
   AppleScript picker for raw BSP directories; passing a map key still opens a
   single package for development. The old launcher filename remains a
-  compatibility alias. The title text/layout is port UI: retail's
-  hash-pinned `0042DEC0` constructor is confirmed to load `menu.rrf`, but its
-  artwork and interactions remain untraced. Catalog selection uses the static
-  `0042F500` ordinal path. CMake and packaged binaries match at SHA-256
+  compatibility alias. The title uses original retail bitmap ID 10 from
+  `menu.rrf`; its actions and placement remain port UI. Retail's hash-pinned
+  `0042DEC0` constructor and `0042F500` catalog selection path are mapped, but
+  widget layout and interactions remain open. CMake and packaged binaries match at SHA-256
   `bcbd5e3803e036a2b9b2240ad81e8f162c04773f1104c9617182e6876fd29121`;
   catalog loading (8/8), offscreen title/selector rendering, and controlled
   rescue transactions (13/13) pass. These do not establish interactive launch,
@@ -167,6 +169,18 @@ the report is observed.
   but timer/HUD/expiry/result handlers have not been traced; `0044C360` remains
   an unverified no-final-exit path, not a proven outro. See
   [`rescue_front_end_entry_flow_port_2026-10-17.md`](../tracker/evidence/runtime/rescue_front_end_entry_flow_port_2026-10-17.md).
+
+- **2026-10-17 retail title-art checkpoint:** the rescue-all bundle now carries
+  the original 640x480 `main.bmp` registered as menu RRF resource 10, and the
+  native title page renders it at 4:3. This improves artwork fidelity but does
+  not establish retail widget placement or interaction. The title actions and
+  the rescue selector remain provisional until the selector object/vtable,
+  menu input/render dispatch, and state handlers are traced. See
+  [`retail_main_menu_art_port_2026-10-17.md`](../tracker/evidence/runtime/retail_main_menu_art_port_2026-10-17.md).
+  The rebuilt CMake and packaged executables match at SHA-256
+  `b48789b0b0fdd5122eb7336b6579cdb1e2ad16d1e3a6d594f50691420693437e`;
+  the existing offscreen menu check renders the retail title bitmap and eight
+  mission rows, but does not establish retail behavior.
 
 - **2026-10-15 portable wide-integer checkpoint:** `clock.h` and
   `extended.h` now use the shared `wide_integer.h`; the portable two-word
