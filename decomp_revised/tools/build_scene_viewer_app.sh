@@ -2,10 +2,10 @@
 set -eu
 
 PROJECT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-SCENE_KEY=${1:-mbase}
+SCENE_KEY=${1:-rescue-all}
 BUILD_DIR="$PROJECT_ROOT/port/spikes/training-native-prototype/.local/build-scene-viewer"
 ACTOR_ASSETS_DIR="$PROJECT_ROOT/.local/actor_exports"
-APP_DIR="$PROJECT_ROOT/.local/FDNY Scene Preview.app"
+APP_DIR="$PROJECT_ROOT/.local/FDNY Firefighters.app"
 
 if [ "$SCENE_KEY" = "rescue-all" ]; then
     PACKAGE_KEYS="training mbase bar_r gas_r bank boat_a subway_a oil_rig_a boat_b subway_b oil_rig_b oil_rig_c oil_rig_d"
@@ -92,9 +92,9 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
     <key>CFBundleExecutable</key>
     <string>fdny-scene-viewer</string>
     <key>CFBundleIdentifier</key>
-    <string>org.fdnydecomp.sceneviewer</string>
+    <string>org.fdny.firefighters.americanhero</string>
     <key>CFBundleName</key>
-    <string>FDNY Scene Preview</string>
+    <string>FDNY Firefighters: American Hero</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -115,7 +115,7 @@ plutil -lint "$APP_DIR/Contents/Info.plist"
 printf '\nBuilt app: %s\n' "$APP_DIR"
 if [ "$SCENE_KEY" = "rescue-all" ]; then
     printf 'Bundled rescue packages: %s\n' "$PACKAGE_KEYS"
-    printf 'Default launch: source-ordered rescue mission chooser\n'
+    printf 'Default launch: title menu, then source-ordered rescue mission selection\n'
 else
     printf 'Bundled scene: %s\n' "$SCENE_KEY"
 fi

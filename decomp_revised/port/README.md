@@ -1,25 +1,22 @@
 # Native port work
 
 The product goal is the full game, with a native macOS playable slice first and
-Windows/Linux support as later acceptance gates. The first playable slice must
-cover a rescue campaign path. Military Base (`mbase`) is the first integration
-candidate because it is the first rescue entry after Training and its BSP has a
-manageable rescue-object mix. Its geometry, exported textures, player spawn,
-and recovered movement/collision now load in a map-neutral preview; mission
-systems and catalog-driven startup are the remaining integration work.
+Windows/Linux support as later acceptance gates. The shared host now packages
+all eight rescue choices, executes rescue and stage transitions, and contains
+recovered movement, tool, fire, victim, and contact systems. It remains an
+incomplete port: natural end-to-end progression, mission objective/result
+behavior, retail presentation parity, and non-macOS builds remain open.
 
 ## Current contents
 
 - [`spikes/training-native-prototype/`](spikes/training-native-prototype/README.md)
-  is a copied, single-level Training workbench with a substantial integrated
-  gameplay reconstruction. It compiles as a Mac executable with CMake, SDL2,
-  and json-c, though a window has not launched in the current shell. Its
-  gameplay components are candidates for direct reuse; its Training-specific
-  bootstrap, data path, and Apple CoreText UI need replacement or generalizing.
-  See the [native C++ reuse audit](../docs/NATIVE_CODE_REUSE_AUDIT.md).
+  contains both the shared `fdny-scene-viewer` host and a separate, Apple-only
+  Training workbench. The shared host is the playable port; Training is a
+  required regression scenario, not a separate product. See the
+  [native C++ reuse audit](../docs/NATIVE_CODE_REUSE_AUDIT.md).
 - `spikes/training-native-prototype/src/scene_data.h` and
   `scene_viewer.cpp` provide a level-neutral package loader and BSP
-  geometry/movement preview. Its CMake dependency discovery supports pkg-config,
+  gameplay host. Its CMake dependency discovery supports pkg-config,
   CMake packages, or standard include/library paths. The shared runtime now
   has portable 128-bit arithmetic; both native and forced-fallback builds and
   all 13 rescue/stage checks pass on macOS. Linux and Windows builds remain
