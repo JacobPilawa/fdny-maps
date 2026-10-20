@@ -40,8 +40,9 @@ cmake --build port/spikes/training-native-prototype/.local/build -j 4
 `./run.sh` also builds and launches the Training workbench on macOS. The current
 Codex shell has previously compiled the binary, while SDL reported that its
 video driver had no displays; interactive launch remains unverified there.
-Press Escape to release or recapture the mouse. Use WASD to move, mouse to look,
-Space or right mouse to jump, Shift to use, C to crouch, 1 to select the axe,
+Press Escape to release or recapture the mouse. Use WASD to move and mouse to
+look. Jumping follows accepted ground contact; right mouse (with Space as a
+host alias) requests crouch clearance, Shift to use, C to crouch, 1 to select the axe,
 2 to select the extinguisher, and left mouse to use the active tool.
 
 To build the macOS workbench separately without starting its window, run these
@@ -71,7 +72,8 @@ workspace):
 port/spikes/training-native-prototype/.local/build-scene-viewer/fdny-scene-viewer .local/exports/mbase
 ```
 
-Use WASD to move, mouse to look, Space or right mouse to jump, C to crouch,
+Use WASD to move and mouse to look. Jumping follows accepted ground contact;
+right mouse (with Space as a host alias) requests crouch clearance, C crouches,
 F to snap to the nearest walkable collision floor below the player, and Escape
 to release or recapture the mouse. Six-motion survivors run authored `roam`
 commands through a collision-checked waypoint approximation and are picked up

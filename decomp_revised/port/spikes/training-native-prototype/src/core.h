@@ -95,7 +95,7 @@ struct Player{
  // +0x3400 is the oxygen/burn-gated safe-position snapshot, and +0x534 is
  // the separate reset checkpoint. The retail constructor zeros the snapshot
  // and seeds the checkpoint from the starting frame.
- bool collisionLatch=false;
+ bool collisionLatch=true;
  V safePosition3400{},checkpointPosition{};
  float checkpointYaw=0.f;
  // 00451870 stores setrescuebot at Player+0x32e4; unset is retained until
@@ -105,23 +105,93 @@ struct Player{
  void setAshDensity(float value){if(value>1.f)value=1.f;if(value<0.f)value=0.f;ashDensity=value;}
  V maxs()const{return {30,crouch?25.f:85.f,30};}
  // PlayerRescue Think -> IntegrateVelocity 0x0049DBC0 -> collision callback 0x0043F810.
- // Jump input is still a host adapter: retail JUMP runs only in crouch state
- // 4 and calls the uncrouch clearance helper 0044BCE0. Normal-state 0044E990
- // uses a timed contact latch; its relation to a direct user action is open.
+ // Retail Player update order is jump helper 0044E990 -> integrator wrapper
+ // 0043F680 -> collision loop 0043F6D0. The current collision latch therefore
+ // gates the next movement pass. Retail JUMP is only polled in crouch state 4
+ // and calls the uncrouch clearance helper 0044BCE0.
  // The host's 25/85 max-Y values match retail constants; the world-query
  // origin/bounds transform and callback timing are not yet matched.
- void step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
- collisionLatch=false;
- cooldown=std::max(0.f,cooldown-dt);if(crouchEdge){if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}else if(ground)crouch=true;}
- float speed=crouch?260:400;float cp=climbing?std::cos(pitch):1,sp=climbing?std::sin(pitch):0;V wish{-std::sin(yaw)*cp*forward+std::cos(yaw)*strafe,sp*forward,-std::cos(yaw)*cp*forward-std::sin(yaw)*strafe};float len=length(wish);if(len>0){wish=wish*(speed/std::max(1.f,len));double weight=std::pow((ground||climbing)?.2:.95,27*dt);v.x=float(wish.x*(1-weight)+v.x*weight);v.z=float(wish.z*(1-weight)+v.z*weight);if(climbing)v.y=float(wish.y*(1-weight)+v.y*weight);}
- bool wasClimbing=climbing;float drag=(ground||climbing)?1000:0;if(jump){if(crouch){if(jumpEdge&&!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;delta={};return;}if((ground||climbing)&&cooldown==0){if(climbing){climbing=false;v.y=400;}else v.y+=400;cooldown=.5;}}
- V acceleration{0,wasClimbing?0.f:-1000.f,0};for(int i=0;i<3;i++){float amount=(i==1&&!wasClimbing?0:drag)*dt;float after=v[i]>0?std::max(0.f,v[i]-amount):std::min(0.f,v[i]+amount);v[i]=after+acceleration[i]*dt;delta[i]=v[i]*dt+(.5f*acceleration[i])*(dt*dt);}ground=false;
- V clipped=acceleration;bool stepped=false;
- for(int attempt=0;attempt<5;attempt++){Hit h;if(!c.trace(p,delta,{-30,-30,-30},maxs(),h))break;bool didStep=false;
- if(!stepped&&h.normal.y<=.9){Hit t;V up{0,16,0},horizontal{delta.x,0,delta.z};if(!c.trace(p,up,{-30,-30,-30},maxs(),t)&&!c.trace(p+up,horizontal,{-30,-30,-30},maxs(),t)){Hit landing;if(c.trace(p+up+horizontal,{0,-17,0},{-30,-30,-30},maxs(),landing)){p=landing.point;stepped=didStep=true;}}}
- if(!didStep){if(h.normal.y>=.5){ground=true;collisionLatch=true;}V inverse=h.normal*-1;float inward=dot(v,inverse);if(inward>0)v=v-inverse*inward;inward=dot(acceleration,inverse);if(inward>0)clipped=clipped-inverse*inward;delta=v*dt+clipped*(.5f*dt*dt);}
- if(attempt==4){if(h.normal.y>=.5)ground=true;else{v={};delta={};}}
- }p=p+delta;
+ bool step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
+  const bool priorContactLatch=collisionLatch;
+  cooldown=std::max(0.f,cooldown-dt);
+  if(crouchEdge){
+   if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}
+   else if(ground)crouch=true;
+  }
+  // State 4 exits this Player update after its JUMP clearance query; the
+  // integrator and collision callbacks do not run on that branch.
+  if(crouch){
+   if(jump&&jumpEdge&&!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;
+   delta={};
+   return false;
+  }
+
+  float speed=crouch?260:400;
+  float cp=climbing?std::cos(pitch):1,sp=climbing?std::sin(pitch):0;
+  V wish{-std::sin(yaw)*cp*forward+std::cos(yaw)*strafe,sp*forward,
+         -std::cos(yaw)*cp*forward-std::sin(yaw)*strafe};
+  float len=length(wish);
+  if(len>0){
+   wish=wish*(speed/std::max(1.f,len));
+   double weight=std::pow((ground||climbing)?.2:.95,27*dt);
+   v.x=float(wish.x*(1-weight)+v.x*weight);
+   v.z=float(wish.z*(1-weight)+v.z*weight);
+   if(climbing)v.y=float(wish.y*(1-weight)+v.y*weight);
+  }
+
+  const bool wasClimbing=climbing;
+  bool jumped=false;
+  if(cooldown==0.f&&(wasClimbing||priorContactLatch)){
+   if(wasClimbing){climbing=false;v.y=400.f;}
+   else v.y+=400.f;
+   cooldown=.5f;
+   jumped=true;
+  }
+
+  // 0049DBC0 consumes +0x12C after the jump check and before the collision
+  // loop. Contacts resolved below populate the latch for the next Player step.
+  collisionLatch=false;
+  float drag=(ground||climbing)?1000.f:0.f;
+  V acceleration{0,wasClimbing?0.f:-1000.f,0};
+  for(int i=0;i<3;i++){
+   float amount=(i==1&&!wasClimbing?0:drag)*dt;
+   float after=v[i]>0?std::max(0.f,v[i]-amount):std::min(0.f,v[i]+amount);
+   v[i]=after+acceleration[i]*dt;
+   delta[i]=v[i]*dt+(.5f*acceleration[i])*(dt*dt);
+  }
+  ground=false;
+  V clipped=acceleration;
+  bool stepped=false;
+  for(int attempt=0;attempt<5;attempt++){
+   Hit h;
+   if(!c.trace(p,delta,{-30,-30,-30},maxs(),h))break;
+   bool didStep=false;
+   if(!stepped&&h.normal.y<=.9){
+    Hit t;V up{0,16,0},horizontal{delta.x,0,delta.z};
+    if(!c.trace(p,up,{-30,-30,-30},maxs(),t)&&
+       !c.trace(p+up,horizontal,{-30,-30,-30},maxs(),t)){
+     Hit landing;
+     if(c.trace(p+up+horizontal,{0,-17,0},{-30,-30,-30},maxs(),landing)){
+      p=landing.point;stepped=didStep=true;
+     }
+    }
+   }
+   if(!didStep){
+    if(h.normal.y>=.5){ground=true;collisionLatch=true;}
+    V inverse=h.normal*-1;
+    float inward=dot(v,inverse);
+    if(inward>0)v=v-inverse*inward;
+    inward=dot(acceleration,inverse);
+    if(inward>0)clipped=clipped-inverse*inward;
+    delta=v*dt+clipped*(.5f*dt*dt);
+   }
+   if(attempt==4){
+    if(h.normal.y>=.5)ground=true;
+    else{v={};delta={};}
+   }
+  }
+  p=p+delta;
+  return jumped;
  }
 };
 struct Door{

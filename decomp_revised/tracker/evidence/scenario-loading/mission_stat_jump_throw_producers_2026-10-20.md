@@ -37,8 +37,16 @@ raw comparison and state-reset instructions are preserved in
 Other writers use states 3, 4, and 7 for distinct Player interaction states.
 Collision callback `0049E0A0` sets `+0x12C` for an
 upward-facing contact; integrator `0049DBC0` copies it to `+0x12D` and clears
-`+0x12C`. This establishes a transient contact latch, while its equivalence to
-the host's grounded state or keyboard jump path remains unproven.
+`+0x12C`. Accepted collision-response calls are at `0043F92E` and `0043F9F8`
+in the `0043F810` block; the direct downward-snap branch is separate. Player
+vtable slot `+0x64` points to wrapper `0043F680`, which calls `0049DBC0` and
+clears Player `+0x130`, but no direct code caller or outer callback schedule is
+established. Reset helper `0044CD10` zeros cooldown timestamp `+0x388` and
+neighboring timer fields `+0x384/+0x38C/+0x390`, then initializes both contact
+bytes `+0x12C/+0x12D` to 1. This establishes the latch mechanics, while its
+equivalence to the host's grounded state, exact ordering, and normal-state
+input producer remain unproven. See
+[`player_jump_contact_latch_2026-10-20.md`](player_jump_contact_latch_2026-10-20.md).
 
 The Player action constructor registers `JUMP` at `004395C0` using control ID
 `0x105`, which the input-name constructor registers as `MOUSE_RB` at
@@ -59,18 +67,21 @@ timing remain provisional. This branch does not call the `0044E990`
 velocity/stat routine. When state is not 4, the update calls `0044E990` separately at
 `00453784`; that routine uses its 500 ms timer and `+0x12C` latch, independent
 of the visible `JUMP` query. The camera/input pass at `0042DB06` also queries
-MOUSE_RB but discards that call's result. The Player origin/bounds transform,
-outer update cadence, and normal-state jump/contact behavior remain
-unresolved. See
+MOUSE_RB but discards that call's result. The Player origin/bounds transform
+and outer update cadence remain unresolved. The local jump-helper → integrator
+→ collision order is preserved in
+[`player_update_jump_contact_order_2026-10-20.asm`](player_update_jump_contact_order_2026-10-20.asm).
+See
 [`player_jump_action_state4_2026-10-20.asm`](player_jump_action_state4_2026-10-20.asm).
 No Space binding was found in the retail Player action constructor.
 
-The shared host accepts jumps from grounded or climbing states, applies the
-same 400-unit vertical impulse, and has a 500 ms cooldown. It does not model the
-retail state-5 command gate, the consumed `+0x12C` callback latch, or the
-source's combined impulse/stat/sound transaction. Do not count every host jump
-as a retail-equivalent `Jumps` value until the input route and these state gates
-are joined.
+The shared host now reads the previous step's collision latch before consuming
+it, applies the 400-unit impulse through the 500 ms gate, handles its climb
+state with the source's set-to-400 branch, increments `Jumps`, and requests the
+registered `Jump` sound. Current collision acceptance and host-frame cadence
+remain adapters; this is not a retail parity result. The right-mouse `JUMP`
+action only drives crouch clearance in the host, with Space retained as an
+extra alias in that state.
 
 ## Objects Thrown
 
@@ -201,8 +212,12 @@ each held Player update without a separate input edge. The host substitutes
 its camera basis for the throw gate's Player view follower at root `+0x34A4`
 and for the separate held-target frame at root `+0x24`; it samples the callback
 once per host frame. Both adapters and the host cadence remain provisional.
-`Jumps` still needs the retail input, state, and contact-latch route mapped to
-the host movement transaction.
+`Jumps` now has a source-mapped 500 ms transaction, state gate, collision
+writer, integrator consumer, and local movement order. The state-not-4 branch
+has no button gate; outer callback cadence remains open. The shared host now
+uses the prior-step latch, increments `Jumps`, and requests the `Jump` sound;
+host collision/cadence mapping remains provisional. See
+[`player_jump_contact_latch_2026-10-20.md`](player_jump_contact_latch_2026-10-20.md).
 The local retail Player route is root slot `+0x14` → wrapper `0044FE20` →
 `00470740(Player+0x140)` → movement slot zero → `00452570`; the recurring outer
 manager and cadence remain unknown. See

@@ -8,6 +8,31 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## Player jump/contact transaction slice (2026-10-20)
+
+The normal-state Player updater calls `0044E990` before the root vtable
+`+0x64` integrator wrapper and before the collision loop. A collision latch
+accepted during that collision pass can feed the next normal-state update.
+Retail gates the impulse on a 500 ms clock and the contact latch, or sets the
+vertical velocity to 400 while in climb state 5; each accepted transaction
+increments `Jumps` and requests the `Jump` sound. State 4 is crouch and polls
+the named JUMP action only to clear its standing-height obstruction.
+
+The shared Player step now follows that local ordering: it consumes the prior
+host collision latch for jump gating, applies the 400 impulse and 500 ms gate,
+increments `Jumps`, requests `Jump`, then resolves current collision for the
+next step. The host's accepted-normal mapping, one-step-per-host-frame cadence,
+climb-state mapping, and crouch bound transform remain provisional. This is
+source-shaped implementation, not retail parity. Evidence is in
+[`player_jump_contact_latch_2026-10-20.md`](../tracker/evidence/scenario-loading/player_jump_contact_latch_2026-10-20.md),
+[`player_update_jump_contact_order_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_update_jump_contact_order_2026-10-20.asm),
+and [`mission_stat_jump_throw_producers_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_jump_throw_producers_2026-10-20.md).
+The macOS `fdny-scene-viewer` target compiled after this change with SHA-256
+`8fa302242fc87678973bc22f2dc7c91fe6e277646c63ff5f3daf2f6ffa5ccf03`. The
+linker warned that installed `json-c` was built for macOS 27.0 while the target
+deployment is 13.3. No tests, interactive gameplay, or retail parity check was
+run.
+
 ## BModel use-mode initialization slice (2026-10-20)
 
 The shared mission scene now retains BModel use mode from authored script and
@@ -139,6 +164,9 @@ and
 | `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. It does not call status 3 or touch Player `+0xA94`; post-throw visibility route remains open. No edits |
 | `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local Player/BModel routes to `00470740` and callback bodies are mapped, but recurring manager caller and frame ordering remain unproven. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
+| `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
+| `player_contact_latch` (Luna) | `0049E0A0`, `0049DBC0`, `0043F680`, Player collision/update vtable route; current-hash headless Ghidra and collision note | Complete, read-only; confirmed accepted collision writers and Player vtable slot `+0x64` → `0043F680` → integrator, which consumes/clears the latch. Parent follow-up found the indirect call before collision loop `0043F6D0`; downward snap bypasses the writer and outer cadence remains unresolved. No edits |
+| `player_jump_contact_order` (parent follow-up) | Search of vtable slot `+0x64` references and raw Player movement window `00453784..004537DB`; saved Ghidra project | Complete, read-only; confirmed `0044E990` → integrator wrapper → collision loop within one Player movement pass. Accepted contact can set `+0x12C` for the next normal-state pass. Outer recurring cadence remains unresolved. No edits |
 
 ## Boat A type-5 Exploder trace (2026-10-20)
 
@@ -256,11 +284,17 @@ resolve state 4 as crouch and show `0044BCE0` also handles `uncrouch`, so
 JUMP is a crouch-clearance/uncrouch action there. The helper queries
 `geWorld_GetContents` in mode 2; returned contents intersecting `0x43` block
 uncrouching. Its source bounds use 25/85 values, matching host max-Y values,
-but origin/bounds mapping and normal-state jump/contact behavior remain open.
+but origin/bounds mapping and outer Player callback cadence remain open. The
+local jump → integrator → collision order is now traced; accepted collision can
+feed the following Player pass. The shared host uses that prior-step latch,
+ports the source-shaped 400 impulse and 500 ms gate, and increments `Jumps`
+with a `Jump` sound request. Collision acceptance and host cadence remain
+provisional. Total Steps remains unported; Objects Thrown is connected to the
+host throw transaction, with frame cadence still provisional. See
+[`player_jump_contact_latch_2026-10-20.md`](../tracker/evidence/scenario-loading/player_jump_contact_latch_2026-10-20.md).
 The separate
 state-5 setter branch is the `climb` command, and `unclimb` restores state 3
-only from state 5. Total Steps' sound-selection cadence remains open, so Jumps
-and Objects Thrown are still unported. See
+only from state 5. Total Steps' sound-selection cadence remains open. See
 [`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md).
 Raw command-token and state-reset instructions are in
 [`player_climb_state_command_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_climb_state_command_2026-10-20.asm).

@@ -3705,6 +3705,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             {"Completion Time", {0, 0}},
             {"Air Time", {0, 0}},
             {"Bonus Points", {0, 0}},
+            {"Jumps", {0, 0}},
             {"Objects Thrown", {0, 0}},
             {"Rescues", {0, 0}},
             {"Gallons Sprayed", {0, 0}},
@@ -5693,7 +5694,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         if (dedicatedPlayerHose) {
             std::cout << "PlayerHose: the authored camera rail follows the hose path. Move the mouse to steer the stream; left-click and hold to douse the selected WindowFire target. Escape releases the mouse.\n";
         } else {
-            std::cout << "WASD move, mouse look, Space/right mouse jump, C crouch, Escape releases the mouse.\n"
+            std::cout << "WASD move, mouse look; jumps trigger on accepted ground contact, right mouse (Space alias) clears crouch, C crouches, Escape releases the mouse.\n"
                       << "Press F to snap to the nearest walkable collision floor below you.\n"
                       << "Rescue victims render from exported ACT assets; authored roam commands move them around the map.\n"
                           "Authored FireRescue sprites animate; left-click and hold with the extinguisher selected to suppress fires.\n"
@@ -6039,8 +6040,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 !passoutRecoveredThisFrame && rescueState.exits.messageGate != 2;
             if (hostPlayerSteppedThisFrame) {
                 // The source movement update returns after its timeout write.
-                player.step(dt, forward, side, yaw, jumpDown,
+                const bool acceptedJump = player.step(dt, forward, side, yaw, jumpDown,
                     jumpEdge && !usingConsole, crouchEdge, collision, pitch);
+                if (acceptedJump) {
+                    addSourceStatistic(&rescueStatistics["Jumps"], 1);
+                    sceneAudio.playOwned(playerEntityId, "Jump", player.p, player.p,
+                                         yaw, 1);
+                }
             }
             // Player::Think calls the RescueBot callback after movement and
             // collision. Host frame cadence remains provisional.
