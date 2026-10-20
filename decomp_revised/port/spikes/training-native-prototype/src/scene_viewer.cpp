@@ -7291,8 +7291,15 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             const V playerMinimum = player.p + V{-30.f, -30.f, -30.f};
             const V playerMaximum = player.p + player.maxs();
             for (const auto& bmodel : bmodelMotions) {
+                V contactMinimum = bmodel.boundsMin;
+                V contactMaximum = bmodel.boundsMax;
+                // 0043DC60 refreshes 0043B7A0 bounds after child PATH updates
+                // when UserData G_Liftable is set. Transforming current child
+                // corners approximates Genesis' runtime model extents here.
+                if (bmodel.liftable != 0)
+                    bmodelInteractionBounds(bmodel, collision, contactMinimum, contactMaximum);
                 const bool inside = BModelContact::overlapsExpanded(
-                    bmodel.boundsMin, bmodel.boundsMax, playerMinimum, playerMaximum,
+                    contactMinimum, contactMaximum, playerMinimum, playerMaximum,
                     bmodel.contactReach);
                 const bool wasInside = bmodelContacts[bmodel.entity];
                 if (scriptRuntime) {

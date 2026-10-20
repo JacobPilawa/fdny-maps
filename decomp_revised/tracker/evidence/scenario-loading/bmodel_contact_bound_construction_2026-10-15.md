@@ -1,8 +1,9 @@
 # Retail BModel contact-bound construction audit
 
-Updated 2026-10-15; root-offset correction added 2026-10-20. This audit maps
-the child-model extent reads used during BModel initialization. It narrows the
-host comparison but does not establish bit-for-bit runtime parity.
+Updated 2026-10-15; root-offset and update-path corrections added 2026-10-20.
+This audit maps the child-model extent reads used during BModel initialization
+and movement. It narrows the host comparison but does not establish bit-for-bit
+runtime parity.
 
 ## Pinned inputs
 
@@ -45,6 +46,19 @@ assembly: they are decimal, so `lea 240(%ebp)` is root `+0xF0`, while
 initializer also runs through `0043DC60`'s embedded ScriptActor path, which
 normalizes its `root+0x24` pointer back to the BModel root before the call.
 
+The current-hash `0043DC60` update samples each child motion path and writes
+its model transform before checking parsed BModel UserData `+0x38`
+(`G_Liftable`). When that value is nonzero, callsite `0043E188` invokes
+`0043B7A0` with `this-0x24`, refreshing the raw child-bound union before the
+timed-command loop. `0043BAA0` also writes each child's requested translation
+as target center minus that child's rotational center, optionally stores the
+new owner center, then calls `0043B7A0`; its callers include the trajectory
+update `0043D330` and center correction `0043BD90`. Thus the retail liftable
+path recomputes bounds after child pose changes. A fresh direct-reference and
+offset-use audit did not identify a BModel-root consumer for the converted
+`+0xF0..+0x120` structure or the 32-unit-expanded `+0x278..+0x28C` copy;
+matching numeric offsets in Player and other functions use different bases.
+
 The saved bounded disassembly excerpts are in
 [`bmodel_contact_bound_construction_2026-10-15.asm`](bmodel_contact_bound_construction_2026-10-15.asm).
 They include the initializer and its vector helpers, `004818C0`, `004819A0`,
@@ -65,10 +79,13 @@ model's exported `mins` and `maxs` into `PreviewBModelMotion::boundsMin` and
 This matches the asset-bound inputs for the contact callback, assuming the
 Genesis runtime model extent fields retain the corresponding GBSP `MODELS`
 values. The exporter and loader establish that data lineage; no live Genesis
-model read has verified those runtime fields. The host currently omits the
-tiny per-child adjustment from `004818C0` (the pinned float is approximately
-`2.0535056e-19`), whose effect can differ at zero-valued bounds. The separate
-52-byte structure written at `+0xF0` and the 32-unit-expanded box at
-`+0x278..+0x28C` may serve other consumers; their consumer paths remain open.
-A follow-up should verify runtime extents and these other consumers before
-changing the host bounds.
+model read has verified those runtime fields. The shared host contact pass now
+recomputes bounds from current child poses for nonzero `G_Liftable` entities,
+reusing its eight-corner world-bound adapter; static bounds remain for other
+BModels. This follows the retail refresh gate but approximates Genesis runtime
+extents, whose exact update behavior is not live-verified. The host still omits
+the tiny per-child adjustment from `004818C0` (approximately `2.0535056e-19`),
+whose effect can differ at zero-valued bounds. The converted
+`+0xF0..+0x120` structure and expanded `+0x278..+0x28C` copy have no verified
+consumer yet. Treat the lifted contact-box port as source-shaped, with runtime
+extent parity and callback cadence provisional.

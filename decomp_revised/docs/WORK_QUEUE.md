@@ -477,7 +477,7 @@ and
 | Agent | Scope and files | Status |
 | --- | --- | --- |
 | `bmodel_contact_registry` | Read-only check of retail contact registration/removal and host seam; Ghidra exports, `scene_viewer.cpp`, BModel contact evidence | Complete; registry mechanics confirmed, live order and cadence unresolved |
-| `bmodel_next_core_gap` (Luna) | Recheck `0043B7A0` initialization base, raw union, converted structure, and `0043B620` consumer | Current-hash Ghidra export and AT&T disassembly | Complete; decimal displacements resolve the apparent offset mismatch: raw union is root +0x240/+0x24C and feeds contact, converted 52-byte output is root +0xF0, and the +0x260 32-unit adjustment is separate. No code edits. |
+| `bmodel_next_core_gap` (Luna) | Recheck `0043B7A0` offsets and identify consumers of its outputs | Current-hash Ghidra export, direct xrefs, and broad offset-use census | Complete; decimal displacements resolve raw contact union +0x240/+0x24C vs converted output +0xF0; 32-unit copy is +0x278..+0x28C. `0043DC60` refreshes raw bounds after child PATH transforms for G_Liftable; no verified BModel-root consumer of the other outputs. Root +0x240 contact is confirmed; runtime field and cadence parity remain open. No edits. |
 | `bmodel_selection_query` | Read-only trace of `00459350`/`00459630` and query vtable; fresh Ghidra exports and interaction helpers | Complete; ordered scan, 200-unit cutoff, and later tie winner confirmed |
 | `bmodel_selection_review` | Read-only review of the new selection and held-pose adapter; `bmodel_interaction_selection.h`, `scene_viewer.cpp`, held-frame evidence | Complete; documented provisional frame, bounds, Player gate, and callback mappings; no edits |
 | `bmodel_update_scheduler` (Luna) | External recurring caller/cadence for BModel slot `+0x14`; current-hash Ghidra and saved fixed-offset scan | Complete; local slot `+0x14` → `0043AFE0` → `00470740` → `0043DC60` route is known, and `0043DC60` directly calls `0043D330` when root `+0x258` is nonzero. No recurring manager route into root slot `+0x14` is proven, so callback cadence/order remain unknown. No edits |
@@ -2251,9 +2251,17 @@ the report is observed.
   offset audit corrected the earlier destination: `004819A0`'s 52-byte result
   is copied to root `+0xF0`, while `0043B620` gives the raw union directly to
   `004817A0`; a separate copy at `+0x278..+0x28C` is expanded by 32 units.
+  `0043DC60` refreshes the raw union after child PATH transforms for nonzero
+  `G_Liftable`; the shared contact pass now rebuilds those bounds from current
+  child poses before overlap checks.
   The host uses the matching exported GBSP `MODELS` bounds as its
   union inputs; Genesis runtime extents and the tiny `004818C0` adjustment
-  remain unverified. See
+  remain unverified. The rescue-all macOS executable was rebuilt with matching
+  standalone/package SHA-256
+  `10630ef909d3f449258d22ac70084f97bd1ca65f1b9f5d98c89e23123f905ac0`;
+  `Info.plist` validation passed. The installed json-c dylib targets macOS
+  27.0 while this build links for 13.3. This is compile/package evidence only;
+  no runtime or retail parity check was performed. See
   [`bmodel_contact_bound_construction_2026-10-15.md`](../tracker/evidence/scenario-loading/bmodel_contact_bound_construction_2026-10-15.md).
 
 - **2026-10-14 all-victim rescue checkpoint:** `--rescue-check` now runs every
