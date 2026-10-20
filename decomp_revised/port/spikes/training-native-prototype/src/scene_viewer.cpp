@@ -5839,12 +5839,16 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     // Player candidate per fire; a frame-wide cap would
                     // incorrectly discard later FireRescue instances.
                     if (fire.runtime.suppression.state == 5) continue;
+                    // 0044A7A0 reads first flame sprite +0xD0. Fire Think
+                    // writes that alpha from strength and clamps it to 0.999.
+                    // Its pre-first-update value and callback order remain open.
+                    const float emitterAlpha = fire.runtime.alpha;
                     const auto unobstructedContact = PlayerFireContact::evaluate(
                         fire.runtime.visual.position,
                         fire.runtime.visual.sizes.size.x,
                         fire.runtime.visual.sizes.size.z,
                         0.f, // Retail PlayerRescue initializes getter buffer +0x0C's fourth float (+0x74) to zero.
-                        1.f, fire.runtime.suppression.strength,
+                        emitterAlpha, fire.runtime.suppression.strength,
                         candidatePosition, false);
                     // Retail 004483A0 first rejects candidates beyond its
                     // 500-unit max-axis gate, then computes volume falloff,
@@ -5865,7 +5869,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                             fire.runtime.visual.sizes.size.x,
                             fire.runtime.visual.sizes.size.z,
                             0.f, // Retail PlayerRescue initializes getter buffer +0x0C's fourth float (+0x74) to zero.
-                            1.f, fire.runtime.suppression.strength,
+                            emitterAlpha, fire.runtime.suppression.strength,
                             candidatePosition, true)
                         : unobstructedContact;
                     // Retail applies the influence cutoff before visibility.

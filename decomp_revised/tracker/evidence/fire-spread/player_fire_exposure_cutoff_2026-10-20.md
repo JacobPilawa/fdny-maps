@@ -43,8 +43,10 @@ cutoff check, while retail compares the live x87 extended result against the
 binary64 cutoff. The host narrows the intensity weight to binary32 before
 multiplication and narrows the message value before later visibility
 attenuation, matching the traced storage points. Its spatial arithmetic still
-uses binary64 rather than x87 extended precision. The host also supplies unit
-emitter scale because the FireEmitter mapping is unresolved. Thus the exact
-constant and gate order are confirmed, but near-cutoff precision, exposure
-magnitude, callback cadence, and retail damage feel remain unverified. This is
-not a retail-parity claim.
+uses binary64 rather than x87 extended precision. The host now supplies the
+first flame sprite's strength-derived alpha override as the emitter multiplier;
+the setter and falloff read are documented in
+[`fire_emitter_alpha_exposure_2026-10-20.md`](fire_emitter_alpha_exposure_2026-10-20.md).
+The alpha value before the first actor update and callback cadence remain
+unresolved. Near-cutoff precision and retail damage feel also remain
+unverified. This is not a retail-parity claim.

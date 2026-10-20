@@ -504,9 +504,11 @@ unobstructed and visibility-attenuated Player exposure calculations, replacing
 the former provisional 30-unit movement-hull padding. The binary64 `0.0001`
 influence cutoff and its pre-visibility position are now confirmed; the host
 preserves messages attenuated below the cutoff, matching the retail order.
-Callback cadence, later arbitrary aliases, emitter scale, near-cutoff x87
-precision, and live damage response remain open; no retail watchpoint or
-natural exposure capture was available.
+The first flame sprite's alpha override is now confirmed as the falloff
+multiplier and is wired into the shared port. Its initial/stale value, callback
+cadence, later arbitrary aliases, near-cutoff x87 precision, and live damage
+response remain open; no retail watchpoint or natural exposure capture was
+available.
 
 The fresh pseudocode and trace are in
 [`player_fire_exposure_padding_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/player_fire_exposure_padding_fresh_2026-10-20.c)
@@ -523,7 +525,25 @@ compile/package check; it does not establish fire-damage feel or retail parity.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Player fire falloff padding and cutoff | `scene_viewer.cpp`, `player_fire_contact.h`, `player_rescue_candidate_getter.md`, `player_fire_exposure_cutoff_2026-10-20.md`, fresh exports, function-review CSV | Implemented with constructor-backed `0.0f` padding and exact binary64 `0.0001` pre-visibility cutoff; post-attenuation messages are retained. Callback cadence, possible later aliases, emitter scale, x87 near-cutoff precision and live damage behavior remain open |
+| Player fire falloff padding and cutoff | `scene_viewer.cpp`, `player_fire_contact.h`, `player_rescue_candidate_getter.md`, `player_fire_exposure_cutoff_2026-10-20.md`, `fire_emitter_alpha_exposure_2026-10-20.md`, fresh exports, function-review CSV | Implemented with constructor-backed `0.0f` padding, exact binary64 `0.0001` pre-visibility cutoff, retained post-attenuation messages, and source-mapped first-flame alpha. Initial/stale alpha, callback cadence, possible later aliases, x87 near-cutoff precision and live damage behavior remain open |
+
+## Player fire exposure emitter alpha traced (2026-10-20)
+
+The pinned retail falloff reads child `+0xD0` through the first FireRescue
+visual sprite pointer. `00449FE0` derives that alpha from suppression strength,
+`0044A610` clamps it to `0.999`, and `0047F1F0` stores it while enabling the
+child alpha override. The shared Player contact path now uses `FireEntity::alpha`
+instead of a unit multiplier. This closes the steady-state emitter-alpha
+mapping, while the first value before the initial actor update and callback
+ordering remain unresolved. Evidence and host limitations are recorded in
+[`fire_emitter_alpha_exposure_2026-10-20.md`](../tracker/evidence/fire-spread/fire_emitter_alpha_exposure_2026-10-20.md).
+The rescue-all macOS compile/package build completed with matching standalone
+and app executable SHA-256
+`dcf97672a2ebaf01faf716ce2757e75323901bd9461b6ddea8d4d990deb2f967`;
+`Info.plist` passed validation and eight rescue choices were emitted. Linking
+retained the existing Homebrew `json-c` macOS 27.0 versus target 13.3 warning.
+This was a compile/package check only, with no tests, interactive run, or
+retail-parity check.
 
 ## Mission outcome status dispatch traced (2026-10-20)
 
@@ -1856,7 +1876,7 @@ the report is observed.
   the retail nonempty A_Name gate; generated unnamed children do not become
   spread parents. Player message `0x7531` now reaches the traced pain, burn
   accumulation, and passout path; retail pain/passout WAVs are bundled. Fire
-  contact scheduling, emitter scale and x87 near-cutoff precision remain
+  contact scheduling, initial/stale emitter alpha and x87 near-cutoff precision remain
   provisional. The viewer now uses the verified binary64 `0.0001` pre-visibility
   cutoff and retains messages after visibility attenuation, as retail does. It
   also uses zero padding from the Player getter's

@@ -10,8 +10,8 @@ inline constexpr double kPlayerFireExposureInfluenceCutoff = 0.0001;
 // Retail 004483A0 exposure candidate math, using the live shared FireVisual
 // size as the two volume extents. PlayerRescue's constructor initializes the
 // fourth float after its returned XYZ buffer to zero (+0x74); the viewer passes
-// that source-derived padding. Emitter scale remains explicit because its
-// FireEmitter mapping is not yet verified.
+// that source-derived padding. The emitter alpha is the first flame sprite's
+// +0xD0 override, which Fire Think derives from suppression strength.
 struct PlayerFireContact {
     int maxAxisDistance = 0;
     float spatialFalloff = 0.f;
@@ -19,7 +19,7 @@ struct PlayerFireContact {
     double preVisibilityInfluence = 0.0;
 
     static PlayerFireContact evaluate(V fireOrigin, float volumeWidth, float volumeDepth,
-                                      float candidatePadding, float emitterScale,
+                                      float candidatePadding, float emitterAlpha,
                                       float fireIntensity, V candidate, bool blocked) {
         const double dx = double(candidate.x) - fireOrigin.x;
         const double dy = double(candidate.y) - fireOrigin.y;
@@ -34,7 +34,7 @@ struct PlayerFireContact {
         const double radius = unpaddedRadius + candidatePadding;
         const double weightedDistanceSquared = dx * dx + (2.0 * dy) * (2.0 * dy) + dz * dz;
         if (radius <= 0.0 || weightedDistanceSquared > radius * radius) return result;
-        const double spatialFalloff = double(emitterScale) / radius *
+        const double spatialFalloff = double(emitterAlpha) / radius *
             (radius - std::sqrt(weightedDistanceSquared));
         result.spatialFalloff = float(spatialFalloff);
 

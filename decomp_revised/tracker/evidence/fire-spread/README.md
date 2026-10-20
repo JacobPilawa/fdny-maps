@@ -95,8 +95,9 @@ second cutoff. The host now follows that gate order. Its influence value is
 retained as a binary64 approximation for the cutoff check, while retail uses
 the live x87 extended result. The host narrows its intensity weight to
 binary32 and narrows the message value before obstruction attenuation. Spatial
-arithmetic therefore still differs near the threshold; emitter scale and
-callback cadence also remain unresolved. See
+arithmetic therefore still differs near the threshold; the emitter multiplier
+is now source-mapped to the first flame sprite's alpha override. Its initial
+value and callback cadence remain unresolved. See
 [`player_fire_exposure_cutoff_2026-10-20.md`](player_fire_exposure_cutoff_2026-10-20.md).
 
 `ComputeFireVolumeFalloff` (`0x0044A7A0`) computes the spatial term. Its
@@ -109,10 +110,16 @@ and the old export for comparison. Do not infer native return storage from the
 normalized prototype. With
 `r = (volume[+0x44] + volume[+0x4C]) * 0.5 + candidatePadding` and
 `d² = dx² + (2*dy)² + dz²`, it returns
-`scale/r * (r - sqrt(d²))` when the unpadded radius is at least 0.01 and
+`emitterAlpha/r * (r - sqrt(d²))` when the unpadded radius is at least 0.01 and
 `d² <= r²`; otherwise it returns zero. The scale is read through
 `volume[+0x60] + 0xD0`. The helper is also called at `0x00463EF0`, so this
 is a shared fire-volume falloff routine rather than a callback-only helper.
+For Player exposure, that field is the first flame sprite's alpha override:
+`00449FE0` derives it from suppression strength, `0044A610` clamps it to
+`0.999`, and `0047F1F0` writes the child `+0xD0` value while enabling its
+`+0xD4` override. The separate glow alpha is not used by this falloff. The
+initial override value and callback order remain open; see
+[`fire_emitter_alpha_exposure_2026-10-20.md`](fire_emitter_alpha_exposure_2026-10-20.md).
 
 The Player vtable message handler `DispatchPlayerMessage` (`0x00453A70`)
 routes `0x7531` payload word 0 as the FireRescue pointer and word 1 as the
