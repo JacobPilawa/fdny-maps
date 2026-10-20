@@ -129,11 +129,10 @@ struct Player{
   float len=length(wish);
   if(len>0){
    wish=wish*(speed/std::max(1.f,len));
-   // Retail derives a half-life in 00482AD0 and blends with pow(0.5,dt/halfLife)
-   // in 00482FC0. This exponent is algebraically equivalent for base .2/.95;
-   // the host's ground/climbing base selection and double-precision libm are
-   // still provisional against retail's state/contact/debug gates and x87 path.
-   double weight=std::pow((ground||climbing)?.2:.95,27*dt);
+   // Retail selects base .2 for state 5 or the prior +0x12C contact latch;
+   // +0x380 is a separate unported debug gate. 00482AD0/00482FC0 reduce to
+   // this exponent for the fixed .2/.95 bases; libm/x87 rounding still differ.
+   double weight=std::pow((climbing||priorContactLatch)?.2:.95,27*dt);
    v.x=float(wish.x*(1-weight)+v.x*weight);
    v.z=float(wish.z*(1-weight)+v.z*weight);
    if(climbing)v.y=float(wish.y*(1-weight)+v.y*weight);

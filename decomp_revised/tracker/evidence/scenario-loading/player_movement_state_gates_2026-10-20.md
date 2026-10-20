@@ -84,9 +84,11 @@ movement parity. See
 The smoothing call at `004532B3` passes the 0.95/0.2 base and
 27 to `00482AD0`; its result is a half-life used by `00482FC0` as
 `pow(0.5, frameDelta/halfLife)`. For those fixed bases this is algebraically
-equivalent to the host's `pow(base, 27*dt)`. The host's ground/climbing base
-selection, double-precision libm, x87 rounding, and callback cadence remain
-unverified. See
+equivalent to the host's `pow(base, 27*dt)`. The host now chooses base 0.2 for
+its climb state or the prior `+0x12C` contact latch, matching the recovered
+ordinary gates. The separate retail `+0x380` debug gate is not ported;
+double-precision libm, x87 rounding, and callback cadence remain unverified.
+See
 [`player_movement_smoothing_formula_2026-10-20.md`](player_movement_smoothing_formula_2026-10-20.md).
 
 `ESI+0x3310` aliases Player root `+0x3450`, the oxygen resource. The

@@ -323,8 +323,10 @@ live scheduling remains unresolved. This removes placeholder item data from
 the possible frame input but does not establish movement parity.
 `00482AD0` derives a half-life consumed by `00482FC0`; for the fixed movement
 bases, retail's `pow(0.5,dt/halfLife)` is algebraically equivalent to the
-host's `pow(base,27*dt)`. Host base selection, x87 rounding, and callback
-cadence are still provisional. Evidence:
+host's `pow(base,27*dt)`. The host now selects base 0.2 from climb state or the
+prior `+0x12C` contact latch, rather than its `ground` approximation. The
+separate `+0x380` debug gate, x87 rounding, and callback cadence remain open.
+Evidence:
 [`player_movement_smoothing_formula_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_smoothing_formula_2026-10-20.md)
 and
 [`player_movement_gate_bytes_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_gate_bytes_2026-10-20.md).
