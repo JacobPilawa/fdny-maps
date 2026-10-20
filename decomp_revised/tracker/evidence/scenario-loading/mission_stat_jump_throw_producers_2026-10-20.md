@@ -27,11 +27,15 @@ clock `00502AFC`. If the interval has elapsed:
 The fields are not a generic jump counter and a grounded Boolean. Reset helper
 `0044CD10` initializes `+0x18C` to 3 and `+0x12C/+0x12D` to 1. The parsed
 `jump` ScriptActor token in handler `00451870` calls `0044E990` directly at
-`004518D4`. A separate handler branch at `00451B92` calls `0044C0B0`; that
-helper sets state 5 only when the current state is not 5 and Player `+0x3440`
-is zero. The token for this state-5 branch is unresolved and must not be
-identified as `jump`. Other writers use states 3, 4, and 7 for distinct Player
-interaction states. Collision callback `0049E0A0` sets `+0x12C` for an
+`004518D4`. A separate handler branch compares the token with `climb` at
+`00451B60`, then calls `0044C0B0` at `00451B92`; the helper sets state 5 only
+when the current state is not 5 and Player `+0x3440` is zero. The adjacent
+`unclimb` token at `004E1BDC` restores Player state 3 only from state 5. Thus
+state 5 is part of the climb command path, not a second `jump` binding. The
+raw comparison and state-reset instructions are preserved in
+[`player_climb_state_command_2026-10-20.asm`](player_climb_state_command_2026-10-20.asm).
+Other writers use states 3, 4, and 7 for distinct Player interaction states.
+Collision callback `0049E0A0` sets `+0x12C` for an
 upward-facing contact; integrator `0049DBC0` copies it to `+0x12D` and clears
 `+0x12C`. This establishes a transient contact latch, while its equivalence to
 the host's grounded state or keyboard jump path remains unproven.
@@ -39,8 +43,12 @@ the host's grounded state or keyboard jump path remains unproven.
 The Player action constructor registers `JUMP` at `004395C0` using control ID
 `0x105`, which the input-name constructor registers as `MOUSE_RB` at
 `00437F30`. This confirms the default action binding but not the call path from
-right-click input to the update or state-5 branch: no saved poll site joins the
-action to either call. No Space binding was found in that constructor.
+right-click input to the jump producer: the saved `0042D8C0` call at
+`0042DB06` discards the `MOUSE_RB` query result and proceeds into cursor
+handling. A bounded saved-callsite scan found no `JUMP` query in movement
+update `00452570` and no bridge to `00453784` or `0044E990`; it does not exclude
+indirect runtime scheduling or behavior in unsaved callees. No Space binding
+was found in that constructor.
 
 The shared host accepts jumps from grounded or climbing states, applies the
 same 400-unit vertical impulse, and has a 500 ms cooldown. It does not model the

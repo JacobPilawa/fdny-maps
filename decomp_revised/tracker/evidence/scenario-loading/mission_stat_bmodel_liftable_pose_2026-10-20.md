@@ -158,8 +158,11 @@ The Player action constructor registers `JUMP` to control ID `0x105`; the input
 name table maps that ID to `MOUSE_RB`. The `0042D8C0` camera/input pass queries
 right mouse at `0042DB06`, but discards the result. Its left-mouse query stores
 its result at Player `+0x285`. The saved static references do not join the
-right-mouse result to Player update `00453784`, state-5 setter `0044C0B0`, or
-ScriptActor handler `00451870`. The literal `jump` ScriptActor branch at
-`004518D4` directly calls producer `0044E990`; the separate state-5 branch at
-`00451B92` has an unresolved command token. This control bridge remains open;
+right-mouse result to Player update `00453784` or producer `0044E990`. The
+literal `jump` ScriptActor branch at `004518D4` directly calls producer
+`0044E990`. The separate state-5 branch compares the `climb` token at
+`00451B60` and calls setter `0044C0B0`; the adjacent `unclimb` branch restores
+state 3 only from state 5. Its token is recorded in
+[`player_climb_state_command_2026-10-20.asm`](player_climb_state_command_2026-10-20.asm).
+The JUMP control bridge remains open;
 the host jump impulse and counter should not be described as retail-equivalent.

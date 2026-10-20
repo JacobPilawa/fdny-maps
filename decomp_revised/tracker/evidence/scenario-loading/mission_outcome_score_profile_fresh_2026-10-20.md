@@ -116,9 +116,9 @@ interactive run, or retail comparison was performed.
 
 ## Next evidence step
 
-Finish the three remaining stat integrations against the shared host: map the
-JUMP action's runtime poll route and the state-5 command token, establish the
-host cadence for the Total Steps sound-selection gate, and promote the
+Finish the remaining stat integrations against the shared host: map the JUMP
+action's runtime poll route, establish the host cadence for the Total Steps
+sound-selection gate, and promote the
 source-shaped held-BModel throw transaction from the Training spike into the
 shared mission scene with the callback-owned trajectory substep, drop-event,
 sound, and timer services. The direct `0043DC60` → `0043D330` route is mapped;

@@ -73,10 +73,11 @@ no matching sound-selection scheduler, so this producer is not ported yet.
 equal to 5 changes to 3 and sets `+0x100` to 400; otherwise byte `+0x12C` must
 be nonzero, after which `+0x100` increases by 400. It then adds one to `Jumps`,
 requests sound, and stores the current clock. The `jump` ScriptActor branch at
-`004518D4` calls this producer directly. The `+0x18C=5` setter is a separate
-handler branch at `00451B92` whose token is unresolved. Although the Player
-action map registers `JUMP` against the default `MOUSE_RB` control, no saved
-input poll path joins that action to the update or setter. The host collision
+`004518D4` calls this producer directly. The separate state-5 setter at
+`00451B92` is under the `climb` token; the adjacent `unclimb` branch returns
+state 5 to state 3. Although the Player action map registers `JUMP` against the
+default `MOUSE_RB` control, no saved input poll path joins that action to the
+jump producer. The host collision
 latch has not been proven equivalent to retail `+0x12C`, so no jump counter is
 wired. See
 [`mission_stat_jump_throw_producers_2026-10-20.md`](mission_stat_jump_throw_producers_2026-10-20.md).
