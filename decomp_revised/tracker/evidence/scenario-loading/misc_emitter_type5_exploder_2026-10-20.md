@@ -51,24 +51,56 @@ and `+0xB0=4`, then appends each child to the emitter's child list. Internal
 mode 1 instead creates three children using `0x502D78` and initializes a
 `Torch` sound instance; that branch is not the Boat A type-5 path.
 
-`0x502D40` is passed as a pointer to a static descriptor, not established as a
-small RRF resource ID. The saved program image shows zeroed BSS bytes at that
-address; `0047F850` passes it to `0047D370`, which stores the descriptor pointer
-and reads its `+0x18` field. The dynamic descriptor initialization and the
-actual renderer resource/path are not identified by this trace. The four
-children's visible appearance, position/update cadence, and one-second visible
-exposure are therefore still unresolved.
+`0x502D40` is a descriptor pointer, not an RRF resource ID. Ghidra places it
+inside `.data` (`004FF000` base, `0x3000` bytes); its on-disk bytes are zero.
+Both a current-hash Ghidra xref query and a raw little-endian immediate scan
+found one direct reference in the executable: `00445772`, the child-constructor
+argument. That rules out another direct-address initializer in this image, but
+does not rule out runtime writes through computed pointers or resource-loader
+aliases. `0047F850` passes the descriptor to `0047D370`, which stores it at child
+`+0x0C` and copies descriptor `+0x18` to child `+0x18`. `0047D2B0` follows
+descriptor `+0x0C` to a frame/resource array and uses descriptor `+0x18` bit 0
+to select clamping versus wrapping for the two child indices initialized to 0
+and 1. The backing array and runtime descriptor contents remain unknown.
+
+The mode-2 child draw path is now mapped. The internal-emitter vtable slot 9
+(`00445490`) iterates its child array at `+0x4C`/count `+0x50` and calls
+`0047F960(child, renderContext)` for each child; no separate child render-manager
+registration appears in construction or in this parent method. `0047F960`
+selects a world/renderer context, evaluates child vertex/UV/color and size
+tracks, resolves the selected descriptor index through `0047D820`/`0047D860`
+and `00493D00`/`00493650`, then submits a polygon through Genesis
+`geWorld_AddPolyOnce` (import slot `004DC0D0`). This is the resource-ID lookup
+and polygon-submission shape, but the numeric resource IDs from `0x502D40` are
+unknown, so no Boat A bitmap, frame sequence, or faithful visual can be named.
+
+The mode-2 updater is internal-emitter vtable slot 8 (`00444D00`), which updates
+the same child array. No direct RNG call was found in the inspected mode-2
+constructor/update path; this does not rule out draws in resource loading or
+other indirect paths. The generic manager that schedules the parent callbacks
+was not identified, so update/render cadence and order are unknown. The EVS
+one-second wait is an authored command delay before `turnoff`; it does not
+establish visible-effect duration or direct emitter timing.
 
 ## Port status and next trace
 
 The shared scene host currently routes `setsize` only to `PreviewFire` at
 `scene_viewer.cpp:3976`; it has no `RCS_MiscEmitter` runtime representation.
-Adding only an active flag and scalar scale would not reproduce the child
-effect. Next trace the descriptor initialization and mode-2 child update/draw
-consumer, including any shared RNG use. Then add a generic cross-platform
-MiscEmitter implementation that handles the map-authored parameters and
-commands. The existing `victim_spawn_rng_port_coverage.md` also records missing
-MiscEmitter constructor draws; this trace does not resolve those draws.
+The command/state behavior is source-backed, but a visible effect cannot be
+implemented faithfully without the descriptor's numeric resources and track
+data. Next recover the runtime descriptor contents through a resource-loader
+trace or memory capture, then port the generic actor and its authored commands
+in the shared mission host. The existing
+`victim_spawn_rng_port_coverage.md` also records missing MiscEmitter constructor
+draws; this trace finds no direct RNG call in the inspected mode-2 methods but
+does not resolve all resource initialization or queue-order draws.
 
-This checkpoint is static source/data analysis only: no code change, build,
-gameplay run, or retail-parity check was performed.
+## Follow-up provenance
+
+The update/child/resource traces used Ghidra 12.0.4 headless reads of the
+saved `FDNYPort` program and raw current-hash instruction windows. Temporary
+logs are under `/private/tmp/fdny_misc_*`; the `.data` RVA/contents were checked
+against the hash-pinned PE. The executable is still
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`. This is
+static evidence only: no runtime memory capture, code change, build, gameplay
+run, or retail-parity check was performed.

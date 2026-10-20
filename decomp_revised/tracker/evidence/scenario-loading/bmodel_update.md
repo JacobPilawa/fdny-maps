@@ -28,7 +28,29 @@ For each child model, the routine obtains its Genesis motion, samples the path a
 
 ## Timed command records
 
-The BModel stores a pointer array at ScriptActor `+0x124` and a count at `+0x128`. An active record has an active byte at `+0`, a key frame at `+4`, a shared command string object at `+8`, and an opaque context pointer at `+0xc`. The update compares the key frame's distance from the new frame with the frame step from the previous value. When the key frame is closer to the updated frame than the frame step from the previous value, it calls `DispatchScriptActorCommandWithContext` (`00475310`). That helper stores the supplied context at ScriptActor `+0x78` and routes the command through the common `00470150` dispatcher. It then clears the record's active byte, so the entry fires once.
+The embedded ScriptActor stores a pointer array at `+0x124` and a count at `+0x128`; on the BModel root these are `+0x148` and `+0x14C`. They are separate from root `+0x124`, which is the initialized sound instance. An active record has an active byte at `+0`, a key frame at `+4`, a shared command string object at `+8`, and an opaque context pointer at `+0xc`. The update compares the key frame's distance from the new frame with the frame step from the previous value. When the key frame is closer to the updated frame than the frame step from the previous value, it calls `DispatchScriptActorCommandWithContext` (`00475310`). That helper stores the supplied context at ScriptActor `+0x78` and routes the command through the common `00470150` dispatcher. It then clears the record's active byte, so the entry fires once.
+
+The `addtimecmd` branch in `DispatchBModelScriptCommand` (`0043E680`) passes
+the BModel root to `0043E360`. That helper reuses the first inactive 0x10-byte
+record or grows the array, then stores the active byte, key frame, retained
+command string, and owner context. The `removealltimecmds` branch calls
+`0043C260` from `0043EB22`; it clears the active byte on each counted record
+but leaves the count, pointer array, allocated records, strings, and contexts
+in place. Thus dispatch and removal deactivate entries, and insertion can
+reuse their slots. No available evidence links trajectory completion's `drop`
+event to `removealltimecmds`.
+
+## External update scheduler search
+
+The local BModel route is established: root slot `+0x14` points to thunk
+`0043AFE0`, which adjusts to the ScriptActor and enters shared updater
+`00470740`; its slot-zero callback reaches `0043DC60`. No positive external
+recurring caller for that route has been identified. The inspected owner
+manager pass at `00429520` dispatches four managers through slot zero; its
+contact traversal (`0049BD20`) invokes BModel root slot `+0x48` instead. A
+hash-pinned literal `[reg+0x14]` scan found 53 candidates but no proven BModel
+receiver. These checks do not exclude computed dispatch or unexamined update
+loops, so update cadence and ordering relative to contact remain unknown.
 
 ## Bank route joined to this method
 

@@ -44,11 +44,15 @@ victim spawn factory trace](victim_spawn_factory_and_order.md).
 ## Limits
 
 This is partial stream reconstruction, not seed parity. `RCS_MiscEmitter`
-factory initialization comes before PlayerRescue, FireRescue, and VictimRescue;
-its shared-stream draws are not included. Other actor constructors, sound
-timing, scripts, runtime callbacks, the original time-based seed, and queue
-scheduling can also affect later draws. The viewer cannot yet claim that a
-given retail seed selects the same Fatman variant or spawn spot.
+factory initialization comes before PlayerRescue, FireRescue, and VictimRescue.
+A current-hash Boat A audit found no direct RNG call in the inspected type-5
+mode-2 constructor/update path, but it did not trace every resource-loader or
+indirect initialization path and does not settle other `RCS_MiscEmitter`
+configurations. Other actor constructors, sound timing, scripts, runtime
+callbacks, the original time-based seed, and queue scheduling can also affect
+later draws. The viewer cannot yet claim that a given retail seed selects the
+same Fatman variant or spawn spot. See
+[`misc_emitter_type5_exploder_2026-10-20.md`](misc_emitter_type5_exploder_2026-10-20.md).
 
 The copied previous-project FireRescue pseudocode is preserved under
 `reference/previous-work/decomp/evidence/rng-startup/` and

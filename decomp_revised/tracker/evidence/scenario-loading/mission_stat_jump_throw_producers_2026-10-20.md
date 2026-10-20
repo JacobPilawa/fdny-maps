@@ -86,6 +86,14 @@ state `+0x18C` to 3, and adds exactly one to `Objects Thrown` through
 `00486980` at `0045399C..004539CF`. This identifies the counted operation as a
 held-BModel throw transaction rather than arbitrary contact or generic ACTION.
 
+The status-4 callback is joined to the Player Axe subobject: `004571A0` calls
+`0047DC90` on Player `+0xA94` with a false value. The Player loadout evidence
+identifies this subobject as the Axe actor; the callback hides that subobject.
+The higher-level name for status 4 and a matching shared-host visual state
+remain unresolved. The Player constructor registers `ThrowObject` on the Axe
+subobject, but the release-side sound dispatch was not found; the BModel
+separately registers `ThrowObjectEnd` on its root `+0x124` sound instance.
+
 `0043B580` receives the held BModel root and starts its trajectory. BModel
 update `0043D330` converts the wrapped clock delta to seconds and advances
 state 2 from the stored duration, endpoints, and vertical-trajectory fields.

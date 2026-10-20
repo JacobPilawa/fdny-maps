@@ -95,7 +95,7 @@
     "stale_report_export_addresses": 840,
     "stale_report_matched_addresses": 737,
     "copied_legacy_export_files": 3115,
-    "reviewed_exe_functions": 461
+    "reviewed_exe_functions": 465
   },
   "scope_note": "Function totals are Ghidra-defined boundaries from this binary snapshot. They are not a completeness claim or source-recovery percentage."
 }
