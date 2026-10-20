@@ -707,6 +707,9 @@ FDNYFirefighter.exe,004394c0,118,FUN_004394c0,Global,false,false,__fastcall,unde
 FDNYFirefighter.exe,00439540,30,FUN_00439540,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_00439540(void * this, byte param_1)"
 FDNYFirefighter.exe,00439560,85,FUN_00439560,Global,false,false,__fastcall,undefined __fastcall FUN_00439560(void * param_1)
 FDNYFirefighter.exe,004395c0,6141,FUN_004395c0,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_004395c0(void * this, int * param_1)"
+FDNYFirefighter.exe,0043B620,166,CheckBModelContactCandidate,Global,false,false,__thiscall,"void __thiscall CheckBModelContactCandidate(void * this, int * candidate)"
+FDNYFirefighter.exe,0043DB40,274,GetBModelUseAction,Global,false,false,__thiscall,"uint __thiscall GetBModelUseAction(void * this, void * * query_interface_out)"
+FDNYFirefighter.exe,0043DC60,1592,UpdateBModelEntity,Global,false,false,__thiscall,void __thiscall UpdateBModelEntity(void * this)
 FDNYFirefighter.exe,0043adc0,30,FUN_0043adc0,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_0043adc0(void * this, byte param_1)"
 FDNYFirefighter.exe,0043ade0,138,FUN_0043ade0,Global,false,false,__fastcall,undefined __fastcall FUN_0043ade0(undefined4 * param_1)
 FDNYFirefighter.exe,0043ae70,43,FUN_0043ae70,Global,false,false,__cdecl,undefined4 __cdecl FUN_0043ae70(float param_1)
@@ -728,7 +731,6 @@ FDNYFirefighter.exe,0043b470,63,FUN_0043b470,Global,false,false,__thiscall,"unde
 FDNYFirefighter.exe,0043b4b0,93,InitializeBModelFactoryDescriptor,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0043b4b0(undefined4 * param_1)
 FDNYFirefighter.exe,0043b510,105,FUN_0043b510,Global,false,false,__thiscall,"undefined __thiscall FUN_0043b510(void * this, undefined4 * param_1)"
 FDNYFirefighter.exe,0043b580,159,FUN_0043b580,Global,false,false,__fastcall,undefined __fastcall FUN_0043b580(int param_1)
-FDNYFirefighter.exe,0043B620,166,CheckBModelContactCandidate,Global,false,false,__thiscall,"void __thiscall CheckBModelContactCandidate(void * this, int * candidate)"
 FDNYFirefighter.exe,0043b6d0,14,FUN_0043b6d0,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0043b6d0(undefined4 * param_1)
 FDNYFirefighter.exe,0043b6e0,150,FUN_0043b6e0,Global,false,false,__thiscall,"undefined __thiscall FUN_0043b6e0(void * this, int param_1)"
 FDNYFirefighter.exe,0043b7a0,753,FUN_0043b7a0,Global,false,false,__fastcall,undefined __fastcall FUN_0043b7a0(int param_1)
@@ -753,8 +755,6 @@ FDNYFirefighter.exe,0043d6a0,957,FUN_0043d6a0,Global,false,false,__fastcall,uint
 FDNYFirefighter.exe,0043da70,59,FUN_0043da70,Global,false,false,__fastcall,undefined4 __fastcall FUN_0043da70(int param_1)
 FDNYFirefighter.exe,0043daf0,55,FUN_0043daf0,Global,false,false,__thiscall,"int * __thiscall FUN_0043daf0(void * this, int param_1)"
 FDNYFirefighter.exe,0043db30,14,FUN_0043db30,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0043db30(undefined4 * param_1)
-FDNYFirefighter.exe,0043DB40,274,GetBModelUseAction,Global,false,false,__thiscall,"uint __thiscall GetBModelUseAction(void * this, void * * query_interface_out)"
-FDNYFirefighter.exe,0043DC60,1592,UpdateBModelEntity,Global,false,false,__thiscall,void __thiscall UpdateBModelEntity(void * this)
 FDNYFirefighter.exe,0043e2a0,182,FUN_0043e2a0,Global,false,false,__fastcall,uint __fastcall FUN_0043e2a0(int param_1)
 FDNYFirefighter.exe,0043e360,778,FUN_0043e360,Global,false,false,__thiscall,"undefined4 __thiscall FUN_0043e360(void * this, undefined4 param_1, int * param_2)"
 FDNYFirefighter.exe,0043e680,1226,DispatchBModelScriptCommand,Global,false,false,__thiscall,"undefined4 __thiscall DispatchBModelScriptCommand(void * this, int * param_1)"
@@ -791,13 +791,13 @@ FDNYFirefighter.exe,0043fd40,100,FUN_0043fd40,Global,false,false,__fastcall,bool
 FDNYFirefighter.exe,0043ff10,1054,FUN_0043ff10,Global,false,false,__fastcall,undefined __fastcall FUN_0043ff10(void * param_1)
 FDNYFirefighter.exe,00440330,291,FUN_00440330,Global,false,false,__thiscall,"undefined4 __thiscall FUN_00440330(void * this, int * param_1)"
 FDNYFirefighter.exe,00440460,1747,FUN_00440460,Global,false,false,__thiscall,"undefined4 __thiscall FUN_00440460(void * this, int * param_1)"
+FDNYFirefighter.exe,00440CE0,116,CheckBoundsTriggerContact,Global,false,false,__thiscall,"void __thiscall CheckBoundsTriggerContact(void * this, int * param_1)"
+FDNYFirefighter.exe,00440DC0,386,DispatchBoundsTriggerContactEvents,Global,false,false,__fastcall,void __fastcall DispatchBoundsTriggerContactEvents(void * param_1)
 FDNYFirefighter.exe,00440b40,98,FUN_00440b40,Global,false,false,__fastcall,undefined __fastcall FUN_00440b40(undefined4 * param_1)
 FDNYFirefighter.exe,00440bb0,149,FUN_00440bb0,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_00440bb0(void * this, void * param_1)"
 FDNYFirefighter.exe,00440c50,30,FUN_00440c50,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_00440c50(void * this, byte param_1)"
 FDNYFirefighter.exe,00440c70,99,FUN_00440c70,Global,false,false,__stdcall,undefined4 * __stdcall FUN_00440c70(void * param_1)
-FDNYFirefighter.exe,00440CE0,116,CheckBoundsTriggerContact,Global,false,false,__thiscall,"void __thiscall CheckBoundsTriggerContact(void * this, int * param_1)"
 FDNYFirefighter.exe,00440d60,93,InitializeBoundsTriggerFactoryDescriptor,Global,false,false,__fastcall,undefined4 * __fastcall FUN_00440d60(undefined4 * param_1)
-FDNYFirefighter.exe,00440DC0,386,DispatchBoundsTriggerContactEvents,Global,false,false,__fastcall,void __fastcall DispatchBoundsTriggerContactEvents(void * param_1)
 FDNYFirefighter.exe,00440f50,230,FUN_00440f50,Global,false,false,__thiscall,"undefined __thiscall FUN_00440f50(void * this, char param_1)"
 FDNYFirefighter.exe,00441040,2202,InitializeBoundsTriggerEntity,Global,false,false,__fastcall,undefined __fastcall InitializeBoundsTriggerEntity(void * param_1)
 FDNYFirefighter.exe,004418e0,382,FUN_004418e0,Global,false,false,__thiscall,"undefined4 __thiscall FUN_004418e0(void * this, int * param_1)"
@@ -906,9 +906,9 @@ FDNYFirefighter.exe,00448630,831,FUN_00448630,Global,false,false,__fastcall,unde
 FDNYFirefighter.exe,00448970,287,ApplyFireSuppressionContact,Global,false,false,__thiscall,"void __thiscall ApplyFireSuppressionContact(void * this, float contactX, float contactY, float contactZ, float influence, char finalize)"
 FDNYFirefighter.exe,00448a90,716,FUN_00448a90,Global,false,false,__thiscall,"undefined4 __thiscall FUN_00448a90(void * this, int * param_1, float param_2, undefined4 param_3, undefined4 param_4)"
 FDNYFirefighter.exe,00449340,1788,FUN_00449340,Global,false,false,__fastcall,undefined __fastcall FUN_00449340(void * param_1)
+FDNYFirefighter.exe,00449FE0,687,UpdateFireRescueActor,Global,false,false,__fastcall,void __fastcall UpdateFireRescueActor(int param_1)
 FDNYFirefighter.exe,00449a40,61,DispatchFireRescueSprayMessage,Global,false,false,__thiscall,"void __thiscall DispatchFireRescueSprayMessage(void * this, int messageId, float * payload)"
 FDNYFirefighter.exe,00449a80,1363,FUN_00449a80,Global,false,false,__thiscall,"uint __thiscall FUN_00449a80(void * this, int * param_1)"
-FDNYFirefighter.exe,00449FE0,687,UpdateFireRescueActor,Global,false,false,__fastcall,void __fastcall UpdateFireRescueActor(int param_1)
 FDNYFirefighter.exe,0044a290,120,FUN_0044a290,Global,false,false,__fastcall,undefined __fastcall FUN_0044a290(undefined4 * param_1)
 FDNYFirefighter.exe,0044a330,284,FUN_0044a330,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_0044a330(void * this, void * param_1)"
 FDNYFirefighter.exe,0044a450,30,FUN_0044a450,Global,false,false,__thiscall,"undefined4 * __thiscall FUN_0044a450(void * this, byte param_1)"
@@ -1967,6 +1967,8 @@ FDNYFirefighter.exe,00499ec0,39,FUN_00499ec0,Global,false,false,__fastcall,undef
 FDNYFirefighter.exe,00499f10,105,FUN_00499f10,Global,false,false,__thiscall,"undefined __thiscall FUN_00499f10(void * this, int param_1, int param_2)"
 FDNYFirefighter.exe,00499f80,48,FUN_00499f80,Global,false,false,__fastcall,undefined __fastcall FUN_00499f80(int * param_1)
 FDNYFirefighter.exe,00499fd0,71,FUN_00499fd0,Global,false,false,__fastcall,int __fastcall FUN_00499fd0(int * param_1)
+FDNYFirefighter.exe,0049BC90,86,RegisterContactManagerEntity,Global,false,false,__thiscall,"void __thiscall RegisterContactManagerEntity(void * this, void * entity)"
+FDNYFirefighter.exe,0049BD20,439,DispatchEntityContactLists,Global,false,false,__thiscall,void __thiscall DispatchEntityContactLists(void * this)
 FDNYFirefighter.exe,0049a040,374,FUN_0049a040,Global,false,false,__thiscall,"undefined __thiscall FUN_0049a040(void * this, int param_1, int param_2, int param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6)"
 FDNYFirefighter.exe,0049a1c0,330,FUN_0049a1c0,Global,false,false,__thiscall,"undefined __thiscall FUN_0049a1c0(void * this, int param_1, int param_2, int param_3, int param_4)"
 FDNYFirefighter.exe,0049a310,219,FUN_0049a310,Global,false,false,__fastcall,undefined __fastcall FUN_0049a310(int * param_1)
@@ -1994,13 +1996,12 @@ FDNYFirefighter.exe,0049b8a0,219,FUN_0049b8a0,Global,false,false,__fastcall,unde
 FDNYFirefighter.exe,0049b980,96,FUN_0049b980,Global,false,false,__fastcall,undefined __fastcall FUN_0049b980(undefined4 * param_1)
 FDNYFirefighter.exe,0049b9e0,187,FUN_0049b9e0,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0049b9e0(undefined4 * param_1)
 FDNYFirefighter.exe,0049baa0,143,FUN_0049baa0,Global,false,false,__fastcall,undefined __fastcall FUN_0049baa0(undefined4 * param_1)
-FDNYFirefighter.exe,0049BC90,86,RegisterContactManagerEntity,Global,false,false,__thiscall,"void __thiscall RegisterContactManagerEntity(void * this, void * entity)"
-FDNYFirefighter.exe,0049BD20,439,DispatchEntityContactLists,Global,false,false,__thiscall,void __thiscall DispatchEntityContactLists(void * this)
 FDNYFirefighter.exe,0049bf10,150,FUN_0049bf10,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0049bf10(undefined4 * param_1)
 FDNYFirefighter.exe,0049c0c0,18,FUN_0049c0c0,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0049c0c0(undefined4 * param_1)
 FDNYFirefighter.exe,0049c0e0,204,FUN_0049c0e0,Global,false,false,__fastcall,undefined __fastcall FUN_0049c0e0(int * param_1)
 FDNYFirefighter.exe,0049c290,96,FUN_0049c290,Global,false,false,__fastcall,undefined __fastcall FUN_0049c290(undefined4 * param_1)
 FDNYFirefighter.exe,0049c2f0,220,FUN_0049c2f0,Global,false,false,__fastcall,undefined4 * __fastcall FUN_0049c2f0(undefined4 * param_1)
+FDNYFirefighter.exe,0049c3d0,12,DispatchEntityThinkMember,Global,false,false,unknown,undefined DispatchEntityThinkMember(void)
 FDNYFirefighter.exe,0049c440,79,FUN_0049c440,Global,false,false,__fastcall,undefined __fastcall FUN_0049c440(undefined4 * param_1)
 FDNYFirefighter.exe,0049c490,79,FUN_0049c490,Global,false,false,__fastcall,undefined __fastcall FUN_0049c490(undefined4 * param_1)
 FDNYFirefighter.exe,0049c4e0,79,FUN_0049c4e0,Global,false,false,__fastcall,undefined __fastcall FUN_0049c4e0(undefined4 * param_1)

@@ -4214,10 +4214,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
 
                     // Retail validates data\\maps\\<key>.bsp before queuing a
-                    // pending level request. The viewer's scene packages sit
-                    // beside one another, so the authored key selects a sibling
-                    // package here. The saved Ghidra trace has not proven that
-                    // retail's separate forwarded context equals this key.
+                    // pending level request, then stores that same authored key
+                    // in EverGame +0x660. The viewer's scene packages sit beside
+                    // one another, so this key selects the sibling package here.
+                    // Static identity is confirmed; live transition behavior is not.
                     const auto [rawStageKey, ignored] = token(arguments);
                     (void)ignored;
                     std::string stageKey = lower(rawStageKey);

@@ -1,6 +1,6 @@
 # Shared rescue completion and map exit path
 
-Status: **static Player class-to-handler identity, command/completion routes, and authored exit triggers across all 17 BSPs are mapped; the shared escape transaction and a sibling-package adapter for authored `finalexitloadmap` chains are integrated in the preview; runtime factory admission, live contact/scheduler order, retail key/context identity, and parity remain open.**
+Status: **static Player class-to-handler identity, command/completion routes, and authored exit triggers across all 17 BSPs are mapped; the shared escape transaction and a sibling-package adapter for authored `finalexitloadmap` chains are integrated in the preview; BoundsTrigger admission, owner-pass phase order, and retail pending-key identity are mapped; live allocation/overlap, wall-clock cadence, transition completion, and parity remain open.**
 
 All executable observations use `FDNYFirefighter.exe` SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`. The [exit-trigger inventory](../rescue_exit_trigger_inventory.md) is generated from copied BSP files, checks each source hash against `scene_load_coverage.csv`, and retains complete ordered entity epairs.
 
@@ -13,13 +13,27 @@ Across the 17 BSP assets, **40** `RCS_BoundsTrigger` entities have an `escape`, 
 - Six author `finalexitloadmap`: Boat A → Boat B, Subway A → Subway B, and Oil Rig A → B → C → D.
 - Training, MBase, Bar R, Gas R, Boat A/B, Subway A/B, Bank, and all four Oil Rig stages retain map-specific exit triggers in the ledger. `City_h`, `const_h`, `dock_h`, and `oil_rig_h` have no matching exit scripts in their BSP entities.
 
-These are asset/script facts, not proof that a factory admitted the trigger or that its touch callback fires on a specific frame. The asset-level stage list remains part of the port scope, including Boat B, Subway B, and Oil Rig B/C/D.
+The generic spawn queue registers each successfully created root through
+`00429490`; BoundsTrigger's constructor mask includes owner Think filter value
+2, and its type/category also reaches contact list 8 through manager filter
+`0x20`. This statically supports admission on the successful factory path, not
+runtime allocation or a live overlap on any particular map. The asset-level
+stage list remains part of the port scope, including Boat B, Subway B, and Oil
+Rig B/C/D.
 
 ## Shared `escape` path
 
 The shared `tell` dispatcher looks up the first ScriptActor whose registered name matches the command's first token, then sends the second token through that actor's ScriptActor dispatcher. That dispatcher falls through to the target class's vtable slot `+0x04`. The Player handler at `0x00451870` has a case-insensitive `escape` branch which calls `DispatchPlayerEscapeCommand` (`0x004513A0`). See [named actor dispatch](named_script_actor_dispatch.md).
 
 `DispatchPlayerEscapeCommand` applies a Player frame/state prepass and calls `ProcessCarriedVictimRescue` (`0x00451160`). That routine returns when the carry field at Player `+0x3534` is empty. Otherwise it updates `Rescues`, `Longest Rescue Time`, and `Shortest Rescue Time`; calls victim release at `0x0045C000`; updates Player status and the rescue deadline; clears the carry pointer; resets carry effects; then calls `UpdateFinalExitAvailability` (`0x004504C0`). The older address-specific exports in this directory were rechecked against the same hash and this current Ghidra analysis; their behavior is reused without assuming the old Training host is the full port.
+
+BoundsTrigger pair production runs in the owner contact manager at `+0xE0`;
+its embedded ScriptActor pair drain runs through root slot `+0x14` in the
+owner `+0x50` Think manager, which precedes contact production. A `touch` pair
+produced in one normal owner invocation is therefore available to the script
+event dispatcher on a later normal owner invocation. The shared host now
+buffers these pairs across one paced update iteration; that interval remains
+provisional. See the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
 
 The victim release helper's ordered actor/frame/timer/event effects are modeled by the C++ [`victim_release.h`](../../../port/spikes/training-native-prototype/src/victim_release.h), with frame math in [`victim_frame_ops.h`](../../../port/spikes/training-native-prototype/src/victim_frame_ops.h). `VictimTransactions` composes them behind the shared viewer host; Training-prefixed source-derived type names do not make the mechanic Training-only.
 
@@ -88,9 +102,9 @@ event remains distinct from the no-exit-zone state-1 write and from
 audio during the EVS command invocation; exact retail callback cadence is not
 verified. See [`rescue_win_feedback_port_2026-10-20.md`](rescue_win_feedback_port_2026-10-20.md).
 
-The `finalexitloadmap` command reaches `HandlePlayerFinalExitLoadMap` (`0x00450A70`). It checks `data\\maps\\<key>.bsp`, applies the same remaining-victim gate, and, when accepted, queues a pending level request with `data\\resdefs\\rescue.rrf`. The pending-level update and World loader route are statically mapped in [the pending-level evidence](evergame_pending_load_update.md). Equality between the checked key and the forwarded pending map-name context, runtime stage handoff, and transition timing are still open.
+The `finalexitloadmap` command reaches `HandlePlayerFinalExitLoadMap` (`0x00450A70`). It checks `data\\maps\\<key>.bsp`, applies the same remaining-victim gate, and, when accepted, queues a pending level request with the original command key and `data\\resdefs\\rescue.rrf`. Raw stack offsets confirm the same key is checked and stored at EverGame `+0x660`; see [the key dataflow trace](finalexitloadmap_pending_key_dataflow_2026-10-20.md). Runtime stage handoff and transition timing are still open.
 
-The shared viewer has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. A controlled `--rescue-check` dispatches all six authored `finalexitloadmap` touch bindings after all victims are rescued, verifies that each key loads a matching sibling package, and confirms the command remains gated after the first rescue. All 13 bundled rescue/stage packages pass their rescue checks. The adapter uses the command key because the retail helper's separate forwarded context has not been proven equal. Live exit contact, trigger enable timing, retail request identity, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
+The shared viewer has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. A controlled `--rescue-check` dispatches all six authored `finalexitloadmap` touch bindings after all victims are rescued, verifies that each key loads a matching sibling package, and confirms the command remains gated after the first rescue. All 13 bundled rescue/stage packages pass their rescue checks. The adapter uses the authored command key, matching the static retail request path. Live exit contact, trigger enable timing, transition completion, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
 
 Fresh tracing of the Player status callback confirms that Player `+0x3438` is
 also read as a result state: value `1` dispatches win feedback and value `2`
@@ -105,7 +119,7 @@ full result-to-frontend behavior remain unresolved. See
 ## Current uncertainty and next trace
 
 - `tell player ...` uses first-match, case-insensitive actor-name lookup. Static factory, class, and vtable evidence resolves rescue-map `Player` to `RCS_PlayerRescue`; the separate `RCS_PlayerHose` class appears in hose-map BSPs. Live load execution, insertion order, and command delivery timing still need a runtime capture. See [named actor dispatch](named_script_actor_dispatch.md), the [PlayerRescue factory path](player_rescue_factory_and_spawn_path.md), and the [hash-checked 17-BSP class inventory](../rescue_exit_trigger_inventory.md).
-- The shared overlap/contact manager and authored trigger records are mapped, but trigger factory admission, dispatch cadence, `touch` event order, message delivery frame, and completion timing still need runtime evidence.
+- The static BoundsTrigger factory/registration route and `+0x50`-before-`+0xE0` phase boundary are mapped. Live allocation, overlap, within-list order, the interval between owner passes, and natural completion timing still need runtime evidence.
 - The original game has not been captured live for these routes. A Wine/Sikarugir capture or a Windows capture is still needed for visual/audio/mission parity.
 - Complete carried-body presentation and live exit contact, then exercise the authored exits in every required rescue map and stage. The initial sibling-package stage adapter is implemented but needs user/live contact confirmation. Keep the seven campaign rescues, Training, all other catalog scenarios, and all 17 BSP assets in scope.
 

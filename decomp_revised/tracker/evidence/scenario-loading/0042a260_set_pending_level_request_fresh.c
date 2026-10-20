@@ -19,9 +19,9 @@
    Evidence:
    - ProcessEverGameUpdate consumes +0x68C and passes the pending block at +0x660 to
    ProcessLevelLoadRequest.
-   - HandlePlayerFinalExitLoadMap checks the authored command argument's BSP path, then passes its
-   separate context string through this setter. This function does not compare those strings;
-   runtime equality and transition success remain unverified. */
+   - HandlePlayerFinalExitLoadMap checks a BSP path built from the authored command key, then passes
+   the original key reference through this setter. Raw stack offsets confirm the checked and stored
+   keys match; runtime transition success remains unverified. */
 
 void __thiscall SetPendingLevelRequest(void *this,undefined4 *param_1,undefined4 *param_2)
 

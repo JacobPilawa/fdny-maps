@@ -739,7 +739,7 @@ entry_address,exact_fresh_entry,legacy_export_files,copied_export_files,legacy_s
 0049BF10,True,2,2,,reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049bf10_FUN_0049bf10.c;reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-dispatch/0049bf10_FUN_0049bf10.c
 0049BFB0,False,1,1,,reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049bfb0_FUN_0049bfb0.c
 0049C0E0,True,2,2,,reference/previous-work/decomp/evidence/entity-dispatch/0049c0e0_FUN_0049c0e0.c;reference/previous-work/decomp/evidence/startup-world/0049c0e0_FUN_0049c0e0.c
-0049C3D0,False,2,2,,reference/previous-work/decomp/evidence/entity-dispatch/0049c3d0_FUN_0049c3d0.c;reference/previous-work/decomp/evidence/startup-world/0049c3d0_FUN_0049c3d0.c
+0049C3D0,True,2,2,,reference/previous-work/decomp/evidence/entity-dispatch/0049c3d0_FUN_0049c3d0.c;reference/previous-work/decomp/evidence/startup-world/0049c3d0_FUN_0049c3d0.c
 0049C440,True,1,1,,reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049c440_FUN_0049c440.c
 0049C490,True,1,1,,reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/entity-manager-dispatch/0049c490_FUN_0049c490.c
 0049C4E0,True,1,1,,reference/previous-work/decomp/evidence/entity-scheduler/0049c4e0_FUN_0049c4e0.c

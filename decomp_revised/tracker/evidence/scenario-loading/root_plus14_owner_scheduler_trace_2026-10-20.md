@@ -57,6 +57,17 @@ path. Their local slot `+0x14` routes reach the pair drains
 `00440DC0` and `00444050`, respectively. Exact manager-list residence remains
 a static constructor/registration conclusion, not a runtime observation.
 
+The selected-level `World` factory uses the same spawn queue: `0049C670`
+creates `WorldEntity` through `0049E300` and calls `00429490` before batch
+initialization. Its constructor changes the common mask to
+`0xFFEB | 0x14 = 0xFFFF`; vtable slot `+0x14` points to delayed EVS callback
+`0049E2C0`. Thus the selected WorldEntity is statically admitted to the `+0x50`
+Think list. Its counter starts at 4, and each callback decrements it; the
+fourth normal Think callback after registration loads the EVS. Because
+`00429520` invokes manager `+0x50` before its `+0x3C0` spawn-queue service,
+construction at the end of one pass cannot consume the counter in that same
+pass. The early `0042AEA0` branch at `+0x64C` skips the manager pass.
+
 ## Think/contact phase boundary
 
 On the normal game-update path, `0042AEA0` calls `00429520`. The latter
@@ -78,7 +89,8 @@ Because the normal `+0x50` Think manager runs before the `+0xE0` producers,
 pairs added during one owner invocation cannot be consumed by those Think
 callbacks until a later normal owner invocation. This establishes a
 next-owner-pass phase delay for these pair lists. It does not establish a
-rendered frame count, elapsed time, or retail runtime cadence.
+rendered frame count, elapsed time, or retail runtime cadence. The WorldEntity
+startup count is similarly four normal owner Think callbacks, not four frames.
 
 ## Shared-port change and limits
 

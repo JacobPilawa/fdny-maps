@@ -19,6 +19,6 @@ These are behavioral labels, not recovered C++ member names or confirmed field t
 
 ## Map-key provenance
 
-HandlePlayerFinalExitLoadMap (00450A70) builds and checks data\\maps\\<command-key>.bsp from its parsed command argument. On success it passes a separate context string to SetPendingLevelRequest (0042A260), which stores that value in the request block's +0x00 map-name field. ProcessLevelLoadRequest later appends .bsp to the stored field.
+HandlePlayerFinalExitLoadMap (00450A70) builds and checks data\\maps\\<command-key>.bsp from its parsed command argument. On success it passes the original command-key reference to SetPendingLevelRequest (0042A260), which stores that value in the request block's +0x00 map-name field. ProcessLevelLoadRequest later appends .bsp to the stored field. Raw x86 stack offsets establishing the shared key are recorded in [the pending-key dataflow note](finalexitloadmap_pending_key_dataflow_2026-10-20.md).
 
-The field consumed by the loader is therefore known. The current static trace does not prove the context string equals the parsed finalexitloadmap argument: the helper checks the command key but does not compare it with the string it queues. The context producer and runtime equality check remain follow-up work.
+The field consumed by the loader is therefore known, and the raw static trace proves it receives the same key used in the existence check. Runtime stage completion and unload behavior remain follow-up work.

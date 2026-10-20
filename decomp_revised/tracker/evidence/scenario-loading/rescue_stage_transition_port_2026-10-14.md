@@ -4,12 +4,12 @@
 
 `HandlePlayerFinalExitLoadMap` (`00450A70`) subtracts the Player's two
 remaining-victim fields and only queues a level request when the result is
-zero. It checks `data\\maps\\<authored-key>.bsp` and passes a separate context
-string plus `data\\resdefs\\rescue.rrf` to the pending-level setter
-(`0042A260`). That setter stores the context string as the pending map name;
-the level loader appends `.bsp` to that field. Current static evidence does
-not establish that the checked authored key and forwarded context string are
-equal. See `00450a70_player_finalexitloadmap_fresh.c`,
+zero. It checks `data\\maps\\<authored-key>.bsp` and passes the original key
+reference plus `data\\resdefs\\rescue.rrf` to the pending-level setter
+(`0042A260`). That setter stores the same key as the pending map name; raw x86
+stack offsets confirm the identity. The level loader appends `.bsp` to that
+field. Runtime transition completion and timing remain open. See
+`00450a70_player_finalexitloadmap_fresh.c`,
 `0042a260_set_pending_level_request_fresh.c`, and
 `pending_level_request_fields.md`.
 
@@ -28,10 +28,10 @@ the rescue chooser/runtime chain loads the sibling package and continues
 until the next stage does not request another map. A repeated stage key stops
 the chain to avoid a loop.
 
-This is an explicit viewer adapter around the authored key. It does **not**
-claim that the retail pending-context string is the same value. The normal
-interactive run path and chooser both use the stage chain. Non-interactive
-diagnostic modes stay on their supplied scene.
+This is an explicit viewer adapter around the authored key. Raw x86 confirms
+the retail pending request stores that same key after checking its BSP path.
+The normal interactive run path and chooser both use the stage chain.
+Non-interactive diagnostic modes stay on their supplied scene.
 
 ## Verification and confidence
 
@@ -41,14 +41,14 @@ through `SceneData`; all eight primary rescue packages pass the current
 synthetic one-victim release check; the rescue mission catalog loads all eight
 entries through the app bundle.
 
-**Inferred:** the authored command key is the viewer's intended next package
-key. This follows the map key documented by `00450A70` but does not reproduce
-the retail setter's separate context parameter.
+**Source-backed:** the authored command key is also the retail pending map
+key. The viewer still uses a sibling-package adapter instead of reproducing
+retail world teardown and factory startup.
 
 **Open:** live player contact with each enabled stage exit, confirmation that
-every exit trigger enables at the retail point in the rescue flow, retail
-key/context identity, scene teardown/reinitialization side effects, transition
-timing, and full staged mission completion. No interactive run was performed
+every exit trigger enables at the retail point in the rescue flow, scene
+teardown/reinitialization side effects, transition timing, and full staged
+mission completion. No interactive run was performed
 for this checkpoint.
 
 ## 2026-10-15 authored stage-exit check

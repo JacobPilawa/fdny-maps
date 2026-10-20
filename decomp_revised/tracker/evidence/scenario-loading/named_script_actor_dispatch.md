@@ -65,7 +65,7 @@ by triggers in their owning BSPs. The three steam targets are Oil Rig C
 `RCS_MiscEmitter` entities whose initializer registers their authored names
 and dispatches their bindings; their `turnon` handler is also mapped. Oil Rig
 exits request the next stage A→B→C→D through `finalexitloadmap`; the static
-pending-level path reaches the World loader. The pending map-name field at EverGame+0x660 is mapped. Equality between the checked command argument and forwarded context, runtime WorldEntity handoff, and event timing remain open.
+pending-level path reaches the World loader. The pending map-name field at EverGame+0x660 is mapped, and raw x86 stack dataflow confirms the checked command key is the key stored there. Runtime WorldEntity handoff and event timing remain open; see [the pending-key dataflow note](finalexitloadmap_pending_key_dataflow_2026-10-20.md).
 The gas/bar variable and
 event sequences, every rescue mission, all 12 catalog entries, and all 17 BSP
 files remain in scope.
@@ -107,8 +107,7 @@ pointer.
 
 **Open:** runtime factory admission, registry insertion order and command
 delivery timing; the map-specific effects of Boat A's `explodeb` and Subway A's
-`subdoor` self-commands; equality between the checked command argument and
-forwarded context, plus runtime completion of Oil Rig's `finalexitloadmap`.
+`subdoor` self-commands; runtime completion of Oil Rig's `finalexitloadmap`.
 Bank, Boat A, Bar R, Gas R, and the statically resolved Oil Rig stage targets
 have their named BModel routes mapped. Map-specific runtime effects, cadence,
 and visual timing remain open; static routing is not evidence of port parity.
@@ -117,8 +116,7 @@ and visual timing remain open; static routing is not evidence of port parity.
 
 The direct named BModel `open` routes in Bank, Boat A, Bar R, Gas R, and Oil Rig
 are joined to their authored child models in [bmodel_rescue_targets.md](bmodel_rescue_targets.md).
-Next, trace the producer of the context string stored at EverGame+0x660 and
-verify Oil Rig's runtime stage handoff, then trace Subway A's `subdoor`
+Next, verify Oil Rig's runtime stage handoff, then trace Subway A's `subdoor`
 self-command route through its class handler. Obtain a live startup/event trace
 for factory admission and command delivery across the rescue maps; Training
 remains in scope alongside all seven campaign rescues.

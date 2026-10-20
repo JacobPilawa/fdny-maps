@@ -5,7 +5,7 @@
    
    Algorithm:
    - Build data\\maps\\<map-key>.bsp and check it with FindFirstFileA.
-   - On success, call FUN_0042A260 with a forwarded command context and data\\resdefs\\rescue.rrf;
+   - On success, call FUN_0042A260 with the original command-key string and data\\resdefs\\rescue.rrf;
    this sets the pending-level byte at offset +0x68C.
    - ProcessEverGameUpdate (0042AEA0) consumes the pending byte and calls FUN_0042AB00, which
    constructs a World factory request and reaches the WorldEntity BSP loader through
@@ -15,15 +15,17 @@
    Parameters:
    - this: Player entity root object.
    - param_1: Parsed map-key argument used to construct the existence-check path.
-   - param_2: Forwarded context value stored into the pending level descriptor; its exact identity
-   and relation to the map-key field need a register/data-flow audit.
+   - The decompiler's apparent second context parameter is a stack-variable alias. Raw x86 at
+     00450C48 passes the original command-key argument slot to 0042A260, after the separate
+     file-check path has been constructed from that same key.
    
    Returns:
    - Low-byte status is produced; the Player handler reports the command handled independently.
    
    Evidence:
    - Oil Rig BSP stage exits request oil_rig_B, oil_rig_C, and oil_rig_D in order.
-   - The static request-to-loader control path is mapped; runtime completion and timing are not.
+   - Raw stack data-flow confirms the checked command key is the map-name stored by 0042A260;
+     runtime completion and timing are not established.
    - EXE SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 
 uint __thiscall HandlePlayerFinalExitLoadMap(void *this,int *param_1,int *param_2)

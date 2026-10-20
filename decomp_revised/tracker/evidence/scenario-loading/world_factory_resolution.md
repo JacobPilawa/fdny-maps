@@ -26,6 +26,15 @@ The result is pinned to `FDNYFirefighter.exe` SHA-256 `4b3b4dc1cc0b05bcb42c8e27a
 
 Thus the selected `World` request creates a `WorldEntity`, and the staged object's initialization loads the selected BSP. `0049E4D0` then enumerates BSP entities and submits their factory requests through the same spawn queue. The `+0x20` then `+0x24` batch order is shared across entity classes; for example, `RCS_MiscEmitter` initialization at `004424D0` registers its authored actor name and applies `S_Script` bindings during the first pass.
 
+The spawn queue also calls `00429490` on the factory result before batching it
+for initialization. WorldEntity's constructor sets its root mask to
+`0xFFEB | 0x14 = 0xFFFF`, and root vtable slot `+0x14` is `0049E2C0`. It is
+therefore registered in the owner `+0x50` Think manager. Since `00429520`
+calls that manager before its `+0x3C0` spawn-queue service, the newly created
+WorldEntity starts its four-callback delayed-EVS counter on a subsequent
+normal owner pass. See the [root scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md)
+and [WorldEntity callback boundary](worldentity_callback_dispatch_boundary.md).
+
 ## Evidence provenance and limits
 
 Fresh, hash-pinned outputs in this workspace cover `0042B4E0`, `0042AB00`, `00429C00`, `0049D130`, `0049E240`, and `0049E4D0`. Preserved same-binary Ghidra exports for descriptor construction, queue drain, and the World factory are in the root archive at `../../../../decomp/evidence/{entity-dispatch,entity-bootstrap,entity-queues,startup-world}/`. The current EXE bytes at the factory vtable were read directly and match the pinned hash. The WorldEntity vtable bytes are saved in `memory_004e4460_world_entity_vtable.json`.

@@ -23,7 +23,7 @@
    Evidence:
    - Called by ProcessEverGameUpdate after consuming this+0x68C.
    - The command-side map-key path is checked earlier by HandlePlayerFinalExitLoadMap. The queueing
-   setter receives a separate context string; equality is not checked here, and successful runtime
+   setter receives the original command key at EverGame +0x660; raw caller stack offsets prove it is the same value used for the BSP existence check. Successful runtime
    transition is unverified. */
 
 void __thiscall ProcessLevelLoadRequest(void *this,void *param_1)
