@@ -18,17 +18,21 @@ advances route progress inside the state-4 callback and moves embedded visual
 placement at the mapped half-radius emission gate. Retail copies its old visual
 position into a generated child request before moving the parent visual to the
 current route candidate; the root world transform stays fixed. The host
-currently ports the parent visual move only. Exact frame cadence,
-route-generated size keys, deferred child lifecycle, contact-list parity, and
-RNG interleaving remain open. Evidence is in
+now queues the captured prior-position request and creates a fresh route child
+after represented contact candidates, with the no-model three-key size track,
+floor flag, heading, and alternating smoke request. It uses zero/unset proxies
+for untouched class-template fields and key-time bases. Exact parent route
+size-track behavior, template defaults, factory pool reuse, frame cadence,
+contact-list parity, and RNG interleaving remain open. Evidence is in
 [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md)
 and
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
-The rescue-all macOS app compiled with matching standalone/package executable
-SHA-256 `92fdfbd0d594119bb68ea0e4cd82a0bf080eb80979595d3e0bd7e8068b95cb26`;
-`Info.plist` validation passed. The json-c dylib still targets macOS 27.0
-while this build links for 13.3. This is compile-only evidence, not retail
-parity.
+The rescue-all macOS app compiled and packaged with matching standalone/app
+arm64 executable SHA-256
+`96bf6ffffb66ea9bfacbb0191cf595a590af4075cc0e276e025afd0c72d49ec7`; its
+`Info.plist` passed validation and eight rescue choices were emitted. The
+json-c dylib still targets macOS 27.0 while this build links for 13.3. This is
+compile/package evidence only, not route runtime or retail parity.
 
 ## FireRescue shared size track and visual route placement (2026-10-20)
 
@@ -42,16 +46,20 @@ that its `+0x28..+0x30` base position moves rendered child geometry. Retail
 copies that pre-update position into the generated child's `ZZ_location`, then
 stores the route candidate into the parent visual. The route helper's
 completion call `00442BF0` adds a pair to the PathPoint-owned `+0xE8` container,
-not a transform setter. The host now moves only the parent visual at each
-mapped emission gate; root transform/origin stay fixed. It still lacks the
-generated child and route size keys, so no route parity claim is made. Evidence:
+not a transform setter. The host now moves the parent visual at each mapped
+emission gate and instantiates its generated no-model child after represented
+contacts; root transform/origin stay fixed. The child keys are source-backed,
+while untouched template values and the parent's generated size track remain
+incomplete, so no route parity claim is made. Evidence:
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
 
 The key list itself is already modeled for authored `setsize`; interactions
-between `setsize` and `moveto`, exact route-key times, model-derived thresholds,
-and child ownership/retirement remain open. The trailing operands contribute
-scaled offsets to state-dependent key timestamps; their author-facing terms
-remain provisional. Keep callback cadence provisional.
+between `setsize` and `moveto`, generated template timestamp bases,
+model-derived thresholds, and child ownership/retirement remain open. For the
+no-model child, operands 3/4 scale to its key timestamp offsets, and
+`00448D60` adds those offsets to its current clock. The source's retained x87
+extent is the separation between route-direction endpoints; authored seconds
+remain an inference. Keep callback cadence provisional.
 
 ### Bounded agent ledger
 
@@ -60,6 +68,9 @@ remain provisional. Keep callback cadence provisional.
 | `route_timing_keys` | `00449340_fresh.c`, `00449340_timing_key_offsets.asm`, timed-vector note | Complete; trailing args are scaled into existing timestamps; x87 value and meanings remain open; no edits |
 | `route_child_lifecycle` | deferred-spawn queue, FireRescue factory/manager path, UserData layout | Complete; child manager enrollment/next-pass eligibility mapped; retirement/reuse unresolved; no edits |
 | `route_visual_origin` | `0044A6A0`, `0044B060`, `0044A840`, route caller writes | Complete; proved pre-update child location and visible parent visual move; no edits |
+| `route_request_schema` | `00449340` request stores, `00448D60`, typed UserData audit | Complete; mapped no-model generated child fields and alternating smoke; inherited template defaults remain open; no edits |
+| `route_key_timing` | `00449340` x86, `004B9400`, `00448D60` key consumer | Complete; established three child keys, global-clock addition, retained distance; base timestamp and authored units remain provisional; no edits |
+| `route_model_threshold` | current MBase/Gas R typed exports, `00448D60` model branch | Complete; only two authored `moveto` actors, both no-model; generic model bounds unresolved; no edits |
 
 ## Rescue timeout loss audio (2026-10-20)
 

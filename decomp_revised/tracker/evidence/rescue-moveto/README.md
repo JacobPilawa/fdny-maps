@@ -13,13 +13,16 @@ computed from the first operand. The current-hash follow-up established that
 the `H_Radius/2` threshold gates deferred FireRescue child requests. At each
 gate retail copies the old embedded visual position to the child request, then
 moves the embedded visual to the current route candidate; it does not move the
-FireRescue root world translation. The host currently moves only the embedded
-visual at mapped gates. These authored MBase and Gas R routes have no
-`C_Model`, so the initializer's
-threshold field is directly mapped to `H_Radius`. See
-[`00448D60_h_radius_threshold.asm`](00448D60_h_radius_threshold.asm). The two
-trailing operands are retained as inputs but are not yet used to build retail's
-timed visual keys or deferred child requests.
+FireRescue root world translation. These authored MBase and Gas R routes have
+no `C_Model`, so the initializer's threshold field is directly mapped to
+`H_Radius`. See
+[`00448D60_h_radius_threshold.asm`](00448D60_h_radius_threshold.asm).
+The host now queues a child request at each mapped gate and drains it after the
+represented contact candidates. It copies the prior visual base, current size,
+route heading, floor flag, alternating smoke bit, and three generated size
+keys. `00448D60` adds the relative key times to its current game clock. The
+host currently uses zero for untouched class-template values and generated
+timestamp bases; full child-template and object-pool semantics remain open.
 
 The pinned updater also builds FireRescue-shaped configs and submits deferred
 map-entity spawn requests as the source actor advances. The later generic
@@ -27,10 +30,10 @@ spawn-queue drain (`0049C670`) performs object creation and manager
 registration. A follow-up maps the FireRescue factory, handle assignment, and
 the limits of its pool/update lifecycle in
 [`deferred_child_lifecycle_2026-10-15.md`](deferred_child_lifecycle_2026-10-15.md).
-The queued actor's recurring update, per-entity deactivation, reuse, and
-emission behavior are not fully mapped, so the host does not spawn trail
-actors. The source FireRescue's route-generated size track and the external
-callback cadence remain open. The packaged MBase and gas_r
+The queued actor's recurring update, per-entity deactivation, and reuse are not
+fully mapped. The host creates fresh actors and does not emulate pool reuse;
+the source FireRescue's own route-generated size track and external callback
+cadence also remain open. The packaged MBase and gas_r
 `--rescue-check` commands complete
 without an `Unimplemented EVS` report, but those controlled rescue transactions
 do not exercise or establish natural route timing or retail parity.

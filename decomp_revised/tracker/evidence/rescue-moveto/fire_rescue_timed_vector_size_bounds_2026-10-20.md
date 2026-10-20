@@ -73,21 +73,81 @@ instruction excerpt for the accessor and vertex writes is retained in
 [`00449340_visual_position.asm`](00449340_visual_position.asm). The exact full
 placement chain for each of the other three flame quads remains less direct.
 
-The shared host now moves `FireVisual::position` to the clamped route candidate
-when the mapped `H_Radius/2` emission gate fires and rebuilds its placement;
-`FireEntity::origin` and root-driven sounds/proximity remain fixed. It does not
-yet instantiate the captured prior-position child or apply the generated
-source/child size keys. The prior note that the visual position should remain
-fixed confused embedded visual placement with root world translation.
+## Generated route-child request and current port
+
+At each `00449340` emission gate, retail creates another `RCS_FireRescue`
+UserData request and copies the pre-update visual base into `ZZ_location`.
+For the authored no-`C_Model` route case, current-hash instructions confirm
+these request fields:
+
+- `F_FireType`, `C_Model`, and `A_Name` are explicitly zero. The dynamic child
+  therefore has no named-fire loop and does not pass the name gate used by
+  random spread.
+- `H_Radius` and `H_Height` copy the parent's current visual vector at
+  `+0x44/+0x48`. `T_UseHeading` is one; `T_Heading` is the normalized route
+  direction derived from visual-base endpoints at plus/minus half of the
+  parent's `+0x110` radius. `L_FloorMe` copies from the source UserData.
+- `P_NumKeys` is reset and populated with three no-model child records:
+  `(root+0x108, root+0x10C, distance)` at offset 0; the same dimensions at the
+  existing second-key timestamp plus `root+0xB0 * 1000`; then
+  `(0, 0, distance)` at the existing third-key timestamp plus
+  `root+0xB4 * 1000`. For these authored no-model actors, `root+0x108/+0x10C`
+  are initialized from `H_Radius/H_Height`. The retained x87 distance is the
+  endpoint separation; it equals `root+0x110` when the route direction is
+  unit length. The first explicit timestamp is zero.
+- `00448D60` adds the generated key offsets to its current game clock before
+  inserting them in the shared timed-vector track. The route updater's
+  `004B9400` rounds the offset expression to an integer. Treating the
+  untouched second/third base timestamps as zero is a host assumption until
+  the FireRescue class template data is traced.
+- `M_Smoking` starts at zero in the request. If the parent has smoking enabled,
+  its `+0x118` counter enables smoke on every second qualifying route child.
+  `ZZ_spawn_message`, `K_SprayTime`, and `N_IsAlive` are not written by this
+  request builder and continue to come from the class-data template.
+
+Only two authored `moveto` FireRescue actors appear in the current typed scene
+and script exports: MBase `mortarfire1` to `mortar1` and Gas R `Fire42` across
+four PathPoints. Neither has a `C_Model`, so these routes take the verified
+radius/height branch. See the work-queue audit ledger for the pinned map and
+export hashes. The non-null model path remains unsupported. Current files were
+rehashed during this audit:
+
+| Evidence | SHA-256 |
+|---|---|
+| `mbase.bsp` | `4ff3b18dd809c619a6734673a7f90bd2e98d9fc9518ee7bf94ece4b6ff90b266` |
+| `mbase.evs` | `75cee4301a5d0dc029db55f5b405d4011867092d4b94acafa0fc76e757aec565` |
+| MBase `entities.json` | `bf62ce8b332de1f884e70aebc10e9e027040a66168371ece08836e1ae278d0a2` |
+| MBase `scripts.json` | `8fabb9e49c514d22dd6341d5cddaab6e970a648012b969f1a3c6c06feb8d0bf1` |
+| `gas_r.bsp` | `f6822f8d598d2888896165bbee8b554351230cd76ad6331abf0d735a03b54cbc` |
+| `gas_r.evs` | `1f83f48debdbfe916c0b5e818f35e0dbf6cb9046a996dfecd75882e27e3fa8c0` |
+| Gas R `entities.json` | `7c1fa33cd1d38bf22fc231c7131fb0256ca9e2f74d57c29691a3e3bcada7f7f0` |
+| Gas R `scripts.json` | `bc39433f7274748a9fdf8cd3ff7ad3d80b7f9a3b5088eb34331fcba41f3f3077` |
+
+Both map exports and source scripts match the independently audited paths;
+these hashes pin the authored no-model coverage claim.
+
+The shared host now snapshots the old visual position, queues a route child
+during the state-4 callback, moves/rebuilds the parent embedded visual, then
+drains the child request after represented contact candidates. It builds a
+fresh child with no name, copied floor behavior, alternating smoke, route
+heading, and the generated three-key size track. For portable simulation it
+currently treats the untouched class-template fields and initial key timestamp
+bases as zero/unset. The retail factory can reuse a retained root; host object
+reuse, untouched template defaults, x87 edge behavior, exact callback cadence,
+sprite/RNG interleaving, and child retirement remain unresolved. The renderer
+currently projects the route vector to horizontal yaw for child orientation;
+the full retail heading frame is not established. This is a source-backed host
+slice, not live route, gameplay, or retail parity.
 
 ## Remaining work and limits
 
 - Decode how the two trailing `moveto` values select timestamps across the
-  source and child tracks, including interactions with consecutive `setsize`
-  commands.
-- Port the prior-position child request and shared route-generated size track.
-  Keep timestamp offsets provisional: trailing operands add scaled values to
-  state-dependent key times, and a separate retained x87 value is unresolved.
+  source and child tracks, including the untouched base timestamp fields and
+  interactions with consecutive `setsize` commands. The current host uses
+  zero for the generated request's inherited timestamp bases.
+- Port the source parent's route-generated size track alongside the child
+  track. The child track is now represented; its time offsets use the
+  current initialization clock plus a provisional zero base.
 - Establish queued-child setup, update ownership, and retirement before
   claiming full route parity.
 - Trace the non-null `C_Model` dimensions path and exact rendered bounds.

@@ -642,13 +642,18 @@ struct PreviewFire {
         float lastEmissionGateProgress = 0.f, childEmissionThreshold = 0.f;
         bool childEmissionThresholdMapped = false;
         // Retail stores these as inputs to generated visual-key timestamps.
-        // The route trail/key factory is not ported yet.
+        // The generated child applies them relative to its initialization
+        // clock; pool reuse and the preexisting request-template key times
+        // remain unverified.
         float firstKeyOffset = 0.f, secondKeyOffset = 0.f;
     } pathMotion;
     int entity = -1;
     std::string label;
     std::string authoredName;
     bool floorMe = false;
+    bool routeChildrenSmokeEnabled = false;
+    int routeChildSmokeCounter = 0;
+    float authoredRouteRadius = 24.f, authoredRouteHeight = 24.f;
     float routeChildEmissionThreshold = 0.f;
     bool routeChildEmissionThresholdMapped = false;
     // 0046F930 initializes the root +0x48 name string empty. FireRescue init
@@ -661,6 +666,15 @@ struct PreviewFire {
     FireEntity runtime;
     bool loopSoundStarted = false;
     V lastLoopSoundSource{};
+};
+
+struct QueuedRouteFire {
+    int parentEntity = -1;
+    V position{}, heading{};
+    float radius = 0.f, height = 0.f;
+    float keyRadius = 0.f, keyHeight = 0.f, keyDepth = 0.f;
+    int32_t firstKeyOffsetMs = 0, secondKeyOffsetMs = 0;
+    bool floorMe = false, smoking = false;
 };
 
 const char* fireLoopSoundName(int choice) {
@@ -1296,6 +1310,10 @@ std::vector<PreviewFire> loadPreviewFires(const SceneData& scene, Collision& col
                                        parseVector(property(entity, "location"), {}));
         const bool floorMe = parseFloat(property(entity, "L_FloorMe"), 0.f) != 0.f;
         preview.floorMe = floorMe;
+        preview.routeChildrenSmokeEnabled =
+            parseFloat(property(entity, "M_Smoking"), 0.f) != 0.f;
+        preview.authoredRouteRadius = parseFloat(property(entity, "H_Radius"), 24.f);
+        preview.authoredRouteHeight = parseFloat(property(entity, "H_Height"), 24.f);
         // The authored `moveto` fires in MBase and Gas R have no C_Model. In
         // that initializer branch, 00448D60 writes
         // (H_Radius,H_Height,H_Radius) to root[+0x108..+0x110]. Preserve the
@@ -1386,7 +1404,16 @@ int drawPreviewFires(std::vector<PreviewFire>& fires, FireRenderer& renderer, ui
     return quads;
 }
 
-void updatePreviewFirePathMotion(PreviewFire& fire, float dt) {
+int32_t roundedRouteKeyOffsetMs(float seconds) {
+    const double milliseconds = std::nearbyint(double(seconds) * 1000.0);
+    if (!std::isfinite(milliseconds)) return 0;
+    return int32_t(std::clamp(milliseconds,
+        double(std::numeric_limits<int32_t>::min()),
+        double(std::numeric_limits<int32_t>::max())));
+}
+
+void updatePreviewFirePathMotion(PreviewFire& fire, float dt, uint32_t now,
+                                 std::vector<QueuedRouteFire>& queued) {
     auto& motion = fire.pathMotion;
     if (!motion.active) return;
 
@@ -1395,8 +1422,7 @@ void updatePreviewFirePathMotion(PreviewFire& fire, float dt) {
     // gates deferred FireRescue child requests. Retail copies the current
     // visual-subobject position into that child, then writes the route
     // candidate back to the visual subobject. The root world transform and
-    // FireEntity::origin remain fixed. Child creation and generated size keys
-    // are not ported yet.
+    // FireEntity::origin remain fixed.
     motion.progress += std::max(0.f, dt) * motion.rate;
     const bool complete = motion.progress >= motion.distance;
     if (!complete && motion.childEmissionThresholdMapped &&
@@ -1404,16 +1430,104 @@ void updatePreviewFirePathMotion(PreviewFire& fire, float dt) {
         return;
 
     motion.lastEmissionGateProgress = motion.progress;
+    const V previousVisualPosition = fire.runtime.visual.position;
     const float routeProgress = std::clamp(motion.progress, 0.f, motion.distance);
-    fire.runtime.visual.setPosition(motion.start + motion.direction * routeProgress);
+    const V routeCandidate = motion.start + motion.direction * routeProgress;
+    if (motion.childEmissionThresholdMapped) {
+        QueuedRouteFire request;
+        request.parentEntity = fire.entity;
+        // 00449340 copies ZZ_location before writing routeCandidate to the
+        // parent visual component.
+        request.position = previousVisualPosition;
+        request.heading = motion.direction;
+        // The request's H_Radius/H_Height come from the current visual vector;
+        // generated P keys use the source entity's no-C_Model initializer
+        // vector. For authored routes those are rooted in H_Radius/H_Height.
+        request.radius = fire.runtime.visual.sizes.size.x;
+        request.height = fire.runtime.visual.sizes.size.y;
+        request.keyRadius = fire.authoredRouteRadius;
+        request.keyHeight = fire.authoredRouteHeight;
+        // The retained x87 distance is the separation of +/- half-radius
+        // endpoints along the normalized route direction. It equals the
+        // authored radius for the verified no-C_Model route path.
+        request.keyDepth = fire.authoredRouteRadius;
+        request.firstKeyOffsetMs = roundedRouteKeyOffsetMs(motion.firstKeyOffset);
+        request.secondKeyOffsetMs = roundedRouteKeyOffsetMs(motion.secondKeyOffset);
+        request.floorMe = fire.floorMe;
+        if (fire.routeChildrenSmokeEnabled && ++fire.routeChildSmokeCounter > 1) {
+            fire.routeChildSmokeCounter = 0;
+            request.smoking = true;
+        }
+        queued.push_back(request);
+    }
+    fire.runtime.visual.setPosition(routeCandidate);
     if (complete) motion.active = false;
 }
 
-void updatePreviewFires(std::vector<PreviewFire>& fires, uint32_t now, float dt) {
+void updatePreviewFires(std::vector<PreviewFire>& fires, uint32_t now, float dt,
+                        std::vector<QueuedRouteFire>& queuedRouteChildren) {
     for (auto& fire : fires)
         fire.runtime.think(now, dt, [] {}, [] {}, [&] {
-            updatePreviewFirePathMotion(fire, dt);
+            updatePreviewFirePathMotion(fire, dt, now, queuedRouteChildren);
         });
+}
+
+void drainPreviewFireRouteQueue(std::vector<PreviewFire>& fires, Collision& collision,
+                                Random& random, uint32_t now, int& dividerCycle,
+                                int& nextDynamicEntity,
+                                const std::vector<QueuedRouteFire>& queued) {
+    // Retail stages route requests during the FireRescue +0x50 Think pass and
+    // drains them after the contact pass. Its class factory may reuse a
+    // retained root; creating a fresh host actor is the current visual/runtime
+    // approximation until reset and retirement are mapped.
+    for (const auto& request : queued) {
+        PreviewFire child;
+        child.entity = nextDynamicEntity++;
+        child.label = "Route fire from #" + std::to_string(request.parentEntity);
+        child.floorMe = request.floorMe;
+        child.authoredRouteRadius = request.radius;
+        child.authoredRouteHeight = request.height;
+        child.routeChildEmissionThreshold = request.radius * 0.5f;
+        child.routeChildEmissionThresholdMapped = true;
+        child.spreadNameGateEnabled = false; // generated A_Name is explicitly null.
+
+        const float yaw = std::atan2(request.heading.x, request.heading.z);
+        const float c = std::cos(yaw);
+        const float s = std::sin(yaw);
+        const float headingMatrix[9] = {c, 0.f, s, 0.f, 1.f, 0.f, -s, 0.f, c};
+        child.runtime.initialize(
+            random, now, dividerCycle, request.position,
+            request.radius, request.height,
+            // K_SprayTime is untouched in this generated request. The host
+            // applies its zero/unset class-data proxy, then FireRescue's
+            // existing radius-based normalization; the class-template value
+            // remains an open source field.
+            0.f, false, request.smoking,
+            [&](FireVisual& visual) {
+                std::copy(headingMatrix, headingMatrix + 9, visual.matrix);
+                if (request.floorMe) FireFloor::alignInWorld(visual, collision);
+            }, [](int) {});
+
+        // The child UserData carries three size keys: the no-model source
+        // extent at time zero, the same extent after the first offset, then a
+        // zero horizontal extent at the second offset. 00448D60 adds the
+        // generated relative key times to its initialization game clock.
+        auto& size = child.runtime.visual.sizes;
+        size.keys.clear();
+        size.first = size.next = -1;
+        size.size = {};
+        size.scale = {1.f, 1.f, 1.f};
+        size.changed = false;
+        const V initialKey{request.keyRadius, request.keyHeight, request.keyDepth};
+        const V terminalKey{0.f, 0.f, request.keyDepth};
+        const uint32_t firstKeyTime = now + uint32_t(request.firstKeyOffsetMs);
+        const uint32_t secondKeyTime = now + uint32_t(request.secondKeyOffsetMs);
+        size.add(initialKey, now, now);
+        size.add(initialKey, firstKeyTime, now);
+        size.add(terminalKey, secondKeyTime, now);
+        child.runtime.visual.sizeUpdate(now);
+        fires.push_back(std::move(child));
+    }
 }
 
 V playerRescueCandidateWorldOrigin(const Player& player) {
@@ -6038,7 +6152,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 passoutRecoveredThisFrame = true;
             }
             updateBoundsTriggerModelFlags(now);
-            updatePreviewFires(fires, now, dt);
+            std::vector<QueuedRouteFire> pendingRouteChildren;
+            updatePreviewFires(fires, now, dt, pendingRouteChildren);
             if (previewMotionsPlaying) {
                 previewMotionTime = std::min(bmodelMotionEnd, previewMotionTime + dt);
                 sampleBModelMotions(bmodelMotions, previewMotionTime, inspectionPoses);
@@ -7373,6 +7488,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             // VictimRescue submissions now follow their registered class
             // order; ScriptActor event-drain timing and render-frame cadence
             // remain unresolved.
+            drainPreviewFireRouteQueue(fires, collision, gameplayRandom, now,
+                                       fireDividerCycle, nextDynamicFireEntity,
+                                       pendingRouteChildren);
             drainPreviewFireSpawnQueue(fires, collision, gameplayRandom, now,
                                        fireDividerCycle, nextDynamicFireEntity,
                                        pendingSpreadChildren);
