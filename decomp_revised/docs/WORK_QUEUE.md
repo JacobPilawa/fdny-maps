@@ -717,6 +717,23 @@ eight rescue choices and packaged all 17 scene directories. The existing
 json-c macOS 27.0 versus 13.3 linker warning remains. No tests, interactive
 run, or retail parity comparison was performed.
 
+The current `004640F0` body calls base updater `0045F600` before its mode-1/3
+stream gate; `0045F600` advances the item `+0x15C` follower when equipped byte
+`+0x158` is set. The host now follows selected HoseSpray state for that
+follower, while mode 1/3 still gates stream and action work. Its rebuilt
+standalone and packaged executables match at SHA-256
+`f7283875b6f28b174fce4e7eadff9e6c2613797ecc00f5308cffa3ff68d41094`.
+`Info.plist` and `git diff --check` passed; all eight rescue choices and 17
+scene packages are included. The outer callback cadence and camera-to-follower
+transform remain unresolved. No tests, interactive run, or retail parity
+comparison was performed.
+
+The saved helper trace resolves HoseSpray's active vector as positive item
+axis 2: `0049E770` reads component `+0x1C..+0x24`, `00446390` scales it by 5,
+and the same axis is passed to `0046D1B0`. The host maps forward through the
+camera proxy's `-Z` convention; because its relation to Player `+0x34A4` is
+open, that stream/offset sign remains provisional.
+
 After the fresh particle-template trace, the shared macOS target and
 rescue-all app rebuilt with matching standalone/package SHA-256
 `19a4f8e02b096e24e46a4dbce87f006ae44905fdf46a9c2fca56c9f7f520cc8c`. The

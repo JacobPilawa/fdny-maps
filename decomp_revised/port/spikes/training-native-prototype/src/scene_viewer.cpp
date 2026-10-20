@@ -6400,28 +6400,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const bool hoseSelected = selectedItem == "hose";
                 const int hoseMode = playerLoadout.items.hoseMode;
                 const bool hoseModeUpdates = hoseMode == 1 || hoseMode == 3;
-                if (hoseSelected && hoseModeUpdates && sprayPressed &&
-                    !rescueHoseSpray.action.active) {
-                    HoseSprayAction::begin(rescueHoseSpray.action, now);
-                    // Retail action-start requests the owned 2D HoseSpray
-                    // instance. The host loops it while held; loop policy has
-                    // not been measured from the original audio backend.
-                    sceneAudio.loopOwned(playerEntityId, "HoseSpray", player.p,
-                                         player.p, yaw, 2);
-                }
-                if (rescueHoseSpray.action.active &&
-                    (sprayReleased || !sprayHeld || !hoseSelected || !hoseModeUpdates)) {
-                    HoseSprayAction::end(rescueHoseSpray.action);
-                    sceneAudio.stopOwned(playerEntityId, "HoseSpray");
-                }
-
-                if (hoseSelected && hoseModeUpdates) {
-                    // 0045F660 creates the HoseSpray item follower at +0x98
-                    // under Player+0x34A4 with per-axis smoothing
-                    // (.006/.009/.006). 0045F600 advances that follower only
-                    // while the item is selected. Re-selecting calls
-                    // 00483A20(..., parent, true), which copies the parent
-                    // frame before following resumes.
+                if (hoseSelected) {
+                    // 004640F0 calls 0045F600 before checking hose mode. The
+                    // base callback advances +0x15C whenever equipped byte
+                    // +0x158 is set, including outside the mode-1/3 stream
+                    // branch. Re-selection copies the current parent frame.
                     if (!rescueHoseSpray.itemFollowerInitialized ||
                         !rescueHoseSpray.itemWasSelected) {
                         rescueHoseSpray.itemFollower = Follower{};
@@ -6438,7 +6421,25 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     // its numeric relation to Genesis camera space is open.
                     rescueHoseSpray.itemFollower.basis = cameraFrame.axis;
                     rescueHoseSpray.itemWasSelected = true;
+                } else {
+                    rescueHoseSpray.itemWasSelected = false;
+                }
+                if (hoseSelected && hoseModeUpdates && sprayPressed &&
+                    !rescueHoseSpray.action.active) {
+                    HoseSprayAction::begin(rescueHoseSpray.action, now);
+                    // Retail action-start requests the owned 2D HoseSpray
+                    // instance. The host loops it while held; loop policy has
+                    // not been measured from the original audio backend.
+                    sceneAudio.loopOwned(playerEntityId, "HoseSpray", player.p,
+                                         player.p, yaw, 2);
+                }
+                if (rescueHoseSpray.action.active &&
+                    (sprayReleased || !sprayHeld || !hoseSelected || !hoseModeUpdates)) {
+                    HoseSprayAction::end(rescueHoseSpray.action);
+                    sceneAudio.stopOwned(playerEntityId, "HoseSpray");
+                }
 
+                if (hoseSelected && hoseModeUpdates) {
                     // 0044F340 calls the selected slot-4 child update and then
                     // adds floor(frameDelta * 1000) while ACTION remains held.
                     // This does not depend on a fire-contact hit.
@@ -6497,11 +6498,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     rescueHoseSpray.stream.clearContact();
                     rescueHoseSpray.stream.updatePressure(
                         rescueHoseSpray.action.active);
-                    // 004640F0 transforms local nozzle point (0,0,8) through
-                    // item component +0x58 and adds 5 units along its resolved
-                    // axis while active. The component's local frame is
-                    // identity; the final retail camera-space join remains
-                    // open, so use the source-shaped item follower here.
+                    // Retail transforms local (0,0,8), then adds +5 on item
+                    // axis 2 and passes +axis 2 to 0046D1B0. This host's
+                    // cameraFrame proxy uses OpenGL's -Z view-forward
+                    // convention, so the following sign is a camera adapter,
+                    // not the recovered retail item-to-camera mapping.
                     FrameTransform hoseItemFrame =
                         ExtinguisherPose::followerFrame(rescueHoseSpray.itemFollower);
                     V source = cameraRelativePoint(hoseItemFrame, 0.f, 0.f, 8.f);
@@ -6535,10 +6536,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                     hoseStreamDrawPressure = rescueHoseSpray.stream.pressure;
                 } else if (!hoseSelected) {
-                    rescueHoseSpray.itemWasSelected = false;
                     rescueHoseSpray.stream.reset();
-                } else {
-                    rescueHoseSpray.itemWasSelected = false;
                 }
             }
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);

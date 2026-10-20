@@ -119,7 +119,9 @@ the base update `0045F600` calls `00483720` only while the selected byte
 `00483720` copies the parent's basis and updates translation using the
 per-axis follower flags and smoothing helper `00483140`. `004640F0` resolves
 the local nozzle point `(0,0,8)` through item component `+0x58` and adds 5
-units along its resolved axis while active. The saved setup has no
+units along its resolved axis while active. `0049E770` extracts component
+axis 2 (`+0x1C..+0x24`), and `00446390` scales that vector by positive 5;
+`004640F0` also passes positive axis 2 to `0046D1B0`. The saved setup has no
 HoseSpray-specific hand offset in the component's local transform. The
 `touchhose N` intrusive-list records at `+0xCB8` remain unrelated by current
 evidence.
@@ -127,11 +129,21 @@ evidence.
 The shared host now applies this item-follower state while HoseSpray is
 selected, including the source smoothing rates, direct parent-basis copy, and
 copy-parent reset on selection. It uses `cameraFrame` as the parent proxy and
-retains the source local nozzle offset. This makes the item path source-shaped,
-but the proxy's relation to Player `+0x3460/+0x34A4`, the Genesis camera, and the
-retail update cadence is still provisional. The mode-2 matrix writer and
+maps its local forward through the host camera's `-Z` convention for the nozzle
+and stream. Retail's positive item-axis-2 direction is known, but its mapping
+to the host camera proxy is not; the active 5-unit offset and stream direction
+therefore remain provisional. The proxy's relation to Player
+`+0x3460/+0x34A4`, the Genesis camera, and retail update cadence is unresolved.
+The mode-2 matrix writer and
 ActorInfo consumer are traced through `00497F70`/`00492110` to
 `geActor_SetPose`; their final runtime camera-space values remain open.
+
+Update-order follow-up: the current `004640F0` body calls `0045F600` before
+checking whether HoseSpray mode is 1 or 3. Saved `0045F600` calls `00483720`
+only when equipped byte `+0x158` is set, and `0045F620` writes that byte. The
+host now advances its item follower while HoseSpray is selected, independently
+of the later stream-mode gate; action/contact/stream processing remains under
+modes 1/3. This does not establish the outer Player callback cadence.
 
 Retail does not establish the keyboard or mouse mapping for selecting slot 4
 or invoking these callbacks in the current evidence. The shared host exposes
@@ -169,10 +181,12 @@ collision gate, previous-frame contact ordering, and the
 The extinguisher's message path continues to use its separate nonterminal
 `finalize=0` route.
 
-The shared scene host now models the selected item's follower state and
-transforms the local nozzle point through that frame. Its parent is represented
-by `cameraFrame`, so the relation from Player view frame `+0x3460` through
-follower `+0x34A4` to Genesis camera space is still provisional. The generic
+The shared scene host now models the selected item's follower state and maps
+local nozzle forward through the `cameraFrame` proxy's `-Z` convention. Retail
+adds 5 along item component positive axis 2 and passes that axis to the stream
+update; the proxy's relation from Player view frame `+0x3460` through follower
+`+0x34A4` to Genesis camera space is unresolved, so that sign mapping remains
+provisional. The generic
 equipment writer/consumer path is mapped through ActorInfo and
 `geActor_SetPose`, but its final runtime matrix is not captured. Slot and
 action bindings are also provisional. The host draws the traced dual-curve
@@ -252,6 +266,14 @@ bundled all 17 scene packages, including the four PlayerHose maps. The existing
 json-c macOS 27.0 versus deployment target 13.3 warning remains. `git diff
 --check` passed. No tests, interactive run, or retail parity comparison was
 performed.
+
+After the selected-byte/update-order correction, the standalone and bundled
+macOS executables match at SHA-256
+`f7283875b6f28b174fce4e7eadff9e6c2613797ecc00f5308cffa3ff68d41094`.
+`Info.plist` validation passed and the rescue-all build emitted all eight
+catalog choices and packaged all 17 scene directories. The existing json-c
+macOS 27.0 versus 13.3 linker warning remains. `git diff --check` passed. No
+tests, interactive run, or retail parity comparison was performed.
 
 Next trace the item-local/mode-2 matrix writer and recover a camera/ActorInfo
 runtime capture before changing the camera-space adapter. Also resolve the
