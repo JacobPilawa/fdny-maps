@@ -3828,6 +3828,17 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 throw std::runtime_error("Scene audio check could not open SDL's dummy audio device");
             sceneAudio.load(scene, inheritedMusic);
         }
+        bool rescueWinFeedbackDispatched = false;
+        auto dispatchRescueWinFeedback = [&] {
+            if (rescueWinFeedbackDispatched) return;
+            // Only the accepted authored `finalexit` command is a confirmed
+            // standalone win event here. The numeric message gate can also be
+            // set by the no-exit-zone branch, which is not a proven win.
+            sceneAudio.play("RC_ResLvlWin0", player.p, player.p, yaw, 1);
+            sceneAudio.playOwned(playerEntityId, "RescueWin", player.p,
+                                 player.p, yaw, 1);
+            rescueWinFeedbackDispatched = true;
+        };
         auto startExtinguisherActionAudio = [&](bool middleAlreadyActive) {
             sceneAudio.playOwned(playerEntityId, "ExtStart", player.p, player.p, yaw, 2);
             if (!middleAlreadyActive)
@@ -4174,6 +4185,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         total - uint32_t(accounted);
                     if (remaining == 0) {
                         rescueState.exits.messageGate = 1;
+                        dispatchRescueWinFeedback();
                         if (rescueServices.refreshSelectedItem)
                             rescueServices.refreshSelectedItem();
                         return true;

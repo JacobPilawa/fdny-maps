@@ -82,6 +82,8 @@ remain an inference. Keep callback cadence provisional.
 | `route_parent_track` | `00449340` x86 and `0044B620` track helper | Complete; parent clears shared `setsize`/route track and inserts zero at clock-10 plus root+108 at clamped route-rate delay; host implementation updated |
 | `route_template_defaults` | FireRescue typedef, 15 mission BSPs, class registration `00448070`, constructor `0044A330` | Complete; placed epairs do not prove generated-template defaults; spawn message, spray time, alive and child timestamp bases remain unresolved; no edits |
 | `route_factory_reuse` | FireRescue factory, vtable `004475F0`, registration `00448D60`, broad `+0x1C` writer census | Complete; UserData and visual setup are reinitialized; direct constructor/reuse resets are mapped, but no direct nonzero root writer was found; aliases, computed writes and retirement remain unresolved; no edits |
+| `route_template_pipeline` | `00449340`, `0049B760`/`0049B690`, `00429C00`, `0049D130`/`0049D4C0`, factory/constructor/setup evidence | Complete, read-only; confirmed the request-to-factory chain and that the builder/constructor do not prove untouched template values; no edits |
+| `class_template_source` | original Data inventory, RRF, BSP exports, FireRescue typed schemas | Complete, read-only; no separate class-template file exists in the copied source snapshot, and placed actor values cannot establish generated defaults; no edits |
 
 ## Rescue timeout loss audio (2026-10-20)
 
@@ -1266,6 +1268,17 @@ profile serialization can resume after the source movement and held-tool frame
 gaps are better understood. Timeout state 2 is statically traced and now
 ported; keep result widget timing, frontend handoff and the complete return
 route open until their source behavior is established.
+
+The shared host now requests the one-entry `RC_ResLvlWin0` chatter and
+Player-owned `RescueWin` sound once when an authored standalone `finalexit`
+passes its remaining-victim gate. This uses the accepted command as the
+completed-mission event and does not treat the no-exit-zone state-1 write as a
+win. The matching samples are included in every scene package. The audio call
+shares the EVS command invocation as a host timing adapter; retail's outer
+status callback cadence remains unverified. The timed result card and
+win-to-Records handoff are still open because its duration fields and live
+presentation are not established. Evidence:
+[`rescue_win_feedback_port_2026-10-20.md`](../tracker/evidence/scenario-loading/rescue_win_feedback_port_2026-10-20.md).
 
 ## RescueBot lifecycle implemented from fresh retail trace (2026-10-20)
 

@@ -130,6 +130,17 @@ UserData request and copies the pre-update visual base into `ZZ_location`.
 For the authored no-`C_Model` route case, current-hash instructions confirm
 these request fields:
 
+The pinned request/factory path is `00449340` → `0049B760`/`0049B690` class
+lookup → `00429C00` descriptor lookup → `0049D130`/`0049D4C0` submission →
+factory `0044A470`. A fresh root uses constructor `0044A330`; its FireRescue
+UserData initialization is `0049D160`, and setup then runs `00448D60`. Neither
+the request builder nor the inspected constructor/reuse path establishes the
+inherited values for untouched fields. The local original snapshot includes
+map BSPs, EVS, ACT, and RRF resource definitions but no separate
+`RCS_FireRescue` class-template/default manifest. The decoded BSP entity JSON
+contains placed actor values only and is not evidence for generated-child
+defaults.
+
 - `F_FireType`, `C_Model`, and `A_Name` are explicitly zero. The dynamic child
   therefore has no named-fire loop and does not pass the name gate used by
   random spread.

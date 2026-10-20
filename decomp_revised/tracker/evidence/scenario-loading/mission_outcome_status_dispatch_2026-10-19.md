@@ -40,6 +40,13 @@ needs a source-confirmed completed-mission event instead of treating every
 `RescueExitState.messageGate == 1` as a win. See
 [`rescue_completion_and_exit_path.md`](rescue_completion_and_exit_path.md).
 
+The host now uses only an accepted authored standalone `finalexit` command
+after its remaining-victim check as that completed-mission event. It requests
+`RC_ResLvlWin0` and the Player-owned `RescueWin` sound once, while leaving the
+no-exit-zone state-1 path separate. The request occurs during the host EVS
+command invocation; retail status-callback timing remains unverified. See
+[`rescue_win_feedback_port_2026-10-20.md`](rescue_win_feedback_port_2026-10-20.md).
+
 The status updater routes named chatter through `004897C0`, which finds the
 set and chooses `00489110` for flag `1`. That routine advances its set cursor
 and wraps at the entry count before requesting the selected sound through
@@ -220,8 +227,10 @@ the same gate field.
 the Player update in seconds; it is also read as the input to escape/RescueBot
 deadline scheduling. Its negative-value path writes `+0x3438 = 2`. The shared
 host now tracks that countdown, writes state 2, and stops its Player movement
-step, but it does not yet implement result audio/widget playback or frontend
-return. The frontend manager's static result consumer is traced to child 5 for
+step, then requests the source-confirmed loss audio once. On an accepted
+standalone `finalexit`, it requests win audio once without conflating the
+no-exit-zone gate. The result widget and frontend return are not yet ported.
+The frontend manager's static result consumer is traced to child 5 for
 state 1 and the level selector (child 2) for state 2; exact child timing and
 complete outro remain open. PlayerHose has a separate result field and no
 confirmed consumer, so do not apply this rescue result path to it.

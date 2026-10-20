@@ -80,6 +80,14 @@ The `finalexit` command reaches `HandleFinalExitCommand` (`0x00450A00`). It comp
 
 The viewer now follows both branches: an incomplete exit shows the remaining count for seven seconds, while a complete exit sets the shared gate and refreshes the first owned inventory slot through the existing `refreshSelectedItem` adapter. The complete branch does not add a success hint; the source trace does not show one. The controlled rescue check dispatches authored final-exit triggers before and after the last release to verify the timer, gate, and item reselection.
 
+For an accepted standalone `finalexit`, the shared host also requests the
+source-mapped one-entry `RC_ResLvlWin0` chatter and Player-owned `RescueWin`
+sound once. The matching resources are included in every scene bundle. This
+event remains distinct from the no-exit-zone state-1 write and from
+`finalexitloadmap`, which continues to another stage. The host dispatches the
+audio during the EVS command invocation; exact retail callback cadence is not
+verified. See [`rescue_win_feedback_port_2026-10-20.md`](rescue_win_feedback_port_2026-10-20.md).
+
 The `finalexitloadmap` command reaches `HandlePlayerFinalExitLoadMap` (`0x00450A70`). It checks `data\\maps\\<key>.bsp`, applies the same remaining-victim gate, and, when accepted, queues a pending level request with `data\\resdefs\\rescue.rrf`. The pending-level update and World loader route are statically mapped in [the pending-level evidence](evergame_pending_load_update.md). Equality between the checked key and the forwarded pending map-name context, runtime stage handoff, and transition timing are still open.
 
 The shared viewer has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. A controlled `--rescue-check` dispatches all six authored `finalexitloadmap` touch bindings after all victims are rescued, verifies that each key loads a matching sibling package, and confirms the command remains gated after the first rescue. All 13 bundled rescue/stage packages pass their rescue checks. The adapter uses the command key because the retail helper's separate forwarded context has not been proven equal. Live exit contact, trigger enable timing, retail request identity, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
@@ -87,10 +95,11 @@ The shared viewer has a bounded adapter for this route: after the remaining-vict
 Fresh tracing of the Player status callback confirms that Player `+0x3438` is
 also read as a result state: value `1` dispatches win feedback and value `2`
 dispatches loss feedback while the status is visible. Direct final-exit writers
-set `1`; the countdown path writes `2` on timeout. The shared host now requests
-the two source-confirmed timeout loss sounds once, but does not yet render the
-result widget or implement win feedback. Widget lifetime/presentation, replay
-cadence, and full result-to-frontend behavior remain unresolved. See
+set `1`; the countdown path writes `2` on timeout. The shared host requests
+source-confirmed win audio on accepted standalone `finalexit` and the two
+timeout loss sounds once, but does not yet render the result widget or enter
+the frontend return flow. Widget lifetime/presentation, replay cadence, and
+full result-to-frontend behavior remain unresolved. See
 [`mission_outcome_status_dispatch_2026-10-19.md`](mission_outcome_status_dispatch_2026-10-19.md).
 
 ## Current uncertainty and next trace
