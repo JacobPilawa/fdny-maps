@@ -76,9 +76,10 @@ existing `N_PitchSpread` degree clamp; its exact relation to retail
 
 The host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment from
 the retail-shaped `00465EF0` frame offset with the same `0x43/2`
-world-collision arguments seen in the retail stream collision, and only
-advances the currently selected target when the hit BSP model matches that
-target's authored model. The temporary aim basis follows retail's pitch-around-
+world-collision arguments seen in the retail stream collision, and checks the
+selected target's model bounds against the impact point expanded by the
+current-pressure contact radius. A world collision is still required to set
+the contact gate. The temporary aim basis follows retail's pitch-around-
 axis-0 then negative-yaw-around-updated-axis-1 order, including the helper's
 basis-by-axis cross-product order, with source point and direction kept
 separate. SDL deltas stand in for retail's separate pitch/yaw accumulators;
@@ -106,8 +107,12 @@ owner `+0x1830` / component `+0x3B0`. The shared host tracks the source's
 per-update 0.2 interpolation toward that target while held and toward zero
 after release. Retail writes this scalar to stream sample records and sends it
 as a WindowFire message payload; the traced WindowFire timer ignores the
-payload. The simple blue beam uses the scalar as a provisional opacity proxy
-because the native sample renderer is not yet traced. The earlier exact
+payload as a rate input. The sample consumer passes twice the interpolated
+pressure to its stream-curve builder, culls low-pressure segments, and creates
+four-vertex strips. On collision it sets the douse contact radius from 10 to 40
+using current pressure; the host now checks that radius against the selected
+target's world AABB. The simple blue beam still uses pressure as a provisional
+opacity proxy, and exact rendered-water appearance remains open. The earlier exact
 `+0x1834` instruction-text scan finds only the assignment at `00467B8A`; it
 missed the component-relative alias. The host win/loss title is not retail
 result presentation. See

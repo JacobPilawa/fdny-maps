@@ -76,6 +76,15 @@ struct Collision{
  if(flags&8)break;
  }return found;
  }
+ // PlayerHose's WindowFire callback tests the stream impact against each
+ // target model's AABB expanded by the shared component contact radius.
+ bool modelBoundsOverlapPoint(int modelIndex,V point,float reach){
+ const auto found=std::find_if(collisionModels.begin(),collisionModels.end(),[&](const auto& model){return model.index==modelIndex;});
+ if(found==collisionModels.end())return false;
+ V lo=found->mins,hi=found->maxs;
+ if(modelAngle(modelIndex)!=0||poses.count(modelIndex)){V a{1e9f,1e9f,1e9f},b{-1e9f,-1e9f,-1e9f};for(int bits=0;bits<8;bits++){V corner;for(int axis=0;axis<3;axis++)corner[axis]=(bits&(1<<axis))?hi[axis]:lo[axis];corner=transform(corner,found->origin,modelIndex,false);for(int axis=0;axis<3;axis++){a[axis]=std::min(a[axis],corner[axis]);b[axis]=std::max(b[axis],corner[axis]);}}lo=a;hi=b;}
+ return point.x+reach>=lo.x&&point.x-reach<=hi.x&&point.y+reach>=lo.y&&point.y-reach<=hi.y&&point.z+reach>=lo.z&&point.z-reach<=hi.z;
+ }
  bool solid(V p,V mn,V mx){std::vector<int> ids;for(const auto& model:collisionModels){if(disabled.count(model.index))continue;V point=transform(p,model.origin,model.index,true);ids.clear();leaves(model.root,point+mn,point+mx,ids);for(int id:ids){auto leaf=at(field(data,"leafs"),id);int ns=integer(field(leaf,"num_sides"));if(!(integer(field(leaf,"contents"))&integer(field(data,"contents_mask")))||!ns)continue;bool inside=true;for(int s=0;s<ns;s++){auto ls=at(field(data,"leaf_sides"),integer(field(leaf,"first_side"))+s);auto plane=at(field(data,"planes"),integer(field(ls,"plane")));float sign=integer(field(ls,"side"))?-1:1;V n=vec(field(plane,"normal"))*sign;float d=num(field(plane,"distance"))*sign;for(int i=0;i<3;i++)d-=n[i]*(n[i]>0?mn[i]:mx[i]);if(dot(n,point)-d>=0){inside=false;break;}}if(inside)return true;}}return false;}
 };
 struct Player{

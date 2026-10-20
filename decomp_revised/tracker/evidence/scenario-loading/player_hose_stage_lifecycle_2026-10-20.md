@@ -111,7 +111,7 @@ distance between anchor processing and state-4 countdown remains unresolved.
 | `D_NextHotSpot` | Resolved to the next hotspot pointer for the PlayerHose state machine. |
 | `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
 | `M_SpotTime` | Multiplied by the active session mode's timer scale and stored at PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. Exact numeric scales are in [`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md); mode labels and the selection path are open. |
-| `M_MaxPressure` | `004677D0` copies the path record's `+0x2C` to PlayerHose `+0x1834`; a fresh exact-offset instruction-text scan finds only this write at `00467B8A`. No direct-immediate reader appears, but computed and aliased accesses remain possible. See [`player_hose_pressure_scan_2026-10-20.md`](player_hose_pressure_scan_2026-10-20.md). |
+| `M_MaxPressure` | `004677D0` copies the path record's `+0x2C` to PlayerHose `+0x1834`, aliasing stream component target `+0x3B4`. Current pressure at `+0x3B0` feeds sample geometry and contact padding; see [`player_hose_pressure_stream_2026-10-20.md`](player_hose_pressure_stream_2026-10-20.md). |
 | `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp in degrees. Its interaction with path-angle progression remains open. |
 | `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |
 | `ZF0..ZF8_FireModel` and paired `SprayTime` | Non-null model references create WindowFire children for the initialized context; each paired SprayTime is copied to its child's linked state. |
@@ -131,11 +131,13 @@ orientation feeds nozzle aim helper `00465EF0` and stream presentation
 angle input is multiplied by `0.0174532924` and `0.5` before sine/cosine, so
 the pitch and yaw accumulators use degrees and the helper forms half-angle
 rotations. This establishes the authored pitch bound's units, but not the
-rendered stream's cone width. `M_MaxPressure`'s downstream effect remains
-unknown; the earlier `0x194` scan was not relevant, and the fresh exact
-`0x1834` scan only found the assignment. It is distinct from stream-owner intensity at PlayerHose
-`+0x1830` (stream component-relative `+0x3B0`), which the DouseHose callback
-passes to the WindowFire contact.
+rendered stream's cone width. The pressure consumer is now traced separately:
+current pressure is interpolated into stream samples, passed as a geometry
+input, and used to derive a 10-to-40 contact padding before WindowFire bounds
+checks. The `0x7530` handler still ignores the message payload as a completion
+rate input. See
+[`player_hose_pressure_stream_2026-10-20.md`](player_hose_pressure_stream_2026-10-20.md)
+for the source chain and host update.
 The fresh rotation pseudocode is
 [`player_hose_angle_rotation_fresh_2026-10-20.c`](player_hose_angle_rotation_fresh_2026-10-20.c)
 (SHA-256 `30a8b4e2aa55a82592408fcdb8d316a242121f5bb1a6f7913bca6d985ca2bfec`).
@@ -255,9 +257,11 @@ which actors are active together.
 - Explain which spline/start conditions can enter Construction node 36, and
   find a source-backed read of `E_NextHotSpotPathDir`; the current first-hotspot
   A route and D progression chain both exclude 36.
-- Trace direct or aliased consumers of `M_MaxPressure` at PlayerHose `+0x1834`
-  and resolve its effect; trace the pitch clamp's interaction with path-angle
-  progression and `SprayTime` zero-value handling before implementing those semantics.
+- Trace the remaining stream geometry/render-state transfer and component
+  cadence; `M_MaxPressure` sample and contact-radius consumers are now mapped
+  and the contact-radius gate is ported. Trace the pitch clamp's interaction
+  with path-angle progression and `SprayTime` zero-value behavior before
+  implementing those semantics.
 - Trace which `RC_HoseTimeWarn` sound entry is selected and verify audible
   playback; the source crossing is six-to-five seconds after joining the
   countdown to the traced seconds-based frame delta.

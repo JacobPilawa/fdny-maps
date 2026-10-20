@@ -5789,7 +5789,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     rotateFrameAroundAxis(hoseAimFrame, hoseAimFrame.axis[1], hoseYawDegrees);
                 }
                 const std::string previousTransition = playerHoseStage.transition;
-                int hitModel = -1;
+                bool streamHasWorldContact = false;
                 const bool hoseActionActive = sprayHeld &&
                     playerHoseStage.result == PlayerHoseStage::Result::Running;
                 playerHoseStage.updateStreamPressure(hoseActionActive);
@@ -5805,11 +5805,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     Hit streamHit;
                     if (collision.tracePoint(hoseStreamStart, streamDelta, 0x43, 2, streamHit)) {
                         hoseStreamEnd = streamHit.point;
-                        hitModel = streamHit.model;
+                        streamHasWorldContact = true;
                     }
                     hoseStreamVisible = true;
                 }
-                playerHoseStage.update(dt, hoseActionActive, hitModel);
+                bool targetInContactVolume = false;
+                if (hoseActionActive && streamHasWorldContact) {
+                    if (const auto* target = playerHoseStage.target()) {
+                        targetInContactVolume = collision.modelBoundsOverlapPoint(
+                            target->model, hoseStreamEnd, playerHoseStage.streamContactRadius());
+                    }
+                }
+                playerHoseStage.update(dt, hoseActionActive, targetInContactVolume);
                 if (playerHoseStage.transition != previousTransition &&
                     !playerHoseStage.transition.empty()) {
                     activeHint = playerHoseStage.transition;

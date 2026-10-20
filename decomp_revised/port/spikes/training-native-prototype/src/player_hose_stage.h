@@ -274,6 +274,12 @@ struct PlayerHoseStage {
         streamPressure += (target - streamPressure) * 0.2f;
     }
 
+    float streamContactRadius() const {
+        // 0046C5A0 interpolates the shared component's +0x18 padding between
+        // constructor values +0x38C (10) and +0x3AC (40) using current +0x3B0.
+        return 40.f * streamPressure + (1.f - streamPressure) * 10.f;
+    }
+
     bool enterHotspot(size_t index) {
         if (index >= pathNodes.size()) return false;
         auto& next = pathNodes[index];
@@ -321,7 +327,7 @@ struct PlayerHoseStage {
         return true;
     }
 
-    void update(float dt, bool waterHeld, int hitModel) {
+    void update(float dt, bool waterHeld, bool targetInContactVolume) {
         if (result != Result::Running || activeHotspot < 0) return;
         const float elapsed = std::max(0.f, dt);
         const float previousCountdown = countdown;
@@ -358,7 +364,7 @@ struct PlayerHoseStage {
             }
         }
 
-        if (!waterHeld || currentTarget.model != hitModel) return;
+        if (!waterHeld || !targetInContactVolume) return;
 
         // 00468680 subtracts delta/SprayTime and completes only below the
         // source's zero threshold. Preserve the authored zero/negative divisor
