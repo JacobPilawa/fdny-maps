@@ -68,11 +68,18 @@ resource manager selected for the spawned child or the final draw binding.
 The host now ports the residual and due-time gates, shared-RNG delay/deadline,
 and velocity spawn request. It assumes allocation succeeds, matching the
 unbounded pool in normal operation. Child `+0xA4` flags are not represented by
-the host renderer. The preview reuses the extinguisher renderer's two-second
-linear particle motion and texture pair; HoseSpray key interpretation,
-allocation failure, final texture binding, lifetime, alpha, and draw cadence
-remain provisional or unresolved. The shared timer is elapsed milliseconds;
-callback cadence is not established.
+the host renderer. A fresh trace of the particle path shows that HoseSpray
+starts with track key 0 selected and its size getter returns that key's scalar
+`3.0`; the later key contains `5.0`, but is not active at initialization. The
+host now passes the current `3.0` scalar through its per-particle preview-size
+field. Mapping that Genesis polygon scalar to the OpenGL quad's side length is
+provisional. The preview still reuses the extinguisher renderer's two-second
+linear motion, constant alpha 191, and resource-14 texture pair. Key advancement,
+effective lifetime, child render flags, allocation failure, final texture
+binding, source alpha, and draw cadence remain provisional or unresolved. The
+shared timer is elapsed milliseconds; callback cadence is not established.
+See
+[`rescue_hose_spray_particle_trace_2026-10-20.md`](rescue_hose_spray_particle_trace_2026-10-20.md).
 
 The generic equipment setup helper `0045F660` also creates an item follower
 under Player view follower `+0x34A4` and stores it at item `+0x98`. HoseSpray
@@ -140,11 +147,22 @@ retail-source SHA. The plist and `git diff --check` passed. The existing
 Homebrew json-c macOS 27.0 versus deployment target 13.3 warning remains. No
 tests, interactive run, or retail comparison was performed.
 
+After passing the source key-0 size scalar into the shared renderer, the
+macOS rescue-all application rebuilt successfully. Standalone and packaged
+executables match at SHA-256
+`19a4f8e02b096e24e46a4dbce87f006ae44905fdf46a9c2fca56c9f7f520cc8c`. The
+plist validated, the packaged rescue catalog contains eight entries, and all
+four PlayerHose maps are present. The existing Homebrew json-c macOS 27.0
+versus deployment target 13.3 linker warning remains. No tests, interactive
+run, or retail comparison was performed.
+
 ## Next work
 
-Trace the HoseSpray attachment matrix and action binding, then resolve the
-child allocation/render-resource chain, template keys, `+0xA4` flags, and
-particle lifetime. The cooldown and spawn-request logic are ported; renderer
-reuse remains provisional. Compare a controlled host contact/douse sequence
-with a retail capture when available. Keep PlayerHose's WindowFire stage and
-rescue-player HoseSpray's FireRescue suppression as independent mechanics.
+Trace the HoseSpray attachment matrix and action binding, then model template
+key advancement and resolve the child allocation/render-resource chain,
+`+0xA4` flags, and effective particle lifetime. The cooldown, spawn request,
+and initial size scalar are ported; the renderer's size-to-world mapping and
+resource binding remain provisional. Compare a controlled host contact/douse
+sequence with a retail capture when available. Keep PlayerHose's WindowFire
+stage and rescue-player HoseSpray's FireRescue suppression as independent
+mechanics.

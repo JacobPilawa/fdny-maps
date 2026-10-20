@@ -5961,8 +5961,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                 // HoseSpray and Extinguisher both configure
                                 // resource 14. The child render binding is not
                                 // proven, so reuse the preview particle path.
+                                // The initial HoseSpray template scalar is 3.0;
+                                // mapping it to a quad side length is provisional.
                                 extinguisherSprayRenderer.spawn(
-                                    effectSpawn, fire.runtime.origin, now);
+                                    effectSpawn, fire.runtime.origin, now,
+                                    RescueHoseSprayEffects::initialParticleSizeScalar);
                             }
                         }
                     }

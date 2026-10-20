@@ -1,5 +1,9 @@
 # FireRescue exposure and random spread
 
+The rescue-player HoseSpray particle key, resource lookup, and submission
+trace is documented in
+[`rescue_hose_spray_particle_trace_2026-10-20.md`](rescue_hose_spray_particle_trace_2026-10-20.md).
+
 ## Pinned input and evidence quality
 
 The fresh analysis is against `FDNYFirefighter.exe`, SHA-256

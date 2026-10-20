@@ -152,10 +152,14 @@ provisional. The host now applies the 100-ms initial effect delay and, after
 terminal suppression, the residual-intensity `>=0.01` gate and direct unsigned
 deadline comparison. When due it advances the millisecond deadline by a
 shared-RNG delay in `[10,250]` converted toward zero, then draws velocity in
-retail `{last,height,first}` axis order and requests a child. The preview
-renderer borrows the extinguisher's two-second particle path. HoseSpray pool
+retail `{last,height,first}` axis order and requests a child. Fresh Ghidra
+traces show HoseSpray's size track starts at key 0 with scalar 3.0; its second
+key's scalar is 5.0 and is not selected initially. The shared renderer now
+passes the current 3.0 value as a per-particle preview size, with the mapping
+to a full OpenGL quad side still provisional. The preview still borrows the
+extinguisher's two-second path and constant alpha. Key advancement, pool
 allocation failure, child `+0xA4` render flags, final resource selection,
-template key/lifetime semantics, and render cadence remain unresolved.
+effective lifetime, and render cadence remain unresolved.
 The `00463EF0` instruction listing preserves the clock addition and conversion
 that the C-like export omits. Resource-3 material, authored bindings,
 attachment-record purpose, scheduler cadence, and retail parity remain open.
@@ -170,6 +174,14 @@ the plist passed, eight rescue choices were emitted by the catalog build, all
 four PlayerHose scene directories are packaged, and the HoseSpray WAV hash was
 verified in each rescue scene manifest. No tests, interactive run, or retail
 comparison was performed.
+
+After the fresh particle-template trace, the shared macOS target and
+rescue-all app rebuilt with matching standalone/package SHA-256
+`19a4f8e02b096e24e46a4dbce87f006ae44905fdf46a9c2fca56c9f7f520cc8c`. The
+plist validated, the catalog contains eight entries, and all four PlayerHose
+maps are packaged. The existing Homebrew json-c 27.0 versus deployment target
+13.3 linker warning remains. No tests, interactive run, or retail comparison
+was performed.
 
 The pressure trace establishes a stored aim-velocity magnitude of
 `4000 * currentPressure` and a separate `0.8 + 2.2 * currentPressure` shape
@@ -2248,6 +2260,7 @@ symptom remain open.
 | `hose_anchor_entry` | Trace `00490BB0` record-cache semantics and `004677D0` hotspot entry timing | Current pinned EXE, Ghidra trace, PlayerHose spline and state exports | Complete, read-only; selected record is returned only on change, initial null cache reports the first record, first/D-linked anchors enter hotspot state, and state-4 countdown copies the stored timer budget; exact frame gap remains open |
 | `hose_aim_camera` | Separate PlayerHose view frame, steering frame, and nozzle/stream source point | `00466780`, `004677D0`, `00465EF0`, `00496DD0`, fresh hose exports | Complete, read-only; stream source point uses the entity frame offset while bounded steering rotates a temporary aim frame; accessor cadence, effective limits, and live orientation remain open |
 | `hose_effect_trace_audit` | Independently audit rescue HoseSpray deadline and spawn mapping | `00463EF0_fresh.c`, `00463EF0_hose_contact.asm`, `random.h`, `rescue_hose_spray_effects.h`, `scene_viewer.cpp` | Complete, read-only; corrected the direct unsigned deadline gate and `{last,height,first}` velocity order; clock-plus-random deadline and shared RNG order match; allocation and final particle rendering remain unresolved |
+| `spray_template_trace` | `00463700`, `0047D2B0`, `0047D330`, `0047DB10`, `0047D6D0`, `0047D8A0`, `0047D820`, `0047F500`, `0047F960`, `0047FEA0`; HoseSpray renderer | Complete, read-only; corrected the initial non-interpolated scalar to key 0's 3.0 (key 1 is 5.0); `004B9400` calls are numeric conversions, not RNG; host passes the current scalar as a provisional quad size; later key advancement, final material, effective lifetime, and pool cadence remain open |
 | `camhose_data_binding` | Check whether the four BSP exports and host loader expose `RCS_CamHose` spline inputs | `.local/exports/{city_h,const_h,dock_h,oil_rig_h}`, `scene_property_matrix.csv`, `SCENE_DATA_CONTRACT.md`, `scene_viewer.cpp` | Complete; read-only; confirmed no CamHose BSP entities, then constructor/UserData and HosePath offsets established route binding; CamHose is a separate helper and not the route-node source |
 | `bank_retail_collision_trace` | Resolve retail Player hull and swept collision path for Bank obstruction | Pinned EXE/Genesis exports, `core.h`, Bank door evidence | Complete; read-only; retail mins `(-30,-30,-30)`/maxs `(30,85,30)` match the port; exact leaf and live route remain open |
 | `mesh_metadata_audit` | Independently audit world-mesh face-span source correspondence | Exporter, geometry/world-mesh JSON, C++ loader | Complete; read-only; validated field mapping and recommended all-map metadata checks; no renderer change |

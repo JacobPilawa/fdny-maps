@@ -19,21 +19,24 @@
 #include <vector>
 
 // Retail extinguisher setup 00461830 selects resource 14 for a two-second
-// particle using white color and a .75 alpha key. rescue.rrf maps resource 14
-// to bsmoke.bmp + sm_alpha.bmp, though the pool manager's link to that RRF is
-// not fully resolved. This host draws a camera-facing OpenGL quad in place of
-// geWorld_AddPolyOnce; quad orientation/extent, key interpolation, blend flags,
-// clipping, and exact resource-manager selection remain provisional.
+// particle using white color and a .75 alpha key. HoseSpray also selects
+// resource 14. rescue.rrf maps it to bsmoke.bmp + sm_alpha.bmp, though the pool
+// manager's link to that RRF is not fully resolved. This host draws a
+// camera-facing OpenGL quad in place of geWorld_AddPolyOnce; the mapping from
+// the source scalar to quad side length, orientation, key interpolation,
+// blend flags, clipping, and exact resource-manager selection remain
+// provisional.
 struct ExtinguisherSprayRenderer {
+    static constexpr uint32_t lifetimeMs = 2000;
+    static constexpr float previewSize = 3.f;
+    static constexpr uint8_t previewAlpha = 191; // source alpha key: trunc(.75 * 255)
+
     struct Particle {
         V origin{};
         V velocity{};
         uint32_t startTime = 0;
+        float quadSideLength = previewSize;
     };
-
-    static constexpr uint32_t lifetimeMs = 2000;
-    static constexpr float previewSize = 3.f;
-    static constexpr uint8_t previewAlpha = 191; // source alpha key: trunc(.75 * 255)
 
     GLuint texture = 0;
     std::vector<Particle> particles;
@@ -124,9 +127,9 @@ struct ExtinguisherSprayRenderer {
     }
 
     void spawn(const ExtinguisherEffects::SpawnRequest& request, V origin,
-               uint32_t now) {
+               uint32_t now, float quadSideLength = previewSize) {
         if (!request.requested) return;
-        particles.push_back({origin, request.offset, now});
+        particles.push_back({origin, request.offset, now, quadSideLength});
     }
 
     void prune(uint32_t now) {
@@ -151,14 +154,14 @@ struct ExtinguisherSprayRenderer {
         glColor4ub(255, 255, 255, previewAlpha);
 
         constexpr float uv[4][2] = {{0.f, 0.f}, {.99f, 0.f}, {.99f, .99f}, {0.f, .99f}};
-        const V right = camera.axis[0] * (previewSize * .5f);
-        const V up = camera.axis[1] * (previewSize * .5f);
         int drawn = 0;
         glBegin(GL_QUADS);
         for (const Particle& particle : particles) {
             const uint32_t age = uint32_t(now - particle.startTime);
             if (age >= lifetimeMs) continue;
             const V center = particle.origin + particle.velocity * (float(age) * .001f);
+            const V right = camera.axis[0] * (particle.quadSideLength * .5f);
+            const V up = camera.axis[1] * (particle.quadSideLength * .5f);
             const std::array<V, 4> vertices = {
                 center - right - up,
                 center + right - up,

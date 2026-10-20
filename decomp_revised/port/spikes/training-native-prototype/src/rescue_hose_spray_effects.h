@@ -7,6 +7,11 @@
 struct RescueHoseSprayEffects {
     using SpawnRequest = ExtinguisherEffects::SpawnRequest;
 
+    // HoseSpray's initial size getter returns current template key 0's scalar.
+    // The OpenGL preview treats that scalar as quad side length; this mapping
+    // to geWorld_AddPolyOnce geometry remains provisional.
+    static constexpr float initialParticleSizeScalar = 3.f;
+
     static bool afterContact(Random& random, uint32_t gameClockMs,
                              float remainingFireStrength,
                              uint32_t& nextEffectClockMs,
