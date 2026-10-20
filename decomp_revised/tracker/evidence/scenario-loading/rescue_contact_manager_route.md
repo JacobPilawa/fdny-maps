@@ -105,8 +105,12 @@ This statically joins Gas R button1's successful class-factory path to the
 type-4 BModel list and its slot `+0x48` checks over the type-1 list. Runtime
 overlap, Player candidate-list membership/order at a particular location, and
 input activation have not been captured. The BModel embedded updater's
-recurring caller and its order relative to the owner contact pass also remain
-unresolved.
+recurring route is the owner `+0x50` Think manager: the root mask admits the
+BModel through `00429490`, and the manager adapter dispatches root slot
+`+0x14` before the later `+0xE0` contact pass. Pair deltas made by the `+0x48`
+producer are therefore drained on a later normal owner pass. This establishes
+phase order only; overlap, list order, input activation, and wall-clock cadence
+remain unobserved. See the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
 
 ## BoundsTrigger contacts and Gas R touch handlers
 
@@ -126,20 +130,23 @@ triggers to the shared BoundsTrigger class path. Successful construction
 admits both instances to the type-8 list; their live overlap contacts and
 event dispatch on a particular update remain unobserved.
 
-The relative order between `0049BD20` contact production and each embedded
-ScriptActor updater is not established. Do not infer same-pass event delivery,
-one-frame latency, or a fixed update cadence from these local routes.
+The owner `+0x50` Think manager now supplies the missing relative order:
+BoundsTrigger root `+0x14` drains root `+0x100` before the later `+0xE0`
+contact producer appends new pairs through root `+0x48`. New pairs are
+available to the next normal owner Think pass. This is not a fixed frame or
+elapsed-time claim; early owner-pass returns and live callback cadence remain
+unverified. See the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
 Additional BoundsTrigger evidence is in
 [training_touch_dispatch_boundary.md](training_touch_dispatch_boundary.md).
 
-This updater caveat concerns the BoundsTrigger ScriptActor's contact-pair
-drain. Victim overlap uses the separate Message Mapper: the preserved
-same-hash owner-service trace maps owner `+0x3BC` to message drain `0049B610`,
-which `00429520` calls after all four manager callbacks, including contact
-manager `+0xE0`. A `0x7532` submitted by VictimRescue during that pass therefore
-reaches its mapped receiver later in the same owner invocation. This does not
-resolve the BoundsTrigger child updater's caller or player/render-frame order;
-see [the victim contact/message integration note](victim_contact_message_port_2026-10-14.md).
+The BoundsTrigger phase boundary is established from the owner manager order;
+Victim overlap uses a separate Message Mapper route. The preserved same-hash
+owner-service trace maps owner `+0x3BC` to message drain `0049B610`, which
+`00429520` calls after all four manager callbacks, including contact manager
+`+0xE0`. A `0x7532` submitted by VictimRescue during that pass therefore
+reaches its mapped receiver later in the same owner invocation. Victim roam
+ordering and the host-to-retail interval remain unresolved; see [the victim
+contact/message integration note](victim_contact_message_port_2026-10-14.md).
 
 ## Fresh Ghidra exports
 

@@ -10,24 +10,38 @@ WorldEntity constructor `0049E240` installs root vtable `004E4458` (raw store at
 
 ## Scheduler search and false candidates
 
-The general linked-list queue pump `0049C0E0` calls queue-member slot `+4`, then member slot `+4` again to check removal. It does not call WorldEntity slot `+0x14`, so this function's list-pump shape does not establish the WorldEntity callback scheduler.
+`0049C0E0` is the active-list pump for the owner `+0x50` Think manager. Its
+manager slot `+4` points to adapter `0049C3D0`, which calls each member's root
+slot `+0x14`; the vtable entry is data-bound at `004E4164+4`. The earlier xref
+query found no direct code caller because the manager reaches the adapter
+through vtable data. See the [root scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
 
-Two nearby routines are only candidates without a type/registration edge:
+WorldEntity constructor `0049E240` reaches common base initialization and then
+ORs value `0x14` into root `+0x14`; that mask still includes the Think
+manager's filter value 2. This makes the instance eligible if it is passed
+through `00429490`, but the WorldEntity factory/load path has not yet been
+joined to that registration call. Therefore the new manager trace does not
+prove that a WorldEntity instance enters the active `+0x50` list, or that its
+four-invocation counter is advanced there.
 
-- `0049C3D0` is a thin virtual wrapper that calls receiver slot `+0x14`. The
-  2026-10-20 FireRescue manager follow-up maps it as the per-member adapter for
-  the owner `+0x50` Think manager. That identifies one use of the wrapper, but
-  does not tie a WorldEntity instance to that manager; WorldEntity slot
-  `+0x14` scheduling therefore remains unresolved. See the
-  [FireRescue dispatch-order note](../fire-spread/fire_update_dispatch_order_2026-10-20.md).
-- `0049C630` increments a counter at `+8`; when it exceeds a limit at `+4`, it calls receiver slot `+4` and resets the counter. No evidence ties this cadence limiter to the WorldEntity or its slot `+0x14`.
+The whole-program fixed-offset scan found 53 indirect `CALL`/`JMP
+[reg+0x14]` candidates. Its apparent main-frame hit at `0042AED4` dispatches
+through `*DAT_00503A78`; constructor `004395C0` installs vtable `004E0B44`,
+whose slot `+0x14` is input handler `00439330`, not a WorldEntity. The two
+world-load candidates (`0049EE0D` and `0049EECE`) still lack a verified
+WorldEntity receiver. The cadence limiter at `0049C630` likewise has no
+registration edge to WorldEntity. See the archived
+[`fixed-offset-call-candidates.md`](../../../../decomp/evidence/scriptactor-common-scheduler-audit/fixed-offset-call-candidates.md).
 
-The mapped app-owner and entity-manager paths do not close the gap: ordinary manager category dispatch is through member slot `+0x48`; staged entity admission invokes slots `+0x20` and `+0x24`; the relevant WorldEntity update slot is `+0x14`. No positive caller path or timing relation has been found. Therefore, only the four-invocation threshold and one-shot effect are established. Do not call it four frames, 120 updates, or any fixed duration without a verified scheduler/runtime trace.
-
-A follow-up audit of the saved whole-program fixed-offset scan found 53 indirect `CALL`/`JMP [reg+0x14]` candidates. The apparent main-frame hit at `0042AED4` dispatches through `*DAT_00503A78`; constructor `004395C0` installs vtable `004E0B44` there, whose slot `+0x14` is input handler `00439330`, not WorldEntity. The generic wrapper `0049C3D0` has no incoming references in its saved xref query. Two hits near world loading (`0049EE0D` and `0049EECE`) have generic indirect-call context but no verified WorldEntity receiver or recurring schedule. This search narrows the static candidates without proving a dynamic caller. See the archived [`fixed-offset-call-candidates.md`](../../../../decomp/evidence/scriptactor-common-scheduler-audit/fixed-offset-call-candidates.md).
+Only the four-invocation threshold and one-shot effect are established for a
+constructed WorldEntity. Do not convert the threshold to a frame count or
+duration until its active-list membership and runtime cadence are verified.
 
 ## Provenance and next work
 
 The constructor and callback pseudocode are saved in [`0049e240_world_startup_constructor.c`](0049e240_world_startup_constructor.c) and [`0049e2c0_delayed_script_load.c`](0049e2c0_delayed_script_load.c). The queue pump and candidate wrappers are same-hash archived Ghidra exports at [0049C0E0](../../../../decomp/evidence/startup-world/0049c0e0_FUN_0049c0e0.c), [0049C3D0](../../../../decomp/evidence/startup-world/0049c3d0_FUN_0049c3d0.c), and [0049C630](../../../../decomp/evidence/startup-world/0049c630_FUN_0049c630.c). The WorldEntity vtable/factory chain is in [world_factory_resolution.md](world_factory_resolution.md).
 
-Next, identify the caller that dispatches WorldEntity root slot `+0x14`, and compare its receiver registration and ordering with the owner manager, staged-entity service, and parser load. If static xrefs remain indirect, use a bounded runtime trace only after the Wine launch and capture setup are verified.
+Next, join WorldEntity factory/load registration to `00429490` or establish
+its active-list membership in a bounded runtime trace. Then compare its four
+invocations with the normal and early-return owner paths; the call target alone
+does not resolve the counter interval.

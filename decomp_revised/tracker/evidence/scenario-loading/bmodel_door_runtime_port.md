@@ -246,16 +246,19 @@ timing or retail callback cadence.
 ## Provisional behavior and open gaps
 
 - The host uses clamped rendered-frame `dt` as the global BModel delta. Retail
-  delta units, updater frequency/order, and the callback cadence remain
-  unknown, so visible duration and event latency are not timing-parity claims.
+  delta units, per-member order, and wall-clock cadence remain unknown, so
+  visible duration and event latency are not timing-parity claims. The owner
+  `+0x50` Think manager and its position before contact manager `+0xE0` are now
+  statically mapped; see the [scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
 - Quaternion multiplication plus conjugation represents the XForm multiply and
   transpose in `0043D6A0`; the result is source-shaped, but its float bits have
   not been compared against the shipped Genesis DLL. Child rotational centers
   come from exported collision-model origins, and the owner direction bounds
   come from each child's root node with the source's 128-unit inset.
-- ScriptActor queue advancement is provisionally once per rendered frame. The
-  retail updater processes at most one queued command per callback, but the
-  callback scheduler and its cadence remain unresolved.
+- ScriptActor queue advancement is provisionally once per paced host update.
+  The retail updater processes at most one queued command per callback; its
+  owner-manager route is known, while the interval between callbacks remains
+  unresolved.
 - The host contact box unions each exported child-model AABB. The new
   [bound-construction audit](bmodel_contact_bound_construction_2026-10-15.md)
   confirms that retail `0043B7A0` also unions per-child model min/max values,

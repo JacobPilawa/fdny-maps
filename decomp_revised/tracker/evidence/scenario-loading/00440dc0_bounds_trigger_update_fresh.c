@@ -20,8 +20,9 @@
    - Fresh Ghidra pseudocode and assembly at 0x00440DC0; root+0x14 adjustment is described in the
    BoundsTrigger vtable trace.
    Limits:
-   - The external updater caller, ordering against contact production, and cadence remain
-   unresolved. */
+   - The owner +0x50 root-slot dispatcher and its order before +0xE0 contact production are
+   mapped in root_plus14_owner_scheduler_trace_2026-10-20.md. The interval between normal owner
+   passes and live manager membership/cadence are still unverified. */
 
 void __fastcall DispatchBoundsTriggerContactEvents(uint param_1)
 

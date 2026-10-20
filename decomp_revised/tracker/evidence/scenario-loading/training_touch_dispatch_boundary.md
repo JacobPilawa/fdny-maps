@@ -24,7 +24,22 @@ The shared `00470840` path enumerates contacts, resolves the associated ScriptAc
 
 The root constructor sets entity type `8` at `00441D2F` and enables category bit 1 through `0049D330(this,1)` at `00441D21`. The shared entity base initializes the registration mask at root `+0x14` to `0xFFEB`; virtual slot `+0x1C` reads that mask. Registration routine `00429490` checks it against manager filter `0x20` and dispatches accepted entities through manager `+0xE4/+4`. Manager `0049BF10` at owner `+0xE0` has nine type lists; helper `0049BC90` chooses the list by root `+0x18` and records the active member. Since `0xFFEB` includes `0x20` and BoundsTrigger type is 8, a BoundsTrigger taking this registration path is eligible for list 8. The normal manager pass at `0049BD20` dispatches member slot `+0x48`, which maps to producer `00440CE0`. The generic WorldEntity factory/spawn route registers each successfully created entity root; the common base mask and type-8 constructor establish Training BoundsTrigger admission on that successful path. No live Training allocation, overlap, or event capture is available.
 
-The root `+0x14` thunk reaches the child updater locally, but the recurring caller of that root slot and its ordering relative to the contact producer remain unresolved. A bounded follow-up found data references to thunk `0043AFE0` at vtable words `004E0E0C` (BModel), `004E10A4` (BoundsTrigger), and `004E1794` (FireRescue), but no direct code references to the thunk. Direct references to shared updater `00470740` are the known class-wrapper sites; none identifies a BoundsTrigger root-slot caller. Fixed-offset candidate `0046269D` is not evidence for this scheduler: raw bytes show `call dword ptr [eax+0x14]`, and a same-hash scratch Ghidra audit of `00462660` found a conditional self-vtable call outside its child-array loop, with no constructor, receiver type, or runtime edge connecting it to ScriptActor or BoundsTrigger. See [the candidate disposition](fixed_slot_candidate_0046269d_rejection.md). The fixed-slot scan does not cover computed-slot dispatch. Do not state same-pass delivery or frame latency: the missing evidence is a loop or callback that selects a BoundsTrigger instance and invokes root slot `+0x14` (or an equivalent adjusted child update).
+The owner `+0x50` Think manager supplies the recurring static route. Its
+vtable adapter `0049C3D0` dispatches member root slot `+0x14`; BoundsTrigger
+mask `0xFFEB` admits filter value 2 through `00429490`. The normal owner pass
+calls this manager before contact manager `+0xE0`. Therefore `00440DC0` drains
+the pair list on a later normal owner pass than the `00440CE0` producer that
+appended the pair. This is a phase-order result, not a frame or wall-clock
+interval. The earlier direct-reference scan missed the data-bound adapter;
+see the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
+
+Fixed-offset candidate `0046269D` remains unrelated evidence: raw bytes show
+`call dword ptr [eax+0x14]`, while the same-hash scratch Ghidra audit of
+`00462660` found a conditional self-vtable call outside its child-array loop,
+with no constructor, receiver type, or runtime edge connecting it to
+ScriptActor or BoundsTrigger. See [the candidate disposition](fixed_slot_candidate_0046269d_rejection.md).
+Exact runtime membership, early owner-pass returns, and the interval between
+retail owner passes remain unverified.
 
 ## Separate `+0x164` model-flag path
 
@@ -52,4 +67,7 @@ remain unresolved. See
 - The archived same-hash [carry entity mode audit](https://github.com/JacobPilawa/fdny-maps/blob/main/decomp/evidence/victim-ai-audit/carry-entity-mode-component.md) records `0044FCE0` and `00440F50` behavior.
 - The archived same-hash [BModel contact/event order audit](https://github.com/JacobPilawa/fdny-maps/blob/main/decomp/evidence/training-door-contact-event-order-audit.md) records shared `00470840` event conversion and scheduler limitations; its BModel pair producer is a distinct system.
 
-Next, identify the dynamic caller(s) of root slot `+0x14`. The manager-side producer is dispatched during the normal owner manager pass, but the embedded updater's scheduling and order relative to contact production remain unknown. Do not infer same-pass delivery or latency.
+Next, verify the phase-buffered host behavior in controlled scene interaction
+and continue resolving retail owner-pass cadence/runtime membership. The static
+phase relation is documented in the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md);
+do not report it as a fixed frame count or retail parity.

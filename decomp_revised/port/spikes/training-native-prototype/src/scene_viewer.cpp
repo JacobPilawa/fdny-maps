@@ -5839,6 +5839,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         std::map<int, bool> bmodelContacts;
         std::map<int, bool> boundsTriggerContacts;
         std::map<int, bool> propModelContacts;
+        using ScriptContactEvent = std::pair<int, std::string>;
+        std::vector<ScriptContactEvent> pendingBModelContactEvents;
+        std::vector<ScriptContactEvent> pendingBoundsTriggerContactEvents;
+        std::vector<ScriptContactEvent> pendingPropModelContactEvents;
         std::map<int, float> lastLoggedBModelPathTimes;
         std::map<int, int> lastLoggedBModelStates;
         bool axeStrikePending = false;
@@ -7286,8 +7290,50 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                               << playerInteractionState << "\n";
                 }
             }
+            // The retail +0x50 Think manager drains ScriptActor contact-pair
+            // lists before the +0xE0 contact manager produces this pass's
+            // pair deltas. Keep one owner-pass of pending pairs so script
+            // responses from the preceding contact pass reach this Think
+            // phase; this does not claim a fixed rendered-frame interval.
+            if (scriptRuntime) {
+                for (const auto& contact : pendingBModelContactEvents) {
+                    const int entity = contact.first;
+                    const auto& event = contact.second;
+                    scriptRuntime->dispatch(entity, event);
+                    if (event == "touch") {
+                        auto bmodel = std::find_if(bmodelMotions.begin(), bmodelMotions.end(),
+                            [entity](const PreviewBModelMotion& candidate) {
+                                return candidate.entity == entity;
+                            });
+                        if (bmodel != bmodelMotions.end())
+                            std::cout << "BModel contact result: state " << bmodel->motionState
+                                      << ", speed " << bmodel->timeScale << ", PATH time "
+                                      << bmodel->currentTime << "/" << bmodel->endTime << "\n";
+                    }
+                }
+                for (const auto& contact : pendingBoundsTriggerContactEvents)
+                    scriptRuntime->dispatch(contact.first, contact.second);
+                for (const auto& contact : pendingPropModelContactEvents) {
+                    const int entity = contact.first;
+                    const auto& event = contact.second;
+                    if (event == "touch") {
+                        auto prop = std::find_if(propModels.begin(), propModels.end(),
+                            [entity](const PropModelInstance& candidate) {
+                                return candidate.entity == entity;
+                            });
+                        if (prop != propModels.end())
+                            std::cout << "PropModel contact touch: entity " << prop->entity
+                                      << (prop->name.empty() ? "" : " (" + prop->name + ")")
+                                      << " at authored point radius " << prop->touchRadius << "\n";
+                    }
+                    scriptRuntime->dispatch(entity, event);
+                }
+            }
+            pendingBModelContactEvents.clear();
+            pendingBoundsTriggerContactEvents.clear();
+            pendingPropModelContactEvents.clear();
+
             std::map<int, bool> currentBModelContacts;
-            std::vector<std::pair<int, std::string>> pendingBModelContactEvents;
             const V playerMinimum = player.p + V{-30.f, -30.f, -30.f};
             const V playerMaximum = player.p + player.maxs();
             for (const auto& bmodel : bmodelMotions) {
@@ -7387,14 +7433,28 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             propModelContacts = std::move(currentPropModelContacts);
             // The registered contact classes are traversed in this order by
             // retail's contact manager: BModel, BoundsTrigger, PropModel,
-            // FireRescue, then VictimRescue. Keep the event drains below the
-            // contact pass; their retail scheduling cadence remains open.
+            // FireRescue, then VictimRescue. These are this pass's produced
+            // pair deltas; the next +0x50 Think phase drains them.
+            if (scriptRuntime) {
+                for (const auto* trigger : boundsTriggerTouches)
+                    pendingBoundsTriggerContactEvents.emplace_back(trigger->entity, "touch");
+                for (const auto* trigger : boundsTriggerTouching)
+                    pendingBoundsTriggerContactEvents.emplace_back(trigger->entity, "touching");
+                for (const auto* trigger : boundsTriggerUntouches)
+                    pendingBoundsTriggerContactEvents.emplace_back(trigger->entity, "untouch");
+                for (const auto* prop : propModelTouches)
+                    pendingPropModelContactEvents.emplace_back(prop->entity, "touch");
+                for (const auto* prop : propModelTouching)
+                    pendingPropModelContactEvents.emplace_back(prop->entity, "touching");
+                for (const auto* prop : propModelUntouches)
+                    pendingPropModelContactEvents.emplace_back(prop->entity, "untouch");
+            }
             runFireContactPass();
             if (rescueTransactions && hasPlayerRescueMessageRoute) {
                 // VictimRescue is registered after FireRescue in the retail
                 // contact manager. Submit its 0x7532 records here, before the
-                // separate ScriptActor pair drains below. The relative timing
-                // of victim roam updates and this owner callback is unresolved.
+                // mapped-message drain. ScriptActor pairs drain on the next
+                // Think phase; victim roam timing remains unresolved.
                 syncVictimsToRescueState();
                 const VictimPickupBox playerBox{
                     playerContactPoint, {-30.f, -30.f, -30.f}, player.maxs()};
@@ -7409,44 +7469,6 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         [&] { return playerRescueMessageRoute; },
                         [] { std::cerr << "Victim message mapper has no free records\n"; });
                 }
-            }
-            if (scriptRuntime) {
-                for (const auto& [entity, event] : pendingBModelContactEvents) {
-                    scriptRuntime->dispatch(entity, event);
-                    if (event == "touch") {
-                        const int eventEntity = entity;
-                        auto bmodel = std::find_if(bmodelMotions.begin(), bmodelMotions.end(),
-                            [eventEntity](const PreviewBModelMotion& candidate) {
-                                return candidate.entity == eventEntity;
-                            });
-                        if (bmodel != bmodelMotions.end())
-                            std::cout << "BModel contact result: state " << bmodel->motionState
-                                      << ", speed " << bmodel->timeScale << ", PATH time "
-                                      << bmodel->currentTime << "/" << bmodel->endTime << "\n";
-                    }
-                }
-                // 00470840 dispatches accumulated BoundsTrigger contacts in
-                // three event-type passes. Contact production is sampled per
-                // host frame; the retail updater cadence remains unresolved.
-                for (const auto* trigger : boundsTriggerTouches)
-                    scriptRuntime->dispatch(trigger->entity, "touch");
-                for (const auto* trigger : boundsTriggerTouching)
-                    scriptRuntime->dispatch(trigger->entity, "touching");
-                for (const auto* trigger : boundsTriggerUntouches)
-                    scriptRuntime->dispatch(trigger->entity, "untouch");
-                // 00470840 drains pair deltas in three passes: newly touching,
-                // still touching, then no longer touching. Keep that ordering
-                // even when a Player overlaps more than one PropModel.
-                for (const auto* prop : propModelTouches) {
-                    std::cout << "PropModel contact touch: entity " << prop->entity
-                              << (prop->name.empty() ? "" : " (" + prop->name + ")")
-                              << " at authored point radius " << prop->touchRadius << "\n";
-                    scriptRuntime->dispatch(prop->entity, "touch");
-                }
-                for (const auto* prop : propModelTouching)
-                    scriptRuntime->dispatch(prop->entity, "touching");
-                for (const auto* prop : propModelUntouches)
-                    scriptRuntime->dispatch(prop->entity, "untouch");
             }
             if (useEdge && scriptRuntime && useTargetBeforeMove >= 0 &&
                 useActionBeforeMove != 0) {

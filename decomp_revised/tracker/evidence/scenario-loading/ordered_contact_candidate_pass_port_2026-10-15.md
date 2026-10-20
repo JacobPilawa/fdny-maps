@@ -8,8 +8,12 @@ collected contact candidates for BModels, BoundsTriggers, and PropModels. It
 now collects those three candidate groups first, then runs the FireRescue
 spread and exposure callback, then reaches VictimRescue pickup candidates.
 This aligns the represented cross-class candidate order with the mapped retail
-manager order. The actor scripts that respond to contact still run after the
-candidate pass because their retail update timing has not been recovered.
+manager order. Static owner scheduling now shows the `+0x50` ScriptActor Think
+manager before the `+0xE0` contact manager. The shared host drains the preceding
+iteration's BModel, BoundsTrigger, and PropModel pairs before collecting the
+current iteration's pair deltas, then holds those deltas for the next
+iteration. This follows the recovered phase boundary while retaining a
+provisional host interval.
 
 ## Retail evidence
 
@@ -32,14 +36,15 @@ that later boundary; see
 
 ## Port change
 
-In `scene_viewer.cpp`, BModel, BoundsTrigger, and PropModel contact state is
-collected before `runFireContactPass()`. The BModel, BoundsTrigger, and
-PropModel script events are then dispatched from the staged contact results.
-Victim pickup candidate publication remains later in the frame, before the
-existing mapped-message drain.
+In `scene_viewer.cpp`, pending BModel, BoundsTrigger, and PropModel ScriptActor
+events drain before current contact-pair sampling and `runFireContactPass()`.
+Current pair deltas are stored for the next paced host iteration. BoundsTrigger
+and PropModel events keep the shared `touch`, `touching`, `untouch` pass order.
+Victim pickup candidate publication remains after FireRescue contact handling
+and before the existing mapped-message drain.
 
-This changes the order of candidate evaluation, not the established retail
-frame schedule. Player update alignment, dynamic/reused contact registration,
-within-class entity order, and class-specific ScriptActor drain cadence remain
-unverified. The checks below are controlled package diagnostics, not a live
-retail timing comparison.
+The owner pass order and next-owner-pass phase delay are static retail results.
+The host uses one paced update iteration for that phase and has not established
+retail wall-clock cadence, Player alignment, dynamic/reused contact
+registration, within-class entity order, or live contact parity. The checks
+below are controlled package diagnostics, not a live retail timing comparison.

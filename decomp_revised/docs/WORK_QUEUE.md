@@ -8,28 +8,39 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
-## Player and BModel recurring update scheduler census (2026-10-20)
+## Root `+0x14` owner Think scheduler and contact-pair phase (2026-10-20)
 
-The local Player and BModel root `+0x14` routes both reach
-`00470740` and their embedded movement/update methods. A fresh saved-project
-Ghidra caller query found only local wrappers/thunks directly referencing
-`00470740`; it did not identify the recurring manager. The same-hash static
-spawn and registration path admits PlayerRescue (type 1) and BModel (type 4)
-to the contact manager, but its normal owner `+0xE0` pass dispatches root
-`+0x48` contact callbacks through `0049BD20`. It does not establish the
-recurring `+0x14` caller. The retained same-hash app pre/post pass evidence also
-shows child slots `+0x74`/`+0x70` and removal slot `+0x6C`, with no evidence
-that PlayerRescue or BModel roots register in that list. A fresh headless
-follow-up could not open Ghidra because its launcher failed before project
-load; this app-pass conclusion reviews the retained hash-pinned outputs. Keep
-callback cadence and Player/BModel order provisional. Next identify the hidden
-update manager/list or obtain a bounded retail runtime trace after
-launch/capture prerequisites are verified. Evidence:
-[`player_bmodel_update_scheduler_census_2026-10-20.md`](../tracker/evidence/scenario-loading/player_bmodel_update_scheduler_census_2026-10-20.md).
-The owner tail service at `+0x3C4` is separately mapped to `0049C820`; its
-bounded callback window drains queued items through item vtable slot `+0` or
-`+0x2C`, without directly invoking root slot `+0x14`. Producers and item
-classes remain open, so an indirect update effect is not excluded.
+Fresh read-only Ghidra analysis identifies owner `+0x50` as the root Think
+manager. Its filter value is 2; active-list pump `0049C0E0` calls member
+adapter `0049C3D0`, which dispatches root slot `+0x14`. `00429490` registers
+eligible roots by their `+0x1C` mask. PlayerRescue and BModel reach common
+mask `0xFFEB` and their successful spawn path reaches this registration. Their
+`+0x14` update route is therefore statically supported; runtime residence,
+list order, and wall-clock cadence remain unverified. Normal owner pass
+`00429520` invokes `+0x50` before contact manager `+0xE0`; its early
+`+0x64C` branch can bypass both. See
+[`root_plus14_owner_scheduler_trace_2026-10-20.md`](../tracker/evidence/scenario-loading/root_plus14_owner_scheduler_trace_2026-10-20.md)
+and the corrected [Player/BModel census](../tracker/evidence/scenario-loading/player_bmodel_update_scheduler_census_2026-10-20.md).
+
+The shared scene now buffers BModel, BoundsTrigger, and PropModel ScriptActor
+contact-pair events across one host update iteration: it drains the preceding
+iteration before sampling current contacts, matching the static `+0x50` then
+`+0xE0` phase order. The host interval is provisional and is not a retail
+frame-parity claim. FireRescue and VictimRescue mapper paths remain separate.
+Next trace WorldEntity and other gameplay-root membership through registration,
+then investigate runtime owner cadence where a controlled capture is possible.
+
+The rescue-all macOS app compiled and packaged after this change. Standalone
+and app executable SHA-256 match at
+`c70e43e4a2c308861b5e6cf4197920e763540d3dc86821e112ca3a20dd0361c3`; the
+bundle contains eight source-ordered rescue choices and `Info.plist` validates.
+The linker still warns that json-c was built for macOS 27.0 while this build
+targets 13.3. This is compile/package evidence only; no tests, interactive
+runtime, or retail parity check was run.
+
+The owner tail service at `+0x3C4` remains separate: `0049C820` drains queued
+items through item vtable slot `+0` or `+0x2C`, without directly invoking root
+slot `+0x14`. Producers and item classes remain open.
 
 ## FireRescue state-4 Think ordering (2026-10-20)
 
@@ -443,7 +454,9 @@ tie rule, gates mode-1 action 1004, and routes selected use into the authored
 event plus the mode-1 carry-state transition. Held-object target smoothing is
 also connected. This is an implementation slice, not retail parity: registry
 updates still come from host overlap sampling and BModel iteration order;
-retail contact registration order and callback cadence are unresolved. The
+dynamic/reused contact registration and callback cadence remain unresolved.
+The static owner `+0x50` Think pass precedes `+0xE0` contact production, but
+per-member list order is open. The
 host derives query bounds from transformed child collision boxes, substitutes
 the camera frame for the retail Player frame, and adapts Player byte `+0x12C`
 from the host collision latch only when `Player::step()` ran this frame; all
@@ -452,9 +465,10 @@ facing contact and `0049DBC0` consumes/clears it, but host contact resolution
 and callback timing are not proven equivalent. Selection action host
 key/polling equivalence and query sign/frame equivalence are unverified. The
 per-frame BModel callback directly calls `0043D330` when root `+0x258` is
-nonzero; state 2 advances the trajectory. The callback-owned route is mapped
-and connected to the shared host; its outer recurring caller/cadence remain
-open. The host now runs the source-shaped strict angle-under-10 gate while
+nonzero; state 2 advances the trajectory. The owner `+0x50` Think manager
+reaches root slot `+0x14` before contact manager `+0xE0`. The host connects the
+callback-owned route; owner-pass interval and per-member order remain open.
+The host now runs the source-shaped strict angle-under-10 gate while
 carrying, starts the `0043B580` throw setup, clears the held pointer, restores
 Player state 3, sets action status 4, and increments `Objects Thrown`. Its
 camera-frame substitute and per-frame cadence are provisional. State-2 motion
@@ -563,7 +577,7 @@ and
 | `bmodel_next_core_gap` (Luna) | Recheck `0043B7A0` offsets and identify consumers of its outputs | Current-hash Ghidra export, direct xrefs, and broad offset-use census | Complete; decimal displacements resolve raw contact union +0x240/+0x24C vs converted output +0xF0; 32-unit copy is +0x278..+0x28C. `0043DC60` refreshes raw bounds after child PATH transforms for G_Liftable; no verified BModel-root consumer of the other outputs. Root +0x240 contact is confirmed; runtime field and cadence parity remain open. No edits. |
 | `bmodel_selection_query` | Read-only trace of `00459350`/`00459630` and query vtable; fresh Ghidra exports and interaction helpers | Complete; ordered scan, 200-unit cutoff, and later tie winner confirmed |
 | `bmodel_selection_review` | Read-only review of the new selection and held-pose adapter; `bmodel_interaction_selection.h`, `scene_viewer.cpp`, held-frame evidence | Complete; documented provisional frame, bounds, Player gate, and callback mappings; no edits |
-| `bmodel_update_scheduler` (Luna) | External recurring caller/cadence for BModel slot `+0x14`; current-hash Ghidra and saved fixed-offset scan | Complete; local slot `+0x14` → `0043AFE0` → `00470740` → `0043DC60` route is known, and `0043DC60` directly calls `0043D330` when root `+0x258` is nonzero. No recurring manager route into root slot `+0x14` is proven, so callback cadence/order remain unknown. No edits |
+| `bmodel_update_scheduler` (Luna) | External recurring caller/cadence for BModel slot `+0x14`; current-hash Ghidra and saved fixed-offset scan | Initial direct-call census was incomplete; follow-up resolved owner `+0x50` filter-2 list through `0049C0E0` → vtable adapter `0049C3D0` → root `+0x14`, with BModel admission through `00429490`. Normal owner pass precedes `+0xE0` contacts; absolute cadence and list order remain open. No code edits by audit agent |
 | `bmodel_timed_commands` (Luna) | BModel timed-command insertion, one-shot dispatch, removal command, and relationship to throw completion | Complete; root `+0x148/+0x14C` list is separate from sound at `+0x124`; `0043E360` reuses/appends records and `0043DC60` clears the active byte after dispatch. `removealltimecmds` / `0043C260` also clear each active byte without freeing records or list storage; no connection to `drop` is established. No edits |
 | `bmodel_first_child_flag` (Luna) | Retail `0043D330` flag writer and Genesis collision consumers; `genesis_collision_functions.c`, BModel route evidence, `scene_viewer.cpp` | Complete; bit `0x10` at first child `+0xCC` excludes that model from swept-hull and point/ray queries while state `+0x25C` is nonzero. Renderer use remains unproven. No edits |
 | `throw_release_gate` (Luna) | Player held-object gate in `00452570`; producer, target-writer, and angle-helper evidence | Complete; a non-null held pointer reaches the strict angle-under-10 branch on each Player update, without an action-edge check. Vector semantics and callback cadence remain unresolved. No edits |
@@ -571,10 +585,10 @@ and
 | `view_frame_identity` (Luna) | Distinguish Player held-target frame from throw-gate frame; frame-helper evidence and current update window | Complete, read-only; throw gate reads view follower root `+0x34A4`, refreshed before the gate; held-target writer reads root `+0x24`. Numeric relation to rendered Genesis camera remains open. No edits |
 | `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use. Status 3 enables Player `+0xA94` and refreshes a time-zero GUI rectangle/frame-style record; no consumer links it to an Axe ACT pose. No code edits |
 | `axe_frame_record_consumer` (Luna) | Consumers of the `00455BC0` time-zero frame record; distinguish GUI rectangle helpers from Axe ACT render | Complete, read-only from retained hash-pinned evidence. Shared `0047EDF0`/`0047EA10` helpers are used for GUI rectangle/quad setup in menu/HUD traces, but no Player `+0xA94` draw consumer or Axe ACT link is established. No live Ghidra instance was available for a fresh complete xref census; no edits |
-| `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local routes to `00470740` are mapped; no recurring manager caller or Player/BModel frame ordering is proven. Follow-up contact census separates root `+0x48` contact callbacks from `+0x14` updates. No edits |
-| `player_registration_path` (Luna) | PlayerRescue/BModel admission masks, type lists, and root `+0x14` scheduler; same-hash registration evidence and owner pass | Complete, read-only; PlayerRescue type 1 and BModel type 4 are eligible for contact-manager admission, whose owner `+0xE0` pass calls root `+0x48`; recurring `+0x14` caller and Player category mask remain open. No edits |
+| `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; owner `+0x50` routes through the `0049C3D0` adapter to root `+0x14`, ahead of contact manager `+0xE0`; retail interval and per-member list order remain open. No edits |
+| `player_registration_path` (Luna) | PlayerRescue/BModel admission masks, type lists, and root `+0x14` scheduler; same-hash registration evidence and owner pass | Complete, read-only; root mask `0xFFEB` includes owner `+0x50` filter value 2 for successful PlayerRescue/BModel spawn registration through `00429490`; their `+0xE0` contact callbacks are separate. Runtime membership/cadence remains unobserved. No edits |
 | `owner_tail_service_census` (root) | `0042B2C0`, nested vtables `004DF8E8/004DF8F8`, owner `00429520`, code window `0049C820` | Complete, read-only; `+0x3C4` drains queued items using item slot `+0` or `+0x2C`, not root `+0x14`; queued item classes/producers remain open. No edits |
-| `app_callback_registry_route` (Luna) | `0049A310`, `00499E60`, `00499410`, Player/BModel update routes; retained hash-pinned outputs | Complete, read-only; app pre/post passes dispatch child slots `+0x74`/`+0x70`, removal uses `+0x6C`, and no Player/BModel root registration is evidenced. Fresh headless launcher failed before project load; recurring root `+0x14` manager remains unresolved. No edits |
+| `app_callback_registry_route` (Luna) | `0049A310`, `00499E60`, `00499410`, Player/BModel update routes; retained hash-pinned outputs | Complete, read-only; app pre/post passes dispatch child slots `+0x74`/`+0x70`, removal uses `+0x6C`, and no Player/BModel root registration is evidenced there. The separate owner `+0x50` Think list now resolves root `+0x14`; no app-list change. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
 | `player_contact_latch` (Luna) | `0049E0A0`, `0049DBC0`, `0043F680`, Player collision/update vtable route; current-hash headless Ghidra and collision note | Complete, read-only; confirmed accepted collision writers and Player vtable slot `+0x64` → `0043F680` → integrator, which consumes/clears the latch. Parent follow-up found the indirect call before collision loop `0043F6D0`; downward snap bypasses the writer and outer cadence remains unresolved. No edits |
@@ -672,7 +686,7 @@ No effect renderer change is justified yet.
 | `bmodel_liftable_endpoint_time_port` (root) | Same-hash `0043BE00`/`0043B120` exports and instructions; BModel pose note; `scene_viewer.cpp` | Complete; ports the used strict zero and one endpoint windows through a dedicated shared helper. Rescue-all app compiles/packages with matched arm64 hashes; all current authored liftable endpoints remain exact. No runtime or parity claim. |
 | `axe_gap_audit` (Luna) | Axe action, child update/Think, strike, collision, inventory, and same-hash Axe evidence | Complete, read-only; the source-backed mapped behavior is already present. Remaining release/cadence, collision adapter, frame-record draw effect, and view-follower relation are unresolved; no safe Axe edit found. |
 | `carry_render_audit` (Luna) | Carry evidence, Genesis normal actor gate, `victim_rescue.h`, `scene_viewer.cpp` | Complete, read-only; pickup hide/freeze is implemented, but no retail Player-relative carry transform is evidenced. Do not add a pose adapter without recovered transform inputs. |
-| `core_gap_triage_next` (Luna) | Latest queue, shared rescue host, Boat A type-5 emitter evidence | Complete, read-only; no additional source-backed gameplay slice is ready. Boat A's renderer still needs runtime descriptor `0x502D40` contents or its external initializer; the recurring Player/BModel root `+0x14` scheduler remains the highest-impact open trace, but static caller searches have not identified it. No edits. |
+| `core_gap_triage_next` (Luna) | Latest queue, shared rescue host, Boat A type-5 emitter evidence | Complete, read-only; Boat A's renderer still needs runtime descriptor `0x502D40` contents or its external initializer. The root `+0x14` scheduler is now statically mapped; next high-value follow-up is class-by-class active-list membership, especially WorldEntity's four-call EVS startup callback. No edits. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
 
@@ -1749,8 +1763,8 @@ body-bearing functions and 287 external entries.
 | `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340`/`0044F713` hose path and `00453993` Player update producer; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution are integrated. Objects Thrown is a held-BModel transaction through Player `+0x3440`, a strict angle-under-10-degree gate, BModel trajectory state 2, Player action status 4, and one stat increment. Static all-BSP candidate coverage is enumerated; shared selection/carry uses provisional adapters while the callback-owned trajectory substep, outer update route/cadence, drop/timed-list relation, action-status label/host effect, and release sound remain open. |
 | `throw_authored_coverage` (Luna) | Authored liftable BModels across retail BSP maps and links to the carry path | All-map BSP entity/MOTN/PATH scan; `liftable_bmodel_map_inventory_2026-10-20.json` | Complete, read-only; identified 18 `G_Liftable` BModels in seven of 17 maps. Parent Ghidra follow-up confirmed `0043C670` dispatches nonzero `G_Liftable` to `0043BE00`; 17 have first-child PATH data passing the static two-key time checks. Boat A entity 192 has no child model. Static data does not prove selection/runtime reachability. |
 | `liftable_host_seam` (Luna) | Shared BModel use/carry path against held-target and smoothing traces | `scene_viewer.cpp`, `bmodel_use.h`, `training_liftable_sequence.h`, current-hash evidence | Complete, read-only audit; shared host now retains authored use-mode initialization, selection, action, and carry state. The trajectory substep is source-mapped inside `0043DC60`; shared-host integration, outer callback cadence, and timed-list cleanup remain open. |
-| `throw_scheduler_trace` (Luna) | Retail `0043B580`/`0043D330` throw lifecycle, BModel update gate, completion callbacks, and timed-list cleanup | Current-hash Ghidra decompilation, assembly, constructor evidence, `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed trajectory fields, mode-2 gate, endpoint flip, `drop`, and `004A11A0` completion call. The `004A11A0` call is BModel sound playback. `0043DC60` is the sole direct caller found; its recurring outer caller/cadence and any data-driven `drop` effect remain unresolved. No code edits. |
-| `throw_trajectory_schedule` (Luna) | Direct caller and update gate for `0043D330` | Current-hash Ghidra caller query, `0043dc60_update_bmodel_entity.asm`, fresh decompilation | Complete, read-only; confirmed `0043DDC6` in `0043DC60` as the sole direct call, gated by root `+0x258 != 0` after the child-model guard. Root-slot recurring caller/cadence remains unknown. No edits. |
+| `throw_scheduler_trace` (Luna) | Retail `0043B580`/`0043D330` throw lifecycle, BModel update gate, completion callbacks, and timed-list cleanup | Current-hash Ghidra decompilation, assembly, constructor evidence, `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed trajectory fields, mode-2 gate, endpoint flip, `drop`, and `004A11A0` completion call. The `004A11A0` call is BModel sound playback. `0043DC60` is the sole direct caller found; owner `+0x50` supplies its root `+0x14` dispatch. Wall-clock cadence and any data-driven `drop` effect remain unresolved. No code edits. |
+| `throw_trajectory_schedule` (Luna) | Direct caller and update gate for `0043D330` | Current-hash Ghidra caller query, `0043dc60_update_bmodel_entity.asm`, fresh decompilation | Complete, read-only; confirmed `0043DDC6` in `0043DC60` as the sole direct call, gated by root `+0x258 != 0` after the child-model guard. The `0049C0E0` owner `+0x50` Think list reaches BModel root slot `+0x14`; only the owner-pass interval remains unknown. No edits. |
 | `throw_drop_event_route` (Luna) | Completion event lookup, command routing, held-state and timed-list effects | `0043D330`, `004705B0`, event lookup and dispatch evidence | Complete, read-only; completion sets the endpoint, flips `+0x220`, dispatches `drop`, then requests root `+0x124` sound playback. No direct held-state or timed-list mutation was found. No edits. |
 | `throw_port_review` (Luna) | Review of host use-gate and carry/throw integration boundaries | Shared scene code, `bmodel_interaction_selection.h`, BModel evidence | Complete, read-only; recommended a current-frame collision-latch adapter for unresolved `+0x12C` and keeping callback cadence provisional. No code edits. |
 | `throw_action_status_review` (Luna) | `004571A0` status 4, Axe subobject, throw trigger, and sound registrations | Saved `004571A0` decompilation, Player loadout/constructor evidence, current throw trace | Complete, read-only; status 4 calls `0047DC90(Player+0xA94,false)` on the Axe actor. No high-level status label, release-side sound call, or input gate was found; no code edits. |
@@ -2151,7 +2165,7 @@ the report is observed.
 | `ext_hud_damage_audit` | Training extinguisher pickup, retail hint window, and damage feedback | Read-only pinned executable audit and current viewer source | Complete; `ext1` is a touch PropModel whose event drain remains open; retail hint font/render path is traced and ported; generic damage overlay remains unresolved |
 | `retail_hint_gui_render_trace` | Trace the retail Player hint widget's render callback, text assets, layout, and styling | `tracker/evidence/scenario-loading/player_hint_widget_render_trace.md`; hash-pinned headless Ghidra | Complete; resource 1020, 16x24 glyphs, color markup, and strict timeout are verified and the atlas is ported; mode-2 layout, tint layers, wrapping, and tick rollover remain open |
 | `retail_frame_pacing` | Trace retail delta-time consumers, frame pump, and pacing controls | `tracker/evidence/runtime/retail_frame_pacing_audit_2026-10-14.md`; read-only headless Ghidra audit | Complete; delta consumers and queue-empty update/render pump are mapped; delta writer and frame limiter remain unresolved |
-| `propmodel_retail_schedule` | Resolve PropModel contact callback, pair drain, and owner cadence | `tracker/evidence/scenario-loading/retail_propmodel_contact_trace.md`; headless Ghidra follow-up | Complete; producer, visibility gate, pair delta drain, and `ext1` join are verified; external updater caller/cadence remain open |
+| `propmodel_retail_schedule` | Resolve PropModel contact callback, pair drain, and owner cadence | `tracker/evidence/scenario-loading/retail_propmodel_contact_trace.md`; headless Ghidra follow-up | Complete; producer, visibility gate, pair drain, and `ext1` join are verified; owner `+0x50` dispatch precedes the `+0xE0` producer, so pair delivery is on a later owner pass. Wall-clock cadence and live membership remain open |
 | `gebm_truecolor_trace` | Verify embedded ACT GeBm true-color and color-key layouts | Read-only copied ACT inventory and Genesis.dll trace | Complete; referenced rescue actors include 24-bit BGR and color-key formats; decoder scope is recorded in the Genesis render note |
 | `propmodel_port_review` | Review shared PropModel actor/contact integration and trace its VISDATA/PVS gate | Read-only review of exporter, `scene_viewer.cpp`, PropModel headers, and copied BSP data | Complete; lower-level cluster-PVS rejection is integrated; exact runtime area-matrix/current-view semantics remain open |
 | `rescue_progression_audit` | Re-audit victim alternate spots, rescue completion, and exit progression for the next shared gameplay seam | Read-only hash-pinned retail exports and authored rescue packages; `rescue_completion_and_exit_path.md`, `victim_spawn_factory_and_order.md` | Complete; all 45 alternate-spot joins resolve and the `escape`/final-exit path is source-mapped; full contact-driven progression remains the next implementation target |

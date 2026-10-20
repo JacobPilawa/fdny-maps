@@ -32,10 +32,11 @@ is nonzero. Because this ScriptActor is owner `-0x24`, that gate is BModel root
 ```
 
 The local route into slot zero remains root slot `+0x14` → thunk `0043AFE0` →
-shared updater `00470740` → embedded ScriptActor callback `0043DC60`. No
-recurring manager route into that root slot has been proven. Therefore the
-callback cadence and ordering against contact and rendering remain unknown.
-The timed-command loop is later in the same `0043DC60` callback.
+shared updater `00470740` → embedded ScriptActor callback `0043DC60`. The owner
+`+0x50` Think manager dispatches root slot `+0x14` before contact manager
+`+0xE0`; the precise interval, list position, and rendering relation remain
+unknown. The timed-command loop is later in the same `0043DC60` callback. See
+the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md).
 
 `0043D330` updates bit `0x10` in the first child model's flags at `+0xCC`: it
 clears the bit when BModel state `+0x25C` is zero and sets it for nonzero state.
@@ -77,8 +78,8 @@ host.
 
 ## Port status
 
-The trajectory is a substep of the BModel ScriptActor update, not a separately
-identified scheduler. The shared mission scene now wires the strict Player
+The trajectory is a substep of the BModel ScriptActor update under the owner
+`+0x50` Think manager. The shared mission scene now wires the strict Player
 angle-under-10 gate to the source-shaped throw setup, clears carry state, sets
 Player state 3/action status 4, and increments `Objects Thrown`. The source
 gate reads Player view follower root `+0x34A4`, refreshed by `0044F340` earlier
@@ -94,9 +95,9 @@ The shared BModel update samples its ordinary PATH pose, advances state-2
 trajectory, then processes timed commands. Throw completion applies the
 selected endpoint, flips the selector, dispatches `drop`, and requests the
 owner's `ThrowObjectEnd` sound through host services in the source order. The
-outer recurring BModel callback route and cadence are not proven; this
-
-per-host-frame adapter is provisional. Player action status 3 enables the Axe
+manager route is established; the host's one-update-per-paced-iteration
+adapter remains provisional because the retail wall-clock cadence is unknown.
+Player action status 3 enables the Axe
 subobject and samples its GUI rectangle/frame-style record at time zero through
 `00455BC0`; status 4 disables it. The shared renderer mirrors enable/disable
 visibility, but the GUI rectangle-style frame record has no mapped

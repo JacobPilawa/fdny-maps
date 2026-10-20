@@ -55,15 +55,22 @@ event to `removealltimecmds`.
 The local BModel route is established: root slot `+0x14` points to thunk
 `0043AFE0`, which adjusts to the ScriptActor and enters shared updater
 `00470740`; its slot-zero callback reaches `0043DC60`. No positive external
-recurring caller for that route has been identified. The inspected owner
-manager pass at `00429520` dispatches four managers through slot zero; its
-contact traversal (`0049BD20`) invokes BModel root slot `+0x48` instead. A
-hash-pinned literal `[reg+0x14]` scan found 53 candidates but no proven BModel
-receiver. These checks do not exclude computed dispatch or unexamined update
-loops, so update cadence and ordering relative to contact remain unknown.
-The direct `0043DC60` → `0043D330` call is established inside the slot-zero
-callback; it does not identify the recurring external caller of root slot
-`+0x14`.
+The recurring static caller is the owner `+0x50` manager: owner constructor
+`0042B860` builds it with filter value 2 and vtable `004E4164`; its list pump
+`0049C0E0` invokes adapter `0049C3D0`, which calls the member root slot
+`+0x14`. The common BModel root mask `0xFFEB` includes filter value 2, and the
+successful spawn registration path reaches this manager through `00429490`.
+The normal owner pass calls this Think manager before contact manager `+0xE0`,
+whose `0049BD20` traversal invokes BModel root slot `+0x48`. Thus contact-pair
+deltas produced by `+0x48` are drained on a later normal owner pass by
+`0043DC60`/`00470840`. This is a phase relationship, not a frame interval.
+
+The earlier direct-reference and literal `[reg+0x14]` scans found no BModel
+receiver because they did not follow the member adapter stored in vtable data.
+The direct `0043DC60` → `0043D330` throw call remains established inside the
+slot-zero callback. See the [owner scheduler trace](root_plus14_owner_scheduler_trace_2026-10-20.md)
+for the registration and manager evidence. Wall-clock cadence, manager-list
+order, and live retail timing remain unresolved.
 
 ## Bank route joined to this method
 

@@ -31,7 +31,10 @@ follower. `0044CD10` does not write this frame,
 so the inspected constructor and entity-init path preserve its zero
 translation and null parent. The frame refresh setters also preserve
 translation and parent. The normal Player callback is visible at `00453860`;
-the recurring manager and cadence remain unknown. The earlier interpretation
+the owner `+0x50` manager reaches its root `+0x14` callback, while wall-clock
+cadence and member order remain unknown. See
+[`root_plus14_owner_scheduler_trace_2026-10-20.md`](root_plus14_owner_scheduler_trace_2026-10-20.md).
+The earlier interpretation
 of the stack area as an input frame was incorrect; the copy direction is
 confirmed by current-hash x86 for `0042D350`/`0042D0A0` and saved Ghidra
 decompilation. See
