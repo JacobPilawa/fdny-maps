@@ -30,11 +30,38 @@ executable SHA-256
 validation passed. The installed json-c dylib targets macOS 27.0 while this
 build links for 13.3.
 
-Next core-gameplay evidence step: trace the Player locomotion input/frame
-consumer around `00452570`, especially the remaining `+0x3460` setter vector
-and input signs/scales, because those affect movement and held-tool
-orientation. Keep frame-axis changes gated on resolving its relation to the
-retail camera/ActorInfo chain.
+The Player movement input trace now confirms retail's digital arrow-key and
+WASD aliases, the `+1/-1` forward values, and the `+/-0.75` lateral values.
+The shared host accepts both key sets while retaining its existing lateral
+sign convention, since retail's local lateral axis is mediated by its runtime
+frame. The ordinary `0044F340` caller's `+0x3460` third-axis vector is now
+resolved as `normalize((selectedItemAimOffset + (0,height,1000)) -
+selectedItemViewOffset)`. Remaining movement work is the runtime frame's final
+axis/world orientation, its relationship to camera/ActorInfo, retail-vs-host
+lateral sign, and input/update cadence. Evidence:
+[`player_movement_input_bindings_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_input_bindings_2026-10-20.md)
+and
+[`player_locomotion_frame_axes_2026-10-20.md`](../tracker/evidence/scenario-loading/player_locomotion_frame_axes_2026-10-20.md).
+
+## Player movement input aliases (2026-10-20)
+
+The shared rescue scene now accepts the retail Player movement defaults for
+both arrow keys and WASD. The pinned constructor registers these as digital
+actions, and `00452570` contributes `+1/-1` forward and `+/-0.75` lateral.
+Retail's local lateral sign differs from the host `strafe` sign, but the retail
+world transform remains unresolved. The ordinary `+0x3460` frame setter vector
+is now sourced to selected-item aim/view offsets; this still does not resolve
+the final frame axes, camera/ActorInfo relation, or update cadence. Evidence:
+[`player_movement_input_bindings_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_input_bindings_2026-10-20.md)
+and
+[`player_locomotion_frame_axes_2026-10-20.md`](../tracker/evidence/scenario-loading/player_locomotion_frame_axes_2026-10-20.md).
+
+The rescue-all macOS app compiled with matching standalone/app executable
+SHA-256
+`2835a7ee082c8c0a9a164a69c4c6bd98d3ddcc41883d3d2c38f75bde3219aea9`; the
+Info.plist validation passed. The linker warns that installed json-c targets
+macOS 27.0 while the build links for 13.3. No tests, interactive gameplay, or
+retail parity check was run.
 
 ## Player jump/contact transaction slice (2026-10-20)
 
@@ -100,7 +127,14 @@ or reset to 0/1, but its meaning/default are unresolved. The `+0x3460`
 locomotion frame update explicitly sets world `+Y` as its up axis; a second
 indirect setter derives the third axis from selected-item view/aim data, then
 repairs the remaining axes. It does not change frame position or parent. The
-second setter vector and input signs/scales remain open.
+second setter vector is resolved for the ordinary caller as
+`normalize((selectedItemAimOffset + (0,height,1000)) -
+selectedItemViewOffset)`, with height selected from two retail constants by
+Player state. The retail local lateral scalar is positive for left while the
+host scalar is positive for right; the world-direction mapping remains open
+because the retail vector is transformed through a runtime frame. Retail input
+bindings and magnitudes are now mapped, with callback cadence and camera/
+ActorInfo composition still unresolved.
 `00482AD0` derives a half-life consumed by `00482FC0`; for the fixed movement
 bases, retail's `pow(0.5,dt/halfLife)` is algebraically equivalent to the
 host's `pow(base,27*dt)`. Host base selection, x87 rounding, and callback
@@ -108,6 +142,14 @@ cadence are still provisional. Evidence:
 [`player_movement_smoothing_formula_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_smoothing_formula_2026-10-20.md)
 and
 [`player_movement_gate_bytes_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_gate_bytes_2026-10-20.md).
+
+The shared rescue scene host now accepts retail's arrow-key aliases alongside
+WASD for `MOVE_FORWARD`, `MOVE_BACKWARD`, `MOVE_LEFT`, and `MOVE_RIGHT` while
+retaining the verified 0.75 lateral magnitude. Retail's local lateral sign and
+the host's camera-yaw `strafe` sign differ; the transformation through the
+equipment-dependent locomotion frame is not yet mapped to world direction, so
+no sign flip is inferred. Details and exact binding codes are in
+[`player_movement_input_bindings_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_input_bindings_2026-10-20.md).
 
 The host now raises the default DifficultyLevel-1 pitch clamp from 40 to 45
 degrees in the `climbing` state adapter. The current rescue-all macOS app
@@ -1291,8 +1333,8 @@ body-bearing functions and 287 external entries.
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms selector scheduler and Jumps' 500 ms gate. Follow-up mapped the `0045331A` call gate and `00491140` sample-pattern writer. `FootStep1`–`FootStep4` are packaged in every scene; the shared host now gates playback from its preceding HeadMotion flag and increments the stat. First +0x198 value, +0x558 computed writers, RNG interleaving, and cadence remain open. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is crouch and its JUMP query routes to `0044BCE0`. Completion Time, Air Time, Jumps, and Total Steps are integrated with provisional host cadence. |
-| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, `+0x3450` timer/delta accumulator, movement-vector caps, transform construction/composition and helpers. `+0x3460` is identity/null-parent at init; callback sets world +Y up and a second axis from selected-item view/aim data. Second setter vector, input scale, callback cadence, and `+0x3450` semantic name/default remain open. Smoothing exponent relationship is mapped. No edits. |
-| `player_frame_runtime` (Luna) | Player `+0x3460` frame writers, composition, axes, and update cadence | Constructor `00453D50`, callback `0044F340`, frame helpers `0042D2D0`/`004977B0`, saved xrefs, `equipment_view_frame_trace_2026-10-17.c`; `player_locomotion_frame_axes_2026-10-20.md` | Complete, read-only; identity/null-parent frame at construction and recurring view callback mutations through slots `+8`/`+0x14` are mapped. Slot +8 sets world +Y up; slot +0x14 sets the third basis column from item view/aim data and repairs the other axes. Position/parent are unchanged. The second setter vector and outer callback cadence remain unresolved. No edits. |
+| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, `+0x3450` timer/delta accumulator, movement-vector caps, transform construction/composition, and helpers. Ordinary `+0x3460` setter vector is resolved as normalized selected-item aim/view data plus `(0,height,1000)`. `+0x3450` semantic name/default, final frame/world orientation, local lateral sign mapping, callback cadence, and camera/ActorInfo relationship remain open. Retail action magnitudes are 1.0 forward and 0.75 lateral. Smoothing exponent relationship is mapped. No edits. |
+| `player_frame_runtime` (Luna) | Player `+0x3460` frame writers, composition, axes, and update cadence | Constructor `00453D50`, callback `0044F340`, frame helpers `0042D2D0`/`004977B0`, saved xrefs, `equipment_view_frame_trace_2026-10-17.c`; `player_locomotion_frame_axes_2026-10-20.md` | Complete, read-only; identity/null-parent frame at construction and callback mutations through slots `+8`/`+0x14` are mapped. Slot +8 sets world +Y up; slot +0x14 installs the ordinary caller vector `normalize((aimOffset + (0,height,1000)) - viewOffset)` and repairs the other axes. Position/parent are unchanged. Equipment-varying final axes, outer callback cadence, and camera/ActorInfo relation remain unresolved. No edits. |
 | `movement_gate_bytes` (Luna) | Player root `+0x198/+0x380` initialization, writers, action strings, and movement/Total Steps gates | Headless Ghidra read-only writer/constructor scans; `player_movement_gate_bytes_2026-10-20.md`; `player_total_steps_and_headmotion_2026-10-20.asm` | Complete, read-only; `+0x380` initializes clear, is set by `DBG_TOGGLE_SPECT`, and cleared by `JUMP`, with state `+0x18C=3` on both transitions. `+0x198` is written by `00491140` from a strict local minimum of head-motion Y samples and gates `0044EA90`; initial value remains unknown. The host uses a deterministic false initial state. No edits. |
 | `total_steps_producer` (Luna) | `0044EA90` callsite gate, sound selector/resources, and host integration seam | Current-hash Player movement disassembly, Player init, `sound.rrf`, `export_evs_bundle.py`, `scene_audio.h`, `player_footsteps.h`, `scene_viewer.cpp` | Complete, read-only trace; mapped callsite `0045331A`, prior +0x198 sample gate, 100 ms scheduler, shared-RNG selector/retry, and sound/stat order. `FootStep1`–`FootStep4` ship in every scene. Shared rescue loop now advances HeadMotion history, requests footstep audio, and increments Total Steps. First +0x198 value, +0x558 computed writers, +0x380 debug action path, RNG interleaving, and Player cadence remain provisional. No gameplay edits by the audit agent. |
 | `jump_input_bridge` (Luna) | `JUMP` action registration, right-mouse polling, and Player jump producer consumers | Saved hash-pinned Ghidra exports, `0042D8C0`, `004395C0`, `00437F30`, `00451870`; `mission_stat_bmodel_liftable_pose_2026-10-20.md`; `player_jump_action_state4_2026-10-20.asm` | Complete, read-only; confirmed MOUSE_RB ID `0x105`; camera poll `0042DB06` discards its result. Player movement queries named action `JUMP` in crouch state 4 at `00453739` and routes it to `0044BCE0`, also used by ScriptActor `uncrouch`; the state-not-4 path calls the separate `0044E990` jump-stat/velocity routine. Normal-state jump/contact behavior remains open. |

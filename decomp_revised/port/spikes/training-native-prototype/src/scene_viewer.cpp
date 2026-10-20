@@ -6044,8 +6044,16 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 lastLoggedBModelStates[bmodel.entity] = bmodel.motionState;
             }
             const Uint8* keys = SDL_GetKeyboardState(nullptr);
-            float forward = captured ? float(keys[SDL_SCANCODE_W] - keys[SDL_SCANCODE_S]) : 0.f;
-            float side = captured ? .75f * float(keys[SDL_SCANCODE_D] - keys[SDL_SCANCODE_A]) : 0.f;
+            // Player controls constructor 004395C0 binds both arrow keys and
+            // WASD to each MOVE_* digital action through 00437410/00438BF0.
+            const bool moveForwardDown = keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_UP];
+            const bool moveBackwardDown = keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_DOWN];
+            const bool moveLeftDown = keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_LEFT];
+            const bool moveRightDown = keys[SDL_SCANCODE_D] || keys[SDL_SCANCODE_RIGHT];
+            float forward = captured
+                ? float(moveForwardDown) - float(moveBackwardDown) : 0.f;
+            float side = captured ? .75f *
+                (float(moveRightDown) - float(moveLeftDown)) : 0.f;
             bool crouchEdge = false;
             static bool crouchWasDown = false;
             bool crouchDown = keys[SDL_SCANCODE_C] != 0;

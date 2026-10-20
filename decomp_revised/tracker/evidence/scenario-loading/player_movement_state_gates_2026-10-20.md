@@ -39,9 +39,15 @@ The transform at `ESI+0x3320` (Player root `+0x3460`) is initialized as an
 identity frame with a null parent by the Player constructor; `004977B0`
 composes parent frames before the state-5 movement vector transform. The
 movement update builds a temporary basis from the pitch/yaw accumulators using
-`0042D350`/`004968B0`, then applies it through `00495EB0`. Runtime writes to
-the `+0x3460` frame, its final world axes, and the input scale/sign convention
-are not mapped. The smoothing call at `004532B3` passes the 0.95/0.2 base and
+`0042D350`/`004968B0`, then applies it through `00495EB0`. The recurring
+`0044F340` callback writes world `+Y` as the up axis and derives a third axis
+from the selected item's view/aim offsets; the ordinary caller's vector is
+`normalize((aimOffset + (0,height,1000)) - viewOffset)`. The final axes as
+equipment and callback state vary remain open. Retail movement actions
+contribute `+1/-1` forward and `+/-0.75` laterally (positive local lateral for
+left); the host uses the opposite lateral sign convention, whose world
+meaning cannot be compared until the retail frame mapping is resolved. The
+smoothing call at `004532B3` passes the 0.95/0.2 base and
 27 to `00482AD0`; its result is a half-life used by `00482FC0` as
 `pow(0.5, frameDelta/halfLife)`. For those fixed bases this is algebraically
 equivalent to the host's `pow(base, 27*dt)`. The host's ground/climbing base
@@ -98,9 +104,11 @@ collision/integration loop. Difficulty selection beyond the fresh-profile
 default, byte `+0x380`, and state 6 are not represented. Do not infer retail
 motion parity from the current `Player::step`.
 
-Next, resolve the meaning/default of `+0x3310`, runtime axes and indirect
-equipment-vector argument of the `+0x3320` frame, and source movement input
-scale before changing host movement vectors. The pitch/yaw fields
+Next, resolve the meaning/default of `+0x3310`, the equipment-varying final
+axes and camera/ActorInfo relation of the locomotion frame, and how retail
+local movement signs map through that frame before changing host vectors. The
+input key aliases and magnitudes are mapped; callback/update cadence is not.
+The pitch/yaw fields
 `+0x32F0/+0x32F4`, core frame/vector helpers, and smoothing exponent
 relationship are mapped. Continue tracing initialization/writers for the
 `+0x198` Total Steps gate, then separate source movement from host

@@ -27,10 +27,27 @@ establish the full world orientation because the indirect second-setter vector
 still depends on equipment view data. The normal Player callback is visible at
 `00453860`; the recurring manager and cadence remain unknown.
 
+## Ordinary Player callback vector
+
+The second setter's vector is resolved for the ordinary caller in the
+`00452570` Player update block. `0044F340` selects the active item through the
+Player inventory array `+0x3564` and selected index `+0x357C`. It reads the
+selected item's view offset at `+0x1E4` and aim offset at `+0x1F0`; the ordinary
+call passes view and aim fractions of 1 and zero endpoint vectors. It adds the
+aim offset to `(0, height, 1000)`, subtracts the view offset, then supplies the
+normalized result to setter `00496360`. The height is selected from two source
+constants according to Player state 4. The raw x87/binary32 store order is in
+[`view-call-dataflow.md`](../../../reference/previous-work/decomp/evidence/player-tool-pose/view-call-dataflow.md).
+
+This resolves the setter input recipe, but not the input movement sign/scale
+or its world-direction interpretation. The frame's third axis is equipment
+dependent, and the movement block only uses `+0x3460` for its special movement
+transform. Do not substitute camera pitch/yaw for this equipment vector.
+
 ## Host status
 
-No movement transform was changed from this trace. `Player::step` still uses a
-camera-pitch substitute for the retail `+0x3320` transform; the host movement
-frame orientation and callback cadence remain provisional. Evidence logs from
-the read-only headless review were temporary; this note records the durable
+`Player::step` still uses a camera-pitch substitute for the retail `+0x3320`
+transform; the host movement-frame orientation and callback cadence remain
+provisional. This trace did not change movement transforms. Evidence logs from
+the read-only review were temporary; this note records the durable
 address-level result.
