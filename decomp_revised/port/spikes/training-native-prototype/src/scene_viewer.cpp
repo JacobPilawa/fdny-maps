@@ -1413,6 +1413,19 @@ int32_t truncatedRouteKeyOffsetMs(float seconds) {
         double(std::numeric_limits<int32_t>::max())));
 }
 
+int32_t routeParentSizeDelayMs(float routeRate) {
+    // 00449340 clamps root[+0xFC] to [10, 1000], then evaluates these
+    // binary32-constant operations on x87 before 004B9400 truncates toward
+    // zero: ((1 - ((rate - 10) * 0.001)) * 250) + 1750.
+    float boundedRate = routeRate;
+    if (boundedRate > 1000.f) boundedRate = 1000.f;
+    if (boundedRate < 10.f) boundedRate = 10.f;
+    if (!std::isfinite(boundedRate)) return 0;
+    const double normalized = (double(boundedRate) - 10.0) * double(0.001f);
+    const double delay = (1.0 - normalized) * 250.0 + 1750.0;
+    return int32_t(std::trunc(delay));
+}
+
 void updatePreviewFirePathMotion(PreviewFire& fire, float dt, uint32_t now,
                                  std::vector<QueuedRouteFire>& queued) {
     auto& motion = fire.pathMotion;
@@ -1460,6 +1473,15 @@ void updatePreviewFirePathMotion(PreviewFire& fire, float dt, uint32_t now,
             request.smoking = true;
         }
         queued.push_back(request);
+    }
+    if (motion.childEmissionThresholdMapped) {
+        // 00449340 resets the parent's shared setsize/moveto track on each
+        // route emission and targets root[+0x108..+0x110]. The model-derived
+        // root extent and threshold branch are still unsupported.
+        fire.runtime.visual.sizes.setRouteMotion(
+            {fire.authoredRouteRadius, fire.authoredRouteHeight,
+             fire.authoredRouteRadius},
+            uint32_t(routeParentSizeDelayMs(motion.rate)), now);
     }
     fire.runtime.visual.setPosition(routeCandidate);
     if (complete) motion.active = false;

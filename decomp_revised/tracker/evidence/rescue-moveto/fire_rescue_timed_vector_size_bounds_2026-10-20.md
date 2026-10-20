@@ -38,6 +38,56 @@ Thus `setsize` and `moveto` share one size/bounds key track; the vector is not
 world translation. Exact per-axis scale meaning and the detailed
 `00458DA0` linked-object effect remain unresolved.
 
+## Parent route-generated size keys
+
+The route emission block at `004498FC..00449999` resets this same track after
+queuing the child request. `0044AD70` clears its active key list. The first
+`0044B620` insertion is `(0,0,0)` at `DAT_00502AFC - 10`; the second points to
+the source parent's `root+0x108..+0x110` vector at
+`DAT_00502AFC + truncTowardZero(delay)`. The source vector is the no-model
+initializer extent `(H_Radius,H_Height,H_Radius)`. Consequently, a route
+emission also replaces any keys left by an earlier `setsize` command.
+
+Same-hash x86 around the delay computation:
+
+```text
+0044992F: FLD   dword ptr [EDI+0xFC]
+00449935: FCOM  dword ptr [0x004E0ED4]  ; 1000.0
+0044993B: FNSTSW AX
+0044993D: TEST  AH,0x41
+00449940: JNE   0044994C
+00449942: FSTP  ST(0)
+00449944: FLD   dword ptr [0x004E0ED4]  ; upper clamp = 1000.0
+0044994A: JMP   00449961
+0044994C: FCOM  dword ptr [0x004E169C]  ; 10.0
+00449952: FNSTSW AX
+00449954: TEST  AH,0x05
+00449957: JP    00449961
+00449959: FSTP  ST(0)
+0044995B: FLD   dword ptr [0x004E169C]  ; lower clamp = 10.0
+00449961: FSUB  dword ptr [0x004E169C]  ; rate - 10
+00449967: FMUL  dword ptr [0x004E175C]  ; 0.001000000047...
+0044996D: FSUBR dword ptr [0x004DFC24]  ; 1 - normalized rate
+00449973: FMUL  dword ptr [0x004E1754]  ; 250
+00449979: FADD  dword ptr [0x004E1758]  ; 1750
+0044997F: CALL  004B9400               ; integer conversion toward zero
+00449984: ADD   EAX,dword ptr [0x00502AFC]
+0044998A: PUSH  EAX
+0044998B: LEA   EAX,[EDI+0x108]
+00449991: PUSH  EAX
+00449992: MOV   ECX,EBP
+00449994: CALL  0044B620               ; insert target vector at clock + EAX
+```
+
+The two compare/test sequences clamp ordinary finite route-rate values to
+`[10,1000]`. The resulting delay is
+`((1 - ((rate - 10) * 0.001)) * 250) + 1750` before integer conversion: 2000
+at rate 10 and 1752 at rate 1000. The `0.001` operand is the stored binary32
+constant, and the expression executes on x87; host arithmetic is an
+approximation at integer-boundary cases. The route rate's author-facing units,
+the reason for this delay, and its live effect are not established. This is
+static binary evidence, not a live comparison.
+
 For no-`C_Model` FireRescue entities, initializer `00448D60` writes
 `root+0x108..+0x110 = (H_Radius, H_Height, H_Radius)`. The route updater uses
 the first component times one half as the threshold for emitting its
@@ -127,18 +177,20 @@ rehashed during this audit:
 Both map exports and source scripts match the independently audited paths;
 these hashes pin the authored no-model coverage claim.
 
-The shared host now snapshots the old visual position, queues a route child
-during the state-4 callback, moves/rebuilds the parent embedded visual, then
-drains the child request after represented contact candidates. It builds a
-fresh child with no name, copied floor behavior, alternating smoke, route
-heading, and the generated three-key size track. For portable simulation it
-currently treats the untouched class-template fields and initial key timestamp
-bases as zero/unset. The retail factory can reuse a retained root; host object
-reuse, untouched template defaults, x87 edge behavior, exact callback cadence,
-sprite/RNG interleaving, and child retirement remain unresolved. The renderer
-currently projects the route vector to horizontal yaw for child orientation;
-the full retail heading frame is not established. This is a source-backed host
-slice, not live route, gameplay, or retail parity.
+The shared host snapshots the old visual position, queues a route child during
+the state-4 callback, resets the parent's shared size track with the two keys
+above, then moves/rebuilds the parent embedded visual. It drains the child
+request after represented contact candidates. The fresh-child approximation
+has no name, copied floor behavior, alternating smoke, route heading, and the
+generated three-key size track. For portable simulation it currently treats
+untouched class-template fields and initial key timestamp bases as zero/unset.
+Retail factory reuse reinitializes UserData and reruns FireRescue visual setup,
+but host pooling and reuse eligibility remain unresolved. Untouched template
+defaults, x87 edge behavior, exact callback cadence, sprite/RNG interleaving,
+and child retirement remain open. The renderer currently projects the route
+vector to horizontal yaw for child orientation; the full retail heading frame
+is not established. This is a source-backed host slice, not live route,
+gameplay, or retail parity.
 
 ## Remaining work and limits
 
@@ -146,9 +198,10 @@ slice, not live route, gameplay, or retail parity.
   source and child tracks, including the untouched base timestamp fields and
   interactions with consecutive `setsize` commands. The current host uses
   zero for the generated request's inherited timestamp bases.
-- Port the source parent's route-generated size track alongside the child
-  track. The child track is now represented; its time offsets use the
-  current initialization clock plus a provisional zero base.
+- Match x87 conversion at parent route-delay integer boundaries and determine
+  whether untouched generated-child timestamp bases differ from the current
+  host's zero proxy. The parent route track is now represented; child offsets
+  still use a provisional zero base.
 - Establish queued-child setup, update ownership, and retirement before
   claiming full route parity.
 - Trace the non-null `C_Model` dimensions path and exact rendered bounds.

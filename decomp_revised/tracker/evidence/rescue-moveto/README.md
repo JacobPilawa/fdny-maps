@@ -20,9 +20,12 @@ no `C_Model`, so the initializer's threshold field is directly mapped to
 The host now queues a child request at each mapped gate and drains it after the
 represented contact candidates. It copies the prior visual base, current size,
 route heading, floor flag, alternating smoke bit, and three generated size
-keys. `00448D60` adds the relative key times to its current game clock. The
-host currently uses zero for untouched class-template values and generated
-timestamp bases; full child-template and object-pool semantics remain open.
+keys. At the same gate it resets the parent's shared `setsize`/`moveto` track,
+then inserts zero at global clock minus 10 and the no-model root dimensions at
+global clock plus the clamped route-rate delay. `00448D60` adds the child
+relative key times to its current game clock. The host currently uses zero for
+untouched child class-template values and generated timestamp bases; full
+child-template defaults and object-pool eligibility remain open.
 
 The pinned updater also builds FireRescue-shaped configs and submits deferred
 map-entity spawn requests as the source actor advances. The later generic
@@ -31,9 +34,9 @@ registration. A follow-up maps the FireRescue factory, handle assignment, and
 the limits of its pool/update lifecycle in
 [`deferred_child_lifecycle_2026-10-15.md`](deferred_child_lifecycle_2026-10-15.md).
 The queued actor's recurring update, per-entity deactivation, and reuse are not
-fully mapped. The host creates fresh actors and does not emulate pool reuse;
-the source FireRescue's own route-generated size track and external callback
-cadence also remain open. The packaged MBase and gas_r
+fully mapped. Reused retail roots reinitialize their UserData and rerun
+`00448D60`, but the host still creates fresh actors. External callback cadence
+also remains open. The packaged MBase and gas_r
 `--rescue-check` commands complete
 without an `Unimplemented EVS` report, but those controlled rescue transactions
 do not exercise or establish natural route timing or retail parity.

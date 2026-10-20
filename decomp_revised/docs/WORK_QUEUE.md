@@ -20,10 +20,12 @@ position into a generated child request before moving the parent visual to the
 current route candidate; the root world transform stays fixed. The host
 now queues the captured prior-position request and creates a fresh route child
 after represented contact candidates, with the no-model three-key size track,
-floor flag, heading, and alternating smoke request. It uses zero/unset proxies
-for untouched class-template fields and key-time bases. Exact parent route
-size-track behavior, template defaults, factory pool reuse, frame cadence,
-contact-list parity, and RNG interleaving remain open. Evidence is in
+floor flag, heading, and alternating smoke request. At the same route gate it
+now resets the parent's shared size track to the confirmed zero anchor and
+`root+0x108` target, using the clamped route-rate delay. It uses zero/unset
+proxies for untouched child template fields and child key-time bases. Generated
+child template defaults, reuse eligibility, frame cadence, contact-list
+parity, and RNG interleaving remain open. Evidence is in
 [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md)
 and
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
@@ -48,13 +50,14 @@ stores the route candidate into the parent visual. The route helper's
 completion call `00442BF0` adds a pair to the PathPoint-owned `+0xE8` container,
 not a transform setter. The host now moves the parent visual at each mapped
 emission gate and instantiates its generated no-model child after represented
-contacts; root transform/origin stay fixed. The child keys are source-backed,
-while untouched template values and the parent's generated size track remain
-incomplete, so no route parity claim is made. Evidence:
+contacts; root transform/origin stay fixed. The parent and child size keys are
+source-backed, while untouched template values remain incomplete, so no route
+parity claim is made. Evidence:
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
 
-The key list itself is already modeled for authored `setsize`; interactions
-between `setsize` and `moveto`, generated template timestamp bases,
+The key list itself is modeled for authored `setsize`; `moveto` now resets
+that shared list, replacing any prior `setsize` keys with a zero anchor and the
+parent's no-model dimensions. Generated child template timestamp bases,
 model-derived thresholds, and child ownership/retirement remain open. For the
 no-model child, operands 3/4 scale to its key timestamp offsets, and
 `00448D60` adds those offsets to its current clock. The source's retained x87
@@ -71,6 +74,9 @@ remain an inference. Keep callback cadence provisional.
 | `route_request_schema` | `00449340` request stores, `00448D60`, typed UserData audit | Complete; mapped no-model generated child fields and alternating smoke; inherited template defaults remain open; no edits |
 | `route_key_timing` | `00449340` x86, `004B9400`, `00448D60` key consumer | Complete; established three child keys, global-clock addition, retained distance; base timestamp and authored units remain provisional; no edits |
 | `route_model_threshold` | current MBase/Gas R typed exports, `00448D60` model branch | Complete; only two authored `moveto` actors, both no-model; generic model bounds unresolved; no edits |
+| `route_parent_track` | `00449340` x86 and `0044B620` track helper | Complete; parent clears shared `setsize`/route track and inserts zero at clock-10 plus root+108 at clamped route-rate delay; host implementation updated |
+| `route_template_defaults` | FireRescue typedef, 15 mission BSPs, `00447A90`, `0044A330` | Complete; placed epairs do not prove generated-template defaults; spawn message, spray time, alive and child timestamp bases remain unresolved; no edits |
+| `route_factory_reuse` | FireRescue factory, vtable `004475F0`, registration `00448D60` | Complete; corrected stale reuse note: UserData and visual setup are reinitialized; `+0x1C` eligibility writers and retirement remain unresolved; no edits |
 
 ## Rescue timeout loss audio (2026-10-20)
 

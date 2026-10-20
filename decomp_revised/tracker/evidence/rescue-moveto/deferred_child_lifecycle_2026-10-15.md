@@ -74,11 +74,22 @@ shared updater `00470740` and invokes the visual Think path from the owner's
 ## Reuse, removal, and teardown limits
 
 `0044A470` writes byte `+0x1D` to 1 after factory selection. The inspected
-factory body does not show a reset of this byte. It calls the reused object's
-slot `+0x28`, but the full reinitialization effects and how `+0x1C` changes
-during a live lifetime are not established here. The destructor route
-`0044A450 -> 0044A290 -> 0049D510` releases identity and visual subobjects; the
-inspected destructor slice does not clear pool byte `+0x1D`.
+factory body does not show a reset of this byte. **2026-10-20 correction:**
+the reused object's slot `+0x28` resolves to `004475F0`. That method calls
+`0049D310` to copy request `+0x0C` into root `+0x0C` and clear root bytes
+`+0x10`, `+0x1C`, and `+0x1D`, then calls `0049D160(request, root+0x78, 0x88)`
+to reinitialize the FireRescue UserData region. After factory selection,
+`0044A470` sets `+0x1D` and `0049D450` assigns a fresh identity handle. Generic
+queue registration then reruns `00448D60`; this visual initializer resets the
+timed size track, dimensions, origin and transient visual state before the
+child enters normal manager updates. Therefore a reused entry does not simply
+retain its old UserData or visual initialization state.
+
+The eligibility check still reads root byte `+0x1C`, but the complete set of
+runtime writers and its meaning across a live lifetime are not established.
+The destructor route `0044A450 -> 0044A290 -> 0049D510` releases identity and
+visual subobjects; the inspected destructor slice does not clear pool byte
+`+0x1D`.
 
 The descriptor teardown method `00448110` walks its retained object array,
 calls each entry's slot 0 with argument 1, then clears the array. That is
@@ -92,10 +103,10 @@ name-gated path and does not close these ownership questions; see
 ## Port boundary
 
 The host may preserve the queued request data and generic create/register/init
-phase as separate operations. It should not yet present route children as
-ordinary persistent fires or claim their update, retirement, or reuse parity.
-The request contains generated size keys, a route direction, a stagger mode,
-and source values that feed its timing track; the child visual and recurring
-callback path still depend on the unresolved lifecycle above. Source route
-progress and its `H_Radius/2` child-emission gate are documented separately in
+phase as separate operations. The current host instantiates fresh child
+objects, while retail may select and reinitialize retained roots. It should
+not yet claim their update, retirement, or reuse parity. The request contains
+generated size keys, a route direction, a stagger mode, and source values that
+feed its timing track; reuse eligibility and child retirement remain open.
+Source route progress and its `H_Radius/2` child-emission gate are documented separately in
 [`README.md`](README.md).

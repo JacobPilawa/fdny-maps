@@ -25,6 +25,15 @@ struct FireSize {
   add(size,now+10u,now);
   add(target,targetTime,now);
  }
+ // 00449340 clears the same track used by setsize, anchors zero at the
+ // current game clock minus 10, then inserts root[+0x108..+0x110] at the
+ // route-derived future timestamp.
+ void setRouteMotion(V target,uint32_t targetDelay,uint32_t now){
+  for(auto& key:keys)key.active=false;
+  first=next=-1;
+  add({0,0,0},now-10u,now);
+  add(target,now+targetDelay,now);
+ }
  void update(uint32_t now){
   if(first<0)return;
   if(next>=0&&keys[next].time<now){keys[first].active=false;first=next;next=-1;
