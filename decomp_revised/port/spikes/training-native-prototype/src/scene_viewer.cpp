@@ -325,6 +325,8 @@ PlayerHoseStage loadPlayerHoseStage(const SceneData& scene) {
             throw std::runtime_error("RCS_HosePath has no authored name in " + scene.key());
         path.nextPath = property(entity, "A_NextPoint");
         path.lookAtPath = property(entity, "B_LookAtPoint");
+        if (path.nextPath == "<null>") path.nextPath.clear();
+        if (path.lookAtPath == "<null>") path.lookAtPath.clear();
         path.nextHotspot = property(entity, "D_NextHotSpot");
         if (path.nextHotspot == "<null>") path.nextHotspot.clear();
         path.position = parseVector(property(entity, "ZZ_location"),
@@ -5282,11 +5284,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             performanceSwapMs.reserve(90);
         }
         SDL_SetRelativeMouseMode(SDL_TRUE);
-        std::cout << "WASD move, mouse look, Space/right mouse jump, C crouch, Escape releases the mouse.\n"
-                  << "Press F to snap to the nearest walkable collision floor below you.\n"
-                  << (dedicatedPlayerHose
-                        ? "PlayerHose: left-click and hold to send the stream at the currently selected authored WindowFire target. WASD movement is a temporary host control while the retail hose spline camera is unported.\n"
-                        : "Rescue victims render from exported ACT assets; authored roam commands move them around the map.\n"
+        if (dedicatedPlayerHose) {
+            std::cout << "PlayerHose: the authored camera rail follows the hose path. Move the mouse to steer the stream; left-click and hold to douse the selected WindowFire target. Escape releases the mouse.\n";
+        } else {
+            std::cout << "WASD move, mouse look, Space/right mouse jump, C crouch, Escape releases the mouse.\n"
+                      << "Press F to snap to the nearest walkable collision floor below you.\n"
+                      << "Rescue victims render from exported ACT assets; authored roam commands move them around the map.\n"
                           "Authored FireRescue sprites animate; left-click and hold with the extinguisher selected to suppress fires.\n"
                           "Victims are picked up automatically on contact. Authored BModel touch events open and close doors.\n"
                           "PlayerRescue authored loadouts initialize; press 1/2/3 to select equipped axe/extinguisher/goggles.\n"
@@ -5295,7 +5298,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                           "Tool selection keys 1/2/3 are viewer controls.\n"
                           "Press E or Space near a scripted console to use it. M/N inspect PATH timing; live door poses stay in control.\n"
                           "Doors respond to authored touch events; PATH preview does not activate a door or change collision.\n"
-                          "Gameplay BModel poses drive both rendering and collision; retail callback cadence remains unknown.\n");
+                          "Gameplay BModel poses drive both rendering and collision; retail callback cadence remains unknown.\n";
+        }
         if (fireCameraAudit)
             std::cout << "Fire camera audit is active: it logs mouse events, 250 ms view/movement samples, and extinguisher contact points and delivery while spraying.\n";
         if (performanceAudit)
@@ -5583,13 +5587,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (playerIncapacitated) forward = side = 0.f;
             const bool jumpDown = !playerIncapacitated && !usingConsole && (keys[SDL_SCANCODE_SPACE] != 0 ||
                 (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_RIGHT)));
-            if (!playerIncapacitated && !passoutRecoveredThisFrame) {
+            if (!dedicatedPlayerHose && !playerIncapacitated && !passoutRecoveredThisFrame) {
                 player.step(dt, forward, side, yaw, jumpDown,
                     jumpEdge && !usingConsole, crouchEdge, collision, pitch);
             }
             // Player::Think calls the RescueBot callback after movement and
             // collision. Host frame cadence remains provisional.
-            if (!playerIncapacitated && !passoutRecoveredThisFrame)
+            if (!dedicatedPlayerHose && !playerIncapacitated && !passoutRecoveredThisFrame)
                 advanceRescueBot(now);
             sceneAudio.updateOwnedListeners(player.p, yaw);
             updatePreviewFireLoopSounds(fires, sceneAudio, player.p, yaw);
@@ -5714,10 +5718,42 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             };
             const std::string selectedItem = playerLoadout.selectedName();
+            if (dedicatedPlayerHose) playerHoseStage.advanceCameraRail(dt);
             FrameTransform cameraFrame = ViewUpdate::directEye(player.p, yaw, pitch, player.crouch);
+            FrameTransform hoseAimFrame = cameraFrame;
             V hoseStreamEnd{};
             bool hoseStreamVisible = false;
             if (dedicatedPlayerHose) {
+                const PlayerHoseCameraPose hosePose = playerHoseStage.cameraPose();
+                if (hosePose.valid) {
+                    Hit floorHit;
+                    const V floorStart{hosePose.railPosition.x, 50.f, hosePose.railPosition.z};
+                    const V floorEnd{hosePose.railPosition.x, -2000.f, hosePose.railPosition.z};
+                    const float floorY = collision.tracePoint(floorStart, floorEnd, 1, 2, floorHit)
+                        ? floorHit.point.y : 0.f;
+                    const V cameraPosition{
+                        hosePose.railPosition.x, floorY + 32.f, hosePose.railPosition.z};
+                    player.p = cameraPosition;
+                    player.v = {};
+                    const V lookDirection = ViewUpdate::normalize(hosePose.lookAt - cameraPosition);
+                    const float routeYaw = std::atan2(-lookDirection.x, -lookDirection.z);
+                    const float routePitch = std::asin(std::clamp(lookDirection.y, -1.f, 1.f));
+                    auto frameForAngles = [](V position, float frameYaw, float framePitch) {
+                        FrameTransform frame;
+                        const float cy = std::cos(frameYaw), sy = std::sin(frameYaw);
+                        const float cp = std::cos(framePitch), sp = std::sin(framePitch);
+                        frame.position = position;
+                        frame.axis = {V{cy, 0.f, -sy}, V{sy * sp, cp, cy * sp},
+                                      V{sy * cp, -sp, cy * cp}};
+                        return frame;
+                    };
+                    cameraFrame = frameForAngles(cameraPosition, routeYaw, routePitch);
+                    // Retail feeds separate STEER_YAW/PITCH values to nozzle
+                    // aiming. Preserve mouse steering as a provisional offset
+                    // around the authored rail look direction.
+                    hoseAimFrame = frameForAngles(
+                        cameraPosition, routeYaw + (yaw - playerHoseStage.spawnYaw), pitch);
+                }
                 const std::string previousTransition = playerHoseStage.transition;
                 int hitModel = -1;
                 const bool hoseActionActive = sprayHeld &&
@@ -5725,7 +5761,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (hoseActionActive) {
                     constexpr float streamLength = 2000.f; // 0046C5A0 traces a 2000-unit hose segment.
                     const V streamStart = cameraFrame.position;
-                    const V streamDelta = cameraFrame.axis[2] * -streamLength;
+                    const V streamDelta = hoseAimFrame.axis[2] * -streamLength;
                     hoseStreamEnd = streamStart + streamDelta;
                     Hit streamHit;
                     if (collision.tracePoint(streamStart, streamDelta, 0x43, 2, streamHit)) {

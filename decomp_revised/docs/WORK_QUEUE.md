@@ -19,9 +19,12 @@ includes `city_h`, `const_h`, `dock_h`, and `oil_rig_h` for direct launch by map
 key. This is the first playable hose interaction slice, not a completed hose
 port.
 
-The current host uses free WASD movement and the standard first-person view in
-place of PlayerHose's retail spline/camera. It treats M_SpotTime as host seconds
-and starts the WindowFire progress proxy at 1.0, decrementing by
+The shared host follows the authored PlayerHose camera rail and traces the
+retail-shaped floor offset; its +500 factor is interpreted as world units per
+host second, which remains provisional. Mouse steering is applied as a
+provisional nozzle offset around the interpolated rail look direction. It
+treats M_SpotTime as host seconds and starts the WindowFire progress proxy at
+1.0, decrementing by
 `dt/SprayTime`; the exact timer units and retail WindowFire initialization are
 unresolved. Mouse-delta scaling, the rendered stream, M_MaxPressure's effect,
 result feedback, and stage return flow also remain open. Do not treat the host
@@ -29,7 +32,7 @@ build as a live check or retail parity. The full port assumptions and compile
 record are in
 [`player_hose_port_host_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_port_host_2026-10-20.md).
 
-The shared macOS executable compiled successfully with SHA-256
+The first gameplay-slice executable compiled successfully with SHA-256
 `514dd0ae15bb0c733f7b1b01dca939f26eb5e5d23c1696b187ec6f3af1eb059c`.
 The rescue-all app bundle also built successfully; its embedded catalog has
 eight rescue entries and its scene resources include all four hose maps. The
@@ -39,7 +42,48 @@ performed.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implemented first target/cycle/hotspot path with source-shaped collision targeting and exact numeric mode timer table; free movement, visual/camera, target baseline, countdown wall-clock units, retail mode labels/initial choice and result flow remain provisional/open |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements target/cycle/hotspot flow and authored spline camera rail; speed calibration, mouse-to-nozzle mapping, visuals, WindowFire baseline, countdown units, mode labels/initial choice, result and return flow remain provisional/open |
+
+## PlayerHose authored rail trace and shared-host camera port (2026-10-20)
+
+Fresh Ghidra 12.0.4 decompilation against retail EXE SHA-256
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` traces
+`00468050/0049D160 -> 004661A0 -> 00490510/00490D00/004905A0` and the runtime
+samplers `00490AB0/00490BB0`. The PlayerHose constructor validates a 20-byte
+UserData record, stores it at `+0x194`, and the builder reads its `+0x10` route
+pointer. That layout strongly maps to the authored `FirstPathPoint`, while the
+compiled property descriptor offset remains unverified. HosePath offsets
+`+0x10/+0x14/+0x18` strongly map to `A_NextPoint`, `B_LookAtPoint`, and
+`C_IsAHotSpot`. The builder follows the A chain, closes a null tail to the
+first point, creates 32-byte controls and ten subdivisions per segment, and
+interpolates LookAtPoint coordinates for the camera.
+
+The exports have 19/34/17/13 HosePath records; the FirstPathPoint A chains
+reach 10/19/13/7 nodes. `RCS_CamHose` is a separate runtime helper lookup and
+its absence from the BSP tables does not prevent HosePath binding. Retail
+samples centered half-difference cubic curves, advances with a `+500` factor,
+traces down from Y `+50` to `-2000`, and positions the rail at floor Y `+32`.
+The host now ports this authored camera rail. The speed is interpreted as 500
+world units per host second and remains provisional because retail delta-time
+calibration is open. Mouse-to-nozzle aim and camera sampling cadence also
+remain provisional. Full evidence and BSP hashes are in
+[`player_hose_curve_pipeline_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_curve_pipeline_2026-10-20.md).
+
+The function-review tracker now has 392 reviewed functions after four new
+fresh reviews (`00468050`, `0049D160`, `00468230`, and `0043B2D0`), with the
+existing `0048FF30` world probe review linked to the new camera evidence. No
+test suite or interactive run was performed. The shared macOS target compiled
+after the camera port; compilation is not retail parity.
+
+| Scope | Files | Status |
+| --- | --- | --- |
+| PlayerHose authored rail | Fresh constructor/builder/sampler/collision excerpts, spline evidence, `player_hose_stage.h`, `scene_viewer.cpp` | UserData and HosePath correspondence mapped from size/layout/runtime access; shared host follows the A-chain and renders the sampled floor-following camera rail; property descriptor, timing calibration, aim interaction, cadence, and retail parity remain open |
+
+The standalone and bundled macOS executables rebuilt with identical SHA-256
+`597ca269667e3002d2411c40877f0d5c0eef1ec210f48a39a0f4a68c6a1ae3be`.
+The rescue-all bundle's plist passed validation and retained the eight-choice
+rescue catalog plus all four hose maps. No interactive run or test suite was
+performed.
 
 ## PlayerHose hotspot timer mode scale ported (2026-10-20)
 
@@ -53,8 +97,8 @@ menu labels and initial mode value remain unknown. Do not label these indices
 Easy/Normal/Hard without further evidence. Details and the pinned EXE hash are
 in [`player_hose_mode_timer_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_mode_timer_2026-10-20.md).
 
-No new EXE function review was added; the tracker remains at 382 reviewed
-functions. The rescue-all macOS bundle rebuilt with this timer change, its
+This timer checkpoint added no EXE function review; the tracker stood at 382
+reviews then. Later hose traces bring the current count to 392. The rescue-all macOS bundle rebuilt with this timer change, its
 `Info.plist` passed validation, the embedded rescue catalog has eight rows,
 and the four hose maps are present. The packaged executable SHA-256 is
 `61578f31be495ce98c1e951f7afeb09cc7f3c80f097f17d69286a27636332f5e`.
@@ -1923,11 +1967,14 @@ symptom remain open.
 | `bank_door_audit` | Audit the reported Bank M-only door symptom against live loop and controlled harness | `scene_viewer.cpp`, `bmodel_door_runtime_port.md`, Bank interaction evidence | Complete; no edits; M/N only affect inspection state; continuous aimed route opens PATH but hits static world model 0 at a 24-unit lateral offset; aligned control crosses; live route remains open |
 | `bank_collision_retail` | Trace retail swept collision and BModel transform path against Bank door result | Pinned EXE/Genesis exports, Bank entity/model inventory, `bmodel_door_runtime_port.md` | Complete; read-only; swept hull checks static and transformed models, BModel PATH updates Genesis model transforms; exact leaf and live route remain open |
 | `bank_contact_review` | Audit Bank live-loop contact/PATH ordering and reported M workaround | `scene_viewer.cpp`, Bank door route and interaction fixture | Complete; read-only; no M-to-collision path; live ordinary route still needs capture |
-| `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; keep the eight-entry rescue catalog invariant and add a separate hose catalog/runner with the PlayerHose runtime; no edits |
+| `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; its separate direct-runner recommendation is implemented with all four hose maps packaged; a retail hose catalog/selector remains open |
 | `hose_runtime_data_audit` | Find a source-backed first playable PlayerHose data slice | `city_h/entities.json`, `scene_data.h`, `startup.h`, `scene_viewer.cpp`, lifecycle evidence | Complete; read-only; city_h gives a linear first hotspot path and its 29 ZF names resolve to `%Model%`; no edits; live route, exact camera, timing, collision, and WindowFire effect presentation remain open |
 | `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle and contact exports | Complete; read-only; traced pitch/yaw input accumulators and authored N_PitchSpread pitch clamp; M_MaxPressure reaches `+0x1834`, whose downstream effect remains unknown |
-| `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommended a dedicated route in the shared game host; authored spline/camera and stage result remain open |
+| `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommendation integrated as a separate route in the shared game host; authored spline/camera and stage result remain open |
 | `hose_city_data` | Map city_h's authored path, targets, and loader representation | `.local/exports/city_h/entities.json`, `scene_data.h`, lifecycle evidence | Complete; read-only; confirmed 19 path nodes, nine hotspots and 29 `%Model%` target references; no edits |
+| `hose_mode_labels` | Trace PlayerHose session mode index to retail labels/default | Pinned `004677D0`, related PlayerRescue initialization, menu and EVS evidence | Complete; read-only; exact timer factors are source-backed, but labels/default are not; difficulty-like role is suggestive only |
+| `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; builder and samplers reviewed; +0x194 UserData chain and HosePath field layout strongly mapped; shared camera rail ported; delta calibration, mouse aim and live parity remain open |
+| `camhose_data_binding` | Check whether the four BSP exports and host loader expose `RCS_CamHose` spline inputs | `.local/exports/{city_h,const_h,dock_h,oil_rig_h}`, `scene_property_matrix.csv`, `SCENE_DATA_CONTRACT.md`, `scene_viewer.cpp` | Complete; read-only; confirmed no CamHose BSP entities, then constructor/UserData and HosePath offsets established route binding; CamHose is a separate helper and not the route-node source |
 | `bank_retail_collision_trace` | Resolve retail Player hull and swept collision path for Bank obstruction | Pinned EXE/Genesis exports, `core.h`, Bank door evidence | Complete; read-only; retail mins `(-30,-30,-30)`/maxs `(30,85,30)` match the port; exact leaf and live route remain open |
 | `mesh_metadata_audit` | Independently audit world-mesh face-span source correspondence | Exporter, geometry/world-mesh JSON, C++ loader | Complete; read-only; validated field mapping and recommended all-map metadata checks; no renderer change |
 | `retail_material_trace` | Search pinned retail evidence for TexInfo alpha and lightmap render semantics | Ghidra exports, material/driver evidence, Bank and Training exports | Complete; read-only; 2026-10-15 hash-pinned trace maps descriptor/RGB handoff, shared raw projection source and UV formula, two-pass ZERO/SRCCOLOR fallback and two-stage TEXTURE×CURRENT composition, clamp/linear filtering, ZWRITE and LESSEQUAL, one style-sequence step per geEngine_RenderWorld call, and the selector `wMaxSimultaneousTextures > 1`; effective ZENABLE, mip filter, selected-device path, optional face branch, host render-call rate, channel convention, rounding, and full pixel parity remain open |

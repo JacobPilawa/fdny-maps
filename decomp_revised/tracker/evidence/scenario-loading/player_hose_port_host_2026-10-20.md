@@ -2,10 +2,11 @@
 
 Status: **the shared game host loads the four dedicated PlayerHose maps,
 resolves authored WindowFire target names to BSP model IDs, applies the
-source-derived numeric mode timer scale, and runs a source-shaped
-target/cycle/hotspot state path. The retail menu labels/initial mode, spline
-camera/motion, exact input scaling, live dousing response, WindowFire visuals,
-result widget, and stage transition remain open.**
+source-derived numeric mode timer scale, runs a source-shaped target/cycle/
+hotspot state path, and follows the authored HosePath camera rail with a
+floor-height query. Retail menu labels/initial mode, rail timing calibration,
+mouse-to-nozzle mapping, live dousing response, WindowFire visuals, result
+widget, and stage transition remain open.**
 This is a port checkpoint, not a live retail-parity result.
 
 ## Evidence and authored data
@@ -53,14 +54,23 @@ hose BSPs. Launch any one directly with its map key, for example
 `--hose-mode-index 0|1|2` after the map key to select the source-derived timer
 scale; the launcher forwards this host option to the executable.
 
-The shared host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment
-with the same `0x43/2` world-collision arguments seen in the retail stream
-collision, and only advances the currently selected target when the hit BSP
-model matches that target's authored model. It decrements the hotspot countdown
-before the dousing update, applies the authored SprayTime divisor, and presents
-the current hotspot, target, cycle, and timer in the window title. The player
-can use the existing host's WASD and first-person camera to work through the
-route.
+The shared host builds its camera rail from `FirstPathPoint` and the linked
+`A_NextPoint`/`B_LookAtPoint` data. It samples ten cubic subdivisions per
+segment, traces from rail X/Z at Y `+50` to `-2000` using collision arguments
+`1/2`, and places the camera origin at the hit Y `+32`. It advances the rail
+with `dt*500/length`; interpreting the retail `+500` factor as units per host
+second remains provisional. The view follows the interpolated LookAt point.
+Mouse steering offsets the nozzle aim around that direction, preserving the
+existing `N_PitchSpread` degree clamp; its exact relation to retail
+`STEER_PITCH/YAW` remains provisional.
+
+The host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment with
+the same `0x43/2` world-collision arguments seen in the retail stream collision,
+and only advances the currently selected target when the hit BSP model matches
+that target's authored model. It decrements the hotspot countdown before the
+dousing update, applies the authored SprayTime divisor, and presents the
+current hotspot, target, cycle, and timer in the window title. WASD movement is
+disabled in dedicated rail mode.
 
 The host's WindowFire meter is intentionally only a first gameplay proxy. It
 starts at 1.0 and decays by `dt / SprayTime`; `SprayTime <= 0` completes on the
@@ -81,9 +91,9 @@ but a retail-authentic hose selector and result/return flow remain open.
 
 ## Build result
 
-The macOS `fdny-scene-viewer` target compiled successfully with
+The initial gameplay-slice macOS `fdny-scene-viewer` target compiled successfully with
 `cmake --build port/spikes/training-native-prototype/.local/build-scene-viewer --target fdny-scene-viewer -j 4`.
-Output SHA-256:
+Its output SHA-256 was
 `514dd0ae15bb0c733f7b1b01dca939f26eb5e5d23c1696b187ec6f3af1eb059c`.
 The `./tools/build_scene_viewer_app.sh rescue-all` packaging build completed,
 validated its `Info.plist`, included the four dedicated hose scenes, and
@@ -94,6 +104,17 @@ built for macOS 27.0 while this target links for 13.3. No test suite or
 interactive run was performed; compilation confirms the source builds but does
 not establish loader/runtime correctness or retail parity.
 
-The later mode-timer update rebuilt the rescue-all bundle. The current
+The later mode-timer update rebuilt the rescue-all bundle. That checkpoint's
 packaged executable SHA-256 is recorded in
 [`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md).
+
+## Authored rail build
+
+After the camera-rail port, the macOS target compiled successfully. The
+standalone and rescue-all bundle executables have identical SHA-256
+`597ca269667e3002d2411c40877f0d5c0eef1ec210f48a39a0f4a68c6a1ae3be`. The
+package build validated `Contents/Info.plist`, retained all eight rescue
+catalog rows, and included `city_h`, `const_h`, `dock_h`, and `oil_rig_h`.
+Linking repeated the existing Homebrew json-c warning: the library was built
+for macOS 27.0 while the target links for 13.3. No tests or interactive run
+were performed; compilation does not establish camera timing or retail parity.
