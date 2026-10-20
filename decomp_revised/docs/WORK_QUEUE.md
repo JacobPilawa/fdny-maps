@@ -54,12 +54,17 @@ plist validation passed and eight rescue choices were emitted. This remains a
 compile/package check, not a live bonus pickup or retail-parity check. See
 [`bonus_points_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bonus_points_port_2026-10-20.md).
 
-The outcome path is now split into two evidence tasks. Static tracing has
-identified child 5 as the Records page and mapped its left/right actions to a
-selected-record index and page rebuild. Next trace the exact record fields and
-profile schema used by `004332E0`, then decide what can be ported into the shared
-frontend. The saved 943-line decompilation is
+The outcome path is now split into page/schema evidence and runtime transition
+evidence. Static tracing identifies child 5 as the Records page and maps its
+left/right actions to a selected-record index and page rebuild. A fresh
+hash-pinned follow-up maps 13 mission-stat definitions and the `Score` save-tree
+nodes, but does not yet join those keys to the exact visible record rows or
+sample profile values. Next correlate registered keys with serialized
+`stats` entries and grouping before adding a profile-backed Records model to the
+shared frontend. The builder export is
 [`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c).
+The profile/schema trace is
+[`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md).
 
 The gate-to-result transition remains pending retail runtime evidence. The
 result child is at `PlayerStatus+0x824`, and its active check at
@@ -604,7 +609,7 @@ HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, textures, timed-child active alias, and frontend consumer traced. State 1 selects child 5, now identified as Records; actions 1/2 navigate the selected-record index and rebuild its contents, while action 0 backs through menu history. Exact record fields/profile schema, timing values, state-2 producer, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow remain open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, textures, timed-child active alias, frontend consumer, and partial `Score` profile schema traced. State 1 selects child 5, now identified as Records; actions 1/2 navigate the selected-record index and rebuild its contents, while action 0 backs through menu history. The 13 registered stat keys are known, but their join to visible persisted rows and concrete profile values remains open along with timing, state-2 producer, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow |
 
 The result path uses direct calls: `00458400` invokes `0048D180` and
 `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs that child with
@@ -619,18 +624,24 @@ record and selects frontend child 5; state 2 selects child 2, the level
 selector. Child 5 calls `00436630` with menu resources 11 and 17, which map to
 `sub.bmp` and `ttl-records.bmp`, and requests arrow texture 54. It is the
 Records page. Its actions 1 and 2 move the selected-record index at child
-`+0x354` and call `004332E0`; action 0 backs through menu history. The page
-builder looks up the selected catalog entry and constructs its displayed rows
-from stored record entries, but exact field labels, profile schema, layout and
-runtime visibility remain open. The constructor, callback, updater and profile
-mutation traces are in
+`+0x354` and call `004332E0`; action 0 backs through menu history. The builder
+looks up the selected level key in the saved score collection and formats
+stored entries grouped by descriptor order. `00424710` registers 13 mission
+stat keys, while the save reader/writer traces identify `Score`, `LevelName`,
+`stats`, `Name`, `LevelIndex`, and `DifficultyLevel` nodes. The exact mapping
+from those definitions to the visible persisted rows, field units, profile
+values, category layout and runtime visibility remains open. The constructor,
+callback, builder, profile mutation and schema traces are in
 [`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c),
 [`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c),
+[`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md),
 and [`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_handoff_fresh_2026-10-20.c).
 
-Next, map the selected record's exact fields through `004332E0` and the profile
-mutation before porting a shared Records page. Keep the result transition
-unmodeled until runtime evidence resolves the gate lifecycle and child timing.
+The shared port has a runtime rescue-stat map but no profile-backed Records
+page model or menu route. Next correlate the 13 registered stat keys with the
+serialized `stats` values, order, and grouping, then add a shared data model and
+frontend route from the verified source. Keep the result transition unmodeled
+until runtime evidence resolves the gate lifecycle and child timing.
 Do not port guessed placement, timing, or a loss-state producer. The bounded
 scan still found no direct writer of Player `+0x3438 = 2`; if retail runtime
 access becomes available, set a write watchpoint during expiry, passout, and
@@ -924,6 +935,8 @@ body-bearing functions and 287 external entries.
 | `outcome_widget_timing` (Luna) | Result child `+0x130/+0x134` timing and sibling callers | Result widget evidence, full raw disassembly scan, and constructor chain | Complete, read-only; no direct parent-relative timing operands in full EXE scan; `0044D550` → `004576B0` → `0048D390` has no observed timing-field clear/write; allocator clearing and computed aliases remain unknown, so values stay unmodeled; no edits |
 | `next_core_gap` (Luna) | Current port/evidence audit for next cross-mission system | Work queue and rescue outcome evidence | Complete, read-only; verified ordinary all-victims exit enables authored exits/stage links and found no source-backed win/loss transition without runtime evidence; keep `+0x3438` gate separate from result state; no edits |
 | `result_child5_page_audit` (Luna) | Child 5 constructor `00432BB0`, vtable handler `004346A0`, record updater `004332E0`, menu resource table | Complete, read-only; corrected the earlier callback no-op claim; identified Records page, action 0 history-back, actions 1/2 index navigation, and dynamic selected-record rebuild; exact record field labels/layout remain open; no edits |
+| `records_schema_trace` (Luna) | `004332E0`, mission stat registry, save profile reader/writer and `Score` strings | Complete, read-only; found grouped stored-string rendering and the 13-key stat catalog; exact key-to-visible-row join, group labels, and populated profile values remain open; no edits |
+| `records_port_gap` (Luna) | Shared menu/frontend and runtime statistic state | Complete, read-only; confirmed no profile-backed Records model or menu route in the current shared port; next safe implementation requires a verified row/value join; no edits |
 | `mission_outcome_direct_offset_scan` | EXE direct stores to Player/result candidate fields `+0x960`, `+0xE24`, `+0x824`, `+0x6EC` | `.local/mission-outcome-flag-writes.txt`, `FindOffsetWrites.java` | Complete, read-only; found seven direct `+0x6EC` stores and no register-displacement store candidates for the other three offsets. Pointer aliases, computed addressing, runtime and external writers are not excluded; no edits |
 
 ## View bob fully removed (2026-10-18)
