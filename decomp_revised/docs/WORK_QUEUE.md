@@ -8,6 +8,24 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## Player and BModel recurring update scheduler census (2026-10-20)
+
+The local Player and BModel root `+0x14` routes both reach
+`00470740` and their embedded movement/update methods. A fresh saved-project
+Ghidra caller query found only local wrappers/thunks directly referencing
+`00470740`; it did not identify the recurring manager. The same-hash static
+spawn and registration path admits PlayerRescue (type 1) and BModel (type 4)
+to the contact manager, but its normal owner `+0xE0` pass dispatches root
+`+0x48` contact callbacks through `0049BD20`. It does not establish the
+recurring `+0x14` caller. Keep callback cadence and Player/BModel order
+provisional. Next identify the hidden update manager/list or obtain a bounded
+retail runtime trace after launch/capture prerequisites are verified. Evidence:
+[`player_bmodel_update_scheduler_census_2026-10-20.md`](../tracker/evidence/scenario-loading/player_bmodel_update_scheduler_census_2026-10-20.md).
+The owner tail service at `+0x3C4` is separately mapped to `0049C820`; its
+bounded callback window drains queued items through item vtable slot `+0` or
+`+0x2C`, without directly invoking root slot `+0x14`. Producers and item
+classes remain open, so an indirect update effect is not excluded.
+
 ## FireRescue state-4 Think ordering (2026-10-20)
 
 Pinned retail tracing now connects the normal owner `+0x50` manager to
@@ -536,7 +554,9 @@ and
 | `view_frame_identity` (Luna) | Distinguish Player held-target frame from throw-gate frame; frame-helper evidence and current update window | Complete, read-only; throw gate reads view follower root `+0x34A4`, refreshed before the gate; held-target writer reads root `+0x24`. Numeric relation to rendered Genesis camera remains open. No edits |
 | `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use. Status 3 enables Player `+0xA94` and refreshes a time-zero GUI rectangle/frame-style record; no consumer links it to an Axe ACT pose. No code edits |
 | `axe_frame_record_consumer` (Luna) | Consumers of the `00455BC0` time-zero frame record; distinguish GUI rectangle helpers from Axe ACT render | Complete, read-only from retained hash-pinned evidence. Shared `0047EDF0`/`0047EA10` helpers are used for GUI rectangle/quad setup in menu/HUD traces, but no Player `+0xA94` draw consumer or Axe ACT link is established. No live Ghidra instance was available for a fresh complete xref census; no edits |
-| `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local Player/BModel routes to `00470740` and callback bodies are mapped, but recurring manager caller and frame ordering remain unproven. No edits |
+| `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local routes to `00470740` are mapped; no recurring manager caller or Player/BModel frame ordering is proven. Follow-up contact census separates root `+0x48` contact callbacks from `+0x14` updates. No edits |
+| `player_registration_path` (Luna) | PlayerRescue/BModel admission masks, type lists, and root `+0x14` scheduler; same-hash registration evidence and owner pass | Complete, read-only; PlayerRescue type 1 and BModel type 4 are eligible for contact-manager admission, whose owner `+0xE0` pass calls root `+0x48`; recurring `+0x14` caller and Player category mask remain open. No edits |
+| `owner_tail_service_census` (root) | `0042B2C0`, nested vtables `004DF8E8/004DF8F8`, owner `00429520`, code window `0049C820` | Complete, read-only; `+0x3C4` drains queued items using item slot `+0` or `+0x2C`, not root `+0x14`; queued item classes/producers remain open. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
 | `player_contact_latch` (Luna) | `0049E0A0`, `0049DBC0`, `0043F680`, Player collision/update vtable route; current-hash headless Ghidra and collision note | Complete, read-only; confirmed accepted collision writers and Player vtable slot `+0x64` → `0043F680` → integrator, which consumes/clears the latch. Parent follow-up found the indirect call before collision loop `0043F6D0`; downward snap bypasses the writer and outer cadence remains unresolved. No edits |
