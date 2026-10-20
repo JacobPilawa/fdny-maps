@@ -176,15 +176,17 @@ receiver, hose contact helper, and HoseSpray update are saved beside this note.
 Selected old exports and the hash-tagged old oracle/model are preserved in
 [`reference/legacy-evidence/fire-spread/`](../../../reference/legacy-evidence/fire-spread/README.md).
 The 2026-10-20 contact-frame audit initially left the rescue-player HoseSpray
-contact producer open. A follow-up maps the embedded shared stream component:
+contact producer open. The shared Player host now handles the authored
+`touchhose` command and slot-4 attachment-list count; its item frame update and
+contact/dousing transaction remain open. A follow-up maps the embedded shared stream component:
 HoseSpray item `+0x608` feeds `0046D1B0`/`0046C5A0`, which write the collision
 point and gate at item `+0x614..+0x624` consumed by `00463EF0`. It also
 connects `touchhose` to HoseSpray slot 4 and traces the distinct dedicated
 `RCS_PlayerHose` contact message to `RCS_WindowFire`; its local timer/geometry
 response is not FireRescue suppression. A fresh state-machine trace resolves
 the authored cycle counter, spot-time win/loss path, and
-`RC_HoseLvlStart/Win/Lose` outputs; the `+0x10` writer, route reachability, and
-configured sound names and result presentation remain open. The stage keys
+`RC_HoseLvlStart/Win/Lose` outputs; the `+0x10` writer, live Construction
+route, and result presentation remain open. The stage keys
 appear in retail `TRadioChatter` registration, and their nonzero send path
 requests a selected sound from the sound manager. See
 [`hose_contact_frame_gap_2026-10-20.md`](hose_contact_frame_gap_2026-10-20.md)
@@ -195,6 +197,13 @@ with its [fresh state-machine export](../scenario-loading/playerhose_hotspot_sta
 The [stage message-registration export](../scenario-loading/hose_stage_message_registration_fresh_2026-10-20.c)
 shows the key lookup and sound-manager request, but not the configured hose
 sound name or a mission transition.
+
+The authored rescue `touchhose N` route and per-map hashes are in
+[`touchhose_authored_trigger_audit_2026-10-20.md`](touchhose_authored_trigger_audit_2026-10-20.md).
+The current-hash handler trace shows that N scales the HoseSpray attachment
+record count through `00482780`/`00485D20`; record purpose and argument units
+remain unresolved in
+[`touchhose_attachment_list_trace_2026-10-20.md`](touchhose_attachment_list_trace_2026-10-20.md).
 
 The current-hash stream trace separates stored velocity magnitude
 (`4000 * currentPressure`) from the shape scalar (`0.8 + 2.2 * currentPressure`)

@@ -13,6 +13,7 @@ namespace HoseSprayPoseList {
 
 constexpr int kDefaultNodeCount = 12;       // 00482850: 240 / 20
 constexpr int kOriginalNodeBytes = 0x30;    // operator_new(0x30) in 00485D20
+constexpr float kCommandScaleDenominator = 20.f; // HoseSpray owner +0xCB0 after 00482850 setup.
 
 struct Node {
     int32_t next = -1;                       // target node +0x00
@@ -76,16 +77,21 @@ inline void construct(State& state,
     resize(state, kDefaultNodeCount);
 }
 
-// Training's touchhose 25 path supplies the scaled value 25 * 24 / 20 to
-// 00482780; 004B9400 truncates it before 00485D20 receives the node count.
-inline int trainingInitializerCount(int touchhoseArgument) {
-    const float scaled = (static_cast<float>(touchhoseArgument) * 24.0f) / 20.0f;
+// 00482780 converts touchhose N to N * 24 / HoseSpray[+0xCB0]. The default
+// stream setup initializes +0xCB0 to 20; 004B9400 converts toward zero.
+inline int commandRecordCount(int touchhoseArgument) {
+    const float scaled = (static_cast<float>(touchhoseArgument) * 24.0f) /
+        kCommandScaleDenominator;
     return static_cast<int>(std::trunc(scaled));
 }
 
-inline bool initializeTraining(State& state, int touchhoseArgument) {
+inline float currentArgumentEquivalent(const State& state) {
+    return kCommandScaleDenominator * static_cast<float>(state.count) / 24.0f;
+}
+
+inline bool initializeFromCommand(State& state, int touchhoseArgument) {
     construct(state);
-    return resize(state, trainingInitializerCount(touchhoseArgument));
+    return resize(state, commandRecordCount(touchhoseArgument));
 }
 
 // Attachment writes the valve getter's position into the Hose frame first;

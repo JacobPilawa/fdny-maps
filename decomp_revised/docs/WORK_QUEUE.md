@@ -70,19 +70,32 @@ rescue-all macOS app rebuilt with matching standalone/package SHA-256
 `b2d7a1f802065a489636729ddb266a7e39df61bef528230ebe8123375bf77716`; its
 plist passed validation, its catalog reports eight retail rescue choices, and
 its resources include all four hose maps. No tests, interactive run, or retail
-comparison was performed. The higher-value gameplay gap is the rescue-player
-HoseSpray path: connect its traced slot-4 command/contact behavior to the shared
-rescue host once the authored `touchhose` trigger path is established. Resource
-ID 3/material binding and component gate/cadence remain open stream work.
+comparison was performed. The next higher-value gameplay gap is the rescue-
+player HoseSpray frame update and contact path in the shared rescue host,
+preserving previous-frame collision ordering and terminal `finalize=1`
+FireRescue suppression. The authored `touchhose` route, slot-4 loadout creation,
+and its 24-scaled attachment-list count are now represented in the host; the
+record purpose, live cadence, and argument units remain unresolved. Resource ID
+3/material binding and component gate/cadence remain open stream work.
 
 The rescue-player HoseSpray contact writer is now traced through the shared
 stream-collision component: HoseSpray embeds it at `+0x608`, and
 `0046D1B0`/`0046C5A0` refresh its hit point, padding, and gate for
 `00463EF0`. The latter runs before that refresh in each `UpdateHoseSpray`
-call. This closes the static contact-vector producer gap; the authored
-`touchhose` trigger, rescue-player slot-4 host integration, live cadence, and
-parity remain open. See
+call. A raw scan finds 16 authored `touch: tell player (touchhose N)` commands
+on `RCS_PropModel` entities in 12 preserved rescue BSPs; existing PropModel
+contact and named-actor evidence maps the event route to PlayerRescue
+`00451870`. This closes the static authored-entry and contact-vector gaps;
+rescue-player item update/contact, attachment record purpose, live cadence, and
+parity remain open. The shared host now creates slot 4 and models the list
+count from `touchhose N`. Retail passes N to `00482780` on both allocation
+and refresh paths; that helper scales N by 24, divides by attachment-state
+`+0x40`, converts the value to an integer, and appends that many 0x30-byte
+records to the list at `+0x48`. This supports a 24-scaled count but does not
+establish a time unit or the records' purpose. See
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md).
+Per-map hashes and literal contexts are in
+[`touchhose_authored_trigger_audit_2026-10-20.md`](../tracker/evidence/fire-spread/touchhose_authored_trigger_audit_2026-10-20.md).
 
 The dedicated PlayerHose pressure field is now resolved through the embedded
 stream component alias: hotspot `M_MaxPressure` at owner `+0x1834` aliases
@@ -437,13 +450,18 @@ are established. The read-only trace is recorded in
 [`rescuebot_update_path_2026-10-15.md`](../tracker/evidence/scenario-loading/rescuebot_update_path_2026-10-15.md).
 
 Two separate retail hose paths are present in the binary. The rescue-player
-HoseSpray path is still missing: PlayerRescue command handler `00451870`
+HoseSpray update/contact path is still missing: PlayerRescue command handler `00451870`
 routes `touchhose` to `0044CAB0`, which creates the
 `0xD54`-byte HoseSpray item with constructor `004634F0`, attaches it, stores it
 in inventory slot 4, and starts its hose mode. This is separate from `equip`,
-whose name selector accepts only slots 1–3. The binary contains this command,
-but no preserved authored map/script contains the token; its natural trigger
-remains open. The separate dedicated-stage path has a first shared-host slice.
+whose name selector accepts only slots 1–3. Preserved rescue BSPs contain 16
+`touch: tell player (touchhose N)` PropModel bindings across 12 maps. Existing
+PropModel contact-event and named ScriptActor traces map the static route to
+the PlayerRescue handler; the shared host now models its slot-4 loadout command
+and attachment-list count. Item frame updates, contact/dousing, and live
+callback order remain open. See
+[`touchhose_authored_trigger_audit_2026-10-20.md`](../tracker/evidence/fire-spread/touchhose_authored_trigger_audit_2026-10-20.md).
+The separate dedicated-stage path has a first shared-host slice.
 All four dedicated hose BSPs instantiate `RCS_PlayerHose`
 instead of `RCS_PlayerRescue`. Initializer `00466D60` builds its path/camera/
 douse components; update `00466780` reads hose mouse/steering input and uses
@@ -589,9 +607,11 @@ methods; `0x7530` calls `00468680` directly while the separate `00468870`
 recurring branch is gated by that byte. Its authored role and indirect/runtime
 writers remain open. The configured chatter resource names and request path
 are traced; result presentation and mission transition remain open. The
-HoseSpray contact writer is statically resolved through the shared component;
-its natural `touchhose` trigger/host route and Construction branch entry remain open.
-Implement each source-backed host route with separate state. Evidence is in
+HoseSpray contact writer and authored `touchhose` event route are statically
+resolved through the shared component, PropModel contact dispatch, and named
+Player command path; shared slot-4 host integration and Construction branch
+entry remain open. Implement each source-backed host route with separate state.
+Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),
@@ -643,7 +663,9 @@ body-bearing functions and 287 external entries.
 | `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
 | `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
 | `runrescuebot_trace` | `0047A1F0`, `00475020`, `00455230`, initializer and recurring RescueBot context | Complete, read-only; one-shot uses Player `+0x340C`, recurring callback uses `+0x32CC`; aliasing and one-shot completion servicing unresolved |
-| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; follow-up maps the shared component collision writer plus rescue-player `touchhose` slot 4 and separate PlayerHose missions; natural trigger and slot-4 host integration remain open |
+| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; shared component collision writer, authored PropModel trigger, and named Player route are mapped; slot-4 command/list is ported, while item update/contact remain open |
+| `touchhose_authored` | Preserved BSP/EVS strings, PropModel contact, named ScriptActor dispatch | Complete, read-only; verified 16 commands in 12 BSPs with full hashes; static authored route reaches PlayerRescue `touchhose`, while runtime cadence remains open |
+| `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and argument unit unresolved |
 
 ## View bob fully removed (2026-10-18)
 

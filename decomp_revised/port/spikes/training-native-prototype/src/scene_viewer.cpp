@@ -118,6 +118,7 @@ bool jsonNumber(J value) {
 #include "world_startup.h"
 #include "scene_audio.h"
 #include "hose_item_selection.h"
+#include "hose_spray_pose_list.h"
 #include "player_hose_stage.h"
 
 namespace {
@@ -656,6 +657,9 @@ const char* fireLoopSoundName(int choice) {
 
 struct PreviewPlayerLoadout {
     HoseItemSelection::State items;
+    HoseSprayPoseList::State rescueHoseAttachment;
+
+    enum class TouchHoseResult { Connected, Refreshed, AlreadyHaveHose };
 
     static int slotForName(std::string name) {
         std::transform(name.begin(), name.end(), name.begin(), [](unsigned char c) {
@@ -699,6 +703,26 @@ struct PreviewPlayerLoadout {
         if (slot == 0) return false;
         HoseItemSelection::Result result;
         return HoseItemSelection::selectSlot(items, slot, false, result);
+    }
+
+    TouchHoseResult touchhose(int argument) {
+        auto& hose = items.slots[4];
+        const bool alreadyPresent = hose.present;
+        if (alreadyPresent && (items.hoseMode == 2 || items.hoseMode == 3))
+            return TouchHoseResult::AlreadyHaveHose;
+
+        if (!alreadyPresent) {
+            hose.present = true;
+            HoseSprayPoseList::initializeFromCommand(rescueHoseAttachment, argument);
+        } else if (HoseSprayPoseList::currentArgumentEquivalent(rescueHoseAttachment) <
+                   static_cast<float>(argument)) {
+            HoseSprayPoseList::resize(
+                rescueHoseAttachment, HoseSprayPoseList::commandRecordCount(argument));
+        }
+
+        HoseItemSelection::Result result;
+        HoseItemSelection::setMode(items, 2, result);
+        return alreadyPresent ? TouchHoseResult::Refreshed : TouchHoseResult::Connected;
     }
 
     std::string selectedName() const {
@@ -3576,6 +3600,27 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     const bool equipped = playerLoadout.equip(arguments);
                     if (equipped) noteGogglesSelection(previousSelection);
                     return equipped;
+                }
+                if (entityId == playerEntityId && verb == "touchhose") {
+                    char* end = nullptr;
+                    const long parsed = std::strtol(arguments.c_str(), &end, 10);
+                    if (end == arguments.c_str() || parsed < std::numeric_limits<int>::min() ||
+                        parsed > std::numeric_limits<int>::max()) return false;
+                    while (*end && std::isspace(static_cast<unsigned char>(*end))) ++end;
+                    if (*end != '\0') return false;
+                    const int argument = static_cast<int>(parsed);
+                    const auto result = playerLoadout.touchhose(argument);
+                    if (result == PreviewPlayerLoadout::TouchHoseResult::AlreadyHaveHose) {
+                        activeHint = "Already have hose";
+                        activeHintRemaining = 2.f;
+                        return true;
+                    }
+                    activeHint = "Hose connected";
+                    activeHintRemaining = 2.f;
+                    std::cout << "PlayerRescue touchhose " << argument
+                              << " connected slot 4; attachment records="
+                              << playerLoadout.rescueHoseAttachment.count << "\n";
+                    return true;
                 }
                 if (entityId == playerEntityId && verb == "select") {
                     const std::string previousSelection = playerLoadout.selectedName();

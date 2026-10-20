@@ -4,7 +4,7 @@ Status: **the HoseSpray contact gates and contact-vector writer,
 rescue-player `touchhose` allocation, dedicated PlayerHose input path,
 PlayerHose-to-WindowFire contact-message route, dedicated hotspot
 cycle/time/win/loss state machine, and configured stage chatter sound names
-are confirmed; the natural rescue-player `touchhose` trigger/host route,
+are confirmed; the shared rescue-player slot-4 HoseSpray host integration,
 authored/live Construction branch entry, WindowFire `+0x10` authored role,
 stage result consumer, and mission transition remain open. A bounded
 decoded-code scan found only a WindowFire `+0x10` clear and no nonzero setter
@@ -38,8 +38,13 @@ HoseSpray object through constructor `004634F0`, attaches it through vtable
 slot `+0x08`, stores it in Player inventory slot 4, and dispatches the hose
 mode. The ordinary equipment name selector `0044CA50` still recognizes only
 axe, extinguisher, and goggles. This establishes the rescue-player slot-4
-creation path; `touchhose` does not occur in the preserved authored map or
-script files, so the natural runtime trigger for the command is still unknown.
+creation path. A raw-string scan of all 17 preserved BSPs finds 16 authored
+`touch: tell player (touchhose N)` commands on `RCS_PropModel` entities across
+12 rescue BSPs. The four dedicated PlayerHose maps and all 21 preserved EVS
+files contain no such command. The PropModel contact and named `tell` dispatch
+routes are already source-mapped, so the authored static entry path is
+established. Per-map counts, argument values, hashes, and route references are
+in [`touchhose_authored_trigger_audit_2026-10-20.md`](touchhose_authored_trigger_audit_2026-10-20.md).
 
 The four dedicated hose BSPs (`city_h`, `const_h`, `dock_h`, `oil_rig_h`) use
 `RCS_PlayerHose` instead of `RCS_PlayerRescue`. Initializer `00466D60`
@@ -173,21 +178,29 @@ and `SearchPlayerOffsets` are retained under `tools/ghidra-scripts/` for
 reproduction. Computed aliases outside this shared-component path and dynamic
 retail parity remain untested.
 
-The shared viewer has no retail rescue-player `touchhose`/slot-4 route, no
-rescue-player HoseSpray fire-contact call, and no retail hose selector. The
-separate Training host has a local hose action/pose path, but it does not
-establish the rescue-player entry route. No natural authored trigger for
-`touchhose` is present in the preserved maps/scripts. Live collision cadence,
-action timing, and retail parity remain unverified.
+The shared viewer's Player host now handles the authored `touchhose N` command,
+creates the slot-4 HoseSpray state, and rebuilds its attachment record list
+with the source-derived 24-scaled count. The viewer still lacks the retail item
+attachment/frame update, previous-frame contact scan, and `finalize=1`
+FireRescue transaction. The `touchhose N` value is traced into an attachment-list count:
+`00482780` scales by 24 and divides by item `+0xCB0`, then `00485D20` builds
+that many 0x30-byte records. The list record purpose and argument units remain
+open; see
+[`touchhose_attachment_list_trace_2026-10-20.md`](touchhose_attachment_list_trace_2026-10-20.md).
+The separate Training host has a local hose action/pose path; that path does
+not implement rescue HoseSpray. PropModel update ordering, live collision
+cadence, action timing, and retail parity remain unverified.
 
 ## Remaining trace
 
-Port the confirmed rescue-player contact component and `finalize=1` HoseSpray
-transaction into the shared host when its source-backed item/command route is
-available. First establish how retail reaches the `touchhose` command; the
-preserved authored maps and scripts contain no such token. Keep the rescue
-HoseSpray transaction separate from dedicated PlayerHose's WindowFire message
-route and the extinguisher `finalize=0` path. Separately establish the authored
+Port the rescue HoseSpray attachment/frame update, shared stream collision, and
+`finalize=1` transaction into the shared host. Preserve the retail
+phase order: scan FireRescue candidates using the previous stream collision
+result, derive the current source/aim, then refresh the stream collision for
+the next update. Keep this path separate from dedicated PlayerHose's WindowFire
+message route and the extinguisher `finalize=0` path. The authored trigger
+route and argument-to-list count formula are statically mapped; PropModel
+callback scheduling and live delivery timing remain open. Separately establish the authored
 meaning of WindowFire linked `+0x10` and whether an indirect/external writer
 sets it, then trace result presentation and mission transition for the
 registered stage chatter keys. Resolve the Construction alternate path and
