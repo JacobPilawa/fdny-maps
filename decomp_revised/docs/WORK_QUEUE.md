@@ -8,6 +8,30 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## Rescue timeout loss audio (2026-10-20)
+
+The shared rescue host now requests the retail state-2 loss chatter and
+status-owned `RescueLose` sound once after the mission countdown expires. The
+pinned trace routes `00452570` timeout to state 2 and `00458400` to
+`RC_ResLvlLose`/`RC_ResLvlLose0` plus `RescueLose`; the constructor stores raw
+sound category 1 at instance `+0x14`. The exporter now includes both samples in
+every scene package because the audio bank persists from the first scene.
+Evidence: [`mission_result_sound_requests_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_result_sound_requests_fresh_2026-10-20.c)
+and [`rescue_timeout_loss_audio_port_2026-10-20.md`](../tracker/evidence/scenario-loading/rescue_timeout_loss_audio_port_2026-10-20.md).
+
+This ports only the source-confirmed audio requests. The loss widget's
+duration/tail, screen layout, and result-to-frontend transition are still
+unresolved, so no lifetime or return flow is guessed. State 1 stays separate:
+the no-exit-zone path also sets it without proving a completed-mission win.
+The hash-pinned retail source is
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`.
+The rescue-all macOS app compiled with matching standalone/package executable
+SHA-256
+`323cb101463aebd5614c041ab90e0740bbc4e1c31c236b8c5c76c3205ac0026d`.
+`Info.plist` validation passed, and both loss resources are present in all 17
+retail rescue scene manifests. The existing json-c macOS 27.0 versus 13.3
+deployment-target warning remains; no runtime or audible check was run.
+
 ## All mission-stat producers connected in the shared runtime map (2026-10-20)
 
 The 13 retail-registered mission-stat keys now all have in-memory producer
@@ -1411,6 +1435,8 @@ body-bearing functions and 287 external entries.
 | `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms mode 2 acquisition, mode 3 slot selection, mode 1 deactivation, separate action callbacks, prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and input bindings unresolved |
 | `hose_material_trace` | PlayerHose stream component material/resource binding | `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c`, `playerhose_strip_texture_lookup_fresh_2026-10-20.c`, `hose.rrf` | Complete, read-only; confirmed resource ID 3 lookup, source-ordered polygon setup, white vertex colors, 0.15 U span, six-unit U scroll and V extent 0.9; blend/material state and runtime parity remain open |
 | `mission_result_return_trace` | Static result widget consumer and stage return handoff | Frontend consumer, Records page decompilation, handoff export, result and exit evidence | Complete, read-only; confirmed state-1 Records page, button actions 1/2 navigation, action 0 history-back, and `PlayerStatus+0x960 == child(+0x13C)` alias; exact record fields, result timing, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
+| `cross_campaign_gap_audit` (Luna) | Shared campaign outcome feedback gaps and current rescue host | Outcome state/status traces, `scene_viewer.cpp`, scene sound exporter | Complete, read-only; identified countdown state 2 as the supported shared loss-feedback trigger. State-1 no-exit ambiguity and result-widget timing/return remain unresolved; findings integrated in the timeout audio slice below. |
+| `extinguisher_frame_audit` (Luna) | Selected HoseSpray follower and extinguisher successful-contact frame path | Current-hash Ghidra trace, retained evidence and `scene_viewer.cpp` | Complete, read-only; confirmed generic follower parent/update path, while numeric camera composition and exact contact pose remain unresolved. No speculative pose correction recommended. |
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms selector scheduler and Jumps' 500 ms gate. Follow-up mapped the `0045331A` call gate and `00491140` sample-pattern writer. `FootStep1`–`FootStep4` are packaged in every scene; the shared host now gates playback from its preceding HeadMotion flag and increments the stat. First +0x198 value, +0x558 computed writers, RNG interleaving, and cadence remain open. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is crouch and its JUMP query routes to `0044BCE0`. Completion Time, Air Time, Jumps, and Total Steps are integrated with provisional host cadence. |

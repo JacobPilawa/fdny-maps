@@ -151,6 +151,10 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # Dedicated PlayerHose emits these one-entry chatter sets at the first
     # hotspot and terminal win/loss state transitions.
     wanted.update(("RC_HoseLvlStart0", "RC_HoseLvlWin0", "RC_HoseLvlLose0"))
+    # PlayerRescue status state 2 requests the one-entry loss chatter set and
+    # the status-owned direct sound outside EVS. Include both in every rescue
+    # bundle because SceneAudio keeps the sample bank from the first scene.
+    wanted.update(("RC_ResLvlLose0", "RescueLose"))
     sounds_dir = scene_package / "sounds"
     sounds_dir.mkdir(parents=True, exist_ok=True)
     sound_rows = []

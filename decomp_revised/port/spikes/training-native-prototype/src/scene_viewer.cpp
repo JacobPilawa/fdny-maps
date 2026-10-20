@@ -5671,6 +5671,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         bonusPointsHudRendererLoaded = true;
         bool running = true, captured = true, jumpEdge = false;
         bool useEdge = false, sprayHeld = false, sprayPressed = false, sprayReleased = false;
+        bool rescueTimeoutLossFeedbackDispatched = false;
         float pitch = 0.f;
         Follower playerViewFollower;
         bool playerViewInitialized = false;
@@ -5959,6 +5960,19 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     addSourceStatistic(&rescueStatistics["Air Time"],
                                        statFrameDelta);
                 }
+            }
+            if (!dedicatedPlayerHose && playerEntityId >= 0 &&
+                !rescueTimeoutLossFeedbackDispatched &&
+                rescueState.exits.messageGate == 2) {
+                // The 00452570 timeout path writes state 2, then 00458400
+                // selects the loss result, advances the one-entry chatter set,
+                // and requests the status-owned RescueLose sound. Its widget
+                // timing is unresolved, so this ports only the proven audio
+                // requests and keeps them one-shot while state 2 persists.
+                sceneAudio.play("RC_ResLvlLose0", player.p, player.p, yaw, 1);
+                sceneAudio.playOwned(playerEntityId, "RescueLose", player.p,
+                                     player.p, yaw, 1);
+                rescueTimeoutLossFeedbackDispatched = true;
             }
             extinguisherSprayRenderer.prune(now);
             if (scriptRuntime) scriptRuntime->timeMs = now;
