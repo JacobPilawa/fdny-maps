@@ -223,8 +223,14 @@ The hash-pinned input-map follow-up maps the `JUMP` registration and boolean
 binding query: `00438D70` stores the named action record, `00437410` delegates
 control-ID insertion to `00438BF0`, and `00438550` runs the bound input
 predicates. Its Player callsite remains the state-4 clearance branch; no
-action-to-ScriptActor `jump` emission was found. Keep normal-state input
-parity open. See
+action-to-ScriptActor `jump` emission was found. A fresh direct-caller census
+found only `004518D4` (Player ScriptActor command) and `00453784` (Player
+movement) calling `0044E990`; the Player movement block's six action polls
+include `JUMP` only at the state-4 clearance branch `00453739`. The copied
+authored EVS files contain no `jump` command. No direct static input bridge or
+reason to add a normal-state key gate was found; an indirect runtime or
+external configuration route remains open. Preserve the source-mapped
+contact/500 ms transaction and do not claim input parity. See
 [`player_jump_host_input_bridge_2026-10-20.md`](../tracker/evidence/scenario-loading/player_jump_host_input_bridge_2026-10-20.md)
 and its four fresh function exports.
 The macOS `fdny-scene-viewer` target compiled with SHA-256
@@ -535,9 +541,9 @@ and
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
 | `player_contact_latch` (Luna) | `0049E0A0`, `0049DBC0`, `0043F680`, Player collision/update vtable route; current-hash headless Ghidra and collision note | Complete, read-only; confirmed accepted collision writers and Player vtable slot `+0x64` → `0043F680` → integrator, which consumes/clears the latch. Parent follow-up found the indirect call before collision loop `0043F6D0`; downward snap bypasses the writer and outer cadence remains unresolved. No edits |
 | `player_jump_contact_order` (parent follow-up) | Search of vtable slot `+0x64` references and raw Player movement window `00453784..004537DB`; saved Ghidra project | Complete, read-only; confirmed `0044E990` → integrator wrapper → collision loop within one Player movement pass. Accepted contact can set `+0x12C` for the next normal-state pass. Outer recurring cadence remains unresolved. No edits |
-| `jump_dispatch_trace` (Luna) | `004395C0`, `0045370E..00453784`, `00451870`, ScriptActor router; current-hash saved Ghidra project | Complete, read-only; distinguished the state-4 JUMP query from the separate `jump` ScriptActor branch. No action-to-script producer found. No edits |
+| `jump_dispatch_trace` (Luna) | `004395C0`, `0045370E..00453784`, `00451870`, ScriptActor router; current-hash saved Ghidra project | Complete, read-only; distinguished the state-4 JUMP query from the separate `jump` ScriptActor branch. Follow-up direct-caller census found only the Player command and normal movement calling `0044E990`; no direct action-to-script route found. No edits |
 | `mechanic_gap_review` (Luna) | Current work queue, gameplay evidence, shared rescue port | Complete, read-only; selected the shared Player JUMP dispatch gap for a bounded follow-up; no code edits |
-| `player_jump_host_input_bridge` (root) | `core.h`, `004395C0`, `00438550`, `00438D70`, `00437410`, `00438BF0`, Player `00452570` and `00451870` routes | Complete, read-only; named-action setup and boolean binding query are mapped. State-4 JUMP routes to clearance; state-not-4 calls `0044E990`; the action-to-ScriptActor producer remains unresolved. No physics change justified |
+| `player_jump_host_input_bridge` (root) | `core.h`, `004395C0`, `00438550`, `00438D70`, `00437410`, `00438BF0`, Player `00452570` and `00451870` routes | Complete, read-only; named-action setup, boolean query and direct callers are mapped. State-4 JUMP routes to clearance; state-not-4 calls `0044E990`. No direct action-to-ScriptActor bridge or authored EVS `jump` command found; indirect/runtime behavior remains open. No physics change justified |
 
 ## Boat A type-5 Exploder trace (2026-10-20)
 
@@ -623,6 +629,7 @@ No effect renderer change is justified yet.
 | `player_camera_frame_identity` (Luna) | `retail_camera_context_ancestry_followup_2026-10-20.md`, `player_locomotion_frame_axes_2026-10-20.md`, retained Type-5 trace | Complete, read-only; static camera-context ancestry and view/follower/context/item update order confirmed. Numeric Genesis camera/follower alignment remains open; no host correction made. |
 | `playerhose_time_warning_registration` (root) | `player_hose_stage.h`, `playerhose_time_warning_lookup_gap_2026-10-20.md`, four retained Ghidra exports | Complete, static; the constructor's manager omits `RC_HoseTimeWarn` and null lookup skips playback, so the synthetic host toast was removed. Post-construction writes and live audio remain unchecked. |
 | `playerhose_pitch_and_zero_spraytime` (root) | `player_hose_stage.h`, `playerhose_pitch_and_zero_spraytime_2026-10-20.md`, current-hash aim/douse pseudocode, `City_h.bsp` | Complete, static; the world-up guard algebraically matches the host's route-pitch interval, and authored `fire11` uses zero SprayTime through the source divide/complete path. Camera-frame join and live cadence remain provisional. |
+| `player_jump_dispatch_census` (root) | Saved hash-pinned `FDNYPort`; `FindFunctionCallers.java`; `player_jump_host_input_bridge_2026-10-20.md`; copied authored `.evs` files | Complete, read-only; `0044E990` has two direct callers (`004518D4`, `00453784`); the named-action helper's Player `JUMP` poll is state-4-only and routes to clearance. No direct action-to-ScriptActor route or authored EVS `jump` command found. Indirect/runtime route remains open; no gameplay change justified. |
 | `recent_fdny_handoff_review` (root) | Recent FDNY task summaries, `list_artifacts`, active-agent inventory | Complete; no managed worktree or pull-request attachment needs cleanup. The older level-editor task is separate and inactive. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)

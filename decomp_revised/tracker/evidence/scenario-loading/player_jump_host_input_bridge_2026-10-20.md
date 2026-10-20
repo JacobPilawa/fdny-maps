@@ -21,8 +21,8 @@ The shared `Player::step` currently uses `jumpEdge` only to request state-4
 uncrouch. In ordinary movement it applies the 500 ms/latch impulse without
 consulting `jump` or `jumpEdge`. This follows the mapped helper transaction,
 but the retail path from the `JUMP` action to the normal-state `jump`
-ScriptActor event has not been established. Do not change the physics gate or
-claim normal-state input parity until that dispatcher route is traced. The
+ScriptActor event has not been established. Do not add a physics gate or claim
+normal-state input parity from the action name alone. The
 retained `input.rrf` does not supply a `JUMP` default binding. No host code,
 build, test, runtime, or parity change was made for this review.
 
@@ -48,6 +48,34 @@ body does not invoke the ScriptActor router. The call in Player movement at
 This narrows the unresolved edge to any producer outside the named-action
 query and its constructor. The separate Player `jump` ScriptActor token still
 reaches `0044E990`, but no static route from the `JUMP` predicate to that token
-has been found. The normal-state impulse remains ungated in the host pending a
-source-backed bridge or a source-backed confirmation that no such bridge is
-used.
+has been found. Whether an indirect runtime or external configuration route
+exists remains open pending new evidence.
+
+## Direct-caller and authored-script follow-up (2026-10-20)
+
+Read-only headless Ghidra `FindFunctionCallers` queries against the saved
+`FDNYPort` program, whose input EXE hash is recorded above, returned exactly
+two direct callers of `0044E990`: `004518D4` in
+`HandlePlayerScriptActorCommand` and `00453784` in the Player movement block.
+The named-action predicate `00438550` has 12 direct callsites. The six calls
+inside the Player movement block are `004525FA`, `004526A0`, `00452DBF`,
+`004530AD`, `00453387`, and `00453739`; the last one is the state-4 `JUMP`
+clearance poll documented above. None of the direct callers of `00438550`
+calls `00470150` or `00475310` as part of the predicate path.
+
+The router caller census found 27 direct calls to `00470150` and 60 direct
+calls to `00475310`. They are in the common/event dispatchers, EVS parsing,
+BoundsTrigger/PathPoint/BModel setup and updates, Player-rescue entity setup,
+and queued ScriptActor processing. No caller is in the named-action predicate
+or Player movement block. A read-only search across copied authored `.evs`
+files found no `jump` command; the only `jump` match in the scanned `.rrf`
+definitions is the `Jump` sound resource. This rules out a direct static
+action-to-ScriptActor edge and a copied-map EVS producer, but not an indirect
+runtime route or external script/configuration.
+
+This evidence supports the host's current division: normal-state movement runs
+the source-mapped contact/500 ms transaction, while `jumpEdge` only requests
+the mapped state-4 uncrouch path. No physics or input change is justified by
+the static call graph. An indirect dispatcher or retail runtime behavior would
+need new evidence before changing that boundary. The query was read-only; no
+build, test, runtime capture, or retail parity check was performed.
