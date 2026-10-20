@@ -81,11 +81,18 @@ state `+0x18C` to 3, and adds exactly one to `Objects Thrown` through
 `00486980` at `0045399C..004539CF`. This identifies the counted operation as a
 held-BModel throw transaction rather than arbitrary contact or generic ACTION.
 
-`0043B580` receives the held BModel root and starts its trajectory; the later
-BModel update reaches the authored `drop` command and timer cleanup path after
-the trajectory ends. Player and BModel constructors register `ThrowObject` and
-`ThrowObjectEnd` sounds, consistent with the sequence but not needed to
-identify the stat gate. The source-shaped sequence already exists in
+`0043B580` receives the held BModel root and starts its trajectory. BModel
+update `0043D330` converts the wrapped clock delta to seconds and advances
+state 2 from the stored duration, endpoints, and vertical-trajectory fields.
+It interpolates X/Z linearly and Y with the stored acceleration and initial
+velocity, then writes the model transform. When elapsed time exceeds duration
+it resets state to 0, applies the selected endpoint, flips the endpoint byte,
+dispatches the ScriptActor `drop` event, and requests the BModel sound. The
+exact timer or timed-list cleanup associated with this event remains
+unresolved. Player and
+BModel constructors register `ThrowObject` and `ThrowObjectEnd` sounds,
+consistent with the sequence but not needed to identify the stat gate. The
+source-shaped sequence already exists in
 `port/spikes/training-native-prototype/src/training_liftable_sequence.h`, but
 it is not connected to the shared mission scene. Shared frame/model adapters,
 the throw trajectory scheduler and drop/timer lifecycle, and authored-instance
