@@ -231,6 +231,33 @@ path-reference actor factory are in
 The current linked-state export for `00465B90`, `004683F0`, `00468680`,
 `004686E0`, `00468870`, `004688F0`, `00468A80`, `00468AC0`, and `0049D140` is
 [`windowfire_link_state_fresh_2026-10-20.c`](windowfire_link_state_fresh_2026-10-20.c).
+
+### WindowFire linked `+0x10` write scan follow-up (2026-10-20)
+
+The local retail executable still hashes to
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`. A
+read-only Ghidra 12.0.4 pass over every decoded instruction used
+[`FindOffsetWrites.java`](../../../tools/ghidra-scripts/FindOffsetWrites.java)
+to collect memory-store operands containing a register plus displacement
+`0x10`. It returned 2,031 syntactic candidates across all operand sizes. A
+text review narrowed that list to 188 byte stores with the exact displacement;
+excluding obvious `ESP`/`EBP` stack-base writes left 22 register-based byte
+stores. The only candidate in the known WindowFire code path is
+`00468B01`, which clears the linked byte inside `00468AC0`.
+
+This is broader than the earlier class/manager-only search, but an offset
+match cannot identify an object. The other candidates include unrelated
+structures, and this scan cannot rule out writes through aliases, helper
+functions that receive a computed pointer, bulk initialization, or external
+engine code. `00465B90` visibly allocates a `0x14`-byte linked record and
+writes its model pointer at `+0x04` and `SprayTime` at `+0x08`; no explicit
+`+0x10` initialization is present in that function's exported stores. The
+byte's nonzero source and meaning therefore remain unresolved. Preserve the
+host's explicit message-driven WindowFire path and keep the recurring `+0x10`
+gate provisional until a runtime write watch or a source-backed alias is
+available. The raw candidate output stays in ignored `.local/ghidra/` data;
+no retail binary or Ghidra project data was added to the evidence pack.
+
 The hotspot cycle, PlayerHose state transitions, and win/loss handlers are in
 [`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
 The pre-existing HoseSpray contact and suppression exports are listed in

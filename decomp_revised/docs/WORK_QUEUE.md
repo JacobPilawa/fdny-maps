@@ -739,12 +739,14 @@ component to `0046D1B0`, which calls collision writer `0046C5A0`. The shared
 component stores the hit point, pressure-derived padding, and contact gate at
 `+0x0C..+0x1C`, corresponding to item `+0x614..+0x624`. Contact runs before
 the next collision refresh, closing the static writer route while runtime
-cadence and parity remain open. The WindowFire `+0x10` scan
-found a clear at
-`00468B01` in `00468AC0`, with no nonzero store in the examined class/manager
-methods; `0x7530` calls `00468680` directly while the separate `00468870`
-recurring branch is gated by that byte. Its authored role and indirect/runtime
-writers remain open. The configured chatter resource names and request path
+cadence and parity remain open. A read-only all-program Ghidra scan for
+`+0x10` memory-store operands returned 2,031 candidates across operand sizes;
+byte-store filtering found 188, and 22 had a non-stack base register. The only
+candidate in the known WindowFire path is the clear at `00468B01` in
+`00468AC0`. `0x7530` calls `00468680` directly while the separate `00468870`
+recurring branch is gated by that byte. This offset scan cannot identify
+objects or rule out aliases, helper writes, bulk initialization, or engine
+writes; the gate's authored role and nonzero source remain open. The configured chatter resource names and request path
 are traced; result presentation and mission transition remain open. The
 HoseSpray contact writer and authored `touchhose` event route are statically
 resolved through the shared component, PropModel contact dispatch, and named
@@ -811,6 +813,8 @@ body-bearing functions and 287 external entries.
 | `hose_material_trace` | PlayerHose stream component material/resource binding | `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c`, `playerhose_strip_texture_lookup_fresh_2026-10-20.c`, `hose.rrf` | Complete, read-only; confirmed resource ID 3 lookup, source-ordered polygon setup, white vertex colors, 0.15 U span, six-unit U scroll and V extent 0.9; blend/material state and runtime parity remain open |
 | `mission_result_return_trace` | Static result widget consumer and stage return handoff | `mission_outcome_frontend_consumer_fresh_2026-10-20.c`, `mission_outcome_frontend_handoff_fresh_2026-10-20.c`, result and exit evidence | Complete, read-only; confirmed static result consumer, but result timing/child-5 meaning, loss producer and full return flow remain unresolved; no guessed host transition added |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
+| `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
+| `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |
 
 ## View bob fully removed (2026-10-18)
 
