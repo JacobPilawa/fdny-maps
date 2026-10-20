@@ -48,6 +48,19 @@ app rebuilt with matching standalone/package executable SHA-256
 remains. Evidence:
 [`playerhose_time_warning_lookup_gap_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_time_warning_lookup_gap_2026-10-20.md).
 
+## PlayerHose pitch guard and zero SprayTime (2026-10-20)
+
+The `00466780` pitch guard measures the current aim axis against world up and
+limits that angle to 10..170 degrees after the hotspot's symmetric
+`N_PitchSpread` clamp. For a rail frame with elevation `theta`, that is the
+host's existing `theta +/- 80` degree bound; the exact retail ActorInfo to host
+rail-frame join remains unverified. `City_h.bsp` also authors `fire11` at
+`RCS_HosePath3` slot 2 with `SprayTime=0.0`. Retail `00468680` divides by that
+value without a guard, so qualifying positive-delta contact takes the normal
+below-zero douse-completion branch. The shared host preserves the same
+arithmetic. Live scheduling and contact cadence remain provisional. Evidence:
+[`playerhose_pitch_and_zero_spraytime_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_pitch_and_zero_spraytime_2026-10-20.md).
+
 ## All mission-stat producers connected in the shared runtime map (2026-10-20)
 
 The 13 retail-registered mission-stat keys now all have in-memory producer
@@ -429,6 +442,7 @@ in [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-lo
 | `hose_hotspot_direction` (Luna) | `playerhose_hotspot_state_machine_fresh_2026-10-20.c`, `player_hose_curve_pipeline_fresh_2026-10-20.c`, Construction `const_h` export | Complete, read-only; initializer follows A links and progression follows D links, with no source-backed E-direction branch. `RCS_HosePath36` is excluded from the current forward chain; no host route change. |
 | `player_camera_frame_identity` (Luna) | `retail_camera_context_ancestry_followup_2026-10-20.md`, `player_locomotion_frame_axes_2026-10-20.md`, retained Type-5 trace | Complete, read-only; static camera-context ancestry and view/follower/context/item update order confirmed. Numeric Genesis camera/follower alignment remains open; no host correction made. |
 | `playerhose_time_warning_registration` (root) | `player_hose_stage.h`, `playerhose_time_warning_lookup_gap_2026-10-20.md`, four retained Ghidra exports | Complete, static; the constructor's manager omits `RC_HoseTimeWarn` and null lookup skips playback, so the synthetic host toast was removed. Post-construction writes and live audio remain unchecked. |
+| `playerhose_pitch_and_zero_spraytime` (root) | `player_hose_stage.h`, `playerhose_pitch_and_zero_spraytime_2026-10-20.md`, current-hash aim/douse pseudocode, `City_h.bsp` | Complete, static; the world-up guard algebraically matches the host's route-pitch interval, and authored `fire11` uses zero SprayTime through the source divide/complete path. Camera-frame join and live cadence remain provisional. |
 | `recent_fdny_handoff_review` (root) | Recent FDNY task summaries, `list_artifacts`, active-agent inventory | Complete; no managed worktree or pull-request attachment needs cleanup. The older level-editor task is separate and inactive. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
@@ -923,6 +937,12 @@ preserves zero/negative divisor arithmetic. This replaces the earlier
 `1.0 -> 0.0` duration proxy. Callback/entity update ordering, frame-delta
 calibration, and live contact cadence remain provisional.
 
+The zero divisor occurs in current retail data: `City_h.bsp` authors
+`RCS_HosePath3` slot 2 as `fire11` with `SprayTime=0.0`. With a positive frame
+delta, the unguarded source division takes the normal below-zero completion
+branch; the shared host preserves that arithmetic. Static evidence is in
+[`playerhose_pitch_and_zero_spraytime_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_pitch_and_zero_spraytime_2026-10-20.md).
+
 The trace pins `_DAT_004dc50c` to `0.0f`; `00468850` resets the timer and sets
 the ramp flag, `00468870` advances the ramp, and `00468680` performs the
 contact subtraction and strict-threshold reset. Source excerpts are in
@@ -1331,6 +1351,15 @@ Keep this path separate from rescue-player HoseSpray, which calls shared
 FireRescue suppression with `finalize=1`; the extinguisher route remains
 `finalize=0`.
 
+`00466780` applies the world-up angle guard after the symmetric hotspot pitch
+spread. `00497AA0` computes the vector angle in degrees; for a host rail-frame
+elevation `theta`, the source interval reduces to `theta +/- 80` degrees. This
+resolves the limit equation, while exact retail ActorInfo-to-host-rail frame
+identity remains provisional. The authored `City_h.bsp` also has
+`RCS_HosePath3` `ZF2_FireModel=fire11` with `ZF2_SprayTime=0.0`; the host keeps
+the source's unguarded division and strict-below-zero completion. See
+[`playerhose_pitch_and_zero_spraytime_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_pitch_and_zero_spraytime_2026-10-20.md).
+
 Fresh trace of `00466780` confirms `MOUSE_LB`, `STEER_PITCH`, and `STEER_YAW`
 inputs. Pitch state at PlayerHose `+0x230` subtracts `STEER_PITCH` and is
 clamped symmetrically by `+0x238`; yaw at `+0x234` subtracts `STEER_YAW` and
@@ -1340,8 +1369,9 @@ uses the symmetric `+0x23C` limit. Hotspot entry `004677D0` copies
 the steerable pitch in degrees; constructor `00466D60` starts its pitch/yaw
 limits at 45/60 degrees, and hotspot entry replaces the pitch limit. Helper
 `00496DD0` multiplies the angle by the degrees-to-radians constant and `0.5`
-before its sine/cosine rotation. The limit's relationship to path-angle
-progression remains open. The pressure value has no direct immediate-offset
+before its sine/cosine rotation. The 10..170-degree world-up guard reduces to
+`routePitch +/- 80` for the host rail frame; exact retail ActorInfo-to-rail
+identity remains open. The pressure value has no direct immediate-offset
 consumer because `0046D1B0` reads it through the embedded component's
 `+0x3B4` target alias. Stream-owner current scalar at `+0x1830` is component
 `+0x3B0`; the source smooths it toward the pressure target while held and

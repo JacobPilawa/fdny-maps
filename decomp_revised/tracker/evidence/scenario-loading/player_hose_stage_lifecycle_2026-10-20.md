@@ -66,11 +66,15 @@ ramp byte once it passes one. On message `0x7530`, `00468680` requires linked
 linked `+0x0F`. The host now uses this zero-start ramp and contact arithmetic.
 Message-versus-entity scheduling and live contact cadence remain provisional.
 The traced shared frame delta is seconds, with the source `>1/60` pacing gate
-and `0.1` cap now applied by the host. The current contact trace shows a local WindowFire timer and
-geometry transition; it does not call shared FireRescue suppression or update
-the shared Fires Doused statistic. The paired SprayTime is a divisor in the
-observed operation, so its unit is seconds; its zero-value behavior remains
-open.
+and `0.1` cap now applied by the host. The current contact trace shows a local
+WindowFire timer and geometry transition; it does not call shared FireRescue
+suppression or update the shared Fires Doused statistic. The paired SprayTime
+is a divisor in the observed operation, so its unit is seconds. `City_h.bsp`
+authors `RCS_HosePath3` slot 2 as model `fire11` with `SprayTime=0.0`; with a
+positive delta, the source's unguarded division takes the ordinary below-zero
+completion branch. The host preserves this arithmetic rather than assigning a
+default duration. See
+[`playerhose_pitch_and_zero_spraytime_2026-10-20.md`](playerhose_pitch_and_zero_spraytime_2026-10-20.md).
 
 The `00468870` export also calls the contact updater when linked `+0x10` is
 set. The writer and authored meaning of `+0x10`, update cadence, and rendered
@@ -133,8 +137,13 @@ orientation feeds nozzle aim helper `00465EF0` and stream presentation
 `0046D1B0`. Fresh decompilation of rotation helper `00496DD0` confirms the
 angle input is multiplied by `0.0174532924` and `0.5` before sine/cosine, so
 the pitch and yaw accumulators use degrees and the helper forms half-angle
-rotations. This establishes the authored pitch bound's units, but not the
-rendered stream's cone width. The pressure consumer is now traced separately:
+rotations. After the symmetric authored clamp, `00466780` measures the current
+third aim axis against world up through `00497AA0` and constrains that angle to
+10..170 degrees. For a route frame with elevation `theta`, the equivalent
+steering interval is `theta-80` through `theta+80`; the shared host already
+uses that form. This resolves the angle formula, while the exact retail
+ActorInfo-to-host-rail frame join and rendered stream cone width remain
+unverified. The pressure consumer is now traced separately:
 current pressure is interpolated into stream samples, passed as a geometry
 input, and used to derive a 10-to-40 contact padding before WindowFire bounds
 checks. The `0x7530` handler still ignores the message payload as a completion
@@ -280,9 +289,9 @@ which actors are active together.
   A route and D progression chain both exclude 36.
 - Trace the remaining stream geometry/render-state transfer and component
   cadence; `M_MaxPressure` sample and contact-radius consumers are now mapped
-  and the contact-radius gate is ported. Trace the pitch clamp's interaction
-  with path-angle progression and `SprayTime` zero-value behavior before
-  implementing those semantics.
+  and the contact-radius gate is ported. The pitch guard equation and authored
+  `city_h` zero-`SprayTime` contact case are now mapped; exact Type-5/rail frame
+  identity and live douse scheduling remain open.
 - Audit for post-construction additions to the PlayerHose `+0x208` chatter
   manager; the constructor's exact key list and null-lookup dispatch path omit
   `RC_HoseTimeWarn`, so the host no longer synthesizes a visible toast.

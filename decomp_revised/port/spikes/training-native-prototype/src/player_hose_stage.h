@@ -156,9 +156,10 @@ struct PlayerHoseStage {
         const float pitchLimit = hotspot() ? hotspot()->pitchSpread : 45.f;
         steerPitchDegrees += static_cast<float>(pendingMouseDeltaY) * 0.1f;
         steerPitchDegrees = std::clamp(steerPitchDegrees, -pitchLimit, pitchLimit);
-        // 00466780 also keeps the aimed direction 10..170 degrees from world
-        // up. In the host's route frame this is an absolute elevation limit
-        // of +/-80 degrees, expressed as a bound on the steering accumulator.
+        // 00466780 constrains the third aim axis to 10..170 degrees from world
+        // up after the authored symmetric pitch clamp. For a rail frame with
+        // elevation theta this reduces to theta +/- 80 degrees. The retail
+        // ActorInfo-frame to host rail-frame join remains unverified.
         const float routePitchDegrees = routePitchRadians * radiansToDegrees;
         steerPitchDegrees = std::clamp(steerPitchDegrees,
             routePitchDegrees - 80.f, routePitchDegrees + 80.f);
@@ -495,8 +496,9 @@ struct PlayerHoseStage {
         if (!waterHeld || !targetInContactVolume) return;
 
         // 00468680 subtracts delta/SprayTime and completes only below the
-        // source's zero threshold. Preserve the authored zero/negative divisor
-        // arithmetic rather than replacing it with a separate host rule.
+        // source's zero threshold. city_h's RCS_HosePath3 ZF2 target (fire11)
+        // authors SprayTime=0.0; with a positive delta, preserve the source's
+        // divide-by-zero arithmetic so this target completes on contact.
         currentTarget.timer -= elapsed / currentTarget.sprayTime;
         if (currentTarget.timer < 0.f) {
             currentTarget.timer = 0.f;
