@@ -3083,7 +3083,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         const std::string& equipmentOrientationCheck,
         std::string* nextRescueStage = nullptr, bool performanceAudit = false,
         const SceneAudio::MusicSelection* inheritedMusic = nullptr,
-        std::optional<float> levelField10 = std::nullopt) {
+        std::optional<float> levelField10 = std::nullopt,
+        std::optional<int> hoseModeIndex = std::nullopt) {
     const bool rescueDiagnostic = rescueCheck || ambientAudioCheck;
     auto logRescueStage = [&](const char* stage) {
         if (rescueCheck) std::cerr << "rescue-check: " << stage << std::endl;
@@ -3100,13 +3101,16 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             ++hotspots;
             targets += path.targets.size();
         }
-        if (!inspectOnly && !playerHoseStage.start())
+        const int selectedModeIndex = hoseModeIndex.value_or(2);
+        if (!inspectOnly && !playerHoseStage.start(selectedModeIndex))
             throw std::runtime_error("Cannot start PlayerHose route in " + scene.key() + ": " +
                                      playerHoseStage.transition);
         std::cout << "Dedicated PlayerHose route: " << scene.key()
                   << ", path nodes=" << playerHoseStage.pathNodes.size()
                   << ", authored hotspots=" << hotspots
                   << ", WindowFire target references=" << targets
+                  << ", mode index=" << selectedModeIndex
+                  << ", spot-time multiplier=" << PlayerHoseStage::modeTimeMultiplier(selectedModeIndex)
                   << ". Static retail order/data are mapped; this host still uses free movement and a provisional view/action mapping.\n";
     }
     logRescueStage("scene loaded");
@@ -6812,7 +6816,8 @@ int runVictimRoamMotionCheck() {
 
 int runRescueSceneChain(const std::filesystem::path& initialPackage,
                         bool performanceAudit = false,
-                        std::optional<float> levelField10 = std::nullopt) {
+                        std::optional<float> levelField10 = std::nullopt,
+                        std::optional<int> hoseModeIndex = std::nullopt) {
     const SceneData initialScene = SceneData::load(initialPackage);
     if (loadPlayerHoseStage(initialScene).present) {
         const std::string musicFile = SceneData::stringField(initialScene.music(), "file");
@@ -6824,8 +6829,10 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
         // messages into the rescue-only linked-stage chain.
         return run(initialPackage, false, false, false, false, false, -1,
                    false, false, false, false, false, {}, nullptr, performanceAudit,
-                   hoseMusic ? &*hoseMusic : nullptr, levelField10);
+                   hoseMusic ? &*hoseMusic : nullptr, levelField10, hoseModeIndex);
     }
+    if (hoseModeIndex)
+        throw std::runtime_error("--hose-mode-index requires a dedicated PlayerHose scene");
     const std::string musicFile = SceneData::stringField(initialScene.music(), "file");
     const std::string musicTrack = SceneData::stringField(initialScene.music(), "track");
     std::optional<SceneAudio::MusicSelection> inheritedMusic;
@@ -7005,6 +7012,7 @@ int main(int argc, char** argv) {
         bool missionMenuRenderCheck = false;
         std::string equipmentOrientationCheck;
         int triggerRenderCheckEntity = -1;
+        std::optional<int> hoseModeIndex;
         std::filesystem::path package;
         for (int i = 1; i < argc; ++i) {
             std::string argument(argv[i]);
@@ -7025,6 +7033,7 @@ int main(int argc, char** argv) {
                           << "       fdny-scene-viewer --mission-select\n"
                           << "       fdny-scene-viewer --mission-catalog-check\n"
                           << "       fdny-scene-viewer --mission-menu-render-check\n"
+                          << "       fdny-scene-viewer <hose-scene-directory> --hose-mode-index 0|1|2\n"
                           << "       fdny-scene-viewer --victim-roam-math-check\n"
                           << "With a rescue-all bundle, no directory opens the rescue mission chooser.\n"
                           << "Otherwise, no directory loads the bundled scene (or .local/exports/mbase in the project).\n";
@@ -7064,6 +7073,17 @@ int main(int argc, char** argv) {
             }
             if (argument == "--performance-audit") {
                 performanceAudit = true;
+                continue;
+            }
+            if (argument == "--hose-mode-index") {
+                if (i + 1 >= argc)
+                    throw std::runtime_error("--hose-mode-index requires a retail mode index (0, 1, or 2)");
+                const std::string value(argv[++i]);
+                size_t parsed = 0;
+                const int modeIndex = std::stoi(value, &parsed);
+                if (parsed != value.size() || modeIndex < 0 || modeIndex > 2)
+                    throw std::runtime_error("--hose-mode-index accepts only 0, 1, or 2");
+                hoseModeIndex = modeIndex;
                 continue;
             }
             if (argument == "--tool-orientation-check") {
@@ -7158,6 +7178,8 @@ int main(int argc, char** argv) {
             }
         }
         if (missionSelect) {
+            if (hoseModeIndex)
+                throw std::runtime_error("--hose-mode-index is only available when directly launching a PlayerHose scene");
             if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck || ambientAudioCheck ||
                 hintRenderCheck || fireDirectionRenderCheck || fireCameraAudit ||
                 oxygenHudRenderCheck || victimPickupHudRenderCheck || !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0 ||
@@ -7169,6 +7191,8 @@ int main(int argc, char** argv) {
             return runRescueMissionSelectionLoop(bundledResources, performanceAudit);
         }
         if (missionCatalogCheck || missionMenuRenderCheck) {
+            if (hoseModeIndex)
+                throw std::runtime_error("--hose-mode-index is only available when directly launching a PlayerHose scene");
             if (!package.empty() || inspectOnly || renderCheck || interactionCheck || rescueCheck || ambientAudioCheck ||
                 hintRenderCheck || fireDirectionRenderCheck || fireCameraAudit ||
                 oxygenHudRenderCheck || victimPickupHudRenderCheck || !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0 ||
@@ -7185,6 +7209,10 @@ int main(int argc, char** argv) {
         }
         const int diagnosticModes = int(inspectOnly) + int(renderCheck) + int(interactionCheck) +
                                     int(rescueCheck) + int(ambientAudioCheck);
+        if (hoseModeIndex && (diagnosticModes != 0 || hintRenderCheck || fireDirectionRenderCheck ||
+                              oxygenHudRenderCheck || victimPickupHudRenderCheck || fireCameraAudit ||
+                              !equipmentOrientationCheck.empty() || triggerRenderCheckEntity >= 0))
+            throw std::runtime_error("--hose-mode-index is only available for an interactive PlayerHose launch");
         if (diagnosticModes > 1)
             throw std::runtime_error("Choose only one diagnostic mode: --inspect, --render-check, --interaction-check, --rescue-check, or --scene-audio-check.");
         if (ambientAudioCheck && (hintRenderCheck || fireDirectionRenderCheck ||
@@ -7204,7 +7232,8 @@ int main(int argc, char** argv) {
             triggerRenderCheckEntity < 0 && !hintRenderCheck &&
             !fireDirectionRenderCheck && !oxygenHudRenderCheck && !victimPickupHudRenderCheck && !fireCameraAudit &&
             equipmentOrientationCheck.empty();
-        if (normalInteractiveRun) return runRescueSceneChain(package, performanceAudit);
+        if (normalInteractiveRun)
+            return runRescueSceneChain(package, performanceAudit, std::nullopt, hoseModeIndex);
         if (ambientAudioCheck && SDL_setenv("SDL_AUDIODRIVER", "dummy", 1) != 0)
             throw std::runtime_error("Could not select SDL's dummy audio driver for --scene-audio-check");
         return run(package, inspectOnly, renderCheck, interactionCheck, rescueCheck, ambientAudioCheck,

@@ -156,6 +156,11 @@ authored cycle and hotspot data. The current stage host still uses free player
 movement and the standard view in place of the retail hose spline/camera, and
 the WindowFire progress baseline/result presentation remain provisional. The
 retail rescue chooser continues to list only the eight rescue catalog entries.
+For direct hose launches, `--hose-mode-index 0|1|2` selects the source-derived
+M_SpotTime multiplier (1.8, 1.3, or 1.0 respectively); the host defaults to
+index 2 until the retail menu's labels and initial selection are mapped. For
+example, `./Open FDNY Firefighters.command city_h --hose-mode-index 0`. These
+numeric indices are not labeled Easy/Normal/Hard.
 The title uses retail `menu.rrf` bitmap 10 (`main.bmp`) and resource 100
 (`mcontrols.bmp` plus its alpha mask) for the GAME/SCORES/OPTIONS/EXIT labels
 at source-backed positions. GAME currently opens the port-created eight-row

@@ -95,7 +95,7 @@ marker. The fields copied or consumed in this path include:
 | --- | --- |
 | `D_NextHotSpot` | Resolved to the next hotspot pointer for the PlayerHose state machine. |
 | `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
-| `M_SpotTime` | Copied through a mode-dependent multiplier into PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. |
+| `M_SpotTime` | Multiplied by the active session mode's timer scale and stored at PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. Exact numeric scales are in [`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md); mode labels and the selection path are open. |
 | `M_MaxPressure` | Copied from the path record's `+0x2C` to PlayerHose `+0x1834`; no direct downstream read was found in the bounded offset scan. |
 | `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp in degrees. Its interaction with path-angle progression remains open. |
 | `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |

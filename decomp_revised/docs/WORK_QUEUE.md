@@ -39,7 +39,31 @@ performed.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implemented first target/cycle/hotspot path with source-shaped collision targeting; free movement, visual/camera, target baseline, difficulty-scaled timing and result flow remain provisional/open |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implemented first target/cycle/hotspot path with source-shaped collision targeting and exact numeric mode timer table; free movement, visual/camera, target baseline, countdown wall-clock units, retail mode labels/initial choice and result flow remain provisional/open |
+
+## PlayerHose hotspot timer mode scale ported (2026-10-20)
+
+Current-hash x86 bytes at `004677D0`, cross-checked against the existing
+Ghidra export, resolve the session mode table applied to authored `M_SpotTime`:
+index 0 multiplies by 1.8, index 1 by 1.3, and every other index by 1.0 before
+the result is stored as a float countdown. The shared host now applies this
+rule and accepts `--hose-mode-index 0|1|2` for a direct hose-map launch. Its
+default index 2 is a host choice matching the source's 1.0 branch; the retail
+menu labels and initial mode value remain unknown. Do not label these indices
+Easy/Normal/Hard without further evidence. Details and the pinned EXE hash are
+in [`player_hose_mode_timer_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_mode_timer_2026-10-20.md).
+
+No new EXE function review was added; the tracker remains at 382 reviewed
+functions. The rescue-all macOS bundle rebuilt with this timer change, its
+`Info.plist` passed validation, the embedded rescue catalog has eight rows,
+and the four hose maps are present. The packaged executable SHA-256 is
+`61578f31be495ce98c1e951f7afeb09cc7f3c80f097f17d69286a27636332f5e`.
+Camera/path motion, WindowFire visual behavior and result/return flow remain
+larger PlayerHose gaps; no interactive or retail-parity check was made.
+
+| Scope | Files | Status |
+| --- | --- | --- |
+| PlayerHose mode-scaled timer | `scene_viewer.cpp`, `player_hose_stage.h`, launcher, mode-timer evidence | Numeric mode table ported; retail labels/selection and host default remain explicitly unresolved |
 
 ## Player fire-exposure padding resolved (2026-10-20)
 
@@ -175,13 +199,15 @@ authored `runrescuebot` command. Keep the two paths separate until those links
 are established. The read-only trace is recorded in
 [`rescuebot_update_path_2026-10-15.md`](../tracker/evidence/scenario-loading/rescuebot_update_path_2026-10-15.md).
 
-The shared port is missing two retail hose gameplay paths. First, PlayerRescue
-command handler `00451870` routes `touchhose` to `0044CAB0`, which creates the
+Two separate retail hose paths are present in the binary. The rescue-player
+HoseSpray path is still missing: PlayerRescue command handler `00451870`
+routes `touchhose` to `0044CAB0`, which creates the
 `0xD54`-byte HoseSpray item with constructor `004634F0`, attaches it, stores it
 in inventory slot 4, and starts its hose mode. This is separate from `equip`,
 whose name selector accepts only slots 1–3. The binary contains this command,
 but no preserved authored map/script contains the token; its natural trigger
-remains open. Second, all four dedicated hose BSPs instantiate `RCS_PlayerHose`
+remains open. The separate dedicated-stage path has a first shared-host slice.
+All four dedicated hose BSPs instantiate `RCS_PlayerHose`
 instead of `RCS_PlayerRescue`. Initializer `00466D60` builds its path/camera/
 douse components; update `00466780` reads hose mouse/steering input and uses
 `00465EF0` to calculate its aimed point. The examined updater uses
@@ -220,16 +246,18 @@ from 36 has not been found. One non-hotspot path record also contains ZF fire
 references. The hash-pinned trace and per-map counts are in
 [`player_hose_stage_lifecycle_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_stage_lifecycle_2026-10-20.md).
 The function-review ledger now has 382 reviewed EXE functions; the tracker
-atlas, summary, and dashboard were regenerated from the CSVs. This is static
-analysis only; no dedicated hose-stage port implementation or live parity
-check was made.
-The shared host integration audit confirms the exported `entities.json`
-preserves the required hose actor fields, but the viewer only treats
-`RCS_PlayerHose` as a spawn marker. Its generic script startup omits the hose
-actors and path nodes; the rescue catalog and macOS bundle also omit all four
-dedicated hose stages. There is no PlayerHose runtime model or result adapter
-yet. Reuse this package boundary in the shared host, keeping the new system
-separate from Training's interaction path and rescue-player transactions.
+atlas, summary, and dashboard were regenerated from the CSVs. The referenced
+decompilation remains static evidence, not live parity; the first dedicated
+host implementation is recorded at the top of this queue.
+The earlier shared-host audit found that `entities.json` preserved the hose
+actor fields while the viewer treated `RCS_PlayerHose` only as a spawn marker.
+That handoff is superseded by the dedicated host slice at the top of this
+queue: scene loading now retains path nodes, resolves `%Model%` target IDs and
+preserves ordered ZF/SprayTime slots; the macOS bundle carries all four hose
+maps. The implementation remains a provisional free-movement/action host and
+does not reproduce the retail spline camera, WindowFire visuals, result widget,
+or transition. Keep it separate from Training interactions and rescue-player
+HoseSpray transactions.
 The local `city_h` export is a clean first authored slice: PlayerHose starts at
 `location=3088 -168 2112` with `FirstPathPoint=RCS_HosePath19`, the first
 hotspot is node 1 with A/D links to node 2, `Q_NumCycles=2`, and
@@ -244,9 +272,9 @@ The retail `thegame.lev` source (SHA-256
 records: Training plus eight `rescue.rrf` missions and four `hose.rrf` stages.
 The current chooser deliberately keeps only the eight rescue records; the hose
 records are `dock_h` (source ordinal 1), `const_h` (5), `city_h` (8), and
-`oil_rig_h` (10). The dedicated gameplay and bundle catalog need to carry
-these alongside the existing rescue path once the PlayerHose runtime adapter
-is available.
+`oil_rig_h` (10). The rescue-all bundle now includes all four hose scenes for
+direct launch by map key. A retail-authentic hose selector and integration
+with the title/briefing/result flow remain open.
 Defined-string xrefs also place `RC_HoseLvlStart/Win/Lose` in the
 `TRadioChatter` setup at `004895C0`, which registers `TChatterSet` entries via
 `00489200`. `004897C0` resolves the message key, and the emitters' nonzero

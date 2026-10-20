@@ -1,12 +1,12 @@
 # PlayerHose shared host slice (2026-10-20)
 
 Status: **the shared game host loads the four dedicated PlayerHose maps,
-resolves authored WindowFire target names to BSP model IDs, and runs a
-source-shaped target/cycle/hotspot state path. The macOS target compiles.**
-The retail spline camera/motion, exact input scaling, live dousing response,
-difficulty timer multiplier, WindowFire visuals, result widget, and stage
-transition are still open. This is a port checkpoint, not a live retail-parity
-result.
+resolves authored WindowFire target names to BSP model IDs, applies the
+source-derived numeric mode timer scale, and runs a source-shaped
+target/cycle/hotspot state path. The retail menu labels/initial mode, spline
+camera/motion, exact input scaling, live dousing response, WindowFire visuals,
+result widget, and stage transition remain open.**
+This is a port checkpoint, not a live retail-parity result.
 
 ## Evidence and authored data
 
@@ -49,7 +49,9 @@ positions and paired SprayTime values, resolves target model IDs, starts from
 `FirstPathPoint` by following A links to the first hotspot, and follows D links
 after each authored target cycle. The default macOS bundle includes the four
 hose BSPs. Launch any one directly with its map key, for example
-`./Open FDNY Firefighters.command city_h`.
+`./Open FDNY Firefighters.command city_h`. A direct launch may pass
+`--hose-mode-index 0|1|2` after the map key to select the source-derived timer
+scale; the launcher forwards this host option to the executable.
 
 The shared host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment
 with the same `0x43/2` world-collision arguments seen in the retail stream
@@ -64,12 +66,14 @@ The host's WindowFire meter is intentionally only a first gameplay proxy. It
 starts at 1.0 and decays by `dt / SprayTime`; `SprayTime <= 0` completes on the
 first positive-delta contact. Retail initializes a related visual blend at
 zero, then updates it through both burning and dousing paths, so the exact
-douse-ready baseline has not been reproduced. The raw M_SpotTime is treated as
-host seconds because the retail mode multiplier and wall-clock unit remain
-unresolved. Pitch is clamped to the current N_PitchSpread in degrees; mapping
-mouse deltas to retail STEER_PITCH/YAW remains provisional. `M_MaxPressure` is
-loaded but has no effect until its downstream use is found. The simple blue
-beam and host win/loss title are not retail WindowFire or result presentation.
+douse-ready baseline has not been reproduced. The source-derived session mode
+scale modifies M_SpotTime before it becomes the countdown; the countdown's
+wall-clock units remain unresolved. Host mode index 2 is the default because
+the retail selector and initial index are not yet mapped. Pitch is clamped to
+the current N_PitchSpread in degrees; mapping mouse deltas to retail
+STEER_PITCH/YAW remains provisional. `M_MaxPressure` is loaded but has no
+effect until its downstream use is found. The simple blue beam and host
+win/loss title are not retail WindowFire or result presentation.
 
 The rescue catalog still validates and displays exactly eight `rescue.rrf`
 rows. The four hose packages are available as direct launches from the bundle,
@@ -89,3 +93,7 @@ Linking emitted the existing Homebrew `json-c` warning that the dependency was
 built for macOS 27.0 while this target links for 13.3. No test suite or
 interactive run was performed; compilation confirms the source builds but does
 not establish loader/runtime correctness or retail parity.
+
+The later mode-timer update rebuilt the rescue-all bundle. The current
+packaged executable SHA-256 is recorded in
+[`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md).

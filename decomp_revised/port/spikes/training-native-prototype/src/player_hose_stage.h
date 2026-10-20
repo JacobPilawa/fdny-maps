@@ -42,6 +42,12 @@ struct PlayerHoseHotspot {
 struct PlayerHoseStage {
     enum class Result { Running, Won, Lost };
 
+    static double modeTimeMultiplier(int modeIndex) {
+        if (modeIndex == 0) return 1.8;
+        if (modeIndex == 1) return 1.3;
+        return 1.0;
+    }
+
     bool present = false;
     int playerEntity = -1;
     V spawn{};
@@ -53,6 +59,8 @@ struct PlayerHoseStage {
     int activeTarget = -1;
     int cyclesRemaining = 0;
     int hotspotOrdinal = 0;
+    int modeIndex = 2;
+    double modeSpotTimeMultiplier = 1.0;
     float countdown = 0.f;
     bool timeWarningSent = false;
     Result result = Result::Running;
@@ -77,7 +85,9 @@ struct PlayerHoseStage {
         activeHotspot = int(index);
         activeTarget = 0;
         cyclesRemaining = std::max(0, next.numCycles);
-        countdown = next.spotTime;
+        // Retail multiplies the authored float by a mode-selected double,
+        // then stores the result back to float before entering the timer state.
+        countdown = static_cast<float>(double(next.spotTime) * modeSpotTimeMultiplier);
         timeWarningSent = false;
         ++hotspotOrdinal;
         for (auto& target : next.targets) {
@@ -88,9 +98,11 @@ struct PlayerHoseStage {
         return true;
     }
 
-    bool start() {
+    bool start(int selectedModeIndex = 2) {
         transition.clear();
         if (!present || firstPathPoint.empty()) return false;
+        modeIndex = selectedModeIndex;
+        modeSpotTimeMultiplier = modeTimeMultiplier(modeIndex);
         auto current = byName.find(firstPathPoint);
         std::vector<size_t> visited;
         while (current != byName.end() &&
