@@ -350,7 +350,7 @@ PlayerHoseStage loadPlayerHoseStage(const SceneData& scene) {
                 throw std::runtime_error("Unresolved PlayerHose target " + name + " in " + scene.key());
             if (!collisionModels.count(model->second))
                 throw std::runtime_error("PlayerHose target has no BSP collision model: " + name);
-            path.targets.push_back({slot, model->second, name, sprayTime, 1.f, false});
+            path.targets.push_back({slot, model->second, name, sprayTime, 0.f, false, false});
         }
         const size_t nodeIndex = stage.pathNodes.size();
         if (!stage.byName.emplace(path.name, nodeIndex).second)

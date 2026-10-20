@@ -54,19 +54,24 @@ the current calls:
 
 `00468850` begins dousing by setting linked `+0x0D`, setting WindowFire ramp
 byte `+0x25D`, zeroing its timer at `+0x258`, then recalculating geometry.
-On message `0x7530`, `00468680` requires linked `+0x0C` and `+0x0E`, subtracts
-frame delta divided by linked `+0x08` from `+0x258`, and, after crossing the
-global threshold, clears `+0x0D`, resets the timer, updates geometry, and sets
-linked `+0x0F`. The current contact trace shows a local WindowFire timer and
+The current Ghidra export for `00468870` adds twice the frame delta to
+`+0x258` while the ramp byte is set, caps the timer at `1.0`, and clears the
+ramp byte once it passes one. On message `0x7530`, `00468680` requires linked
+`+0x0C` and `+0x0E`, subtracts frame delta divided by linked `+0x08` from
+`+0x258`, and clears `+0x0D` only when the result is strictly below
+`004dc50c` (`0.0f`); it then resets the timer, updates geometry, and sets
+linked `+0x0F`. The host now uses this zero-start ramp and contact arithmetic.
+Message-versus-entity scheduling and frame-delta calibration remain
+provisional. The current contact trace shows a local WindowFire timer and
 geometry transition; it does not call shared FireRescue suppression or update
 the shared Fires Doused statistic. The paired SprayTime is a divisor in the
 observed operation, but its exact authored units and zero-value handling have
 not been established.
 
-`00468870` also advances the visual ramp at `+0x25D` using frame delta and
-calls the contact updater when linked `+0x10` is set. The rate and gate are
-source-derived; the time units, writer for `+0x10`, and rendered result remain
-open.
+The `00468870` export also calls the contact updater when linked `+0x10` is
+set. The writer and authored meaning of `+0x10`, update cadence, and rendered
+result remain open; message `0x7530` separately reaches `00468680` through
+`00468A80`.
 
 A fresh full-program instruction-text search for offsets `0x2B8` and `0x2A8`
 returned 36 instructions. It found no direct object-relative `+0x2B8` field
@@ -105,7 +110,7 @@ distance between anchor processing and state-4 countdown remains unresolved.
 | `D_NextHotSpot` | Resolved to the next hotspot pointer for the PlayerHose state machine. |
 | `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
 | `M_SpotTime` | Multiplied by the active session mode's timer scale and stored at PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. Exact numeric scales are in [`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md); mode labels and the selection path are open. |
-| `M_MaxPressure` | Copied from the path record's `+0x2C` to PlayerHose `+0x1834`; no direct downstream read was found in the bounded offset scan. |
+| `M_MaxPressure` | `004677D0` copies the path record's `+0x2C` to PlayerHose `+0x1834`; a fresh exact-offset instruction-text scan finds only this write at `00467B8A`. No direct-immediate reader appears, but computed and aliased accesses remain possible. See [`player_hose_pressure_scan_2026-10-20.md`](player_hose_pressure_scan_2026-10-20.md). |
 | `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp in degrees. Its interaction with path-angle progression remains open. |
 | `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |
 | `ZF0..ZF8_FireModel` and paired `SprayTime` | Non-null model references create WindowFire children for the initialized context; each paired SprayTime is copied to its child's linked state. |
@@ -125,9 +130,9 @@ orientation feeds nozzle aim helper `00465EF0` and stream presentation
 angle input is multiplied by `0.0174532924` and `0.5` before sine/cosine, so
 the pitch and yaw accumulators use degrees and the helper forms half-angle
 rotations. This establishes the authored pitch bound's units, but not the
-rendered stream's cone width. The bounded direct-offset scan found the
-`+0x1834` assignment but no direct read, so `M_MaxPressure`'s downstream effect
-remains unknown. It is distinct from stream-owner intensity at PlayerHose
+rendered stream's cone width. `M_MaxPressure`'s downstream effect remains
+unknown; the earlier `0x194` scan was not relevant, and the fresh exact
+`0x1834` scan only found the assignment. It is distinct from stream-owner intensity at PlayerHose
 `+0x1830` (stream component-relative `+0x3B0`), which the DouseHose callback
 passes to the WindowFire contact.
 The fresh rotation pseudocode is

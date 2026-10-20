@@ -5,7 +5,7 @@ resolves authored WindowFire target names to BSP model IDs, applies the
 source-derived numeric mode timer scale, runs a source-shaped target/cycle/
 hotspot state path, and follows the authored HosePath camera rail with a
 floor-height query. Retail menu labels/initial mode, rail timing calibration,
-mouse-to-nozzle mapping, live dousing response, WindowFire visuals, result
+mouse-to-nozzle mapping, live dousing cadence, WindowFire visuals, result
 widget, and stage transition remain open.**
 This is a port checkpoint, not a live retail-parity result.
 
@@ -84,22 +84,52 @@ before the dousing update, applies the authored SprayTime divisor, and presents 
 current hotspot, target, cycle, and timer in the window title. WASD movement
 is disabled in dedicated rail mode.
 
-The host's WindowFire meter is intentionally only a first gameplay proxy. It
-starts at 1.0 and decays by `dt / SprayTime`; `SprayTime <= 0` completes on the
-first positive-delta contact. Retail initializes a related visual blend at
-zero, then updates it through both burning and dousing paths, so the exact
-douse-ready baseline has not been reproduced. The source-derived session mode
-scale modifies M_SpotTime before it becomes the countdown; the countdown's
-wall-clock units remain unresolved. Host mode index 2 is the default because
+The host now models the source-derived WindowFire timer path. Selecting a
+target starts its `+0x258` timer at zero and enables a ramp; host updates add
+`2*dt` until it reaches one. Matching stream contact subtracts
+`dt/SprayTime`, and the target completes only when the result is strictly
+below zero. The source threshold at `004dc50c` is `0.0f`; zero and negative
+divisor arithmetic are preserved. The callback versus entity-update order,
+frame-delta calibration, and live contact cadence remain provisional. The
+source-derived session mode scale modifies M_SpotTime before it becomes the
+countdown; the countdown's wall-clock units remain unresolved. Host mode index 2 is the default because
 the retail selector and initial index are not yet mapped. Pitch is clamped to
 the current N_PitchSpread in degrees; mapping mouse deltas to retail
-STEER_PITCH/YAW remains provisional. `M_MaxPressure` is loaded but has no
-effect until its downstream use is found. The simple blue beam and host
+STEER_PITCH/YAW remains provisional. `M_MaxPressure` is loaded but its
+downstream use remains unknown. A fresh exact `+0x1834` instruction-text
+scan finds only the assignment at `00467B8A`; direct register aliases are not
+excluded. The simple blue beam and host
 win/loss title are not retail WindowFire or result presentation.
 
 The rescue catalog still validates and displays exactly eight `rescue.rrf`
 rows. The four hose packages are available as direct launches from the bundle,
 but a retail-authentic hose selector and result/return flow remain open.
+
+## WindowFire selected-target timer port
+
+Current-hash Ghidra evidence establishes that target selection through
+`00468850` starts the WindowFire timer at zero and enables the ramp. The
+`00468870` code adds `2*dt` while that ramp flag is set, caps the timer at one,
+and clears the ramp flag on the upper branch. Contact delivery through
+`00468680` subtracts `dt/SprayTime` only while the linked target is active and
+selected. It clears the dousing flag only when the result is strictly below
+`004dc50c`, verified as `0.0f`, then resets the timer. The shared host now
+uses that initialization, ramp, arithmetic, and comparison. Its target update
+executes ramping before the host contact, but message/entity scheduling and
+frame-delta units remain provisional.
+
+A headless instruction-text scan against retail EXE SHA-256
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` found
+only the assignment to PlayerHose `+0x1834` at `00467B8A`; this does not rule
+out computed or aliased consumers. The full scan scope is in
+[`player_hose_pressure_scan_2026-10-20.md`](player_hose_pressure_scan_2026-10-20.md).
+
+The updated shared macOS target and rescue-all bundle compiled successfully.
+Standalone and packaged executable SHA-256 values match at
+`598ecd280b436093a5e11d0e0d2775924bbc10a1defcbb0833876399ed3bc52c`. The
+bundle plist passed; it retains eight rescue choices and all four hose maps.
+The existing json-c macOS 27.0 versus target 13.3 warning remains. No test
+suite, interactive run, or retail comparison was performed.
 
 ## Anchor event and stream source follow-up
 

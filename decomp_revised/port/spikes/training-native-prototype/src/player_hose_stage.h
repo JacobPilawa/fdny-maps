@@ -15,10 +15,12 @@ struct PlayerHoseTarget {
     int model = -1;
     std::string modelName;
     float sprayTime = 0.f;
-    // The retail WindowFire blends this value while burning and subtracts
-    // deltaTime/SprayTime while receiving DouseHose contact. A unit starting
-    // level is a host gameplay proxy; its exact retail initialization is open.
-    float remaining = 1.f;
+    // Retail initializes the WindowFire timer to zero when this target is
+    // selected, ramps it toward one at 2*dt, then subtracts dt/SprayTime on
+    // contact. Frame ordering and the authored duration's wall-clock units
+    // remain provisional in the host.
+    float timer = 0.f;
+    bool rampActive = false;
     bool complete = false;
 };
 
@@ -256,6 +258,12 @@ struct PlayerHoseStage {
         return &current->targets[size_t(activeTarget)];
     }
 
+    static void beginTarget(PlayerHoseTarget& target) {
+        target.timer = 0.f;
+        target.rampActive = true;
+        target.complete = false;
+    }
+
     bool enterHotspot(size_t index) {
         if (index >= pathNodes.size()) return false;
         auto& next = pathNodes[index];
@@ -269,9 +277,11 @@ struct PlayerHoseStage {
         timeWarningSent = false;
         ++hotspotOrdinal;
         for (auto& target : next.targets) {
-            target.remaining = 1.f;
+            target.timer = 0.f;
+            target.rampActive = false;
             target.complete = false;
         }
+        beginTarget(next.targets[size_t(activeTarget)]);
         transition = "Hotspot " + std::to_string(hotspotOrdinal) + " started";
         expectedHotspot = next.nextHotspot;
         next.isFirstHotspot = false;
@@ -316,23 +326,33 @@ struct PlayerHoseStage {
         }
 
         auto* currentHotspot = &pathNodes[size_t(activeHotspot)];
-        if (!waterHeld || activeTarget < 0 || size_t(activeTarget) >= currentHotspot->targets.size())
+        if (activeTarget < 0 || size_t(activeTarget) >= currentHotspot->targets.size())
             return;
         auto& currentTarget = currentHotspot->targets[size_t(activeTarget)];
-        if (currentTarget.complete || currentTarget.model != hitModel) return;
+        if (currentTarget.complete) return;
 
-        // 00468680 subtracts the frame delta divided by the paired authored
-        // SprayTime and clears WindowFire's selected byte after the value drops
-        // below zero. A zero value is source-authored in city_h; avoid a host
-        // divide-by-zero and treat it as a one-frame completion proxy.
-        if (currentTarget.sprayTime <= 0.f) {
-            if (elapsed <= 0.f) return;
-            currentTarget.remaining = 0.f;
-        } else {
-            currentTarget.remaining -= elapsed / currentTarget.sprayTime;
+        // 00468870 advances the selected WindowFire timer by 2*delta until it
+        // reaches one, then stops the ramp. The contact message's separate
+        // call into 00468680 subtracts delta/SprayTime afterward in this host
+        // update; retail message-versus-entity scheduling remains unresolved.
+        if (currentTarget.rampActive) {
+            const float ramped = currentTarget.timer + elapsed * 2.f;
+            if (ramped <= 1.f) {
+                currentTarget.timer = ramped;
+            } else {
+                currentTarget.timer = 1.f;
+                currentTarget.rampActive = false;
+            }
         }
-        if (currentTarget.remaining <= 0.f) {
-            currentTarget.remaining = 0.f;
+
+        if (!waterHeld || currentTarget.model != hitModel) return;
+
+        // 00468680 subtracts delta/SprayTime and completes only below the
+        // source's zero threshold. Preserve the authored zero/negative divisor
+        // arithmetic rather than replacing it with a separate host rule.
+        currentTarget.timer -= elapsed / currentTarget.sprayTime;
+        if (currentTarget.timer < 0.f) {
+            currentTarget.timer = 0.f;
             currentTarget.complete = true;
             transition = "Doused " + currentTarget.modelName;
             advanceTarget();
@@ -343,14 +363,19 @@ struct PlayerHoseStage {
         if (activeHotspot < 0) return;
         auto& current = pathNodes[size_t(activeHotspot)];
         ++activeTarget;
-        if (size_t(activeTarget) < current.targets.size()) return;
+        if (size_t(activeTarget) < current.targets.size()) {
+            beginTarget(current.targets[size_t(activeTarget)]);
+            return;
+        }
         --cyclesRemaining;
         if (cyclesRemaining > 0) {
             activeTarget = 0;
             for (auto& target : current.targets) {
-                target.remaining = 1.f;
+                target.timer = 0.f;
+                target.rampActive = false;
                 target.complete = false;
             }
+            beginTarget(current.targets[size_t(activeTarget)]);
             transition = "WindowFire cycle " + std::to_string(current.numCycles - cyclesRemaining + 1) +
                          " of " + std::to_string(current.numCycles);
             return;
