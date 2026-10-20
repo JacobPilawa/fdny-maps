@@ -91,6 +91,15 @@ updates current and next hotspot pointers, and enters PlayerHose state 5. The
 first hotspot also emits `RC_HoseLvlStart` and clears its `M_IsFirstHotSpot`
 marker. The fields copied or consumed in this path include:
 
+The event comes from `00490BB0`: it returns the selected 32-byte control-record
+address only when that address differs from the cached record, then updates
+the cache. `00490510` initializes the cache to null, so the first sampled
+record is reported. `004677D0` resolves that record's node at `+0x10` and
+accepts it if it matches the expected `D_NextHotSpot` pointer or has the first
+marker set. The timer budget is written at `+0x1A84`; `00465FB0` copies it to
+the live countdown at `+0x1A7C` on state-4 entry. The exact scheduler-frame
+distance between anchor processing and state-4 countdown remains unresolved.
+
 | `RCS_HosePath` field | Observed use |
 | --- | --- |
 | `D_NextHotSpot` | Resolved to the next hotspot pointer for the PlayerHose state machine. |

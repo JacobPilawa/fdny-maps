@@ -47,9 +47,15 @@ keeps the dedicated stage separate from rescue-player HoseSpray. The shared
 `scene_viewer.cpp` loader reads `RCS_PlayerHose`, `RCS_HosePath`, and `%Model%`
 records from the raw `SceneData` entities. It preserves the nine ZF slot
 positions and paired SprayTime values, resolves target model IDs, starts from
-`FirstPathPoint` by following A links to the first hotspot, and follows D links
-after each authored target cycle. The default macOS bundle includes the four
-hose BSPs. Launch any one directly with its map key, for example
+`FirstPathPoint`, and builds control-node sample distances from the A rail.
+Hotspot activation is anchor-driven: the first marker starts the first hotspot,
+and each D-linked hotspot activates only when its A-rail anchor is selected.
+If target cycles finish first, the host waits at that boundary. This mirrors
+the selected-control-record change event from `00490BB0` and the
+expected-pointer/first-marker check in `004677D0`. The exact
+state scheduler frame between hotspot setup and countdown entry remains
+unresolved. The default macOS bundle includes the four hose BSPs. Launch any
+one directly with its map key, for example
 `./Open FDNY Firefighters.command city_h`. A direct launch may pass
 `--hose-mode-index 0|1|2` after the map key to select the source-derived timer
 scale; the launcher forwards this host option to the executable.
@@ -64,13 +70,16 @@ Mouse steering offsets the nozzle aim around that direction, preserving the
 existing `N_PitchSpread` degree clamp; its exact relation to retail
 `STEER_PITCH/YAW` remains provisional.
 
-The host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment with
-the same `0x43/2` world-collision arguments seen in the retail stream collision,
-and only advances the currently selected target when the hit BSP model matches
-that target's authored model. It decrements the hotspot countdown before the
-dousing update, applies the authored SprayTime divisor, and presents the
-current hotspot, target, cycle, and timer in the window title. WASD movement is
-disabled in dedicated rail mode.
+The host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment from
+the retail-shaped `00465EF0` frame offset with the same `0x43/2`
+world-collision arguments seen in the retail stream collision, and only
+advances the currently selected target when the hit BSP model matches that
+target's authored model. Direction uses a provisional mouse offset around the
+rail-derived view; retail's separate pitch/yaw accumulators, clamps, and
+matrix-rotation order are not yet ported. It decrements the hotspot countdown
+before the dousing update, applies the authored SprayTime divisor, and presents
+the current hotspot, target, cycle, and timer in the window title. WASD
+movement is disabled in dedicated rail mode.
 
 The host's WindowFire meter is intentionally only a first gameplay proxy. It
 starts at 1.0 and decays by `dt / SprayTime`; `SprayTime <= 0` completes on the
@@ -88,6 +97,20 @@ win/loss title are not retail WindowFire or result presentation.
 The rescue catalog still validates and displays exactly eight `rescue.rrf`
 rows. The four hose packages are available as direct launches from the bundle,
 but a retail-authentic hose selector and result/return flow remain open.
+
+## Anchor event and stream source follow-up
+
+The stage now selects a route control record from the current sampled rail
+distance and processes a hotspot only when that selected record changes. The
+first marked hotspot starts from its anchor; after entry, `D_NextHotSpot` is
+the expected path node. A completed target-cycle context waits if its next
+anchor has not arrived. This follows `00490BB0` and `004677D0` statically; the
+host does not claim retail frame timing or a controlled gameplay match.
+
+The stream collision and line now start from the entity frame offset returned
+by `00465EF0`: `origin + 10*basis3 + 15*basis2 - 10*basis1`. The steered
+direction comes from the separate provisional host aim frame. Source-derived
+rotation order and `STEER_PITCH/YAW` accessor cadence remain open.
 
 ## Build result
 
@@ -107,6 +130,14 @@ not establish loader/runtime correctness or retail parity.
 The later mode-timer update rebuilt the rescue-all bundle. That checkpoint's
 packaged executable SHA-256 is recorded in
 [`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md).
+
+The anchor event and stream-source follow-up rebuilt the shared macOS target
+and rescue-all app. Standalone and bundled executables match at SHA-256
+`7fc114f3bee70cef91352ae49d85c694c892db8128156ad6759c760b84918018`; the
+plist validated, all four hose maps are packaged, and the rescue catalog has
+eight entries. The build emitted the existing Homebrew `json-c` deployment
+warning (library built for macOS 27.0 while the target links for 13.3). No
+interactive run, tests, or retail comparison were performed.
 
 ## Authored rail build
 

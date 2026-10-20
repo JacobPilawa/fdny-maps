@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <iterator>
 #include <map>
 #include <string>
 #include <vector>
@@ -69,8 +70,12 @@ struct PlayerHoseStage {
     std::map<std::string, size_t> byName;
     std::vector<size_t> railNodeIndices;
     std::vector<PlayerHoseRailSample> railSamples;
+    std::vector<float> railAnchorDistances;
+    std::vector<size_t> railAnchorNodeIndices;
     float railLength = 0.f;
     float railProgress = 0.f;
+    int cachedRailAnchorIndex = -1;
+    std::string expectedHotspot;
     int activeHotspot = -1;
     int activeTarget = -1;
     int cyclesRemaining = 0;
@@ -103,8 +108,11 @@ struct PlayerHoseStage {
     void buildCameraRail() {
         railNodeIndices.clear();
         railSamples.clear();
+        railAnchorDistances.clear();
+        railAnchorNodeIndices.clear();
         railLength = 0.f;
         railProgress = 0.f;
+        cachedRailAnchorIndex = -1;
         auto current = byName.find(firstPathPoint);
         for (int count = 0; current != byName.end() && count < 32; ++count) {
             const size_t index = current->second;
@@ -163,6 +171,10 @@ struct PlayerHoseStage {
             return;
         }
         for (const auto& segment : segments) {
+            railAnchorDistances.push_back(railSamples[segment.first].distance);
+            railAnchorNodeIndices.push_back(railNodeIndices[segment.fromNode]);
+        }
+        for (const auto& segment : segments) {
             const float firstDistance = railSamples[segment.first].distance;
             const float segmentDistance = railSamples[segment.last].distance - firstDistance;
             for (size_t i = segment.first; i <= segment.last; ++i) {
@@ -183,6 +195,28 @@ struct PlayerHoseStage {
         // provisional until its retail calibration is captured.
         railProgress += std::max(0.f, dt) * 500.f / railLength;
         railProgress -= std::floor(railProgress);
+        processRailAnchor();
+    }
+
+    void processRailAnchor() {
+        if (railAnchorDistances.empty() || railAnchorDistances.size() != railAnchorNodeIndices.size())
+            return;
+        const float distance = railProgress * railLength;
+        const auto upper = std::upper_bound(railAnchorDistances.begin(), railAnchorDistances.end(), distance);
+        const int selected = upper == railAnchorDistances.begin()
+            ? 0 : int(std::distance(railAnchorDistances.begin(), upper) - 1);
+        if (selected == cachedRailAnchorIndex) return;
+        cachedRailAnchorIndex = selected;
+
+        const size_t nodeIndex = railAnchorNodeIndices[size_t(selected)];
+        if (nodeIndex >= pathNodes.size()) return;
+        auto& node = pathNodes[nodeIndex];
+        const bool expectedNext = !expectedHotspot.empty() && node.name == expectedHotspot;
+        if (!node.isHotspot || (!node.isFirstHotspot && !expectedNext)) return;
+        if (!enterHotspot(nodeIndex)) {
+            result = Result::Lost;
+            transition = "Hose stage stopped: invalid hotspot anchor " + node.name;
+        }
     }
 
     PlayerHoseCameraPose cameraPose() const {
@@ -239,6 +273,8 @@ struct PlayerHoseStage {
             target.complete = false;
         }
         transition = "Hotspot " + std::to_string(hotspotOrdinal) + " started";
+        expectedHotspot = next.nextHotspot;
+        next.isFirstHotspot = false;
         return true;
     }
 
@@ -246,20 +282,20 @@ struct PlayerHoseStage {
         transition.clear();
         if (!present || firstPathPoint.empty()) return false;
         buildCameraRail();
+        if (!hasCameraRail()) {
+            transition = "Hose stage stopped: no usable authored camera rail";
+            return false;
+        }
         modeIndex = selectedModeIndex;
         modeSpotTimeMultiplier = modeTimeMultiplier(modeIndex);
-        auto current = byName.find(firstPathPoint);
-        std::vector<size_t> visited;
-        while (current != byName.end() &&
-               std::find(visited.begin(), visited.end(), current->second) == visited.end()) {
-            const size_t index = current->second;
-            visited.push_back(index);
-            const auto& node = pathNodes[index];
-            if (node.isHotspot) return enterHotspot(index);
-            current = byName.find(node.nextPath);
-        }
-        transition = "No reachable PlayerHose hotspot from " + firstPathPoint;
-        return false;
+        activeHotspot = -1;
+        activeTarget = -1;
+        cyclesRemaining = 0;
+        hotspotOrdinal = 0;
+        countdown = 0.f;
+        expectedHotspot.clear();
+        transition = "Waiting for first PlayerHose hotspot anchor";
+        return true;
     }
 
     void update(float dt, bool waterHeld, int hitModel) {
@@ -326,10 +362,14 @@ struct PlayerHoseStage {
             return;
         }
         auto next = byName.find(current.nextHotspot);
-        if (next == byName.end() || !enterHotspot(next->second)) {
+        if (next == byName.end() || !pathNodes[next->second].isHotspot ||
+            pathNodes[next->second].targets.empty()) {
             result = Result::Lost;
             transition = "Hose stage stopped: unresolved next hotspot " + current.nextHotspot;
             return;
         }
+        activeHotspot = -1;
+        activeTarget = -1;
+        transition = "Hotspot complete; waiting for anchor " + current.nextHotspot;
     }
 };

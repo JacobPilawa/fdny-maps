@@ -5721,6 +5721,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (dedicatedPlayerHose) playerHoseStage.advanceCameraRail(dt);
             FrameTransform cameraFrame = ViewUpdate::directEye(player.p, yaw, pitch, player.crouch);
             FrameTransform hoseAimFrame = cameraFrame;
+            V hoseStreamStart{};
             V hoseStreamEnd{};
             bool hoseStreamVisible = false;
             if (dedicatedPlayerHose) {
@@ -5752,7 +5753,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     // aiming. Preserve mouse steering as a provisional offset
                     // around the authored rail look direction.
                     hoseAimFrame = frameForAngles(
-                        cameraPosition, routeYaw + (yaw - playerHoseStage.spawnYaw), pitch);
+                        cameraPosition, routeYaw + (yaw - playerHoseStage.spawnYaw), routePitch + pitch);
                 }
                 const std::string previousTransition = playerHoseStage.transition;
                 int hitModel = -1;
@@ -5760,11 +5761,15 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     playerHoseStage.result == PlayerHoseStage::Result::Running;
                 if (hoseActionActive) {
                     constexpr float streamLength = 2000.f; // 0046C5A0 traces a 2000-unit hose segment.
-                    const V streamStart = cameraFrame.position;
+                    // 00465EF0 offsets the stream source from the entity frame:
+                    // +10*basis3 +15*basis2 -10*basis1. Keep steering on the
+                    // direction only; 00466780 rotates a temporary aim frame.
+                    hoseStreamStart = cameraFrame.position + cameraFrame.axis[2] * 10.f +
+                        cameraFrame.axis[1] * 15.f - cameraFrame.axis[0] * 10.f;
                     const V streamDelta = hoseAimFrame.axis[2] * -streamLength;
-                    hoseStreamEnd = streamStart + streamDelta;
+                    hoseStreamEnd = hoseStreamStart + streamDelta;
                     Hit streamHit;
-                    if (collision.tracePoint(streamStart, streamDelta, 0x43, 2, streamHit)) {
+                    if (collision.tracePoint(hoseStreamStart, streamDelta, 0x43, 2, streamHit)) {
                         hoseStreamEnd = streamHit.point;
                         hitModel = streamHit.model;
                     }
@@ -6660,7 +6665,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         fogState, lightStyles, cameraFrame.position, yaw, pitch, width, height,
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
-            if (hoseStreamVisible) drawPlayerHoseStream(cameraFrame.position, hoseStreamEnd);
+            if (hoseStreamVisible) drawPlayerHoseStream(hoseStreamStart, hoseStreamEnd);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};

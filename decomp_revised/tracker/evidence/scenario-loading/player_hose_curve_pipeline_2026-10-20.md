@@ -56,10 +56,28 @@ operations and loop boundaries are in the fresh excerpt.
 `00490AB0` accepts normalized path input, scales by total duration, finds two
 adjacent samples and linearly interpolates XYZ. `00490BB0` uses the same scaled
 time to find the control-record interval and linearly interpolates LookAt XYZ;
-it also returns a cached-record notification used by the PlayerHose caller.
-The updater uses constant `+500` in its normalized progress advance, but the
-retail frame-delta calibration is not established. Treating this as 500 host
-world units per second is a port assumption, not verified timing parity.
+it returns the selected control-record address when that record differs from
+the cached address, then updates the cache on every successful sample. The
+record is therefore a change notification: the first selected record is
+reported because `00490510` initializes the cache to null, and subsequent
+records are reported when the sample crosses their time key. `004677D0`
+resolves the notified record's `+0x10` node pointer and accepts the node when
+it matches the expected next-hotspot pointer or retains its first-hotspot
+marker. On acceptance it clears `M_IsFirstHotSpot`, stores `D_NextHotSpot` as
+the next expected anchor, enters state 5, and stores mode-scaled `M_SpotTime`
+as a budget at PlayerHose `+0x1A84`. `00465FB0` later copies that budget to the
+live countdown at `+0x1A7C` when entering state 4. The precise scheduler-frame
+gap between those calls is unresolved.
+
+The shared host now tracks each route control node's sampled arc-length key,
+emits an event only when its selected record changes, starts the first marked
+hotspot on its anchor, and starts each D-linked hotspot only when its A-rail
+anchor is selected. If target cycles finish first, the host waits at that
+boundary. This follows the source event shape; host frame cadence and rail
+speed remain provisional. The updater uses
+constant `+500` in normalized progress advance, but retail frame-delta
+calibration is not established. Treating this as 500 host world units per
+second is a port assumption, not verified timing parity.
 
 ## Camera placement
 
@@ -68,14 +86,19 @@ The PlayerHose constructor trace establishes entity origin storage, while
 from X/Z at Y `+50` down to Y `-2000` through `0048FF30` using world trace
 arguments `1,2`, then places the PlayerHose origin at sampled X/Z and hit Y
 `+32`. `0048FF30` returns zero on a miss. The sampled LookAt target is
-subtracted from the rail position to form the view direction. No live retail
-capture was available for camera cadence, floor-miss behavior, mouse-to-nozzle
-aim interaction, or orientation rounding.
+subtracted from the rail position to form the view direction. `00465EF0`
+computes the stream source point from the entity frame as
+`origin + 10*basis3 + 15*basis2 - 10*basis1`; `00466780` applies its steering
+rotations to a temporary aim frame, so aim direction and source point use
+separate frames. No live retail capture was available for camera cadence,
+floor-miss behavior, mouse-to-nozzle aim interaction, or orientation rounding.
 
 The shared host now builds the same authored A-link rail, samples ten
 subdivisions per segment with the corresponding cubic curve, queries floor
 height, and constructs a camera frame toward the interpolated B target. It
 advances at 500 units per host second as an explicitly provisional timing
-assumption. Mouse aiming remains an independent provisional offset from the
-rail look direction. The build is a code compilation check, not a controlled
-retail comparison or parity result.
+assumption. It offsets the stream source along the rail frame using the
+`00465EF0` expression and applies host mouse steering around the rail-derived
+aim; mouse scaling, accumulator behavior, and rotation order remain
+provisional. The build is a code compilation check, not a controlled retail
+comparison or parity result.
