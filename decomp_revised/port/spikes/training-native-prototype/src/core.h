@@ -113,20 +113,16 @@ struct Player{
  // origin/bounds transform and callback timing are not yet matched.
  bool step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
   const bool priorContactLatch=collisionLatch;
-  cooldown=std::max(0.f,cooldown-dt);
   if(crouchEdge){
    if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}
    else if(ground)crouch=true;
   }
-  // State 4 exits this Player update after its JUMP clearance query; the
-  // integrator and collision callbacks do not run on that branch.
-  if(crouch){
-   if(jump&&jumpEdge&&!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;
-   delta={};
-   return false;
-  }
+  // State 4 builds and smooths the capped movement velocity before polling
+  // JUMP. Its action branch then returns before the velocity integrator and
+  // collision callbacks, whether or not the clearance query succeeds.
+  const bool movementCrouching=crouch;
 
-  float speed=crouch?260:400;
+  float speed=movementCrouching?260:400;
   float cp=climbing?std::cos(pitch):1,sp=climbing?std::sin(pitch):0;
   V wish{-std::sin(yaw)*cp*forward+std::cos(yaw)*strafe,sp*forward,
          -std::cos(yaw)*cp*forward-std::sin(yaw)*strafe};
@@ -142,6 +138,14 @@ struct Player{
    v.z=float(wish.z*(1-weight)+v.z*weight);
    if(climbing)v.y=float(wish.y*(1-weight)+v.y*weight);
   }
+
+  if(movementCrouching){
+   if(jump&&jumpEdge&&!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;
+   delta={};
+   return false;
+  }
+
+  cooldown=std::max(0.f,cooldown-dt);
 
   const bool wasClimbing=climbing;
   bool jumped=false;

@@ -20,6 +20,15 @@ action query is at `00453708..00453779` and routes to the same clearance helper
 collision loop `0043F6D0` when byte `ESI+0x240` is clear. This establishes
 local ordering, not the outer callback cadence.
 
+A fresh current-hash instruction check narrows the state-4 exit: velocity
+half-life/blending at `004532B3..004532EF` runs before the `00453708` state
+branch. In state 4, the named JUMP query at `00453739` reaches the epilogue
+whether it returns false or calls `0044BCE0`; this branch bypasses
+`0044E990`, the root `+0x64` integrator, and the `0043F6D0` collision pass.
+State 4 therefore updates the capped/smoothed velocity but does not integrate
+Player position in that pass. The exact instruction excerpt is
+[`player_crouch_velocity_return_2026-10-20.asm`](player_crouch_velocity_return_2026-10-20.asm).
+
 The source selects a pitch cap from DifficultyLevel at the mission stat store:
 20, 40, or 70 degrees. State 5 or byte `ESI+0x240` raises that cap to 45
 degrees when the base cap is at most the float at `004E1C1C` (45); otherwise

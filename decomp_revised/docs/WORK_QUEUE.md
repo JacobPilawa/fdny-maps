@@ -29,6 +29,10 @@ parity, and RNG interleaving remain open. Evidence is in
 [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md)
 and
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
+The bounded FireRescue spread audit found the host's per-attempt RNG sequence
+matches the pinned `00447A90` routine for accepted, rejected, and geometry-miss
+branches. It found no justified reorder; interleaving across contact candidates
+and callback cadence remain the open RNG questions.
 The bounded `+0x1C` write census confirms constructor/reuse resets and
 distinguishes UserData floor-flag and embedded-subobject writes; no direct
 nonzero write to the FireRescue root eligibility byte was found, while alias
@@ -229,6 +233,15 @@ the root vtable `+0x64` integrator, then collision loop `0043F6D0` when
 movement byte `+0x380` is clear. State 4 queries JUMP and routes to
 `0044BCE0`; state 6 calls a separate update path.
 
+Current-hash x86 disassembly shows state 4 reaches its JUMP query after the
+movement-vector cap and velocity smoothing. Both query outcomes return before
+`0044E990`, root vtable `+0x64`, and collision loop `0043F6D0`; the true action
+first calls the uncrouch helper `0044BCE0`. The shared host now applies the
+state-4 cap and blend, then returns before cooldown, position integration, and
+collision. This preserves the recovered local order while its movement basis
+and outer callback cadence remain provisional. See
+[`player_crouch_velocity_return_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_crouch_velocity_return_2026-10-20.asm).
+
 Retail selects pitch caps 20/40/70 degrees from DifficultyLevel, raises the
 cap to 45 in state 5 or when byte `+0x380` is set if the base cap is at most
 45, and uses a separate movement-vector cap of 400 normally, 260 in state 4,
@@ -265,6 +278,10 @@ host scalar is positive for right; the world-direction mapping remains open
 because the retail vector is transformed through a runtime frame. Retail input
 bindings and magnitudes are now mapped, with callback cadence and camera/
 ActorInfo composition still unresolved.
+Common equipment offsets are source-backed zeros from `0045F660`, while Axe
+offsets are dynamic and already modeled in `ItemViewPose`; the Axe callback's
+live scheduling remains unresolved. This removes placeholder item data from
+the possible frame input but does not establish movement parity.
 `00482AD0` derives a half-life consumed by `00482FC0`; for the fixed movement
 bases, retail's `pow(0.5,dt/halfLife)` is algebraically equivalent to the
 host's `pow(base,27*dt)`. Host base selection, x87 rounding, and callback
@@ -282,11 +299,14 @@ no sign flip is inferred. Details and exact binding codes are in
 [`player_movement_input_bindings_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_input_bindings_2026-10-20.md).
 
 The host now raises the default DifficultyLevel-1 pitch clamp from 40 to 45
-degrees in the `climbing` state adapter. The current rescue-all macOS app
-compiled with SHA-256
-`92715dddece1a41a2045d7c53704dda70bbb635aa0dc0d79282919f6eb7a2ea6`; linking
-warned that installed `json-c` targets macOS 27.0 while the build target is
-13.3. The Info.plist check passed. This is compile-only evidence. `Player::step` still substitutes
+degrees in the `climbing` state adapter and models state-4's pre-return capped
+velocity blend. The latest rescue-all macOS app has matching standalone and
+packaged arm64 executable SHA-256
+`d2a0fc8a201fec494537ad717591aa2f57de9af2ead2e5d8e9ccf515d89652d7`; the
+build emitted all eight rescue choices and 17 scene packages, and `Info.plist`
+validation passed. Linking warned that installed `json-c` targets macOS 27.0
+while the build target is 13.3. This is compile/package evidence only; no tests,
+interactive gameplay, or retail parity check was run. `Player::step` still substitutes
 `ground`/`climbing` booleans, fixed 400/260 values, camera pitch for frame
 `+0x3320`, and a host collision loop. The debug `+0x380` action path is not
 exposed. The `+0x198` writer and sample predicate are known, but its initial
@@ -1582,6 +1602,10 @@ body-bearing functions and 287 external entries.
 | `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms selector scheduler and Jumps' 500 ms gate. Follow-up mapped the `0045331A` call gate and `00491140` sample-pattern writer. `FootStep1`–`FootStep4` are packaged in every scene; the shared host now gates playback from its preceding HeadMotion flag and increments the stat. First +0x198 value, +0x558 computed writers, RNG interleaving, and cadence remain open. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is crouch and its JUMP query routes to `0044BCE0`. Completion Time, Air Time, Jumps, and Total Steps are integrated with provisional host cadence. |
 | `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, `+0x3450` timer/delta accumulator, movement-vector caps, transform construction/composition, and helpers. Ordinary `+0x3460` setter vector is resolved as normalized selected-item aim/view data plus `(0,height,1000)`. `+0x3450` semantic name/default, final frame/world orientation, local lateral sign mapping, callback cadence, and camera/ActorInfo relationship remain open. Retail action magnitudes are 1.0 forward and 0.75 lateral. Smoothing exponent relationship is mapped. No edits. |
 | `player_frame_runtime` (Luna) | Player `+0x3460` frame writers, composition, axes, and update cadence | Constructor `00453D50`, callback `0044F340`, frame helpers `0042D2D0`/`004977B0`, saved xrefs, `equipment_view_frame_trace_2026-10-17.c`; `player_locomotion_frame_axes_2026-10-20.md` | Complete, read-only; identity/null-parent frame at construction and callback mutations through slots `+8`/`+0x14` are mapped. Slot +8 sets world +Y up; slot +0x14 installs the ordinary caller vector `normalize((aimOffset + (0,height,1000)) - viewOffset)` and repairs the other axes. Position/parent are unchanged. Equipment-varying final axes, outer callback cadence, and camera/ActorInfo relation remain unresolved. No edits. |
+| `locomotion_frame_gap` (Luna) | Player state-5/root `+0x380` movement transform versus current host | `core.h`, `scene_viewer.cpp`, locomotion/frame/state evidence | Complete, read-only; confirmed the host substitutes camera yaw/pitch for the runtime frame transform. Equipment vectors are available for common items, but frame composition/world direction and callback cadence still prevent a parity-safe special-state change. No edits. |
+| `locomotion_item_offsets` (Luna) | Selected item `+0x1E4/+0x1F0` inputs consumed by `0044F340` | Common equipment setup `0045F660`, Axe writer `0045FEC0`, `item_view_pose.h`, view-call oracle | Complete, read-only; HoseSpray/extinguisher/goggles and initial Axe offsets are source-backed zeros; Axe's dynamic writer is already implemented in `ItemViewPose`. Its live Think scheduling is not established, so activation cadence remains open. No edits. |
+| `fire_spread_rng_gap` (Luna) | Per-attempt `00447A90` RNG draws and host FireRescue comparison | Pinned `00447A90_fresh.c`, assembly/call-order evidence, `fire_spread.h`/`fire_update.h` | Complete, read-only; successful/rejected/missed attempts preserve source draw order in the host. Cross-class candidate interleaving and callback cadence remain unresolved; no per-attempt code change recommended. |
+| `player_crouch_velocity_return` | State-4 movement-vector/smoothing order and return boundary | Current-hash x86 excerpt `player_crouch_velocity_return_2026-10-20.asm`, `00452570_FUN_00452570.c`, `core.h` | Implemented source-shaped crouch cap/blend before state-4 JUMP return; normal integrator/collision remain skipped. Local movement basis and recurring cadence remain provisional. |
 | `player_movement_input_bindings` (Luna) | Retail `MOVE_*` action registrations, default keyboard aliases, local movement contributions, and host comparison | Pinned `004395C0`/`00437410`/`00438BF0`/`00452570` exports and `input.rrf`; `player_movement_input_bindings_2026-10-20.md` | Complete, read-only; verified arrows plus WASD, `+1/-1` forward and `+0.75/-0.75` local lateral. Shared host now accepts both key sets. Local lateral sign/world mapping, key-rebinding behavior, and cadence remain open. No agent edits. |
 | `movement_gate_bytes` (Luna) | Player root `+0x198/+0x380` initialization, writers, action strings, and movement/Total Steps gates | Headless Ghidra read-only writer/constructor scans; `player_movement_gate_bytes_2026-10-20.md`; `player_total_steps_and_headmotion_2026-10-20.asm` | Complete, read-only; `+0x380` initializes clear, is set by `DBG_TOGGLE_SPECT`, and cleared by `JUMP`, with state `+0x18C=3` on both transitions. `+0x198` is written by `00491140` from a strict local minimum of head-motion Y samples and gates `0044EA90`; initial value remains unknown. The host uses a deterministic false initial state. No edits. |
 | `total_steps_producer` (Luna) | `0044EA90` callsite gate, sound selector/resources, and host integration seam | Current-hash Player movement disassembly, Player init, `sound.rrf`, `export_evs_bundle.py`, `scene_audio.h`, `player_footsteps.h`, `scene_viewer.cpp` | Complete, read-only trace; mapped callsite `0045331A`, prior +0x198 sample gate, 100 ms scheduler, shared-RNG selector/retry, and sound/stat order. `FootStep1`–`FootStep4` ship in every scene. Shared rescue loop now advances HeadMotion history, requests footstep audio, and increments Total Steps. First +0x198 value, +0x558 computed writers, +0x380 debug action path, RNG interleaving, and Player cadence remain provisional. No gameplay edits by the audit agent. |

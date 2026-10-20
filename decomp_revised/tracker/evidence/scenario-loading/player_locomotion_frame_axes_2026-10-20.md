@@ -44,6 +44,17 @@ or its world-direction interpretation. The frame's third axis is equipment
 dependent, and the movement block only uses `+0x3460` for its special movement
 transform. Do not substitute camera pitch/yaw for this equipment vector.
 
+The equipment source inputs are present for the four modeled tools. Common
+setup `0045F660` initializes item `+0x1E4` view and `+0x1F0` aim offsets to
+zero; the HoseSpray, extinguisher, goggles, and Axe setup paths call that helper.
+The Axe's later `0045FEC0` callback writes dynamic offsets from its animated
+sine phase, and the host already models that arithmetic in
+`src/item_view_pose.h`. Thus the values can be supplied without a zero-vector
+placeholder. The remaining Axe input gap is the live callback activation and
+frame ordering; the current offset/view oracle verifies 420 words but stubs
+item Think callbacks. These facts narrow the data gap without resolving final
+frame composition, world-direction mapping, or recurring cadence.
+
 ## Host status
 
 `Player::step` still uses a camera-pitch substitute for the retail `+0x3320`
