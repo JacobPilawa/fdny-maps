@@ -164,10 +164,13 @@ and routes a true result to `0044BCE0`; it does not call the normal
 ScriptActor branch at `004518D4` also directly calls producer `0044E990`. The
 state-4 query and helper are preserved in
 [`player_jump_action_state4_2026-10-20.asm`](player_jump_action_state4_2026-10-20.asm).
+The `crouch` and `uncrouch` tokens resolve state 4 as crouch, and `0044BCE0`
+is also the ScriptActor uncrouch helper; the JUMP action therefore attempts
+the crouch-clearance/uncrouch path in state 4.
 The separate state-5 branch compares the `climb` token at
 `00451B60` and calls setter `0044C0B0`; the adjacent `unclimb` branch restores
 state 3 only from state 5. Its token is recorded in
 [`player_climb_state_command_2026-10-20.asm`](player_climb_state_command_2026-10-20.asm).
-The full state-4 meaning and mapping to the host's general jump controls remain
+The helper's exact geometry query and mapping of normal-state jumping remain
 open; the host jump impulse and counter should not be described as
 retail-equivalent.

@@ -105,6 +105,9 @@ struct Player{
  void setAshDensity(float value){if(value>1.f)value=1.f;if(value<0.f)value=0.f;ashDensity=value;}
  V maxs()const{return {30,crouch?25.f:85.f,30};}
  // PlayerRescue Think -> IntegrateVelocity 0x0049DBC0 -> collision callback 0x0043F810.
+ // Jump input is still a host adapter: retail JUMP runs only in crouch state
+ // 4 and calls the uncrouch clearance helper 0044BCE0. Normal-state 0044E990
+ // uses a timed contact latch; its relation to a direct user action is open.
  void step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
  collisionLatch=false;
  cooldown=std::max(0.f,cooldown-dt);if(crouchEdge){if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}else if(ground)crouch=true;}

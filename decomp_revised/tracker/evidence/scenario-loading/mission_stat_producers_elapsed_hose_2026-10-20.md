@@ -77,10 +77,11 @@ requests sound, and stores the current clock. The `jump` ScriptActor branch at
 `00451B92` is under the `climb` token; the adjacent `unclimb` branch returns
 state 5 to state 3. The Player action map registers `JUMP` against the default
 `MOUSE_RB` control, and movement update `00453739` queries that action only in
-state 4, routing it to helper `0044BCE0`. The state-not-4 path calls this
-producer at `00453784` independently of the action query. This maps the
-retail `JUMPS` transaction but does not establish a direct input trigger for
-it. The host collision latch has not been proven equivalent to retail
+state 4 (the ScriptActor `crouch` token sets state 4), routing it to helper
+`0044BCE0`, which is also called by the `uncrouch` command. The state-not-4
+path calls this producer at `00453784` independently of the action query.
+This maps the retail `JUMPS` transaction but does not establish a direct input
+trigger for it. The host collision latch has not been proven equivalent to retail
 `+0x12C`, so no jump counter is wired. See
 [`mission_stat_jump_throw_producers_2026-10-20.md`](mission_stat_jump_throw_producers_2026-10-20.md).
 

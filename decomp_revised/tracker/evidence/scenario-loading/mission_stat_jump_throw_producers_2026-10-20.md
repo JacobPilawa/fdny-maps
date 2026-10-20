@@ -46,13 +46,16 @@ The Player action constructor registers `JUMP` at `004395C0` using control ID
 `0045370E..00453739` through `00438550`. It is reached only when Player root
 state `+0x18C` is 4; a true result calls `0044BCE0`, whose geometry query either
 plays the sound at root `+0x508` and leaves state 4, or writes root `+0x88` and
-returns the state to 3. This branch does not call the `0044E990` velocity/stat
-routine. When state is not 4, the update calls `0044E990` separately at
+returns the state to 3. Player ScriptActor token references identify state 4
+as `crouch`: the `crouch` command sets state 4 and the `uncrouch` command calls
+the same `0044BCE0` helper. Thus the default JUMP action is a crouch-clearance /
+uncrouch action in this state. This branch does not call the `0044E990`
+velocity/stat routine. When state is not 4, the update calls `0044E990` separately at
 `00453784`; that routine uses its 500 ms timer and `+0x12C` latch, independent
 of the visible `JUMP` query. The camera/input pass at `0042DB06` also queries
-MOUSE_RB but discards that call's result. The exact state-4 label, the geometry
-query's full meaning, outer update cadence, and mapping to the host's general
-jump controls remain unresolved. See
+MOUSE_RB but discards that call's result. The geometry query's full meaning,
+outer update cadence, and normal-state jump/contact behavior remain
+unresolved. See
 [`player_jump_action_state4_2026-10-20.asm`](player_jump_action_state4_2026-10-20.asm).
 No Space binding was found in the retail Player action constructor.
 

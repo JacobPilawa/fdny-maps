@@ -24,6 +24,20 @@
 0045377e  LEA ECX,[ESI - 0x140]
 00453784  CALL 0x0044e990
 
+; ScriptActor token references resolve the meaning of Player state 4.
+; 004E1C00 is "crouch" (XREF 004518FB); its handler checks state != 4 and
+; an adjacent Player byte before setting root +0x88 and state +0x18C = 4.
+; 004E1BF4 is "uncrouch" (XREF 00451964); its handler calls 0044BCE0.
+; Ghidra data bytes: 004E1C00 = 63 72 6F 75 63 68 00; 004E1BF4 =
+; 75 6E 63 72 6F 75 63 68 00.
+004518fb  PUSH 0x004e1c00
+00451927  CMP dword ptr [ECX + 0x4c],0x4
+00451933  MOV EDX,dword ptr [0x004e1820]
+00451939  MOV dword ptr [ECX - 0xb8],EDX
+0045193f  MOV dword ptr [ECX + 0x4c],0x4
+00451964  PUSH 0x004e1bf4
+00451992  CALL 0x0044bce0
+
 ; 0044BCE0 only runs its body when root state +0x18C is 4. It checks a
 ; clearance/query using Player root +0x4c, +0x78, +0x84, and +0x8c. A true
 ; result requests the sound instance at root +0x508 and returns with state 4.
@@ -42,7 +56,8 @@
 0044bd46  MOV dword ptr [ESI + 0x88],ECX
 0044bd4c  MOV dword ptr [ESI + 0x18c],0x3
 
-; The action method and this state-4 handler are source-backed. The semantic
-; label for state 4, the clearance query's exact geometric interpretation,
-; outer update scheduling, and equivalence to the host's jump controls remain
-; unresolved. Do not infer that the JUMP action directly triggers 0044E990.
+; Together, the named commands show that state 4 is the crouch state and that
+; the JUMP action in that state routes to the same uncrouch helper as the
+; ScriptActor command. The geometry query's exact interpretation, outer update
+; scheduling, and the normal-state jump/contact behavior remain open. Do not
+; infer that the JUMP action directly triggers 0044E990.
