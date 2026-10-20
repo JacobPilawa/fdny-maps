@@ -160,6 +160,12 @@ creates runtime `RCS_WindowFire` actors from path-point fire references. Their
 message handler routes `0x7530` directly to `00468680`, which updates WindowFire's own
 timer and geometry when its `+0x2A8` state has `+0xC` and `+0xE` gates set.
 This path has no direct call to FireRescue suppression or its doused counter.
+In the PlayerHose initializer/update pseudocode, `param_1` is an `int *`, so
+`param_1 + 0x520` is the embedded stream component at PlayerHose byte `+0x1480`,
+not byte `+0x520`. `0046C5A0` writes its hit XYZ and active flag at PlayerHose
+`+0x148C/+0x1490/+0x1494/+0x149C`; `00464AA0` reads this owner state, while
+the DouseHose callback object owns a separate contact queue at `+0x28`.
+Keep the stream state and callback queue as distinct port objects.
 Fresh tracing of `004658A0`, `00465A20`, `00465FB0`, `004674A0`, `004677D0`,
 `00468850`, `00466C50`, and `00466CE0` resolves selected/dousing gates,
 per-hotspot `Q_NumCycles`, the mode-scaled `M_SpotTime` deadline, and the
@@ -191,12 +197,30 @@ actors and path nodes; the rescue catalog and macOS bundle also omit all four
 dedicated hose stages. There is no PlayerHose runtime model or result adapter
 yet. Reuse this package boundary in the shared host, keeping the new system
 separate from Training's interaction path and rescue-player transactions.
+The retail `thegame.lev` source (SHA-256
+`ee6819873cd540e67613774d848506561e2861442b37ef301e27273805d558c6`) has 13
+records: Training plus eight `rescue.rrf` missions and four `hose.rrf` stages.
+The current chooser deliberately keeps only the eight rescue records; the hose
+records are `dock_h` (source ordinal 1), `const_h` (5), `city_h` (8), and
+`oil_rig_h` (10). The dedicated gameplay and bundle catalog need to carry
+these alongside the existing rescue path once the PlayerHose runtime adapter
+is available.
 Defined-string xrefs also place `RC_HoseLvlStart/Win/Lose` in the
 `TRadioChatter` setup at `004895C0`, which registers `TChatterSet` entries via
 `00489200`. `004897C0` resolves the message key, and the emitters' nonzero
 payload selects the shuffled-entry path at `00489110`, which requests the
-chosen sound through manager `004A0BE0`. The configured hose sound names and
-result presentation remain unresolved. The supporting export is
+chosen sound through manager `004A0BE0`. `Data/ResDefs/sound.rrf` maps the
+three keys to `start2_b.wav`, `hosewin2.wav`, and `lose5_b.wav` under
+`Data/Snd/chatter/` (SHA-256
+`433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333`). This
+confirms configuration and a sound request, not audible playback.
+`Data/ResDefs/hose.rrf` maps result selectors 71/72 to `paperwin-h.bmp` and
+`paperlose-h.bmp` with `paperwin_a.bmp` (SHA-256
+`93a1b2dae7d755fdd66fabaee89514de8e420cfb62f2f96132b341c0cce6fe45`), but a
+PlayerHose result consumer is not confirmed. The apparent `+0x198` consumer in
+the prior widget export is a generic rescue `PlayerStatus` path, not PlayerHose.
+The result presentation and mission transition remain unresolved. The
+supporting export is
 [`hose_stage_message_registration_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/hose_stage_message_registration_fresh_2026-10-20.c).
 Keep this path separate from rescue-player HoseSpray, which calls shared
 FireRescue suppression with `finalize=1`; the extinguisher route remains
@@ -207,20 +231,21 @@ action byte `+0xC58` is active. That helper reads contact `+0x614..+0x61C`,
 padding `+0x620`, and gate `+0x624`, evaluates shared ellipsoid falloff, and
 calls `00448970(finalize=1)` at influence `>= 0.01`. The extinguisher message
 route remains `finalize=0`; preserve that distinction. The fresh 16-instruction
-decoded-offset scan found no direct HoseSpray XYZ writer. `0046D1B0` receives
-the attachment subobject at HoseSpray `+0x608` and writes its subobject
-`+0x15C` (absolute `+0x764`) for animation/visuals, not contact `+0x614`.
-The attach and activation callbacks also do not write the contact point.
-Computed aliases, bulk copies, engine helper writes, and the exact HoseSpray
-contact point remain unresolved. The WindowFire `+0x10` scan found a clear at
+decoded-offset scan found no direct HoseSpray XYZ writer. The constructor,
+action callbacks, attach, setup, and update have no explicit contact-vector
+write in the examined functions. `004640F0` computes a world-space point for
+`0046D1B0` attachment visuals; that helper writes attachment state at absolute
+`+0x764`, not the contact fields read by `00463EF0`. The actual direct,
+computed, or engine-assisted producer remains unresolved; a live watchpoint on
+the allocated object is the clearest follow-up. The WindowFire `+0x10` scan
+found a clear at
 `00468B01` in `00468AC0`, with no nonzero store in the examined class/manager
 methods; `0x7530` calls `00468680` directly while the separate `00468870`
 recurring branch is gated by that byte. Its authored role and indirect/runtime
-writers remain open. Next trace Construction branch entry, configured chatter
-sounds, and result presentation for `RC_HoseLvlStart/Win/Lose`; the hotspot
-cycle and sound-request producer are now traced. Separately trace
-the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`; implement
-each source-backed host route with separate state. Evidence is in
+writers remain open. The configured chatter resource names and request path
+are traced; result presentation and mission transition remain open. The
+HoseSpray contact producer and Construction branch entry also remain open.
+Implement each source-backed host route with separate state. Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),

@@ -14,6 +14,26 @@ Fresh pseudocode for the state and transition functions is in
 The prior dedicated contact and WindowFire trace is in
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c).
 
+## PlayerHose stream component and DouseHose owner
+
+In the Ghidra pseudocode, `00466D60` and `00466780` receive
+`int *param_1`; therefore expressions `param_1 + 0x520` are dword-indexed and
+refer to byte offset `PlayerHose+0x1480`. This is the embedded stream component
+initialized by `0046D6B0`, passed through path setup, and supplied as the owner
+payload for the registered `RCS_DouseHose` callback context. It is not a
+DouseHose helper at byte `PlayerHose+0x520`.
+
+`00466780` passes that stream component to `0046D1B0`; `0046D1B0` updates its
+stream presentation and calls `0046C5A0(this)` with the same component. On a
+world collision, `0046C5A0` writes hit XYZ and the active byte at component
+offsets `+0x0C`, `+0x10`, `+0x14`, and `+0x1C`, which are PlayerHose byte offsets
+`+0x148C`, `+0x1490`, `+0x1494`, and `+0x149C`. `00464AA0` obtains the owner
+through the DouseHose callback context and reads its XYZ, radius `+0x18`, active
+byte `+0x1C`, and intensity `+0x3B0`. It submits contacts through the
+DouseHose callback object's separate queue at `+0x28` via `00481A60`. This
+distinguishes the stream collision result from the callback context and its
+queue, and from the unresolved rescue HoseSpray contact fields at `+0x614`.
+
 ## Dousing one WindowFire target
 
 The per-path manager at `00465B90` reads the `ZF0..ZF8_FireModel` and paired
@@ -92,9 +112,11 @@ and advances the WindowFire cycle.
 
 The win handler emits `RC_HoseLvlWin`, writes PlayerHose result field
 `+0x198 = 1`, and enters state 6. The loss handler emits `RC_HoseLvlLose`,
-writes `+0x198 = 2`, and also enters state 6. The downstream message/resource
-consumer, exact result-screen presentation, and any surrounding mission
-transition are not established by these functions.
+writes `+0x198 = 2`, and also enters state 6. A bounded caller search found
+no confirmed PlayerHose result-field consumer. The apparent `+0x198` consumer
+in a previous widget export belongs to the generic rescue `PlayerStatus` path.
+The exact result-screen presentation and any surrounding mission transition
+are not established by these functions.
 
 The PlayerHose functions above emit `RC_HoseLvlStart`, `RC_HoseLvlWin`, and
 `RC_HoseLvlLose`; defined-string xrefs for all three keys also lead to
@@ -105,9 +127,15 @@ the registered sets by key, and the emitters pass byte `1`, which selects
 `00489110`. That method advances through the set's shuffled sound entries and
 requests the selected instance through `004A11A0` and sound manager
 `004A0BE0`. The checked code establishes a sound request for these events, but
-the configured sound names for the hose keys and audible playback have not
-been confirmed. The independent result-screen feedback and mission transition
-also remain open. The hash-pinned export is
+not audible playback. `Data/ResDefs/sound.rrf` maps `RC_HoseLvlStart0`,
+`RC_HoseLvlWin0`, and `RC_HoseLvlLose0` to `start2_b.wav`, `hosewin2.wav`, and
+`lose5_b.wav` under `Data/Snd/chatter/`; this mapping file has SHA-256
+`433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333`.
+`hose.rrf` maps result selectors 71 and 72 to `paperwin-h.bmp` and
+`paperlose-h.bmp` (alpha `paperwin_a.bmp`), but no PlayerHose result consumer
+has been confirmed; these selector entries do not prove that this stage uses
+them. Result-screen feedback and mission transition remain open. The
+hash-pinned export is
 [`hose_stage_message_registration_fresh_2026-10-20.c`](hose_stage_message_registration_fresh_2026-10-20.c).
 
 ## Current authored data in the four dedicated hose maps
@@ -162,8 +190,9 @@ which actors are active together.
   A route and D progression chain both exclude 36.
 - Resolve `M_MaxPressure`, `N_PitchSpread`, and SprayTime units/edge cases from
   their downstream consumers.
-- Identify the configured sound names for the `RC_HoseLvlStart/Win/Lose` keys,
-  and trace the separate stage transition, result HUD, and return flow.
+- Trace the separate stage transition, result HUD, and return flow. Treat the
+  configured chatter filenames as resolved but audible playback as unverified;
+  the generic rescue `PlayerStatus` result widget is not a PlayerHose consumer.
 - Separately trace the rescue-player HoseSpray contact producer at `+0x614`;
   it is not the dedicated PlayerHose/WindowFire path.
 - Implement the two host routes from source-backed state and data, then perform

@@ -2,11 +2,12 @@
 
 Status: **the HoseSpray contact gates, rescue-player `touchhose` allocation,
 dedicated PlayerHose input path, PlayerHose-to-WindowFire contact-message
-route, and dedicated hotspot cycle/time/win/loss state machine are confirmed;
-the HoseSpray world-space contact writer, authored/live Construction branch
-entry, WindowFire `+0x10` authored role, and stage result presentation remain
-open. A bounded decoded-code scan found only a WindowFire `+0x10` clear and no
-nonzero setter in the examined class/manager methods.** This is static
+route, dedicated hotspot cycle/time/win/loss state machine, and configured
+stage chatter sound names are confirmed; the HoseSpray contact-vector writer,
+authored/live Construction branch entry, WindowFire `+0x10` authored role,
+stage result consumer, and mission transition remain open. A bounded
+decoded-code scan found only a WindowFire `+0x10` clear and no nonzero setter
+in the examined class/manager methods.** This is static
 analysis of the pinned retail `FDNYFirefighter.exe` SHA-256
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` using
 Ghidra 12.0.4 and bounded instruction/operand searches. It is not a live hose
@@ -45,12 +46,15 @@ registers the ScriptActor as `Player` and sets up hose path/camera/douse
 components. Update `00466780` reads `MOUSE_LB`, `STEER_PITCH`, and `STEER_YAW`,
 uses `00465EF0` to calculate an aimed hose point, and updates its hose visual
 through `0046D1B0`. `0046C5A0` performs the world collision along the hose and,
-on a hit, stores the hit point, radius, and active gate in the douse helper at
-`PlayerHose+0x520`. The registered `RCS_DouseHose` runtime class uses callback
-`00464AA0` (runtime vtable slot `+0x48`): when that active gate is set, it gets a
-candidate's bounds through virtual slot `+0x0C`, checks AABB overlap against
-the current helper volume, and calls `00481A60` with the candidate, hit point,
-and helper intensity at `+0x3B0`.
+on a hit, stores hit XYZ and the active gate in the embedded stream component
+at PlayerHose byte offset `+0x1480` (owner-relative `+0x0C..+0x14` and `+0x1C`).
+The registered `RCS_DouseHose` runtime class uses callback `00464AA0` (runtime
+vtable slot `+0x48`): when that active gate is set, it gets a candidate's
+bounds through virtual slot `+0x0C`, checks AABB overlap against the stream
+owner volume (radius at owner `+0x18`), and calls `00481A60` with the candidate,
+hit point, and owner intensity at `+0x3B0`. The DouseHose actor has its own
+contact queue at callback-object `+0x28`; the stream component and the
+callback/queue object are distinct.
 
 `00481A60` adds the XYZ plus intensity to its bounded 32-entry contact queue
 and sends the candidate message `0x7530`. In the dedicated hose path,
@@ -90,8 +94,16 @@ with fresh pseudocode in
 The stage-key `TRadioChatter` registration and dispatch to a sound-manager
 request are documented in
 [`hose_stage_message_registration_fresh_2026-10-20.c`](../scenario-loading/hose_stage_message_registration_fresh_2026-10-20.c);
-the key-specific sound names and result-screen consumer or mission transition
-remain unknown.
+`Data/ResDefs/sound.rrf` (SHA-256
+`433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333`) maps the
+three keys to `start2_b.wav`, `hosewin2.wav`, and `lose5_b.wav`. This establishes
+configured resource names, not audible playback. `hose.rrf` (SHA-256
+`93a1b2dae7d755fdd66fabaee89514de8e420cfb62f2f96132b341c0cce6fe45`) maps
+selectors 71 and 72 to `paperwin-h.bmp` and `paperlose-h.bmp` with
+`paperwin_a.bmp`, but a PlayerHose consumer for those selectors is not found.
+The apparent `+0x198` consumer in the previous widget export belongs to the
+generic rescue `PlayerStatus` path, not PlayerHose. Result presentation and
+mission transition remain unknown.
 
 The dedicated maps therefore need their own gameplay trace and shared-host
 integration, not an assumption that they use the rescue Player's slot-4
@@ -107,6 +119,19 @@ HoseSpray `+0x614`. The vtable attach callback `00463460`, activation callback
 `00463400`, action-start callback `004632D0`, setup `00463700`, and constructor
 `004634F0` were checked. The action start sets `+0xC58` and a deadline at
 `+0x3B0`, but none of these functions writes the XYZ contact fields.
+
+The broader update trace confirms the same distinction. `004634F0` allocates
+and initializes HoseSpray without explicit stores to `+0x614..+0x61C`;
+`00463460` attaches the component through an engine virtual call and helper
+`004859E0` using attachment component `+0xC70`. Setup `00463700` gets the
+current model through a virtual getter and calls `0046D6B0` for the `+0x608`
+attachment. Update `004640F0` computes a candidate world-space point from the
+item transform into a stack temporary, but does not store it to the contact
+fields. It passes that point to `0046D1B0`, which writes visual/animation state
+inside the attachment (`+0x608 + 0x15C`, absolute item `+0x764`) and then calls
+`0046C5A0`; the point is not evidence of the contact vector read by
+`00463EF0`. The action callbacks `004632D0` and `00463300` set and clear
+`+0xC58`; the start callback also sets deadline `+0x3B0` to frame plus 100.
 
 A fresh full-program decoded-instruction scan for literals `+0x614`, `+0x618`,
 `+0x61C`, `+0x620`, and `+0x624` returned 16 instructions. The direct stores at
@@ -127,13 +152,19 @@ cadence, or retail action timing is being inferred for the viewer.
 ## Remaining trace
 
 Trace the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`
-and join it to the item attachment transform consumed by `00463EF0`. Separately
-establish the authored meaning of WindowFire linked `+0x10` and whether an
-indirect/external writer sets it, then identify the configured sounds and
-trace downstream presentation for the registered stage chatter keys. Resolve the Construction
-alternate path and authored hose controls. Implement the two source-backed host
-routes with separate states and preserve extinguisher `finalize=0`. Do not assign a
-guessed contact point or merge the paths.
+and join it to the item attachment transform consumed by `00463EF0`. The
+bounded decoded-offset scan includes direct writers to the same offsets in
+Extinguisher constructor/action functions, but those belong to another class;
+the HoseSpray contact helper contributes reads only. A live debugger
+write-watchpoint on the allocated HoseSpray instance, capturing the first
+writer's call stack, is the strongest next check. Separately establish the
+authored meaning of WindowFire linked `+0x10` and whether an indirect/external
+writer sets it, then trace downstream presentation for the registered stage
+chatter keys. The configured filenames are known, while audible playback and
+the PlayerHose result consumer are not. Resolve the Construction alternate
+path and authored hose controls. Implement the two source-backed host routes with separate states and
+preserve extinguisher `finalize=0`. Do not assign a guessed contact point or
+merge the paths.
 
 The unrelated recurring RescueBot and `runrescuebot` paths also remain
 separate: the one-shot passes Player `+0x340C` to selector `00455230`, while
