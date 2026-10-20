@@ -4,7 +4,9 @@ Status: **the shared game host loads the four dedicated PlayerHose maps,
 resolves authored WindowFire target names to BSP model IDs, applies the
 source-derived numeric mode timer scale, runs a source-shaped target/cycle/
 hotspot state path, and follows the authored HosePath camera rail with a
-floor-height query. Retail menu labels/initial mode, rail timing calibration,
+floor-height query. The shared loop now uses the traced retail delta scale,
+lower pacing threshold, and upper cap. Retail menu labels/initial mode, rail
+speed calibration, SDL tick quantization/focus-pause mapping,
 mouse-to-nozzle mapping, live dousing cadence, WindowFire visuals, result
 widget, and stage transition remain open.**
 This is a port checkpoint, not a live retail-parity result.
@@ -90,9 +92,10 @@ target starts its `+0x258` timer at zero and enables a ramp; host updates add
 `dt/SprayTime`, and the target completes only when the result is strictly
 below zero. The source threshold at `004dc50c` is `0.0f`; zero and negative
 divisor arithmetic are preserved. The callback versus entity-update order,
-frame-delta calibration, and live contact cadence remain provisional. The
-source-derived session mode scale modifies M_SpotTime before it becomes the
-countdown; the countdown's wall-clock units remain unresolved. Host mode index 2 is the default because
+SDL tick quantization/focus behavior, and live contact cadence remain
+provisional. The source-derived session mode scale modifies M_SpotTime before
+it becomes the countdown; the frame-delta trace establishes both values are
+seconds. Host mode index 2 is the default because
 the retail selector and initial index are not yet mapped. Pitch is clamped to
 the current N_PitchSpread in degrees; mapping mouse deltas to retail
 STEER_PITCH/YAW remains provisional. `M_MaxPressure` is loaded but its
@@ -193,3 +196,20 @@ catalog rows, and included `city_h`, `const_h`, `dock_h`, and `oil_rig_h`.
 Linking repeated the existing Homebrew json-c warning: the library was built
 for macOS 27.0 while the target links for 13.3. No tests or interactive run
 were performed; compilation does not establish camera timing or retail parity.
+
+## Frame-clock source and pacing port (2026-10-20)
+
+The timer alias trace resolves `00502b04` to the active WinMM clock record.
+The shared loop now converts SDL millisecond differences with `0.001`, waits
+until the stored delta exceeds `1/60`, and caps the exposed delta at `0.1`.
+The source delta establishes `M_SpotTime`, its countdown, and each
+`SprayTime` divisor are in seconds. The timer source and pause path are
+documented in
+[`player_hose_frame_delta_refs_2026-10-20.md`](player_hose_frame_delta_refs_2026-10-20.md).
+
+The rescue-all macOS app rebuilt successfully. Its standalone and packaged
+executable SHA-256 values match at
+`7d04b10a561f5a1bafc53551ef601093a8a894d6c8a68498c076cc87e2a2f17b`. The
+plist passed validation; all eight rescue choices and four hose scenes remain
+packaged. The existing Homebrew json-c warning remains (built for macOS 27.0,
+linked for 13.3). No tests, interactive run, or retail comparison were made.

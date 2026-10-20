@@ -61,12 +61,13 @@ ramp byte once it passes one. On message `0x7530`, `00468680` requires linked
 `+0x258`, and clears `+0x0D` only when the result is strictly below
 `004dc50c` (`0.0f`); it then resets the timer, updates geometry, and sets
 linked `+0x0F`. The host now uses this zero-start ramp and contact arithmetic.
-Message-versus-entity scheduling and frame-delta calibration remain
-provisional. The current contact trace shows a local WindowFire timer and
+Message-versus-entity scheduling and live contact cadence remain provisional.
+The traced shared frame delta is seconds, with the source `>1/60` pacing gate
+and `0.1` cap now applied by the host. The current contact trace shows a local WindowFire timer and
 geometry transition; it does not call shared FireRescue suppression or update
 the shared Fires Doused statistic. The paired SprayTime is a divisor in the
-observed operation, but its exact authored units and zero-value handling have
-not been established.
+observed operation, so its unit is seconds; its zero-value behavior remains
+open.
 
 The `00468870` export also calls the contact updater when linked `+0x10` is
 set. The writer and authored meaning of `+0x10`, update cadence, and rendered
@@ -184,9 +185,10 @@ to `00481F40` on PlayerHose component `+0xBC0`. The helper's `004B98B0` calls
 floor the current value and stored comparison marker at `+0x278`; the warning
 branch requires current floor `5` and stored floor `6`. A nonzero returned
 low byte makes `004653B0` request `RC_HoseTimeWarn` through `004897C0`. This
-supports a request when the countdown crosses from six to five units. Whether
-those units are seconds, which configured sound entry is selected, and whether
-it is audible in a live stage remain unverified. A second PlayerStatus/widget
+supports a request when the countdown crosses from six to five units. The
+frame-delta trace establishes these countdown units are seconds. Which
+configured sound entry is selected and whether it is audible in a live stage
+remain unverified. A second PlayerStatus/widget
 caller passes a null value and the same literal to the shared helper, so that
 call site's timer semantics differ.
 
@@ -255,10 +257,10 @@ which actors are active together.
   A route and D progression chain both exclude 36.
 - Trace direct or aliased consumers of `M_MaxPressure` at PlayerHose `+0x1834`
   and resolve its effect; trace the pitch clamp's interaction with path-angle
-  progression and SprayTime units/edge cases before implementing those semantics.
-- Confirm the PlayerHose countdown's time units and which `RC_HoseTimeWarn`
-  sound entry is selected; the traced crossing is six-to-five countdown units,
-  not yet verified wall-clock seconds or audible playback.
+  progression and `SprayTime` zero-value handling before implementing those semantics.
+- Trace which `RC_HoseTimeWarn` sound entry is selected and verify audible
+  playback; the source crossing is six-to-five seconds after joining the
+  countdown to the traced seconds-based frame delta.
 - Trace the separate stage transition, result HUD, and return flow. Treat the
   configured chatter filenames as resolved but audible playback as unverified;
   the generic rescue `PlayerStatus` result widget is not a PlayerHose consumer.

@@ -92,6 +92,16 @@ time-scaled movement while retail's delta producer and long-stall behavior are
 unresolved. Continue the shared PropModel pickup and retail HUD work tracked in
 `docs/WORK_QUEUE.md`.
 
+## Frame-clock follow-up (2026-10-20)
+
+The earlier unresolved-source statement above is superseded by the fresh
+hash-pinned trace in
+[`retail_frame_pacing_audit_2026-10-14.md`](retail_frame_pacing_audit_2026-10-14.md):
+the game EXE computes `DAT_00502B04` from WinMM millisecond ticks, waits until
+the stored delta exceeds `1/60`, and caps it at `0.1` second. The shared port
+now uses those scale and pacing thresholds. Focus-pause handling outside the
+delta field and measured retail presentation parity remain open.
+
 ## Follow-up checkpoint — 2026-10-14
 
 Player sweeps now broadphase static collision models by their authored minimum

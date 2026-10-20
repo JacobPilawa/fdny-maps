@@ -17,18 +17,30 @@
   `tracker/evidence/runtime-loop/0042aea0_game_update.c`, and
   `tracker/evidence/genesis-boundary/00494670_frame_dispatcher.c`.
 
-## Open timing source
+## Frame-delta source trace (2026-10-20)
 
-The producer/writer of `DAT_00502B04` is unresolved. Reviewed Ghidra data
-references show reads; a raw scan for common absolute-store encodings in the
-pinned executable found no direct write. This does not rule out an indirect
-write or an engine callback. Timing API imports and the D3D `EndScene`
-presentation path do not establish a frame limiter or VSync behavior.
+The earlier direct-reference scan did not see the writer because the timer
+manager stores through an object alias. In the normal update route,
+`0042aea0 ProcessEverGameUpdate` calls `0042c080(&DAT_00502ab8)`; that manager
+selects a clock record, calls `0042bf70`, and copies its `+0x10` float to
+manager `+0x4c`, which is `DAT_00502B04`. The exact timer pseudocode and
+constants are in
+[`0042bf70_frame_clock_delta_fresh.c`](0042bf70_frame_clock_delta_fresh.c)
+and [`player_hose_frame_delta_refs_2026-10-20.md`](../scenario-loading/player_hose_frame_delta_refs_2026-10-20.md).
 
-The port uses SDL elapsed milliseconds, a provisional 100 ms maximum step, and
-swap interval 1. Time-scaled physics is supported by the retail consumers, but
-the exact retail delta source, long-stall cap, update cadence, and presentation
-limit remain open. Do not claim timing parity from elapsed-time scaling alone.
+`0042bf70` reads `timeGetTime()` millisecond differences, handles DWORD wrap,
+multiplies by binary64 `0.001`, and stores a binary32 delta. It calls
+`Sleep(1)` and resamples while the stored delta is at or below binary64
+`1/60`; deltas above binary64 `0.1` are capped to binary32 `0.1`. On loss of
+focus `0042bf20` records the pause start, and `0042bf40` offsets the clock base
+when focus returns. This establishes the retail shared-delta unit, lower
+pacing threshold, upper cap, and focus-pause clock treatment.
+
+The shared SDL host now applies the same millisecond conversion, pacing
+threshold, and cap. SDL's tick resolution and focus-pause effects on other
+absolute-time consumers still need a controlled check. A same-machine retail
+capture remains necessary before claiming measured presentation or timing
+parity; this static trace does not establish VSync behavior.
 
 ## Port profiling aid and Bank status
 

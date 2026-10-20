@@ -5470,12 +5470,21 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             }
             uint32_t now = SDL_GetTicks();
+            // Retail 0042bf70 converts elapsed milliseconds with 0.001,
+            // waits in 1 ms steps until dt > 1/60 second, then caps dt at
+            // 0.1 second. Keep the same gameplay pacing with SDL's shared tick.
+            float dt = float(double(now - previous) * 0.001);
+            while (double(dt) <= (1.0 / 60.0)) {
+                SDL_Delay(1);
+                now = SDL_GetTicks();
+                dt = float(double(now - previous) * 0.001);
+            }
+            previous = now;
+            if (double(dt) > 0.1) dt = 0.1f;
             extinguisherSprayRenderer.prune(now);
             if (scriptRuntime) scriptRuntime->timeMs = now;
             fogState.update(now);
             advanceWorldStartup(now);
-            float dt = std::min(.1f, float(now - previous) * .001f);
-            previous = now;
             bool passoutRecoveredThisFrame = false;
             if (!playerIncapacitated) {
                 PreviewPlayerFireOps oxygenOps;
@@ -6758,7 +6767,6 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             SDL_GL_SwapWindow(window);
             const auto performanceSwapEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
-            SDL_Delay(1);
             if (performanceAudit) {
                 const auto performanceFrameEnd = PerformanceClock::now();
                 performanceFrameMs.push_back(std::chrono::duration<double, std::milli>(

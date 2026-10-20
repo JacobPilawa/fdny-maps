@@ -29,8 +29,16 @@ initial null cache therefore reports the first sample. The stream source also
 uses `00465EF0`'s frame offset, while host mouse steering remains a provisional
 nozzle direction. Rail speed is interpreted as world units per host second
 and remains provisional. The host applies the traced zero-start WindowFire
-timer ramp and contact subtraction; callback ordering and frame-delta
-calibration remain provisional. Mouse-delta
+timer ramp and contact subtraction. The frame delta is traced through
+`0042aea0` → `0042c080` → `0042bf70`: WinMM millisecond differences are scaled
+by `0.001`, paced until the stored delta exceeds `1/60`, and capped at `0.1`.
+The manager writes the timer record's `+0x10` float through its `+0x4c` alias
+at `00502b04`, explaining why the 55 direct Ghidra references are all reads.
+The shared host now applies these thresholds with SDL ticks and `SDL_Delay(1)`.
+Focus-pause behavior for absolute-time consumers, SDL tick quantization,
+callback ordering, and live retail parity remain open; see
+[`player_hose_frame_delta_refs_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_frame_delta_refs_2026-10-20.md).
+Mouse-delta
 scaling, rendered stream fidelity, M_MaxPressure's effect, result feedback,
 and stage return flow remain open. Do not treat the host build as a live check
 or retail parity. The full port assumptions and compile record are in
@@ -46,7 +54,24 @@ performed.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point, and the source-shaped temporary aim rotation order; speed calibration, state-frame cadence, SDL-to-steering mapping, visuals, WindowFire baseline, countdown units, mode labels/initial choice, result and return flow remain provisional/open |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point, source-shaped temporary aim rotation, and retail-delta pacing; speed calibration, state-frame cadence, SDL-to-steering mapping, visuals, mode labels/initial choice, result and return flow remain provisional/open |
+| Frame-delta clock trace | `0042bf70_frame_clock_delta_fresh.c`, frame-delta evidence note, shared SDL loop | Source producer and second-based delta traced; `>1/60` pacing and `0.1` cap ported; focus-pause/absolute-time mapping and retail parity remain open |
+
+### Frame-clock source and pacing port (2026-10-20)
+
+The timer alias now resolves `00502b04` to the active `timeGetTime()` clock
+record; the shared SDL loop applies the `0.001` millisecond conversion,
+`>1/60` minimum update interval, and `0.1` cap. PlayerHose `M_SpotTime`, its
+remaining countdown, and `SprayTime` are seconds. Focus-pause effects on other
+absolute-time consumers, SDL tick quantization, callback ordering, and retail
+parity remain open.
+
+The rescue-all macOS app rebuilt with matching standalone and packaged
+executable SHA-256
+`7d04b10a561f5a1bafc53551ef601093a8a894d6c8a68498c076cc87e2a2f17b`; its
+plist passed, all eight rescue choices and four hose scenes are packaged, and
+the existing json-c macOS 27.0/target 13.3 linker warning remains. No tests,
+interactive run, or retail comparison was made.
 
 ### Anchor event and stream source follow-up (2026-10-20)
 
@@ -447,9 +472,10 @@ The time-warning caller `004653B0` passes the decremented hotspot countdown and
 literal `5` to shared helper `00481F40`; `004B98B0` floors both the current
 value and comparison marker, and the warning branch requires current floor 5
 and stored floor 6. A nonzero low-byte return requests `RC_HoseTimeWarn`, so
-the source supports a six-to-five countdown-unit crossing. The countdown's
-wall-clock units, selected chatter entry, and audible playback remain
-unverified. `sound.rrf` maps warning entries 0/1 to `time4_b.wav` and
+the source supports a six-to-five countdown-unit crossing. The traced frame
+delta is in seconds, so `M_SpotTime` and its remaining countdown are seconds;
+the selected chatter entry and audible playback remain unverified.
+`sound.rrf` maps warning entries 0/1 to `time4_b.wav` and
 `time5_b.wav`. See the fresh
 [`hose_pressure_path_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_pressure_path_fresh_2026-10-20.c),
 [`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c),
@@ -1815,7 +1841,7 @@ the report is observed.
   `b44840eced38f76a3639271ea593b77cbc856fe0614ed37b5b9341a441da8529`.
 - **Door motion/collision:** Bank's authored door route now applies its source-derived openaway direction and PATH motion from contact; M/N only control the inspection timeline. The fresh continuous route to entity 541 dispatches touch, plays `OpenDoor`, and reaches PATH 1 without M, then stalls on static world model 0 at X offset 24.011. The endpoint/alignment control crosses at X=-719.419. Retail exports confirm swept collision checks static and transformed models and BModel PATH updates model transforms; the exact BSP aperture and live ordinary route remain open. Reproduce from a new app launch and compare touch dispatch, PATH/render/collision pose, player position, and world hits. Callback timing remains provisional.
 - **Bank start/render appearance:** the user expects an open start but sees an opaque enclosure. The fresh EVS-enabled Bank offscreen check submitted all 497 mesh groups, decoded/uploaded 105 base textures, and uploaded 9,474 face lightmaps through the shared atlas. The camera still shows a dark enclosure that has not been matched to the user's interactive view. Retail alpha/reflective state remain open. A pinned Genesis/D3DDrv trace confirms row-preserving uploads and positive retail V progression through source rows; the exporter lightmap V flip was removed. Final pixel parity remains open. Keep the visual diagnosis distinct from player collision. See the Bank start-view surface audit and Genesis face-lightmap handoff.
-- **Bank performance:** the Bank hot path now skips FireRescue LOS traces outside the retail 500-unit gate/falloff, caches collision-model bounds, draws mesh buffers through OpenGL client arrays, culls static groups outside the camera frustum, and caches fire sprite durations at initialization instead of allocating once per fire draw per frame. Moving/posed BModels bypass culling. Bank render, door/vault interaction, and victim-release checks pass; the render-check image is unchanged. The user now reports Bank framerate seems sorted. This does not yet measure same-route retail FPS or frame pacing; the delta writer and presentation limit remain unresolved. Keep physics time-scaled while those retail timing facts remain open. See [`bank_runtime_performance_followup_2026-10-14.md`](../tracker/evidence/runtime/bank_runtime_performance_followup_2026-10-14.md).
+- **Bank performance:** the Bank hot path now skips FireRescue LOS traces outside the retail 500-unit gate/falloff, caches collision-model bounds, draws mesh buffers through OpenGL client arrays, culls static groups outside the camera frustum, and caches fire sprite durations at initialization instead of allocating once per fire draw per frame. Moving/posed BModels bypass culling. Bank render, door/vault interaction, and victim-release checks pass; the render-check image is unchanged. The user now reports Bank framerate seems sorted. The shared `00502B04` source is traced to WinMM elapsed milliseconds, a `>1/60` pacing gate, and a `0.1` cap, now ported through SDL; same-route retail FPS, focus-pause timing, and presentation behavior remain open. See [`bank_runtime_performance_followup_2026-10-14.md`](../tracker/evidence/runtime/bank_runtime_performance_followup_2026-10-14.md) and [`retail_frame_pacing_audit_2026-10-14.md`](../tracker/evidence/runtime/retail_frame_pacing_audit_2026-10-14.md).
 - **Extinguisher, hint windows, and damage feedback:** Training entity 161 `ext1` is authored as PropModel `D_Model=2` (`ext.act`) at `(780,-164,-1748)`, with 70-unit touch radius and `touch:*RefillExt`; it has no `E_Use`. That macro equips/refills the extinguisher and plays `Steam4`. The viewer now exports and draws world PropModels and routes player-point/radius contact through authored script events, including `ext1`. Its contact path applies the lower-level cluster-PVS rejection, while the runtime area matrix/current-view semantics and update cadence remain open. Training build and render checks pass, but no live contact or retail capture has confirmed the pickup yet. Retail hint routing `0044EE50→004564C0` constructs a GUI text widget at Player `+0x6D8`; its resource-1020 atlas, glyph grid, color markup, and strict timeout are ported, while mode-2 placement and overflow remain open. No generic full-screen damage overlay was found in the bounded audit. See [`propmodel_world_actor_port_2026-10-14.md`](../tracker/evidence/scenario-loading/propmodel_world_actor_port_2026-10-14.md) and the delegated ledger above.
 - **Fog and remaining red surfaces:** Training's solid red blocks are now
   joined to 25/25 authored BoundsTrigger models using `col_red`; retail setup
@@ -2059,7 +2085,7 @@ symptom remain open.
 | `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommendation integrated as a separate route in the shared game host; authored spline/camera and stage result remain open |
 | `hose_city_data` | Map city_h's authored path, targets, and loader representation | `.local/exports/city_h/entities.json`, `scene_data.h`, lifecycle evidence | Complete; read-only; confirmed 19 path nodes, nine hotspots and 29 `%Model%` target references; no edits |
 | `hose_mode_labels` | Trace PlayerHose session mode index to retail labels/default | Pinned `004677D0`, related PlayerRescue initialization, menu and EVS evidence | Complete; read-only; exact timer factors are source-backed, but labels/default are not; difficulty-like role is suggestive only |
-| `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; corrected the cache-change return polarity; builder/samplers and +0x194 UserData/HosePath mapping are documented; shared camera rail and anchor-driven hotspot entry are ported; delta calibration, state-frame timing, mouse aim, and live parity remain open |
+| `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; corrected the cache-change return polarity; builder/samplers and +0x194 UserData/HosePath mapping are documented; shared camera rail and anchor-driven hotspot entry are ported; delta and countdown units are seconds with the source pacing/cap ported, while focus-pause mapping, state-frame timing, mouse aim, and live parity remain open |
 | `hose_anchor_entry` | Trace `00490BB0` record-cache semantics and `004677D0` hotspot entry timing | Current pinned EXE, Ghidra trace, PlayerHose spline and state exports | Complete, read-only; selected record is returned only on change, initial null cache reports the first record, first/D-linked anchors enter hotspot state, and state-4 countdown copies the stored timer budget; exact frame gap remains open |
 | `hose_aim_camera` | Separate PlayerHose view frame, steering frame, and nozzle/stream source point | `00466780`, `004677D0`, `00465EF0`, `00496DD0`, fresh hose exports | Complete, read-only; stream source point uses the entity frame offset while bounded steering rotates a temporary aim frame; accessor cadence, effective limits, and live orientation remain open |
 | `camhose_data_binding` | Check whether the four BSP exports and host loader expose `RCS_CamHose` spline inputs | `.local/exports/{city_h,const_h,dock_h,oil_rig_h}`, `scene_property_matrix.csv`, `SCENE_DATA_CONTRACT.md`, `scene_viewer.cpp` | Complete; read-only; confirmed no CamHose BSP entities, then constructor/UserData and HosePath offsets established route binding; CamHose is a separate helper and not the route-node source |
