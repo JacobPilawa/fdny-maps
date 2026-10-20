@@ -97,7 +97,7 @@ marker. The fields copied or consumed in this path include:
 | `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
 | `M_SpotTime` | Copied through a mode-dependent multiplier into PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. |
 | `M_MaxPressure` | Copied from the path record's `+0x2C` to PlayerHose `+0x1834`; no direct downstream read was found in the bounded offset scan. |
-| `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp. Its units and interaction with path-angle progression remain open. |
+| `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp in degrees. Its interaction with path-angle progression remains open. |
 | `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |
 | `ZF0..ZF8_FireModel` and paired `SprayTime` | Non-null model references create WindowFire children for the initialized context; each paired SprayTime is copied to its child's linked state. |
 
@@ -109,12 +109,18 @@ limit at `+0x23C`. Pitch is also constrained by the current view-angle limits.
 On hotspot entry, `004677D0` writes the path record's `+0x30` pitch-spread value
 to `+0x238`, and its `+0x2C` max-pressure value to `+0x1834`. The resulting
 orientation feeds nozzle aim helper `00465EF0` and stream presentation
-`0046D1B0`. This establishes an authored pitch bound and aim path, but not the
-field's units or visual cone width. The bounded direct-offset scan found the
+`0046D1B0`. Fresh decompilation of rotation helper `00496DD0` confirms the
+angle input is multiplied by `0.0174532924` and `0.5` before sine/cosine, so
+the pitch and yaw accumulators use degrees and the helper forms half-angle
+rotations. This establishes the authored pitch bound's units, but not the
+rendered stream's cone width. The bounded direct-offset scan found the
 `+0x1834` assignment but no direct read, so `M_MaxPressure`'s downstream effect
 remains unknown. It is distinct from stream-owner intensity at PlayerHose
 `+0x1830` (stream component-relative `+0x3B0`), which the DouseHose callback
 passes to the WindowFire contact.
+The fresh rotation pseudocode is
+[`player_hose_angle_rotation_fresh_2026-10-20.c`](player_hose_angle_rotation_fresh_2026-10-20.c)
+(SHA-256 `30a8b4e2aa55a82592408fcdb8d316a242121f5bb1a6f7913bca6d985ca2bfec`).
 
 `00465FB0` enters state 4, enables the linked active gates, and initializes
 the current spot-time countdown. In state 4, `004674A0` checks cycle
@@ -226,8 +232,8 @@ which actors are active together.
   find a source-backed read of `E_NextHotSpotPathDir`; the current first-hotspot
   A route and D progression chain both exclude 36.
 - Trace direct or aliased consumers of `M_MaxPressure` at PlayerHose `+0x1834`
-  and resolve its effect; trace the pitch-spread units/view frame and SprayTime
-  units/edge cases before implementing those semantics.
+  and resolve its effect; trace the pitch clamp's interaction with path-angle
+  progression and SprayTime units/edge cases before implementing those semantics.
 - Trace the exact warning thresholds and selector state behind `00481F40`;
   the caller's literal `5` and `RC_HoseTimeWarn` resource names do not prove
   displayed seconds or audible entry selection.
