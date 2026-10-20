@@ -96,10 +96,25 @@ marker. The fields copied or consumed in this path include:
 | `D_NextHotSpot` | Resolved to the next hotspot pointer for the PlayerHose state machine. |
 | `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
 | `M_SpotTime` | Copied through a mode-dependent multiplier into PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. |
-| `M_MaxPressure` | Copied to PlayerHose `+0x1834`; downstream pressure semantics remain open. |
-| `N_PitchSpread` | Copied into the path-following state; its gameplay effect remains open. |
+| `M_MaxPressure` | Copied from the path record's `+0x2C` to PlayerHose `+0x1834`; no direct downstream read was found in the bounded offset scan. |
+| `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp. Its units and interaction with path-angle progression remain open. |
 | `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |
 | `ZF0..ZF8_FireModel` and paired `SprayTime` | Non-null model references create WindowFire children for the initialized context; each paired SprayTime is copied to its child's linked state. |
+
+The per-frame updater `00466780` reads `MOUSE_LB`, `STEER_PITCH`, and
+`STEER_YAW`. Its pitch accumulator at PlayerHose byte `+0x230` subtracts the
+pitch input and is clamped to `[-PlayerHose+0x238, +PlayerHose+0x238]`; its yaw
+accumulator at `+0x234` subtracts yaw input and is clamped to the symmetric
+limit at `+0x23C`. Pitch is also constrained by the current view-angle limits.
+On hotspot entry, `004677D0` writes the path record's `+0x30` pitch-spread value
+to `+0x238`, and its `+0x2C` max-pressure value to `+0x1834`. The resulting
+orientation feeds nozzle aim helper `00465EF0` and stream presentation
+`0046D1B0`. This establishes an authored pitch bound and aim path, but not the
+field's units or visual cone width. The bounded direct-offset scan found the
+`+0x1834` assignment but no direct read, so `M_MaxPressure`'s downstream effect
+remains unknown. It is distinct from stream-owner intensity at PlayerHose
+`+0x1830` (stream component-relative `+0x3B0`), which the DouseHose callback
+passes to the WindowFire contact.
 
 `00465FB0` enters state 4, enables the linked active gates, and initializes
 the current spot-time countdown. In state 4, `004674A0` checks cycle
@@ -137,6 +152,28 @@ has been confirmed; these selector entries do not prove that this stage uses
 them. Result-screen feedback and mission transition remain open. The
 hash-pinned export is
 [`hose_stage_message_registration_fresh_2026-10-20.c`](hose_stage_message_registration_fresh_2026-10-20.c).
+
+## Hose time-warning gate
+
+The PlayerHose warning caller `004653B0` passes its integer input and literal
+`5` to `00481F40` on the component at PlayerHose `+0xBC0`. When the helper's
+returned low byte is nonzero, the caller requests `RC_HoseTimeWarn` through
+`004897C0`. A second caller in the PlayerStatus/widget path passes a null
+integer pointer and the same literal, then requests the same key. The helper
+compares the supplied value with its stored value at `+0x278`, uses a global
+floating-point tolerance and rounded-value checks, and queues a record through
+`0048C780`. This supports a shared timer-transition gate; the literal `5` is
+not enough to establish a five-second warning or the exact warning schedule.
+
+`Data/ResDefs/sound.rrf` maps `RC_HoseTimeWarn0` and `RC_HoseTimeWarn1` to
+`time4_b.wav` and `time5_b.wav`; its SHA-256 is
+`433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333`.
+These are configured resources and a source-level sound request, not proof of
+audible output or which entry is heard in a live hose stage. Fresh pseudocode
+is in [`hose_pressure_path_fresh_2026-10-20.c`](../fire-spread/hose_pressure_path_fresh_2026-10-20.c)
+(SHA-256 `c61d19bfaa00d1f385a5384183c1d2f65d85351acb71f63445e2963a0354e980`)
+and [`hose_time_warning_helper_fresh_2026-10-20.c`](../fire-spread/hose_time_warning_helper_fresh_2026-10-20.c)
+(SHA-256 `3a266991ef999dfddafe6108202ba2f269ae88fdddd3f37dd7de1279c91121a6`).
 
 ## Current authored data in the four dedicated hose maps
 
@@ -188,8 +225,12 @@ which actors are active together.
 - Explain which spline/start conditions can enter Construction node 36, and
   find a source-backed read of `E_NextHotSpotPathDir`; the current first-hotspot
   A route and D progression chain both exclude 36.
-- Resolve `M_MaxPressure`, `N_PitchSpread`, and SprayTime units/edge cases from
-  their downstream consumers.
+- Trace direct or aliased consumers of `M_MaxPressure` at PlayerHose `+0x1834`
+  and resolve its effect; trace the pitch-spread units/view frame and SprayTime
+  units/edge cases before implementing those semantics.
+- Trace the exact warning thresholds and selector state behind `00481F40`;
+  the caller's literal `5` and `RC_HoseTimeWarn` resource names do not prove
+  displayed seconds or audible entry selection.
 - Trace the separate stage transition, result HUD, and return flow. Treat the
   configured chatter filenames as resolved but audible playback as unverified;
   the generic rescue `PlayerStatus` result widget is not a PlayerHose consumer.

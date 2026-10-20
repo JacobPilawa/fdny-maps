@@ -186,7 +186,7 @@ hotspot progression link; a read of `E_NextHotSpotPathDir` or runtime entry
 from 36 has not been found. One non-hotspot path record also contains ZF fire
 references. The hash-pinned trace and per-map counts are in
 [`player_hose_stage_lifecycle_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_stage_lifecycle_2026-10-20.md).
-The function-review ledger now has 378 reviewed EXE functions; the tracker
+The function-review ledger now has 380 reviewed EXE functions; the tracker
 atlas, summary, and dashboard were regenerated from the CSVs. This is static
 analysis only; no dedicated hose-stage port implementation or live parity
 check was made.
@@ -197,6 +197,15 @@ actors and path nodes; the rescue catalog and macOS bundle also omit all four
 dedicated hose stages. There is no PlayerHose runtime model or result adapter
 yet. Reuse this package boundary in the shared host, keeping the new system
 separate from Training's interaction path and rescue-player transactions.
+The local `city_h` export is a clean first authored slice: PlayerHose starts at
+`location=3088 -168 2112` with `FirstPathPoint=RCS_HosePath19`, the first
+hotspot is node 1 with A/D links to node 2, `Q_NumCycles=2`, and
+`M_SpotTime=40`. Across its nine hotspots, all 29 referenced fire names match
+the 29 `%Model%` records by `%name%`; these are model entities, not
+`RCS_FireRescue` actors. A dedicated WindowFire target list must preserve each
+ZF slot and paired SprayTime and resolve its model actor separately from the
+rescue fire loader. These are source-matched authored-data facts, not evidence
+of complete route reachability or live behavior.
 The retail `thegame.lev` source (SHA-256
 `ee6819873cd540e67613774d848506561e2861442b37ef301e27273805d558c6`) has 13
 records: Training plus eight `rescue.rrf` missions and four `hose.rrf` stages.
@@ -225,6 +234,28 @@ supporting export is
 Keep this path separate from rescue-player HoseSpray, which calls shared
 FireRescue suppression with `finalize=1`; the extinguisher route remains
 `finalize=0`.
+
+Fresh trace of `00466780` confirms `MOUSE_LB`, `STEER_PITCH`, and `STEER_YAW`
+inputs. Pitch state at PlayerHose `+0x230` subtracts `STEER_PITCH` and is
+clamped symmetrically by `+0x238`; yaw at `+0x234` subtracts `STEER_YAW` and
+uses the symmetric `+0x23C` limit. Hotspot entry `004677D0` copies
+`N_PitchSpread` from the path record's `+0x30` into `+0x238`, and
+`M_MaxPressure` from `+0x2C` into `+0x1834`. The pitch value therefore bounds
+the steerable pitch; its units and relationship to path-angle progression
+remain open. The pressure value has no direct consumer in the bounded offset
+scan and must not be treated as stream intensity. Stream-owner intensity is
+separately at `+0x1830`. `00465EF0` calculates the nozzle aim and `0046D1B0`
+updates the stream visual. See the hose lifecycle note and
+[`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c).
+
+The time-warning caller `004653B0` passes its value and literal `5` to the
+shared helper `00481F40`; a nonzero low-byte return requests
+`RC_HoseTimeWarn`. The helper compares a supplied value with its stored marker
+using a global tolerance and rounded-value checks. `sound.rrf` maps warning
+entries 0/1 to `time4_b.wav` and `time5_b.wav`, but the literal does not prove a
+five-second schedule, selected entry, or audible playback. See the fresh
+[`hose_pressure_path_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_pressure_path_fresh_2026-10-20.c)
+and [`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c).
 
 The rescue-player HoseSpray update `004640F0` calls `00463EF0` while item
 action byte `+0xC58` is active. That helper reads contact `+0x614..+0x61C`,
@@ -1824,6 +1855,9 @@ symptom remain open.
 | `bank_door_audit` | Audit the reported Bank M-only door symptom against live loop and controlled harness | `scene_viewer.cpp`, `bmodel_door_runtime_port.md`, Bank interaction evidence | Complete; no edits; M/N only affect inspection state; continuous aimed route opens PATH but hits static world model 0 at a 24-unit lateral offset; aligned control crosses; live route remains open |
 | `bank_collision_retail` | Trace retail swept collision and BModel transform path against Bank door result | Pinned EXE/Genesis exports, Bank entity/model inventory, `bmodel_door_runtime_port.md` | Complete; read-only; swept hull checks static and transformed models, BModel PATH updates Genesis model transforms; exact leaf and live route remain open |
 | `bank_contact_review` | Audit Bank live-loop contact/PATH ordering and reported M workaround | `scene_viewer.cpp`, Bank door route and interaction fixture | Complete; read-only; no M-to-collision path; live ordinary route still needs capture |
+| `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; keep the eight-entry rescue catalog invariant and add a separate hose catalog/runner with the PlayerHose runtime; no edits |
+| `hose_runtime_data_audit` | Find a source-backed first playable PlayerHose data slice | `city_h/entities.json`, `scene_data.h`, `startup.h`, `scene_viewer.cpp`, lifecycle evidence | Complete; read-only; city_h gives a linear first hotspot path and its 29 ZF names resolve to `%Model%`; no edits; live route, exact camera, timing, collision, and WindowFire effect presentation remain open |
+| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle and contact exports | Complete; read-only; traced pitch/yaw input accumulators and authored N_PitchSpread pitch clamp; M_MaxPressure reaches `+0x1834`, whose downstream effect remains unknown |
 | `bank_retail_collision_trace` | Resolve retail Player hull and swept collision path for Bank obstruction | Pinned EXE/Genesis exports, `core.h`, Bank door evidence | Complete; read-only; retail mins `(-30,-30,-30)`/maxs `(30,85,30)` match the port; exact leaf and live route remain open |
 | `mesh_metadata_audit` | Independently audit world-mesh face-span source correspondence | Exporter, geometry/world-mesh JSON, C++ loader | Complete; read-only; validated field mapping and recommended all-map metadata checks; no renderer change |
 | `retail_material_trace` | Search pinned retail evidence for TexInfo alpha and lightmap render semantics | Ghidra exports, material/driver evidence, Bank and Training exports | Complete; read-only; 2026-10-15 hash-pinned trace maps descriptor/RGB handoff, shared raw projection source and UV formula, two-pass ZERO/SRCCOLOR fallback and two-stage TEXTURE×CURRENT composition, clamp/linear filtering, ZWRITE and LESSEQUAL, one style-sequence step per geEngine_RenderWorld call, and the selector `wMaxSimultaneousTextures > 1`; effective ZENABLE, mip filter, selected-device path, optional face branch, host render-call rate, channel convention, rounding, and full pixel parity remain open |
