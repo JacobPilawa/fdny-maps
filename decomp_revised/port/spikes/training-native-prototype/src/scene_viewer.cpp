@@ -121,6 +121,7 @@ bool jsonNumber(J value) {
 #include "goggles_renderer.h"
 #include "oxygen_hud_renderer.h"
 #include "scripts.h"
+#include "misc_emitter_runtime.h"
 #include "world_startup.h"
 #include "scene_audio.h"
 #include "hose_item_selection.h"
@@ -1324,6 +1325,21 @@ std::vector<PreviewFire> loadPreviewFires(const SceneData& scene, Collision& col
         fires.push_back(std::move(preview));
     }
     return fires;
+}
+
+std::vector<MiscEmitterRuntimeState> loadType5MiscEmitters(const SceneData& scene) {
+    std::vector<MiscEmitterRuntimeState> emitters;
+    J entities = scene.entities();
+    emitters.reserve(size_t(count(entities)));
+    for (int i = 0; i < count(entities); ++i) {
+        J entity = at(entities, i);
+        if (str(field(entity, "class")) != "RCS_MiscEmitter" ||
+            parseFloat(property(entity, "C_Type"), -1.f) != 5.f) continue;
+        MiscEmitterRuntimeState emitter;
+        emitter.entity = integer(field(entity, "index"));
+        emitters.push_back(emitter);
+    }
+    return emitters;
 }
 
 void startPreviewFireLoopSounds(std::vector<PreviewFire>& fires, SceneAudio& audio,
@@ -3449,6 +3465,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     std::vector<PropModelInstance> propModels;
     std::map<int, size_t> propModelByEntity;
     std::vector<PreviewFire> fires;
+    std::vector<MiscEmitterRuntimeState> miscEmitters;
+    std::map<int, size_t> miscEmitterByEntity;
     int fireDividerCycle = 0;
     int nearbySpreadFireCount = 0;
     int nextDynamicFireEntity = 1000000;
@@ -3499,6 +3517,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             readSceneChunkBytes(scene, "chunks/21_visdata.bin"));
         auto bmodelMotions = loadBModelMotions(scene);
         auto boundsTriggers = loadBoundsTriggers(scene);
+        miscEmitters = loadType5MiscEmitters(scene);
+        for (size_t i = 0; i < miscEmitters.size(); ++i)
+            miscEmitterByEntity[miscEmitters[i].entity] = i;
         PreviewWorldModelFlags worldModelFlags;
         // InitializeBoundsTriggerEntity (00441040) sends ModelSetFlags(model, 0)
         // after resolving each valid authored trigger model.
@@ -4124,6 +4145,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     sceneAudio.loopOwned(ambientOwner, soundName, source, player.p, yaw, 2);
                     return true;
                 }
+                auto miscEmitter = miscEmitterByEntity.find(entityId);
+                if (miscEmitter != miscEmitterByEntity.end() &&
+                    applyMiscEmitterCommand(miscEmitters[miscEmitter->second], verb, arguments))
+                    return true;
                 auto propOwner = propModelByEntity.find(entityId);
                 if (propOwner != propModelByEntity.end()) {
                     auto& prop = propModels[propOwner->second];
@@ -4275,6 +4300,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const std::string entityClass = str(field(entity, "class"));
                 if (entityClass == "RCS_BModel" || entityClass == "RCS_BoundsTrigger" ||
                     entityClass == "RCS_PlayerRescue" || entityClass == "RCS_PropModel" ||
+                    (entityClass == "RCS_MiscEmitter" &&
+                     parseFloat(property(entity, "C_Type"), -1.f) == 5.f) ||
                     (dedicatedPlayerHose && (entityClass == "RCS_PlayerHose" ||
                                              entityClass == "RCS_HosePath")))
                     scriptRuntime->startupEntity(entity);

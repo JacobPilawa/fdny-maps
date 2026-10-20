@@ -333,11 +333,32 @@ remain possible. Parent callback cadence also remains unresolved, so the shared
 scene has no faithful visible effect yet. No direct RNG call was found in the
 inspected mode-2 constructor/update path; resource-loader and indirect draws
 remain open. Next trace the descriptor's runtime writer or capture its resource
-IDs, then add the generic actor path with the authored asset and lifetime
-established. Static Boat A command content does not prove natural trigger
+IDs and frame sequence, then complete the generic child renderer and authored
+effect lifetime. Static Boat A command content does not prove natural trigger
 reachability or visible retail timing. No gameplay code, build, or runtime
 check changed in this source-only checkpoint. See
 [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md).
+
+### Shared command-state follow-up (2026-10-20)
+
+The shared mission host now registers type-5 `RCS_MiscEmitter` actors and
+routes their startup bindings plus EVS `setsize <scalar>`, `turnon`, and
+`turnoff` commands into source-shaped actor state. The authored scalar is an
+immediate uniform size; activation records the mode-2 active byte. This makes
+Boat A's initial `setsize 6`/`turnoff` and `QueExploders` mutations available
+to the shared scene runtime, while the event queue still uses provisional
+host update cadence. The host does not render an effect: resource descriptor
+`0x502D40`, its frame sequence, child animation timing, and parent callback
+schedule remain unresolved. Implementation details and build hash are recorded
+in [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md).
+
+### Current-turn audit ledger (2026-10-20)
+
+| Agent | Scope and files | Status |
+| --- | --- | --- |
+| `hose_frame_writer_audit` (Luna) | Rescue HoseSpray transform chain; `equipment_actor_render_path_2026-10-13.md`, `equipment_view_frame_trace_2026-10-17.md`, `equipment_action_pose_followup_2026-10-17.md`, hose host/evidence | Complete, read-only; generic component setup and ActorInfo writer through `geActor_SetPose` are mapped under Player follower `+0x34A4`; HoseSpray numeric matrix and camera join remain open. Findings integrated into the HoseSpray evidence note. |
+| `result_feedback_portability` (Luna) | PlayerRescue result branch and host gate; `mission_outcome_status_dispatch_2026-10-19.md`, `victim_exit.h`, `scene_viewer.cpp` | Complete, read-only; `messageGate=1` is not a safe win signal because it also represents the no-exit-zone path. A loss request has a countdown trigger, but widget duration/placement and repeated sound behavior remain unresolved; no feedback change made. |
+| `core_gap_triage` (Luna) | Shared campaign gameplay gaps; current queue, Boat A EVS/MiscEmitter evidence | Complete, read-only; recommended the authored Boat A C_Type=5 exploder state route. Shared host command-state follow-up implemented above; descriptor-based rendering remains open. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
 
@@ -666,9 +687,12 @@ unresolved.
 The `00463EF0` instruction listing preserves the clock addition and conversion
 that the C-like export omits. Resource-3 material, authored bindings,
 attachment-record purpose, scheduler cadence, and retail parity remain open.
-The generic equipment
-follower chain is confirmed under Player `+0x34A4`, while the exact writer into
-the transform consumed from HoseSpray `+0x58` remains unresolved.
+The generic equipment writer is mapped: HoseSpray's component at item `+0x58`
+is parented under Player follower `+0x34A4`, then composed through
+`00497F70`/`00492110` into ActorInfo and `geActor_SetPose`. Its final numeric
+matrix, any HoseSpray-specific local mutation, and the camera/follower join
+remain unresolved; `touchhose N` attachment records are not linked to this
+transform. The host still uses a provisional camera-derived frame.
 Details and binary/build hashes are in
 [`rescue_hose_spray_port_2026-10-20.md`](../tracker/evidence/fire-spread/rescue_hose_spray_port_2026-10-20.md).
 The shared macOS executable and rescue-all app rebuilt with matching standalone
@@ -1353,6 +1377,7 @@ body-bearing functions and 287 external entries.
 | `rescue_mission_core_gap` (Luna) | Compare current campaign coverage against missing authored mission systems | Rescue catalog and mission evidence/queue | Complete, read-only; maps remain `loaded_inspection_only` by coverage tracker, and static Boat A Exploders are a cross-map MiscEmitter gap. Recommended tracing the C_Type=5 sequence; no edits. |
 | `exploder_setsize_trace` (Luna) | Boat A `QueExploders`, C_Type=5 construction, setsize, activation, and child setup | `boat_a.evs`, Boat A entity export, `004420F0`, `00442900`, `00445600`, `00445720`, `00444D00` | Complete, read-only; confirmed scalar immediate setsize, internal mode 2, active-byte toggle, and four child objects from descriptor `0x502D40`. Resource initialization, visible effect/timing, and shared host path remain open. |
 | `misc_emitter_renderer` (Luna) | C_Type=5 descriptor writer, parent update/render path, child registration and draw | Hash-pinned Ghidra headless listing/decompilation, executable immediate-address scan, `00444D00`, `00445490`, `0047F960` | Complete, read-only; parent slot 9 draws each child through resource lookup and `geWorld_AddPolyOnce`. Descriptor `0x502D40` has one direct xref and no direct static initializer; runtime numeric IDs/frame sequence and callback cadence remain unresolved. No edits |
+| `misc_emitter_host_port` | Shared type-5 MiscEmitter startup and EVS command state | `misc_emitter_runtime.h`, `scene_viewer.cpp`, current-hash `004420F0`/`004424D0` evidence | Implemented source-backed one-scalar `setsize` plus `turnon`/`turnoff` actor state and startup registration; no effect rendering, descriptor resources, or retail cadence claim |
 | `bmodel_liftable_pose_trace` | Lift-mode initializer, held-target writer, and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode plus raw update windows | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the held target at `+0x224` is now composed from movement `+0x338c` and scaled frame basis columns. The center blend follows `0.5^(frameDelta/0.1s)`; frame-to-view semantics and live callback cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no gameplay code change. |
 | `core_gap_inventory` (Luna) | Current core-gap review including Player passout mode-2 HeroDown continuation | Existing `player_herodown_tail.h`, passout port note, work queue | Complete, read-only; found the source-shaped mode-2 continuation already exists, but the shared host defaults mode to 0 and has no evidenced mode-2 scenario setup. No synthetic scenario added. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |

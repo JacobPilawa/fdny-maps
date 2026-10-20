@@ -104,3 +104,32 @@ against the hash-pinned PE. The executable is still
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`. This is
 static evidence only: no runtime memory capture, code change, build, gameplay
 run, or retail-parity check was performed.
+
+## Shared host command-state follow-up (2026-10-20)
+
+The shared rescue scene now creates lightweight runtime state for authored
+`RCS_MiscEmitter` entities with `C_Type=5` and routes their startup scripts and
+later EVS commands through the same host dispatcher. The state starts with the
+source-initialized uniform scale `1.0`; active state stays unset until a
+source-backed `turnon` or `turnoff` callback writes it. The one-scalar
+`setsize` command updates that uniform scale immediately, and `turnon` /
+`turnoff` record the internal mode-2 active byte. This covers Boat A's three
+`exploder` startup bindings and the authored `QueExploders` state sequence.
+
+This is command and actor-state plumbing only. It does not construct the four
+retail child render objects, reproduce descriptor `0x502D40`, or draw an
+explosion. Script queue scheduling still follows the host's per-frame actor
+adapter; the authored one-second `wait` is not a retail cadence measurement.
+The dynamic descriptor resource IDs/frame track and callback schedule remain
+the next evidence gaps. The source file for the command-state adapter is
+`port/spikes/training-native-prototype/src/misc_emitter_runtime.h`; the shared
+dispatcher and type-5 actor registration live in `scene_viewer.cpp`.
+
+The rescue-all macOS app rebuilt after this shared-host change. Standalone and
+packaged executable SHA-256 both equal
+`d2a7f0c32b8e5f772ed32a8fd68ecafbdd57f3dfe33b1130681cb630956c2d61`. The
+Info.plist validation passed, the build emitted all eight rescue choices, and
+all 17 retail scene packages plus the existing custom test-room package were
+copied. The linker warned that installed json-c targets macOS 27.0 while the
+target is 13.3. No tests, interactive run, runtime emitter capture, or retail
+parity check was performed.

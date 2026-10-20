@@ -76,10 +76,13 @@ scanning found 16 authored `touch: tell player (touchhose N)` commands on
 named `tell player` resolution are covered by existing static traces. The
 shared viewer now handles the authored command, slot-4 selection, action
 boundary, sampled 15-section stream, world collision gate, previous-frame
-FireRescue contact, and terminal dousing transaction. Its camera-derived item
-frame, key `4` selection and held-left-mouse action are provisional host
-choices; attachment transform, retail input mapping, effects, and live update
-cadence remain open. `touchhose N` supplies N to `00482780` for both new and
+FireRescue contact, and terminal dousing transaction. Retail's generic
+equipment transform component is parented under Player follower `+0x34A4` and
+composes through ActorInfo to `geActor_SetPose`; the final numeric item matrix
+and its join to the rendered Genesis camera remain unresolved, so the host's
+camera-derived item frame remains provisional. Key `4` and held-left-mouse
+action are provisional host choices; authored input mapping, effects, and live
+update cadence remain open. `touchhose N` supplies N to `00482780` for both new and
 existing items; the helper converts `N * 24 / (item+0xCB0)` toward zero and
 passes the count to the `0x30`-byte attachment-list builder `00485D20`. The
 list records' purpose and argument units remain unresolved. The map evidence,

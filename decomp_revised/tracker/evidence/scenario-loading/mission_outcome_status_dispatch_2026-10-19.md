@@ -31,6 +31,15 @@ state `0x48`, chatter set `RC_ResLvlLose`, and the sound instance at
 `PlayerStatus+0x800`. `004576B0` constructs those two instances using the names
 `RescueWin` and `RescueLose`.
 
+The numeric gate is not itself a reliable mission-win event for the shared
+host. `UpdateFinalExitAvailability` (`004504C0`) also writes
+`Player+0x3438 = 1` when the rescue threshold passes but no exit zone exists,
+then calls `0044C360`; the available trace does not establish that call as a
+completed mission outro. The source win feedback branch is real, but a port
+needs a source-confirmed completed-mission event instead of treating every
+`RescueExitState.messageGate == 1` as a win. See
+[`rescue_completion_and_exit_path.md`](rescue_completion_and_exit_path.md).
+
 The status updater routes named chatter through `004897C0`, which finds the
 set and chooses `00489110` for flag `1`. That routine advances its set cursor
 and wraps at the entry count before requesting the selected sound through

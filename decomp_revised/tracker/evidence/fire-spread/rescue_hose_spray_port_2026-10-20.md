@@ -14,6 +14,31 @@ and the shared-component collision writer described in
 These are static, current-hash traces. They do not establish scheduler cadence
 or retail runtime parity.
 
+## Generic equipment frame chain
+
+The rescue HoseSpray setup `00463700` calls shared helper `0045F660`, which
+configures the item's embedded transform component at item `+0x58` in mode 2
+and stores its follower pointer at item `+0x98`. The component has an identity
+local transform and is parented to Player view follower `+0x34A4`; setup
+`00497E90` stores its resolved ActorInfo pointer at component `+0x94`.
+During Player view update, `0044F340` builds the view frame at `+0x3460`,
+refreshes follower `+0x34A4` through `00483720`, then invokes inventory-item
+post-view callbacks. Component setup `00497E90` stores mode and parent/source
+fields and resolves ActorInfo through `00494500`; updater `00497F70` composes
+the hierarchy and calls `00492110`, which writes ActorInfo's matrix and
+dispatches `00492450` to apply it through `geActor_SetPose`.
+
+This closes the generic writer/consumer route but not the HoseSpray's numeric
+world matrix. The source-to-parent values, any HoseSpray-specific local pose
+mutation, and the numeric relation between Player follower `+0x34A4` and the
+rendered Genesis camera remain unresolved. The port's camera-derived item
+frame is still an approximation. The `touchhose N` list at `+0xCB8` is not
+linked to this transform by current evidence. See
+[`equipment_actor_render_path_2026-10-13.md`](../scenario-loading/equipment_actor_render_path_2026-10-13.md),
+[`equipment_view_frame_trace_2026-10-17.md`](../scenario-loading/equipment_view_frame_trace_2026-10-17.md),
+and
+[`equipment_action_pose_followup_2026-10-17.md`](../scenario-loading/equipment_action_pose_followup_2026-10-17.md).
+
 ## Confirmed slot, mode, and action transitions
 
 `touchhose N` creates or refreshes HoseSpray in Player slot 4, builds the
@@ -130,12 +155,12 @@ The extinguisher's message path continues to use its separate nonterminal
 `finalize=0` route.
 
 The shared scene host uses the player camera frame as the HoseSpray item frame
-and mouse steering as its aim input. Both are provisional. Setup `00463700`
-uses shared equipment helper `0045F660`, which creates an item follower under
-Player view follower `+0x34A4`; that establishes the follower chain but not
-the writer or composition that supplies the transform consumed from item
-`+0x58`. The `touchhose N` list records at `+0xCB8` are not yet tied to that
-transform. The host draws the traced dual-curve stream with a temporary color;
+and mouse steering as its aim input. Both are provisional. The generic
+equipment component writer is now mapped through ActorInfo and
+`geActor_SetPose`, but the final item matrix and numeric join from Player view
+follower `+0x34A4` to the rendered Genesis camera remain open. The `touchhose N`
+list records at `+0xCB8` are not tied to that transform. The host draws the
+traced dual-curve stream with a temporary color;
 resource-3 texture, UVs, alpha/material state, exact HoseSpray particle timing
 under retail pool cadence, final resource binding, and the exact item frame
 remain open. It applies

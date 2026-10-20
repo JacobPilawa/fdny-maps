@@ -186,9 +186,12 @@ The shared viewer's Player host handles the authored `touchhose N` command,
 creates the slot-4 HoseSpray state, and rebuilds its attachment record list
 with the source-derived 24-scaled count. It now ports slot selection mode 3,
 separate action callbacks, the sampled stream and world collision gate, prior-
-frame contact scan, and `finalize=1` FireRescue transaction. The item frame is
-camera-derived and the left-mouse action is a host mapping; retail attachment
-and input bindings remain unresolved. The `touchhose N` value is traced into an attachment-list count:
+frame contact scan, and `finalize=1` FireRescue transaction. Retail's generic
+equipment component writer is mapped from item `+0x58` under Player follower
+`+0x34A4` through ActorInfo and `geActor_SetPose`, but the final numeric item
+matrix and camera join remain unresolved. The host's camera-derived item frame
+and left-mouse action are provisional; authored retail input bindings remain
+unresolved. The `touchhose N` value is traced into an attachment-list count:
 `00482780` scales by 24 and divides by item `+0xCB0`, then `00485D20` builds
 that many 0x30-byte records. The list record purpose and argument units remain
 open; see
@@ -199,9 +202,10 @@ cadence, action timing, and retail parity remain unverified.
 
 ## Remaining trace
 
-Trace the HoseSpray attachment transform writer and authored input binding;
-port its initial 100-ms effect delay, randomized 10..250-ms contact cooldown,
-and splash/particle lifecycle. The source action sound key and callback-bound
+Resolve the HoseSpray numeric parent/source frame, any item-local pose
+mutation, and its relation to the rendered Genesis camera; the generic
+component writer is now mapped. Trace the authored input binding and splash /
+particle lifecycle. The source action sound key and callback-bound
 start/stop route are now ported with the host loop policy still provisional.
 Preserve the retail phase order: scan FireRescue candidates using the previous
 stream collision result, derive the current source/aim, then refresh the stream
