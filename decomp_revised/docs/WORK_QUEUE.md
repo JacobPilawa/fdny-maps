@@ -29,6 +29,11 @@ parity, and RNG interleaving remain open. Evidence is in
 [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md)
 and
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
+The bounded `+0x1C` write census confirms constructor/reuse resets and
+distinguishes UserData floor-flag and embedded-subobject writes; no direct
+nonzero write to the FireRescue root eligibility byte was found, while alias
+and computed-address writers remain possible. See
+[`fire_rescue_pool_eligibility_writer_census_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_pool_eligibility_writer_census_2026-10-20.md).
 The rescue-all macOS app compiled and packaged with matching standalone/app
 arm64 executable SHA-256
 `5f2ad43e7ae14aa49e39e0e6ee68be35133c97fa01b16e1fe87538c0874dfcc6`; its
@@ -75,8 +80,8 @@ remain an inference. Keep callback cadence provisional.
 | `route_key_timing` | `00449340` x86, `004B9400`, `00448D60` key consumer | Complete; established three child keys, global-clock addition, retained distance; base timestamp and authored units remain provisional; no edits |
 | `route_model_threshold` | current MBase/Gas R typed exports, `00448D60` model branch | Complete; only two authored `moveto` actors, both no-model; generic model bounds unresolved; no edits |
 | `route_parent_track` | `00449340` x86 and `0044B620` track helper | Complete; parent clears shared `setsize`/route track and inserts zero at clock-10 plus root+108 at clamped route-rate delay; host implementation updated |
-| `route_template_defaults` | FireRescue typedef, 15 mission BSPs, `00447A90`, `0044A330` | Complete; placed epairs do not prove generated-template defaults; spawn message, spray time, alive and child timestamp bases remain unresolved; no edits |
-| `route_factory_reuse` | FireRescue factory, vtable `004475F0`, registration `00448D60` | Complete; corrected stale reuse note: UserData and visual setup are reinitialized; `+0x1C` eligibility writers and retirement remain unresolved; no edits |
+| `route_template_defaults` | FireRescue typedef, 15 mission BSPs, class registration `00448070`, constructor `0044A330` | Complete; placed epairs do not prove generated-template defaults; spawn message, spray time, alive and child timestamp bases remain unresolved; no edits |
+| `route_factory_reuse` | FireRescue factory, vtable `004475F0`, registration `00448D60`, broad `+0x1C` writer census | Complete; UserData and visual setup are reinitialized; direct constructor/reuse resets are mapped, but no direct nonzero root writer was found; aliases, computed writes and retirement remain unresolved; no edits |
 
 ## Rescue timeout loss audio (2026-10-20)
 

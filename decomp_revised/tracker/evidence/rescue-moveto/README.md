@@ -36,7 +36,11 @@ the limits of its pool/update lifecycle in
 The queued actor's recurring update, per-entity deactivation, and reuse are not
 fully mapped. Reused retail roots reinitialize their UserData and rerun
 `00448D60`, but the host still creates fresh actors. External callback cadence
-also remains open. The packaged MBase and gas_r
+also remains open. A bounded direct-store census maps constructor/reuse resets
+of root `+0x1C` but found no direct FireRescue-root nonzero writer; pointer
+aliases and computed writes remain possible. See
+[`fire_rescue_pool_eligibility_writer_census_2026-10-20.md`](fire_rescue_pool_eligibility_writer_census_2026-10-20.md).
+The packaged MBase and gas_r
 `--rescue-check` commands complete
 without an `Unimplemented EVS` report, but those controlled rescue transactions
 do not exercise or establish natural route timing or retail parity.

@@ -87,6 +87,11 @@ retain its old UserData or visual initialization state.
 
 The eligibility check still reads root byte `+0x1C`, but the complete set of
 runtime writers and its meaning across a live lifetime are not established.
+The 2026-10-20 direct-store census found the constructor/reuse zero stores and
+distinguished same-offset FireRescue UserData/subobject writes, but found no
+direct nonzero writer through a FireRescue root base. Aliased or computed
+stores and indirect calls remain possible; see
+[`fire_rescue_pool_eligibility_writer_census_2026-10-20.md`](fire_rescue_pool_eligibility_writer_census_2026-10-20.md).
 The destructor route `0044A450 -> 0044A290 -> 0049D510` releases identity and
 visual subobjects; the inspected destructor slice does not clear pool byte
 `+0x1D`.
