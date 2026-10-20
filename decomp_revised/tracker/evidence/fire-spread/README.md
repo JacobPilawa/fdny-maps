@@ -196,9 +196,11 @@ The [stage message-registration export](../scenario-loading/hose_stage_message_r
 shows the key lookup and sound-manager request, but not the configured hose
 sound name or a mission transition.
 
-The current-hash stream sample follow-up separates primary reach
+The current-hash stream trace separates stored velocity magnitude
 (`4000 * currentPressure`) from the shape scalar (`0.8 + 2.2 * currentPressure`)
-and preserves the interpolation excerpt in
+and traces the 0.75-second ballistic path in
+[the PlayerHose pressure and stream note](../scenario-loading/player_hose_pressure_stream_2026-10-20.md).
+The interpolation excerpt is preserved in
 [`playerhose_stream_shape_interpolation_fresh_2026-10-20.c`](playerhose_stream_shape_interpolation_fresh_2026-10-20.c).
 
 ### Random child placement and shape

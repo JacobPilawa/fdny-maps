@@ -35,9 +35,9 @@ runtime gate are not measured here.
 
 `0046D1B0` derives two separate values from current pressure before writing
 the primary sample history at component `+0x168`. Constructor values
-`+0x370 = 0` and `+0x390 = 4000` make the sampled endpoint offset
-`4000 * currentPressure`; that distance scales the aim direction. Values
-`+0x374 = 0.8` and `+0x394 = 3` make the sample's final scalar
+`+0x370 = 0` and `+0x390 = 4000` scale the aim direction to a stored velocity
+vector of magnitude `4000 * currentPressure`; they do not specify the final
+travel distance. Values `+0x374 = 0.8` and `+0x394 = 3` make the sample's final scalar
 `0.8 + 2.2 * currentPressure`. `0046C000` stores the source point, scaled
 direction vector, and this separate shape scalar in each timestamped sample
 (record float `+0x1C`). The fresh sample consumer is
@@ -48,7 +48,7 @@ The interpolation and sample-buffer helpers are preserved in
 segments whose interpolated scalar is at most `0.8 * 1.25 = 1.0` are cleared;
 retained segments pass twice the shape scalar (from `1.6` to `6.0` for pressure
 from zero to one) to `00469F50`, update four-vertex strips, and run world
-collision along the generated path. This separates pressure-scaled reach from
+collision along the generated path. This separates pressure-scaled velocity from
 the strip's scalar input. The exact transfer from the stored scalar to vertex
 width, color, or texture and the live appearance remain unresolved.
 
@@ -73,21 +73,39 @@ The authored pressure values in the current hose BSP exports are `1` for
 The four hash-pinned BSP exports are listed in
 [`player_hose_curve_pipeline_2026-10-20.md`](player_hose_curve_pipeline_2026-10-20.md).
 
+## Sampled ballistic path
+
+`0046C2F0` constructs the history with a `0.75` second lifetime and `0.1`
+second minimum interval, allocating eight 32-byte records. `0046C000` primes
+the empty ring with repeated initial samples, then adds a sample after each
+0.1 second interval. This time base is consistent with the separately traced
+WinMM clock converted from milliseconds by `0.001`.
+
+`0046D6B0` creates 25 strip sections and stores each history parameter as
+`0.5*u + 0.5*u*u`, for `u = section / 24`. `0046BC10` looks up the source,
+velocity and shape at `now - age`, where `age = parameter * 0.75`. For the main
+path it evaluates `source + velocity*age + (0,-1000,0)*age*age`; the
+`-1000` coefficient comes from half of the constructor's `(0,-2000,0)` vector.
+`0046C5A0` collision-tests consecutive path samples and stops building later
+sections after a hit. At full pressure and a normalized horizontal aim, the
+nominal forward travel at age `0.75` is 3000 units, with about 562.5 units of
+downward displacement. The exact four-vertex cross-section, material transfer,
+and rendered appearance remain unresolved.
+
 ## Shared-host port
 
 `PlayerHoseStage` tracks the source-shaped current scalar and active target.
 Entering a hotspot sets its target from that node's `M_MaxPressure`; the host
 updates once per frame toward the target while its hose action is active and
 toward zero otherwise, using the source's per-update 0.2 interpolation. Its
-primary stream trace now reaches `4000 * currentPressure` units, matching the
-source's sample endpoint offset. This host ray approximates the retail's
-timestamped, interpolated strip collision. Its contact radius follows the
-component's separate 10-to-40 interpolation, and the selected target's
-exported world AABB is tested against that expanded impact point before the
-WindowFire timer can advance. The simple blue line still uses pressure as a
-provisional opacity proxy; exact strip and texture appearance remain open.
-
-Remaining work: recover the component state gate and scheduler cadence, trace
-the exact strip-scalar-to-vertex/render-state transfer, and compare the host
-contact volume against controlled samples. No runtime or retail comparison
-was performed for this checkpoint.
+stream path keeps eight timestamped source/velocity/shape samples, updates
+them at 0.1 second intervals, and evaluates the source-shaped 25-section
+ballistic centerline over the 0.75 second history. The host tests each eligible
+successive path segment with the source collision flags and stops after the
+first hit. This replaces the previous single straight ray and the earlier
+incorrect interpretation of `4000 * pressure` as a final reach. It remains an
+approximation of the retail four-vertex strip; the shared host checks the
+selected target AABB against the pressure-derived 10-to-40 contact padding,
+and its blue line opacity remains provisional. Source sample and path math are
+static evidence; no interactive or retail comparison was performed for this
+checkpoint.

@@ -54,6 +54,18 @@ struct PlayerHoseCameraPose {
     V lookAt{};
 };
 
+struct PlayerHoseStreamSample {
+    float time = 0.f;
+    V source{};
+    V velocity{};
+    float shape = 0.f;
+};
+
+struct PlayerHoseStreamPoint {
+    V position{};
+    float shape = 0.f;
+};
+
 struct PlayerHoseStage {
     enum class Result { Running, Won, Lost };
 
@@ -87,10 +99,12 @@ struct PlayerHoseStage {
     float countdown = 0.f;
     // The shared stream component moves its output scalar 20% toward the
     // current hotspot's M_MaxPressure while held, and 20% toward zero when
-    // released. Retail scales the primary stream reach by 4000 * this value;
-    // its sampled ribbon shape remains only partly reconstructed.
+    // released. Retail scales the sampled stream velocity by 4000 * this
+    // value, then retains the samples in a 0.75 second ballistic path.
     float streamPressureTarget = 0.f;
     float streamPressure = 0.f;
+    float streamClockSeconds = 0.f;
+    std::vector<PlayerHoseStreamSample> streamHistory;
     bool timeWarningSent = false;
     Result result = Result::Running;
     std::string transition;
@@ -275,10 +289,70 @@ struct PlayerHoseStage {
         streamPressure += (target - streamPressure) * 0.2f;
     }
 
-    float streamRange() const {
+    float streamSpeed() const {
         // 0046D1B0 blends constructor +0x370 (0) and +0x390 (4000) by the
-        // current pressure, then scales the aim direction by that distance.
+        // current pressure, then scales the aim direction before sample storage.
         return 4000.f * streamPressure;
+    }
+
+    void appendStreamSample(V source, V direction) {
+        PlayerHoseStreamSample sample;
+        sample.time = streamClockSeconds;
+        sample.source = source;
+        sample.velocity = direction * streamSpeed();
+        sample.shape = 0.8f + 2.2f * streamPressure;
+
+        // 0046C2F0 allocates eight 32-byte samples for its 0.75 / 0.1
+        // history. 0046C000 writes at 0.1 second intervals and primes the
+        // empty ring with duplicate initial records.
+        if (streamHistory.empty()) {
+            streamHistory.assign(8, sample);
+            return;
+        }
+        if (sample.time - streamHistory.back().time < 0.1f) return;
+        streamHistory.push_back(sample);
+        if (streamHistory.size() > 8) streamHistory.erase(streamHistory.begin());
+    }
+
+    PlayerHoseStreamSample streamSampleAt(float time) const {
+        if (streamHistory.empty()) return {};
+        if (time <= streamHistory.front().time) return streamHistory.front();
+        for (size_t i = 1; i < streamHistory.size(); ++i) {
+            const auto& before = streamHistory[i - 1];
+            const auto& after = streamHistory[i];
+            if (time > after.time) continue;
+            const float span = after.time - before.time;
+            if (span <= 1e-6f) return after;
+            const float amount = std::clamp((time - before.time) / span, 0.f, 1.f);
+            return {time, lerp(before.source, after.source, amount),
+                    lerp(before.velocity, after.velocity, amount),
+                    before.shape + (after.shape - before.shape) * amount};
+        }
+        return streamHistory.back();
+    }
+
+    std::vector<PlayerHoseStreamPoint> streamCurve(float dt, V source, V direction) {
+        streamClockSeconds += std::max(0.f, dt);
+        appendStreamSample(source, direction);
+
+        // 0046D6B0 creates 25 sections and spaces their history parameters as
+        // 0.5*u + 0.5*u*u. 0046BC10 follows the sampled source/aim history for
+        // 0.75 seconds and evaluates a ballistic path with (0,-2000,0) gravity.
+        constexpr int sections = 25;
+        constexpr float historySeconds = 0.75f;
+        const V gravity{0.f, -2000.f, 0.f};
+        std::vector<PlayerHoseStreamPoint> points;
+        points.reserve(sections);
+        for (int i = 0; i < sections; ++i) {
+            const float u = float(i) / float(sections - 1);
+            const float historyFraction = 0.5f * u + 0.5f * u * u;
+            const float age = historyFraction * historySeconds;
+            const PlayerHoseStreamSample sample = streamSampleAt(streamClockSeconds - age);
+            const V position = sample.source + sample.velocity * age +
+                gravity * (0.5f * age * age);
+            points.push_back({position, sample.shape});
+        }
+        return points;
     }
 
     float streamContactRadius() const {
@@ -329,6 +403,8 @@ struct PlayerHoseStage {
         countdown = 0.f;
         streamPressureTarget = 0.f;
         streamPressure = 0.f;
+        streamClockSeconds = 0.f;
+        streamHistory.clear();
         expectedHotspot.clear();
         transition = "Waiting for first PlayerHose hotspot anchor";
         return true;

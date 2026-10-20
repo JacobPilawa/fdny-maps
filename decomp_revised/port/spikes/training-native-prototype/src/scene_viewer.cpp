@@ -3060,7 +3060,7 @@ void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) 
     std::cout << "\n";
 }
 
-void drawPlayerHoseStream(V start, V end, float pressure) {
+void drawPlayerHoseStream(const std::vector<V>& segments, float pressure) {
     glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT |
                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_TEXTURE_2D);
@@ -3068,13 +3068,11 @@ void drawPlayerHoseStream(V start, V end, float pressure) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
     glLineWidth(3.f);
-    // Retail renders timestamped four-vertex strips. The host beam remains a
-    // visibility placeholder, and this pressure-to-opacity mapping is
-    // provisional rather than a source-derived appearance rule.
+    // Retail renders timestamped four-vertex strips. The host draws their
+    // sampled ballistic centerline; pressure-to-opacity remains provisional.
     glColor4f(.36f, .74f, 1.f, .82f * std::clamp(pressure, 0.f, 1.f));
     glBegin(GL_LINES);
-    glVertex3f(start.x, start.y, start.z);
-    glVertex3f(end.x, end.y, end.z);
+    for (const V& point : segments) glVertex3f(point.x, point.y, point.z);
     glEnd();
     glPopAttrib();
 }
@@ -5733,7 +5731,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (dedicatedPlayerHose) playerHoseStage.advanceCameraRail(dt);
             FrameTransform cameraFrame = ViewUpdate::directEye(player.p, yaw, pitch, player.crouch);
             FrameTransform hoseAimFrame = cameraFrame;
-            V hoseStreamStart{};
+            std::vector<V> hoseStreamSegments;
             V hoseStreamEnd{};
             bool hoseStreamVisible = false;
             if (dedicatedPlayerHose) {
@@ -5793,20 +5791,30 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const bool hoseActionActive = sprayHeld &&
                     playerHoseStage.result == PlayerHoseStage::Result::Running;
                 playerHoseStage.updateStreamPressure(hoseActionActive);
-                if (hoseActionActive) {
-                    const float streamLength = playerHoseStage.streamRange();
-                    // 00465EF0 offsets the stream source from the entity frame:
-                    // +10*basis3 +15*basis2 -10*basis1. Keep steering on the
-                    // direction only; 00466780 rotates a temporary aim frame.
-                    hoseStreamStart = cameraFrame.position + cameraFrame.axis[2] * 10.f +
-                        cameraFrame.axis[1] * 15.f - cameraFrame.axis[0] * 10.f;
-                    const V streamDelta = hoseAimFrame.axis[2] * -streamLength;
-                    hoseStreamEnd = hoseStreamStart + streamDelta;
+                // 00465EF0 offsets the source from the entity frame; the aim
+                // direction comes from 00466780's temporary rotated frame.
+                const V hoseStreamStart = cameraFrame.position + cameraFrame.axis[2] * 10.f +
+                    cameraFrame.axis[1] * 15.f - cameraFrame.axis[0] * 10.f;
+                const V hoseStreamDirection = hoseAimFrame.axis[2] * -1.f;
+                const auto hoseCurve = playerHoseStage.streamCurve(
+                    dt, hoseStreamStart, hoseStreamDirection);
+                if (!hoseCurve.empty()) hoseStreamEnd = hoseCurve.front().position;
+                for (size_t i = 1; i < hoseCurve.size(); ++i) {
+                    if (hoseCurve[i].shape <= 1.f) continue;
+                    const V segmentStart = hoseCurve[i - 1].position;
+                    const V segmentDelta = hoseCurve[i].position - segmentStart;
                     Hit streamHit;
-                    if (collision.tracePoint(hoseStreamStart, streamDelta, 0x43, 2, streamHit)) {
+                    if (collision.tracePoint(segmentStart, segmentDelta, 0x43, 2, streamHit)) {
+                        hoseStreamSegments.push_back(segmentStart);
+                        hoseStreamSegments.push_back(streamHit.point);
                         hoseStreamEnd = streamHit.point;
                         streamHasWorldContact = true;
+                        hoseStreamVisible = true;
+                        break;
                     }
+                    hoseStreamSegments.push_back(segmentStart);
+                    hoseStreamSegments.push_back(hoseCurve[i].position);
+                    hoseStreamEnd = hoseCurve[i].position;
                     hoseStreamVisible = true;
                 }
                 bool targetInContactVolume = false;
@@ -6707,7 +6715,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
             if (hoseStreamVisible)
-                drawPlayerHoseStream(hoseStreamStart, hoseStreamEnd, playerHoseStage.streamPressure);
+                drawPlayerHoseStream(hoseStreamSegments, playerHoseStage.streamPressure);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};

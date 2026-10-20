@@ -4,8 +4,8 @@ Status: **the shared game host loads the four dedicated PlayerHose maps,
 resolves authored WindowFire target names to BSP model IDs, applies the
 source-derived numeric mode timer scale, runs a source-shaped target/cycle/
 hotspot state path, follows the authored HosePath camera rail with a
-floor-height query, and tracks the source-shaped `M_MaxPressure` scalar and
-pressure-scaled stream reach.
+floor-height query, and tracks the source-shaped `M_MaxPressure` scalar with a
+timestamped ballistic stream path.
 The shared loop now uses the traced retail delta scale,
 lower pacing threshold, and upper cap. Retail menu labels/initial mode, rail
 speed calibration, SDL tick quantization/focus-pause mapping,
@@ -107,18 +107,21 @@ STEER_PITCH/YAW remains provisional. `M_MaxPressure` at owner `+0x1834`
 aliases stream-component target `+0x3B4`, while current stream pressure is at
 owner `+0x1830` / component `+0x3B0`. The shared host tracks the source's
 per-update 0.2 interpolation toward that target while held and toward zero
-after release. Retail turns current pressure into a primary stream reach of
-`4000 * pressure` and a separate sample shape scalar of
-`0.8 + 2.2 * pressure`; the host uses the source-derived reach. Its single ray
-approximates the retail's timestamped four-vertex strip collision. The strip
-consumer culls samples whose interpolated shape scalar is at most 1.0 and
-passes twice that scalar to the curve helper. It remains unclear how that value
-transfers to rendered vertex width or color. Retail also sends current pressure
-as a WindowFire message payload; the traced timer ignores it as a rate input.
-On collision it sets the douse contact radius from 10 to 40 using current
-pressure; the host checks that radius against the selected target's world AABB.
-The simple blue beam still uses pressure as a provisional opacity proxy, and
-exact rendered-water appearance remains open. The earlier exact
+after release. Retail scales a stored aim-velocity vector by `4000 * pressure`
+and records the separate shape scalar `0.8 + 2.2 * pressure`. Its eight-sample
+ring covers 0.75 seconds, with samples written at 0.1 second intervals. The
+25-section consumer interpolates that source/velocity history and evaluates a
+ballistic centerline with vertical acceleration `-2000`; at full pressure its
+nominal horizontal travel is 3000 units over the 0.75 second sample lifetime.
+The host now follows this timestamped path and collision-tests successive
+segments. The strip consumer culls samples whose interpolated shape scalar is
+at most 1.0 and passes twice that scalar to the curve helper. It remains unclear
+how that value transfers to rendered vertex width or color. Retail also sends
+current pressure as a WindowFire message payload; the traced timer ignores it
+as a rate input. On collision it sets the douse contact radius from 10 to 40
+using current pressure; the host checks that radius against the selected
+target's world AABB. The simple blue line still uses pressure as a provisional
+opacity proxy, and exact rendered-water appearance remains open. The earlier exact
 `+0x1834` instruction-text scan finds only the assignment at `00467B8A`; it
 missed the component-relative alias. The host win/loss title is not retail
 result presentation. See
@@ -246,17 +249,31 @@ four hose maps are packaged. The existing Homebrew json-c warning remains
 (built for macOS 27.0, linked for 13.3). No tests, interactive run, or retail
 comparison were made.
 
-## Pressure-scaled stream reach follow-up
+## Ballistic stream path follow-up (supersedes the earlier reach interpretation)
 
 Fresh traces of `0046D1B0`, `0046C000`, `0046BAD0`, and `0046BC10` separate
-current pressure from the sample's shape scalar. The primary endpoint offset
-is `4000 * currentPressure`; a second value written at sample `+0x1C` is
-`0.8 + 2.2 * currentPressure`. `0046C5A0` culls samples whose interpolated
-shape scalar is at most 1.0, passes twice the scalar to the curve helper, then
-updates four-vertex strips and collides along the generated geometry. The host
-now scales its primary collision ray by `4000 * pressure`. This improves reach
-behavior, while the single ray still approximates retail strip collision and
-the blue line opacity remains provisional.
+Fresh traces of `0046D1B0`, `0046C000`, `0046BAD0`, `0046BC10`, `0046C2F0`,
+`0046C5A0`, and `0046D6B0` separate the stored velocity magnitude
+(`4000 * currentPressure`) from final travel. The sample ring holds eight
+records over 0.75 seconds and refreshes at 0.1 second intervals. The strip has
+25 nonlinear time sections, with main path point
+`source + velocity*age + (0,-1000,0)*age^2`. At full pressure and horizontal
+aim this yields 3000 units of nominal travel and 562.5 units of downward
+displacement. The host now samples the source/velocity history, builds this
+ballistic centerline, and collision-tests consecutive path segments. This
+corrects the prior single-ray port. Its line and collision still approximate
+the retail four-vertex shape; the strip scalar's visual transfer and live
+appearance remain open.
+
+## Ballistic stream build (2026-10-20)
+
+The shared macOS executable and rescue-all app rebuilt successfully after the
+ballistic path update. Standalone and packaged executable SHA-256 values match
+at `214827038a147653b9ea541846b5e96bc7b7486b30f69e0c140bc0dc5bf8d804`.
+`Info.plist` passed validation; all eight rescue choices and four PlayerHose
+maps remain packaged. Linking retained the existing Homebrew json-c warning
+(built for macOS 27.0 while the target links for 13.3). No tests, interactive
+run, or retail comparison were performed.
 
 The shared macOS target and rescue-all bundle rebuilt with matching standalone
 and packaged executable SHA-256
