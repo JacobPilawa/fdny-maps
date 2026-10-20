@@ -267,9 +267,14 @@ shows `+0x3320` is an identity frame with a null parent in the constructor.
 Entity init later rebuilds it from a stack source at `0044DF30`; `0042D0A0`
 copies that source's parent pointer, whose value remains unresolved. The
 movement pass composes the stored frame before transforming the state-5 vector.
-Field
-`+0x3310` (`root+0x3450`) is updated as a timer/delta accumulator and clamped
-or reset to 0/1, but its meaning/default are unresolved. The `+0x3460`
+Field `+0x3310` (`root+0x3450`) is the oxygen resource, initialized to 1.0 by
+`0044CD10` and drained/refilled by `00451560`; adjacent `+0x3314/+0x3318`
+(`root+0x3454/+0x3458`) hold its next-drain and drain-enable deadlines. The
+oxygen evidence maps 0.05 decrements every 3000 ms while enabled, passout below
+zero, and frame-delta refill by 0.1 to 1.0 while disabled. Its update cadence
+remains provisional. See
+[`player_oxygen_resource_and_script_path_2026-10-14.md`](../tracker/evidence/scenario-loading/player_oxygen_resource_and_script_path_2026-10-14.md).
+The `+0x3460`
 locomotion frame update explicitly sets world `+Y` as its up axis; a second
 indirect setter derives the third axis from selected-item view/aim data, then
 repairs the remaining axes. It does not change frame position or parent. The
@@ -472,6 +477,7 @@ and
 | Agent | Scope and files | Status |
 | --- | --- | --- |
 | `bmodel_contact_registry` | Read-only check of retail contact registration/removal and host seam; Ghidra exports, `scene_viewer.cpp`, BModel contact evidence | Complete; registry mechanics confirmed, live order and cadence unresolved |
+| `bmodel_next_core_gap` (Luna) | Recheck `0043B7A0` initialization base, raw union, converted structure, and `0043B620` consumer | Current-hash Ghidra export and AT&T disassembly | Complete; decimal displacements resolve the apparent offset mismatch: raw union is root +0x240/+0x24C and feeds contact, converted 52-byte output is root +0xF0, and the +0x260 32-unit adjustment is separate. No code edits. |
 | `bmodel_selection_query` | Read-only trace of `00459350`/`00459630` and query vtable; fresh Ghidra exports and interaction helpers | Complete; ordered scan, 200-unit cutoff, and later tie winner confirmed |
 | `bmodel_selection_review` | Read-only review of the new selection and held-pose adapter; `bmodel_interaction_selection.h`, `scene_viewer.cpp`, held-frame evidence | Complete; documented provisional frame, bounds, Player gate, and callback mappings; no edits |
 | `bmodel_update_scheduler` (Luna) | External recurring caller/cadence for BModel slot `+0x14`; current-hash Ghidra and saved fixed-offset scan | Complete; local slot `+0x14` → `0043AFE0` → `00470740` → `0043DC60` route is known, and `0043DC60` directly calls `0043D330` when root `+0x258` is nonzero. No recurring manager route into root slot `+0x14` is proven, so callback cadence/order remain unknown. No edits |
@@ -1603,7 +1609,8 @@ body-bearing functions and 287 external entries.
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms selector scheduler and Jumps' 500 ms gate. Follow-up mapped the `0045331A` call gate and `00491140` sample-pattern writer. `FootStep1`–`FootStep4` are packaged in every scene; the shared host now gates playback from its preceding HeadMotion flag and increments the stat. First +0x198 value, +0x558 computed writers, RNG interleaving, and cadence remain open. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is crouch and its JUMP query routes to `0044BCE0`. Completion Time, Air Time, Jumps, and Total Steps are integrated with provisional host cadence. |
-| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, `+0x3450` timer/delta accumulator, movement-vector caps, transform construction/composition, and helpers. Ordinary `+0x3460` setter vector is resolved as normalized selected-item aim/view data plus `(0,height,1000)`. `+0x3450` semantic name/default, final frame/world orientation, local lateral sign mapping, callback cadence, and camera/ActorInfo relationship remain open. Retail action magnitudes are 1.0 forward and 0.75 lateral. Smoothing exponent relationship is mapped. No edits. |
+| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, oxygen resource at root `+0x3450` initialized to 1.0, and its adjacent drain-deadline fields, plus movement-vector caps, transform construction/composition, and helpers. Ordinary `+0x3460` setter vector is resolved as normalized selected-item aim/view data plus `(0,height,1000)`. Final frame/world orientation, local lateral sign mapping, callback cadence, and camera/ActorInfo relationship remain open. Retail action magnitudes are 1.0 forward and 0.75 lateral. Smoothing exponent relationship is mapped. No edits. |
+| `oxygen_movement_alias_audit` (Luna) | Audit `ESI+0x3310` and neighboring movement fields against the pinned oxygen update path | `player_movement_state_gates_2026-10-20.md`, `player_oxygen_resource_and_script_path_2026-10-14.md` | Complete, read-only; confirmed ESI+0x3310 aliases Player root +0x3450 oxygen and +0x3314/+0x3318 are adjacent drain fields. Host ordering/cadence cannot be resolved from static evidence; docs only, no code edits. |
 | `player_frame_runtime` (Luna) | Player `+0x3460` frame writers, composition, axes, and update cadence | Constructor `00453D50`, callback `0044F340`, frame helpers `0042D2D0`/`004977B0`, saved xrefs, `equipment_view_frame_trace_2026-10-17.c`; `player_locomotion_frame_axes_2026-10-20.md` | Complete, read-only; identity/null-parent frame at construction and callback mutations through slots `+8`/`+0x14` are mapped. Slot +8 sets world +Y up; slot +0x14 installs the ordinary caller vector `normalize((aimOffset + (0,height,1000)) - viewOffset)` and repairs the other axes. Position/parent are unchanged. Equipment-varying final axes, outer callback cadence, and camera/ActorInfo relation remain unresolved. No edits. |
 | `locomotion_frame_gap` (Luna) | Player state-5/root `+0x380` movement transform versus current host | `core.h`, `scene_viewer.cpp`, locomotion/frame/state evidence | Complete, read-only; confirmed raw `004977B0` parent composition followed by basis-column `00495EB0`, matching `FrameTransform::world()` conventions. Constructor frame is identity/null-parent, but entity init rebuilds it from a stack frame source and copies an unresolved parent pointer. The host still substitutes camera yaw/pitch; post-init frame source, callback cadence, and movement direction remain unresolved. No edits. |
 | `locomotion_item_offsets` (Luna) | Selected item `+0x1E4/+0x1F0` inputs consumed by `0044F340` | Common equipment setup `0045F660`, Axe writer `0045FEC0`, `item_view_pose.h`, view-call oracle | Complete, read-only; HoseSpray/extinguisher/goggles and initial Axe offsets are source-backed zeros; Axe's dynamic writer is already implemented in `ItemViewPose`. Its live Think scheduling is not established, so activation cadence remains open. No edits. |
@@ -2240,11 +2247,13 @@ the report is observed.
   [`proximity_count_port_2026-10-15.md`](../tracker/evidence/fire-spread/proximity_count_port_2026-10-15.md).
 
 - **2026-10-15 BModel bound construction:** retail `0043B7A0` unions the
-  min/max fields from each child model, then converts the aggregate through
-  `004819A0` before `0043B620` tests root `+0x240`. The host uses the matching
-  exported GBSP `MODELS` bounds as its union inputs. The exporter data lineage
-  is verified; Genesis runtime extents and final box conversion remain open.
-  See
+  min/max fields from each child model into raw root `+0x240/+0x24C`. A fresh
+  offset audit corrected the earlier destination: `004819A0`'s 52-byte result
+  is copied to root `+0xF0`, while `0043B620` gives the raw union directly to
+  `004817A0`; a separate copy at `+0x278..+0x28C` is expanded by 32 units.
+  The host uses the matching exported GBSP `MODELS` bounds as its
+  union inputs; Genesis runtime extents and the tiny `004818C0` adjustment
+  remain unverified. See
   [`bmodel_contact_bound_construction_2026-10-15.md`](../tracker/evidence/scenario-loading/bmodel_contact_bound_construction_2026-10-15.md).
 
 - **2026-10-14 all-victim rescue checkpoint:** `--rescue-check` now runs every

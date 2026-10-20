@@ -1,8 +1,8 @@
 # Retail BModel contact-bound construction audit
 
-Updated 2026-10-15. This audit maps the child-model extent reads used during
-BModel initialization. It narrows the host comparison but does not establish
-bit-for-bit parity for the final contact box.
+Updated 2026-10-15; root-offset correction added 2026-10-20. This audit maps
+the child-model extent reads used during BModel initialization. It narrows the
+host comparison but does not establish bit-for-bit runtime parity.
 
 ## Pinned inputs
 
@@ -29,12 +29,21 @@ maximum. In the pinned PE image that address contains the bytes `66 6F 72 20`
 magnitudes this adjustment rounds away; it is not the 128-unit root-node inset
 used separately by the `openaway` direction-bounds path.
 
-After the union, `0043B7A0` calls `004819A0` with the min/max pair and copies a
-52-byte bounds structure back to root `+0x240`. The helper computes a midpoint
-and endpoint-relative vectors before copying that structure. The original
-union min/max are also retained at root `+0x278` and `+0x284`; a separate
-32-unit adjustment is applied to the structure at root `+0x260`. The contact
-callback `0043B620` passes root `+0x240` to overlap helper `004817A0`.
+After the union, `0043B7A0` calls `004819A0` with the min/max pair and copies
+the returned 52-byte structure to root `+0xF0`. The helper computes a midpoint
+and endpoint-relative vectors. The raw union remains at root `+0x240` and
+`+0x24C`. The union is also copied into a secondary six-float box at
+`+0x278..+0x28C`; `0043B470`, called with root `+0x260`, subtracts 32 from its
+three minima and adds 32 to its three maxima. The contact callback `0043B620`
+passes root `+0x240` directly to overlap helper `004817A0`; it reads the six
+raw min/max floats there, so neither the `004819A0` conversion nor the separate
+32-unit-expanded copy forms this callback's contact bounds.
+
+The correction comes from rechecking the AT&T displacements in the pinned
+assembly: they are decimal, so `lea 240(%ebp)` is root `+0xF0`, while
+`lea 576(%ebp)` and `lea 588(%ebp)` are root `+0x240` and `+0x24C`. The
+initializer also runs through `0043DC60`'s embedded ScriptActor path, which
+normalizes its `root+0x24` pointer back to the BModel root before the call.
 
 The saved bounded disassembly excerpts are in
 [`bmodel_contact_bound_construction_2026-10-15.asm`](bmodel_contact_bound_construction_2026-10-15.asm).
@@ -53,12 +62,13 @@ resolves each BModel child through `%Model%`, then unions the joined collision
 model's exported `mins` and `maxs` into `PreviewBModelMotion::boundsMin` and
 `boundsMax`.
 
-This matches the asset-bound inputs before the retail `004819A0` conversion,
-assuming the Genesis runtime model extent fields retain the corresponding
-GBSP `MODELS` values. The exporter and loader establish that data lineage; no
-live Genesis model read has verified those runtime fields. The final
-`004819A0` structure semantics also remain incomplete, so using the raw union
-as the host contact AABB is still an approximation. No host code change is
-justified from this trace alone. A follow-up should finish the structure-field
-mapping and compare the retail runtime extents or a captured contact boundary
-before changing the host box.
+This matches the asset-bound inputs for the contact callback, assuming the
+Genesis runtime model extent fields retain the corresponding GBSP `MODELS`
+values. The exporter and loader establish that data lineage; no live Genesis
+model read has verified those runtime fields. The host currently omits the
+tiny per-child adjustment from `004818C0` (the pinned float is approximately
+`2.0535056e-19`), whose effect can differ at zero-valued bounds. The separate
+52-byte structure written at `+0xF0` and the 32-unit-expanded box at
+`+0x278..+0x28C` may serve other consumers; their consumer paths remain open.
+A follow-up should verify runtime extents and these other consumers before
+changing the host bounds.

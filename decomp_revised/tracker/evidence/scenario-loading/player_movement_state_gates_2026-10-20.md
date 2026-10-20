@@ -67,11 +67,15 @@ selection, double-precision libm, x87 rounding, and callback cadence remain
 unverified. See
 [`player_movement_smoothing_formula_2026-10-20.md`](player_movement_smoothing_formula_2026-10-20.md).
 
-`ESI+0x3310` aliases Player root `+0x3450`. `00451560` updates this field on
-timer branches, including frame-delta-scaled accumulation and clamp/reset at
-0/1; it also changes neighboring animation/condition fields. Its semantic
-name and constructor default have not been established, so it should not be
-treated as movement speed.
+`ESI+0x3310` aliases Player root `+0x3450`, the oxygen resource. The
+hash-pinned `00451560` trace in
+[`player_oxygen_resource_and_script_path_2026-10-14.md`](player_oxygen_resource_and_script_path_2026-10-14.md)
+establishes its use: `0044CD10` initializes it to 1.0; with oxygen drain
+enabled, `00451560` subtracts 0.05 at the `+0x3454` three-second deadline and
+calls passout below zero, while disabled drain refills by frame delta times
+0.1 up to 1.0. The neighboring `+0x3314/+0x3318` fields alias root
+`+0x3454/+0x3458`, the next-drain and drain-enable deadlines. This field is
+not movement speed; its timer/delta writes are the oxygen update path.
 
 The code converts movement input to a vector, applies the selected vector cap,
 smooths toward it, and calls `0044EA90` only when state is not 5, byte
@@ -120,10 +124,12 @@ collision/integration loop. Difficulty selection beyond the fresh-profile
 default, byte `+0x380`, and state 6 are not represented. Do not infer retail
 motion parity from the current `Player::step`.
 
-Next, resolve the meaning/default of `+0x3310`, the equipment-varying final
-axes and camera/ActorInfo relation of the locomotion frame, and how retail
-local movement signs map through that frame before changing host vectors. The
-input key aliases and magnitudes are mapped; callback/update cadence is not.
+Next, resolve the equipment-varying final axes and camera/ActorInfo relation
+of the locomotion frame, and how retail local movement signs map through that
+frame before changing host vectors. The input key aliases and magnitudes are
+mapped; callback/update cadence is not. The oxygen alias and initialized
+resource default are documented above; its outer update cadence remains
+provisional in the oxygen evidence.
 The pitch/yaw fields
 `+0x32F0/+0x32F4`, core frame/vector helpers, and smoothing exponent
 relationship are mapped. Continue tracing initialization/writers for the
