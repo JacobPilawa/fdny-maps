@@ -94,3 +94,6 @@ cadence, and event timing remain unresolved. Throw trajectory, drop handling,
 timed-list cleanup, and retail carry/drop animation integration are not
 implemented. Treat current behavior as a source-shaped prototype, not 1:1
 selection or carry parity.
+The trajectory substep is traced inside `0043DC60`; shared update integration
+and the outer callback cadence remain unresolved. See the
+[throw update route and authored-data audit](bmodel_throw_update_route_2026-10-20.md).

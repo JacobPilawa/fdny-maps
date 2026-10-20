@@ -120,7 +120,9 @@ Finish the three remaining stat integrations against the shared host: map the
 JUMP action's runtime poll route and the state-5 command token, establish the
 host cadence for the Total Steps sound-selection gate, and promote the
 source-shaped held-BModel throw transaction from the Training spike into the
-shared mission scene with its trajectory, drop, and timer lifecycle. Separately
+shared mission scene with the callback-owned trajectory substep, drop-event,
+sound, and timer services. The direct `0043DC60` → `0043D330` route is mapped;
+the outer update cadence and data-driven event effects remain open. Separately
 map the exact serialized scalar/container encoding before adding profile
 persistence. Keep the result transition gated on separate runtime evidence,
 and return to the Records UI after core gameplay coverage improves.

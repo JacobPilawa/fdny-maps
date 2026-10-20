@@ -26,6 +26,16 @@ The update interprets command state 3 as forward/open movement and state 4 as re
 
 For each child model, the routine obtains its Genesis motion, samples the path at the current frame, and calls `geWorld_SetModelXForm`. Thus the `open` command is consumed by an animation path rather than directly toggling a door transform.
 
+The same callback contains the BModel throw-update call. After its model-count
+guard, `0043DC60` checks the embedded ScriptActor field at `+0x234` (BModel root
+`+0x258`, `useMode`) and calls `0043D330` at `0043DDC6` when it is nonzero.
+The trajectory function updates bit `0x10` on the first child model according
+to whether state `+0x25C` is zero, and advances the throw only for state 2.
+Throw completion applies the selected endpoint, flips `+0x220`, dispatches
+`drop` through the root's embedded ScriptActor, and requests sound playback
+through root `+0x124`. See the [throw update route and authored-data audit](bmodel_throw_update_route_2026-10-20.md)
+and [fresh trajectory decompilation](0043d330_bmodel_throw_fresh_2026-10-20.c).
+
 ## Timed command records
 
 The embedded ScriptActor stores a pointer array at `+0x124` and a count at `+0x128`; on the BModel root these are `+0x148` and `+0x14C`. They are separate from root `+0x124`, which is the initialized sound instance. An active record has an active byte at `+0`, a key frame at `+4`, a shared command string object at `+8`, and an opaque context pointer at `+0xc`. The update compares the key frame's distance from the new frame with the frame step from the previous value. When the key frame is closer to the updated frame than the frame step from the previous value, it calls `DispatchScriptActorCommandWithContext` (`00475310`). That helper stores the supplied context at ScriptActor `+0x78` and routes the command through the common `00470150` dispatcher. It then clears the record's active byte, so the entry fires once.
@@ -51,6 +61,9 @@ contact traversal (`0049BD20`) invokes BModel root slot `+0x48` instead. A
 hash-pinned literal `[reg+0x14]` scan found 53 candidates but no proven BModel
 receiver. These checks do not exclude computed dispatch or unexamined update
 loops, so update cadence and ordering relative to contact remain unknown.
+The direct `0043DC60` → `0043D330` call is established inside the slot-zero
+callback; it does not identify the recurring external caller of root slot
+`+0x14`.
 
 ## Bank route joined to this method
 

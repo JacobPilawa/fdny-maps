@@ -109,14 +109,24 @@ BModel constructors register `ThrowObject` and `ThrowObjectEnd` sounds,
 consistent with the sequence but not needed to identify the stat gate. The
 source-shaped sequence already exists in
 `port/spikes/training-native-prototype/src/training_liftable_sequence.h`, but
-it is not connected to the shared mission scene. The Player-side held-target
+it is not connected to the shared mission scene. The direct call to
+`0043D330` comes from `0043DC60`'s slot-zero BModel ScriptActor update after its
+model-count guard, when root `+0x258` is nonzero. The callback also processes
+timed-command records later in the same update, but there is no direct
+trajectory-to-timed-list cleanup call. The recurring external route into root
+slot `+0x14`, callback cadence, and ordering against contact/rendering remain
+unknown. A current-hash scan found no literal `drop` or `removealltimecmds`
+binding in the preserved EVS sources or any `S_Script*` value from the 17 retail
+map exports; see [the bounded route/data audit](bmodel_throw_update_route_2026-10-20.md).
+The Player-side held-target
 writer is now source-mapped: it composes movement-subobject `+0x338c` with the
 embedded frame's third column times 90 and second column times -60, then stores
 the result at held BModel `+0x224` before correction. Its exact evidence and
 remaining frame/cadence uncertainties are in
 [`bmodel_player_target_writer_fresh_2026-10-20.c`](bmodel_player_target_writer_fresh_2026-10-20.c).
-Shared frame/model adapters, the throw trajectory scheduler, and the drop/timer
-lifecycle remain integration work. Static authored candidate coverage is now
+Shared held-frame/model adapters, the Player input/carry relation, integration
+of the callback-owned trajectory substep, and data-dependent drop/timer effects
+remain port work. Static authored candidate coverage is now
 accounted for across every preserved BSP; it does not establish runtime
 reachability or which objects participate in rescue objectives.
 
@@ -126,8 +136,8 @@ No shared counter was wired. `Jumps` needs the retail jump input/state/latch
 route mapped to the host movement transaction; `Objects Thrown` needs the
 held-target frame relation and correction cadence resolved, then the
 source-shaped held-BModel transaction promoted from the Training spike into the
-shared mission scene with its frame, model, trajectory, drop, and timer
-services.
+shared mission scene with its frame, model, trajectory, drop-event, sound, and
+timing services.
 `Total Steps` remains coupled to the 100 ms footstep-sound variant scheduler documented in
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
 This is static decompilation evidence only: no gameplay check, build, or retail

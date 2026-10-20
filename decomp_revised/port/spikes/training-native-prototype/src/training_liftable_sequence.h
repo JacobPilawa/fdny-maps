@@ -44,7 +44,8 @@ struct Services {
 };
 
 inline bool validForThrowUpdate(const State& state) {
-    // 0043DC60 requires a model and nonzero useMode; 0043D330 requires mode 2.
+    // 0043DC60 guards on a model and nonzero useMode before calling 0043D330;
+    // its trajectory branch advances only BModel state 2.
     return state.modelCount >= 1 && state.useMode != 0 && state.bmodelState == 2;
 }
 
@@ -121,9 +122,11 @@ inline bool updateCarryAndMaybeRelease(State& state, uint32_t tick,
     return true;
 }
 
-// Represents one externally scheduled BModel subobject update. On an active
-// tick, 0043D330 sends its interpolated point through 0043BAA0. On completion,
-// source order is endpoint mutation, endpoint flip, `drop`, then BModel sound.
+// Represents the 0043D330 substep inside the BModel ScriptActor slot-zero
+// callback 0043DC60. The outer recurring caller and cadence remain unresolved.
+// On an active tick, 0043D330 sends its interpolated point through 0043BAA0.
+// On completion, source order is endpoint mutation, endpoint flip, `drop`, then
+// BModel sound.
 inline bool updateThrow(State& state, uint32_t tick, void* bmodelRoot,
                         const Services& services) {
     if (!bmodelRoot || !validForThrowUpdate(state)) return false;

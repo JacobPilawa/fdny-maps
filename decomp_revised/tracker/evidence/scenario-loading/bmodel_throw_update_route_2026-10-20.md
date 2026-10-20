@@ -1,0 +1,84 @@
+# BModel throw update route and drop-event data audit (2026-10-20)
+
+## Pinned inputs and method
+
+- Retail executable: `FDNYFirefighter.exe`, SHA-256
+  `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`.
+- Local source manifest: `inputs/original/manifest.csv`, SHA-256
+  `f0066868de28f4d91f3271bffb0f5122a067e4b15fac8f5ad2298febd40069a6`.
+- Ghidra 12.0.4 read-only inspection of the saved `FDNYPort` project with
+  `DecompileTargetAndRefs.java` and `FindFunctionCallers.java`; no auto-analysis
+  and no runtime capture.
+- Authored-data audit: all 21 EVS files in `inputs/original/Data`, plus the
+  exported entity records for all 17 original retail BSPs. Each export's BSP
+  SHA-256 matches its `inputs/original/manifest.csv` entry. Across those
+  exports there are 4,323 entities, 329 `RCS_BModel` records, and 9,266
+  nonempty `S_Script*` values.
+
+## Callback and trajectory call
+
+`0043DC60` is the embedded BModel ScriptActor's slot-zero update. Its initial
+model-count guard returns for a BModel with no child model. At `0043DDC6`,
+the callback directly calls `0043D330` when the ScriptActor field at `+0x234`
+is nonzero. Because this ScriptActor is owner `-0x24`, that gate is BModel root
+`+0x258` (`useMode`). The raw listing and Ghidra caller query identify
+`0043DDC6` as the only direct code call to `0043D330`:
+
+```text
+0043DDA3  cmp dword ptr [esi + 0x234], ebx
+0043DDA9  je  0x0043DDCB
+0043DDC4  mov ecx, ebp
+0043DDC6  call 0x0043D330
+```
+
+The local route into slot zero remains root slot `+0x14` → thunk `0043AFE0` →
+shared updater `00470740` → embedded ScriptActor callback `0043DC60`. No
+recurring manager route into that root slot has been proven. Therefore the
+callback cadence and ordering against contact and rendering remain unknown.
+The timed-command loop is later in the same `0043DC60` callback.
+
+`0043D330` updates bit `0x10` in the first child model's flags at `+0xCC`: it
+clears the bit when BModel state `+0x25C` is zero and sets it for nonzero state.
+Only state 2 enters the throw trajectory branch. That branch derives elapsed
+time from the wrapped millisecond clock and stored start tick at `+0x208`,
+converts it to seconds, interpolates X/Z and ballistic Y, and applies the
+position through `0043BAA0`. On the strict `elapsed > duration` completion
+path, it sets state to zero, applies the selected endpoint, flips the selector
+byte at `+0x220`, dispatches ScriptActor event `drop` at root `+0x24`, then
+requests playback on the sound instance at root `+0x124` and returns. This
+call sequence is recorded in the fresh [Ghidra decompilation](0043d330_bmodel_throw_fresh_2026-10-20.c).
+
+The trajectory function contains no direct Player held-object mutation and no
+call to `0043C260`. Event dispatch goes through `004705B0`, which looks up the
+event and routes its stored commands in array order through `00470150`; when
+lookup finds no event, it dispatches no commands. The later sound request is
+independent of that event lookup.
+
+## Authored `drop` binding search
+
+A case-insensitive, word-bounded search of all 21 preserved EVS source files
+found no literal `drop` event command and no `removealltimecmds` command. A
+search of every property name and value in the 17 retail BSP entity exports
+also found no such literal; this includes all 9,266 nonempty `S_Script*`
+values and all 329 BModels. The exports are pinned to their original BSP
+hashes through their `report.json` source hashes and the source manifest.
+
+This search did not identify a map-authored `drop` handler or timed-list
+cleanup. The retail call still performs the event lookup; dynamic registration
+or behavior outside these preserved authored sources is not excluded. Do not
+equate throw completion with `removealltimecmds` or add guessed cleanup to the
+host.
+
+## Port status
+
+The trajectory is a substep of the BModel ScriptActor update, not a separately
+identified scheduler. The existing Training transaction helper is source
+shaped but remains disconnected from the shared mission host. The shared host
+has BModel selection and held-target smoothing, while the Player release gate,
+source frame/model adapters, outer BModel update route, first-child flag, and
+authored event/sound services still need integration. No gameplay test, build,
+or retail-parity claim is made here.
+
+See [BModel update notes](bmodel_update.md), [throw-stat producer trace](mission_stat_jump_throw_producers_2026-10-20.md),
+[event dispatcher decompilation](004705b0_script_actor_event_dispatch_fresh.c), and
+[event dispatcher assembly](004705b0_script_actor_event_dispatch_fresh.asm).

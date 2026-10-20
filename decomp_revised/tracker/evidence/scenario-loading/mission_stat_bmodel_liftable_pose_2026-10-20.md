@@ -130,9 +130,11 @@ the nearest overlapping BModel with a `use` binding and dispatches `use`
 directly, unlike retail's contact-registered slot list, retained query
 interface, 200-unit squared-distance limit, action-code gate, and ordered tie
 behavior. Input and pickup therefore remain unwired. The separate Training
-transaction header remains a spike;
-held-frame semantics, callback cadence, trajectory scheduling, and drop/timer
-cleanup are still unresolved.
+transaction header remains a spike. Held-frame semantics and the outer callback
+cadence remain unresolved. The trajectory is now mapped as a state-2 substep
+called from `0043DC60`; the shared host still needs that update path,
+data-driven `drop` effects, and timed-list behavior integrated. See the
+[throw update route and authored-data audit](bmodel_throw_update_route_2026-10-20.md).
 
 The macOS `fdny-scene-viewer` CMake target compiled after this change at
 SHA-256 `c99318aff5339f753844518aab5006b1a4a5085dab53ea5fd3c357f46e5f03fa`.
