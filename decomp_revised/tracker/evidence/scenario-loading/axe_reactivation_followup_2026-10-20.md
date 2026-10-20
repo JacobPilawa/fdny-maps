@@ -23,9 +23,19 @@ Ordinary Axe selection through `0044C2A0` calls Axe vtable `+0x3C` (`0045F9B0`),
 which activates the Axe and children and refreshes follower state. It then
 calls Player action status 5 for the inventory HUD. This path does not call
 status 3 or touch Player `+0xA94`. Separately, `004571A0` status 3 enables and
-resets Player `+0xA94`, while status 4 disables it. The preserved throw/carry
-route calls status 3, but no source-backed link connects ordinary Axe selection
-to that status callback.
+resets Player `+0xA94`, while status 4 disables it.
+
+A fresh headless caller census on the pinned executable found one direct
+status-3 callsite: `0044BC61` in `0044BC40`. Its only direct caller is
+`0043D2B0`, which enters the carry transition only when the selected BModel's
+use mode is 1. The transition stores that BModel at Player `+0x3440`, sets its
+`+0x25C` use state, calls status 3, and then sets Player state 7. Therefore a
+later mode-1 liftable pickup re-enables/resets the Axe subobject after status 4;
+ordinary Axe re-equipping is not the reactivation route. Status 4 is the
+throw-side call at `0045398E`. Other direct status-helper callsites pass 1, 2,
+5, 6, 7, or 9; status 6 targets the indexed child block at Player `+0x218C`,
+separate from `+0xA94`. This is static caller evidence, not an interactive
+visibility or callback-cadence check.
 
 The shared host already mirrors the source-backed inventory operations:
 `PlayerLoadout::equip("axe")` sets `primaryChildEnabled`, and the
@@ -41,13 +51,15 @@ re-equipping clears throw status 4, actor state, or child state `+0x9B0`.
   records slot switching and activation callbacks.
 - [`004571a0_FUN_004571a0.c`](../../../reference/previous-work/decomp/evidence/startup-factories/004571a0_FUN_004571a0.c)
   records Player action status dispatch.
+- [`0043d2b0_bmodel_use_event_fresh.c`](0043d2b0_bmodel_use_event_fresh.c)
+  records the mode-1 gate into the carry transition and subsequent `use` event.
 - The current shared implementation is in
   [`scene_viewer.cpp`](../../../port/spikes/training-native-prototype/src/scene_viewer.cpp)
   and [`hose_item_selection.h`](../../../port/spikes/training-native-prototype/src/hose_item_selection.h).
 
-## Remaining question
+## Remaining questions
 
-Trace the runtime/manager route that invokes Player status callbacks and
-determine when Axe visibility becomes active after a throw. Until a source link
-is found, keep host visibility tied to the observed status callback and do not
-add a guessed reset on equipment selection.
+The source route that re-enables Player `+0xA94` after status 4 is now mapped to
+the next mode-1 liftable pickup. Runtime callback cadence and rendered visibility
+after that transition remain unverified. Keep host visibility tied to the
+observed status callback and do not add a guessed reset on equipment selection.

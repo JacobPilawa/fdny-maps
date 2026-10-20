@@ -223,8 +223,12 @@ requests `ThrowObjectEnd`. Player status 3 enables/resets the Axe subobject and
 status 4 disables it; the shared first-person renderer now follows those
 observed changes. Existing-Axe inventory equip sets root `+0x1FC`; ordinary
 selection activates the item and requests Player status 5 for the HUD, without
-calling status 3 or touching Player `+0xA94`. Whether another runtime route
-reenables that actor after status 4 remains unresolved. The post-`drop`
+calling status 3 or touching Player `+0xA94`. A fresh direct-caller census
+resolves the source route after status 4: the sole direct status-3 callsite is
+in `0044BC40`, reached by `0043D2B0` only for BModel use mode 1. Thus a later
+liftable pickup re-enables/resets the Axe subobject; ordinary re-equipping does
+not. This is static flow evidence, while callback cadence and rendered
+visibility remain unverified. The post-`drop`
 `004A11A0` call is
 verified as BModel sound playback (root `+0x124`, initialized by `004A13A0`);
 the ScriptActor timed-command array is a separate root `+0x148` pointer array
@@ -239,10 +243,10 @@ owner-manager pass invokes slot zero, while its contact traversal calls BModel
 slot `+0x48`; a 53-candidate literal `[reg+0x14]` scan does not exclude
 computed dispatch elsewhere. Player action status 3 enables/resets the Axe
 subobject and status 4 disables it; the shared renderer mirrors those observed
-states. The inventory-side Axe gate is mapped and ported, but the link that
-reenables Player `+0xA94` after status 4 is unresolved; the Player-side
-`ThrowObject` sound path also remains unresolved. The BModel-side `ThrowObjectEnd`
-request is connected at trajectory completion.
+states. The inventory-side Axe gate and mode-1 liftable reactivation route are
+mapped and ported. Callback cadence and rendered visibility after pickup, plus
+the Player-side `ThrowObject` sound path, remain unresolved. The BModel-side
+`ThrowObjectEnd` request is connected at trajectory completion.
 `0043D330` also sets first-child model flags bit `0x10` at `+0xCC` whenever
 BModel state `+0x25C` is nonzero. Hash-pinned Genesis collision traces show
 that both swept-hull and point/ray scans skip a model with this bit set. The
@@ -275,9 +279,10 @@ the outer callback schedule or equality with the Genesis camera transform. See
 and [`player_update_dispatch_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_update_dispatch_2026-10-20.asm), plus
 [`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](../tracker/evidence/scenario-loading/00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
 The next high-value gaps are resolving the follower/camera relation and Player
-callback schedule, determining how Player `+0xA94` becomes visible after status
-4, and checking whether dynamic `drop` registrations add effects or
-timed-command changes. A scan of all 21
+callback schedule, and checking whether dynamic `drop` registrations add
+effects or timed-command changes. The Axe subobject's source reactivation route
+is now mapped to a later mode-1 liftable pickup; callback cadence and rendered
+visibility are still unverified. A scan of all 21
 preserved EVS files and all `S_Script*` fields in the 17 retail BSP exports found
 no literal `drop` binding; dynamic runtime registration remains unexcluded.
 Keep the current contact, collision, and frame adapters provisional;
@@ -303,7 +308,7 @@ and
 | `throw_release_gate` (Luna) | Player held-object gate in `00452570`; producer, target-writer, and angle-helper evidence | Complete; a non-null held pointer reaches the strict angle-under-10 branch on each Player update, without an action-edge check. Vector semantics and callback cadence remain unresolved. No edits |
 | `throw_drop_event_route` (Luna) | Throw-completion event effects; `0043D330`, `004705B0`, and authored EVS/BSP searches | Complete; trajectory `drop` dispatch does not directly mutate Player carry state or remove timed commands. No authored binding was found in preserved data; runtime registration is unexcluded. No edits |
 | `view_frame_identity` (Luna) | Distinguish Player held-target frame from throw-gate frame; frame-helper evidence and current update window | Complete, read-only; throw gate reads view follower root `+0x34A4`, refreshed before the gate; held-target writer reads root `+0x24`. Numeric relation to rendered Genesis camera remains open. No edits |
-| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. It does not call status 3 or touch Player `+0xA94`; post-throw visibility route remains open. No edits |
+| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use, so a later pickup re-enables/resets Player `+0xA94`; callback cadence and rendered visibility remain unverified. No code edits |
 | `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local Player/BModel routes to `00470740` and callback bodies are mapped, but recurring manager caller and frame ordering remain unproven. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
