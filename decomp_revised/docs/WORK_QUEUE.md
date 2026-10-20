@@ -54,11 +54,13 @@ plist validation passed and eight rescue choices were emitted. This remains a
 compile/package check, not a live bonus pickup or retail-parity check. See
 [`bonus_points_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bonus_points_port_2026-10-20.md).
 
-Next core gap: carry the verified all-victims final-exit win state into the
-existing Player status/result consumer and frontend state-1 handoff. Trace the
-remaining result-child timing and child-5 page controls before implementing
-presentation or return behavior. Leave the unknown loss-state producer and any
-deadline-to-loss transition unmodeled; see
+Next core gap: resolve the Player `+0x3438` message-gate lifecycle as it enters
+the existing status/result consumer. Its result child is at `PlayerStatus+0x824`,
+and the updater's active check at `PlayerStatus+0x960` aliases child `+0x13C`;
+the child timing fields `+0x130/+0x134` and page-5 content/activation remain
+unknown. Keep the state-2 producer and deadline-to-loss transition unmodeled;
+do not add an outcome transition until the gate lifecycle and timing are
+supported. See
 [`mission_outcome_status_dispatch_2026-10-19.md`](../tracker/evidence/scenario-loading/mission_outcome_status_dispatch_2026-10-19.md).
 
 ## Dedicated PlayerHose host slice (2026-10-20)
@@ -564,7 +566,7 @@ HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, rescue textures, post-duration rotation, and frontend consumer traced: state 1 updates selected profile/catalog data and selects child 5; state 2 selects level-selector child 2. Child 5's callback ignores button action IDs 1/2 and uses action 0 for history-back; its controls/content, state-2 producer, result-child timing, runtime placement/alpha, replay cadence, and full outcome flow remain open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, rescue textures, timed child active-flag alias, and frontend consumer traced: state 1 updates selected profile/catalog data and selects child 5; state 2 selects level-selector child 2. Child 5 requests left-arrow artwork (menu resource 54), while its callback ignores button action IDs 1/2 and uses action 0 for history-back; its page content/activation, message-gate lifecycle, result timing, state-2 producer, runtime placement/alpha, replay cadence, and full outcome flow remain open |
 
 The result path is now known to use direct calls: `00458400` invokes
 `0048D180` and `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs
@@ -573,9 +575,14 @@ not apply to it. A fresh decoded-offset scan and decompilation now trace the
 downstream manager consumer: on result completion, manager state 1 updates the
 selected catalog/profile record and selects frontend child 5; state 2 selects
 child 2, the traced level selector. Child 5 is constructed by `00432BB0` with
-two button actions (1/2) and menu bitmap ID 54. Its vtable callback returns
-without acting on either nonzero code; only code 0 moves the menu history back.
-This narrows but does not identify the page's controls, visibility, or content.
+two button actions (1/2) and menu bitmap ID 54. The hash-pinned menu resource
+table maps ID 54 to the left-arrow color/alpha pair; this identifies the
+requested artwork only. Its vtable callback returns without acting on either
+nonzero code; only code 0 moves the menu history back. This narrows but does
+not identify the page's controls, visibility, or content. `00458400` checks
+`PlayerStatus+0x960` for this child to be active; `0048D180` writes the same
+byte through `PlayerStatus+0x824+0x13C`. The timing values and who clears the
+active byte remain unknown.
 The focused export is
 [`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c).
 Next, identify child 5's label/content resources and activation conditions,
@@ -864,7 +871,8 @@ body-bearing functions and 287 external entries.
 | `touchhose_authored` | Preserved BSP/EVS strings, PropModel contact, named ScriptActor dispatch | Complete, read-only; verified 16 commands in 12 BSPs with full hashes; static authored route reaches PlayerRescue `touchhose`, while runtime cadence remains open |
 | `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms mode 2 acquisition, mode 3 slot selection, mode 1 deactivation, separate action callbacks, prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and input bindings unresolved |
 | `hose_material_trace` | PlayerHose stream component material/resource binding | `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c`, `playerhose_strip_texture_lookup_fresh_2026-10-20.c`, `hose.rrf` | Complete, read-only; confirmed resource ID 3 lookup, source-ordered polygon setup, white vertex colors, 0.15 U span, six-unit U scroll and V extent 0.9; blend/material state and runtime parity remain open |
-| `mission_result_return_trace` | Static result widget consumer and stage return handoff | `mission_outcome_frontend_consumer_fresh_2026-10-20.c`, `mission_outcome_frontend_handoff_fresh_2026-10-20.c`, result and exit evidence | Complete, read-only; confirmed static result consumer, but result timing/child-5 meaning, loss producer and full return flow remain unresolved; no guessed host transition added |
+| `mission_result_return_trace` | Static result widget consumer and stage return handoff | `mission_outcome_frontend_consumer_fresh_2026-10-20.c`, `mission_outcome_frontend_handoff_fresh_2026-10-20.c`, result and exit evidence | Complete, read-only; confirmed static result consumer and `PlayerStatus+0x960 == child(+0x13C)` active-byte alias; menu resource 54 maps to left-arrow artwork, but result timing/child-5 meaning, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
+| `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resource 54 join | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed `PlayerStatus+0x960 == PlayerStatus+0x824+0x13C`; ID 54 maps to left-arrow color/alpha images. Neither result timing nor child-5 page purpose is established; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
 | `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |

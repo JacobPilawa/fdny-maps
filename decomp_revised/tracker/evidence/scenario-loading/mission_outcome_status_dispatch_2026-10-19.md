@@ -43,6 +43,11 @@ each contain one entry, so their selected resource is unambiguous either way.
 The status child at `PlayerStatus+0x824` is a timed widget state. Helper
 `0048D180` stores the requested selector (`0x47` or `0x48`) at child `+0x108`,
 records the current global clock at `+0x12C`, and marks it active at `+0x13C`.
+In `00458400`, the matching active check at `PlayerStatus+0x960` aliases this
+same byte: `PlayerStatus+0x824+0x13C == PlayerStatus+0x960`. This joins the
+status updater's result-child gate to the setter without depending on the
+printed direct-operand scan. It does not establish who clears the active byte
+or supply the result child's duration fields.
 Constructor `0048D390` initializes its color and leaves it hidden. Updater
 `0048D1A0` makes it visible and uses the elapsed ratio
 `(clock - child+0x12C) / child+0x130`. When that ratio exceeds 1.0, it calls
@@ -132,8 +137,14 @@ index `5` through `0042D3E0`.
 
 Existing same-hash constructor evidence identifies child `2` as the level
 selector (`0042F670`). Fresh constructor review identifies child `5` as
-`00432BB0`, a two-button page that also requests menu bitmap ID `54`; its label,
-intended controls, visible content, and runtime meaning remain unknown. In the
+`00432BB0`, a two-button page that also requests menu bitmap ID `54`. The
+hash-pinned `menu.rrf` maps ID `54` to `data\\menu\\leftarrow.bmp` and
+`data\\menu\\leftarrow_a.bmp`; the preserved asset manifest records their
+SHA-256 values as
+`fad3d360ed0e138c53e07530b6a28a4bb85928768993c6fa005d629a879a750f` and
+`a146951476a6df0be3565aa651a17bd69d0ce4e97515b36e777e75ac41efc528`.
+This identifies the requested button artwork only; its label, intended
+controls, visible content, and page meaning remain unknown. In the
 win-only `00424650` path, the selected catalog entry is looked up, a profile
 record is obtained or created, and fields in that record are updated with the
 selected ordinal and current menu-owned string. This is evidence of a
@@ -151,8 +162,10 @@ callsite chain. The buttons' visibility and expected user actions remain open.
 
 The focused export is
 [`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](mission_outcome_frontend_consumer_fresh_2026-10-20.c).
-It records the executable hash above. The control flow establishes the
-frontend child indices and the win-only mutation, but not the result child's
+It records the executable hash above. The menu resource table has SHA-256
+`ae89458ef0aa2017351c1fa92fa22286eb4d4052cd55bbee4c1b917a1b9104b0`.
+The control flow establishes the frontend child indices, win-only mutation,
+active-flag alias, and button-art resource, but not the result child's
 duration, page-5 presentation, map-loading handoff, or natural runtime timing.
 No host transition was added from these static findings alone.
 
