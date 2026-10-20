@@ -97,6 +97,7 @@ bool jsonNumber(J value) {
 #include "fire_contact.h"
 #include "fire_spread.h"
 #include "fire_message_queue.h"
+#include "bmodel_interaction_selection.h"
 #include "player_fire_contact.h"
 #include "player_fire_message.h"
 #include "player_burn_cooling.h"
@@ -806,6 +807,7 @@ struct PreviewBModelMotion {
     // BModel root +0x258: generic ScriptActor use starts at mode 2 and a
     // known-data-valid G_Liftable first-child PATH overrides it with mode 1.
     int useMode = 0;
+    int useObjectState = 0; // BModel root +0x25C; set to 1 while lift-carried.
     bool liftablePathHasExactModeTimes = false;
     V liftableStart{}; // BModel root +0x1F0..+0x1F8
     V liftableEnd{};   // BModel root +0x1FC..+0x204
@@ -2339,6 +2341,54 @@ void sampleBModelMotions(const std::vector<PreviewBModelMotion>& motions, float 
 void sampleBModelState(const PreviewBModelMotion& bmodel, Collision& collision) {
     for (const auto& child : bmodel.children)
         collision.setPose(child.model, child.path.sample(bmodel.currentTime));
+}
+
+bool bmodelInteractionBounds(const PreviewBModelMotion& bmodel,
+                             Collision& collision, V& minimum, V& maximum) {
+    const float infinity = std::numeric_limits<float>::infinity();
+    minimum = {infinity, infinity, infinity};
+    maximum = {-infinity, -infinity, -infinity};
+    bool foundBounds = false;
+    for (const auto& child : bmodel.children) {
+        auto model = std::find_if(collision.collisionModels.begin(), collision.collisionModels.end(),
+            [&](const CollisionModelBounds& candidate) { return candidate.index == child.model; });
+        if (model == collision.collisionModels.end()) continue;
+        for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex) {
+            V corner;
+            for (int axis = 0; axis < 3; ++axis)
+                corner[axis] = (cornerIndex & (1 << axis)) ? model->maxs[axis] : model->mins[axis];
+            corner = collision.transform(corner, model->origin, model->index, false);
+            for (int axis = 0; axis < 3; ++axis) {
+                minimum[axis] = std::min(minimum[axis], corner[axis]);
+                maximum[axis] = std::max(maximum[axis], corner[axis]);
+            }
+            foundBounds = true;
+        }
+    }
+    if (!foundBounds && bmodel.hasBounds) {
+        minimum = bmodel.boundsMin;
+        maximum = bmodel.boundsMax;
+        return true;
+    }
+    return foundBounds;
+}
+
+void applyHeldBModelTarget(PreviewBModelMotion& bmodel, Collision& collision,
+                           V target, float dt) {
+    if (bmodel.children.empty()) return;
+    const auto& firstChild = bmodel.children.front();
+    V currentCenter = firstChild.rotationalCenter;
+    auto firstOrigin = collision.modelOrigins.find(firstChild.model);
+    if (firstOrigin != collision.modelOrigins.end())
+        currentCenter = collision.transform(firstChild.rotationalCenter, firstOrigin->second,
+                                            firstChild.model, false);
+    const float oldWeight = dt > 0.f ? std::pow(0.5f, dt / 0.1f) : 1.f;
+    const V correctedCenter = currentCenter * oldWeight + target * (1.f - oldWeight);
+    for (const auto& child : bmodel.children) {
+        Pose pose = child.path.sample(bmodel.currentTime);
+        pose.translation = correctedCenter - child.rotationalCenter;
+        collision.setPose(child.model, pose);
+    }
 }
 
 Q multiplyQuaternion(Q a, Q b) {
@@ -5492,7 +5542,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         float fireCameraAuditSampleYaw = yaw;
         float fireCameraAuditSamplePitch = pitch;
         float previewMotionTime = bmodelMotionStart;
-        int nearestUseEntity = -1;
+        int selectedBModelUseEntity = -1;
+        int selectedBModelUseAction = 0;
+        PreviewBModelMotion* playerHeldBModel = nullptr;
+        int playerBModelActionStatus = 0;
+        int playerInteractionState = 0;
+        BModelInteractionSelection::Registry bmodelUseRegistry;
         std::string previousEquippedItem = playerLoadout.selectedName();
         std::map<int, bool> bmodelContacts;
         std::map<int, bool> boundsTriggerContacts;
@@ -5860,7 +5915,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             bool crouchDown = keys[SDL_SCANCODE_C] != 0;
             crouchEdge = crouchDown && !crouchWasDown;
             crouchWasDown = crouchDown;
-            const int useTargetBeforeMove = nearestUseEntity;
+            const int useTargetBeforeMove = selectedBModelUseEntity;
+            const int useActionBeforeMove = selectedBModelUseAction;
             const bool usingConsole = useEdge && useTargetBeforeMove >= 0;
             if (playerIncapacitated) forward = side = 0.f;
             const bool jumpDown = !playerIncapacitated && !usingConsole && (keys[SDL_SCANCODE_SPACE] != 0 ||
@@ -6805,10 +6861,16 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 extinguisher.worldFrame = ExtinguisherPose::world(
                     extinguisher.localPose, extinguisher.follower);
             }
+            if (playerHeldBModel) {
+                // Player+0x338C supplies the Player origin; the source writer
+                // adds frame column 3 * 90 and column 2 * -60. The camera
+                // basis is the current host adapter for that Player frame.
+                const V heldTarget = player.p + cameraFrame.axis[2] * 90.f -
+                                     cameraFrame.axis[1] * 60.f;
+                applyHeldBModelTarget(*playerHeldBModel, collision, heldTarget, dt);
+            }
             std::map<int, bool> currentBModelContacts;
             std::vector<std::pair<int, std::string>> pendingBModelContactEvents;
-            nearestUseEntity = -1;
-            float nearestUseDistanceSquared = std::numeric_limits<float>::infinity();
             const V playerMinimum = player.p + V{-30.f, -30.f, -30.f};
             const V playerMaximum = player.p + player.maxs();
             for (const auto& bmodel : bmodelMotions) {
@@ -6827,23 +6889,33 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         pendingBModelContactEvents.emplace_back(bmodel.entity, "touching");
                     if (!inside && wasInside)
                         pendingBModelContactEvents.emplace_back(bmodel.entity, "untouch");
-                    auto foundBindings = scriptRuntime->bindings.find(bmodel.entity);
-                    bool hasUse = foundBindings != scriptRuntime->bindings.end() &&
-                        std::any_of(foundBindings->second.begin(), foundBindings->second.end(),
-                                    [](const Scripts::Binding& binding) { return binding.event == "use"; });
-                    if (inside && hasUse) {
-                        const V center = (bmodel.boundsMin + bmodel.boundsMax) * .5f;
-                        const V difference = center - player.p;
-                        const float distanceSquared = dot(difference, difference);
-                        if (distanceSquared < nearestUseDistanceSquared) {
-                            nearestUseDistanceSquared = distanceSquared;
-                            nearestUseEntity = bmodel.entity;
-                        }
-                    }
                 }
+                if (bmodel.useMode != 0 && inside) bmodelUseRegistry.add(bmodel.entity);
+                else bmodelUseRegistry.remove(bmodel.entity);
                 currentBModelContacts[bmodel.entity] = inside;
             }
             bmodelContacts = std::move(currentBModelContacts);
+            std::vector<BModelInteractionSelection::Candidate> useCandidates;
+            useCandidates.reserve(bmodelUseRegistry.slots.size());
+            const bool hoseSlot4Present = playerLoadout.items.slots[4].present;
+            for (int entity : bmodelUseRegistry.slots) {
+                if (entity < 0) continue;
+                auto owner = bmodelByEntity.find(entity);
+                if (owner == bmodelByEntity.end()) continue;
+                const auto& bmodel = bmodelMotions[owner->second];
+                const auto gate = BModelUse::candidate(
+                    bmodel.useMode, hoseSlot4Present, playerLoadout.items.hoseMode,
+                    1, playerHeldBModel == nullptr, bmodel.useObjectState);
+                V minimum = bmodel.boundsMin, maximum = bmodel.boundsMax;
+                if (gate.hasQueryInterface)
+                    bmodelInteractionBounds(bmodel, collision, minimum, maximum);
+                useCandidates.push_back({entity, gate.action, gate.hasQueryInterface,
+                                         minimum, maximum});
+            }
+            const auto bmodelUseSelection = BModelInteractionSelection::select(
+                player.p, cameraFrame.axis[2] * -1.f, bmodelUseRegistry, useCandidates);
+            selectedBModelUseEntity = bmodelUseSelection.entity;
+            selectedBModelUseAction = bmodelUseSelection.action;
             std::map<int, bool> currentBoundsTriggerContacts;
             std::vector<const PreviewBoundsTrigger*> boundsTriggerTouches;
             std::vector<const PreviewBoundsTrigger*> boundsTriggerTouching;
@@ -6948,7 +7020,32 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     scriptRuntime->dispatch(prop->entity, "untouch");
             }
             if (useEdge && scriptRuntime && useTargetBeforeMove >= 0 &&
-                bmodelContacts[useTargetBeforeMove]) {
+                useActionBeforeMove != 0) {
+                auto owner = bmodelByEntity.find(useTargetBeforeMove);
+                if (owner != bmodelByEntity.end()) {
+                    auto& selected = bmodelMotions[owner->second];
+                    if (useActionBeforeMove == BModelUse::kLiftAction &&
+                        selected.useMode == 1) {
+                        BModelUse::LiftTransition transition;
+                        transition.playerHeldObject = playerHeldBModel;
+                        transition.bmodelObjectState = selected.useObjectState;
+                        transition.playerState = playerInteractionState;
+                        if (BModelUse::enterLiftMode(
+                                selected.useMode, &selected, nullptr, transition,
+                                [&](void*, std::uintptr_t actionStatus, const void*) {
+                                    // 0044BC40 calls 004571A0(Player+0x5F4, 3, 0).
+                                    playerBModelActionStatus = int(actionStatus);
+                                })) {
+                            playerHeldBModel = static_cast<PreviewBModelMotion*>(
+                                transition.playerHeldObject);
+                            selected.useObjectState = transition.bmodelObjectState;
+                            playerInteractionState = transition.playerState;
+                            std::cout << "BModel lift action: entity " << selected.entity
+                                      << " action status " << playerBModelActionStatus
+                                      << ", Player state " << playerInteractionState << "\n";
+                        }
+                    }
+                }
                 scriptRuntime->dispatch(useTargetBeforeMove, "use");
                 activeHintRemaining = std::max(activeHintRemaining, 0.25f);
             }
@@ -7113,7 +7210,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                 }
                 if (!activeHint.empty()) title += " | " + activeHint;
-                else if (nearestUseEntity >= 0) title += " | E/Space: use";
+                else if (selectedBModelUseEntity >= 0) title += " | E/Space: use";
+                if (playerHeldBModel)
+                    title += " | carrying " + (playerHeldBModel->authoredName.empty()
+                        ? std::to_string(playerHeldBModel->entity)
+                        : playerHeldBModel->authoredName);
                 SDL_SetWindowTitle(window, title.c_str());
                 previousTitleUpdate = now;
             }

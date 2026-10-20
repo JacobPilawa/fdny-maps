@@ -42,10 +42,13 @@ struct InteractionBox {
  }
 
  static bool query(V start,V direction,V minimum,V maximum,V* point,float* score){
+  // 00489D80 normalizes before handing the ray to 00482B90. Keep the unit
+  // vector for both the slab query and the reconstructed hit point.
+  const V unit=InteractionSphere::normalizedForPoint(direction);
   float nearDistance=0.f,farDistance=0.f;
-  if(!ray(start,direction,minimum,maximum,&nearDistance,&farDistance))return false;
+  if(!ray(start,unit,minimum,maximum,&nearDistance,&farDistance))return false;
   if(point){
-   V unit=InteractionSphere::normalizedForPoint(direction),scaled;
+   V scaled;
    for(int axis=0;axis<3;axis++)scaled[axis]=(E::from(unit[axis])*E::from(nearDistance)).asFloat();
    for(int axis=0;axis<3;axis++)(*point)[axis]=(E::from(start[axis])+E::from(scaled[axis])).asFloat();
   }

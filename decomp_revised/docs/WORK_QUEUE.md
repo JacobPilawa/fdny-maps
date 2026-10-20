@@ -20,20 +20,37 @@ Retail's time comparator is tolerant, so near-equal boundary values are not yet
 accepted. This state initialization does not route input or claim a gameplay
 interaction.
 
-The macOS `fdny-scene-viewer` CMake target compiled after this change with
-SHA-256 `c99318aff5339f753844518aab5006b1a4a5085dab53ea5fd3c357f46e5f03fa`.
+The macOS `fdny-scene-viewer` CMake target compiled after the selection/action/
+carry integration with SHA-256
+`27e94804c6fb5b39231fec5da887a975860757bd0e7634111214a432323e69cb`.
 The linker reported that the installed `json-c` dylib targets macOS 27.0 while
 this build links for 13.3; the target still completed. No package rebuild,
 tests, interactive run, or retail comparison was performed.
 
-The live host still chooses nearest overlapping use-binding BModels and sends
-`use` directly. Retail instead registers contact candidates in a dynamic
-slot list, reuses the first hole, uses the retained query interface and a
-200-unit squared-distance limit, and picks by ordered score with later ties
-winning. Implement that registry/query path and
-the Player action gate before connecting input or pickup. Held pose and throw
-adapters remain open. See
+The shared host now maintains a first-hole candidate registry, performs the
+source-shaped ray/AABB query, applies the 200-unit reach test and later-slot
+tie rule, gates mode-1 action 1004, and routes selected use into the authored
+event plus the mode-1 carry-state transition. Held-object target smoothing is
+also connected. This is an implementation slice, not retail parity: registry
+updates still come from host overlap sampling and BModel iteration order;
+retail contact registration order and callback cadence are unresolved. The
+host derives query bounds from transformed child collision boxes, substitutes
+the camera frame for the retail Player frame, and currently supplies Player
+byte `+0x12C` as 1; all three mappings remain provisional. Selection action
+host key/polling equivalence and query sign/frame equivalence are unverified. Throw
+trajectory, drop/timed-list cleanup, and the action-status callback effects
+remain open. See
+[`bmodel_selection_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bmodel_selection_port_2026-10-20.md)
+and
 [`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md).
+
+### Focused BModel selection audit ledger (2026-10-20)
+
+| Agent | Scope and files | Status |
+| --- | --- | --- |
+| `bmodel_contact_registry` | Read-only check of retail contact registration/removal and host seam; Ghidra exports, `scene_viewer.cpp`, BModel contact evidence | Complete; registry mechanics confirmed, live order and cadence unresolved |
+| `bmodel_selection_query` | Read-only trace of `00459350`/`00459630` and query vtable; fresh Ghidra exports and interaction helpers | Complete; ordered scan, 200-unit cutoff, and later tie winner confirmed |
+| `bmodel_selection_review` | Read-only review of the new selection and held-pose adapter; `bmodel_interaction_selection.h`, `scene_viewer.cpp`, held-frame evidence | Complete; documented provisional frame, bounds, Player gate, and callback mappings; no edits |
 
 ## Boat A type-5 Exploder trace (2026-10-20)
 
