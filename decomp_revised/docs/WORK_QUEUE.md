@@ -672,6 +672,7 @@ No effect renderer change is justified yet.
 | `bmodel_liftable_endpoint_time_port` (root) | Same-hash `0043BE00`/`0043B120` exports and instructions; BModel pose note; `scene_viewer.cpp` | Complete; ports the used strict zero and one endpoint windows through a dedicated shared helper. Rescue-all app compiles/packages with matched arm64 hashes; all current authored liftable endpoints remain exact. No runtime or parity claim. |
 | `axe_gap_audit` (Luna) | Axe action, child update/Think, strike, collision, inventory, and same-hash Axe evidence | Complete, read-only; the source-backed mapped behavior is already present. Remaining release/cadence, collision adapter, frame-record draw effect, and view-follower relation are unresolved; no safe Axe edit found. |
 | `carry_render_audit` (Luna) | Carry evidence, Genesis normal actor gate, `victim_rescue.h`, `scene_viewer.cpp` | Complete, read-only; pickup hide/freeze is implemented, but no retail Player-relative carry transform is evidenced. Do not add a pose adapter without recovered transform inputs. |
+| `core_gap_triage_next` (Luna) | Latest queue, shared rescue host, Boat A type-5 emitter evidence | Complete, read-only; no additional source-backed gameplay slice is ready. Boat A's renderer still needs runtime descriptor `0x502D40` contents or its external initializer; the recurring Player/BModel root `+0x14` scheduler remains the highest-impact open trace, but static caller searches have not identified it. No edits. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
 
