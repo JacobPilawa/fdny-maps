@@ -59,8 +59,11 @@ the existing status/result consumer. Its result child is at `PlayerStatus+0x824`
 and the updater's active check at `PlayerStatus+0x960` aliases child `+0x13C`;
 the child timing fields `+0x130/+0x134` and page-5 content/activation remain
 unknown. Keep the state-2 producer and deadline-to-loss transition unmodeled;
-do not add an outcome transition until the gate lifecycle and timing are
-supported. See
+the same field blocks victim-pickup messages, and the no-exit-zone path can set
+it. A normal authored exit is only enabled until the later `finalexit`
+command, so do not equate every gate write or all-victims completion with a
+frontend win. Do not add an outcome transition until the gate lifecycle and
+timing are supported. See
 [`mission_outcome_status_dispatch_2026-10-19.md`](../tracker/evidence/scenario-loading/mission_outcome_status_dispatch_2026-10-19.md).
 
 ## Dedicated PlayerHose host slice (2026-10-20)

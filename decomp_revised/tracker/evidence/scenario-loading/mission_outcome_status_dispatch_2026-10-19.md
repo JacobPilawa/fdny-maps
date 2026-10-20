@@ -178,6 +178,15 @@ updater and an associated widget-visibility helper. This is not proof that a
 loss state is unreachable: an indirect producer, unrecognized code, external
 callback, or other mechanism may set it.
 
+The same field is the Player message gate used by the shared rescue port to
+reject victim-pickup messages. Retail's final-exit availability routine can
+also set it when no exit zone exists, while ordinary completion with an
+authored exit only enables that exit until a later `finalexit` command passes
+its remaining-victim check. The status callback's value-1 win branch therefore
+does not prove that every gate-setting path is a completed-mission win. Keep
+the gate storage and pickup behavior distinct from any host result transition
+until the branch lifecycle and status visibility are established.
+
 `Player+0x343C` is the deadline input traced in
 [`catalog_time_rescue_deadline_port_2026-10-19.md`](../runtime/catalog_time_rescue_deadline_port_2026-10-19.md).
 This status trace finds no direct connection from that field or its helper to
