@@ -186,7 +186,7 @@ hotspot progression link; a read of `E_NextHotSpotPathDir` or runtime entry
 from 36 has not been found. One non-hotspot path record also contains ZF fire
 references. The hash-pinned trace and per-map counts are in
 [`player_hose_stage_lifecycle_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_stage_lifecycle_2026-10-20.md).
-The function-review ledger now has 381 reviewed EXE functions; the tracker
+The function-review ledger now has 382 reviewed EXE functions; the tracker
 atlas, summary, and dashboard were regenerated from the CSVs. This is static
 analysis only; no dedicated hose-stage port implementation or live parity
 check was made.
@@ -241,24 +241,28 @@ clamped symmetrically by `+0x238`; yaw at `+0x234` subtracts `STEER_YAW` and
 uses the symmetric `+0x23C` limit. Hotspot entry `004677D0` copies
 `N_PitchSpread` from the path record's `+0x30` into `+0x238`, and
 `M_MaxPressure` from `+0x2C` into `+0x1834`. The pitch value therefore bounds
-the steerable pitch in degrees; helper `00496DD0` multiplies the angle by the
-degrees-to-radians constant and `0.5` before its sine/cosine rotation. Its
-relationship to path-angle progression remains open. The pressure value has
-no direct consumer in the bounded offset scan and must not be treated as stream
-intensity. Stream-owner intensity is separately at `+0x1830`. `00465EF0`
-calculates the nozzle aim and `0046D1B0` updates the stream visual. See the hose
-lifecycle note,
+the steerable pitch in degrees; constructor `00466D60` starts its pitch/yaw
+limits at 45/60 degrees, and hotspot entry replaces the pitch limit. Helper
+`00496DD0` multiplies the angle by the degrees-to-radians constant and `0.5`
+before its sine/cosine rotation. The limit's relationship to path-angle
+progression remains open. The pressure value has no direct consumer in the
+bounded offset scan and must not be treated as stream intensity. Stream-owner
+intensity is separately at `+0x1830`. `00465EF0` calculates the nozzle aim and
+`0046D1B0` updates the stream visual. See the hose lifecycle note,
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 and [`player_hose_angle_rotation_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/player_hose_angle_rotation_fresh_2026-10-20.c).
 
-The time-warning caller `004653B0` passes its value and literal `5` to the
-shared helper `00481F40`; a nonzero low-byte return requests
-`RC_HoseTimeWarn`. The helper compares a supplied value with its stored marker
-using a global tolerance and rounded-value checks. `sound.rrf` maps warning
-entries 0/1 to `time4_b.wav` and `time5_b.wav`, but the literal does not prove a
-five-second schedule, selected entry, or audible playback. See the fresh
+The time-warning caller `004653B0` passes the decremented hotspot countdown and
+literal `5` to shared helper `00481F40`; `004B98B0` floors both the current
+value and comparison marker, and the warning branch requires current floor 5
+and stored floor 6. A nonzero low-byte return requests `RC_HoseTimeWarn`, so
+the source supports a six-to-five countdown-unit crossing. The countdown's
+wall-clock units, selected chatter entry, and audible playback remain
+unverified. `sound.rrf` maps warning entries 0/1 to `time4_b.wav` and
+`time5_b.wav`. See the fresh
 [`hose_pressure_path_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_pressure_path_fresh_2026-10-20.c)
-and [`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c).
+, [`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c),
+and [`hose_time_floor_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_floor_helper_fresh_2026-10-20.c).
 
 The rescue-player HoseSpray update `004640F0` calls `00463EF0` while item
 action byte `+0xC58` is active. That helper reads contact `+0x614..+0x61C`,

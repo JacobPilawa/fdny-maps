@@ -106,6 +106,9 @@ The per-frame updater `00466780` reads `MOUSE_LB`, `STEER_PITCH`, and
 pitch input and is clamped to `[-PlayerHose+0x238, +PlayerHose+0x238]`; its yaw
 accumulator at `+0x234` subtracts yaw input and is clamped to the symmetric
 limit at `+0x23C`. Pitch is also constrained by the current view-angle limits.
+Constructor `00466D60` initializes the pitch and yaw limits to 45 and 60
+degrees respectively; hotspot entry replaces the pitch limit with that
+hotspot's `N_PitchSpread`.
 On hotspot entry, `004677D0` writes the path record's `+0x30` pitch-spread value
 to `+0x238`, and its `+0x2C` max-pressure value to `+0x1834`. The resulting
 orientation feeds nozzle aim helper `00465EF0` and stream presentation
@@ -161,15 +164,17 @@ hash-pinned export is
 
 ## Hose time-warning gate
 
-The PlayerHose warning caller `004653B0` passes its integer input and literal
-`5` to `00481F40` on the component at PlayerHose `+0xBC0`. When the helper's
-returned low byte is nonzero, the caller requests `RC_HoseTimeWarn` through
-`004897C0`. A second caller in the PlayerStatus/widget path passes a null
-integer pointer and the same literal, then requests the same key. The helper
-compares the supplied value with its stored value at `+0x278`, uses a global
-floating-point tolerance and rounded-value checks, and queues a record through
-`0048C780`. This supports a shared timer-transition gate; the literal `5` is
-not enough to establish a five-second warning or the exact warning schedule.
+The state-4 updater `004674A0` decrements the hotspot countdown and calls
+`004653B0` with its current value. That caller passes the value and literal `5`
+to `00481F40` on PlayerHose component `+0xBC0`. The helper's `004B98B0` calls
+floor the current value and stored comparison marker at `+0x278`; the warning
+branch requires current floor `5` and stored floor `6`. A nonzero returned
+low byte makes `004653B0` request `RC_HoseTimeWarn` through `004897C0`. This
+supports a request when the countdown crosses from six to five units. Whether
+those units are seconds, which configured sound entry is selected, and whether
+it is audible in a live stage remain unverified. A second PlayerStatus/widget
+caller passes a null value and the same literal to the shared helper, so that
+call site's timer semantics differ.
 
 `Data/ResDefs/sound.rrf` maps `RC_HoseTimeWarn0` and `RC_HoseTimeWarn1` to
 `time4_b.wav` and `time5_b.wav`; its SHA-256 is
@@ -179,7 +184,10 @@ audible output or which entry is heard in a live hose stage. Fresh pseudocode
 is in [`hose_pressure_path_fresh_2026-10-20.c`](../fire-spread/hose_pressure_path_fresh_2026-10-20.c)
 (SHA-256 `c61d19bfaa00d1f385a5384183c1d2f65d85351acb71f63445e2963a0354e980`)
 and [`hose_time_warning_helper_fresh_2026-10-20.c`](../fire-spread/hose_time_warning_helper_fresh_2026-10-20.c)
-(SHA-256 `3a266991ef999dfddafe6108202ba2f269ae88fdddd3f37dd7de1279c91121a6`).
+(SHA-256 `3a266991ef999dfddafe6108202ba2f269ae88fdddd3f37dd7de1279c91121a6`),
+plus the floor helper export
+[`hose_time_floor_helper_fresh_2026-10-20.c`](../fire-spread/hose_time_floor_helper_fresh_2026-10-20.c)
+(SHA-256 `e681e37206a278a2eb3716a479cea235dbc7e2480392124dd2d26309c37cb534`).
 
 ## Current authored data in the four dedicated hose maps
 
@@ -234,9 +242,9 @@ which actors are active together.
 - Trace direct or aliased consumers of `M_MaxPressure` at PlayerHose `+0x1834`
   and resolve its effect; trace the pitch clamp's interaction with path-angle
   progression and SprayTime units/edge cases before implementing those semantics.
-- Trace the exact warning thresholds and selector state behind `00481F40`;
-  the caller's literal `5` and `RC_HoseTimeWarn` resource names do not prove
-  displayed seconds or audible entry selection.
+- Confirm the PlayerHose countdown's time units and which `RC_HoseTimeWarn`
+  sound entry is selected; the traced crossing is six-to-five countdown units,
+  not yet verified wall-clock seconds or audible playback.
 - Trace the separate stage transition, result HUD, and return flow. Treat the
   configured chatter filenames as resolved but audible playback as unverified;
   the generic rescue `PlayerStatus` result widget is not a PlayerHose consumer.
