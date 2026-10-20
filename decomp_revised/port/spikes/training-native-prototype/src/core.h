@@ -113,10 +113,10 @@ struct Player{
  // origin/bounds transform and callback timing are not yet matched.
  bool step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
   const bool priorContactLatch=collisionLatch;
-  if(crouchEdge){
-   if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}
-   else if(ground)crouch=true;
-  }
+  // Retail's CROUCH command (00451927) is idempotent in state 4 and enters
+  // crouch only while the previous accepted-contact latch (+0x12C) is set.
+  // JUMP/uncrouch owns the standing-clearance query below.
+  if(crouchEdge&&!crouch&&priorContactLatch)crouch=true;
   // State 4 builds and smooths the capped movement velocity before polling
   // JUMP. Its action branch then returns before the velocity integrator and
   // collision callbacks, whether or not the clearance query succeeds.

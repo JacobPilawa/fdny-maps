@@ -246,10 +246,19 @@ The follow-up `0044BCE0` trace records its exact `00492DF0` argument sources:
 origin root `+0x4C`, minimum root `+0x78`, and maximum `(root+0x84, 85.0,
 root+0x8C)`. A blocked contents-mask `0x43` query preserves crouch and requests
 the `+0x508` sound; a clear query restores state 3 and writes 85.0 to `+0x88`.
-The host's standing AABB check remains an adapter because the Genesis query
-transform and root bound fields are not yet mapped. Scope `player_uncrouch_clearance`
+Player root `+0x4C` and bounds at `+0x78..+0x8C` now join the documented
+standing origin and `(-30,-30,-30)`/`(30,85,30)` hull. The host still uses its
+local collision-model path in place of Genesis `geWorld_GetContents`, so query
+context and content filtering remain provisional. Scope `player_uncrouch_clearance`
 is complete, read-only; evidence is in
 [`player_uncrouch_clearance_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_uncrouch_clearance_2026-10-20.asm).
+
+The retail `CROUCH` ScriptActor token is also mapped: it enters state 4 only
+when the previous contact latch at `+0x12C` is set, and does nothing if already
+crouched. The shared host now uses that latch instead of its `ground` boolean
+and no longer toggles out of crouch through the Crouch edge; JUMP owns the
+clearance check. The SDL key mapping remains provisional. See
+[`player_crouch_command_gate_2026-10-20.md`](../tracker/evidence/scenario-loading/player_crouch_command_gate_2026-10-20.md).
 
 Retail selects pitch caps 20/40/70 degrees from DifficultyLevel, raises the
 cap to 45 in state 5 or when byte `+0x380` is set if the base cap is at most

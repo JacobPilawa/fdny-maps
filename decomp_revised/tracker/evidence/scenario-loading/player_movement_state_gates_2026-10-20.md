@@ -44,8 +44,8 @@ vector, and a stack maximum `(root+0x84, DAT_004E181C, root+0x8C)` to
 mask `0x43` as blocked. A blocked query leaves state 4 and calls `004A11A0`
 through root `+0x508`; a clear query writes `DAT_004E181C` to root `+0x88` and
 restores state 3. The constant is 85.0 in the reviewed function export. This
-maps the retail argument sources and state writes, but the world query's
-coordinate transform and the root `+0x78..+0x8C` field layout remain open.
+maps the retail argument sources and state writes; the Genesis query transform
+and equivalence of the host collision/content path remain open.
 Evidence: [`player_uncrouch_clearance_2026-10-20.asm`](player_uncrouch_clearance_2026-10-20.asm)
 and [`player_crouch_clearance_query_fresh_2026-10-20.c`](player_crouch_clearance_query_fresh_2026-10-20.c).
 
@@ -146,6 +146,12 @@ camera-pitch substitute for the `+0x3320` movement transform; and a local
 collision/integration loop. Difficulty selection beyond the fresh-profile
 default, byte `+0x380`, and state 6 are not represented. Do not infer retail
 motion parity from the current `Player::step`.
+
+The Player `CROUCH` ScriptActor command is now reflected in the host adapter:
+it enters state 4 only when the previous accepted-contact latch is set, and
+repeating it while crouched does not uncrouch. The state-4 JUMP path owns the
+standing-clearance query. The host key assignment is still provisional. See
+[`player_crouch_command_gate_2026-10-20.md`](player_crouch_command_gate_2026-10-20.md).
 
 Next, resolve the equipment-varying final axes and camera/ActorInfo relation
 of the locomotion frame, and how retail local movement signs map through that
