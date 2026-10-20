@@ -96,6 +96,20 @@ writes `+0x198 = 2`, and also enters state 6. The downstream message/resource
 consumer, exact result-screen presentation, and any surrounding mission
 transition are not established by these functions.
 
+The PlayerHose functions above emit `RC_HoseLvlStart`, `RC_HoseLvlWin`, and
+`RC_HoseLvlLose`; defined-string xrefs for all three keys also lead to
+`004895C0`, the `TRadioChatter` initializer. `00489200` reads the configured
+list at `DAT_004E3888`, creates a `TChatterSet` record per entry, and logs each
+sound index and key. The runtime path is also resolved: `004897C0` searches
+the registered sets by key, and the emitters pass byte `1`, which selects
+`00489110`. That method advances through the set's shuffled sound entries and
+requests the selected instance through `004A11A0` and sound manager
+`004A0BE0`. The checked code establishes a sound request for these events, but
+the configured sound names for the hose keys and audible playback have not
+been confirmed. The independent result-screen feedback and mission transition
+also remain open. The hash-pinned export is
+[`hose_stage_message_registration_fresh_2026-10-20.c`](hose_stage_message_registration_fresh_2026-10-20.c).
+
 ## Current authored data in the four dedicated hose maps
 
 Each report SHA-256 below was matched to the corresponding
@@ -131,8 +145,8 @@ which actors are active together.
   `RCS_HosePath36` is reachable from a different authored path.
 - Resolve `M_MaxPressure`, `N_PitchSpread`, and SprayTime units/edge cases from
   their downstream consumers.
-- Trace the `RC_HoseLvlStart/Win/Lose` receivers and the stage transition,
-  HUD/audio, and return flow.
+- Identify the configured sound names for the `RC_HoseLvlStart/Win/Lose` keys,
+  and trace the separate stage transition, result HUD, and return flow.
 - Separately trace the rescue-player HoseSpray contact producer at `+0x614`;
   it is not the dedicated PlayerHose/WindowFire path.
 - Implement the two host routes from source-backed state and data, then perform

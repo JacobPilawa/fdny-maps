@@ -4,7 +4,7 @@ Status: **the HoseSpray contact gates, rescue-player `touchhose` allocation,
 dedicated PlayerHose input path, PlayerHose-to-WindowFire contact-message
 route, and dedicated hotspot cycle/time/win/loss state machine are confirmed;
 the HoseSpray world-space contact writer, WindowFire `+0x10` writer,
-Construction alternate-path reachability, and result-message consumers remain
+Construction alternate-path reachability, and stage result presentation remain
 open.** This is static
 analysis of the pinned retail `FDNYFirefighter.exe` SHA-256
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` using
@@ -69,9 +69,10 @@ increment of the shared `Fires Doused` statistic. The current static trace
 resolves the dedicated hotspot cycle and spot-time result path: PlayerHose
 emits `RC_HoseLvlStart`, then `RC_HoseLvlWin` or `RC_HoseLvlLose` and stores
 result 1 or 2 at `+0x198`. The WindowFire linked `+0x10` writer, authored
-alternate-path reachability, and downstream result-message consumers remain
-open. The four dedicated hose maps also have no authored FireRescue actors in
-the current inventory. A successful WindowFire message is not proof of shared
+alternate-path reachability, configured sound names for the registered
+radio-chatter keys, and downstream result presentation remain open. The four
+dedicated hose maps also have no authored FireRescue actors in the current inventory. A
+successful WindowFire message is not proof of shared
 FireRescue suppression. Static tracing only; no live hose run or retail parity
 check.
 
@@ -79,6 +80,11 @@ The hotspot manager and its authored data are detailed in
 [`player_hose_stage_lifecycle_2026-10-20.md`](../scenario-loading/player_hose_stage_lifecycle_2026-10-20.md),
 with fresh pseudocode in
 [`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
+The stage-key `TRadioChatter` registration and dispatch to a sound-manager
+request are documented in
+[`hose_stage_message_registration_fresh_2026-10-20.c`](../scenario-loading/hose_stage_message_registration_fresh_2026-10-20.c);
+the key-specific sound names and result-screen consumer or mission transition
+remain unknown.
 
 The dedicated maps therefore need their own gameplay trace and shared-host
 integration, not an assumption that they use the rescue Player's slot-4
@@ -116,10 +122,10 @@ cadence, or retail action timing is being inferred for the viewer.
 Trace the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`
 and join it to the item attachment transform consumed by `00463EF0`. Separately
 find the writer for WindowFire linked state `+0x10`, establish the authored
-meaning of remaining timer/flags, then trace the downstream consumers of the
-already identified stage result messages. Resolve the Construction alternate
-path and authored hose controls. Implement the two source-backed host routes
-with separate states and preserve extinguisher `finalize=0`. Do not assign a
+meaning of remaining timer/flags, then identify the configured sounds and
+trace downstream presentation for the registered stage chatter keys. Resolve the Construction
+alternate path and authored hose controls. Implement the two source-backed host
+routes with separate states and preserve extinguisher `finalize=0`. Do not assign a
 guessed contact point or merge the paths.
 
 The unrelated recurring RescueBot and `runrescuebot` paths also remain

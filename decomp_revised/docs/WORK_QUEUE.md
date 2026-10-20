@@ -170,10 +170,17 @@ eighth hotspot outside the D_NextHotSpot chain from its first hotspot, and one
 non-hotspot record with ZF fire references; alternate-route reachability is
 open. The hash-pinned trace and per-map counts are in
 [`player_hose_stage_lifecycle_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_stage_lifecycle_2026-10-20.md).
-The function-review ledger now has 377 reviewed EXE functions; the tracker
+The function-review ledger now has 378 reviewed EXE functions; the tracker
 atlas, summary, and dashboard were regenerated from the CSVs. This is static
 analysis only; no dedicated hose-stage port implementation or live parity
 check was made.
+Defined-string xrefs also place `RC_HoseLvlStart/Win/Lose` in the
+`TRadioChatter` setup at `004895C0`, which registers `TChatterSet` entries via
+`00489200`. `004897C0` resolves the message key, and the emitters' nonzero
+payload selects the shuffled-entry path at `00489110`, which requests the
+chosen sound through manager `004A0BE0`. The configured hose sound names and
+result presentation remain unresolved. The supporting export is
+[`hose_stage_message_registration_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/hose_stage_message_registration_fresh_2026-10-20.c).
 Keep this path separate from rescue-player HoseSpray, which calls shared
 FireRescue suppression with `finalize=1`; the extinguisher route remains
 `finalize=0`.
@@ -189,8 +196,9 @@ the attachment subobject at HoseSpray `+0x608` and writes its subobject
 The attach and activation callbacks also do not write the contact point.
 Computed aliases, bulk copies, engine helper writes, and the exact HoseSpray
 contact point remain unresolved. Next trace the WindowFire linked `+0x10`
-writer, Construction alternate path, and `RC_HoseLvlStart/Win/Lose` consumers;
-the hotspot cycle and stage result producer are now traced. Separately trace
+writer, Construction alternate path, configured chatter sounds, and result
+presentation for `RC_HoseLvlStart/Win/Lose`; the hotspot cycle and sound-request
+producer are now traced. Separately trace
 the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`; implement
 each source-backed host route with separate state. Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),

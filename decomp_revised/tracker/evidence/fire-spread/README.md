@@ -182,12 +182,17 @@ connects `touchhose` to HoseSpray slot 4 and traces the distinct dedicated
 response is not FireRescue suppression. A fresh state-machine trace resolves
 the authored cycle counter, spot-time win/loss path, and
 `RC_HoseLvlStart/Win/Lose` outputs; the `+0x10` writer, route reachability, and
-downstream message consumers remain open. See
+configured sound names and result presentation remain open. The stage keys
+appear in retail `TRadioChatter` registration, and their nonzero send path
+requests a selected sound from the sound manager. See
 [`hose_contact_frame_gap_2026-10-20.md`](hose_contact_frame_gap_2026-10-20.md)
 and its [HoseSpray/PlayerHose export](hose_contact_and_playerhose_fresh_2026-10-20.c)
 plus [PlayerHose/WindowFire export](playerhose_douse_windowfire_fresh_2026-10-20.c),
 and the [hotspot lifecycle note](../scenario-loading/player_hose_stage_lifecycle_2026-10-20.md)
 with its [fresh state-machine export](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
+The [stage message-registration export](../scenario-loading/hose_stage_message_registration_fresh_2026-10-20.c)
+shows the key lookup and sound-manager request, but not the configured hose
+sound name or a mission transition.
 
 ### Random child placement and shape
 
