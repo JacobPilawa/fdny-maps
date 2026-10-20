@@ -44,14 +44,20 @@ nonzero contact byte at `ESI-0x14` (root `+0x12C`); otherwise it is 0.95. The
 exponent multiplier is 27. Byte `ESI+0x240` also skips the later collision
 loop. State 6 follows a separate `00451080` path.
 
-The transform at `ESI+0x3320` (Player root `+0x3460`) is identity with a null
-parent immediately after the Player constructor. Entity initialization later
-rebuilds it from a stack frame source at `0044DF30`; `0042D0A0` copies the
-source fields, including parent `+0x40`, so the post-init frame/parent is not
-established by the saved static evidence. `004977B0` composes parent frames
-before the state-5 movement vector transform. The movement update builds a
-temporary basis from the pitch/yaw accumulators using
-`0042D350`/`004968B0`, then applies it through `00495EB0`. The recurring
+The transform at `ESI+0x3320` (Player root `+0x3460`) is initialized with
+identity axes, zero translation, unit scale, and a null parent by the Player
+constructor. Entity initialization calls `0042D350(root+0x3460, stackCopy)`;
+the stack pointer is an output copy, not an input frame. `0042D350` resets the
+receiver's axes/scale, preserves translation/parent, and calls `0042D0A0` to
+copy the receiver into that stack buffer. `0044CD10` does not write the frame,
+so the inspected constructor/entity-init chain leaves the parent null.
+`004977B0` composes a nonnull parent before the state-5 movement transform;
+with this frame's observed null parent it copies the frame directly. The
+ordinary path separately resets the basis/scale on Player root `+0x24`, rotates
+it by the yaw accumulator through `004968B0`, and applies the movement vector
+through `00495EB0`. State 5/debug movement materializes root `+0x3460` through
+`004977B0`, then applies the same basis-column multiplication in `00495EB0`.
+The recurring
 `0044F340` callback writes world `+Y` as the up axis and derives a third axis
 from the selected item's view/aim offsets; the ordinary caller's vector is
 `normalize((aimOffset + (0,height,1000)) - viewOffset)`. The final axes as
@@ -103,9 +109,10 @@ remain unresolved. The host begins with the +0x198-equivalent false and
 The follow-up Player frame trace confirms that `0044F340` refreshes the
 locomotion frame's up axis as world `+Y`; a later indirect setter derives the
 third basis column from selected-item view/aim data. Frame position and parent
-are untouched during this refresh. The state-5 path composes the stored frame
-before applying its movement vector; however, entity initialization copies
-frame contents/parent from a stack source whose value remains unresolved. The
+are untouched during this refresh. The stack frame passed at `0044DF30` is an
+output copy of the initialized `+0x3460` receiver; `0042D350` resets its axes
+and unit scale while preserving its zero translation/null parent. The state-5
+path materializes this stored frame before applying its movement vector. The
 host's current camera-pitch substitute therefore remains provisional. Runtime
 equipment vector, final axes, and outer update cadence remain open. See
 [`player_locomotion_frame_axes_2026-10-20.md`](player_locomotion_frame_axes_2026-10-20.md)

@@ -20,16 +20,21 @@ data. The setters repair the remaining axes by normalization and cross
 products. This refresh leaves frame translation `+0x28..+0x30` and parent
 `+0x40` unchanged.
 
-The constructor calls `0042D2D0(root+0x3460, 0)`, making the frame identity,
-zero-positioned, and unparented at that point. Entity initialization later
-calls `0042D350(root+0x3460, auStack_5c)` at `0044DF30`; `0042D350` copies the
-source frame fields through `0042D0A0`, including its parent pointer at `+0x40`.
-The raw caller supplies a stack source at `ESP+0x54`, but the source value and
-post-initialization parent are not established by the current static evidence.
-Do not carry the constructor's null-parent state forward as a verified runtime
-fact. The frame refresh setters preserve translation and parent. The normal
-Player callback is visible at `00453860`; the recurring manager and cadence
-remain unknown. See
+The constructor calls `0042D2D0(root+0x3460, 0)`, initializing identity axes,
+zero translation, unit scale, and a null parent. Entity initialization calls
+`0042D350(root+0x3460, auStack_5c)` at `0044DF30`. The second argument is an
+output copy: `0042D350` resets the receiver's axes and scale, preserves its
+translation and parent, then calls `0042D0A0` with the stack frame as the copy
+destination and `root+0x3460` as the source. The caller ignores this returned
+copy and passes `root+0x3460` directly to `00483A20` to initialize the
+follower. `0044CD10` does not write this frame,
+so the inspected constructor and entity-init path preserve its zero
+translation and null parent. The frame refresh setters also preserve
+translation and parent. The normal Player callback is visible at `00453860`;
+the recurring manager and cadence remain unknown. The earlier interpretation
+of the stack area as an input frame was incorrect; the copy direction is
+confirmed by current-hash x86 for `0042D350`/`0042D0A0` and saved Ghidra
+decompilation. See
 [`player_locomotion_frame_parent_setup_2026-10-20.asm`](player_locomotion_frame_parent_setup_2026-10-20.asm).
 
 ## Ordinary Player callback vector
@@ -64,10 +69,18 @@ frame composition, world-direction mapping, or recurring cadence.
 
 `Player::step` still uses a camera-pitch substitute for the retail `+0x3320`
 transform; the host does not yet pass a stored locomotion frame into the climb
-movement path. The raw follow-up confirms `004977B0` composes the stored frame
-before `00495EB0` applies the movement vector, matching the host's
-`FrameTransform::world()` basis-column convention. Post-entity-init source
-frame contents/parent, callback cadence, and live Axe offset activation remain
-open, so this trace did not change movement transforms. Evidence logs from the
-read-only review were temporary; the accompanying assembly excerpt records the
-durable addresses and current limits.
+movement path. The ordinary movement path resets the basis/scale on Player
+root `+0x24` with `0042D350`, rotates it by the yaw accumulator through
+`004968B0`, then applies movement input through `00495EB0`. The state-5/debug
+path asks `004977B0` to materialize root `+0x3460`; that helper follows a
+nonnull parent recursively, but the reviewed constructor/entity-init path
+keeps this frame unparented, so the helper copies it directly. Both branches
+use `00495EB0` for the final basis-column transform. The current function's
+stack census finds no writes to the output copy before `0042D350`, as expected;
+in the state-5 branch, `004977B0` then overwrites that same buffer with the
+parent-resolved stored frame. The host's frame-column convention matches that
+helper, but the final equipment-derived direction, world mapping, callback
+cadence, and live Axe offset activation remain open. The stack area in the
+constructor and movement calls is a helper output copy, not an unknown input
+frame. The accompanying assembly excerpt records the copy direction and
+current limits.
