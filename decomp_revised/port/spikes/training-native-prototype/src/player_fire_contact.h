@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <cmath>
 
+// Retail 004483A0 compares the extended falloff result against the binary64
+// constant at 004E16B8 (0.0001) before storing the message influence as float.
+inline constexpr double kPlayerFireExposureInfluenceCutoff = 0.0001;
+
 // Retail 004483A0 exposure candidate math, using the live shared FireVisual
 // size as the two volume extents. PlayerRescue's constructor initializes the
 // fourth float after its returned XYZ buffer to zero (+0x74); the viewer passes
@@ -12,6 +16,7 @@ struct PlayerFireContact {
     int maxAxisDistance = 0;
     float spatialFalloff = 0.f;
     float influence = 0.f;
+    double preVisibilityInfluence = 0.0;
 
     static PlayerFireContact evaluate(V fireOrigin, float volumeWidth, float volumeDepth,
                                       float candidatePadding, float emitterScale,
@@ -29,14 +34,21 @@ struct PlayerFireContact {
         const double radius = unpaddedRadius + candidatePadding;
         const double weightedDistanceSquared = dx * dx + (2.0 * dy) * (2.0 * dy) + dz * dz;
         if (radius <= 0.0 || weightedDistanceSquared > radius * radius) return result;
-        result.spatialFalloff = float(double(emitterScale) / radius *
-            (radius - std::sqrt(weightedDistanceSquared)));
+        const double spatialFalloff = double(emitterScale) / radius *
+            (radius - std::sqrt(weightedDistanceSquared));
+        result.spatialFalloff = float(spatialFalloff);
 
-        const double intensityWeight = double(fireIntensity) +
-            (1.0 - double(fireIntensity)) * .25;
-        double influence = double(result.spatialFalloff) * intensityWeight;
-        if (blocked) influence *= .1; // FireRescue's world-visibility failure scale.
-        result.influence = float(influence);
+        // Retail stores this weight to binary32 before multiplying it by the
+        // x87 falloff result. Keep the cutoff value separate from the float
+        // message value so the host does not round before its threshold check.
+        const float intensityWeight = float(double(fireIntensity) +
+            (1.0 - double(fireIntensity)) * .25);
+        result.preVisibilityInfluence = spatialFalloff * double(intensityWeight);
+        result.influence = float(result.preVisibilityInfluence);
+        if (blocked) {
+            // Retail reloads the stored float and attenuates that value.
+            result.influence = float(double(result.influence) * .1);
+        }
         return result;
     }
 };

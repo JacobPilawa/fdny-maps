@@ -501,24 +501,29 @@ fourth float at root `+0x74` to `0.0f`. FireRescue callback `004483A0` passes
 that element `[3]` to `0044A7A0`; getter `0049D790` and cache-copy helper
 `00441E90` update only XYZ. The shared port now passes zero padding in both
 unobstructed and visibility-attenuated Player exposure calculations, replacing
-the former provisional 30-unit movement-hull padding. Exact callback cadence,
-later arbitrary aliases, emitter scale and the minimum-influence constant
-remain open; no retail watchpoint or natural exposure capture was available.
+the former provisional 30-unit movement-hull padding. The binary64 `0.0001`
+influence cutoff and its pre-visibility position are now confirmed; the host
+preserves messages attenuated below the cutoff, matching the retail order.
+Callback cadence, later arbitrary aliases, emitter scale, near-cutoff x87
+precision, and live damage response remain open; no retail watchpoint or
+natural exposure capture was available.
 
 The fresh pseudocode and trace are in
 [`player_fire_exposure_padding_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/player_fire_exposure_padding_fresh_2026-10-20.c)
-and [`player_rescue_candidate_getter.md`](../tracker/evidence/fire-spread/player_rescue_candidate_getter.md).
+and [`player_rescue_candidate_getter.md`](../tracker/evidence/fire-spread/player_rescue_candidate_getter.md),
+and [`player_fire_exposure_cutoff_2026-10-20.md`](../tracker/evidence/fire-spread/player_fire_exposure_cutoff_2026-10-20.md).
 The shared macOS `fdny-scene-viewer` target rebuilt successfully. The resulting
-executable at
-`port/spikes/training-native-prototype/.local/build-scene-viewer/fdny-scene-viewer`
-has SHA-256 `a05e9fbfb5e8f4d467738282a1a44e58e885eda2545fa18d3462b912142a11a8`.
-Linking emitted the existing Homebrew `json-c` deployment-target warning
-(library built for macOS 27.0, target linked for 13.3). This compile-only check
-does not establish fire-damage feel or retail parity.
+The rescue-all macOS compile/package build now has matching standalone and app
+executable SHA-256
+`cdb4d3b2a86676f617cb02449858054ef81893937deebab4c49a88e4031abc96`.
+`Info.plist` passed validation and the build emitted eight retail rescue
+choices. Linking emitted the existing Homebrew `json-c` deployment-target
+warning (library built for macOS 27.0, target linked for 13.3). This is a
+compile/package check; it does not establish fire-damage feel or retail parity.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Player fire falloff padding | `scene_viewer.cpp`, `player_fire_contact.h`, `player_rescue_candidate_getter.md`, fresh export, function-review CSV | Implemented using constructor-backed `0.0f`; callback cadence, possible later aliases, emitter scale, cutoff and live damage behavior remain open |
+| Player fire falloff padding and cutoff | `scene_viewer.cpp`, `player_fire_contact.h`, `player_rescue_candidate_getter.md`, `player_fire_exposure_cutoff_2026-10-20.md`, fresh exports, function-review CSV | Implemented with constructor-backed `0.0f` padding and exact binary64 `0.0001` pre-visibility cutoff; post-attenuation messages are retained. Callback cadence, possible later aliases, emitter scale, x87 near-cutoff precision and live damage behavior remain open |
 
 ## Mission outcome status dispatch traced (2026-10-20)
 
@@ -1851,8 +1856,10 @@ the report is observed.
   the retail nonempty A_Name gate; generated unnamed children do not become
   spread parents. Player message `0x7531` now reaches the traced pain, burn
   accumulation, and passout path; retail pain/passout WAVs are bundled. Fire
-  contact scheduling, emitter scale and the minimum influence constant remain
-  provisional. The viewer now uses zero padding from the Player getter's
+  contact scheduling, emitter scale and x87 near-cutoff precision remain
+  provisional. The viewer now uses the verified binary64 `0.0001` pre-visibility
+  cutoff and retains messages after visibility attenuation, as retail does. It
+  also uses zero padding from the Player getter's
   constructor-initialized +0x74 field. Live damage feel still needs a desktop
   capture. A read-only audit confirmed this path is called in the
   ordinary rendered frame loop; plausible non-contact causes remain the

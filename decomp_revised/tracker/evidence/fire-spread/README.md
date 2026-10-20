@@ -87,6 +87,18 @@ units. It multiplies the helper result by
 world-visibility query reports obstruction, stores the FireRescue pointer and
 influence in an eight-byte record, and sends message `0x7531`.
 
+The current-hash instruction trace resolves the pre-visibility cutoff to the
+binary64 constant `0.0001` at `004E16B8`. `004483A0` compares the live x87
+falloff result to it before the visibility query. When obstructed, retail
+multiplies the influence by `0.1` and still sends message `0x7531` without a
+second cutoff. The host now follows that gate order. Its influence value is
+retained as a binary64 approximation for the cutoff check, while retail uses
+the live x87 extended result. The host narrows its intensity weight to
+binary32 and narrows the message value before obstruction attenuation. Spatial
+arithmetic therefore still differs near the threshold; emitter scale and
+callback cadence also remain unresolved. See
+[`player_fire_exposure_cutoff_2026-10-20.md`](player_fire_exposure_cutoff_2026-10-20.md).
+
 `ComputeFireVolumeFalloff` (`0x0044A7A0`) computes the spatial term. Its
 Ghidra C-like export uses a normalized `float` return signature because setting
 `float10` through the current MCP inserted a false hidden return-storage

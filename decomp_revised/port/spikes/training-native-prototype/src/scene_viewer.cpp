@@ -5854,7 +5854,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     // volumes every frame, including fires nowhere near the
                     // Player. An unobstructed result is an upper bound: a
                     // failed visibility query can only reduce its influence.
-                    if (unobstructedContact.influence < .0001f) continue;
+                    if (unobstructedContact.preVisibilityInfluence <
+                        kPlayerFireExposureInfluenceCutoff) continue;
                     Hit sight;
                     const bool blocked = collision.tracePoint(
                         fire.runtime.visual.position, candidatePosition, 0x43, 2, sight);
@@ -5867,7 +5868,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                             1.f, fire.runtime.suppression.strength,
                             candidatePosition, true)
                         : unobstructedContact;
-                    if (contact.influence < .0001f) continue; // Retail cutoff constant remains under review.
+                    // Retail applies the influence cutoff before visibility.
+                    // An obstructed result is then attenuated and still sent
+                    // even if that lower value falls below the cutoff.
                     if (exposureRecords == 0) {
                         firstExposureFire = fire.entity;
                         firstExposureInfluence = contact.influence;

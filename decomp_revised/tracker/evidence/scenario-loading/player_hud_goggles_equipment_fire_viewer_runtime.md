@@ -88,9 +88,11 @@ per-instance record reset timing remains unknown. Fresh constructor tracing
 resolves the returned buffer's fourth float at PlayerRescue `+0x74` to zero;
 the host now uses zero padding rather than the former 30-unit hull radius.
 Emitter scale remains unit-valued because its FireEmitter mapping is unresolved.
-Fire callback cadence, record reset ordering, the exact minimum-influence
-constant, and alignment of the host movement origin to the retail transform
-remain provisional. The `Serious Burns` display is an ephemeral local counter,
+The binary64 `0.0001` exposure cutoff and its pre-visibility gate order are now
+confirmed and implemented; post-attenuation messages remain queued as in
+retail. Fire callback cadence, record reset ordering, near-cutoff x87 precision,
+and alignment of the host movement origin to the retail transform remain
+provisional. The `Serious Burns` display is an ephemeral local counter,
 not the game's persistent statistics store. Passout stops movement and enters
 state 6, but player fall animation, selected-item release, and recovery timing
 are not implemented.
