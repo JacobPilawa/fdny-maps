@@ -44,10 +44,13 @@ nonzero contact byte at `ESI-0x14` (root `+0x12C`); otherwise it is 0.95. The
 exponent multiplier is 27. Byte `ESI+0x240` also skips the later collision
 loop. State 6 follows a separate `00451080` path.
 
-The transform at `ESI+0x3320` (Player root `+0x3460`) is initialized as an
-identity frame with a null parent by the Player constructor; `004977B0`
-composes parent frames before the state-5 movement vector transform. The
-movement update builds a temporary basis from the pitch/yaw accumulators using
+The transform at `ESI+0x3320` (Player root `+0x3460`) is identity with a null
+parent immediately after the Player constructor. Entity initialization later
+rebuilds it from a stack frame source at `0044DF30`; `0042D0A0` copies the
+source fields, including parent `+0x40`, so the post-init frame/parent is not
+established by the saved static evidence. `004977B0` composes parent frames
+before the state-5 movement vector transform. The movement update builds a
+temporary basis from the pitch/yaw accumulators using
 `0042D350`/`004968B0`, then applies it through `00495EB0`. The recurring
 `0044F340` callback writes world `+Y` as the up axis and derives a third axis
 from the selected item's view/aim offsets; the ordinary caller's vector is
@@ -96,9 +99,13 @@ remain unresolved. The host begins with the +0x198-equivalent false and
 The follow-up Player frame trace confirms that `0044F340` refreshes the
 locomotion frame's up axis as world `+Y`; a later indirect setter derives the
 third basis column from selected-item view/aim data. Frame position and parent
-are untouched during this refresh. Runtime equipment vector, final axes, and
-outer update cadence remain open. See
-[`player_locomotion_frame_axes_2026-10-20.md`](player_locomotion_frame_axes_2026-10-20.md).
+are untouched during this refresh. The state-5 path composes the stored frame
+before applying its movement vector; however, entity initialization copies
+frame contents/parent from a stack source whose value remains unresolved. The
+host's current camera-pitch substitute therefore remains provisional. Runtime
+equipment vector, final axes, and outer update cadence remain open. See
+[`player_locomotion_frame_axes_2026-10-20.md`](player_locomotion_frame_axes_2026-10-20.md)
+and [`player_locomotion_frame_parent_setup_2026-10-20.asm`](player_locomotion_frame_parent_setup_2026-10-20.asm).
 
 ## Shared host comparison and limits
 

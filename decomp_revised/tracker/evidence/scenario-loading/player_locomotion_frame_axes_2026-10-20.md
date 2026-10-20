@@ -20,12 +20,17 @@ data. The setters repair the remaining axes by normalization and cross
 products. This refresh leaves frame translation `+0x28..+0x30` and parent
 `+0x40` unchanged.
 
-The constructor initially makes this frame identity, zero-positioned, and
-unparented. Entity initialization later copies a transform into it, so the
-constructor alone does not establish runtime axes. The callback does not
-establish the full world orientation because the indirect second-setter vector
-still depends on equipment view data. The normal Player callback is visible at
-`00453860`; the recurring manager and cadence remain unknown.
+The constructor calls `0042D2D0(root+0x3460, 0)`, making the frame identity,
+zero-positioned, and unparented at that point. Entity initialization later
+calls `0042D350(root+0x3460, auStack_5c)` at `0044DF30`; `0042D350` copies the
+source frame fields through `0042D0A0`, including its parent pointer at `+0x40`.
+The raw caller supplies a stack source at `ESP+0x54`, but the source value and
+post-initialization parent are not established by the current static evidence.
+Do not carry the constructor's null-parent state forward as a verified runtime
+fact. The frame refresh setters preserve translation and parent. The normal
+Player callback is visible at `00453860`; the recurring manager and cadence
+remain unknown. See
+[`player_locomotion_frame_parent_setup_2026-10-20.asm`](player_locomotion_frame_parent_setup_2026-10-20.asm).
 
 ## Ordinary Player callback vector
 
@@ -58,7 +63,11 @@ frame composition, world-direction mapping, or recurring cadence.
 ## Host status
 
 `Player::step` still uses a camera-pitch substitute for the retail `+0x3320`
-transform; the host movement-frame orientation and callback cadence remain
-provisional. This trace did not change movement transforms. Evidence logs from
-the read-only review were temporary; this note records the durable
-address-level result.
+transform; the host does not yet pass a stored locomotion frame into the climb
+movement path. The raw follow-up confirms `004977B0` composes the stored frame
+before `00495EB0` applies the movement vector, matching the host's
+`FrameTransform::world()` basis-column convention. Post-entity-init source
+frame contents/parent, callback cadence, and live Axe offset activation remain
+open, so this trace did not change movement transforms. Evidence logs from the
+read-only review were temporary; the accompanying assembly excerpt records the
+durable addresses and current limits.
