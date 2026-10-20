@@ -35,6 +35,22 @@ nonzero contact byte at `ESI-0x14` (root `+0x12C`); otherwise it is 0.95. The
 exponent multiplier is 27. Byte `ESI+0x240` also skips the later collision
 loop. State 6 follows a separate `00451080` path.
 
+The transform at `ESI+0x3320` (Player root `+0x3460`) is initialized as an
+identity frame with a null parent by the Player constructor; `004977B0`
+composes parent frames before the state-5 movement vector transform. The
+movement update builds a temporary basis from the pitch/yaw accumulators using
+`0042D350`/`004968B0`, then applies it through `00495EB0`. Runtime writes to
+the `+0x3460` frame, its final world axes, and the input scale/sign convention
+are not mapped. The smoothing call to `00482AD0` receives the 0.95/0.2 base and
+27, but its exact exponent formula and boundary handling remain unverified;
+the host's `pow(base, 27*dt)` is therefore still an approximation.
+
+`ESI+0x3310` aliases Player root `+0x3450`. `00451560` updates this field on
+timer branches, including frame-delta-scaled accumulation and clamp/reset at
+0/1; it also changes neighboring animation/condition fields. Its semantic
+name and constructor default have not been established, so it should not be
+treated as movement speed.
+
 The code converts movement input to a vector, applies the selected vector cap,
 smooths toward it, calls `0044EA90` only when state is not 5, byte
 `ESI+0x240` is clear, byte `ESI+0x58` (root `+0x198`) is nonzero, and the
@@ -62,12 +78,12 @@ collision/integration loop. Difficulty selection beyond the fresh-profile
 default, byte `+0x380`, and state 6 are not represented. Do not infer retail
 motion parity from the current `Player::step`.
 
-Next, resolve `+0x3310`, runtime updates to the `+0x3320` frame, and the
-weight formula in `00482AD0`; map the source movement input scale and exact
-frame axes before changing the host movement vectors. The pitch/yaw fields
-`+0x32F0/+0x32F4` and core frame/vector helpers are mapped. Also resolve the
-initial values and writers for movement bytes `+0x198` and `+0x380`, then
-separate source movement from host collision/callback cadence.
+Next, resolve the meaning/default of `+0x3310`, runtime updates and world axes
+of the `+0x3320` frame, and the exact weight formula in `00482AD0`; map the
+source movement input scale before changing host movement vectors. The
+pitch/yaw fields `+0x32F0/+0x32F4` and core frame/vector helpers are mapped.
+Also resolve initial values and writers for movement bytes `+0x198` and
+`+0x380`, then separate source movement from host collision/callback cadence.
 
 ## Build checkpoint
 
