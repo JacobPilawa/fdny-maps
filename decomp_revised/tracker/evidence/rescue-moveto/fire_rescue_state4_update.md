@@ -1,9 +1,12 @@
 # FireRescue state-4 update path
 
 Checked 2026-10-13 against the pinned executable and the prior project audit.
-This resolves the static state-4 call path from FireRescue's secondary-vtable
-callback into path advancement. It does not resolve who schedules the callback
-or its period/order at runtime.
+This resolves the state-4 path from FireRescue's secondary-vtable callback into
+path advancement. A 2026-10-20 follow-up also maps the ordinary owner-manager
+dispatch path and establishes that FireRescue's root `+0x14` callback precedes
+the root `+0x48` contact callback during a normal owner update. The exact
+wall-clock/rendered-frame cadence remains unresolved; see the
+[Think dispatch and ordering follow-up](../fire-spread/fire_update_dispatch_order_2026-10-20.md).
 
 ## Static call path
 
@@ -57,14 +60,15 @@ and the follow-up
 [`training-fire-dispatch-order-audit.md`](../../../reference/legacy-evidence/fire-update/training-fire-dispatch-order-audit.md)
 already searched owner, app-callback, and candidate dispatch paths. They
 conclude that the recurring caller/order of this secondary Think callback is
-still unresolved. This work reuses those results instead of repeating those
-searches.
+still unresolved. The later owner-manager follow-up now supplies the static
+normal-update route for FireRescue root slot `+0x14`; those earlier audits
+remain useful for the limits they record and are not evidence of a missing
+static caller.
 
 ## Remaining work
 
-- Find the engine/runtime dispatcher that invokes this secondary-vtable slot,
-  or capture it in a live run.
 - Establish the callback interval and order relative to Player, extinguisher,
-  message-drain, and scene updates.
+  message-drain, and outer scene/render callbacks. The manager order inside a
+  normal owner update is now statically mapped, but frame cadence is not.
 - Compare the MBase timing values (`10`, `120`) with gas_r’s (`99999`, `99999`)
   and capture runtime behavior to distinguish delay, duration, or phase semantics.

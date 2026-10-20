@@ -133,8 +133,9 @@ and passes it to `0044BB00`. That method sets one of four directional
 burn-indicator bytes at Player `+0x353C..+0x353F`; it does not change camera or
 movement yaw. The Player updater reads and clears those bytes while gating burn
 cooling, and `00456090` maps them to four HUD child effects. The port now
-records those sectors and applies the cooling gate, but the child effects'
-screen placement and visual style remain unimplemented. The handler then
+records those sectors, applies the cooling gate, and draws the `fireprox`
+resource pair at the recovered viewport locations with the mapped rotations.
+Exact retail alpha sampling/blend and live indicator cadence remain open. The handler then
 applies the `RC_Pain` sound/stat deadline on its separate clock gate and
 accumulates `1.2 * frameDelta * influence` in Player `+0x3538`. A strict
 extended-value comparison above 1.0 invokes the passout handler. The saved

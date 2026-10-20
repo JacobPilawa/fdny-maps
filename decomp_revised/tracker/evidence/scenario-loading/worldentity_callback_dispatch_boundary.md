@@ -14,7 +14,12 @@ The general linked-list queue pump `0049C0E0` calls queue-member slot `+4`, then
 
 Two nearby routines are only candidates without a type/registration edge:
 
-- `0049C3D0` is a thin virtual wrapper that calls receiver slot `+0x14`. No evidence ties its receiver or caller to a WorldEntity.
+- `0049C3D0` is a thin virtual wrapper that calls receiver slot `+0x14`. The
+  2026-10-20 FireRescue manager follow-up maps it as the per-member adapter for
+  the owner `+0x50` Think manager. That identifies one use of the wrapper, but
+  does not tie a WorldEntity instance to that manager; WorldEntity slot
+  `+0x14` scheduling therefore remains unresolved. See the
+  [FireRescue dispatch-order note](../fire-spread/fire_update_dispatch_order_2026-10-20.md).
 - `0049C630` increments a counter at `+8`; when it exceeds a limit at `+4`, it calls receiver slot `+4` and resets the counter. No evidence ties this cadence limiter to the WorldEntity or its slot `+0x14`.
 
 The mapped app-owner and entity-manager paths do not close the gap: ordinary manager category dispatch is through member slot `+0x48`; staged entity admission invokes slots `+0x20` and `+0x24`; the relevant WorldEntity update slot is `+0x14`. No positive caller path or timing relation has been found. Therefore, only the four-invocation threshold and one-shot effect are established. Do not call it four frames, 120 updates, or any fixed duration without a verified scheduler/runtime trace.

@@ -8,6 +8,22 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## FireRescue state-4 Think ordering (2026-10-20)
+
+Pinned retail tracing now connects the normal owner `+0x50` manager to
+FireRescue root `+0x14` Think dispatch and places that pass before the `+0xE0`
+contact manager. Within state 4, retail calls route motion before the embedded
+timed-vector update. The shared host now advances route motion inside the
+state-4 callback before its ordinary visual-size update and avoids the prior
+duplicate size update. Exact frame cadence, timed-vector key tracks, deferred
+child lifecycle, contact-list parity, and RNG interleaving remain open. Evidence
+is in [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md).
+The rescue-all macOS app compiled with matching standalone/package executable
+SHA-256 `5a647fd24be912eb5e10b060ea7fdb9c0c08a8eb547c090994c6b1603bb8a5cd`;
+`Info.plist` validation passed. The json-c dylib still targets macOS 27.0
+while this build links for 13.3. This is compile-only evidence, not retail
+parity.
+
 ## Rescue timeout loss audio (2026-10-20)
 
 The shared rescue host now requests the retail state-2 loss chatter and
@@ -2655,9 +2671,13 @@ the report is observed.
   proximity gating, exposure dispatch, and the player burn/passout receiver
   now have fresh address-specific evidence. The shared owner-update to
   contact-manager traversal is also mapped through `0049BD20`, including the
-  FireRescue category-bit callback path; the viewer still lacks equivalent
-  typed contact lists, and rendered-frame cadence, Think/message ordering,
-  child registration, and cross-system RNG order remain open.
+  FireRescue category-bit callback path. A follow-up maps FireRescue root
+  `+0x14` Think dispatch through owner `+0x50` before contact-manager owner
+  `+0xE0`; the host now advances state-4 route motion inside that Think callback
+  before its ordinary visual-size update. The exact frame cadence, retail
+  timed-vector keys, deferred child registration, contact-list parity, and
+  cross-system RNG order remain open. See
+  `tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md`.
 - The ScriptActor name registry is shared across classes. `tell`'s first value
   is the case-insensitive actor name and the second is its command. Bank's
   `tell vault open` reaches the BModel ScriptActor handler; the handler's
@@ -3042,10 +3062,10 @@ symptom remain open.
 | `victim_equipment_audit` | Read-only review of victim carry/rescue and equipment/goggles integration seam | Victim transaction helpers, Player loadout trace, scene viewer, fresh EXE evidence | Complete; no edits; authored PlayerRescue loadout integration implemented by root; item behavior remains open |
 | `extinguisher_port_seam` | Read-only review of generalizing Training extinguisher contacts into the shared viewer | `main.cpp`, `scene_viewer.cpp`, extinguisher/fire helpers, fresh suppression evidence | Complete; no edits; identified the camera-parent/cadence boundary; shared message path integrated |
 | `goggles_visibility_audit` | Read-only trace of goggles inventory callbacks and visibility effects | Player loadout evidence, goggles initializer/vtable, scene viewer | Complete; no edits; slot 3 is verified, visibility semantics remain unknown |
-| `fire_spread_seam` | Read-only audit of random spread integration and callback dispatch | `scene_viewer.cpp`, FireEntity components, fire-spread evidence, shared contact manager | Complete; no edits; dispatcher traversal is source-mapped and spread is now wired provisionally; candidate lifecycle, RNG ordering, and owner cadence still block faithful parity |
+| `fire_spread_seam` | Read-only audit of random spread integration and callback dispatch | `scene_viewer.cpp`, FireEntity components, fire-spread evidence, shared contact manager | Complete; no edits; owner +0x50 root +0x14 Think precedes +0xE0 contact dispatch in the normal static owner pass; state-4 route motion now runs inside host Think before its ordinary visual update. Exact cadence, timed-vector keys, candidate/child lifecycle, and RNG ordering remain open |
 | `goggles_trace` | Read-only trace of goggles vtable, selection callbacks, and scan visibility behavior | Pinned EXE vtable/data, goggles exports, Player selection path | Complete; no edits; verified target filter/range and callbacks; resource 703 and the 8.5-second effect window now drive the shared heatpulse renderer; child animation and broad visibility remain open |
 | `goggles_effect_review` | Read-only review of preview marker fidelity against the retail target update | Goggles renderer, scan runtime note, pinned EXE disassembly | Complete; no edits; corrected host billboard description; retail actor-local transform and child attachment remain open |
-| `fire_exposure_integration` | Read-only review of Player fire exposure/passout delivery seam | `player_fire_message.h`, exposure/passout helpers, scene viewer, fresh FireRescue/Player evidence | Complete; no edits; documented missing cadence, LOS, player-effect/audio/stat bindings, and passout host services; do not wire guessed automatic scheduling |
+| `fire_exposure_integration` | Read-only review of Player fire exposure/passout delivery seam | `player_fire_message.h`, exposure/passout helpers, scene viewer, fresh FireRescue/Player evidence | Complete; no edits; the host already wires direction indicators, pain/deadline, Serious Burns, accumulated exposure, and passout. Residual gaps are cadence and spatial/input alignment, HUD blend/pixel parity, and live retail comparison; keep timing provisional |
 | `spread_trace_audit` | Read-only audit of current-hash random spread semantics and deferred creation seam | `00447A90_fresh.c`, `00448320_fresh.c`, contact-manager route, scene viewer | Complete; no edits; confirmed shape/queue details and the pointer-at-root-+0x48 / pointed-to-+4 gate; root follow-up mapped it to string length |
 | `player_fire_candidate_trace` | Earlier read-only trace of PlayerRescue candidate position for spread and fire exposure | Player vtable/getter exports, FireRescue callback evidence, scene viewer | Superseded by `player_position_getter`; the earlier claim that PlayerRescue's slot mapping was unproven is corrected by current-hash vtable bytes |
 | `fire_48_subobject` | Trace FireRescue root +0x48 construction and default state | `0044a330_firerescue_constructor.c`, `0046f930_FUN_0046f930.c`, startup initialization | Complete; read-only; found the shared empty-string pointer; initializer setter chain was completed with retail disassembly |

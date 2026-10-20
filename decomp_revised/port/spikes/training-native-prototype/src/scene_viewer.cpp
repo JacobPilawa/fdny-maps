@@ -1386,42 +1386,43 @@ int drawPreviewFires(std::vector<PreviewFire>& fires, FireRenderer& renderer, ui
     return quads;
 }
 
-void updatePreviewFires(std::vector<PreviewFire>& fires, uint32_t now, float dt) {
-    for (auto& fire : fires)
-        fire.runtime.think(now, dt, [] {}, [] {}, [] {});
+void updatePreviewFirePathMotion(PreviewFire& fire, Collision& collision, float dt) {
+    auto& motion = fire.pathMotion;
+    if (!motion.active) return;
+
+    // 00449340 accumulates route distance as frameDelta * root[+0xFC].
+    // For the authored no-C_Model FireRescue routes, 00448D60 sets
+    // root[+0x108] from H_Radius and 00449340 updates the source visual
+    // only after progress advances by more than half that value. Its
+    // callback cadence and deferred child-spawn drain remain open.
+    motion.progress += std::max(0.f, dt) * motion.rate;
+    const bool complete = motion.progress >= motion.distance;
+    if (!complete && motion.updateThresholdMapped &&
+        motion.progress - motion.lastVisualProgress <= motion.updateThreshold)
+        return;
+
+    V next = complete ? motion.target : motion.start + motion.direction * motion.progress;
+    motion.lastVisualProgress = motion.progress;
+    const V previousVisual = fire.runtime.visual.position;
+    fire.runtime.visual.position = next;
+    if (fire.floorMe) FireFloor::alignInWorld(fire.runtime.visual, collision);
+
+    // FireRescue keeps the candidate origin and embedded visual point in
+    // separate fields. Preserve their authored offset while moving both.
+    const V visualDelta = fire.runtime.visual.position - previousVisual;
+    fire.runtime.origin = fire.runtime.origin + visualDelta;
+    fire.runtime.visual.sizes.changed = true;
+    // The state-4 root callback is followed by the ordinary visual update.
+    // Leave sizeUpdate to FireEntity::think so a moved fire only updates once.
+    if (complete) motion.active = false;
 }
 
-void updatePreviewFirePathMotion(std::vector<PreviewFire>& fires, Collision& collision,
-                                 uint32_t now, float dt) {
-    for (auto& fire : fires) {
-        auto& motion = fire.pathMotion;
-        if (!motion.active) continue;
-
-        // 00449340 accumulates route distance as frameDelta * root[+0xFC].
-        // For the authored no-C_Model FireRescue routes, 00448D60 sets
-        // root[+0x108] from H_Radius and 00449340 updates the source visual
-        // only after progress advances by more than half that value. Its
-        // callback cadence and deferred child-spawn drain remain open.
-        motion.progress += std::max(0.f, dt) * motion.rate;
-        const bool complete = motion.progress >= motion.distance;
-        if (!complete && motion.updateThresholdMapped &&
-            motion.progress - motion.lastVisualProgress <= motion.updateThreshold)
-            continue;
-
-        V next = complete ? motion.target : motion.start + motion.direction * motion.progress;
-        motion.lastVisualProgress = motion.progress;
-        const V previousVisual = fire.runtime.visual.position;
-        fire.runtime.visual.position = next;
-        if (fire.floorMe) FireFloor::alignInWorld(fire.runtime.visual, collision);
-
-        // FireRescue keeps the candidate origin and embedded visual point in
-        // separate fields. Preserve their authored offset while moving both.
-        const V visualDelta = fire.runtime.visual.position - previousVisual;
-        fire.runtime.origin = fire.runtime.origin + visualDelta;
-        fire.runtime.visual.sizes.changed = true;
-        fire.runtime.visual.sizeUpdate(now);
-        if (complete) motion.active = false;
-    }
+void updatePreviewFires(std::vector<PreviewFire>& fires, Collision& collision,
+                        uint32_t now, float dt) {
+    for (auto& fire : fires)
+        fire.runtime.think(now, dt, [] {}, [] {}, [&] {
+            updatePreviewFirePathMotion(fire, collision, dt);
+        });
 }
 
 V playerRescueCandidateWorldOrigin(const Player& player) {
@@ -6046,8 +6047,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 passoutRecoveredThisFrame = true;
             }
             updateBoundsTriggerModelFlags(now);
-            updatePreviewFires(fires, now, dt);
-            updatePreviewFirePathMotion(fires, collision, now, dt);
+            updatePreviewFires(fires, collision, now, dt);
             if (previewMotionsPlaying) {
                 previewMotionTime = std::min(bmodelMotionEnd, previewMotionTime + dt);
                 sampleBModelMotions(bmodelMotions, previewMotionTime, inspectionPoses);
