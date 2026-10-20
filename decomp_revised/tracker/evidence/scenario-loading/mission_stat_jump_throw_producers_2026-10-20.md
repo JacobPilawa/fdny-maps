@@ -74,19 +74,27 @@ selected or reach it. Full details and source hashes are in
 Fresh read-only Ghidra instruction windows at `0045387B`, `00453A02`, and
 `00453A38` are recorded in
 [`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
-After the held-pointer guard, the Player update copies a selected BModel vector
-through `0044BED0`, transforms it through `0043B2D0`, and calls
-`ComputeVectorAngleDegrees` (`00497AA0`). It compares the result with
-`004E169C`, verified as binary32 `10.0`. Angles strictly below 10 degrees take
-the throw path; equality, larger angles, and unordered comparisons go to the
-side-selection branch. There is no intervening button or action-edge check, so
-the angle gate runs on every Player update that reaches this held-pointer
-branch. This identifies the condition and transaction order, but the semantic
-labels for the two vectors and the Player callback cadence remain unresolved.
+Fresh read-only decompilations of the called vector helpers are in
+[`bmodel_throw_gate_vectors_fresh_2026-10-20.c`](bmodel_throw_gate_vectors_fresh_2026-10-20.c).
+`0044BED0` selects BModel endpoint `+0x1FC..+0x204` when selector byte `+0x220`
+is zero, or endpoint `+0x1F0..+0x1F8` when nonzero. `0043B2D0` subtracts the
+Player movement vector at `+0x338C` from that selected endpoint. `0049E770`
+copies Player frame `+0x3364` vector `+0x1C..+0x24`, which the held-target trace
+identifies as its third basis column. `00497AA0` takes the normalized dot-product
+angle between that frame vector and the endpoint displacement. It compares the
+result with `004E169C`, verified as binary32 `10.0`. Angles strictly below 10
+degrees take the throw path; equality, larger angles, and unordered comparisons
+go to a side-selection branch. There is no intervening button or action-edge
+check, so the angle gate runs on every Player update that reaches this
+held-pointer branch. The source vector meanings are now mapped; the host
+camera-to-Player frame relation and Player callback cadence remain unresolved.
 
 The throw path calls `0043B580`, which stores the current clock on the BModel,
-sets trajectory acceleration to -384, computes duration and initial vertical
-velocity, and sets BModel state `+0x25C` to 2. It then calls Player action
+sets trajectory acceleration to -384, computes duration from endpoint distance
+with the binary32 `1/960` scale, computes initial vertical velocity, and sets
+BModel state `+0x25C` to 2. The current-hash setup decompilation is in
+[`0043b580_bmodel_throw_setup_fresh_2026-10-20.c`](0043b580_bmodel_throw_setup_fresh_2026-10-20.c).
+It then calls Player action
 status 4 through `004571A0`, clears Player root `+0x3440`, restores Player
 state `+0x18C` to 3, and adds exactly one to `Objects Thrown` through
 `00486980` at `0045399C..004539CF`. This identifies the counted operation as a
@@ -113,9 +121,12 @@ cleanup. The exact timer or timed-list cleanup associated with the event remains
 unresolved. Player and
 BModel constructors register `ThrowObject` and `ThrowObjectEnd` sounds,
 consistent with the sequence but not needed to identify the stat gate. The
-source-shaped sequence already exists in
-`port/spikes/training-native-prototype/src/training_liftable_sequence.h`, but
-it is not connected to the shared mission scene. The direct call to
+source-shaped sequence also exists in
+`port/spikes/training-native-prototype/src/training_liftable_sequence.h` as a
+reference fixture. The shared mission host now connects the common scalar
+setup/trajectory to carry selection, the held-target gate, the `Objects
+Thrown` statistic, `drop` dispatch, and `ThrowObjectEnd` sound request. Its
+Player frame and callback cadence adapters remain provisional. The direct call to
 `0043D330` comes from `0043DC60`'s slot-zero BModel ScriptActor update after its
 model-count guard, when root `+0x258` is nonzero. The callback also processes
 timed-command records later in the same update, but there is no direct
@@ -130,21 +141,21 @@ embedded frame's third column times 90 and second column times -60, then stores
 the result at held BModel `+0x224` before correction. Its exact evidence and
 remaining frame/cadence uncertainties are in
 [`bmodel_player_target_writer_fresh_2026-10-20.c`](bmodel_player_target_writer_fresh_2026-10-20.c).
-Shared held-frame/model adapters, the Player input/carry relation, integration
-of the callback-owned trajectory substep, and data-dependent drop/timer effects
-remain port work. Static authored candidate coverage is now
+The status-4 Axe-subobject hide has not yet been represented in the shared
+first-person equipment renderer. Player frame/callback cadence adapters and
+data-dependent drop/timer effects remain port work. Static authored candidate coverage is now
 accounted for across every preserved BSP; it does not establish runtime
 reachability or which objects participate in rescue objectives.
 
 ## Port decision and next evidence
 
-No shared counter was wired. `Jumps` needs the retail jump input/state/latch
-route mapped to the host movement transaction; `Objects Thrown` needs the
-source vector/frame adapter and correction cadence resolved, then the
-source-shaped held-BModel transaction promoted from the Training spike into
-the shared mission scene with its model, trajectory, drop-event, sound, and
-timing services. Once integrated, the gate should be evaluated on each held
-Player update; the source block does not wait for a separate throw input edge.
+`Objects Thrown` now increments at the shared throw transaction, and the
+source-shaped trajectory, completion event, and end-sound request are wired to
+the shared BModel scene update. The source block evaluates its angle gate on
+each held Player update without a separate input edge. The host substitutes its
+camera basis for the embedded Player frame and samples the callback once per
+frame; both mappings remain provisional. `Jumps` still needs the retail input,
+state, and contact-latch route mapped to the host movement transaction.
 `Total Steps` remains coupled to the 100 ms footstep-sound variant scheduler documented in
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
 This is static decompilation evidence only: no gameplay check, build, or retail

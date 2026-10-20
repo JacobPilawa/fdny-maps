@@ -78,14 +78,25 @@ host.
 ## Port status
 
 The trajectory is a substep of the BModel ScriptActor update, not a separately
-identified scheduler. The existing Training transaction helper is source
-shaped but remains disconnected from the shared mission host. The shared host
-now preserves the first authored child model even when that child has no PATH,
-then maps every nonzero `useObjectState` to a separate collision-exclusion set
-for swept and point/ray queries. It does not map the bit to the host's render
-flag. The host has BModel selection and held-target smoothing, while the
-Player-side throw transaction, source frame/model adapters, outer BModel update
-route, and authored event/sound services still need integration.
+identified scheduler. The shared mission scene now wires the strict Player
+angle-under-10 gate to the source-shaped throw setup, clears carry state, sets
+Player state 3/action status 4, and increments `Objects Thrown`. The angle gate
+uses the selected endpoint and the host camera's third basis column as a
+provisional stand-in for the embedded Player frame. It runs on each held-object
+host update because the source block has no input-edge check. The mapping from
+that host frame to the retail Player frame and the Player update cadence remain
+unknown.
+
+The shared BModel update samples its ordinary PATH pose, advances state-2
+trajectory, then processes timed commands. Throw completion applies the
+selected endpoint, flips the selector, dispatches `drop`, and requests the
+owner's `ThrowObjectEnd` sound through host services in the source order. The
+outer recurring BModel callback route and cadence are not proven; this
+per-host-frame adapter is provisional. The first authored child model is
+preserved even when it has no PATH, and every nonzero `useObjectState` maps to a
+separate collision-exclusion set for swept and point/ray queries. This bit is
+not mapped to the host render flag. The status-4 Axe-subobject hide callback
+has not yet been represented in the shared first-person equipment renderer.
 
 A fresh raw Player-update slice at `0045387B..00453A68` shows that a non-null
 held-BModel pointer proceeds directly through held-target update and the
@@ -93,9 +104,14 @@ angle-under-10 comparison on each invocation of that update; no button or
 action-edge check appears in the block. The strict under-10 branch starts the
 trajectory, calls Player action status 4, clears the held pointer, restores
 Player state 3, increments `Objects Thrown`, and calls the common Player action
-dispatcher. The compared vector semantics and the outer Player callback cadence
+dispatcher. Fresh helper decompilation resolves the compared values to the
+selected BModel endpoint minus Player movement position `+0x338C`, and the
+third basis column copied from the Player frame. The relation between that
+embedded frame and the host camera, and the outer Player callback cadence,
 remain unresolved. See
 [`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
+The helper outputs are in
+[`bmodel_throw_gate_vectors_fresh_2026-10-20.c`](bmodel_throw_gate_vectors_fresh_2026-10-20.c).
 No gameplay test, interactive run, or retail-parity claim is made here.
 
 See [BModel update notes](bmodel_update.md), [throw-stat producer trace](mission_stat_jump_throw_producers_2026-10-20.md),

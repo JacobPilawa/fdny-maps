@@ -103,9 +103,11 @@ meaning of action 1000, Player action-status service effects, live key/polling
 cadence, and event timing remain unresolved. Throw trajectory, drop handling,
 timed-list cleanup, and retail carry/drop animation integration are not
 implemented. The held-object source branch checks its angle whenever the held
-pointer is non-null, with no separate throw input edge, but the two vector
-meanings and Player callback cadence are still open. Treat current behavior as
-a source-shaped prototype, not 1:1 selection or carry parity.
+pointer is non-null, with no separate throw input edge. Fresh helper traces
+map the operands to selected endpoint minus Player movement position and the
+Player frame's third basis column. The frame-to-host-camera relation and Player
+callback cadence are still open. Treat current behavior as a source-shaped
+prototype, not 1:1 selection or carry parity.
 The trajectory substep is traced inside `0043DC60`; shared update integration
 and the outer callback cadence remain unresolved. See the
 [throw update route and authored-data audit](bmodel_throw_update_route_2026-10-20.md).

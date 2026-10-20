@@ -21,10 +21,10 @@ accepted. This initialization slice establishes the authored use mode; the
 selection/action/carry behavior and its current parity limits are described
 below.
 
-The macOS `fdny-scene-viewer` CMake target compiled after the selection/action/
-carry integration, current-frame collision-gate adjustment, and BModel first-
-child collision-flag mapping with SHA-256
-`562f20b0396099f5a03ad919105865ad0ec092370a2d5cb96a2a5636444661f3`.
+The macOS `fdny-scene-viewer` CMake target compiled after the Player throw
+gate, BModel trajectory callback, completion event/sound route, and
+`Objects Thrown` statistic integration with SHA-256
+`acf6a611980df20c4765770e1dfb21f2200d34bb886c1ff6fc59a49714aa741b`.
 The linker reported that the installed `json-c` dylib targets macOS 27.0 while
 this build links for 13.3; the target still completed. No package rebuild,
 tests, interactive run, or retail comparison was performed.
@@ -44,9 +44,17 @@ facing contact and `0049DBC0` consumes/clears it, but host contact resolution
 and callback timing are not proven equivalent. Selection action host
 key/polling equivalence and query sign/frame equivalence are unverified. The
 per-frame BModel callback directly calls `0043D330` when root `+0x258` is
-nonzero; state 2 advances the trajectory. That callback-owned route is mapped,
-while its outer recurring caller/cadence and shared-host integration remain
-open. The post-`drop` `004A11A0` call is
+nonzero; state 2 advances the trajectory. The callback-owned route is mapped
+and connected to the shared host; its outer recurring caller/cadence remain
+open. The host now runs the source-shaped strict angle-under-10 gate while
+carrying, starts the `0043B580` throw setup, clears the held pointer, restores
+Player state 3, sets action status 4, and increments `Objects Thrown`. Its
+camera-frame substitute and per-frame cadence are provisional. State-2 motion
+is advanced inside the shared BModel update after PATH sampling and before
+timed commands; completion applies/flips the endpoint, dispatches `drop`, and
+requests `ThrowObjectEnd`. The status-4 callback that hides the Axe subobject
+is not represented in the shared equipment renderer. The post-`drop`
+`004A11A0` call is
 verified as BModel sound playback (root `+0x124`, initialized by `004A13A0`);
 the ScriptActor timed-command array is a separate root `+0x148` pointer array
 with count at `+0x14C`. `0043E360` reuses inactive records or appends a new
@@ -73,15 +81,18 @@ no retail renderer consumer has been established for bit `0x10`.
 A fresh raw Player update slice at `0045387B..00453A68` shows that a non-null
 held-object pointer immediately enters target and angle calculation. The
 strict angle-under-10 branch starts the throw and increments `Objects Thrown`;
-there is no button or action-edge check in that block. Vector meaning and
-Player callback cadence remain unknown. The next high-value gameplay gap is
-finishing this transaction in the shared mission host: resolve the source
-vector/frame adapter and held-object correction cadence, connect the trajectory
-substep and outer update route, then integrate `drop` effects, sound, and
-timed-command lifetime with evidence. A scan of all 21 preserved EVS files and
-all `S_Script*` fields in the 17 retail BSP exports found no literal `drop`
-binding; dynamic runtime registration remains unexcluded. Keep the current
-contact, collision, and frame adapters provisional;
+there is no button or action-edge check in that block. Player callback cadence
+remains unknown. Fresh helper decompilation identifies the first vector as the
+selected BModel endpoint minus Player movement position `+0x338C`, and the other
+as the Player frame's third basis column. The angle is computed between these
+vectors; the relation between that embedded frame and the host camera basis is
+still unresolved. The next high-value gaps are resolving the Player frame and
+callback schedule, representing the status-4 Axe hide callback in the shared
+equipment renderer, and determining whether dynamic `drop` registrations add
+effects or timed-command changes. A scan of all 21
+preserved EVS files and all `S_Script*` fields in the 17 retail BSP exports found
+no literal `drop` binding; dynamic runtime registration remains unexcluded.
+Keep the current contact, collision, and frame adapters provisional;
 the isolated Training sequence is not yet a campaign implementation.
 See
 [`bmodel_selection_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bmodel_selection_port_2026-10-20.md)
@@ -1160,10 +1171,9 @@ stateful follower. The passout path still uses the source-shaped bob and
 follower. The rebuilt app executable matches the build output at SHA-256
 `717cb02f64a27f59d7f47be6a024e53ece03bc5f77128cc72d722a85255947a7`;
 `git diff --check` passes. No interactive walking capture was run, so the
-user should confirm the next launch feels stable. This checkout has no Git
-remote configured; the existing publishing handoff documents an automatic
-review restriction, so this checkpoint remains local rather than routing
-around that restriction.
+user should confirm the next launch feels stable. This was a local checkpoint at
+the time; the current compare-first mirror workflow and later verified pushes
+are recorded at the top of this file.
 
 ## Current priority (2026-10-17)
 

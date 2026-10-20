@@ -98,6 +98,7 @@ bool jsonNumber(J value) {
 #include "fire_spread.h"
 #include "fire_message_queue.h"
 #include "bmodel_interaction_selection.h"
+#include "throw_scalar.h"
 #include "player_fire_contact.h"
 #include "player_fire_message.h"
 #include "player_burn_cooling.h"
@@ -813,6 +814,11 @@ struct PreviewBModelMotion {
     V liftableStart{}; // BModel root +0x1F0..+0x1F8
     V liftableEnd{};   // BModel root +0x1FC..+0x204
     int liftableEndpointSelector = 0; // BModel root +0x220
+    uint32_t throwStartTick = 0; // BModel root +0x208
+    float throwDuration = 0.f; // BModel root +0x20C
+    float throwAcceleration = 0.f; // BModel root +0x210
+    float throwInitialVerticalVelocity = 0.f; // BModel root +0x214
+    float throwInitialMiddle = 0.f; // BModel root +0x218
     int motionState = 0; // retail states 3=open and 4=close
     std::optional<std::string> pendingCommand;
     std::vector<PreviewBModelTimedCommand> timedCommands;
@@ -2406,6 +2412,78 @@ void applyHeldBModelTarget(PreviewBModelMotion& bmodel, Collision& collision,
     }
 }
 
+void applyBModelThrowPosition(PreviewBModelMotion& bmodel, Collision& collision,
+                             const std::array<float, 3>& target) {
+    const V center{target[0], target[1], target[2]};
+    for (const auto& child : bmodel.children) {
+        // 0043BAA0 preserves the current child orientation and sets its
+        // translation to the requested world point minus its rotational center.
+        Pose pose = child.path.sample(bmodel.currentTime);
+        pose.translation = center - child.rotationalCenter;
+        collision.setPose(child.model, pose);
+    }
+}
+
+bool startBModelThrow(PreviewBModelMotion& bmodel, uint32_t tick) {
+    if (bmodel.useMode != 1 || bmodel.useObjectState != 1 ||
+        !bmodel.liftablePathHasExactModeTimes || bmodel.children.empty())
+        return false;
+    if (!(length(bmodel.liftableEnd - bmodel.liftableStart) > 0.f)) return false;
+    const std::array<float, 3> start{
+        bmodel.liftableStart.x, bmodel.liftableStart.y, bmodel.liftableStart.z};
+    const std::array<float, 3> end{
+        bmodel.liftableEnd.x, bmodel.liftableEnd.y, bmodel.liftableEnd.z};
+    const auto setup = BModelThrowScalar::setup(start, end, tick);
+    // All current authored candidates have distinct PATH endpoints. Avoid
+    // feeding a degenerate duration into the same divide-by-duration formula.
+    if (!(setup.duration > 0.f) || !std::isfinite(setup.duration) ||
+        !std::isfinite(setup.initialVerticalVelocity))
+        return false;
+    bmodel.throwStartTick = setup.tick;
+    bmodel.throwDuration = setup.duration;
+    bmodel.throwAcceleration = setup.acceleration;
+    bmodel.throwInitialVerticalVelocity = setup.initialVerticalVelocity;
+    bmodel.throwInitialMiddle = setup.initialMiddle;
+    bmodel.useObjectState = int(setup.mode);
+    return true;
+}
+
+void updateBModelThrow(PreviewBModelMotion& bmodel, uint32_t tick,
+                       Collision& collision,
+                       const std::function<void(int, const std::string&)>& dispatchDrop,
+                       const std::function<void(int, V)>& requestEndSound) {
+    if (bmodel.useObjectState != 2 || bmodel.children.empty()) return;
+    const std::array<float, 3> start{
+        bmodel.liftableStart.x, bmodel.liftableStart.y, bmodel.liftableStart.z};
+    const std::array<float, 3> end{
+        bmodel.liftableEnd.x, bmodel.liftableEnd.y, bmodel.liftableEnd.z};
+    const auto update = BModelThrowScalar::update(
+        start, end, bmodel.throwStartTick, tick, bmodel.throwDuration,
+        bmodel.throwAcceleration, bmodel.throwInitialVerticalVelocity,
+        bmodel.liftableEndpointSelector != 0);
+    applyBModelThrowPosition(bmodel, collision, update.point);
+    if (!update.completed) return;
+
+    // 0043D330 completion order: clear state, apply selected endpoint, flip
+    // the endpoint selector, dispatch `drop`, then request ThrowObjectEnd.
+    bmodel.useObjectState = 0;
+    bmodel.liftableEndpointSelector = bmodel.liftableEndpointSelector == 0 ? 1 : 0;
+    if (dispatchDrop) dispatchDrop(bmodel.entity, "drop");
+    if (requestEndSound)
+        requestEndSound(bmodel.entity, V{update.point[0], update.point[1], update.point[2]});
+}
+
+float bmodelThrowAngleDegrees(V endpoint, V playerPosition, V playerFrameThird) {
+    const V toEndpoint = endpoint - playerPosition;
+    const float endpointLength = length(toEndpoint);
+    const float frameLength = length(playerFrameThird);
+    if (!(endpointLength > 0.f) || !(frameLength > 0.f))
+        return std::numeric_limits<float>::infinity();
+    const float cosine = std::clamp(dot(toEndpoint, playerFrameThird) /
+                                    (endpointLength * frameLength), -1.f, 1.f);
+    return std::acos(cosine) * 57.29577951308232f;
+}
+
 Q multiplyQuaternion(Q a, Q b) {
     return {
         a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,
@@ -2465,7 +2543,9 @@ void commandBModel(PreviewBModelMotion& bmodel, const std::string& command, V pl
 void updateBModelStates(std::vector<PreviewBModelMotion>& bmodels, float dt,
                         Collision& collision, V playerPosition = {},
                         const std::function<void(int, size_t, const std::string&)>&
-                            dispatchTimedCommand = {}) {
+                            dispatchTimedCommand = {},
+                        const std::function<void(PreviewBModelMotion&, uint32_t)>&
+                            updateThrow = {}, uint32_t tick = 0) {
     for (auto& bmodel : bmodels) {
         if (bmodel.pendingCommand) {
             if ((*bmodel.pendingCommand == "openaway" || *bmodel.pendingCommand == "opentowards") &&
@@ -2504,6 +2584,11 @@ void updateBModelStates(std::vector<PreviewBModelMotion>& bmodels, float dt,
         // owner's timed command array. Keep those operations in the same
         // per-owner order so a due script sees the updated pose.
         sampleBModelState(bmodel, collision);
+
+        // 0043DC60 runs 0043D330 for a nonzero BModel use mode after sampling
+        // the ordinary PATH pose and before its timed-command loop. The owner
+        // callback's external cadence remains unknown.
+        if (bmodel.useMode != 0 && updateThrow) updateThrow(bmodel, tick);
 
         if (motionStateAtUpdate == 0 || !dispatchTimedCommand) continue;
         const float stepDistance = std::abs(bmodel.currentTime - previousTime);
@@ -3620,6 +3705,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             {"Completion Time", {0, 0}},
             {"Air Time", {0, 0}},
             {"Bonus Points", {0, 0}},
+            {"Objects Thrown", {0, 0}},
             {"Rescues", {0, 0}},
             {"Gallons Sprayed", {0, 0}},
             {"Longest Rescue Time", {2, 0}},
@@ -5905,7 +5991,17 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     scriptRuntime->run(command, entityId,
                         "BModel " + std::to_string(entityId) + "/timer " +
                             std::to_string(timerIndex));
-                });
+                },
+                [&](PreviewBModelMotion& bmodel, uint32_t tick) {
+                    updateBModelThrow(bmodel, tick, collision,
+                        [&](int entityId, const std::string& event) {
+                            if (scriptRuntime) scriptRuntime->dispatch(entityId, event);
+                        },
+                        [&](int entityId, V point) {
+                            sceneAudio.playOwned(entityId, "ThrowObjectEnd", point,
+                                                 player.p, yaw, 2);
+                        });
+                }, now);
             syncBModelStateCollisionFlags(bmodelMotions, collision);
             for (const auto& bmodel : bmodelMotions) {
                 const float previousPathTime = lastLoggedBModelPathTimes.count(bmodel.entity)
@@ -6886,6 +6982,23 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const V heldTarget = player.p + cameraFrame.axis[2] * 90.f -
                                      cameraFrame.axis[1] * 60.f;
                 applyHeldBModelTarget(*playerHeldBModel, collision, heldTarget, dt);
+
+                // The retail Player update evaluates this strict angle gate on
+                // every held-object update, without an input-edge check. Its
+                // Player frame is not yet proven equivalent to this camera
+                // basis, so this adapter remains provisional.
+                const V selectedEndpoint = playerHeldBModel->liftableEndpointSelector == 0
+                    ? playerHeldBModel->liftableEnd : playerHeldBModel->liftableStart;
+                if (bmodelThrowAngleDegrees(selectedEndpoint, player.p, cameraFrame.axis[2]) < 10.f &&
+                    startBModelThrow(*playerHeldBModel, now)) {
+                    playerBModelActionStatus = 4;
+                    playerHeldBModel = nullptr;
+                    playerInteractionState = 3;
+                    addSourceStatistic(&rescueStatistics["Objects Thrown"], 1);
+                    std::cout << "BModel throw action: trajectory started, action status "
+                              << playerBModelActionStatus << ", Player state "
+                              << playerInteractionState << "\n";
+                }
             }
             std::map<int, bool> currentBModelContacts;
             std::vector<std::pair<int, std::string>> pendingBModelContactEvents;
