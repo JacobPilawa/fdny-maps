@@ -60,11 +60,16 @@ subobject in `ESI`, which is root `+0x140`.
 At `0045387B`, the update requires `[ESI+0x3300]` to be non-null. With the
 movement-subobject base above, this is Player root `+0x3440`, the held BModel
 pointer. The mode-1 BModel use transition at `0044BC40` assigns that field to
-the used BModel root; reset and initialization clear it. The authored-data
-inventory contains BModel children named `throwbox` in `bank.bsp` and
-`throwbox1`/`throwbox2` in `boat_a.bsp`. These are candidates for the held
-objects, but the inventory alone does not prove which instances reach this
-branch.
+the used BModel root; reset and initialization clear it. The hash-pinned
+`G_Liftable`/MOTN/PATH scan covers all 17 preserved BSPs and finds 18 authored
+liftable BModels. Seventeen pass the static `0043BE00` first-child path checks;
+Boat A entity 192 (`chair1`) has no child model. Bank entities 432/482 and Boat
+A 269/270 contain the `throwbox`-named children; other static candidates
+include Bar R woodboxes, Boat A's `pushbox`, MBase throwboxes, Oil Rig B
+barrels, Oil Rig C rubble, and Training metalboxes. These are candidates for
+the held-object branch, but authored data does not prove which instances are
+selected or reach it. Full details and source hashes are in
+[`mission_stat_bmodel_liftable_pose_2026-10-20.md`](mission_stat_bmodel_liftable_pose_2026-10-20.md).
 
 The Player update copies a selected BModel vector through `0044BED0`, transforms
 it through `0043B2D0`, and calls `ComputeVectorAngleDegrees` (`00497AA0`). It
@@ -95,17 +100,18 @@ consistent with the sequence but not needed to identify the stat gate. The
 source-shaped sequence already exists in
 `port/spikes/training-native-prototype/src/training_liftable_sequence.h`, but
 it is not connected to the shared mission scene. Shared frame/model adapters,
-the throw trajectory scheduler and drop/timer lifecycle, and authored-instance
-coverage across missions remain integration work. The preserved asset
-inventory lists `throwbox`/`throwbox1`/`throwbox2` in Bank and Boat A; these are
-candidate instances, not a complete campaign qualification list.
+the Player-side held target writer, the throw trajectory scheduler, and the
+drop/timer lifecycle remain integration work. Static authored candidate
+coverage is now accounted for across every preserved BSP; it does not establish
+runtime reachability or which objects participate in rescue objectives.
 
 ## Port decision and next evidence
 
 No shared counter was wired. `Jumps` needs the retail jump input/state/latch
 route mapped to the host movement transaction; `Objects Thrown` needs the
-source-shaped held-BModel transaction promoted from the Training spike into
-the shared mission scene with its frame, model, trajectory, drop, and timer
+Player-side held target source joined to the mode-1 initializer, then the
+source-shaped held-BModel transaction promoted from the Training spike into the
+shared mission scene with its frame, model, trajectory, drop, and timer
 services.
 `Total Steps` remains coupled to the 100 ms footstep-sound variant scheduler documented in
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).

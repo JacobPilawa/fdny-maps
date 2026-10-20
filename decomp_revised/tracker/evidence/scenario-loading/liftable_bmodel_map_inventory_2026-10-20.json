@@ -1,0 +1,587 @@
+{
+  "retail_exe_sha256": "4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e",
+  "genesis_dll_sha256": "5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643",
+  "map_count": 17,
+  "liftable_bmodel_count": 18,
+  "static_initializer_candidate_count": 17,
+  "maps": [
+    {
+      "map": "City_h",
+      "bsp_sha256": "9bc788dcaceb477fea52efd49cfbb2fd8f86824907d73c819280710b04fcb27a",
+      "motion_chunk_sha256": "5ad7cdae21e35c26ce58fc392697cef5be84b410e9ae4c1ebd990b9105ee2a22",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "bank",
+      "bsp_sha256": "02a4b351279a9a4a1242050d3a7622f8d10149201646f890f310729a189d27b7",
+      "motion_chunk_sha256": "9dcac97b1faca0845518dcbec1f269a7b0b60e551686ed927f5a7ea5593376c0",
+      "liftable_bmodels": [
+        {
+          "entity_index": 432,
+          "entity_name": "RCS_BModel47",
+          "authored_name": "tr",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "48",
+          "children": [
+            {
+              "slot": 0,
+              "name": "throwbox",
+              "model_index": 279,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 482,
+          "entity_name": "RCS_BModel57",
+          "authored_name": "tr1",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "48",
+          "children": [
+            {
+              "slot": 0,
+              "name": "throwbox1",
+              "model_index": 307,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    },
+    {
+      "map": "bar_r",
+      "bsp_sha256": "1a796f4dfbf0d04bedf7e35ebdcf82e2e726940bf69b1df7ce2ea7428e018a98",
+      "motion_chunk_sha256": "4c563df0d93a4af8db1a288ca0956e90c3b47a420859fa1b7ca7f2a040a615bb",
+      "liftable_bmodels": [
+        {
+          "entity_index": 302,
+          "entity_name": "RCS_BModel35",
+          "authored_name": "liftablecrate1",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "50",
+          "children": [
+            {
+              "slot": 0,
+              "name": "obj_liftable_woodbox",
+              "model_index": 35,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 303,
+          "entity_name": "RCS_BModel36",
+          "authored_name": "liftablecrate2",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "50",
+          "children": [
+            {
+              "slot": 0,
+              "name": "obj_liftable_woodbox1",
+              "model_index": 10,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    },
+    {
+      "map": "boat_a",
+      "bsp_sha256": "e1685b45ef29aa075c688985617b593079a6aad8a6b493bbae327356bd45ad44",
+      "motion_chunk_sha256": "586d96cac5a929d41d640717eb51b204cc4eeaf50c89ff4ddb3d14d3eff966f1",
+      "liftable_bmodels": [
+        {
+          "entity_index": 192,
+          "entity_name": "RCS_BModel21",
+          "authored_name": "chair1",
+          "liftable_value": "1",
+          "hit_points": "2",
+          "reach": "0",
+          "children": [],
+          "first_child_static_initializer_candidate": false
+        },
+        {
+          "entity_index": 268,
+          "entity_name": "RCS_BModel45",
+          "authored_name": "<null>",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "0",
+          "children": [
+            {
+              "slot": 0,
+              "name": "pushbox",
+              "model_index": 102,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 269,
+          "entity_name": "RCS_BModel46",
+          "authored_name": "<null>",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "0",
+          "children": [
+            {
+              "slot": 0,
+              "name": "throwbox",
+              "model_index": 1,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 270,
+          "entity_name": "RCS_BModel47",
+          "authored_name": "hg",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "0",
+          "children": [
+            {
+              "slot": 0,
+              "name": "throwbox2",
+              "model_index": 9,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    },
+    {
+      "map": "boat_b",
+      "bsp_sha256": "4ad7de96916b5c265a4cdd6c477d96a0b6f9cc6e8151c96ff2e1ef8a31313a50",
+      "motion_chunk_sha256": "f1952cf84fc56f8e316b078795619199dd065aa6c279ae62c032f82f96229924",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "const_h",
+      "bsp_sha256": "f4dc99b6dd3b4465c1ba68cc29c09c075368f45f744a32a470b0663251862984",
+      "motion_chunk_sha256": "5ad7cdae21e35c26ce58fc392697cef5be84b410e9ae4c1ebd990b9105ee2a22",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "dock_h",
+      "bsp_sha256": "17427ebd2964f31b47317e53c0881af41a05e78d57a7c95ef9783d10697a6d7c",
+      "motion_chunk_sha256": "5ad7cdae21e35c26ce58fc392697cef5be84b410e9ae4c1ebd990b9105ee2a22",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "gas_r",
+      "bsp_sha256": "f6822f8d598d2888896165bbee8b554351230cd76ad6331abf0d735a03b54cbc",
+      "motion_chunk_sha256": "da35b1df9e3c8f2f89711d8e9f58875f80582a3b8481224d395a4a66d5ee003e",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "mbase",
+      "bsp_sha256": "4ff3b18dd809c619a6734673a7f90bd2e98d9fc9518ee7bf94ece4b6ff90b266",
+      "motion_chunk_sha256": "2282558442f12b9a71fdc527a25c4306eb72cc4920530c82af3bbebb0ac1fb03",
+      "liftable_bmodels": [
+        {
+          "entity_index": 199,
+          "entity_name": "RCS_BModel29",
+          "authored_name": "underground_throw1",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "70",
+          "children": [
+            {
+              "slot": 0,
+              "name": "underground2_throw1",
+              "model_index": 21,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 200,
+          "entity_name": "RCS_BModel30",
+          "authored_name": "underground_throw2",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "70",
+          "children": [
+            {
+              "slot": 0,
+              "name": "underground2_throw2",
+              "model_index": 22,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    },
+    {
+      "map": "oil_rig_A",
+      "bsp_sha256": "c63ff7e6a7e41a6df15f572bc1c327cbc6ecbe934a17cf1c5a136c2a7d7e36c1",
+      "motion_chunk_sha256": "b62dba8842368ae4aed332be815c1ea39cf15e3e37ccd86c3b1f14a3a1e48366",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "oil_rig_B",
+      "bsp_sha256": "bfc16ba4e151a814ba2f80d84a3aadb096d9468c83262daab900c48e5043c701",
+      "motion_chunk_sha256": "6d0f08ed4ed8a64124e3801c6425857d9f30d35a5a010877ff57f15853225c16",
+      "liftable_bmodels": [
+        {
+          "entity_index": 60,
+          "entity_name": "RCS_BModel100",
+          "authored_name": "oil barrel 01",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "20",
+          "children": [
+            {
+              "slot": 0,
+              "name": "oil barrel 01",
+              "model_index": 8,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 61,
+          "entity_name": "RCS_BModel101",
+          "authored_name": "oil barrel 2",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "20",
+          "children": [
+            {
+              "slot": 0,
+              "name": "oil_barrel 02",
+              "model_index": 9,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    },
+    {
+      "map": "oil_rig_C",
+      "bsp_sha256": "786aeb2a56929f1ac8270cd3be16608aec5a6ae9677c477209dbd2cc0721f499",
+      "motion_chunk_sha256": "db6c26511e5599527fd068634aecc1e5ce592cfe0399bb57d0fd754a747f78c1",
+      "liftable_bmodels": [
+        {
+          "entity_index": 233,
+          "entity_name": "RCS_BModel116",
+          "authored_name": "rubble - slab 2",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "24",
+          "children": [
+            {
+              "slot": 0,
+              "name": "rubble - slab 02",
+              "model_index": 23,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 234,
+          "entity_name": "RCS_BModel117",
+          "authored_name": "rubble - slab 3",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "24",
+          "children": [
+            {
+              "slot": 0,
+              "name": "rubble - slab 01",
+              "model_index": 21,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 235,
+          "entity_name": "RCS_BModel118",
+          "authored_name": "rubble - girder 01",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "24",
+          "children": [
+            {
+              "slot": 0,
+              "name": "rubble - girder 01",
+              "model_index": 22,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 236,
+          "entity_name": "RCS_BModel119",
+          "authored_name": "rubble - girder 2",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "24",
+          "children": [
+            {
+              "slot": 0,
+              "name": "rubble - girder 2",
+              "model_index": 24,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    },
+    {
+      "map": "oil_rig_D",
+      "bsp_sha256": "f74675df4da49c2723473b6c9d13faca698824d9bc104262f788394d7f86914d",
+      "motion_chunk_sha256": "fda408ec2612426bc8b7c549b3e18f58bbe735235a989f8a515eecbc4b4e7184",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "oil_rig_h",
+      "bsp_sha256": "6681a6ecb688f69b37bbbc25c6c0dea3f030f33880e7210c7cbed48a108bd4d0",
+      "motion_chunk_sha256": "2255340daa1a36cabf04492ba26b10d3859f9449daf86a2db2cfac8936b0b867",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "subway_a",
+      "bsp_sha256": "b33b67a01e0a2c144033f1da5c9c627b197d0a413b3b13190dd8531b63881f7e",
+      "motion_chunk_sha256": "ff81b93ff732b09f69a55a94ffacbece4d284dc234b493a167fafb0585a4cee8",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "subway_b",
+      "bsp_sha256": "279ef316b08c0eae5d2ae33811402cf754d7e1aef95c2af199a83b87ff99c9e4",
+      "motion_chunk_sha256": "514039c1d67061e10a5d89ea2c7d84fb0e9b853ba2a9b73554b14ebc9cf59736",
+      "liftable_bmodels": []
+    },
+    {
+      "map": "training",
+      "bsp_sha256": "32986212fa875764ca3d5c1630e54ad6315abaea70983203601192cec603a963",
+      "motion_chunk_sha256": "a804484a2423385f395724d19ec4f0b98e1fef2c2f42dc02fd68c854e62f4c72",
+      "liftable_bmodels": [
+        {
+          "entity_index": 109,
+          "entity_name": "RCS_BModel5",
+          "authored_name": "obj_liftable_metalbox",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "50",
+          "children": [
+            {
+              "slot": 0,
+              "name": "obj_liftable_metalbox",
+              "model_index": 7,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        },
+        {
+          "entity_index": 111,
+          "entity_name": "RCS_BModel8",
+          "authored_name": "obj_liftable_metalbox1",
+          "liftable_value": "1",
+          "hit_points": "0",
+          "reach": "20",
+          "children": [
+            {
+              "slot": 0,
+              "name": "obj_liftable_metalbox1",
+              "model_index": 8,
+              "ambiguous_model_name": false,
+              "motion_record_present": true,
+              "path_count": 1,
+              "translation_key_times": [
+                0.0,
+                1.0
+              ],
+              "rotation_key_times": [
+                0.0,
+                1.0
+              ]
+            }
+          ],
+          "first_child_static_initializer_candidate": true
+        }
+      ]
+    }
+  ]
+}
