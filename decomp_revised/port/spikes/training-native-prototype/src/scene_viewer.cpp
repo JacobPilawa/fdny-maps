@@ -3068,9 +3068,9 @@ void drawPlayerHoseStream(V start, V end, float pressure) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
     glLineWidth(3.f);
-    // Retail records this pressure scalar into the hose stream samples. The
-    // simple host beam uses it as provisional opacity until that renderer is
-    // recovered; this mapping is not a retail-parity claim.
+    // Retail renders timestamped four-vertex strips. The host beam remains a
+    // visibility placeholder, and this pressure-to-opacity mapping is
+    // provisional rather than a source-derived appearance rule.
     glColor4f(.36f, .74f, 1.f, .82f * std::clamp(pressure, 0.f, 1.f));
     glBegin(GL_LINES);
     glVertex3f(start.x, start.y, start.z);
@@ -5794,7 +5794,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     playerHoseStage.result == PlayerHoseStage::Result::Running;
                 playerHoseStage.updateStreamPressure(hoseActionActive);
                 if (hoseActionActive) {
-                    constexpr float streamLength = 2000.f; // 0046C5A0 traces a 2000-unit hose segment.
+                    const float streamLength = playerHoseStage.streamRange();
                     // 00465EF0 offsets the stream source from the entity frame:
                     // +10*basis3 +15*basis2 -10*basis1. Keep steering on the
                     // direction only; 00466780 rotates a temporary aim frame.

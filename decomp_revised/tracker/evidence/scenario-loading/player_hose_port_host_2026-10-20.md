@@ -4,7 +4,8 @@ Status: **the shared game host loads the four dedicated PlayerHose maps,
 resolves authored WindowFire target names to BSP model IDs, applies the
 source-derived numeric mode timer scale, runs a source-shaped target/cycle/
 hotspot state path, follows the authored HosePath camera rail with a
-floor-height query, and tracks the source-shaped `M_MaxPressure` stream scalar.
+floor-height query, and tracks the source-shaped `M_MaxPressure` scalar and
+pressure-scaled stream reach.
 The shared loop now uses the traced retail delta scale,
 lower pacing threshold, and upper cap. Retail menu labels/initial mode, rail
 speed calibration, SDL tick quantization/focus-pause mapping,
@@ -41,6 +42,7 @@ Fresh decompilation is preserved in
 [`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](playerhose_hotspot_state_machine_fresh_2026-10-20.c),
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
+[`playerhose_stream_shape_interpolation_fresh_2026-10-20.c`](../fire-spread/playerhose_stream_shape_interpolation_fresh_2026-10-20.c),
 and the fuller authored-data and open-question inventory in
 [`player_hose_stage_lifecycle_2026-10-20.md`](player_hose_stage_lifecycle_2026-10-20.md).
 
@@ -74,8 +76,8 @@ Mouse steering offsets the nozzle aim around that direction, preserving the
 existing `N_PitchSpread` degree clamp; its exact relation to retail
 `STEER_PITCH/YAW` remains provisional.
 
-The host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment from
-the retail-shaped `00465EF0` frame offset with the same `0x43/2`
+The host maps left-button hold to `MOUSE_LB`, traces a pressure-scaled segment
+from the retail-shaped `00465EF0` frame offset with the same `0x43/2`
 world-collision arguments seen in the retail stream collision, and checks the
 selected target's model bounds against the impact point expanded by the
 current-pressure contact radius. A world collision is still required to set
@@ -105,14 +107,18 @@ STEER_PITCH/YAW remains provisional. `M_MaxPressure` at owner `+0x1834`
 aliases stream-component target `+0x3B4`, while current stream pressure is at
 owner `+0x1830` / component `+0x3B0`. The shared host tracks the source's
 per-update 0.2 interpolation toward that target while held and toward zero
-after release. Retail writes this scalar to stream sample records and sends it
-as a WindowFire message payload; the traced WindowFire timer ignores the
-payload as a rate input. The sample consumer passes twice the interpolated
-pressure to its stream-curve builder, culls low-pressure segments, and creates
-four-vertex strips. On collision it sets the douse contact radius from 10 to 40
-using current pressure; the host now checks that radius against the selected
-target's world AABB. The simple blue beam still uses pressure as a provisional
-opacity proxy, and exact rendered-water appearance remains open. The earlier exact
+after release. Retail turns current pressure into a primary stream reach of
+`4000 * pressure` and a separate sample shape scalar of
+`0.8 + 2.2 * pressure`; the host uses the source-derived reach. Its single ray
+approximates the retail's timestamped four-vertex strip collision. The strip
+consumer culls samples whose interpolated shape scalar is at most 1.0 and
+passes twice that scalar to the curve helper. It remains unclear how that value
+transfers to rendered vertex width or color. Retail also sends current pressure
+as a WindowFire message payload; the traced timer ignores it as a rate input.
+On collision it sets the douse contact radius from 10 to 40 using current
+pressure; the host checks that radius against the selected target's world AABB.
+The simple blue beam still uses pressure as a provisional opacity proxy, and
+exact rendered-water appearance remains open. The earlier exact
 `+0x1834` instruction-text scan finds only the assignment at `00467B8A`; it
 missed the component-relative alias. The host win/loss title is not retail
 result presentation. See
@@ -239,3 +245,22 @@ plist passed validation; the rescue catalog still has eight rows, and all
 four hose maps are packaged. The existing Homebrew json-c warning remains
 (built for macOS 27.0, linked for 13.3). No tests, interactive run, or retail
 comparison were made.
+
+## Pressure-scaled stream reach follow-up
+
+Fresh traces of `0046D1B0`, `0046C000`, `0046BAD0`, and `0046BC10` separate
+current pressure from the sample's shape scalar. The primary endpoint offset
+is `4000 * currentPressure`; a second value written at sample `+0x1C` is
+`0.8 + 2.2 * currentPressure`. `0046C5A0` culls samples whose interpolated
+shape scalar is at most 1.0, passes twice the scalar to the curve helper, then
+updates four-vertex strips and collides along the generated geometry. The host
+now scales its primary collision ray by `4000 * pressure`. This improves reach
+behavior, while the single ray still approximates retail strip collision and
+the blue line opacity remains provisional.
+
+The shared macOS target and rescue-all bundle rebuilt with matching standalone
+and packaged executable SHA-256
+`39c681b93c13f6bfb79b1b82fbfc8a3f19f55d450992ba509f0521c1786789ac`. The
+bundle plist passed, all eight rescue choices and four hose scenes remain
+packaged, and the existing Homebrew json-c macOS 27.0 versus target 13.3
+warning remains. No tests, interactive run, or retail comparison were made.

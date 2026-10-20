@@ -87,7 +87,8 @@ struct PlayerHoseStage {
     float countdown = 0.f;
     // The shared stream component moves its output scalar 20% toward the
     // current hotspot's M_MaxPressure while held, and 20% toward zero when
-    // released. The exact rendered-water transfer remains unresolved.
+    // released. Retail scales the primary stream reach by 4000 * this value;
+    // its sampled ribbon shape remains only partly reconstructed.
     float streamPressureTarget = 0.f;
     float streamPressure = 0.f;
     bool timeWarningSent = false;
@@ -272,6 +273,12 @@ struct PlayerHoseStage {
     void updateStreamPressure(bool waterHeld) {
         const float target = waterHeld ? streamPressureTarget : 0.f;
         streamPressure += (target - streamPressure) * 0.2f;
+    }
+
+    float streamRange() const {
+        // 0046D1B0 blends constructor +0x370 (0) and +0x390 (4000) by the
+        // current pressure, then scales the aim direction by that distance.
+        return 4000.f * streamPressure;
     }
 
     float streamContactRadius() const {

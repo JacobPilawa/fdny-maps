@@ -33,19 +33,24 @@ runtime gate are not measured here.
 
 ## Consumers and gameplay scope
 
-`0046D1B0` passes the scalar to `0046C000` as the final field of each
-time-stamped stream sample (record float `+0x1C`); the sample also stores a
-timestamp and two XYZ vectors. The fresh sample consumer is
+`0046D1B0` derives two separate values from current pressure before writing
+the primary sample history at component `+0x168`. Constructor values
+`+0x370 = 0` and `+0x390 = 4000` make the sampled endpoint offset
+`4000 * currentPressure`; that distance scales the aim direction. Values
+`+0x374 = 0.8` and `+0x394 = 3` make the sample's final scalar
+`0.8 + 2.2 * currentPressure`. `0046C000` stores the source point, scaled
+direction vector, and this separate shape scalar in each timestamped sample
+(record float `+0x1C`). The fresh sample consumer is
 [`playerhose_stream_component_consumer_fresh_2026-10-20.c`](../fire-spread/playerhose_stream_component_consumer_fresh_2026-10-20.c).
-The interpolation and curve-array helpers are preserved in
+The interpolation and sample-buffer helpers are preserved in
 [`playerhose_stream_component_helpers_fresh_2026-10-20.c`](../fire-spread/playerhose_stream_component_helpers_fresh_2026-10-20.c).
-`0046BC10` interpolates the sample and returns the pressure field. The
-`0046C5A0` consumer passes twice that scalar to `00469F50` while appending
-stream-curve points, filters low-pressure segments, builds four-vertex strips,
-and performs world collision along the generated path. This resolves the
-native sample-consumer path and confirms pressure changes stream-geometry input;
-the exact vertex-to-pressure rendering transfer and live appearance remain
-open.
+`0046BC10` interpolates both vectors and the shape scalar. In `0046C5A0`,
+segments whose interpolated scalar is at most `0.8 * 1.25 = 1.0` are cleared;
+retained segments pass twice the shape scalar (from `1.6` to `6.0` for pressure
+from zero to one) to `00469F50`, update four-vertex strips, and run world
+collision along the generated path. This separates pressure-scaled reach from
+the strip's scalar input. The exact transfer from the stored scalar to vertex
+width, color, or texture and the live appearance remain unresolved.
 
 The same consumer sets component `+0x18` after a world hit using current
 pressure at `+0x3B0` and constructor values `+0x38C = 10`, `+0x3AC = 40`:
@@ -57,7 +62,7 @@ contactRadius = 40 * currentPressure + (1 - currentPressure) * 10
 `00464AA0` compares each eligible WindowFire target's world AABB against the
 impact point expanded by this radius on all three axes, then queues the impact
 point and current pressure as message `30000`. Pressure therefore affects
-whether a target receives contact as well as the geometry input. The
+whether a target receives contact as well as stream reach and shape input. The
 `0x7530` WindowFire handler does not use the message payload to scale its timer:
 while linked active/selected gates are set, its timer change remains
 `frameDelta / SprayTime`.
@@ -74,14 +79,15 @@ The four hash-pinned BSP exports are listed in
 Entering a hotspot sets its target from that node's `M_MaxPressure`; the host
 updates once per frame toward the target while its hose action is active and
 toward zero otherwise, using the source's per-update 0.2 interpolation. Its
-contact radius now follows the component's 10-to-40 interpolation, and the
-selected target's exported world AABB is tested against that expanded impact
-point before the WindowFire timer can advance. The simple blue line still uses
-pressure as a provisional opacity proxy; the source exposes a pressure-scaled
-stream-geometry input, but the renderer's exact appearance has not been
-recovered.
+primary stream trace now reaches `4000 * currentPressure` units, matching the
+source's sample endpoint offset. This host ray approximates the retail's
+timestamped, interpolated strip collision. Its contact radius follows the
+component's separate 10-to-40 interpolation, and the selected target's
+exported world AABB is tested against that expanded impact point before the
+WindowFire timer can advance. The simple blue line still uses pressure as a
+provisional opacity proxy; exact strip and texture appearance remain open.
 
 Remaining work: recover the component state gate and scheduler cadence, trace
-the remaining stream-geometry helpers and render-state transfer, and compare
-the host contact volume against controlled samples. No runtime or retail
-comparison was performed for this checkpoint.
+the exact strip-scalar-to-vertex/render-state transfer, and compare the host
+contact volume against controlled samples. No runtime or retail comparison
+was performed for this checkpoint.
