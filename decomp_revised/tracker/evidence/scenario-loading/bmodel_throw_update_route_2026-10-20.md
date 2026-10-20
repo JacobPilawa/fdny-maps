@@ -92,11 +92,14 @@ trajectory, then processes timed commands. Throw completion applies the
 selected endpoint, flips the selector, dispatches `drop`, and requests the
 owner's `ThrowObjectEnd` sound through host services in the source order. The
 outer recurring BModel callback route and cadence are not proven; this
-per-host-frame adapter is provisional. The first authored child model is
+per-host-frame adapter is provisional. Player action status 3 enables and
+resets the Axe subobject, while status 4 disables it; the shared renderer now
+mirrors those observed states. Ordinary equipment-selection reactivation
+remains untraced. The first authored child model is
 preserved even when it has no PATH, and every nonzero `useObjectState` maps to a
 separate collision-exclusion set for swept and point/ray queries. This bit is
-not mapped to the host render flag. The status-4 Axe-subobject hide callback
-has not yet been represented in the shared first-person equipment renderer.
+not mapped to the host render flag. The status-3 Axe enable/reset and status-4
+hide are represented in the shared first-person equipment renderer.
 
 A fresh raw Player-update slice at `0045387B..00453A68` shows that a non-null
 held-BModel pointer proceeds directly through held-target update and the

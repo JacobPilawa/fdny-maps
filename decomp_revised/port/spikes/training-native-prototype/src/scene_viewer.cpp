@@ -5648,6 +5648,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         PreviewBModelMotion* playerHeldBModel = nullptr;
         int playerBModelActionStatus = 0;
         int playerInteractionState = 0;
+        bool axeActorVisible = true;
         BModelInteractionSelection::Registry bmodelUseRegistry;
         std::string previousEquippedItem = playerLoadout.selectedName();
         std::map<int, bool> bmodelContacts;
@@ -6992,6 +6993,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (bmodelThrowAngleDegrees(selectedEndpoint, player.p, cameraFrame.axis[2]) < 10.f &&
                     startBModelThrow(*playerHeldBModel, now)) {
                     playerBModelActionStatus = 4;
+                    axeActorVisible = false;
                     playerHeldBModel = nullptr;
                     playerInteractionState = 3;
                     addSourceStatistic(&rescueStatistics["Objects Thrown"], 1);
@@ -7171,6 +7173,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                 [&](void*, std::uintptr_t actionStatus, const void*) {
                                     // 0044BC40 calls 004571A0(Player+0x5F4, 3, 0).
                                     playerBModelActionStatus = int(actionStatus);
+                                    if (actionStatus == 3) axeActorVisible = true;
                                 })) {
                             playerHeldBModel = static_cast<PreviewBModelMotion*>(
                                 transition.playerHeldObject);
@@ -7399,7 +7402,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             // be active after that path.
             auto axeSecondaryAsset = equipmentAssets.find("axe");
             auto axePrimaryAsset = equipmentAssets.find("axel");
-            if (selectedItem == "axe" && axeSecondaryAsset != equipmentAssets.end() &&
+            if (selectedItem == "axe" && axeActorVisible &&
+                axeSecondaryAsset != equipmentAssets.end() &&
                 axeSecondaryAsset->second->renderer) {
                 // Retail's complete ActorInfo matrix is not mapped into camera
                 // coordinates yet, so the preview root remains provisional.

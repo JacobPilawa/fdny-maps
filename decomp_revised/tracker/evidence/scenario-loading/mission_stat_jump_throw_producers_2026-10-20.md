@@ -100,13 +100,16 @@ state `+0x18C` to 3, and adds exactly one to `Objects Thrown` through
 `00486980` at `0045399C..004539CF`. This identifies the counted operation as a
 held-BModel throw transaction rather than arbitrary contact or generic ACTION.
 
-The status-4 callback is joined to the Player Axe subobject: `004571A0` calls
-`0047DC90` on Player `+0xA94` with a false value. The Player loadout evidence
-identifies this subobject as the Axe actor; the callback hides that subobject.
-The higher-level name for status 4 and a matching shared-host visual state
-remain unresolved. The Player constructor registers `ThrowObject` on the Axe
-subobject, but the release-side sound dispatch was not found; the BModel
-separately registers `ThrowObjectEnd` on its root `+0x124` sound instance.
+The Player action callback is joined to the Axe subobject. Status 3 calls
+`00455BC0`, which enables the ActorInfo and resets its motion state. Status 4
+calls `0047DC90` on Player `+0xA94` with false; this disables the ActorInfo and
+its child. The Player loadout evidence identifies this subobject as the Axe
+actor. The shared renderer now mirrors these two states. Normal equipment
+selection reactivation remains untraced. The Player constructor registers
+`ThrowObject` on the Axe subobject, but the release-side sound dispatch was not
+found; the BModel separately registers `ThrowObjectEnd` on its root `+0x124`
+sound instance. The fresh status-helper excerpts are in
+[`player_bmodel_action_status_fresh_2026-10-20.c`](player_bmodel_action_status_fresh_2026-10-20.c).
 
 `0043B580` receives the held BModel root and starts its trajectory. BModel
 update `0043D330` converts the wrapped clock delta to seconds and advances
@@ -141,9 +144,10 @@ embedded frame's third column times 90 and second column times -60, then stores
 the result at held BModel `+0x224` before correction. Its exact evidence and
 remaining frame/cadence uncertainties are in
 [`bmodel_player_target_writer_fresh_2026-10-20.c`](bmodel_player_target_writer_fresh_2026-10-20.c).
-The status-4 Axe-subobject hide has not yet been represented in the shared
-first-person equipment renderer. Player frame/callback cadence adapters and
-data-dependent drop/timer effects remain port work. Static authored candidate coverage is now
+The shared equipment renderer mirrors status 3 enabling/resetting and status 4
+disabling the Axe subobject. Ordinary equipment-selection reactivation is not
+traced. Player frame/callback cadence adapters and data-dependent drop/timer
+effects remain port work. Static authored candidate coverage is now
 accounted for across every preserved BSP; it does not establish runtime
 reachability or which objects participate in rescue objectives.
 
