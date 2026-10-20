@@ -20,6 +20,12 @@ Retail's time comparator is tolerant, so near-equal boundary values are not yet
 accepted. This state initialization does not route input or claim a gameplay
 interaction.
 
+The macOS `fdny-scene-viewer` CMake target compiled after this change with
+SHA-256 `c99318aff5339f753844518aab5006b1a4a5085dab53ea5fd3c357f46e5f03fa`.
+The linker reported that the installed `json-c` dylib targets macOS 27.0 while
+this build links for 13.3; the target still completed. No package rebuild,
+tests, interactive run, or retail comparison was performed.
+
 The live host still chooses nearest overlapping use-binding BModels and sends
 `use` directly. Retail instead registers contact candidates in a dynamic
 slot list, reuses the first hole, uses the retained query interface and a

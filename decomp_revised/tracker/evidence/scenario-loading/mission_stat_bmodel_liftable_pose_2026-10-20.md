@@ -134,6 +134,13 @@ transaction header remains a spike;
 held-frame semantics, callback cadence, trajectory scheduling, and drop/timer
 cleanup are still unresolved.
 
+The macOS `fdny-scene-viewer` CMake target compiled after this change at
+SHA-256 `c99318aff5339f753844518aab5006b1a4a5085dab53ea5fd3c357f46e5f03fa`.
+The linker warned that the installed `json-c` dylib targets macOS 27.0 while
+the target links for 13.3, but completed successfully. This is a source-host
+compile check only: no app packaging, tests, interactive use, or retail
+comparison was done.
+
 The Objects Thrown branch in the previous producer trace remains a held-BModel
 transaction with a strict angle-under-10-degree gate. Static candidate coverage
 and the held target's source arithmetic are now mapped, but the shared mission
