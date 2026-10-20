@@ -803,6 +803,13 @@ struct PreviewBModelMotion {
     float currentTime = 0.f;
     int hitPoints = 0;
     int liftable = 0;
+    // BModel root +0x258: generic ScriptActor use starts at mode 2 and a
+    // known-data-valid G_Liftable first-child PATH overrides it with mode 1.
+    int useMode = 0;
+    bool liftablePathHasExactModeTimes = false;
+    V liftableStart{}; // BModel root +0x1F0..+0x1F8
+    V liftableEnd{};   // BModel root +0x1FC..+0x204
+    int liftableEndpointSelector = 0; // BModel root +0x220
     int motionState = 0; // retail states 3=open and 4=close
     std::optional<std::string> pendingCommand;
     std::vector<PreviewBModelTimedCommand> timedCommands;
@@ -2167,6 +2174,7 @@ std::vector<PreviewBModelMotion> loadBModelMotions(const SceneData& scene) {
         PreviewBModelMotion bmodel;
         bmodel.entity = integer(field(entity, "index"));
         bmodel.authoredName = property(entity, "A_Name");
+        bmodel.liftable = int(parseFloat(property(entity, "G_Liftable"), 0.f));
         bmodel.sourcePosition = parseVector(property(entity, "ZZ_location"),
                                              parseVector(property(entity, "location"), {}));
         bool foundChild = false;
@@ -2175,6 +2183,7 @@ std::vector<PreviewBModelMotion> loadBModelMotions(const SceneData& scene) {
             const std::string propertyName = "C_AnimModel" + std::to_string(child);
             const std::string modelName = property(entity, propertyName.c_str());
             if (modelName.empty() || modelName == "<null>") continue;
+            const bool isFirstChild = !foundChild;
             foundChild = true;
             auto model = modelIndices.find(modelName);
             if (model == modelIndices.end())
@@ -2202,9 +2211,24 @@ std::vector<PreviewBModelMotion> loadBModelMotions(const SceneData& scene) {
                     bmodel.hasOpenAwayBounds = true;
                 }
             }
+            V rotationalCenter{};
+            if (bounds != collisionModels.end())
+                rotationalCenter = vec(field(bounds->second, "origin"));
             auto path = pathsByModel.find(model->second);
             if (path == pathsByModel.end()) continue;
             auto prepared = RetailGbspMotion::preparePath(path->second);
+            if (isFirstChild && bmodel.liftable != 0 &&
+                prepared.translation.size() == 2 &&
+                prepared.translation[0].time == 0.f &&
+                prepared.translation[1].time == 1.f) {
+                // 0043BE00 validates the first child's two endpoint times via
+                // the tolerant 0043B120 helper. Current authored liftables
+                // use exact 0/1 values; fuzzy boundary cases remain unported.
+                bmodel.liftablePathHasExactModeTimes = true;
+                bmodel.liftableStart = prepared.translation[0].value + rotationalCenter;
+                bmodel.liftableEnd = prepared.translation[1].value + rotationalCenter;
+                bmodel.liftableEndpointSelector = 0;
+            }
             auto includeTimes = [&](const auto& keys) {
                 if (keys.empty()) return;
                 if (!hasMotionRange) {
@@ -2218,20 +2242,15 @@ std::vector<PreviewBModelMotion> loadBModelMotions(const SceneData& scene) {
             };
             includeTimes(prepared.translation);
             includeTimes(prepared.rotation);
-            V rotationalCenter{};
-            if (bounds != collisionModels.end())
-                rotationalCenter = vec(field(bounds->second, "origin"));
             bmodel.children.push_back({model->second, rotationalCenter, std::move(prepared)});
         }
         if (!foundChild || !bmodel.hasBounds) continue;
         bmodel.currentTime = bmodel.startTime;
         const float authoredReach = parseFloat(property(entity, "E_Reach"), 0.f);
         const int hitPoints = int(parseFloat(property(entity, "F_HitPoints"), 0.f));
-        const int liftable = int(parseFloat(property(entity, "G_Liftable"), 0.f));
         bmodel.hitPoints = hitPoints;
-        bmodel.liftable = liftable;
         bmodel.contactReach = BModelContact::effectiveReach(
-            authoredReach, hitPoints, liftable, hasMotionRange ? bmodel.endTime : 0.f);
+            authoredReach, hitPoints, bmodel.liftable, hasMotionRange ? bmodel.endTime : 0.f);
         if (bmodel.authoredName.empty() || lower(bmodel.authoredName).rfind("<null>", 0) == 0)
             bmodel.authoredName.clear();
         result.push_back(std::move(bmodel));
@@ -4096,6 +4115,23 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                              entityClass == "RCS_HosePath")))
                     scriptRuntime->startupEntity(entity);
             }
+        }
+        // 0043C670 first grants generic mode 2 to a BModel with a `use`
+        // binding, then 0043BE00 may override it with lift mode 1 after the
+        // first-child PATH checks. This retains authored mode state only;
+        // live candidate order, query geometry and pickup remain unported.
+        for (auto& bmodel : bmodelMotions) {
+            bool hasUseBinding = false;
+            if (scriptRuntime) {
+                auto foundBindings = scriptRuntime->bindings.find(bmodel.entity);
+                hasUseBinding = foundBindings != scriptRuntime->bindings.end() &&
+                    std::any_of(foundBindings->second.begin(), foundBindings->second.end(),
+                                [](const Scripts::Binding& binding) {
+                                    return binding.event == "use";
+                                });
+            }
+            bmodel.useMode = hasUseBinding ? 2 : 0;
+            if (bmodel.liftablePathHasExactModeTimes) bmodel.useMode = 1;
         }
         auto advanceWorldStartup = [&](uint32_t now) {
             if (!scriptRuntime || worldStartup.complete) return;

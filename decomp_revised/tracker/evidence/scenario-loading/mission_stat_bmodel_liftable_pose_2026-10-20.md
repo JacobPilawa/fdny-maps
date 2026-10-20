@@ -111,14 +111,37 @@ cadence remains unknown. See
 The writer therefore specifies the shared host adapter's source-shaped target
 and correction calculations, not a confirmed hand/view pose or timing match.
 
+## Shared host use-mode initialization slice
+
+The shared mission viewer now retains BModel `useMode` (`+0x258`) after its
+authored ScriptActor bindings are known. It first assigns generic mode 2 when
+the entity has a `use` binding, then overrides to mode 1 for nonzero
+`G_Liftable` when the first child has exactly two translation keys at exact
+times 0 and 1. All 17 static mode-1 candidates in the preserved BSP scan use
+those exact values. On that success, the host also stores each path translation
+plus the first child's rotational center at the two lift endpoints and clears
+the endpoint selector, matching the source field effects at `+0x1F0/+0x1FC`
+and `+0x220`. Retail `0043BE00` calls `0043B120` for tolerant time comparisons,
+so near-equal boundary cases are currently rejected by this host initializer;
+this is a narrower data acceptance condition, not a gameplay parity result.
+
+This slice only preserves authored mode state. The shared host still selects
+the nearest overlapping BModel with a `use` binding and dispatches `use`
+directly, unlike retail's contact-registered slot list, retained query
+interface, 200-unit squared-distance limit, action-code gate, and ordered tie
+behavior. Input and pickup therefore remain unwired. The separate Training
+transaction header remains a spike;
+held-frame semantics, callback cadence, trajectory scheduling, and drop/timer
+cleanup are still unresolved.
+
 The Objects Thrown branch in the previous producer trace remains a held-BModel
 transaction with a strict angle-under-10-degree gate. Static candidate coverage
 and the held target's source arithmetic are now mapped, but the shared mission
 scene still lacks the complete selection/carry/pose/trajectory/drop/timer path.
 No counter was wired, no build or gameplay test was run, and no retail parity
-claim is made. Next resolve the `+0x338c`/frame-to-view relation and correction
-cadence, then promote the source-shaped sequence into the shared mission host
-with a cross-platform BModel transform service.
+claim is made. Next implement retail candidate registration/query and action
+gating, then resolve the `+0x338c`/frame-to-view relation and correction
+cadence before adding carry/throw to the shared host.
 
 ## JUMP control bridge status
 
