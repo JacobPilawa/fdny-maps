@@ -6,8 +6,9 @@
  *
  * This records the frontend consumer of the win/loss manager state written
  * by 004295B0, plus the selected-ordinal profile mutation and child switch.
- * It is static control-flow evidence; it does not identify page-5 presentation
- * or establish runtime timing/parity.
+ * Static follow-up identifies child 5 as the Records page and maps its record
+ * navigation callback; exact field presentation and runtime timing/parity
+ * remain open.
  */
 
 /* 0042AEA0: result state is consumed during the EverGame update. */
@@ -112,17 +113,19 @@ LAB_0042d41f:
 }
 
 /* Constructor audit: menu child 2 is FUN_0042F670; child 5 is FUN_00432BB0.
- * The former is the traced level selector. The latter creates two button
- * widgets with action IDs 1 and 2 and requests menu bitmap ID 54. Its exact
- * screen meaning is open. */
+ * The former is the traced level selector. Child 5 calls 00436630 with menu
+ * resources 11 and 17, which menu.rrf maps to sub.bmp and ttl-records.bmp,
+ * and requests alpha texture 54, mapped to leftarrow.bmp/leftarrow_a.bmp.
+ * Its two buttons carry actions 1 and 2. The title resource identifies the
+ * page as Records; 004332E0 rebuilds the selected record's page content. */
 
 /* 004346A0 is slot 1 of child 5's vtable at 004E0668. The generic menu button
  * callback 00435780 forwards the button's +0x04 action value to the parent
- * vtable slot at +0x04. The child-5 buttons above therefore enter this handler
- * with action 1 or 2; both nonzero values take the immediate return branch.
- * Only action 0 calls 0042D460 through this+0x28, which moves menu history back.
- * This bounded callback trace does not show what presents or enables the two
- * buttons. */
+ * vtable slot at +0x04. Action 0 calls 0042D460 through this+0x28 to move menu
+ * history back. Action 1 decrements the selected-record index at +0x354 and
+ * clamps it to zero; action 2 increments it and clamps it below the catalog
+ * count read through the manager at +0x6B4. Both navigation actions call
+ * 004332E0 to rebuild the page for the selected record. */
 /* 004346A0 instruction excerpt:
  *   MOV EAX,[ESP+0x4]
  *   TEST EAX,EAX
@@ -130,7 +133,31 @@ LAB_0042d41f:
  *   MOV ECX,[ECX+0x28]
  *   CALL 0042D460
  *   RET 0x4
- *   004346B3: RET 0x4
+ *   004346B3: CMP EAX,2
+ *   004346B6: JNE 004346E5
+ *   004346B8: INC dword ptr [ECX+0x354]
+ *   004346BE: MOV EDX,[ECX+0x28]
+ *   004346C8: MOV EDX,[EDX+0x154]
+ *   004346CE: CMP EAX,[EDX+0x6B4]
+ *   004346D4: JL 004346FC
+ *   004346D6: DEC dword ptr [ECX+0x354]
+ *   004346DD: CALL 004332E0
+ *   004346E5: CMP EAX,1
+ *   004346E8: JNE 00434701
+ *   004346EA: DEC dword ptr [ECX+0x354]
+ *   004346F0: JNS 004346FC
+ *   004346F2: MOV dword ptr [ECX+0x354],0
+ *   004346FC: CALL 004332E0
+ *   00434701: RET 0x4
  * The vtable target has no saved function boundary in the copied project;
  * this excerpt comes from decoded instructions at the vtable entry.
+ */
+
+/* 004332E0 selected-record page builder (selected Ghidra decompilation):
+ * The selected index at child +0x354 is passed to 004225A0 against the menu
+ * manager's catalog collection at +0x6AC. For a valid entry, the function
+ * updates the page's three text/content children and builds rows from that
+ * record's stored entries. The decompilation is preserved in
+ * mission_outcome_records_page_fresh_2026-10-20.c; the displayed field names,
+ * layout, and final runtime pixels have not been independently identified.
  */

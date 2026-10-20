@@ -54,16 +54,23 @@ plist validation passed and eight rescue choices were emitted. This remains a
 compile/package check, not a live bonus pickup or retail-parity check. See
 [`bonus_points_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bonus_points_port_2026-10-20.md).
 
-Next core gap: resolve the Player `+0x3438` message-gate lifecycle as it enters
-the existing status/result consumer. Its result child is at `PlayerStatus+0x824`,
-and the updater's active check at `PlayerStatus+0x960` aliases child `+0x13C`;
-the child timing fields `+0x130/+0x134` and page-5 content/activation remain
-unknown. Keep the state-2 producer and deadline-to-loss transition unmodeled;
-the same field blocks victim-pickup messages, and the no-exit-zone path can set
-it. A normal authored exit is only enabled until the later `finalexit`
-command, so do not equate every gate write or all-victims completion with a
-frontend win. Do not add an outcome transition until the gate lifecycle and
-timing are supported. See
+The outcome path is now split into two evidence tasks. Static tracing has
+identified child 5 as the Records page and mapped its left/right actions to a
+selected-record index and page rebuild. Next trace the exact record fields and
+profile schema used by `004332E0`, then decide what can be ported into the shared
+frontend. The saved 943-line decompilation is
+[`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c).
+
+The gate-to-result transition remains pending retail runtime evidence. The
+result child is at `PlayerStatus+0x824`, and its active check at
+`PlayerStatus+0x960` aliases child `+0x13C`; a full raw-instruction scan found
+no direct parent-relative accesses to timing fields `+0x954/+0x958`, and the
+reviewed constructor path does not initialize child `+0x130/+0x134`. Allocator
+clearing or computed aliases remain possible. Keep the state-2 producer and
+deadline-to-loss transition unmodeled. The same Player `+0x3438` field blocks
+victim-pickup messages, and the no-exit-zone path can set it; a normal authored
+exit is only enabled until the later `finalexit` command. Do not equate every
+gate write or all-victims completion with a frontend win. See
 [`mission_outcome_status_dispatch_2026-10-19.md`](../tracker/evidence/scenario-loading/mission_outcome_status_dispatch_2026-10-19.md).
 
 ## Dedicated PlayerHose host slice (2026-10-20)
@@ -597,31 +604,37 @@ HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, rescue textures, timed child active-flag alias, and frontend consumer traced: state 1 updates selected profile/catalog data and selects child 5; state 2 selects level-selector child 2. Child 5 requests left-arrow artwork (menu resource 54), while its callback ignores button action IDs 1/2 and uses action 0 for history-back; its page content/activation, message-gate lifecycle, result timing, state-2 producer, runtime placement/alpha, replay cadence, and full outcome flow remain open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, textures, timed-child active alias, and frontend consumer traced. State 1 selects child 5, now identified as Records; actions 1/2 navigate the selected-record index and rebuild its contents, while action 0 backs through menu history. Exact record fields/profile schema, timing values, state-2 producer, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow remain open |
 
-The result path is now known to use direct calls: `00458400` invokes
-`0048D180` and `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs
-that child with `0048D390`. The sibling timing setter's `1000/5000` defaults do
-not apply to it. A fresh decoded-offset scan and decompilation now trace the
-downstream manager consumer: on result completion, manager state 1 updates the
-selected catalog/profile record and selects frontend child 5; state 2 selects
-child 2, the traced level selector. Child 5 is constructed by `00432BB0` with
-two button actions (1/2) and menu bitmap ID 54. The hash-pinned menu resource
-table maps ID 54 to the left-arrow color/alpha pair; this identifies the
-requested artwork only. Its vtable callback returns without acting on either
-nonzero code; only code 0 moves the menu history back. This narrows but does
-not identify the page's controls, visibility, or content. `00458400` checks
-`PlayerStatus+0x960` for this child to be active; `0048D180` writes the same
-byte through `PlayerStatus+0x824+0x13C`. The timing values and who clears the
-active byte remain unknown.
-The focused export is
-[`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c).
-Next, identify child 5's label/content resources and activation conditions,
-trace the zero-action path that returns to menu history, and continue tracing
-result-child timing initialization through aliases or runtime evidence. Do not
-port guessed timing, placement, or a loss-state producer. The bounded scan still found no
-direct writer of Player `+0x3438 = 2`; if retail runtime access becomes
-available, set a write watchpoint during expiry, passout, and exit paths.
+The result path uses direct calls: `00458400` invokes `0048D180` and
+`0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs that child with
+`0048D390`. A full-file raw operand scan found no direct parent-relative timing
+field accesses, and the Player/widget/sprite constructor chain has no observed
+clear or assignment for child `+0x130/+0x134`. The outer allocation path and
+computed aliases remain open, so neither zero nor sibling `1000/5000` defaults
+are safe.
+
+On result completion, manager state 1 updates the selected catalog/profile
+record and selects frontend child 5; state 2 selects child 2, the level
+selector. Child 5 calls `00436630` with menu resources 11 and 17, which map to
+`sub.bmp` and `ttl-records.bmp`, and requests arrow texture 54. It is the
+Records page. Its actions 1 and 2 move the selected-record index at child
+`+0x354` and call `004332E0`; action 0 backs through menu history. The page
+builder looks up the selected catalog entry and constructs its displayed rows
+from stored record entries, but exact field labels, profile schema, layout and
+runtime visibility remain open. The constructor, callback, updater and profile
+mutation traces are in
+[`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c),
+[`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c),
+and [`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_handoff_fresh_2026-10-20.c).
+
+Next, map the selected record's exact fields through `004332E0` and the profile
+mutation before porting a shared Records page. Keep the result transition
+unmodeled until runtime evidence resolves the gate lifecycle and child timing.
+Do not port guessed placement, timing, or a loss-state producer. The bounded
+scan still found no direct writer of Player `+0x3438 = 2`; if retail runtime
+access becomes available, set a write watchpoint during expiry, passout, and
+exit paths.
 
 ## RescueBot lifecycle implemented from fresh retail trace (2026-10-20)
 
@@ -902,14 +915,15 @@ body-bearing functions and 287 external entries.
 | `touchhose_authored` | Preserved BSP/EVS strings, PropModel contact, named ScriptActor dispatch | Complete, read-only; verified 16 commands in 12 BSPs with full hashes; static authored route reaches PlayerRescue `touchhose`, while runtime cadence remains open |
 | `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms mode 2 acquisition, mode 3 slot selection, mode 1 deactivation, separate action callbacks, prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and input bindings unresolved |
 | `hose_material_trace` | PlayerHose stream component material/resource binding | `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c`, `playerhose_strip_texture_lookup_fresh_2026-10-20.c`, `hose.rrf` | Complete, read-only; confirmed resource ID 3 lookup, source-ordered polygon setup, white vertex colors, 0.15 U span, six-unit U scroll and V extent 0.9; blend/material state and runtime parity remain open |
-| `mission_result_return_trace` | Static result widget consumer and stage return handoff | `mission_outcome_frontend_consumer_fresh_2026-10-20.c`, `mission_outcome_frontend_handoff_fresh_2026-10-20.c`, result and exit evidence | Complete, read-only; confirmed static result consumer and `PlayerStatus+0x960 == child(+0x13C)` active-byte alias; menu resource 54 maps to left-arrow artwork, but result timing/child-5 meaning, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
-| `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resource 54 join | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed `PlayerStatus+0x960 == PlayerStatus+0x824+0x13C`; ID 54 maps to left-arrow color/alpha images. Neither result timing nor child-5 page purpose is established; no code changes |
+| `mission_result_return_trace` | Static result widget consumer and stage return handoff | Frontend consumer, Records page decompilation, handoff export, result and exit evidence | Complete, read-only; confirmed state-1 Records page, button actions 1/2 navigation, action 0 history-back, and `PlayerStatus+0x960 == child(+0x13C)` alias; exact record fields, result timing, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
+| `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
 | `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |
 | `bonus_widget_text_trace` (Luna) | Bonus widget style-3 text child, font profile, glyph cells, and bounds helper | `bonus_points_port_2026-10-20.md`, current-hash Ghidra trace | Complete, read-only; mapped resource 64000, printable-ASCII profile, 8x14 glyph cells, digits/minus, and child modes. Final bounds/alignment and render-state semantics remain unresolved; no edits |
-| `outcome_widget_timing` (Luna) | Result child `+0x130/+0x134` timing and sibling callers | Result widget evidence and current-hash caller trace | Complete, read-only; no timing-field writes established and sibling 1000/5000 values do not transfer; timing stays unknown; no edits |
-| `next_core_gap` (Luna) | Current port/evidence audit for next cross-mission system | Work queue and rescue outcome evidence | Complete, read-only; recommends tracing the verified all-victims exit into Player result status and frontend state-1 handoff; no edits |
+| `outcome_widget_timing` (Luna) | Result child `+0x130/+0x134` timing and sibling callers | Result widget evidence, full raw disassembly scan, and constructor chain | Complete, read-only; no direct parent-relative timing operands in full EXE scan; `0044D550` → `004576B0` → `0048D390` has no observed timing-field clear/write; allocator clearing and computed aliases remain unknown, so values stay unmodeled; no edits |
+| `next_core_gap` (Luna) | Current port/evidence audit for next cross-mission system | Work queue and rescue outcome evidence | Complete, read-only; verified ordinary all-victims exit enables authored exits/stage links and found no source-backed win/loss transition without runtime evidence; keep `+0x3438` gate separate from result state; no edits |
+| `result_child5_page_audit` (Luna) | Child 5 constructor `00432BB0`, vtable handler `004346A0`, record updater `004332E0`, menu resource table | Complete, read-only; corrected the earlier callback no-op claim; identified Records page, action 0 history-back, actions 1/2 index navigation, and dynamic selected-record rebuild; exact record field labels/layout remain open; no edits |
 | `mission_outcome_direct_offset_scan` | EXE direct stores to Player/result candidate fields `+0x960`, `+0xE24`, `+0x824`, `+0x6EC` | `.local/mission-outcome-flag-writes.txt`, `FindOffsetWrites.java` | Complete, read-only; found seven direct `+0x6EC` stores and no register-displacement store candidates for the other three offsets. Pointer aliases, computed addressing, runtime and external writers are not excluded; no edits |
 
 ## View bob fully removed (2026-10-18)

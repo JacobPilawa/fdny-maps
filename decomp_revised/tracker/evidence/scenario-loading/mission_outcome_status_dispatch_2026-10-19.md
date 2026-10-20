@@ -137,37 +137,56 @@ index `5` through `0042D3E0`.
 
 Existing same-hash constructor evidence identifies child `2` as the level
 selector (`0042F670`). Fresh constructor review identifies child `5` as
-`00432BB0`, a two-button page that also requests menu bitmap ID `54`. The
-hash-pinned `menu.rrf` maps ID `54` to `data\\menu\\leftarrow.bmp` and
-`data\\menu\\leftarrow_a.bmp`; the preserved asset manifest records their
-SHA-256 values as
+`00432BB0`. Its base constructor requests menu resources `11` and `17`, which
+`menu.rrf` maps to `sub.bmp` and `ttl-records.bmp`; it also requests alpha
+texture `54`, mapped to the left-arrow color/alpha pair. This identifies child
+5 as the Records page. The preserved asset manifest records arrow image hashes
 `fad3d360ed0e138c53e07530b6a28a4bb85928768993c6fa005d629a879a750f` and
 `a146951476a6df0be3565aa651a17bd69d0ce4e97515b36e777e75ac41efc528`.
-This identifies the requested button artwork only; its label, intended
-controls, visible content, and page meaning remain unknown. In the
-win-only `00424650` path, the selected catalog entry is looked up, a profile
-record is obtained or created, and fields in that record are updated with the
-selected ordinal and current menu-owned string. This is evidence of a
-win-triggered profile/catalog mutation; the record schema and exact progression
-semantics are not yet established.
 
-A bounded vtable callback trace narrows the child-5 actions without identifying
-their purpose. Its vtable slot 1 is `004346A0`; the two constructor-created
-buttons carry action IDs `1` and `2`, and the generic button callback forwards
-those IDs to this slot. Both nonzero values return without a page action. Only
-action `0` calls `0042D460`, which moves the menu history backward. The target
-entry has no saved function boundary in the copied Ghidra project, so this
-finding is based on its decoded instructions and the constructor/callback
-callsite chain. The buttons' visibility and expected user actions remain open.
+The earlier child-5 callback summary was incomplete: its excerpt stopped at the
+first conditional branch and incorrectly treated actions `1` and `2` as
+no-ops. Rechecking vtable slot 1, `004346A0`, against the same hash-pinned
+executable shows action `0` calls `0042D460` to move menu history back; action
+`1` decrements child `+0x354` and clamps it to zero; and action `2` increments
+that selected-record index and clamps it below the menu manager's record count
+at `+0x6B4`. Both navigation actions call `004332E0` to rebuild the record
+page. The generic menu button callback `00435780` forwards its configured
+action ID to the page vtable.
 
-The focused export is
-[`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](mission_outcome_frontend_consumer_fresh_2026-10-20.c).
-It records the executable hash above. The menu resource table has SHA-256
+Page updater `004332E0` looks up the selected index in the menu manager's
+catalog collection at `+0x6AC` and rebuilds content from the selected record.
+The selected decompilation is saved in
+[`mission_outcome_records_page_fresh_2026-10-20.c`](mission_outcome_records_page_fresh_2026-10-20.c).
+This narrows the page purpose and navigation behavior, but not the exact record
+field labels, full layout, activation visuals, or runtime pixels. The win-only
+`00424650` path also obtains or creates a profile record and updates it with
+the selected ordinal and a menu-owned string; the profile schema and
+progression semantics remain open.
+
+The focused frontend exports are
+[`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](mission_outcome_frontend_consumer_fresh_2026-10-20.c)
+and [`mission_outcome_records_page_fresh_2026-10-20.c`](mission_outcome_records_page_fresh_2026-10-20.c).
+They record the executable hash above. The menu resource table has SHA-256
 `ae89458ef0aa2017351c1fa92fa22286eb4d4052cd55bbee4c1b917a1b9104b0`.
 The control flow establishes the frontend child indices, win-only mutation,
-active-flag alias, and button-art resource, but not the result child's
-duration, page-5 presentation, map-loading handoff, or natural runtime timing.
-No host transition was added from these static findings alone.
+active-flag alias, and Records navigation. It does not establish the exact
+rendered record fields, result-child duration, activation visuals, map-loading
+handoff, or natural runtime timing. No host transition was added from these
+static findings alone.
+
+## Follow-up: result-child timing constructor scan (2026-10-20)
+
+A full-file `objdump -d -Mintel` operand scan of the pinned executable found
+no direct `[base + 0x954]` or `[base + 0x958]` accesses for the result child's
+parent-relative timing fields. The verified construction chain is
+`0044D550` → `004576B0` → `0048D390` at `PlayerStatus+0x824`; the Player
+initializer has no whole-object clear, and the reviewed widget/sprite base
+constructors contain no writes to child `+0x130/+0x134`. `0048D180` writes the
+start clock, active byte and selector, while `0048D1A0` reads the duration/tail
+fields. This does not establish the outer allocator's clearing behavior and
+cannot rule out computed or indirect alias writes. Do not substitute zero or
+the sibling widget's `1000/5000` defaults.
 
 ## Open state and limits
 
