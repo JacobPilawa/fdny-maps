@@ -5921,8 +5921,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (playerIncapacitated) forward = side = 0.f;
             const bool jumpDown = !playerIncapacitated && !usingConsole && (keys[SDL_SCANCODE_SPACE] != 0 ||
                 (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_RIGHT)));
-            if (!dedicatedPlayerHose && !playerIncapacitated && !passoutRecoveredThisFrame &&
-                rescueState.exits.messageGate != 2) {
+            const bool hostPlayerSteppedThisFrame =
+                !dedicatedPlayerHose && !playerIncapacitated &&
+                !passoutRecoveredThisFrame && rescueState.exits.messageGate != 2;
+            if (hostPlayerSteppedThisFrame) {
                 // The source movement update returns after its timeout write.
                 player.step(dt, forward, side, yaw, jumpDown,
                     jumpEdge && !usingConsole, crouchEdge, collision, pitch);
@@ -6903,9 +6905,14 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 auto owner = bmodelByEntity.find(entity);
                 if (owner == bmodelByEntity.end()) continue;
                 const auto& bmodel = bmodelMotions[owner->second];
+                // Retail 0049E0A0 sets Player+0x12C for upward-facing
+                // contact and 0049DBC0 later consumes/clears it. Use the
+                // host movement latch only after this frame's step; callback
+                // and selection cadence are not proven equivalent.
                 const auto gate = BModelUse::candidate(
                     bmodel.useMode, hoseSlot4Present, playerLoadout.items.hoseMode,
-                    1, playerHeldBModel == nullptr, bmodel.useObjectState);
+                    hostPlayerSteppedThisFrame && player.collisionLatch ? 1 : 0,
+                    playerHeldBModel == nullptr, bmodel.useObjectState);
                 V minimum = bmodel.boundsMin, maximum = bmodel.boundsMax;
                 if (gate.hasQueryInterface)
                     bmodelInteractionBounds(bmodel, collision, minimum, maximum);

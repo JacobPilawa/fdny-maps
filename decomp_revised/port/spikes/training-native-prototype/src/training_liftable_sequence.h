@@ -9,7 +9,7 @@
 // Ordered Training liftable interaction effects recovered from FDNYFirefighter.exe.
 // This is an explicit transaction core, not a scheduler or a live scene adapter.
 // The caller supplies the unresolved engine operations (frames, model transforms,
-// statistics, ScriptActor dispatch, and timer/list cleanup).
+// statistics, ScriptActor dispatch, and sound playback).
 namespace TrainingLiftableSequence {
 
 struct State {
@@ -40,7 +40,7 @@ struct Services {
     std::function<void(void*, const std::array<float, 3>&)> applyBmodelPosition;
     std::function<void()> incrementObjectsThrown;
     std::function<void(void*, const char*)> dispatchDropEvent;
-    std::function<void(void*)> clearBmodelTimer;
+    std::function<void(void*)> requestBmodelSound;
 };
 
 inline bool validForThrowUpdate(const State& state) {
@@ -123,7 +123,7 @@ inline bool updateCarryAndMaybeRelease(State& state, uint32_t tick,
 
 // Represents one externally scheduled BModel subobject update. On an active
 // tick, 0043D330 sends its interpolated point through 0043BAA0. On completion,
-// source order is endpoint mutation, endpoint flip, `drop`, then timer clear.
+// source order is endpoint mutation, endpoint flip, `drop`, then BModel sound.
 inline bool updateThrow(State& state, uint32_t tick, void* bmodelRoot,
                         const Services& services) {
     if (!bmodelRoot || !validForThrowUpdate(state)) return false;
@@ -136,13 +136,13 @@ inline bool updateThrow(State& state, uint32_t tick, void* bmodelRoot,
         services.applyBmodelPosition(bmodelRoot, update.point);
         return true;
     }
-    if (!services.dispatchDropEvent || !services.clearBmodelTimer) return false;
+    if (!services.dispatchDropEvent || !services.requestBmodelSound) return false;
 
     state.bmodelState = 0;
     services.applyBmodelPosition(bmodelRoot, update.point);
     state.reverseEndpoint = !state.reverseEndpoint;
     services.dispatchDropEvent(bmodelRoot, "drop");
-    services.clearBmodelTimer(bmodelRoot);
+    services.requestBmodelSound(bmodelRoot);
     return true;
 }
 

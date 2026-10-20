@@ -35,8 +35,10 @@ Mode 1 action 1004 is subject to `0044C520`: Hose Spray slot 4 must be absent
 or not in mode 3, Player byte `+0x12C` must be nonzero, no BModel may already
 be held at Player `+0x3440`, and the candidate BModel state `+0x25C` must be
 zero. Other nonzero use modes return 1000; its meaning remains unknown. The
-byte at Player `+0x12C` is set to 1 by the constructor/reset route and HeroDown,
-but its name and live value at arbitrary selection times are unverified.
+collision callback `0049E0A0` sets Player `+0x12C` for upward-facing contact;
+integrator `0049DBC0` copies it to `+0x12D` and clears `+0x12C`. The
+constructor/reset route also seeds both bytes to 1, so its live value at a
+selection callback is transient and callback-order-sensitive.
 
 Within Player movement update `00452570`, the cached action path at `004533C2`
 precedes the selection refresh call at `0045386B`. The refresh routine
@@ -62,7 +64,11 @@ vector to reconstruct the hit point. In `scene_viewer.cpp`, candidates are
 currently registered from per-frame host overlap tests. A key edge uses the
 cached selected entity/action before the host refreshes candidates later in its
 loop; mode 1 initializes the carry state and the `use` ScriptActor event is
-dispatched.
+dispatched. The mode-1 action gate now receives the host collision latch only
+when `Player::step()` ran during this frame, avoiding stale host state on frames
+when movement is skipped. This is an adapter rather than an exact `+0x12C`
+port: host contact resolution and retail collision/integrator callback order
+have not been shown equivalent.
 
 The carry target uses the source's 90/-60 basis offsets and exponential
 0.1-second center blend, then updates child poses through the collision scene.
@@ -73,14 +79,16 @@ Player follower at `+0x34A4` and the rendered Genesis camera unresolved.
 ## Verification and limits
 
 The macOS CMake `fdny-scene-viewer` target compiled successfully after the
-selection, action, and carry changes. The linker warned that the installed
-`json-c` dylib targets macOS 27.0 while this target links for 13.3. The build
-hash is recorded in the 2026-10-20 work-queue entry. No tests, interactive
-session, gameplay capture, or retail parity check was performed.
+selection, action, carry, and current-frame collision-latch gate changes. The
+executable SHA-256 is
+`2a5196451d2576e0bd5e9582097eae24fd1c9de6fa12fd9606a50f96a61ecdc3`. The
+linker warned that the installed `json-c` dylib targets macOS 27.0 while this
+target links for 13.3. No tests, interactive session, gameplay capture, or
+retail parity check was performed.
 
 The host's transformed child-box union has not been proven equivalent to the
 retail BModel aggregate axis box. Candidate registration timing/order,
-Player byte `+0x12C`, the camera-to-Player frame relation and ray sign, the
+Player byte `+0x12C` adapter, the camera-to-Player frame relation and ray sign, the
 meaning of action 1000, Player action-status service effects, live key/polling
 cadence, and event timing remain unresolved. Throw trajectory, drop handling,
 timed-list cleanup, and retail carry/drop animation integration are not

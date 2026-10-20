@@ -92,8 +92,10 @@ state 2 from the stored duration, endpoints, and vertical-trajectory fields.
 It interpolates X/Z linearly and Y with the stored acceleration and initial
 velocity, then writes the model transform. When elapsed time exceeds duration
 it resets state to 0, applies the selected endpoint, flips the endpoint byte,
-dispatches the ScriptActor `drop` event, and requests the BModel sound. The
-exact timer or timed-list cleanup associated with this event remains
+dispatches the ScriptActor `drop` event, and calls `004A11A0` on BModel root
+`+0x124`. The BModel constructor initializes that field as a sound instance via
+`004A13A0`; `004A11A0` requests playback. This is a sound request, not timed-list
+cleanup. The exact timer or timed-list cleanup associated with the event remains
 unresolved. Player and
 BModel constructors register `ThrowObject` and `ThrowObjectEnd` sounds,
 consistent with the sequence but not needed to identify the stat gate. The

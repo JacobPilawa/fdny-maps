@@ -17,12 +17,13 @@ exactly two translation keys at exact times 0 and 1. The preserved candidates
 use these exact endpoints; on success the host also stores both translation
 vectors plus the child's rotational center and clears the endpoint selector.
 Retail's time comparator is tolerant, so near-equal boundary values are not yet
-accepted. This state initialization does not route input or claim a gameplay
-interaction.
+accepted. This initialization slice establishes the authored use mode; the
+selection/action/carry behavior and its current parity limits are described
+below.
 
 The macOS `fdny-scene-viewer` CMake target compiled after the selection/action/
-carry integration with SHA-256
-`27e94804c6fb5b39231fec5da887a975860757bd0e7634111214a432323e69cb`.
+carry integration and current-frame collision-gate adjustment with SHA-256
+`2a5196451d2576e0bd5e9582097eae24fd1c9de6fa12fd9606a50f96a61ecdc3`.
 The linker reported that the installed `json-c` dylib targets macOS 27.0 while
 this build links for 13.3; the target still completed. No package rebuild,
 tests, interactive run, or retail comparison was performed.
@@ -35,11 +36,16 @@ also connected. This is an implementation slice, not retail parity: registry
 updates still come from host overlap sampling and BModel iteration order;
 retail contact registration order and callback cadence are unresolved. The
 host derives query bounds from transformed child collision boxes, substitutes
-the camera frame for the retail Player frame, and currently supplies Player
-byte `+0x12C` as 1; all three mappings remain provisional. Selection action
-host key/polling equivalence and query sign/frame equivalence are unverified. Throw
-trajectory, drop/timed-list cleanup, and the action-status callback effects
-remain open. See
+the camera frame for the retail Player frame, and adapts Player byte `+0x12C`
+from the host collision latch only when `Player::step()` ran this frame; all
+three mappings remain provisional. Retail `0049E0A0` sets `+0x12C` on upward-
+facing contact and `0049DBC0` consumes/clears it, but host contact resolution
+and callback timing are not proven equivalent. Selection action host
+key/polling equivalence and query sign/frame equivalence are unverified. Throw
+trajectory and drop handling remain open. The post-`drop` `004A11A0` call is
+verified as BModel sound playback (root `+0x124`, initialized by `004A13A0`);
+associated timed-list cleanup and action-status callback effects remain open.
+See
 [`bmodel_selection_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bmodel_selection_port_2026-10-20.md)
 and
 [`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md).
@@ -1044,9 +1050,11 @@ body-bearing functions and 287 external entries.
 | `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms distinct-sound selection cadence and Jumps' 500 ms gate. The `jump` ScriptActor branch directly calls `0044E990`; state-5 setter `0044C0B0` is in a separate branch with unresolved token. JUMP is registered to default MOUSE_RB, but its runtime poll bridge remains open. Completion Time and Air Time are integrated with provisional host cadence; Jumps and Total Steps remain unported. |
 | `jump_input_bridge` (Luna) | `JUMP` action registration, right-mouse polling, and Player jump producer consumers | Saved hash-pinned Ghidra exports, `0042D8C0`, `004395C0`, `00437F30`, `00451870`; `mission_stat_bmodel_liftable_pose_2026-10-20.md` | Complete, read-only; confirmed MOUSE_RB ID `0x105` registration and poll at `0042DB06`, whose result is discarded. No static bridge to `00453784`, `0044C0B0`, or `00451870` was found; no runtime capture. |
 | `deadline_airtime_audit` (Luna) | Current-hash Player movement subobject, countdown fields, timeout state, and Air Time gate | `player_mission_countdown_airtime_port_2026-10-20.md`; Ghidra read-only writer scan and direct x86 instruction check | Complete, read-only; confirmed `+0x343C` countdown decrement in seconds, expiry clamp and `+0x3438=2` write, Completion Time/Air Time contributions, and the `+0x12C` zero gate. Full mission-result/outro semantics remain open. No edits. |
-| `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340`/`0044F713` hose path and `00453993` Player update producer; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution are integrated. Objects Thrown is a held-BModel transaction through Player `+0x3440`, a strict angle-under-10-degree gate, BModel trajectory state 2, Player action status 4, and one stat increment. Static all-BSP candidate coverage is now enumerated; selection, Player target pose, and trajectory/drop/timer adapters remain open, and the shared mission scene is not wired. |
+| `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340`/`0044F713` hose path and `00453993` Player update producer; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution are integrated. Objects Thrown is a held-BModel transaction through Player `+0x3440`, a strict angle-under-10-degree gate, BModel trajectory state 2, Player action status 4, and one stat increment. Static all-BSP candidate coverage is now enumerated; shared selection and carry state are integrated with provisional adapters, while throw trajectory scheduling, drop/timed-list cleanup, and action-status effects remain open. |
 | `throw_authored_coverage` (Luna) | Authored liftable BModels across retail BSP maps and links to the carry path | All-map BSP entity/MOTN/PATH scan; `liftable_bmodel_map_inventory_2026-10-20.json` | Complete, read-only; identified 18 `G_Liftable` BModels in seven of 17 maps. Parent Ghidra follow-up confirmed `0043C670` dispatches nonzero `G_Liftable` to `0043BE00`; 17 have first-child PATH data passing the static two-key time checks. Boat A entity 192 has no child model. Static data does not prove selection/runtime reachability. |
-| `liftable_host_seam` (Luna) | Shared BModel use/carry path against held-target and smoothing traces | `scene_viewer.cpp`, `bmodel_use.h`, `training_liftable_sequence.h`, current-hash evidence | Complete, read-only audit; the shared host now retains authored use-mode initialization (generic mode 2, valid liftable mode 1). Input/pickup remains unwired because retail candidate ordering/query, held pose, trajectory, and cleanup are still open. |
+| `liftable_host_seam` (Luna) | Shared BModel use/carry path against held-target and smoothing traces | `scene_viewer.cpp`, `bmodel_use.h`, `training_liftable_sequence.h`, current-hash evidence | Complete, read-only audit; shared host now retains authored use-mode initialization, selection, action, and carry state. Throw scheduler, callback cadence, and timed-list cleanup remain open. |
+| `throw_scheduler_trace` (Luna) | Retail `0043B580`/`0043D330` throw lifecycle, BModel update gate, completion callbacks, and timed-list cleanup | Current-hash Ghidra decompilation, assembly, constructor evidence, `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed trajectory fields, mode-2 gate, endpoint flip, `drop`, and `004A11A0` completion call. Current-hash review identifies that call as BModel sound playback; timed-list cleanup and scheduler cadence remain unresolved. No code edits. |
+| `throw_port_review` (Luna) | Review of host use-gate and carry/throw integration boundaries | Shared scene code, `bmodel_interaction_selection.h`, BModel evidence | Complete, read-only; recommended a current-frame collision-latch adapter for unresolved `+0x12C` and keeping callback cadence provisional. No code edits. |
 | `rescue_mission_core_gap` (Luna) | Compare current campaign coverage against missing authored mission systems | Rescue catalog and mission evidence/queue | Complete, read-only; maps remain `loaded_inspection_only` by coverage tracker, and static Boat A Exploders are a cross-map MiscEmitter gap. Recommended tracing the C_Type=5 sequence; no edits. |
 | `exploder_setsize_trace` (Luna) | Boat A `QueExploders`, C_Type=5 construction, setsize, activation, and child setup | `boat_a.evs`, Boat A entity export, `004420F0`, `00442900`, `00445600`, `00445720`, `00444D00` | Complete, read-only; confirmed scalar immediate setsize, internal mode 2, active-byte toggle, and four child objects from descriptor `0x502D40`. Resource initialization, visible effect/timing, and shared host path remain open. |
 | `bmodel_liftable_pose_trace` | Lift-mode initializer, held-target writer, and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode plus raw update windows | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the held target at `+0x224` is now composed from movement `+0x338c` and scaled frame basis columns. The center blend follows `0.5^(frameDelta/0.1s)`; frame-to-view semantics and live callback cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no gameplay code change. |
