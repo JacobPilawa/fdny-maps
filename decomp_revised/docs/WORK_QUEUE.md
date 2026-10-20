@@ -74,9 +74,12 @@ comparison was performed. The rescue-player HoseSpray update/contact path is
 now partially ported into the shared rescue host. Slot-4 mode/action state,
 sampled ballistic stream, previous-frame collision ordering, and terminal
 `finalize=1` FireRescue suppression are represented. Camera-based item
-attachment and left-mouse action mapping are provisional; hose material/effects,
-authored bindings, attachment-record purpose, live cadence, and retail parity
-remain open. See
+attachment and left-mouse action mapping are provisional. The initial 100-ms
+effect delay, residual-intensity gate, randomized deadline, shared-RNG velocity
+draws, and child spawn request are now ported. Its preview renderer reuses the
+extinguisher's two-second particle path; HoseSpray child allocation, render
+flags, final texture binding, key/lifetime interpretation, authored bindings,
+attachment-record purpose, live cadence, and retail parity remain open. See
 [`rescue_hose_spray_port_2026-10-20.md`](../tracker/evidence/fire-spread/rescue_hose_spray_port_2026-10-20.md).
 
 The rescue-player HoseSpray contact writer is now traced through the shared
@@ -88,8 +91,11 @@ on `RCS_PropModel` entities in 12 preserved rescue BSPs; existing PropModel
 contact and named-actor evidence maps the event route to PlayerRescue
 `00451870`. This closes the static authored-entry and contact-vector gaps;
 the shared host now creates slot 4 and ports its update/contact/dousing path.
-Attachment frame, effect presentation, attachment-record purpose, live
-cadence, and parity remain open. Retail passes N to `00482780` on both allocation
+The HoseSpray cooldown and velocity request are ported; particle presentation,
+attachment frame, attachment-record purpose, live cadence, and parity remain
+open. The host assumes child allocation succeeds, consistent with the source
+pool's unbounded configuration for normal operation. Retail passes N to
+`00482780` on both allocation
 and refresh paths; that helper scales N by 24, divides by attachment-state
 `+0x40`, converts the value to an integer, and appends that many 0x30-byte
 records to the list at `+0x48`. This supports a 24-scaled count but does not
@@ -142,17 +148,24 @@ collision gate, previous-frame contact ordering, and terminal FireRescue
 suppression at influence `>= 0.01`. Key 4 and held left mouse are provisional
 host controls; the camera-derived item frame is provisional. The shared sound
 bundle and owned `HoseSpray` action press/stop are ported; held-loop behavior is
-provisional. Resource-3 material, cooldown effects, particles, authored bindings,
+provisional. The host now applies the 100-ms initial effect delay and, after
+terminal suppression, the residual-intensity `>=0.01` gate and direct unsigned
+deadline comparison. When due it advances the millisecond deadline by a
+shared-RNG delay in `[10,250]` converted toward zero, then draws velocity in
+retail `{last,height,first}` axis order and requests a child. The preview
+renderer borrows the extinguisher's two-second particle path. HoseSpray pool
+allocation failure, child `+0xA4` render flags, final resource selection,
+template key/lifetime semantics, and render cadence remain unresolved.
+The `00463EF0` instruction listing preserves the clock addition and conversion
+that the C-like export omits. Resource-3 material, authored bindings,
 attachment-record purpose, scheduler cadence, and retail parity remain open.
-The current-hash contact trace adds a 100-ms initial effect delay and
-randomized 10..250-ms cooldown for residual-fire child effects; neither effect
-spawning nor its rendered resource binding is ported. The generic equipment
+The generic equipment
 follower chain is confirmed under Player `+0x34A4`, while the exact writer into
 the transform consumed from HoseSpray `+0x58` remains unresolved.
 Details and binary/build hashes are in
 [`rescue_hose_spray_port_2026-10-20.md`](../tracker/evidence/fire-spread/rescue_hose_spray_port_2026-10-20.md).
 The shared macOS executable and rescue-all app rebuilt with matching standalone
-and packaged SHA-256 `aa82c474a29d0a720977130d1a0c16c5423a4c706fea7792e4da3f102f0a1a74`;
+and packaged SHA-256 `b8bdedcba9de98a0bd3a217bee40ecb27465c832656dfd58429f140fb530bba8`;
 the plist passed, eight rescue choices were emitted by the catalog build, all
 four PlayerHose scene directories are packaged, and the HoseSpray WAV hash was
 verified in each rescue scene manifest. No tests, interactive run, or retail
@@ -696,7 +709,7 @@ body-bearing functions and 287 external entries.
 | `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
 | `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
 | `runrescuebot_trace` | `0047A1F0`, `00475020`, `00455230`, initializer and recurring RescueBot context | Complete, read-only; one-shot uses Player `+0x340C`, recurring callback uses `+0x32CC`; aliasing and one-shot completion servicing unresolved |
-| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; shared component collision writer and authored trigger are mapped; shared host ports selection/action state, stream collision, previous-frame contact, and terminal dousing, with attachment frame/effects/cadence open |
+| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; shared component collision writer and authored trigger are mapped; shared host ports selection/action state, stream collision, previous-frame contact, terminal dousing, and the effect cooldown/spawn request, with attachment frame, particle presentation, and cadence open |
 | `touchhose_authored` | Preserved BSP/EVS strings, PropModel contact, named ScriptActor dispatch | Complete, read-only; verified 16 commands in 12 BSPs with full hashes; static authored route reaches PlayerRescue `touchhose`, while runtime cadence remains open |
 | `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms mode 2 acquisition, mode 3 slot selection, mode 1 deactivation, separate action callbacks, prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and input bindings unresolved |
 
@@ -2234,6 +2247,7 @@ symptom remain open.
 | `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; corrected the cache-change return polarity; builder/samplers and +0x194 UserData/HosePath mapping are documented; shared camera rail and anchor-driven hotspot entry are ported; delta and countdown units are seconds with the source pacing/cap ported, while focus-pause mapping, state-frame timing, mouse aim, and live parity remain open |
 | `hose_anchor_entry` | Trace `00490BB0` record-cache semantics and `004677D0` hotspot entry timing | Current pinned EXE, Ghidra trace, PlayerHose spline and state exports | Complete, read-only; selected record is returned only on change, initial null cache reports the first record, first/D-linked anchors enter hotspot state, and state-4 countdown copies the stored timer budget; exact frame gap remains open |
 | `hose_aim_camera` | Separate PlayerHose view frame, steering frame, and nozzle/stream source point | `00466780`, `004677D0`, `00465EF0`, `00496DD0`, fresh hose exports | Complete, read-only; stream source point uses the entity frame offset while bounded steering rotates a temporary aim frame; accessor cadence, effective limits, and live orientation remain open |
+| `hose_effect_trace_audit` | Independently audit rescue HoseSpray deadline and spawn mapping | `00463EF0_fresh.c`, `00463EF0_hose_contact.asm`, `random.h`, `rescue_hose_spray_effects.h`, `scene_viewer.cpp` | Complete, read-only; corrected the direct unsigned deadline gate and `{last,height,first}` velocity order; clock-plus-random deadline and shared RNG order match; allocation and final particle rendering remain unresolved |
 | `camhose_data_binding` | Check whether the four BSP exports and host loader expose `RCS_CamHose` spline inputs | `.local/exports/{city_h,const_h,dock_h,oil_rig_h}`, `scene_property_matrix.csv`, `SCENE_DATA_CONTRACT.md`, `scene_viewer.cpp` | Complete; read-only; confirmed no CamHose BSP entities, then constructor/UserData and HosePath offsets established route binding; CamHose is a separate helper and not the route-node source |
 | `bank_retail_collision_trace` | Resolve retail Player hull and swept collision path for Bank obstruction | Pinned EXE/Genesis exports, `core.h`, Bank door evidence | Complete; read-only; retail mins `(-30,-30,-30)`/maxs `(30,85,30)` match the port; exact leaf and live route remain open |
 | `mesh_metadata_audit` | Independently audit world-mesh face-span source correspondence | Exporter, geometry/world-mesh JSON, C++ loader | Complete; read-only; validated field mapping and recommended all-map metadata checks; no renderer change |

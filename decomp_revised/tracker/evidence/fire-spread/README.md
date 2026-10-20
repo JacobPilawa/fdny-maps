@@ -162,6 +162,16 @@ remaining-intensity/effect-timer gate controls its hose-hit effect path. Thus
 both tools reduce the same intensity through the same function, but only this
 hose call requests final dousing.
 
+The rescue-host port also follows HoseSpray's residual-intensity `0.01` gate
+and elapsed-millisecond effect deadline after suppression. On a due hit it
+adds a shared-RNG `[10,250]` delay to the clock, truncates through `004B9400`,
+and builds the source velocity in `{last,height,first}` order. The instruction
+listing preserves clock addition omitted by the C-like export. Its preview
+currently reuses the extinguisher renderer; HoseSpray child allocation,
+`+0xA4` flags, final resource binding, template timing/alpha, and draw cadence
+are unresolved. See
+[`rescue_hose_spray_port_2026-10-20.md`](rescue_hose_spray_port_2026-10-20.md).
+
 The shared `FireSuppression` component captures the nonlinear intensity update
 and terminal/stat/sound state changes. Its `dt` argument must be supplied from
 the native frame-delta equivalent. `FireEntity::spray` now maps the cleared
@@ -180,8 +190,9 @@ contact producer open. The shared Player host now handles authored `touchhose`
 mode-2 acquisition, slot-4 mode-3 selection, separate action callbacks, a
 15-section stream, previous-frame collision contact, and terminal FireRescue
 dousing. Its camera-derived nozzle frame and left-mouse action are provisional;
-authored bindings, item attachment composition, resource-3 material, cooldown
-effects, and particles remain open. The owned HoseSpray sound now routes to the
+authored bindings, item attachment composition, and resource-3 material remain
+open. The effect cooldown and source velocity spawn request are ported, while
+particle rendering and resource binding remain provisional. The owned HoseSpray sound now routes to the
 named retail sample at action start/stop, with loop behavior provisional. See the
 [shared-host port note](rescue_hose_spray_port_2026-10-20.md). A follow-up maps the embedded shared stream component:
 HoseSpray item `+0x608` feeds `0046D1B0`/`0046C5A0`, which write the collision

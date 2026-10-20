@@ -121,6 +121,7 @@ bool jsonNumber(J value) {
 #include "hose_spray_action.h"
 #include "hose_spray_pose_list.h"
 #include "player_hose_stage.h"
+#include "rescue_hose_spray_effects.h"
 #include "rescue_hose_spray_stream.h"
 
 namespace {
@@ -5951,6 +5952,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                         fire.loopSoundStarted = false;
                                     }
                                 });
+                            ExtinguisherEffects::SpawnRequest effectSpawn;
+                            if (RescueHoseSprayEffects::afterContact(
+                                    gameplayRandom, now,
+                                    fire.runtime.suppression.strength,
+                                    rescueHoseSpray.action.effectDeadline,
+                                    effectSpawn)) {
+                                // HoseSpray and Extinguisher both configure
+                                // resource 14. The child render binding is not
+                                // proven, so reuse the preview particle path.
+                                extinguisherSprayRenderer.spawn(
+                                    effectSpawn, fire.runtime.origin, now);
+                            }
                         }
                     }
 
