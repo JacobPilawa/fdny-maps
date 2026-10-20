@@ -428,6 +428,10 @@ renderer/resource lookup trace in
 [`mission_outcome_widget_resource_fresh_2026-10-19.c`](../tracker/evidence/scenario-loading/mission_outcome_widget_resource_fresh_2026-10-19.c),
 and sibling widget caller trace in
 [`mission_outcome_widget_callers_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_widget_callers_fresh_2026-10-20.c).
+The result child's post-duration update rotates its quad around `(320,240)` at
+`ratio * 1800` degrees and hands completion to frontend manager state 1/2;
+selected decompilation and constants are in
+[`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_handoff_fresh_2026-10-20.c).
 
 Decoded-instruction scanning found direct initialization of `+0x3438` to zero
 and two final-exit writers setting it to one; no direct state-2 write appeared
@@ -436,8 +440,9 @@ in the bounded scan. The direct state-2 writer and meaning, audio replay cadence
 timed widget selector mapping is now traced through the generic renderer into
 the authored rescue resource table: `0x47`/71 draws `paperwin-r.bmp`, and
 `0x48`/72 draws `paperlose-r.bmp`, both with `paperwin_a.bmp`; the hose set has
-its own textures at those IDs. Child timing initialization, placement, alpha
-behavior and rendered runtime appearance remain unverified. A fresh direct
+its own textures at those IDs. The result child's duration/tail field values,
+desktop placement, alpha behavior and rendered runtime appearance remain
+unverified. A fresh direct
 operand scan found no assignments to the result child's `+0x130/+0x134` timing
 fields; alias/computed writes remain possible. The `1000/5000` values in
 `0048D330` belong to sibling widget constructors `00458B20` and `004653F0`,
@@ -452,7 +457,7 @@ after ten fresh HoseSpray/PlayerHose contact-path reviews.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, four fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch and authored rescue textures traced through renderer; state-2 writer, result-child timing initialization/placement/alpha/runtime pixels, replay cadence, timer relation, and full outcome flow open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch and authored rescue textures traced; post-duration 1800-degree quad rotation and manager state-1/2 handoff confirmed; state-2 writer, result-child duration/tail initialization, desktop placement/alpha/runtime pixels, replay cadence, timer relation, and full outcome flow remain open |
 
 The result path is now known to use direct calls: `00458400` invokes
 `0048D180` and `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs
@@ -732,6 +737,8 @@ body-bearing functions and 287 external entries.
 | `loss_state_producer` | Player `+0x3438`, `+0x343C`, and direct writer references | Complete, read-only; no direct state-2 writer or link from the deadline helper in the bounded scan; recommends a runtime write watchpoint if runtime tracing becomes available |
 | `result_widget_assets` | Widget selectors and `rescue.rrf` / `hose.rrf` resource tables | Complete, read-only; identified win/loss textures under IDs 71/72 and inspected authored headlines; parent renderer trace confirms the selector-to-resource path |
 | `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
+| `result_widget_init_trace` | `mission_outcome_widget_fresh_2026-10-19.c`, `mission_outcome_widget_callers_fresh_2026-10-20.c`, fresh manager/rotation export | Complete, read-only; confirmed white/hidden initialization, clock/active fields, post-duration viewport-centered rotation, and strict completion timing gate; duration/tail values, desktop placement and alpha remain open |
+| `result_state_writer_audit` | Player `+0x3438` direct operand scan, deadline callers, mission outcome evidence | Complete, read-only; found no state-2 writer or deadline-to-loss path in the bounded scan; computed aliases and external/runtime producers remain unexcluded |
 | `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
 | `runrescuebot_trace` | `0047A1F0`, `00475020`, `00455230`, initializer and recurring RescueBot context | Complete, read-only; one-shot uses Player `+0x340C`, recurring callback uses `+0x32CC`; aliasing and one-shot completion servicing unresolved |
 | `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; shared component collision writer and authored trigger are mapped; shared host ports selection/action state, stream collision, previous-frame contact, terminal dousing, effect cooldown/spawn request, and two-key particle track, with attachment frame, particle material/flags, size mapping, and retail cadence open |

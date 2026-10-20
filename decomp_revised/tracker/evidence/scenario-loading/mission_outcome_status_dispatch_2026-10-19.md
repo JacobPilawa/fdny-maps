@@ -44,16 +44,31 @@ The status child at `PlayerStatus+0x824` is a timed widget state. Helper
 `0048D180` stores the requested selector (`0x47` or `0x48`) at child `+0x108`,
 records the current global clock at `+0x12C`, and marks it active at `+0x13C`.
 Constructor `0048D390` initializes its color and leaves it hidden. Updater
-`0048D1A0` makes it visible and applies time-dependent color/rectangle updates,
-then reports completion from timing fields whose duration and initialization
-are not yet attributed to this result child. Result parent constructor
+`0048D1A0` makes it visible and uses the elapsed ratio
+`(clock - child+0x12C) / child+0x130`. When that ratio exceeds 1.0, it calls
+`0047EB60` with viewport center `(320, 240)` and angle `ratio * 1800` degrees;
+`0047E970` confirms the helper rotates each quad vertex about the supplied
+center. The child reports completion only after the clock is strictly greater
+than `child+0x12C + child+0x130 + child+0x134`. This confirms an authored
+rotation phase and completion gate, but not the result child's desktop
+placement or runtime pixels. Result parent constructor
 `004576B0` calls the child constructor but contains no explicit timing-field
 assignments in the reviewed pseudocode. A fresh Ghidra operand scan for direct
 references to parent offsets `+0x954`/`+0x958` (child `+0x130`/`+0x134`)
 returned no matches. This scan only recognizes decoded instructions with those
 printed offsets; pointer aliases, computed addressing, indirect calls, and
-runtime writes remain possible. The caller trace is saved in
+runtime writes remain possible. Fresh selected pseudocode and binary32 reads
+are saved in
 [`mission_outcome_widget_callers_fresh_2026-10-20.c`](mission_outcome_widget_callers_fresh_2026-10-20.c).
+The rotation helper, conversion constants, and result-completion handoff are
+saved in
+[`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](mission_outcome_frontend_handoff_fresh_2026-10-20.c).
+
+When `0048D1A0` reports completion, `00458400` calls `004295B0` with whether
+`Player+0x3438 == 1`. If manager field `+0x6E4` is nonzero, the helper writes
+manager field `+0x6EC` to `1` for the win path or `2` otherwise. This verifies
+the handoff values only; their downstream UI, transition, or return behavior
+has not been identified.
 
 That trace also checks a tempting source for the missing values: `0048D330`
 initializes a related widget with `+0x130 = 1000` and `+0x134 = 5000`, but its
@@ -82,8 +97,10 @@ rescue images as `fd1fc8271787d87c981066a21fc8e5a0bcb15ede04daa3425419ea5081af39
 (shared alpha). Static inspection of the rescue bitmaps shows the win headline
 “Heroic Firefighter Rescues Helpless Victims from Blazing Inferno!” and the
 loss headline “Careless Firefighter Perishes With Other Victims in Raging
-Blaze!” This establishes authored selector/resource/art mapping, not the
-result child's on-screen placement, alpha behavior, timing, or runtime pixels.
+Blaze!” This establishes authored selector/resource/art mapping. The update
+helper's viewport-centered rotation is source-confirmed, while desktop
+placement, alpha behavior, timing-field values, and runtime pixels remain
+unverified.
 
 The original `sound.rrf` maps the chatter resources as follows:
 
@@ -97,8 +114,9 @@ The original `sound.rrf` maps the chatter resources as follows:
 The direct sounds and chatter clips are distinct resources. The status updater
 contains no visible one-shot latch around these state branches in the reviewed
 function. How often that updater runs, how the sound manager handles repeated
-requests, and the result child timing, placement, and rendered runtime
-appearance for widget states `0x47` and `0x48` are not established here.
+requests, and the result child's timing-field values, desktop placement, and
+rendered runtime appearance for widget states `0x47` and `0x48` are not
+established here.
 
 ## Open state and limits
 
