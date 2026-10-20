@@ -49,10 +49,14 @@ normalized result to setter `00496360`. The height is selected from two source
 constants according to Player state 4. The raw x87/binary32 store order is in
 [`view-call-dataflow.md`](../../../reference/previous-work/decomp/evidence/player-tool-pose/view-call-dataflow.md).
 
-This resolves the setter input recipe, but not the input movement sign/scale
-or its world-direction interpretation. The frame's third axis is equipment
-dependent, and the movement block only uses `+0x3460` for its special movement
-transform. Do not substitute camera pitch/yaw for this equipment vector.
+This resolves the setter input recipe. A follow-up trace of ordinary yaw
+helper `004968B0`, basis multiply `00495EB0`, and the `00452570` input builder
+now resolves the ordinary path's local movement signs and basis formula; see
+[`player_locomotion_yaw_helper_2026-10-20.md`](player_locomotion_yaw_helper_2026-10-20.md).
+The frame's third axis remains equipment-dependent, and state-5/debug movement
+uses `+0x3460` instead of the ordinary yaw-reset frame. Its relationship to
+the rendered Genesis camera and the host OpenGL basis remains open. Do not
+substitute camera pitch/yaw for this equipment vector.
 
 The equipment source inputs are present for the four modeled tools. Common
 setup `0045F660` initializes item `+0x1E4` view and `+0x1F0` aim offsets to

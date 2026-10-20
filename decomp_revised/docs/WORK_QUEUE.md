@@ -288,11 +288,17 @@ repairs the remaining axes. It does not change frame position or parent. The
 second setter vector is resolved for the ordinary caller as
 `normalize((selectedItemAimOffset + (0,height,1000)) -
 selectedItemViewOffset)`, with height selected from two retail constants by
-Player state. The retail local lateral scalar is positive for left while the
-host scalar is positive for right; the world-direction mapping remains open
-because the retail vector is transformed through a runtime frame. Retail input
-bindings and magnitudes are now mapped, with callback cadence and camera/
-ActorInfo composition still unresolved.
+Player state. A fresh hash-pinned export now resolves ordinary local movement:
+`004968B0` consumes yaw in degrees and, after the identity reset, produces
+columns `(cos(yaw),0,-sin(yaw))`, `(0,1,0)`, and
+`(sin(yaw),0,cos(yaw))`. `00495EB0` applies `(lateral,0,forward)` through
+those columns; the Player block adds `+0.75` to local X for MOVE_LEFT,
+`-0.75` for MOVE_RIGHT, `+1` to local Z for MOVE_FORWARD, and `-1` for
+MOVE_BACKWARD. This closes the ordinary path's local sign and basis formula.
+It does not yet join that matrix numerically to the Genesis/OpenGL camera or
+ActorInfo convention. State-5/debug movement uses the same multiply with the
+equipment-derived `+0x3460` frame; its host substitute, item callback cadence,
+and rendered-camera relation remain open.
 Common equipment offsets are source-backed zeros from `0045F660`, while Axe
 offsets are dynamic and already modeled in `ItemViewPose`; the Axe callback's
 live scheduling remains unresolved. This removes placeholder item data from
@@ -307,10 +313,11 @@ and
 
 The shared rescue scene host now accepts retail's arrow-key aliases alongside
 WASD for `MOVE_FORWARD`, `MOVE_BACKWARD`, `MOVE_LEFT`, and `MOVE_RIGHT` while
-retaining the verified 0.75 lateral magnitude. Retail's local lateral sign and
-the host's camera-yaw `strafe` sign differ; the transformation through the
-equipment-dependent locomotion frame is not yet mapped to world direction, so
-no sign flip is inferred. Details and exact binding codes are in
+retaining the verified 0.75 lateral magnitude. The local retail basis and
+action signs are resolved for the ordinary path; comparison with the host's
+OpenGL camera convention and the stored equipment frame still needs a numeric
+camera/ActorInfo join, so no host world-space sign change is inferred yet.
+Details are in
 [`player_movement_input_bindings_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_input_bindings_2026-10-20.md).
 
 The host now raises the default DifficultyLevel-1 pitch clamp from 40 to 45
@@ -1620,7 +1627,8 @@ body-bearing functions and 287 external entries.
 | `oxygen_movement_alias_audit` (Luna) | Audit `ESI+0x3310` and neighboring movement fields against the pinned oxygen update path | `player_movement_state_gates_2026-10-20.md`, `player_oxygen_resource_and_script_path_2026-10-14.md` | Complete, read-only; confirmed ESI+0x3310 aliases Player root +0x3450 oxygen and +0x3314/+0x3318 are adjacent drain fields. Host ordering/cadence cannot be resolved from static evidence; docs only, no code edits. |
 | `player_frame_runtime` (Luna) | Player `+0x3460` frame writers, composition, axes, and update cadence | Constructor `00453D50`, callback `0044F340`, frame helpers `0042D2D0`/`004977B0`, saved xrefs, `equipment_view_frame_trace_2026-10-17.c`; `player_locomotion_frame_axes_2026-10-20.md` | Complete, read-only; constructor sets identity/zero-translation/unit-scale/null-parent. `0042D350` at entity init resets axes/scale and copies receiver to an output stack buffer; it preserves parent, and `0044CD10` has no frame write. Callback mutations through slots `+8`/`+0x14` are mapped; slot +8 sets world +Y up and slot +0x14 installs the ordinary caller vector. Position/parent stay unchanged. Equipment-varying final axes, outer callback cadence, and camera/ActorInfo relation remain unresolved. |
 | `player_movement_stack_frame_audit` (Luna) | Whole `00452570` stack-offset census and `0042D350` copy direction | Pinned raw x86, `0042D350`/`0042D0A0` saved decompilation, `player_locomotion_frame_parent_setup_2026-10-20.asm` | Complete, read-only; caller stack spans are output-copy destinations. `0042D350` initializes the receiver basis/scale, preserves position/parent, then copies receiver to the stack buffer. The prior “uninitialized source frame” reading is corrected; no edits. |
-| `locomotion_frame_gap` (Luna) | Player state-5/root `+0x380` movement transform versus current host | `core.h`, `scene_viewer.cpp`, locomotion/frame/state evidence | Complete, read-only; normal path resets root `+0x24` basis/scale and rotates by yaw through `004968B0`; state-5/debug path materializes stored `+0x3460` through `004977B0`, then both use basis-column `00495EB0`. The observed `+0x3460` parent stays null through constructor/entity init and refresh. The host still substitutes camera yaw/pitch; item-derived world axes, sign mapping, callback cadence, and movement direction remain unresolved. No edits. |
+| `movement_yaw_helper_audit` (Luna) | `004968B0` yaw convention and `00495EB0` basis/input order | Fresh headless Ghidra 12.0.4 export; current-hash x86 excerpts in `player_locomotion_helpers_2026-10-20.asm` | Complete, read-only; degree conversion and ordinary local columns/signs are resolved. No host world-space parity claim or edits. |
+| `locomotion_frame_gap` (Luna) | Player state-5/root `+0x380` movement transform versus current host | `core.h`, `scene_viewer.cpp`, locomotion/frame/state evidence | Complete, read-only; ordinary `004968B0`/`00495EB0` local basis and input signs are now algebraically resolved. State-5/debug path materializes stored `+0x3460` through `004977B0` before the same multiply; item-dependent axes and callback cadence remain open. The host still substitutes camera pitch for the stored frame, and numeric Genesis/OpenGL camera composition remains unresolved. No edits. |
 | `locomotion_item_offsets` (Luna) | Selected item `+0x1E4/+0x1F0` inputs consumed by `0044F340` | Common equipment setup `0045F660`, Axe writer `0045FEC0`, `item_view_pose.h`, view-call oracle | Complete, read-only; HoseSpray/extinguisher/goggles and initial Axe offsets are source-backed zeros; Axe's dynamic writer is already implemented in `ItemViewPose`. Its live Think scheduling is not established, so activation cadence remains open. No edits. |
 | `fire_spread_rng_gap` (Luna) | Per-attempt `00447A90` RNG draws and host FireRescue comparison | Pinned `00447A90_fresh.c`, assembly/call-order evidence, `fire_spread.h`/`fire_update.h` | Complete, read-only; successful/rejected/missed attempts preserve source draw order in the host. Cross-class candidate interleaving and callback cadence remain unresolved; no per-attempt code change recommended. |
 | `player_crouch_velocity_return` | State-4 movement-vector/smoothing order and return boundary | Current-hash x86 excerpt `player_crouch_velocity_return_2026-10-20.asm`, `00452570_FUN_00452570.c`, `core.h` | Implemented source-shaped crouch cap/blend before state-4 JUMP return; normal integrator/collision remain skipped. Local movement basis and recurring cadence remain provisional. |

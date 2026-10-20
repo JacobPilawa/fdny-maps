@@ -57,15 +57,19 @@ ordinary path separately resets the basis/scale on Player root `+0x24`, rotates
 it by the yaw accumulator through `004968B0`, and applies the movement vector
 through `00495EB0`. State 5/debug movement materializes root `+0x3460` through
 `004977B0`, then applies the same basis-column multiplication in `00495EB0`.
-The recurring
-`0044F340` callback writes world `+Y` as the up axis and derives a third axis
-from the selected item's view/aim offsets; the ordinary caller's vector is
-`normalize((aimOffset + (0,height,1000)) - viewOffset)`. The final axes as
-equipment and callback state vary remain open. Retail movement actions
-contribute `+1/-1` forward and `+/-0.75` laterally (positive local lateral for
-left); the host uses the opposite lateral sign convention, whose world
-meaning cannot be compared until the retail frame mapping is resolved. The
-smoothing call at `004532B3` passes the 0.95/0.2 base and
+The recurring `0044F340` callback writes world `+Y` as the up axis and derives
+a third axis from the selected item's view/aim offsets; the ordinary caller's
+vector is `normalize((aimOffset + (0,height,1000)) - viewOffset)`. A fresh
+helper trace resolves the ordinary movement branch separately: `004968B0`
+uses degree yaw and constructs columns `(cos,0,-sin)`, `(0,1,0)`, and
+`(sin,0,cos)` from identity, while `00495EB0` multiplies local X/Y/Z by those
+columns. The action vector is `(lateral,0,forward)`, with left `+0.75`, right
+`-0.75`, forward `+1`, and backward `-1`. The state-5/debug frame remains
+equipment-dependent. Its relation to the Genesis camera and host OpenGL
+camera basis is unresolved, so this closes local signs only and is not world
+movement parity. See
+[`player_locomotion_yaw_helper_2026-10-20.md`](player_locomotion_yaw_helper_2026-10-20.md).
+The smoothing call at `004532B3` passes the 0.95/0.2 base and
 27 to `00482AD0`; its result is a half-life used by `00482FC0` as
 `pow(0.5, frameDelta/halfLife)`. For those fixed bases this is algebraically
 equivalent to the host's `pow(base, 27*dt)`. The host's ground/climbing base

@@ -27,12 +27,17 @@ this check; no fresh decompilation is claimed.
 The `1.0` and `0.75` values are backed by the immediate data used in the
 movement block (`_DAT_004dfc24` and `_DAT_004e1c18`, respectively). The
 preserved `inputs/original/Data/ResDefs/input.rrf` also contains the arrow
-codes for the corresponding movement/strafe defaults. The local lateral sign
-in the retail action accumulator is opposite the host's `strafe` convention;
-the host maps its positive `strafe` scalar to rightward movement. Since retail
-transforms its vector through a runtime frame and the world-direction mapping
-of that frame is not fully established, the sign difference is recorded but
-not changed speculatively.
+codes for the corresponding movement/strafe defaults. Fresh current-hash
+tracing resolves the ordinary local movement vector as `(lateral,0,forward)`:
+left adds `0.75` to X, right subtracts `0.75` from X, forward adds `1.0` to Z,
+and backward subtracts `1.0` from Z. The normal path sends this vector through
+the degree-based yaw basis in `004968B0` and the column multiply in
+`00495EB0`; exact formulas are recorded in
+[`player_locomotion_yaw_helper_2026-10-20.md`](player_locomotion_yaw_helper_2026-10-20.md).
+The host's `side` scalar remains positive for right. Its camera basis uses an
+OpenGL view convention, while the retail view/follower-to-Genesis camera
+composition has no numeric join yet, so this local sign result alone does not
+justify a host world-space correction.
 
 ## Shared host change
 
