@@ -127,10 +127,19 @@ hotspot count.
 | `oil_rig_h` | `6681a6ecb688f69b37bbbc25c6c0dea3f030f33880e7210c7cbed48a108bd4d0` | 13 | 6 | 6 | all 2 | 25–55 | 24 |
 | **Total** | — | **83** | **28** | **27** | — | — | **103** |
 
-Construction has one hotspot, `RCS_HosePath36`, outside the chain reached
-from its first hotspot, `RCS_HosePath12`. Its `D_NextHotSpot` points to
-`RCS_HosePath15`; this is an unresolved alternate-path or reachability
-question, not evidence of a damaged record. The same BSP has
+Construction has one hotspot, `RCS_HosePath36`, outside both the first
+hotspot's directed `A_NextPoint` loop and its `D_NextHotSpot` chain. A fresh
+walk of the source-matched entity graph gives the forward A route
+`12→13→27→28→33→34→14→35→37→15→40→41→16→43→17→18→45→26→25→12`;
+the D chain is `12→13→14→15→16→18→26→null`. Node 36 has both A and D pointing
+to node 15, so it is an authored inbound branch that joins the main A route at
+15, not a node reached by forward traversal from 12. In the hash-pinned
+`004677D0` path handler, the touched hotspot resolves its D pointer into the
+PlayerHose next-hotspot field; `004674A0` uses that field to decide whether to
+advance or finish. The available code does not show `E_NextHotSpotPathDir`
+being read or establish that runtime starts at node 36 / traverses its A edge
+backward. Runtime reachability therefore remains open. The graph result is
+not evidence of a damaged record. The same BSP has
 `RCS_HosePath45` with four fire-model references (`ScaffFire_01` through
 `ScaffFire_04`) while `C_IsAHotSpot=0`. This confirms that ZF references alone
 must not be used to classify a path node as an authored hotspot or to infer
@@ -138,11 +147,19 @@ which actors are active together.
 
 ## Open work
 
-- Find the writer and authored role for WindowFire linked state `+0x10`, then
-  resolve the exact update cadence and interaction with incoming `0x7530`.
-- Trace the Construction alternate route through `A_NextPoint`,
-  `E_NextHotSpotPathDir`, and PlayerHose pointer transitions; establish whether
-  `RCS_HosePath36` is reachable from a different authored path.
+- `00468870` reads WindowFire linked state `+0x10` at `004688E7` and calls
+  `00468680` when it is nonzero while `+0x0D` is set. Message `0x7530` reaches
+  `00468680` directly through `00468A80`, bypassing that gate. The bounded
+  decoded-code scan found only one relevant writer, `00468AC0` at `00468B01`,
+  which clears `+0x10` alongside `+0x0D` and `+0x0F`; no nonzero setter was
+  found in the examined class and manager paths. This supports a recurring
+  update gate as a control-flow inference, but its authored role is unknown.
+  Computed aliases, opaque helpers, bulk initialization, and external writes
+  remain possible. A runtime write watch on the live descriptor byte is the
+  strongest next check.
+- Explain which spline/start conditions can enter Construction node 36, and
+  find a source-backed read of `E_NextHotSpotPathDir`; the current first-hotspot
+  A route and D progression chain both exclude 36.
 - Resolve `M_MaxPressure`, `N_PitchSpread`, and SprayTime units/edge cases from
   their downstream consumers.
 - Identify the configured sound names for the `RC_HoseLvlStart/Win/Lose` keys,

@@ -3,9 +3,10 @@
 Status: **the HoseSpray contact gates, rescue-player `touchhose` allocation,
 dedicated PlayerHose input path, PlayerHose-to-WindowFire contact-message
 route, and dedicated hotspot cycle/time/win/loss state machine are confirmed;
-the HoseSpray world-space contact writer, WindowFire `+0x10` writer,
-Construction alternate-path reachability, and stage result presentation remain
-open.** This is static
+the HoseSpray world-space contact writer, authored/live Construction branch
+entry, WindowFire `+0x10` authored role, and stage result presentation remain
+open. A bounded decoded-code scan found only a WindowFire `+0x10` clear and no
+nonzero setter in the examined class/manager methods.** This is static
 analysis of the pinned retail `FDNYFirefighter.exe` SHA-256
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` using
 Ghidra 12.0.4 and bounded instruction/operand searches. It is not a live hose
@@ -68,9 +69,15 @@ This is a WindowFire-local timer/geometry path. It contains no direct call to
 increment of the shared `Fires Doused` statistic. The current static trace
 resolves the dedicated hotspot cycle and spot-time result path: PlayerHose
 emits `RC_HoseLvlStart`, then `RC_HoseLvlWin` or `RC_HoseLvlLose` and stores
-result 1 or 2 at `+0x198`. The WindowFire linked `+0x10` writer, authored
-alternate-path reachability, configured sound names for the registered
-radio-chatter keys, and downstream result presentation remain open. The four
+result 1 or 2 at `+0x198`. `00468870` reads WindowFire linked `+0x10` and calls
+`00468680` when it is set while `+0x0D` is active; the `0x7530` message handler
+`00468A80` calls `00468680` directly. The bounded decoded-code scan found one
+relevant store, `00468AC0` at `00468B01`, which clears `+0x10` along with
+`+0x0D` and `+0x0F`; no nonzero setter surfaced in the examined class/manager
+methods. This points to a separate recurring-update gate by control flow, but
+its authored role and any indirect/external writer remain unresolved. The
+Construction branch's runtime entry, configured sound names for the
+registered radio-chatter keys, and downstream result presentation remain open. The four
 dedicated hose maps also have no authored FireRescue actors in the current inventory. A
 successful WindowFire message is not proof of shared
 FireRescue suppression. Static tracing only; no live hose run or retail parity
@@ -121,8 +128,8 @@ cadence, or retail action timing is being inferred for the viewer.
 
 Trace the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`
 and join it to the item attachment transform consumed by `00463EF0`. Separately
-find the writer for WindowFire linked state `+0x10`, establish the authored
-meaning of remaining timer/flags, then identify the configured sounds and
+establish the authored meaning of WindowFire linked `+0x10` and whether an
+indirect/external writer sets it, then identify the configured sounds and
 trace downstream presentation for the registered stage chatter keys. Resolve the Construction
 alternate path and authored hose controls. Implement the two source-backed host
 routes with separate states and preserve extinguisher `finalize=0`. Do not assign a
@@ -140,6 +147,9 @@ attachment helpers are in
 The dedicated douse callback, WindowFire message/state updates, and the
 path-reference actor factory are in
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](playerhose_douse_windowfire_fresh_2026-10-20.c).
+The current linked-state export for `00465B90`, `004683F0`, `00468680`,
+`004686E0`, `00468870`, `004688F0`, `00468A80`, `00468AC0`, and `0049D140` is
+[`windowfire_link_state_fresh_2026-10-20.c`](windowfire_link_state_fresh_2026-10-20.c).
 The hotspot cycle, PlayerHose state transitions, and win/loss handlers are in
 [`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
 The pre-existing HoseSpray contact and suppression exports are listed in

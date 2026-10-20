@@ -157,23 +157,40 @@ The douse component callback `00464AA0` requires its hit gate at `+0x1C`,
 compares the hit volume with a target's virtual bounds, and queues contact
 position plus intensity through `00481A60` as message `0x7530`. `00465B90`
 creates runtime `RCS_WindowFire` actors from path-point fire references. Their
-message handler routes `0x7530` to `00468680`, which updates WindowFire's own
+message handler routes `0x7530` directly to `00468680`, which updates WindowFire's own
 timer and geometry when its `+0x2A8` state has `+0xC` and `+0xE` gates set.
 This path has no direct call to FireRescue suppression or its doused counter.
 Fresh tracing of `004658A0`, `00465A20`, `00465FB0`, `004674A0`, `004677D0`,
 `00468850`, `00466C50`, and `00466CE0` resolves selected/dousing gates,
 per-hotspot `Q_NumCycles`, the mode-scaled `M_SpotTime` deadline, and the
-dedicated `RC_HoseLvlStart/Win/Lose` result path. WindowFire linked `+0x10`
-still has no identified writer. Current BSP exports contain 83 HosePath nodes
-and 28 authored hotspots across four dedicated stages. Construction has an
-eighth hotspot outside the D_NextHotSpot chain from its first hotspot, and one
-non-hotspot record with ZF fire references; alternate-route reachability is
-open. The hash-pinned trace and per-map counts are in
+dedicated `RC_HoseLvlStart/Win/Lose` result path. `00468870` separately reads
+WindowFire linked `+0x10` at `004688E7`; if set while dousing, it calls the
+same timer/update routine, but direct `0x7530` messages bypass this gate. The
+bounded decoded-code scan found only a zero write to `+0x10` in `00468AC0`
+(`00468B01`); it also clears `+0x0D` and `+0x0F`. No nonzero setter surfaced
+in the examined WindowFire/manager methods. A recurring-update-gate role is a
+control-flow inference only; computed aliases, bulk initialization, opaque
+helpers, external writes, and authored meaning remain open. Current BSP exports contain 83 HosePath nodes
+and 28 authored hotspots across four dedicated stages. Construction's first
+hotspot A_NextPoint loop is `12→13→27→28→33→34→14→35→37→15→40→41→16→43→17→18→45→26→25→12`;
+its D_NextHotSpot chain is `12→13→14→15→16→18→26→null`. Hotspot 36 points to
+15 on both A and D, so it is an inbound branch to the main A route, not reached
+by forward traversal from 12. `004677D0` and `004674A0` support D as the next
+hotspot progression link; a read of `E_NextHotSpotPathDir` or runtime entry
+from 36 has not been found. One non-hotspot path record also contains ZF fire
+references. The hash-pinned trace and per-map counts are in
 [`player_hose_stage_lifecycle_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_stage_lifecycle_2026-10-20.md).
 The function-review ledger now has 378 reviewed EXE functions; the tracker
 atlas, summary, and dashboard were regenerated from the CSVs. This is static
 analysis only; no dedicated hose-stage port implementation or live parity
 check was made.
+The shared host integration audit confirms the exported `entities.json`
+preserves the required hose actor fields, but the viewer only treats
+`RCS_PlayerHose` as a spawn marker. Its generic script startup omits the hose
+actors and path nodes; the rescue catalog and macOS bundle also omit all four
+dedicated hose stages. There is no PlayerHose runtime model or result adapter
+yet. Reuse this package boundary in the shared host, keeping the new system
+separate from Training's interaction path and rescue-player transactions.
 Defined-string xrefs also place `RC_HoseLvlStart/Win/Lose` in the
 `TRadioChatter` setup at `004895C0`, which registers `TChatterSet` entries via
 `00489200`. `004897C0` resolves the message key, and the emitters' nonzero
@@ -195,15 +212,19 @@ the attachment subobject at HoseSpray `+0x608` and writes its subobject
 `+0x15C` (absolute `+0x764`) for animation/visuals, not contact `+0x614`.
 The attach and activation callbacks also do not write the contact point.
 Computed aliases, bulk copies, engine helper writes, and the exact HoseSpray
-contact point remain unresolved. Next trace the WindowFire linked `+0x10`
-writer, Construction alternate path, configured chatter sounds, and result
-presentation for `RC_HoseLvlStart/Win/Lose`; the hotspot cycle and sound-request
-producer are now traced. Separately trace
+contact point remain unresolved. The WindowFire `+0x10` scan found a clear at
+`00468B01` in `00468AC0`, with no nonzero store in the examined class/manager
+methods; `0x7530` calls `00468680` directly while the separate `00468870`
+recurring branch is gated by that byte. Its authored role and indirect/runtime
+writers remain open. Next trace Construction branch entry, configured chatter
+sounds, and result presentation for `RC_HoseLvlStart/Win/Lose`; the hotspot
+cycle and sound-request producer are now traced. Separately trace
 the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`; implement
 each source-backed host route with separate state. Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),
+[`windowfire_link_state_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/windowfire_link_state_fresh_2026-10-20.c),
 [`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c),
 and the earlier suppression exports in the same evidence directory.
 
