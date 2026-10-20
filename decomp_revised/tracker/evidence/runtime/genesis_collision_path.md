@@ -56,6 +56,16 @@ the requested mask. This route supplies point/ray collision without a swept
 box. It shares the same model list, contents filtering, transform handling,
 nearest-hit selection, and result conversion as the hull route.
 
+## Per-model flag filter
+
+Both model scans test the runtime model flag word at model offset `+0xCC` and
+skip that model when bit `0x10` is set: `FUN_100372A0` tests `pfVar7[0x18]`,
+and `FUN_10038470` tests `pfVar10[0x18]`. `geWorld_ModelSetFlags` at
+`0x1003C160` stores the supplied word at that same offset, as documented in
+[`trigger_brush_render_visibility.md`](trigger_brush_render_visibility.md).
+This proves that bit `0x10` excludes a model from the swept-hull and point/ray
+collision routes. It does not establish a renderer effect for the bit.
+
 ## Port evidence and current limits
 
 The reused C++ Training collision implementation already has direct oracle

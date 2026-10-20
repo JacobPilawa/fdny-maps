@@ -76,12 +76,22 @@ The camera frame currently stands in for the retail Player frame. This is a
 provisional adapter: a separate audit leaves the numeric relation between the
 Player follower at `+0x34A4` and the rendered Genesis camera unresolved.
 
+The shared collision adapter now retains the first authored child model index
+separately from children that have usable PATH records. After each BModel state
+update, any nonzero `useObjectState` excludes that first child from the host's
+swept and point/ray queries. This follows retail `0043D330` setting bit `0x10`
+at child model `+0xCC` and Genesis collision scans skipping that bit. The
+adapter keeps the state-derived collision gate separate from
+`PreviewWorldModelFlags`; the BModel bit's render effect has not been
+established. Host frame scheduling is still provisional, so exact same-frame
+transition timing is not claimed.
+
 ## Verification and limits
 
 The macOS CMake `fdny-scene-viewer` target compiled successfully after the
-selection, action, carry, and current-frame collision-latch gate changes. The
-executable SHA-256 is
-`2a5196451d2576e0bd5e9582097eae24fd1c9de6fa12fd9606a50f96a61ecdc3`. The
+selection, action, carry, current-frame collision-latch gate, and BModel
+first-child collision-flag changes. The executable SHA-256 is
+`562f20b0396099f5a03ad919105865ad0ec092370a2d5cb96a2a5636444661f3`. The
 linker warned that the installed `json-c` dylib targets macOS 27.0 while this
 target links for 13.3. No tests, interactive session, gameplay capture, or
 retail parity check was performed.
@@ -92,8 +102,10 @@ Player byte `+0x12C` adapter, the camera-to-Player frame relation and ray sign, 
 meaning of action 1000, Player action-status service effects, live key/polling
 cadence, and event timing remain unresolved. Throw trajectory, drop handling,
 timed-list cleanup, and retail carry/drop animation integration are not
-implemented. Treat current behavior as a source-shaped prototype, not 1:1
-selection or carry parity.
+implemented. The held-object source branch checks its angle whenever the held
+pointer is non-null, with no separate throw input edge, but the two vector
+meanings and Player callback cadence are still open. Treat current behavior as
+a source-shaped prototype, not 1:1 selection or carry parity.
 The trajectory substep is traced inside `0043DC60`; shared update integration
 and the outer callback cadence remain unresolved. See the
 [throw update route and authored-data audit](bmodel_throw_update_route_2026-10-20.md).

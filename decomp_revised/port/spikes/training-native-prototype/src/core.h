@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <optional>
+#include <set>
 struct V{float x=0,y=0,z=0;float& operator[](int i){return i==0?x:i==1?y:z;} float operator[](int i)const{return i==0?x:i==1?y:z;}};
 V vec(J j){return {num(at(j,0)),num(at(j,1)),num(at(j,2))};}
 V operator+(V a,V b){return {a.x+b.x,a.y+b.y,a.z+b.z};} V operator-(V a,V b){return {a.x-b.x,a.y-b.y,a.z-b.z};} V operator*(V a,float f){return {a.x*f,a.y*f,a.z*f};}
@@ -9,7 +10,8 @@ float dot(V a,V b){return float((double)a.x*b.x+(double)a.y*b.y+(double)a.z*b.z)
 struct Hit{V point,normal;float distance=99999;int model=-1;};
 struct CollisionModelBounds{int index=0,root=0;size_t sourceOrder=0;V origin{},mins{},maxs{};};
 struct Collision{
- J data;std::set<int> disabled;std::map<int,float> angles;std::map<int,Pose> poses;std::map<int,V> modelOrigins;std::vector<CollisionModelBounds> collisionModels;std::vector<const CollisionModelBounds*> staticModelsByMinX,dynamicModels,candidateScratch;std::set<int> dynamicModelIndices;
+ J data;std::set<int> disabled;std::set<int> bmodelStateCollisionDisabled;std::map<int,float> angles;std::map<int,Pose> poses;std::map<int,V> modelOrigins;std::vector<CollisionModelBounds> collisionModels;std::vector<const CollisionModelBounds*> staticModelsByMinX,dynamicModels,candidateScratch;std::set<int> dynamicModelIndices;
+ bool modelCollisionDisabled(int model)const{return disabled.count(model)!=0||bmodelStateCollisionDisabled.count(model)!=0;}
  float modelAngle(int model){auto it=angles.find(model);return it==angles.end()?0.f:it->second;}
  V rotate(V p,V origin,float a){if(a==0)return p;float c=std::cos(a),sn=std::sin(a);V v=p-origin;return origin+V{c*v.x+sn*v.z,v.y,-sn*v.x+c*v.z};}
  V transform(V p,V origin,int model,bool inverse){auto it=poses.find(model);if(it==poses.end())return rotate(p,origin,inverse?-modelAngle(model):modelAngle(model));Pose pose=it->second;if(inverse){p=p-pose.translation;pose.rotation.x=-pose.rotation.x;pose.rotation.y=-pose.rotation.y;pose.rotation.z=-pose.rotation.z;}V result=rotateQ(p-origin,pose.rotation)+origin;return inverse?result:result+pose.translation;}
@@ -27,7 +29,7 @@ struct Collision{
  bool trace(V start,V delta,V mn,V mx,Hit& best){
  V end=start+delta,bmn,bmx;for(int i=0;i<3;i++){bmn[i]=std::min(start[i]+mn[i],end[i]+mn[i])-1;bmx[i]=std::max(start[i]+mx[i],end[i]+mx[i])+1;}
  bool found=false;
- auto traceModel=[&](const CollisionModelBounds& model){int mi=model.index;if(disabled.count(mi))return;
+ auto traceModel=[&](const CollisionModelBounds& model){int mi=model.index;if(modelCollisionDisabled(mi))return;
  V origin=model.origin;float angle=modelAngle(mi);V lo=model.mins,hi=model.maxs;
  if(angle!=0||poses.count(mi)){V a{1e9,1e9,1e9},b{-1e9,-1e9,-1e9};for(int bits=0;bits<8;bits++){V corner;for(int i=0;i<3;i++)corner[i]=(bits&(1<<i))?hi[i]:lo[i];corner=transform(corner,origin,mi,false);for(int i=0;i<3;i++){a[i]=std::min(a[i],corner[i]);b[i]=std::max(b[i],corner[i]);}}lo=a;hi=b;}
  bool overlap=true;for(int i=0;i<3;i++)if(bmx[i]<lo[i]||bmn[i]>hi[i])overlap=false;if(!overlap)return;
@@ -58,7 +60,7 @@ struct Collision{
  V rayPoint{},rayNormal{};bool raySide=false;
  bool tracePoint(V start,V end,int contents,int flags,Hit& best){
  if(!(flags&2))return false;bool found=false;
- for(const auto& model:collisionModels){int mi=model.index;if(disabled.count(mi))continue;
+ for(const auto& model:collisionModels){int mi=model.index;if(modelCollisionDisabled(mi))continue;
  V origin=model.origin,lo=model.mins,hi=model.maxs;
  if(modelAngle(mi)!=0||poses.count(mi)){V a{1e9,1e9,1e9},b{-1e9,-1e9,-1e9};for(int bits=0;bits<8;bits++){V v;for(int i=0;i<3;i++)v[i]=(bits&(1<<i))?hi[i]:lo[i];v=transform(v,origin,mi,false);for(int i=0;i<3;i++){a[i]=std::min(a[i],v[i]);b[i]=std::max(b[i],v[i]);}}lo=a;hi=b;}
  bool overlap=true;for(int i=0;i<3;i++)if(std::max(start[i],end[i])+2<lo[i]||std::min(start[i],end[i])-2>hi[i])overlap=false;if(!overlap)continue;

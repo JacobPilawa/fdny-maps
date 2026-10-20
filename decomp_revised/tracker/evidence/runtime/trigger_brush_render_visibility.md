@@ -47,7 +47,10 @@ Pinned `inputs/original/binaries/FDNYFirefighter.exe` SHA-256:
   `5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643`.
   Raw x86 at `1003C160` stores the supplied flags word at model offset `+0xCC`;
   getter `1003C170` reads the same word. This verifies storage, not the shipped
-  renderer's interpretation of every flag bit.
+  renderer's interpretation of every flag bit. A separate collision trace
+  proves bit `0x10` excludes models from swept-hull and point/ray collision;
+  its renderer effect remains unknown. See
+  [`genesis_collision_path.md`](genesis_collision_path.md).
 
 ## Port change and confidence
 

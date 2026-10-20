@@ -71,12 +71,18 @@ the held-object branch, but authored data does not prove which instances are
 selected or reach it. Full details and source hashes are in
 [`mission_stat_bmodel_liftable_pose_2026-10-20.md`](mission_stat_bmodel_liftable_pose_2026-10-20.md).
 
-The Player update copies a selected BModel vector through `0044BED0`, transforms
-it through `0043B2D0`, and calls `ComputeVectorAngleDegrees` (`00497AA0`). It
-compares the resulting angle with `004E169C`, verified as binary32 `10.0`.
-Angles strictly below 10 degrees take the throw path; equality, larger angles,
-and unordered comparisons go to a side-selection branch. The semantic labels
-for the two vectors remain unresolved.
+Fresh read-only Ghidra instruction windows at `0045387B`, `00453A02`, and
+`00453A38` are recorded in
+[`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
+After the held-pointer guard, the Player update copies a selected BModel vector
+through `0044BED0`, transforms it through `0043B2D0`, and calls
+`ComputeVectorAngleDegrees` (`00497AA0`). It compares the result with
+`004E169C`, verified as binary32 `10.0`. Angles strictly below 10 degrees take
+the throw path; equality, larger angles, and unordered comparisons go to the
+side-selection branch. There is no intervening button or action-edge check, so
+the angle gate runs on every Player update that reaches this held-pointer
+branch. This identifies the condition and transaction order, but the semantic
+labels for the two vectors and the Player callback cadence remain unresolved.
 
 The throw path calls `0043B580`, which stores the current clock on the BModel,
 sets trajectory acceleration to -384, computes duration and initial vertical
@@ -134,10 +140,11 @@ reachability or which objects participate in rescue objectives.
 
 No shared counter was wired. `Jumps` needs the retail jump input/state/latch
 route mapped to the host movement transaction; `Objects Thrown` needs the
-held-target frame relation and correction cadence resolved, then the
-source-shaped held-BModel transaction promoted from the Training spike into the
-shared mission scene with its frame, model, trajectory, drop-event, sound, and
-timing services.
+source vector/frame adapter and correction cadence resolved, then the
+source-shaped held-BModel transaction promoted from the Training spike into
+the shared mission scene with its model, trajectory, drop-event, sound, and
+timing services. Once integrated, the gate should be evaluated on each held
+Player update; the source block does not wait for a separate throw input edge.
 `Total Steps` remains coupled to the 100 ms footstep-sound variant scheduler documented in
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
 This is static decompilation evidence only: no gameplay check, build, or retail

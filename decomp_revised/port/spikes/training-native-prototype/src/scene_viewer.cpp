@@ -787,6 +787,7 @@ struct PreviewBModelTimedCommand {
 
 struct PreviewBModelMotion {
     int entity = -1;
+    int firstChildModel = -1;
     std::string authoredName;
     std::vector<PreviewBModelChild> children;
     V boundsMin{1.0e30f, 1.0e30f, 1.0e30f};
@@ -816,6 +817,19 @@ struct PreviewBModelMotion {
     std::optional<std::string> pendingCommand;
     std::vector<PreviewBModelTimedCommand> timedCommands;
 };
+
+void syncBModelStateCollisionFlags(const std::vector<PreviewBModelMotion>& bmodels,
+                                   Collision& collision) {
+    // 0043D330 sets the first child's model flag bit 0x10 whenever BModel
+    // state +0x25C is nonzero. Genesis consumes that bit in swept and
+    // point/ray collision scans. Keep it separate from render flags and from
+    // the host's other disabled-model reasons.
+    collision.bmodelStateCollisionDisabled.clear();
+    for (const auto& bmodel : bmodels) {
+        if (bmodel.useObjectState != 0 && bmodel.firstChildModel > 0)
+            collision.bmodelStateCollisionDisabled.insert(bmodel.firstChildModel);
+    }
+}
 
 struct PreviewBoundsTrigger {
     int entity = -1;
@@ -2190,6 +2204,7 @@ std::vector<PreviewBModelMotion> loadBModelMotions(const SceneData& scene) {
             auto model = modelIndices.find(modelName);
             if (model == modelIndices.end())
                 throw std::runtime_error("BModel child has no matching %Model% export: " + modelName);
+            if (isFirstChild) bmodel.firstChildModel = model->second;
             auto bounds = collisionModels.find(model->second);
             if (bounds != collisionModels.end()) {
                 V lo = vec(field(bounds->second, "mins"));
@@ -5891,6 +5906,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         "BModel " + std::to_string(entityId) + "/timer " +
                             std::to_string(timerIndex));
                 });
+            syncBModelStateCollisionFlags(bmodelMotions, collision);
             for (const auto& bmodel : bmodelMotions) {
                 const float previousPathTime = lastLoggedBModelPathTimes.count(bmodel.entity)
                     ? lastLoggedBModelPathTimes[bmodel.entity] : bmodel.startTime;

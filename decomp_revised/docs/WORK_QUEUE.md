@@ -22,8 +22,9 @@ selection/action/carry behavior and its current parity limits are described
 below.
 
 The macOS `fdny-scene-viewer` CMake target compiled after the selection/action/
-carry integration and current-frame collision-gate adjustment with SHA-256
-`2a5196451d2576e0bd5e9582097eae24fd1c9de6fa12fd9606a50f96a61ecdc3`.
+carry integration, current-frame collision-gate adjustment, and BModel first-
+child collision-flag mapping with SHA-256
+`562f20b0396099f5a03ad919105865ad0ec092370a2d5cb96a2a5636444661f3`.
 The linker reported that the installed `json-c` dylib targets macOS 27.0 while
 this build links for 13.3; the target still completed. No package rebuild,
 tests, interactive run, or retail comparison was performed.
@@ -61,18 +62,34 @@ computed dispatch elsewhere. The throw transaction's status 4 calls
 `0047DC90` on Player `+0xA94` with false, which hides the Axe subobject; its
 high-level action name, shared-host visual state, and release-side sound
 request remain unresolved.
-The next high-value gameplay gap is completing this held-object transaction in
-the shared mission host: the Player release/carry relation, the source-mapped
-trajectory substep and outer update route, drop event effects, and timed-command
-lifetime still need integration or runtime evidence. A scan of all 21 preserved
-EVS files and all `S_Script*` fields in the 17 retail BSP exports found no
-literal `drop` binding; dynamic runtime registration remains unexcluded. Keep
-the current collision and frame adapters provisional;
+`0043D330` also sets first-child model flags bit `0x10` at `+0xCC` whenever
+BModel state `+0x25C` is nonzero. Hash-pinned Genesis collision traces show
+that both swept-hull and point/ray scans skip a model with this bit set. The
+shared host now preserves the first authored child model and mirrors nonzero
+BModel use state into a separate collision-exclusion set for those two query
+paths. This flag is kept separate from the upstream-derived render gate because
+no retail renderer consumer has been established for bit `0x10`.
+
+A fresh raw Player update slice at `0045387B..00453A68` shows that a non-null
+held-object pointer immediately enters target and angle calculation. The
+strict angle-under-10 branch starts the throw and increments `Objects Thrown`;
+there is no button or action-edge check in that block. Vector meaning and
+Player callback cadence remain unknown. The next high-value gameplay gap is
+finishing this transaction in the shared mission host: resolve the source
+vector/frame adapter and held-object correction cadence, connect the trajectory
+substep and outer update route, then integrate `drop` effects, sound, and
+timed-command lifetime with evidence. A scan of all 21 preserved EVS files and
+all `S_Script*` fields in the 17 retail BSP exports found no literal `drop`
+binding; dynamic runtime registration remains unexcluded. Keep the current
+contact, collision, and frame adapters provisional;
 the isolated Training sequence is not yet a campaign implementation.
 See
 [`bmodel_selection_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bmodel_selection_port_2026-10-20.md)
 and
-[`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md).
+[`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md),
+[`mission_stat_jump_throw_producers_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_jump_throw_producers_2026-10-20.md),
+and
+[`bmodel_throw_update_route_2026-10-20.md`](../tracker/evidence/scenario-loading/bmodel_throw_update_route_2026-10-20.md).
 
 ### Focused BModel selection audit ledger (2026-10-20)
 
@@ -83,6 +100,9 @@ and
 | `bmodel_selection_review` | Read-only review of the new selection and held-pose adapter; `bmodel_interaction_selection.h`, `scene_viewer.cpp`, held-frame evidence | Complete; documented provisional frame, bounds, Player gate, and callback mappings; no edits |
 | `bmodel_update_scheduler` (Luna) | External recurring caller/cadence for BModel slot `+0x14`; current-hash Ghidra and saved fixed-offset scan | Complete; local slot `+0x14` → `0043AFE0` → `00470740` → `0043DC60` route is known, and `0043DC60` directly calls `0043D330` when root `+0x258` is nonzero. No recurring manager route into root slot `+0x14` is proven, so callback cadence/order remain unknown. No edits |
 | `bmodel_timed_commands` (Luna) | BModel timed-command insertion, one-shot dispatch, removal command, and relationship to throw completion | Complete; root `+0x148/+0x14C` list is separate from sound at `+0x124`; `0043E360` reuses/appends records and `0043DC60` clears the active byte after dispatch. `removealltimecmds` / `0043C260` also clear each active byte without freeing records or list storage; no connection to `drop` is established. No edits |
+| `bmodel_first_child_flag` (Luna) | Retail `0043D330` flag writer and Genesis collision consumers; `genesis_collision_functions.c`, BModel route evidence, `scene_viewer.cpp` | Complete; bit `0x10` at first child `+0xCC` excludes that model from swept-hull and point/ray queries while state `+0x25C` is nonzero. Renderer use remains unproven. No edits |
+| `throw_release_gate` (Luna) | Player held-object gate in `00452570`; producer, target-writer, and angle-helper evidence | Complete; a non-null held pointer reaches the strict angle-under-10 branch on each Player update, without an action-edge check. Vector semantics and callback cadence remain unresolved. No edits |
+| `throw_drop_event_route` (Luna) | Throw-completion event effects; `0043D330`, `004705B0`, and authored EVS/BSP searches | Complete; trajectory `drop` dispatch does not directly mutate Player carry state or remove timed commands. No authored binding was found in preserved data; runtime registration is unexcluded. No edits |
 
 ## Boat A type-5 Exploder trace (2026-10-20)
 

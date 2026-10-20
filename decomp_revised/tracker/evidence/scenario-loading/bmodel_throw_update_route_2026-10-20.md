@@ -39,6 +39,12 @@ The timed-command loop is later in the same `0043DC60` callback.
 
 `0043D330` updates bit `0x10` in the first child model's flags at `+0xCC`: it
 clears the bit when BModel state `+0x25C` is zero and sets it for nonzero state.
+The shipped Genesis collision traces identify the effect: both swept-hull
+`FUN_100372A0` and point/ray `FUN_10038470` skip a model when its `+0xCC` flags
+contain `0x10` (`genesis_collision_functions.c`, Genesis SHA-256
+`5014bb879706bfb5ae6cf9ce1de63dc3deebdcc5b8e1b41f247b284a336c4643`). This
+proves collision exclusion for those two query paths; it does not establish a
+renderer effect for this bit.
 Only state 2 enters the throw trajectory branch. That branch derives elapsed
 time from the wrapped millisecond clock and stored start tick at `+0x208`,
 converts it to seconds, interpolates X/Z and ballistic Y, and applies the
@@ -74,10 +80,23 @@ host.
 The trajectory is a substep of the BModel ScriptActor update, not a separately
 identified scheduler. The existing Training transaction helper is source
 shaped but remains disconnected from the shared mission host. The shared host
-has BModel selection and held-target smoothing, while the Player release gate,
-source frame/model adapters, outer BModel update route, first-child flag, and
-authored event/sound services still need integration. No gameplay test, build,
-or retail-parity claim is made here.
+now preserves the first authored child model even when that child has no PATH,
+then maps every nonzero `useObjectState` to a separate collision-exclusion set
+for swept and point/ray queries. It does not map the bit to the host's render
+flag. The host has BModel selection and held-target smoothing, while the
+Player-side throw transaction, source frame/model adapters, outer BModel update
+route, and authored event/sound services still need integration.
+
+A fresh raw Player-update slice at `0045387B..00453A68` shows that a non-null
+held-BModel pointer proceeds directly through held-target update and the
+angle-under-10 comparison on each invocation of that update; no button or
+action-edge check appears in the block. The strict under-10 branch starts the
+trajectory, calls Player action status 4, clears the held pointer, restores
+Player state 3, increments `Objects Thrown`, and calls the common Player action
+dispatcher. The compared vector semantics and the outer Player callback cadence
+remain unresolved. See
+[`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
+No gameplay test, interactive run, or retail-parity claim is made here.
 
 See [BModel update notes](bmodel_update.md), [throw-stat producer trace](mission_stat_jump_throw_producers_2026-10-20.md),
 [event dispatcher decompilation](004705b0_script_actor_event_dispatch_fresh.c), and
