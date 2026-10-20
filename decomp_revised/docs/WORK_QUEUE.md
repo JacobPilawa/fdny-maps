@@ -34,22 +34,32 @@ The shared scene host now handles Player `addbonus` commands from the authored
 `bonusitems.evs` bindings and accumulates the signed amount in the existing
 32-bit `Bonus Points` result-stat state. Ghidra maps the command through
 `00451870` to `0044EF10`, then `00486980`; Player event 7 resets the score
-widget animation. The Player update reads the same stat and formats the score
-as `%i` in the widget at Player `+0x480` through `004574C0` and `0048C2A0`.
+widget animation. The score object is status-subobject `+0x480` (absolute
+Player `+0xA74`), and its text child is at widget `+0x130`. A follow-up trace
+maps sprite resource 502 to `tools.bmp`/`rescbon_a.bmp`, the `+BONUS+` alpha
+band, four source coordinate keys from 0.0 to 1.1 seconds, and text style 3.
+The Player update reads the same stat and formats the total as `%i` through
+`004574C0` and `0048C2A0`.
 
-The widget's exact screen layout, rendering material/font, and animation curve
-remain open; no score popup or placement is guessed. The authored source has a
+The shared scene viewer now displays the copied retail sprite, the traced
+0.0/0.1/1.0/1.1 second widget track, and style-3 digit/minus glyph cells when
+the signed Bonus Points value is nonzero. Text origin/alignment, UV corner
+mapping, alpha-channel conversion, material state, and final viewport placement
+remain provisional; this is not a visual parity claim. The authored source has a
 duplicate `BONUS63` entry and no inferred `BONUS64`; source bytes are preserved.
-The rescue-all macOS app rebuilt with standalone/package SHA-256
-`272e7ded3656858dde3c6a90533908835048a0e2b4375c18475a55452559aacd`; plist
-validation passed and the build emitted eight rescue choices. This is a
+The rescue-all macOS compile/package build completed with matching
+standalone/package SHA-256
+`f138d108d9c27dfa93e85330eeb1b3bc2588ecadc3b652c4730c66bd17e09e61`;
+plist validation passed and eight rescue choices were emitted. This remains a
 compile/package check, not a live bonus pickup or retail-parity check. See
 [`bonus_points_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bonus_points_port_2026-10-20.md).
 
-Next core gap: finish tracing the bonus widget's initialization/layout and
-event-7 animation, then connect it to the shared HUD when the placement and
-visibility behavior are source-backed. Continue afterward with the next
-unimplemented cross-mission command/mechanic in the current coverage audit.
+Next core gap: carry the verified all-victims final-exit win state into the
+existing Player status/result consumer and frontend state-1 handoff. Trace the
+remaining result-child timing and child-5 page controls before implementing
+presentation or return behavior. Leave the unknown loss-state producer and any
+deadline-to-loss transition unmodeled; see
+[`mission_outcome_status_dispatch_2026-10-19.md`](../tracker/evidence/scenario-loading/mission_outcome_status_dispatch_2026-10-19.md).
 
 ## Dedicated PlayerHose host slice (2026-10-20)
 
@@ -858,6 +868,10 @@ body-bearing functions and 287 external entries.
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
 | `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |
+| `bonus_widget_text_trace` (Luna) | Bonus widget style-3 text child, font profile, glyph cells, and bounds helper | `bonus_points_port_2026-10-20.md`, current-hash Ghidra trace | Complete, read-only; mapped resource 64000, printable-ASCII profile, 8x14 glyph cells, digits/minus, and child modes. Final bounds/alignment and render-state semantics remain unresolved; no edits |
+| `outcome_widget_timing` (Luna) | Result child `+0x130/+0x134` timing and sibling callers | Result widget evidence and current-hash caller trace | Complete, read-only; no timing-field writes established and sibling 1000/5000 values do not transfer; timing stays unknown; no edits |
+| `next_core_gap` (Luna) | Current port/evidence audit for next cross-mission system | Work queue and rescue outcome evidence | Complete, read-only; recommends tracing the verified all-victims exit into Player result status and frontend state-1 handoff; no edits |
+| `mission_outcome_direct_offset_scan` | EXE direct stores to Player/result candidate fields `+0x960`, `+0xE24`, `+0x824`, `+0x6EC` | `.local/mission-outcome-flag-writes.txt`, `FindOffsetWrites.java` | Complete, read-only; found seven direct `+0x6EC` stores and no register-displacement store candidates for the other three offsets. Pointer aliases, computed addressing, runtime and external writers are not excluded; no edits |
 
 ## View bob fully removed (2026-10-18)
 

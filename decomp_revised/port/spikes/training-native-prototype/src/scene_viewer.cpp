@@ -88,6 +88,7 @@ bool jsonNumber(J value) {
 #include "fire_visual.h"
 #include "fire_render_state.h"
 #include "fire_entity.h"
+#include "bonus_points_hud_renderer.h"
 #include "victim_pickup_hud_renderer.h"
 #include "fire_floor.h"
 #include "fire_renderer.h"
@@ -994,6 +995,51 @@ std::filesystem::path locateVictimPickupHudSprites(const SceneData& scene) {
     }
     throw std::runtime_error("Cannot find copied rescuing HUD textures under "
                              "actor_exports/victim-feedback or inputs/original/Data/Sprites");
+}
+
+std::filesystem::path locateBonusPointsHudSprites(const SceneData& scene) {
+    auto hasBonusPointsTextures = [](const std::filesystem::path& candidate) {
+        return std::filesystem::is_regular_file(candidate / "tools.bmp") &&
+               std::filesystem::is_regular_file(candidate / "rescbon_a.bmp") &&
+               std::filesystem::is_regular_file(candidate / "confont.bmp") &&
+               std::filesystem::is_regular_file(candidate / "confont_a.bmp");
+    };
+    if (const char* overridePath = std::getenv("FDNY_GAME_DATA_DIR")) {
+        const std::filesystem::path overrideRoot = overridePath;
+        for (const auto& candidate : {overrideRoot / "sprites", overrideRoot / "Sprites",
+                                      overrideRoot / "Data" / "sprites",
+                                      overrideRoot / "Data" / "Sprites"})
+            if (hasBonusPointsTextures(candidate)) return candidate;
+        throw std::runtime_error("FDNY_GAME_DATA_DIR has no Bonus Points sprite/font resources: " +
+                                 overrideRoot.string());
+    }
+    if (const char* overridePath = std::getenv("FDNY_ACTOR_ASSETS_DIR")) {
+        const std::filesystem::path candidate =
+            std::filesystem::path(overridePath) / "bonus-points";
+        if (hasBonusPointsTextures(candidate)) return candidate;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "actor_exports" / "bonus-points",
+                 root.parent_path() / "actor_exports" / "bonus-points"})
+            if (hasBonusPointsTextures(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "inputs" / "original" / "Data" / "Sprites",
+                 root / "inputs" / "original" / "Data" / "sprites",
+                 root / "inputs" / "original" / "data" / "Sprites",
+                 root / "inputs" / "original" / "data" / "sprites"})
+            if (hasBonusPointsTextures(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    throw std::runtime_error("Cannot find Bonus Points HUD sprite/font assets under "
+                             "actor_exports/bonus-points or inputs/original/Data/Sprites");
 }
 
 std::filesystem::path locateFireDirectionSprites(const SceneData& scene) {
@@ -3247,6 +3293,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     bool oxygenHudRendererLoaded = false;
     VictimPickupHudRenderer victimPickupHudRenderer;
     bool victimPickupHudRendererLoaded = false;
+    BonusPointsHudRenderer bonusPointsHudRenderer;
+    bool bonusPointsHudRendererLoaded = false;
     std::filesystem::path actorAssetRoot;
     VictimTransactionState rescueState;
     RescueBotState rescueBotState;
@@ -3653,6 +3701,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     // stores the total as a wrapping 32-bit word.
                     addSourceStatistic(&rescueStatistics["Bonus Points"],
                                        static_cast<uint32_t>(static_cast<int32_t>(parsed)));
+                    if (rescueStatistics["Bonus Points"].value != 0)
+                        bonusPointsHudRenderer.begin(scriptRuntime->timeMs);
+                    else
+                        bonusPointsHudRenderer.hide();
                     return true;
                 }
                 if (verb == "quake") {
@@ -5376,6 +5428,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         oxygenHudRendererLoaded = true;
         victimPickupHudRenderer.load(locateVictimPickupHudSprites(scene));
         victimPickupHudRendererLoaded = true;
+        bonusPointsHudRenderer.load(locateBonusPointsHudSprites(scene));
+        bonusPointsHudRendererLoaded = true;
         bool running = true, captured = true, jumpEdge = false;
         bool useEdge = false, sprayHeld = false, sprayPressed = false, sprayReleased = false;
         float pitch = 0.f;
@@ -7059,6 +7113,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 playerOxygenWarningOverlayAmount(playerOxygen.displayedResource),
                 width, height);
             victimPickupHudRenderer.draw(uint32_t(SDL_GetTicks()), width, height);
+            const int32_t bonusPoints = static_cast<int32_t>(
+                SourceStatisticRecord::signedWord(rescueStatistics["Bonus Points"].value));
+            bonusPointsHudRenderer.draw(uint32_t(SDL_GetTicks()), bonusPoints, width, height);
             if (activeHint == authoredHintText && authoredHintLifetime.configured) {
                 if (authoredHintLifetime.visible(now))
                     hintOverlay.draw(activeHint, width, height);
@@ -7131,6 +7188,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         if (gogglesRendererLoaded) gogglesRenderer.release();
         if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
         if (victimPickupHudRendererLoaded) victimPickupHudRenderer.release();
+        if (bonusPointsHudRendererLoaded) bonusPointsHudRenderer.release();
         hintOverlay.release();
         SDL_GL_DeleteContext(context);
         SDL_DestroyWindow(window);
@@ -7149,6 +7207,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         gogglesRenderer.release();
         oxygenHudRenderer.release();
         victimPickupHudRenderer.release();
+        bonusPointsHudRenderer.release();
         if (context) SDL_GL_DeleteContext(context);
         if (window) SDL_DestroyWindow(window);
         if (SDL_WasInit(SDL_INIT_VIDEO)) SDL_Quit();

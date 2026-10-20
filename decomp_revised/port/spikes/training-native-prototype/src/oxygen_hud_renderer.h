@@ -28,11 +28,12 @@ struct OxygenHudRenderer {
     GLuint needleTexture = 0;
     GLuint visorEffectTexture = 0;
 
-    static GLuint loadAlphaPair(const std::filesystem::path& spriteRoot,
-                                const char* stem,
-                                const char* purpose = "HUD") {
-        const auto colorPath = spriteRoot / (std::string(stem) + ".bmp");
-        const auto alphaPath = spriteRoot / (std::string(stem) + "_a.bmp");
+    static GLuint loadAlphaPairFiles(const std::filesystem::path& spriteRoot,
+                                     const char* colorFilename,
+                                     const char* alphaFilename,
+                                     const char* purpose) {
+        const auto colorPath = spriteRoot / colorFilename;
+        const auto alphaPath = spriteRoot / alphaFilename;
         SDL_Surface* colorBitmap = SDL_LoadBMP(colorPath.string().c_str());
         if (!colorBitmap)
             throw std::runtime_error("Cannot load " + std::string(purpose) + " texture " + colorPath.string() +
@@ -108,6 +109,22 @@ struct OxygenHudRenderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         return texture;
+    }
+
+    static GLuint loadAlphaPair(const std::filesystem::path& spriteRoot,
+                                const char* colorStem,
+                                const char* alphaStem,
+                                const char* purpose) {
+        const std::string colorFilename = std::string(colorStem) + ".bmp";
+        const std::string alphaFilename = std::string(alphaStem) + ".bmp";
+        return loadAlphaPairFiles(spriteRoot, colorFilename.c_str(),
+                                  alphaFilename.c_str(), purpose);
+    }
+
+    static GLuint loadAlphaPair(const std::filesystem::path& spriteRoot,
+                                const char* stem,
+                                const char* purpose = "HUD") {
+        return loadAlphaPair(spriteRoot, stem, stem, purpose);
     }
 
     void load(const std::filesystem::path& spriteRoot) {
