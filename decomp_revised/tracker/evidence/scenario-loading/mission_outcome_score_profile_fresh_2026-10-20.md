@@ -90,12 +90,16 @@ remaining time with Player `+0x12C` clear. The shared host now carries the
 countdown, timeout gate, and in-memory Air Time contribution. Arithmetic and
 field gates are source-backed; host callback cadence, movement-latch timing,
 and the presentation unit implied by “Gallons” remain provisional. The
-remaining unported stat producers are `Jumps`, `Total Steps`, and
-`Objects Thrown`. Their retail producer sites are now identified, while the
-user-input bridge and state gates for `Jumps`, the sound-selection cadence for
-`Total Steps`, and integration of the held-BModel trajectory/drop lifecycle
-for `Objects Thrown` still block a source-matched host transaction. See
-[`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
+previously open `Jumps`, `Total Steps`, and `Objects Thrown` transactions have
+since been integrated into the shared host with the source-mapped gates
+described in
+[`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md)
+and [`mission_stat_jump_throw_producers_2026-10-20.md`](mission_stat_jump_throw_producers_2026-10-20.md).
+A follow-up then connected the remaining `Axe Hits` and `Serious Burns`
+producers to the same runtime map; details and host limitations are in
+[`mission_stat_axe_burn_host_port_2026-10-20.md`](mission_stat_axe_burn_host_port_2026-10-20.md).
+All 13 registered keys now have in-memory producer coverage in the shared
+mission host. Profile serialization and the Records page remain unported.
 
 ## Shared port checkpoint
 
@@ -116,13 +120,11 @@ interactive run, or retail comparison was performed.
 
 ## Next evidence step
 
-Finish the remaining stat integrations against the shared host: map the JUMP
-action's runtime poll route, establish the host cadence for the Total Steps
-sound-selection gate, and promote the
-source-shaped held-BModel throw transaction from the Training spike into the
-shared mission scene with the callback-owned trajectory substep, drop-event,
-sound, and timer services. The direct `0043DC60` → `0043D330` route is mapped;
-the outer update cadence and data-driven event effects remain open. Separately
-map the exact serialized scalar/container encoding before adding profile
-persistence. Keep the result transition gated on separate runtime evidence,
-and return to the Records UI after core gameplay coverage improves.
+Keep profile serialization and the Records UI paused while core gameplay gaps
+remain. A supported next step is to trace the Player locomotion input and frame
+consumer around `00452570`, especially the remaining `+0x3460` setter vector
+and input signs/scales: this affects movement and held-tool orientation. Do not
+change frame axes based only on the viewer mapping; its relation to the retail
+camera/ActorInfo chain remains unresolved. The shared stat map is in-memory
+only, and result timing, frontend handoff, and complete return flow remain
+separate open work.

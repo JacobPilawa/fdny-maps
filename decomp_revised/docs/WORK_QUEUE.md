@@ -8,6 +8,34 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## All mission-stat producers connected in the shared runtime map (2026-10-20)
+
+The 13 retail-registered mission-stat keys now all have in-memory producer
+coverage in the shared mission host. This checkpoint connects `Axe Hits` to a
+successful world sweep before BModel eligibility and `Serious Burns` to the
+existing due-pain-deadline transaction. Earlier slices connected Completion
+Time, Air Time, Bonus Points, Jumps, Total Steps, Objects Thrown, Rescues,
+Shortest/Longest Rescue Time, Gallons Sprayed, and Fires Doused. Source detail
+and host limits are in
+[`mission_stat_axe_burn_host_port_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_axe_burn_host_port_2026-10-20.md),
+[`mission_stat_jump_throw_producers_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_jump_throw_producers_2026-10-20.md),
+and [`mission_stat_producers_elapsed_hose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_producers_elapsed_hose_2026-10-20.md).
+These values remain in-memory; profile serialization and the Records page are
+still unported. Player-message cadence, collision adapters, RNG interleaving,
+and other host scheduling assumptions remain provisional, so this is not
+retail runtime parity.
+The rescue-all macOS app compiled and packaged with matching standalone/app
+executable SHA-256
+`19f3f359420047b4ae54ec701931f264ce2d0ac6c14876d4b8a344a623a76456`; `Info.plist`
+validation passed. The installed json-c dylib targets macOS 27.0 while this
+build links for 13.3.
+
+Next core-gameplay evidence step: trace the Player locomotion input/frame
+consumer around `00452570`, especially the remaining `+0x3460` setter vector
+and input signs/scales, because those affect movement and held-tool
+orientation. Keep frame-axis changes gated on resolving its relation to the
+retail camera/ActorInfo chain.
+
 ## Player jump/contact transaction slice (2026-10-20)
 
 The normal-state Player updater calls `0044E990` before the root vtable
@@ -969,12 +997,13 @@ mutation and schema traces are in
 [`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md),
 and [`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_handoff_fresh_2026-10-20.c).
 
-The shared port has a runtime rescue-stat map but no profile-backed Records
-page model or menu route. The existing work-queue priority pauses menu UI; next
-audit the remaining gameplay-stat producers and implement the missing values
-in the shared host. Timeout state 2 is statically traced and now ported; keep
-the result widget timing, frontend handoff and complete return route open until
-their source behavior is established.
+The shared port has an in-memory producer for every registered rescue stat but
+no profile-backed Records page model or menu route. Keep menu UI paused while
+the next core gameplay trace follows the Player locomotion input/frame bridge;
+profile serialization can resume after the source movement and held-tool frame
+gaps are better understood. Timeout state 2 is statically traced and now
+ported; keep result widget timing, frontend handoff and the complete return
+route open until their source behavior is established.
 
 ## RescueBot lifecycle implemented from fresh retail trace (2026-10-20)
 
@@ -1276,6 +1305,8 @@ body-bearing functions and 287 external entries.
 | `throw_drop_event_route` (Luna) | Completion event lookup, command routing, held-state and timed-list effects | `0043D330`, `004705B0`, event lookup and dispatch evidence | Complete, read-only; completion sets the endpoint, flips `+0x220`, dispatches `drop`, then requests root `+0x124` sound playback. No direct held-state or timed-list mutation was found. No edits. |
 | `throw_port_review` (Luna) | Review of host use-gate and carry/throw integration boundaries | Shared scene code, `bmodel_interaction_selection.h`, BModel evidence | Complete, read-only; recommended a current-frame collision-latch adapter for unresolved `+0x12C` and keeping callback cadence provisional. No code edits. |
 | `throw_action_status_review` (Luna) | `004571A0` status 4, Axe subobject, throw trigger, and sound registrations | Saved `004571A0` decompilation, Player loadout/constructor evidence, current throw trace | Complete, read-only; status 4 calls `0047DC90(Player+0xA94,false)` on the Axe actor. No high-level status label, release-side sound call, or input gate was found; no code edits. |
+| `axe_stat_trace` (Luna) | Retail `Axe Hits` threshold, world query, and increment ordering | Hash-pinned `00460B90`, `004610E0`, and `00460920` saved exports; EXE hash verified | Complete, read-only; one increment follows a positive swept world hit after strict 0.275-second crossing and precedes BModel eligibility/damage. Live Ghidra bridge was unavailable; retained exports used. No edits. |
+| `serious_burns_stat` (Luna) | Retail `Serious Burns` deadline gate and shared Player fire-message host seam | Hash-pinned `00451640` assembly/decompilation and stat catalog; EXE hash verified | Complete, read-only; one increment occurs only when unsigned current clock exceeds Player `+0x390`, after pain request and deadline update; it is independent of the later exposure/passout accumulator. Live Ghidra bridge was unavailable; retained exports used. No edits. |
 | `rescue_mission_core_gap` (Luna) | Compare current campaign coverage against missing authored mission systems | Rescue catalog and mission evidence/queue | Complete, read-only; maps remain `loaded_inspection_only` by coverage tracker, and static Boat A Exploders are a cross-map MiscEmitter gap. Recommended tracing the C_Type=5 sequence; no edits. |
 | `exploder_setsize_trace` (Luna) | Boat A `QueExploders`, C_Type=5 construction, setsize, activation, and child setup | `boat_a.evs`, Boat A entity export, `004420F0`, `00442900`, `00445600`, `00445720`, `00444D00` | Complete, read-only; confirmed scalar immediate setsize, internal mode 2, active-byte toggle, and four child objects from descriptor `0x502D40`. Resource initialization, visible effect/timing, and shared host path remain open. |
 | `misc_emitter_renderer` (Luna) | C_Type=5 descriptor writer, parent update/render path, child registration and draw | Hash-pinned Ghidra headless listing/decompilation, executable immediate-address scan, `00444D00`, `00445490`, `0047F960` | Complete, read-only; parent slot 9 draws each child through resource lookup and `geWorld_AddPolyOnce`. Descriptor `0x502D40` has one direct xref and no direct static initializer; runtime numeric IDs/frame sequence and callback cadence remain unresolved. No edits |

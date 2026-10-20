@@ -522,6 +522,7 @@ struct PreviewPlayerFireOps {
     bool cameraAudit = false;
     std::array<uint8_t, 4>* directionalIndicators = nullptr;
     uint32_t* seriousBurns = nullptr;
+    std::function<void()> recordSeriousBurnStatistic;
     int* lastPainChoice = nullptr;
     int* lastPassoutChoice = nullptr;
     uint32_t selectedItemIndex = 0;
@@ -567,6 +568,7 @@ struct PreviewPlayerFireOps {
     }
     void addSeriousBurns() {
         if (seriousBurns) ++*seriousBurns;
+        if (recordSeriousBurnStatistic) recordSeriousBurnStatistic();
         if (activeHint) *activeHint = "Serious burns: " + std::to_string(seriousBurns ? *seriousBurns : 0);
         if (activeHintRemaining) *activeHintRemaining = 2.5f;
     }
@@ -3716,7 +3718,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             {"Gallons Sprayed", {0, 0}},
             {"Longest Rescue Time", {2, 0}},
             {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}},
-            {"Fires Doused", {0, 0}}
+            {"Fires Doused", {0, 0}},
+            {"Axe Hits", {0, 0}},
+            {"Serious Burns", {0, 0}}
         };
         std::set<int> enabledExitTriggers;
         std::string rescueStageRequest;
@@ -6772,6 +6776,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     // after a world hit before it dispatches impact sounds.
                     sceneAudio.stopOwned(playerEntityId, "AxeSwing");
                     ++axeWorldImpactCount;
+                    // FUN_00460B90 increments Axe Hits after a successful
+                    // world sweep, before testing BModel eligibility.
+                    addSourceStatistic(&rescueStatistics["Axe Hits"], 1);
                     const V contactPoint{worldResult.position[0], worldResult.position[1],
                                          worldResult.position[2]};
                     const V candidatePoint = contactPoint +
@@ -7315,6 +7322,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 fireOps.cameraAudit = fireCameraAudit;
                 fireOps.directionalIndicators = &playerBurnState.directionalIndicators;
                 fireOps.seriousBurns = &playerSeriousBurns;
+                fireOps.recordSeriousBurnStatistic = [&] {
+                    addSourceStatistic(&rescueStatistics["Serious Burns"], 1);
+                };
                 fireOps.lastPainChoice = &lastPainChoice;
                 fireOps.lastPassoutChoice = &lastPassoutChoice;
                 fireOps.selectedItemIndex = uint32_t(playerLoadout.items.selected);
