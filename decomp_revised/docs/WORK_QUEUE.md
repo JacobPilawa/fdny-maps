@@ -55,17 +55,25 @@ state is not 5, `+0x380` is clear, and byte `+0x198` is nonzero; its 100 ms
 producer increments after selecting a footstep index different from Player
 `+0x558`. That field is initialized to zero, but no later static writer was
 found, so it is not yet established as a last-selection field. Selection
-consumes the shared RNG and may retry, affecting later random results. These
-gate bytes and the meaning of the source movement fields remain unresolved.
+consumes the shared RNG and may retry, affecting later random results. Byte
+`+0x380` is initialized clear, set by the `DBG_TOGGLE_SPECT` action route,
+and cleared by `JUMP`; keep it as a debug action latch separate from normal
+state-5 climbing. Byte `+0x198` gates `Total Steps`, while its initial value
+and meaning remain unresolved.
 
 The follow-up maps `+0x32F0/+0x32F4` to the root pitch/yaw accumulators and
 shows `+0x3320` is an identity frame with a null parent at construction; the
 movement pass composes it before transforming the state-5 vector. Field
 `+0x3310` (`root+0x3450`) is updated as a timer/delta accumulator and clamped
 or reset to 0/1, but its meaning/default are unresolved. The frame's runtime
-world axes, input signs/scales, and the exact `00482AD0` weight formula remain
-open. The existing host `pow(base,27*dt)` and camera-pitch climb vector are
-provisional.
+world axes, input signs/scales, and indirect setter arguments remain open.
+`00482AD0` derives a half-life consumed by `00482FC0`; for the fixed movement
+bases, retail's `pow(0.5,dt/halfLife)` is algebraically equivalent to the
+host's `pow(base,27*dt)`. Host base selection, x87 rounding, and callback
+cadence are still provisional. Evidence:
+[`player_movement_smoothing_formula_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_smoothing_formula_2026-10-20.md)
+and
+[`player_movement_gate_bytes_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_gate_bytes_2026-10-20.md).
 
 The host now raises the default DifficultyLevel-1 pitch clamp from 40 to 45
 degrees in the `climbing` state adapter. After this change the macOS
@@ -74,10 +82,11 @@ degrees in the `climbing` state adapter. After this change the macOS
 warned that installed `json-c` targets macOS 27.0 while the build target is
 13.3. This is compile-only evidence. `Player::step` still substitutes
 `ground`/`climbing` booleans, fixed 400/260 values, camera pitch for frame
-`+0x3320`, and a host collision loop. Do not tune that motion as retail-parity
-behavior until the remaining movement helpers, frame updates, and byte gates
-are mapped. `Total Steps` remains unported; its global footstep samples are
-not in the scene audio bundle yet.
+`+0x3320`, and a host collision loop. The debug `+0x380` action path is not
+exposed, and the `+0x198` Total Steps gate remains unresolved. Keep motion
+provisional until the indirect frame setter, input mapping, and callback
+cadence are traced. `Total Steps` remains unported; its global footstep
+samples are not in the scene audio bundle yet.
 See
 [`player_movement_state_gates_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_state_gates_2026-10-20.md)
 and the Player movement/Total Steps entries in the audit ledger below.
@@ -1237,8 +1246,10 @@ body-bearing functions and 287 external entries.
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 | `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms selector scheduler and Jumps' 500 ms gate. Follow-up mapped the `0045331A` call gate and found FootStep resources absent from scene bundles. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is crouch and its JUMP query routes to `0044BCE0`. Completion Time, Air Time, and Jumps are integrated with provisional host cadence; Total Steps remains unported. |
-| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, `+0x3450` timer/delta accumulator, movement-vector caps, transform construction/composition and helpers. `+0x3460` is identity/null-parent at init, but runtime frame axes/cadence, input scale, exact `00482AD0` weight, and `+0x3450` semantic name/default remain open. No edits. |
-| `total_steps_producer` (Luna) | `0044EA90` callsite gate, sound selector/resources, and host integration seam | Current-hash Player movement disassembly, Player init, `sound.rrf`, `export_evs_bundle.py`, and `scene_audio.h` | Complete, read-only; mapped callsite `0045331A`, state/byte/movement gates, shared-RNG selector/retry, and missing scene-bundle samples. `+0x558` compares against the selected index, initializes to zero, and has no later static writer found, so it is not proven to track the prior selection. Host RNG differs and the gate bytes are unmapped; no edits. |
+| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped pitch/yaw fields, `+0x3450` timer/delta accumulator, movement-vector caps, transform construction/composition and helpers. `+0x3460` is identity/null-parent at init; runtime frame axes/cadence, indirect setter args, input scale, and `+0x3450` semantic name/default remain open. Smoothing exponent relationship is now mapped. No edits. |
+| `player_frame_runtime` (Luna) | Player `+0x3460` frame writers, composition, axes, and update cadence | Constructor `00453D50`, callback `0044F340`, frame helpers `0042D2D0`/`004977B0`, saved xrefs, `equipment_view_frame_trace_2026-10-17.c` | Complete, read-only; identity/null-parent frame at construction and recurring view callback mutations through vtable slots `+8`/`+0x14` are mapped. Parent composition is known, but indirect setter arguments, world axes, and outer callback cadence remain unresolved. No edits. |
+| `movement_gate_bytes` (Luna) | Player root `+0x198/+0x380` initialization, writers, action strings, and movement/Total Steps gates | Headless Ghidra read-only writer/constructor scans; `player_movement_gate_bytes_2026-10-20.md` | Complete, read-only; `+0x380` initializes clear, is set by `DBG_TOGGLE_SPECT`, and cleared by `JUMP`, with state `+0x18C=3` on both transitions. `+0x198` gates `0044EA90`, but the inspected constructor chain omits an explicit byte-zero write; initial value and semantic label remain unresolved. No edits. |
+| `total_steps_producer` (Luna) | `0044EA90` callsite gate, sound selector/resources, and host integration seam | Current-hash Player movement disassembly, Player init, `sound.rrf`, `export_evs_bundle.py`, and `scene_audio.h` | Complete, read-only; mapped callsite `0045331A`, state/byte/movement gates, shared-RNG selector/retry, and missing scene-bundle samples. `+0x558` compares against the selected index, initializes to zero, and has no later static writer found, so it is not proven to track the prior selection. The `+0x380` debug latch is mapped; `+0x198` initialization/meaning remains unresolved. No edits. |
 | `jump_input_bridge` (Luna) | `JUMP` action registration, right-mouse polling, and Player jump producer consumers | Saved hash-pinned Ghidra exports, `0042D8C0`, `004395C0`, `00437F30`, `00451870`; `mission_stat_bmodel_liftable_pose_2026-10-20.md`; `player_jump_action_state4_2026-10-20.asm` | Complete, read-only; confirmed MOUSE_RB ID `0x105`; camera poll `0042DB06` discards its result. Player movement queries named action `JUMP` in crouch state 4 at `00453739` and routes it to `0044BCE0`, also used by ScriptActor `uncrouch`; the state-not-4 path calls the separate `0044E990` jump-stat/velocity routine. Normal-state jump/contact behavior remains open. |
 | `deadline_airtime_audit` (Luna) | Current-hash Player movement subobject, countdown fields, timeout state, and Air Time gate | `player_mission_countdown_airtime_port_2026-10-20.md`; Ghidra read-only writer scan and direct x86 instruction check | Complete, read-only; confirmed `+0x343C` countdown decrement in seconds, expiry clamp and `+0x3438=2` write, Completion Time/Air Time contributions, and the `+0x12C` zero gate. Full mission-result/outro semantics remain open. No edits. |
 | `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340`/`0044F713` hose path and `00453993` Player update producer; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution are integrated. Objects Thrown is a held-BModel transaction through Player `+0x3440`, a strict angle-under-10-degree gate, BModel trajectory state 2, Player action status 4, and one stat increment. Static all-BSP candidate coverage is enumerated; shared selection/carry uses provisional adapters while the callback-owned trajectory substep, outer update route/cadence, drop/timed-list relation, action-status label/host effect, and release sound remain open. |

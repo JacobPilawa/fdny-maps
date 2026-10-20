@@ -41,9 +41,13 @@ composes parent frames before the state-5 movement vector transform. The
 movement update builds a temporary basis from the pitch/yaw accumulators using
 `0042D350`/`004968B0`, then applies it through `00495EB0`. Runtime writes to
 the `+0x3460` frame, its final world axes, and the input scale/sign convention
-are not mapped. The smoothing call to `00482AD0` receives the 0.95/0.2 base and
-27, but its exact exponent formula and boundary handling remain unverified;
-the host's `pow(base, 27*dt)` is therefore still an approximation.
+are not mapped. The smoothing call at `004532B3` passes the 0.95/0.2 base and
+27 to `00482AD0`; its result is a half-life used by `00482FC0` as
+`pow(0.5, frameDelta/halfLife)`. For those fixed bases this is algebraically
+equivalent to the host's `pow(base, 27*dt)`. The host's ground/climbing base
+selection, double-precision libm, x87 rounding, and callback cadence remain
+unverified. See
+[`player_movement_smoothing_formula_2026-10-20.md`](player_movement_smoothing_formula_2026-10-20.md).
 
 `ESI+0x3310` aliases Player root `+0x3450`. `00451560` updates this field on
 timer branches, including frame-delta-scaled accumulation and clamp/reset at
@@ -60,9 +64,12 @@ from Player `+0x558`. The `FootStep1`–`FootStep4` sound list is appended durin
 Player initialization. `+0x558` is initialized to zero, but a static
 instruction scan found no later writer; its role as a prior-selection field is
 unproven. Selection uses the shared RNG through `00498B30`/`00404AC0`, so
-retry count affects the global random stream. Meanings of the `+0x198` and
-`+0x380` gate bytes and live callback cadence remain unresolved. See the
-accompanying Total Steps callsite audit in
+retry count affects the global random stream. Byte `+0x380` is initialized
+clear, set by the `DBG_TOGGLE_SPECT` action path, and cleared by the `JUMP`
+action path. Byte `+0x198` gates the Total Steps helper, but its initial value
+and meaning remain unresolved. Live callback cadence is also open. See
+[`player_movement_gate_bytes_2026-10-20.md`](player_movement_gate_bytes_2026-10-20.md)
+and the accompanying Total Steps callsite audit in
 `mission_stat_producers_elapsed_hose_2026-10-20.md`.
 
 ## Shared host comparison and limits
@@ -79,11 +86,12 @@ default, byte `+0x380`, and state 6 are not represented. Do not infer retail
 motion parity from the current `Player::step`.
 
 Next, resolve the meaning/default of `+0x3310`, runtime updates and world axes
-of the `+0x3320` frame, and the exact weight formula in `00482AD0`; map the
-source movement input scale before changing host movement vectors. The
-pitch/yaw fields `+0x32F0/+0x32F4` and core frame/vector helpers are mapped.
-Also resolve initial values and writers for movement bytes `+0x198` and
-`+0x380`, then separate source movement from host collision/callback cadence.
+of the `+0x3320` frame, indirect frame-setter arguments, and source movement
+input scale before changing host movement vectors. The pitch/yaw fields
+`+0x32F0/+0x32F4`, core frame/vector helpers, and smoothing exponent
+relationship are mapped. Continue tracing initialization/writers for the
+`+0x198` Total Steps gate, then separate source movement from host
+collision/callback cadence.
 
 ## Build checkpoint
 
