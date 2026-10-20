@@ -8,7 +8,7 @@
 struct RescueExitState {
  uint32_t total=0xffffffffu; // Player+0x3528, lazy unknown sentinel
  uint32_t field3530=0,rescues=0; // +0x3530 and +0x352C
- uint32_t messageGate=0,field5CC=0; // +0x3438 and +0x5CC
+ uint32_t messageGate=0,field5CC=0; // Player+0x3438 result/message gate and +0x5CC
  std::string prompt; // +0x5D0
 };
 struct RescueExitEntity {
@@ -20,7 +20,8 @@ enum class RescueExitResult { survivorsRemaining,noExitZones,exitPrompt };
 
 // 004504C0 and lazy count helper 0044FBA0. Entity order is source global-list
 // order; binding classification and bounds-center calculation remain inputs.
-// No meaning beyond source storage is assigned to messageGate or item refresh.
+// messageGate stores 0 for open, 1 for the no-zone/final-exit path, and 2 for
+// timer-expiry loss dispatch; the status/render lifecycle remains separate.
 template<class Ops>
 RescueExitResult processRescueExits(RescueExitState& state,
  const std::vector<RescueExitEntity>& entities,const TrainingZones& zones,Ops&& ops){

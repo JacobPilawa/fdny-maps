@@ -15,7 +15,8 @@ inline float initializePlayerDeadlineInput(std::optional<float> levelField10,int
 
 // 004541A0, reached by escape via thunk 00454300 after status call 2.
 // Storage target is (Player+0x340C)+0x14 = Player+0x3420.
-// Player+0x343C is initialized from the catalog field by 0044D550.
+// Its Player+0x343C argument is the live remaining-seconds countdown: 0044D550
+// initializes it from the catalog, and 00452570 subtracts frame delta.
 struct PlayerRescueDeadlineResult {
  uint32_t threshold=0,base=0,bound=0;
  bool beforeThreshold=false;

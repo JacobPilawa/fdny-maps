@@ -190,30 +190,31 @@ the sibling widget's `1000/5000` defaults.
 
 ## Open state and limits
 
-The direct decoded-operand scan found no store of value `2` to `Player+0x3438`.
-Within the scan, the only direct stores were initialization to zero and the
-two final-exit stores to one. The value `2` occurs as a reader in the status
-updater and an associated widget-visibility helper. This is not proof that a
-loss state is unreachable: an indirect producer, unrecognized code, external
-callback, or other mechanism may set it.
+The first decoded-operand scan found no direct root-relative store of value `2`
+to `Player+0x3438`. A fresh subobject-offset trace of the Player movement
+update at `00452570` found the producer: `ESI` is `Player+0x140`, and when
+`ESI+0x32FC` (`Player+0x343C`) becomes negative, the body clamps the timer to
+zero and stores `EDI=2` through `ESI+0x32F8` (`Player+0x3438`). The status
+callback already traced above routes that state to the lose widget and
+audio. The result-child timing and full frontend handoff remain open.
 
 The same field is the Player message gate used by the shared rescue port to
 reject victim-pickup messages. Retail's final-exit availability routine can
-also set it when no exit zone exists, while ordinary completion with an
+also set value `1` when no exit zone exists, while ordinary completion with an
 authored exit only enables that exit until a later `finalexit` command passes
 its remaining-victim check. The status callback's value-1 win branch therefore
-does not prove that every gate-setting path is a completed-mission win. Keep
-the gate storage and pickup behavior distinct from any host result transition
-until the branch lifecycle and status visibility are established.
+does not prove that every gate-setting path is a completed-mission win. Value
+`2` is now tied to the timer-expiry route; the host keeps this numeric state in
+the same gate field.
 
-`Player+0x343C` is the deadline input traced in
-[`catalog_time_rescue_deadline_port_2026-10-19.md`](../runtime/catalog_time_rescue_deadline_port_2026-10-19.md).
-This status trace finds no direct connection from that field or its helper to
-the `+0x3438 == 2` branch. A mission countdown, deadline expiry result, score
-screen, complete outro, and complete presentation remain open. The frontend
-manager's result consumer is now traced to child 5 for win and the level
-selector (child 2) for loss; the host does not yet implement that result
-feedback or return flow. PlayerHose has a separate result field and no
+`Player+0x343C` is initialized from the selected level time and decremented by
+the Player update in seconds; it is also read as the input to escape/RescueBot
+deadline scheduling. Its negative-value path writes `+0x3438 = 2`. The shared
+host now tracks that countdown, writes state 2, and stops its Player movement
+step, but it does not yet implement result audio/widget playback or frontend
+return. The frontend manager's static result consumer is traced to child 5 for
+state 1 and the level selector (child 2) for state 2; exact child timing and
+complete outro remain open. PlayerHose has a separate result field and no
 confirmed consumer, so do not apply this rescue result path to it.
 
 These findings are static decompilation and resource-definition checks. No

@@ -75,12 +75,17 @@ be nonzero, after which `+0x100` increases by 400. It then adds one to `Jumps`,
 requests sound, and stores the current clock. The port's collision latch is not
 yet proven equivalent to this retail byte, so no jump counter is wired.
 
-`Air Time` at `004528B6` has no function owner in the saved project. The
-instruction window tests byte `[ESI-0x14]`; only its zero branch loads
-`00502B04`, multiplies by the same `1000.0f` constant, converts through
-`004B9400`, and adds to the named statistic. The owning object/field identity,
-transition gate, and update cadence remain unresolved. It is not mapped to the
-host's airborne intervals.
+`Air Time` at `004528B6` is in the Player update body beginning at `00452570`.
+With `ESI = Player+0x140`, the same body subtracts the seconds frame delta from
+`ESI+0x32FC` (`Player+0x343C`) before the Air Time block. The value at
+`004DC50C` is binary32 zero. A negative remaining time is clamped to zero and
+the body writes `2` to `ESI+0x32F8` (`Player+0x3438`) before returning. For a
+nonnegative timer, the Air Time branch tests `[ESI-0x14]` (`Player+0x12C`);
+only zero reaches `trunc(frameDelta * 1000.0f)` and the named-stat add. The
+Player `+0x12C` byte is the transient upward-contact latch set by collision
+normal Y>=0.5 and later copied/cleared by the integrator. Host callback order
+and cadence remain provisional; see
+[`player_mission_countdown_airtime_port_2026-10-20.md`](player_mission_countdown_airtime_port_2026-10-20.md).
 
 The bounded movement and action-stat audits found no source-backed
 `Objects Thrown` producer. Its eligible object, trigger, and value remain
@@ -88,13 +93,17 @@ unknown.
 
 ## Shared host change
 
-The shared rescue loop now adds the source-truncated per-frame delta to
-`Completion Time`. While the selected HoseSpray item is active under the
-mode-1/mode-3 update gate, it adds the same delta to `Gallons Sprayed` without
-requiring a fire hit. Both values are in-memory only. The host uses its paced
-frame as the update callback; equivalent retail callback cadence has not been
-verified. No profile serialization, Records display, test, or retail parity
-claim is included in this change.
+The shared rescue loop adds the source-truncated per-frame delta to
+`Completion Time`. It decrements a live seconds countdown and, while that value
+is nonnegative and the collision latch is clear, adds the same delta to
+`Air Time`. A negative countdown is clamped to zero, writes result/message
+state 2, and prevents further Player movement updates. Escape and RescueBot
+deadline helpers read the current remaining time. While the selected HoseSpray
+item is active under the mode-1/mode-3 update gate, it adds `Gallons Sprayed`
+without requiring a fire hit. These values remain in-memory only. The host
+uses its paced frame as the update callback; equivalent retail callback
+cadence has not been verified. No profile serialization, Records display,
+gameplay test, or retail parity claim is included in this change.
 
 ## Build checkpoint
 

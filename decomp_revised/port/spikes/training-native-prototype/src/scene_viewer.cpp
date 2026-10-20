@@ -3534,6 +3534,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         std::unique_ptr<VictimTransactions> rescueTransactions;
         std::map<std::string, SourceStatisticRecord> rescueStatistics{
             {"Completion Time", {0, 0}},
+            {"Air Time", {0, 0}},
             {"Bonus Points", {0, 0}},
             {"Rescues", {0, 0}},
             {"Gallons Sprayed", {0, 0}},
@@ -4107,6 +4108,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                           << "retail callback cadence remains unverified.\n";
         };
         const int rescueGlobalMode = 0;
+        // Player+0x343C begins from the selected .lev time, scaled by mode.
+        // 00452570 then subtracts the frame delta in seconds on every Player
+        // update; this is the remaining timer value used by later callbacks.
+        float playerRescueTimeRemaining =
+            initializePlayerDeadlineInput(levelField10, rescueGlobalMode);
         if (playerEntityId >= 0 && !dedicatedPlayerHose) {
             for (int i = 0; i < count(entities); ++i) {
                 J entity = at(entities, i);
@@ -4161,10 +4167,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             rescueServices.readClock = [] { return uint32_t(SDL_GetTicks()); };
             rescueServices.readPlayerField18C = [&] { return carriedVictim.carriedVictimEntity ? 4 : 3; };
             rescueServices.readGlobalMode = [rescueGlobalMode] { return rescueGlobalMode; };
-            // Retail initializes Player+0x343C from active level +0x10,
-            // applies the mode multiplier, and uses 600.0f when no level is active.
-            rescueServices.readPlayerField343C = [levelField10, rescueGlobalMode] {
-                return initializePlayerDeadlineInput(levelField10, rescueGlobalMode);
+            // Escape and RescueBot deadline helpers read the live remaining
+            // value after Player+0x343C's per-frame countdown update.
+            rescueServices.readPlayerField343C = [&playerRescueTimeRemaining] {
+                return playerRescueTimeRemaining;
             };
             rescueServices.setActorFlags = [&](int entity, uint32_t flags) {
                 auto actor = rescueState.actors.find(entity);
@@ -4325,7 +4331,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (!rescueBotState.schedulesInitialized) {
                 initializeRescueBotSchedules(
                     rescueBotState, now,
-                    initializePlayerDeadlineInput(levelField10, rescueGlobalMode),
+                    playerRescueTimeRemaining,
                     rescueGlobalMode, gameplayRandom);
                 return;
             }
@@ -4415,7 +4421,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 // 00455580 schedules another attempt after every due attempt,
                 // including a maximum-count or no-candidate result.
                 setPlayerRescueDeadline(rescueBotState.nextAttemptDeadline,
-                    initializePlayerDeadlineInput(levelField10, rescueGlobalMode),
+                    playerRescueTimeRemaining,
                     rescueGlobalMode, now, gameplayRandom);
             }
 
@@ -5694,6 +5700,19 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 // 0045277A adds the scaled frame delta to Completion Time.
                 addSourceStatistic(&rescueStatistics["Completion Time"],
                                    statFrameDelta);
+                // 00452737 subtracts the shared seconds delta from Player+0x343C.
+                playerRescueTimeRemaining -= dt;
+                if (playerRescueTimeRemaining < 0.f) {
+                    // 0045289A clamps the remaining value; 004528A4 stores EDI=2
+                    // into Player+0x3438 and the movement update returns.
+                    playerRescueTimeRemaining = 0.f;
+                    rescueState.exits.messageGate = 2;
+                } else if (!player.collisionLatch) {
+                    // 004528AF tests the transient Player+0x12C latch. A clear
+                    // byte adds the same truncated milliseconds as Air Time.
+                    addSourceStatistic(&rescueStatistics["Air Time"],
+                                       statFrameDelta);
+                }
             }
             extinguisherSprayRenderer.prune(now);
             if (scriptRuntime) scriptRuntime->timeMs = now;
@@ -5810,7 +5829,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (playerIncapacitated) forward = side = 0.f;
             const bool jumpDown = !playerIncapacitated && !usingConsole && (keys[SDL_SCANCODE_SPACE] != 0 ||
                 (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_RIGHT)));
-            if (!dedicatedPlayerHose && !playerIncapacitated && !passoutRecoveredThisFrame) {
+            if (!dedicatedPlayerHose && !playerIncapacitated && !passoutRecoveredThisFrame &&
+                rescueState.exits.messageGate != 2) {
+                // The source movement update returns after its timeout write.
                 player.step(dt, forward, side, yaw, jumpDown,
                     jumpEdge && !usingConsole, crouchEdge, collision, pitch);
             }

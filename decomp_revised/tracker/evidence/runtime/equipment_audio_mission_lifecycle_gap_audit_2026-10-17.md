@@ -78,12 +78,15 @@ Retail `thegame.lev` includes per-level `time:` values. The parser stores the
 parsed float times 60 at record `+0x10`; Player initializer `0044D550` copies
 that value into Player `+0x343C`, applies a mode multiplier, and three callers
 use it through deadline helper `004541A0` (Player escape plus two RescueBot
-routines). This is not a confirmed mission countdown, and no objective HUD,
-expiry handler, or result flow is established. The shared port now passes the
-selected catalog value through linked rescue stages. Shared victim release and
-authored final-exit/stage commands are integrated, but controlled
-`--rescue-check` transactions do not prove natural mission completion. The
-no-final-exit call at `0044C360` remains unverified as an outro. See
+routines). **Follow-up correction (2026-10-20):** a hash-pinned read-only pass
+of the Player movement update at `00452570` confirms this field is also a live
+seconds countdown. The body subtracts frame delta, clamps after it becomes
+negative, and writes state 2 to Player `+0x3438`; the status callback routes
+that state to loss feedback. The shared port now models the countdown, Air
+Time gate, and timeout state, while result-widget timing and frontend return
+remain open. Controlled `--rescue-check` transactions still do not prove
+natural mission completion. The no-final-exit call at `0044C360` remains
+unverified as an outro. See
 [`catalog_time_rescue_deadline_port_2026-10-19.md`](catalog_time_rescue_deadline_port_2026-10-19.md).
 
 Evidence: [`MBASE_RESCUE_SLICE.md`](../../../docs/MBASE_RESCUE_SLICE.md),
@@ -98,5 +101,5 @@ and [`level_to_evs_static_trace.md`](../scenario-loading/level_to_evs_static_tra
 2. Trace menu-track startup and exact audio output behavior when menu work
    resumes; the level track and oxygen stream gain are now wired.
 3. Trace downstream consumers of Player `+0x3420` and RescueBot scheduling,
-   then trace objective/result events and level-end behavior before adding a
-   countdown HUD or success/failure presentation.
+   then resolve the countdown HUD, result-widget timing, and full level-end
+   behavior before adding result presentation or frontend return behavior.

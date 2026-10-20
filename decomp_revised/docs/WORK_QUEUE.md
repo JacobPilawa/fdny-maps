@@ -63,34 +63,40 @@ record. `004332E0` reads that same keyed collection, so the 13 names feed the
 Records rows. Concrete profile values and the on-disk scalar/container encoding
 remain unverified. A fresh producer pass added `Completion Time` by the
 source-scaled frame delta and `Gallons Sprayed` only while the selected
-slot-4 HoseSpray action is active; the inferred numeric unit and host callback
-cadence remain provisional. `Fires Doused` still increments only on the
+slot-4 HoseSpray action is active; it also carries the Player seconds
+countdown, its timeout write to result state 2, and the Air Time counter's
+nonnegative-time/clear-latch gate. Host callback cadence and the inferred
+numeric unit implied by “Gallons” remain provisional. `Fires Doused` still increments only on the
 terminal HoseSpray `finalize=1` FireRescue transition; the extinguisher route
 uses `finalize=0`, and PlayerHose's separate WindowFire timer does not touch
 this rescue statistic. All three values remain in-memory only. The next
-producer gaps are `Air Time`, `Jumps`, `Total Steps`, and `Objects Thrown`:
-their current code gates are partly mapped, but field identity, sound-scheduler
-coupling, or producer identity remains too uncertain to add host counters. See
+producer gaps are `Jumps`, `Total Steps`, and `Objects Thrown`: the jump
+producer's state-byte meaning, step sound-scheduler coupling, and thrown-object
+producer identity remain too uncertain to add host counters. See
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_producers_elapsed_hose_2026-10-20.md).
-The rescue-all macOS bundle rebuilt with matching standalone/package
-SHA-256 `b98f26372c8dc108834b8b748888abe75816d06e96049c6c9ac44efd09580a90`;
-the plist validated and eight rescue choices were emitted. This confirms
+After the countdown and Air Time changes, the rescue-all macOS bundle rebuilt
+with matching standalone/package SHA-256
+`c53458c9ce9cca0219475ea270e837ce217d45141e604e5f1e08bc50f6fadd5e`; the
+plist validated and the build bundled eight rescue choices. This confirms
 compilation/package only, with no gameplay test, interactive run, or retail
 comparison. The prior Fires Doused builder export is
 [`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c).
 The profile/schema trace is
 [`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md).
 
-The gate-to-result transition remains pending retail runtime evidence. The
+The result-widget timing and complete frontend return remain pending retail
+runtime evidence. The
 result child is at `PlayerStatus+0x824`, and its active check at
 `PlayerStatus+0x960` aliases child `+0x13C`; a full raw-instruction scan found
 no direct parent-relative accesses to timing fields `+0x954/+0x958`, and the
 reviewed constructor path does not initialize child `+0x130/+0x134`. Allocator
-clearing or computed aliases remain possible. Keep the state-2 producer and
-deadline-to-loss transition unmodeled. The same Player `+0x3438` field blocks
-victim-pickup messages, and the no-exit-zone path can set it; a normal authored
-exit is only enabled until the later `finalexit` command. Do not equate every
-gate write or all-victims completion with a frontend win. See
+clearing or computed aliases remain possible. The same Player `+0x3438` field
+blocks victim-pickup messages, and the no-exit-zone path can set it; a normal
+authored exit is only enabled until the later `finalexit` command. A fresh scan
+of the Player movement update traces timeout below zero to `+0x3438 = 2`, which
+the status callback routes to loss feedback; this does not establish the full
+frontend return or outro. Do not equate every gate write or all-victims
+completion with a frontend win. See
 [`mission_outcome_status_dispatch_2026-10-19.md`](../tracker/evidence/scenario-loading/mission_outcome_status_dispatch_2026-10-19.md).
 
 ## Dedicated PlayerHose host slice (2026-10-20)
@@ -600,9 +606,12 @@ selected decompilation and constants are in
 [`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_handoff_fresh_2026-10-20.c).
 
 Decoded-instruction scanning found direct initialization of `+0x3438` to zero
-and two final-exit writers setting it to one; no direct state-2 write appeared
-in the bounded scan. The direct state-2 writer and meaning, audio replay cadence, relationship to
-`time:`/`+0x343C`, and complete score/outro/return path remain unresolved. The
+and two final-exit writers setting it to one. A fresh pass through the Player
+movement update at `00452570` found the state-2 write: when the `+0x343C`
+countdown becomes negative, the subobject clamps it to zero and writes `2` to
+Player `+0x3438`. The status updater routes state 2 to the loss widget and
+audio resources. Audio replay cadence, result-widget timing, and complete
+score/outro/return path remain unresolved. The
 timed widget selector mapping is now traced through the generic renderer into
 the authored rescue resource table: `0x47`/71 draws `paperwin-r.bmp`, and
 `0x48`/72 draws `paperlose-r.bmp`, both with `paperwin_a.bmp`; the hose set has
@@ -614,9 +623,11 @@ fields; alias/computed writes remain possible. The `1000/5000` values in
 `0048D330` belong to sibling widget constructors `00458B20` and `004653F0`,
 not the Player result child created through `004576B0`/`0048D390`. This is
 static source and resource evidence only; no natural mission
-completion or retail parity check was made. The current host still uses
-`RescueExitState.messageGate` for the message gate and does not implement this
-result feedback. Do not wire a guessed timeout or loss transition. The
+completion or retail parity check was made. The shared host now tracks the
+countdown, stores state 2 in `RescueExitState.messageGate` on expiry, and stops
+Player movement at that state. It does not render the result widget or enter
+the frontend return flow; those portions remain open pending timing and route
+evidence. The
 function-review ledger reached 351 after the sixteen status/chatter/widget
 reviews, 355 after the four PlayerRescue exposure-padding reviews, 365 after
 ten fresh HoseSpray/PlayerHose contact-path reviews, and 410 after the recent
@@ -624,7 +635,7 @@ HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, textures, timed-child active alias, Records navigation, and the win-only keyed stat merge into the `Score` profile record are traced. State 1 selects child 5; the 13 registered stat keys are the page row source. Concrete profile values/save encoding, result timing, state-2 producer, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow remain open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, `player_mission_countdown_airtime_port_2026-10-20.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, timeout-to-state-2, textures, timed-child active alias, Records navigation, and the win-only keyed stat merge into the `Score` profile record are traced. State 1 selects child 5; the 13 registered stat keys are the page row source. Concrete profile values/save encoding, result timing, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow remain open |
 
 The result path uses direct calls: `00458400` invokes `0048D180` and
 `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs that child with
@@ -654,13 +665,10 @@ and [`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/
 
 The shared port has a runtime rescue-stat map but no profile-backed Records
 page model or menu route. The existing work-queue priority pauses menu UI; next
-audit the 13 keyed gameplay-stat producers and implement the missing values in
-the shared host. Keep result-state changes unmodeled until runtime evidence
-resolves the gate lifecycle and child timing.
-Do not port guessed placement, timing, or a loss-state producer. The bounded
-scan still found no direct writer of Player `+0x3438 = 2`; if retail runtime
-access becomes available, set a write watchpoint during expiry, passout, and
-exit paths.
+audit the remaining gameplay-stat producers and implement the missing values
+in the shared host. Timeout state 2 is statically traced and now ported; keep
+the result widget timing, frontend handoff and complete return route open until
+their source behavior is established.
 
 ## RescueBot lifecycle implemented from fresh retail trace (2026-10-20)
 
@@ -896,11 +904,14 @@ and the earlier suppression exports in the same evidence directory.
 Fresh read-only Ghidra 12.0.4 tracing reconfirmed the catalog path:
 `thegame.lev` `time:` is multiplied by 60 into level record `+0x10`, and
 Player initializer `0044D550` applies the current mode multiplier into Player
-`+0x343C`. Caller tracing found three uses of deadline helper `004541A0`:
-Player escape (`00451160`), a RescueBot prompt/deadline routine (`00454BA0`),
-and a RescueBot update (`00455580`). The field is therefore a deadline input,
-not a confirmed mission countdown. Mission timer HUD, expiry, results and
-outro behavior remain untraced.
+`+0x343C`. The Player movement update at `00452570` decrements this field by
+frame delta in seconds and, when it becomes negative, clamps it to zero and
+writes state 2 to Player `+0x3438`. Caller tracing also found three uses of
+deadline helper `004541A0`: Player escape (`00451160`), a RescueBot
+prompt/deadline routine (`00454BA0`), and a RescueBot update (`00455580`). The
+shared port tracks the countdown and Air Time gate; host callback cadence,
+result-widget timing, and frontend return behavior remain open. See
+[`player_mission_countdown_airtime_port_2026-10-20.md`](../tracker/evidence/scenario-loading/player_mission_countdown_airtime_port_2026-10-20.md).
 
 The rescue chooser now carries the selected record `+0x10` through the full
 linked stage chain, replacing the fixed `600.0f` input in the shared rescue
@@ -929,13 +940,13 @@ body-bearing functions and 287 external entries.
 | `retail_exit_trace` | `00440CE0`, `00450A70`, `0042A260`, `0042AEA0`, `0042AB00`, linked-stage package evidence | Complete, read-only; static gates and stage loading are verified; authored-key/context identity and live transition timing remain open |
 | `mission_gap_audit` | Mission completion and outcome paths in the queue/evidence and pinned EXE | Complete, read-only; selected terminal result flow as the next shared gap and cautioned against inventing a deadline/result path |
 | `rescuebot_context_audit` | Player `+0x32CC` recurring RescueBot and `+0x340C` one-shot dispatch | Complete, read-only; confirms separate initialization and one-shot path bypasses recurring gate; context aliasing and live `runrescuebot` behavior remain open |
-| `mission_result_state_trace` | Player `+0x3438` field uses and status/chatter callback | Complete, read-only; state-1 final-exit writers and visible win/loss dispatch mapped; no direct state-2 writer in the bounded instruction scan |
-| `loss_state_producer` | Player `+0x3438`, `+0x343C`, and direct writer references | Complete, read-only; no direct state-2 writer or link from the deadline helper in the bounded scan; recommends a runtime write watchpoint if runtime tracing becomes available |
+| `mission_result_state_trace` | Player `+0x3438` field uses and status/chatter callback | Complete, read-only; state-1 final-exit writers and visible win/loss dispatch mapped; its root-offset scan missed the Player movement subobject writer later found by `deadline_airtime_audit` |
+| `loss_state_producer` | Player `+0x3438`, `+0x343C`, and direct writer references | Initial bounded scan did not include the `00452570` subobject alias; superseded by the current-hash `deadline_airtime_audit`, which traced countdown expiry to `+0x3438=2` |
 | `result_widget_assets` | Widget selectors and `rescue.rrf` / `hose.rrf` resource tables | Complete, read-only; identified win/loss textures under IDs 71/72 and inspected authored headlines; parent renderer trace confirms the selector-to-resource path |
 | `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
 | `result_widget_init_trace` | `mission_outcome_widget_fresh_2026-10-19.c`, `mission_outcome_widget_callers_fresh_2026-10-20.c`, fresh manager/rotation export | Complete, read-only; confirmed white/hidden initialization, clock/active fields, post-duration viewport-centered rotation, and strict completion timing gate; duration/tail values, desktop placement and alpha remain open |
-| `result_state_writer_audit` | Player `+0x3438` direct operand scan, deadline callers, mission outcome evidence | Complete, read-only; found no state-2 writer or deadline-to-loss path in the bounded scan; computed aliases and external/runtime producers remain unexcluded |
-| `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
+| `result_state_writer_audit` | Player `+0x3438` direct operand scan, deadline callers, mission outcome evidence | Its root-relative scan did not resolve the Player movement subobject alias; superseded by the current-hash countdown trace at `00452570` |
+| `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Initial retained-artifact scan missed the movement-subobject store; the current-hash trace now identifies timeout as a state-2 writer |
 | `runrescuebot_trace` | `0047A1F0`, `00475020`, `00455230`, initializer and recurring RescueBot context | Complete, read-only; one-shot uses Player `+0x340C`, recurring callback uses `+0x32CC`; aliasing and one-shot completion servicing unresolved |
 | `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; shared component collision writer and authored trigger are mapped; shared host ports selection/action state, stream collision, previous-frame contact, terminal dousing, effect cooldown/spawn request, and two-key particle track, with attachment frame, particle material/flags, size mapping, and retail cadence open |
 | `touchhose_authored` | Preserved BSP/EVS strings, PropModel contact, named ScriptActor dispatch | Complete, read-only; verified 16 commands in 12 BSPs with full hashes; static authored route reaches PlayerRescue `touchhose`, while runtime cadence remains open |
@@ -944,7 +955,8 @@ body-bearing functions and 287 external entries.
 | `mission_result_return_trace` | Static result widget consumer and stage return handoff | Frontend consumer, Records page decompilation, handoff export, result and exit evidence | Complete, read-only; confirmed state-1 Records page, button actions 1/2 navigation, action 0 history-back, and `PlayerStatus+0x960 == child(+0x13C)` alias; exact record fields, result timing, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
-| `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers | Current-hash producer xrefs, `0044EA90`, `0044E990`, and `00452749..004528F5` instruction windows; `mission_stat_producers_elapsed_hose_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms distinct-sound selection cadence and Jumps' 500 ms state gate. Follow-up resolved Completion Time's `delta × 1000` contribution and implemented it. Air Time's tested byte identity and all callback cadence remain open; no unsupported jump/air counter added. |
+| `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers | Current-hash producer xrefs, `0044EA90`, `0044E990`, and `00452749..004528F5` instruction windows; `mission_stat_producers_elapsed_hose_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms distinct-sound selection cadence and Jumps' 500 ms state gate. Follow-up resolved Completion Time's `delta × 1000` contribution and implemented it; a separate Player subobject trace resolved Air Time's countdown and byte gate, now integrated with provisional host cadence. Jumps and Total Steps remain unported. |
+| `deadline_airtime_audit` (Luna) | Current-hash Player movement subobject, countdown fields, timeout state, and Air Time gate | `player_mission_countdown_airtime_port_2026-10-20.md`; Ghidra read-only writer scan and direct x86 instruction check | Complete, read-only; confirmed `+0x343C` countdown decrement in seconds, expiry clamp and `+0x3438=2` write, Completion Time/Air Time contributions, and the `+0x12C` zero gate. Full mission-result/outro semantics remain open. No edits. |
 | `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340` decompilation and `0044F713` instruction window; `mission_stat_producers_elapsed_hose_2026-10-20.md` | Complete, read-only; follow-up resolved Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution, now integrated into the shared hose-action path. No Objects Thrown producer was found in the bounded scan; object eligibility and trigger remain unknown. |
 | `core_gap_inventory` (Luna) | Current core-gap review including Player passout mode-2 HeroDown continuation | Existing `player_herodown_tail.h`, passout port note, work queue | Complete, read-only; found the source-shaped mode-2 continuation already exists, but the shared host defaults mode to 0 and has no evidenced mode-2 scenario setup. No synthetic scenario added. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
@@ -1396,7 +1408,7 @@ the report is observed.
 | `rescue_script_surface_followup` | Find broad missing authored Player/trigger behavior across campaign rescues | `00451870`, `00451560`, `00458400`, copied rescue actor inventory, shared host | Complete; all seven campaign rescues author oxygen toggles; shared oxygen state/commands, smoothed gauge/needle draw, resource-702 visor transition, child sounds, and category-volume selector effects are integrated; catalog MP3 music and oxygen stream gain are now wired; the manager flag, menu playback, audible parity, retail blend/visual parity, warning, cadence, and fog pixel parity remain open |
 | `victim_hazard_reactions_followup` | Recheck Player passout and carried-victim drop timing/integration | `00450FB0`, `00451080`, `0044FF10`, `0044CD10`, `victim_transactions.h`, `scene_viewer.cpp` | Complete; fire uses passout argument 1 and oxygen argument 0; the shared host wires the separate `+0x3400` safe snapshot, `+0x534` reset checkpoint, carried-victim drop, floor placement, status tail, and strict state-6 recovery delay. Eight controlled map checks cover drop/reset/re-pickup; natural hazard entry, retail scheduler cadence, mode-2 HeroDown, and live camera parity remain open. See `player_passout_recovery_port_2026-10-14.md`. |
 | `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, level-loader and stream helpers, `scene_audio.h` | Complete; four MP3 assets and catalog choices are hash-pinned; selector-2 level start/loop and linked-stage `+0x0C` inheritance are traced and ported, with oxygen stream gain; menu-track startup, FMOD streaming behavior, and audible parity remain open |
-| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h`, and `catalog_time_rescue_deadline_port_2026-10-19.md` | Complete; `time:` reaches Player `+0x343C` and feeds `004541A0` from escape and two RescueBot callers; port carries the selected field through linked stages. It is not a confirmed mission countdown. Result/outro and natural completion remain unresolved. The port replays early shared-EVS loadout tells after four World updates; retail callback cadence and final selected-tool parity remain open |
+| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h`, and `catalog_time_rescue_deadline_port_2026-10-19.md` | Complete; later evidence confirms `+0x343C` is both the live seconds countdown and input to `004541A0`; timeout writes state 2 and the shared host now tracks it. Result/outro and natural completion remain unresolved. The port replays early shared-EVS loadout tells after four World updates; retail callback cadence and final selected-tool parity remain open |
 | `equipment_gap_audit` | Check held-tool rendering/action/audio against current evidence | Read-only; `extinguisher_scene_viewer_runtime.md`, equipment source headers, retail hash-pinned traces | Complete; eligible particle requests draw provisional smoke; packaged SDL rejection of malformed source BMP is fixed by a local 24-bit conversion; natural hit/suppression remain unverified; Axe matrix remains open |
 | `axe_animation_trace` | Recheck reported Axe swing direction against the selected ACT and retail view transform | Read-only pinned retail/Ghidra trace; both Axe ACTs, `ItemViewPose`, `scene_viewer.cpp` | Complete; ordinary first equip uses model 1 `axe.act`, model 6 is duplicate-gated, and both have positive early local-Z motion; corrected asset mapping is integrated but camera-space direction remains open pending retail ActorInfo matrix values |
 | `extinguisher_failure_trace` | Trace why the shared extinguisher appears inert and find retail effect lifecycle | `00461F80`/pool trace, contact helpers, `scene_viewer.cpp` | Ongoing; no deterministic input/queue/suppression drop found; retail doubles influence before the quadratic response, so near-2 center-contact influence has little effect; retail RGB suppression tint is now ported; parent-frame/cadence and successful live contacts remain unresolved |

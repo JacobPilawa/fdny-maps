@@ -10,10 +10,14 @@ fed the rescue transaction a fixed `600.0f`. It now uses the selected retail
 value on the rescue-all launch path and retains it across that mission's
 linked stages.
 
-This is a deadline input, not a confirmed mission countdown. Fresh caller
-references show `004541A0` is also called from two RescueBot-related routines.
-The meanings of the written deadline fields and any mission expiry, objective
-HUD, success/failure screen, or outro are still not established.
+This field has two confirmed roles: `004541A0` reads it as an input when
+setting Player/RescueBot deadlines, and the Player movement update at
+`00452570` decrements it by frame delta in seconds. When it becomes negative,
+that update clamps it to zero and writes state 2 to Player `+0x3438`. Fresh
+caller references show `004541A0` is also called from two RescueBot-related
+routines. The timeout-to-state-2 link is now established; the result widget's
+timing, full mission expiry behavior, frontend return, and outro remain open.
+See [`player_mission_countdown_airtime_port_2026-10-20.md`](../scenario-loading/player_mission_countdown_airtime_port_2026-10-20.md).
 
 ## Retail evidence
 

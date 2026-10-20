@@ -78,15 +78,20 @@ passes `finalize=0`, and PlayerHose's WindowFire timer path does not invoke
 shared FireRescue suppression, so neither increments that rescue statistic.
 The value is still in-memory only; profile serialization and the Records page
 remain unported. This static data-flow trace is not a visual or retail-parity
-result. Result timing, state-2 producer, message-gate lifecycle, and natural
-mission completion remain separate open issues.
+result. Result timing, status replay cadence, profile serialization, and
+natural mission completion remain separate open issues.
 
 A subsequent hash-pinned producer pass also integrated `Completion Time` using
 the retail `frameDelta × 1000` contribution and `Gallons Sprayed` using the same
-contribution only during the selected slot-4 HoseSpray action. The arithmetic
-and gating are source-backed; host callback cadence and the presentation unit
-implied by “Gallons” remain provisional. The remaining unported stat producers
-are `Air Time`, `Jumps`, `Total Steps`, and `Objects Thrown`; see
+contribution only during the selected slot-4 HoseSpray action. A focused
+follow-up traced the Player `+0x343C` remaining-seconds countdown, its timeout
+write of state 2 to Player `+0x3438`, and the Air Time gate: nonnegative
+remaining time with Player `+0x12C` clear. The shared host now carries the
+countdown, timeout gate, and in-memory Air Time contribution. Arithmetic and
+field gates are source-backed; host callback cadence, movement-latch timing,
+and the presentation unit implied by “Gallons” remain provisional. The
+remaining unported stat producers are `Jumps`, `Total Steps`, and
+`Objects Thrown`; see
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
 
 ## Shared port checkpoint
@@ -108,10 +113,9 @@ interactive run, or retail comparison was performed.
 
 ## Next evidence step
 
-Finish the four remaining stat-producer traces against the shared host,
-starting with Air Time's byte gate and Objects Thrown's producer. Keep Jumps
-behind its unverified state-field meaning, and reproduce the Total Steps sound
-selection cadence before counting it. Separately map the exact serialized
+Finish the three remaining stat-producer traces against the shared host:
+Objects Thrown's producer, Jumps' state-field meaning, and the Total Steps
+sound-selection cadence. Separately map the exact serialized
 scalar/container encoding before adding profile persistence. Keep the result
 transition gated on separate runtime evidence, and return to the Records UI
 after core gameplay coverage improves.
