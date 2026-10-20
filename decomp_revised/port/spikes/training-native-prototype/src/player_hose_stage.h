@@ -115,7 +115,6 @@ struct PlayerHoseStage {
     float streamPressure = 0.f;
     float streamClockSeconds = 0.f;
     std::vector<PlayerHoseStreamSample> streamHistory;
-    bool timeWarningSent = false;
     Result result = Result::Running;
     ChatterRequest pendingChatter = ChatterRequest::None;
     std::string transition;
@@ -418,7 +417,6 @@ struct PlayerHoseStage {
         // Retail multiplies the authored float by a mode-selected double,
         // then stores the result back to float before entering the timer state.
         countdown = static_cast<float>(double(next.spotTime) * modeSpotTimeMultiplier);
-        timeWarningSent = false;
         ++hotspotOrdinal;
         if (firstHotspot) pendingChatter = ChatterRequest::LevelStart;
         for (auto& target : next.targets) {
@@ -461,13 +459,11 @@ struct PlayerHoseStage {
     void update(float dt, bool waterHeld, bool targetInContactVolume) {
         if (result != Result::Running || activeHotspot < 0) return;
         const float elapsed = std::max(0.f, dt);
-        const float previousCountdown = countdown;
         countdown -= elapsed;
-        if (!timeWarningSent && std::floor(previousCountdown) == 6.f &&
-            std::floor(countdown) == 5.f) {
-            timeWarningSent = true;
-            transition = "Hotspot time warning";
-        }
+        // Retail 004653B0 attempts RC_HoseTimeWarn when the countdown crosses
+        // six to five. PlayerHose's +0x208 TRadioChatter manager is populated
+        // by 004895C0, whose key list omits RC_HoseTimeWarn; 004897C0 therefore
+        // finds no set and emits no sound. Do not synthesize a visible toast.
         // Retail state 4 checks timeout before updating input and WindowFire.
         if (countdown < 0.f) {
             result = Result::Lost;

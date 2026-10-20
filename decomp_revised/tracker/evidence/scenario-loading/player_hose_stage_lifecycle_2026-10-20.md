@@ -203,20 +203,23 @@ The state-4 updater `004674A0` decrements the hotspot countdown and calls
 `004653B0` with its current value. That caller passes the value and literal `5`
 to `00481F40` on PlayerHose component `+0xBC0`. The helper's `004B98B0` calls
 floor the current value and stored comparison marker at `+0x278`; the warning
-branch requires current floor `5` and stored floor `6`. A nonzero returned
-low byte makes `004653B0` request `RC_HoseTimeWarn` through `004897C0`. This
-supports a request when the countdown crosses from six to five units. The
-frame-delta trace establishes these countdown units are seconds. Which
-configured sound entry is selected and whether it is audible in a live stage
-remain unverified. A second PlayerStatus/widget
-caller passes a null value and the same literal to the shared helper, so that
-call site's timer semantics differ.
+branch requires current floor `5` and stored floor `6`, a six-to-five-second
+crossing. `004653B0` then attempts `RC_HoseTimeWarn` through `004897C0` with
+mode byte 1. On the constructor path, however, `00466D60` initializes the
+PlayerHose `+0x208` chatter manager by calling `004895C0`; that function
+registers exactly 13 keys and omits `RC_HoseTimeWarn`. `00488E30` scans for an
+exact key match and returns null when absent. `004897C0` enters either playback
+branch only for a non-null result. Thus this constructed manager does not
+request a warning sound at the boundary. A second PlayerStatus/widget caller
+passes a null value and the same literal to the shared timer helper, so its
+timer semantics differ.
 
 `Data/ResDefs/sound.rrf` maps `RC_HoseTimeWarn0` and `RC_HoseTimeWarn1` to
 `time4_b.wav` and `time5_b.wav`; its SHA-256 is
-`433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333`.
-These are configured resources and a source-level sound request, not proof of
-audible output or which entry is heard in a live hose stage. Fresh pseudocode
+`433596cb437d05512ef84cc67f5a380db57703fd03f0871d3c9eeb1657c07333`. These
+global definitions are not registered in the constructor-populated PlayerHose
+manager. No live level or audio check was made, and post-construction writes to
+this manager were not audited. Fresh pseudocode
 is in [`hose_pressure_path_fresh_2026-10-20.c`](../fire-spread/hose_pressure_path_fresh_2026-10-20.c)
 (SHA-256 `c61d19bfaa00d1f385a5384183c1d2f65d85351acb71f63445e2963a0354e980`)
 and [`hose_time_warning_helper_fresh_2026-10-20.c`](../fire-spread/hose_time_warning_helper_fresh_2026-10-20.c)
@@ -280,9 +283,9 @@ which actors are active together.
   and the contact-radius gate is ported. Trace the pitch clamp's interaction
   with path-angle progression and `SprayTime` zero-value behavior before
   implementing those semantics.
-- Trace which `RC_HoseTimeWarn` sound entry is selected and verify audible
-  playback; the source crossing is six-to-five seconds after joining the
-  countdown to the traced seconds-based frame delta.
+- Audit for post-construction additions to the PlayerHose `+0x208` chatter
+  manager; the constructor's exact key list and null-lookup dispatch path omit
+  `RC_HoseTimeWarn`, so the host no longer synthesizes a visible toast.
 - Trace the separate stage transition, result HUD, and return flow. Treat the
   configured chatter filenames as resolved but audible playback as unverified;
   the generic rescue `PlayerStatus` result widget is not a PlayerHose consumer.

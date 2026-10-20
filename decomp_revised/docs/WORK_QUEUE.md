@@ -32,6 +32,22 @@ SHA-256
 retail rescue scene manifests. The existing json-c macOS 27.0 versus 13.3
 deployment-target warning remains; no runtime or audible check was run.
 
+## PlayerHose time-warning lookup gap (2026-10-20)
+
+Retail `004653B0` detects the six-to-five-second countdown boundary and calls
+`004897C0` with `RC_HoseTimeWarn`. The PlayerHose constructor initializes its
+`+0x208` chatter manager through `004895C0`, whose 13 exact registrations omit
+that key. `00488E30` returns null for a missing key, and `004897C0` only enters
+playback when lookup succeeds. Thus the configured `RC_HoseTimeWarn0/1` sound
+resources are not requested by this constructed PlayerHose manager. The shared
+host's synthetic visible warning toast has been removed. This is a static
+call-chain conclusion; no live level or audio check was performed. The rescue
+app rebuilt with matching standalone/package executable SHA-256
+`710299cb6b0daf0b00fe307402c7b8d725110e0c4669eb5cc911960d7fbc1153`, and its
+`Info.plist` validation passed. The json-c 27.0 versus 13.3 link warning
+remains. Evidence:
+[`playerhose_time_warning_lookup_gap_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_time_warning_lookup_gap_2026-10-20.md).
+
 ## All mission-stat producers connected in the shared runtime map (2026-10-20)
 
 The 13 retail-registered mission-stat keys now all have in-memory producer
@@ -410,6 +426,10 @@ in [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-lo
 | `core_gap_triage` (Luna) | Shared campaign gameplay gaps; current queue, Boat A EVS/MiscEmitter evidence | Complete, read-only; recommended the authored Boat A C_Type=5 exploder state route. Shared host command-state follow-up implemented above; descriptor-based rendering remains open. |
 | `victim_ai_gap2` (Luna) | Victim AI command inventory, spawn selection, rescue handoff | Complete, read-only; `forcespawnspot <index>` is source-backed but absent from current map scripts, so it is a low-payoff capability; victim cadence remains unresolved. No edits. |
 | `hose_core_gap` (Luna) | Shared rescue HoseSpray and dedicated PlayerHose paths | Complete, read-only; the selected HoseSpray item follower is a high-value shared gameplay seam; exact view/camera matrix remains unresolved. No edits. |
+| `hose_hotspot_direction` (Luna) | `playerhose_hotspot_state_machine_fresh_2026-10-20.c`, `player_hose_curve_pipeline_fresh_2026-10-20.c`, Construction `const_h` export | Complete, read-only; initializer follows A links and progression follows D links, with no source-backed E-direction branch. `RCS_HosePath36` is excluded from the current forward chain; no host route change. |
+| `player_camera_frame_identity` (Luna) | `retail_camera_context_ancestry_followup_2026-10-20.md`, `player_locomotion_frame_axes_2026-10-20.md`, retained Type-5 trace | Complete, read-only; static camera-context ancestry and view/follower/context/item update order confirmed. Numeric Genesis camera/follower alignment remains open; no host correction made. |
+| `playerhose_time_warning_registration` (root) | `player_hose_stage.h`, `playerhose_time_warning_lookup_gap_2026-10-20.md`, four retained Ghidra exports | Complete, static; the constructor's manager omits `RC_HoseTimeWarn` and null lookup skips playback, so the synthetic host toast was removed. Post-construction writes and live audio remain unchecked. |
+| `recent_fdny_handoff_review` (root) | Recent FDNY task summaries, `list_artifacts`, active-agent inventory | Complete; no managed worktree or pull-request attachment needs cleanup. The older level-editor task is separate and inactive. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
 
@@ -1339,12 +1359,14 @@ and [`player_hose_angle_rotation_fresh_2026-10-20.c`](../tracker/evidence/scenar
 The time-warning caller `004653B0` passes the decremented hotspot countdown and
 literal `5` to shared helper `00481F40`; `004B98B0` floors both the current
 value and comparison marker, and the warning branch requires current floor 5
-and stored floor 6. A nonzero low-byte return requests `RC_HoseTimeWarn`, so
-the source supports a six-to-five countdown-unit crossing. The traced frame
-delta is in seconds, so `M_SpotTime` and its remaining countdown are seconds;
-the selected chatter entry and audible playback remain unverified.
-`sound.rrf` maps warning entries 0/1 to `time4_b.wav` and
-`time5_b.wav`. See the fresh
+and stored floor 6. The source call then attempts `RC_HoseTimeWarn`, but the
+PlayerHose constructor's `+0x208` chatter manager omits that key, and its exact
+lookup returns null before playback dispatch. The host therefore no longer
+shows a synthetic warning toast. The traced frame delta is in seconds, so the
+boundary is six-to-five seconds; the static path does not request either
+configured warning sound. Runtime writes to the manager and live audio were
+not checked. See the
+[`playerhose_time_warning_lookup_gap_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_time_warning_lookup_gap_2026-10-20.md) note and fresh
 [`hose_pressure_path_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_pressure_path_fresh_2026-10-20.c),
 [`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c),
 and [`hose_time_floor_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_floor_helper_fresh_2026-10-20.c).
