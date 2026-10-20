@@ -2,10 +2,13 @@
 
 Updated 2026-10-20 UTC. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
-The documented comparison-only GitHub mirror sync was attempted again on
-2026-10-19 at 22:17 UTC but could not resolve `github.com`; no changes were published. The
-existing GitHub handoff note records a prior automatic-review rejection for
-pushes, so this checkpoint was not pushed.
+The prior comparison-only GitHub mirror sync failed under the restricted network
+on 2026-10-19. After the user explicitly authorized occasional publishing, the
+documented compare-first workflow reviewed and pushed 60 source/documentation
+files under `decomp_revised/`; remote `main` was verified at
+`0ac27137af2b0aa39ec5214e5bccfdb0a80b422c`. Existing `decomp/` was preserved;
+retail binaries and local Ghidra/build data were not included. The source
+workspace remains intentionally uncommitted and has no configured Git remote.
 
 ## Player fire-exposure padding resolved (2026-10-20)
 
@@ -73,8 +76,8 @@ completion or retail parity check was made. The current host still uses
 `RescueExitState.messageGate` for the message gate and does not implement this
 result feedback. Do not wire a guessed timeout or loss transition. The
 function-review ledger reached 351 after the sixteen status/chatter/widget
-reviews and now contains 355 current EXE functions following the four
-PlayerRescue exposure-padding reviews.
+reviews, 355 after the four PlayerRescue exposure-padding reviews, and 365
+after ten fresh HoseSpray/PlayerHose contact-path reviews.
 
 | Scope | Files | Status |
 | --- | --- | --- |
@@ -130,6 +133,48 @@ and static checks are not mission or retail-parity checks.
 | Recurring RescueBot behavior | `rescue_bot.h`, `scene_viewer.cpp`, `victim_transactions.h`, RescueBot evidence, function-review CSVs | Implemented behind explicit enable; frame cadence and initial object identity provisional |
 | RescueBot enable defaults and one-shot command | RescueBot evidence and authored script inventory | One-shot entry rechecked at `00475020` → selector `00455230` on Player `+0x340C`; port dispatch and relation to recurring context `+0x32CC` remain open. Retail default enable byte is unresolved. |
 
+## Hose gameplay paths and RescueBot one-shot audit (2026-10-20)
+
+The separate `runrescuebot` command is confirmed as a debug one-shot:
+`0047A1F0` dispatches to `00475020`, which calls selector `00455230` with
+Player `+0x340C`. The recurring updater receives Player `+0x32CC`, reads its
+enable gate from `+0x32E4`, and applies attempt/deadline handling. The contexts'
+aliasing and one-shot drop-off servicing remain unproven; the inventory has no
+authored `runrescuebot` command. Keep the two paths separate until those links
+are established. The read-only trace is recorded in
+[`rescuebot_update_path_2026-10-15.md`](../tracker/evidence/scenario-loading/rescuebot_update_path_2026-10-15.md).
+
+The shared port is missing two retail hose gameplay paths. First, PlayerRescue
+command handler `00451870` routes `touchhose` to `0044CAB0`, which creates the
+`0xD54`-byte HoseSpray item with constructor `004634F0`, attaches it, stores it
+in inventory slot 4, and starts its hose mode. This is separate from `equip`,
+whose name selector accepts only slots 1–3. The binary contains this command,
+but no preserved authored map/script contains the token; its natural trigger
+remains open. Second, all four dedicated hose BSPs instantiate `RCS_PlayerHose`
+instead of `RCS_PlayerRescue`. Initializer `00466D60` builds its path/camera/
+douse components; update `00466780` reads hose mouse/steering input and uses
+`00465EF0` to calculate its aimed point. The examined updater uses
+`0046D1B0` for hose visuals but does not call FireRescue suppression directly.
+The wider `RCS_DouseHose` fire-hit route remains open. Do not treat this as a
+Training-only equipment feature or merge the two retail paths without evidence.
+
+The rescue-player HoseSpray update `004640F0` calls `00463EF0` while item
+action byte `+0xC58` is active. That helper reads contact `+0x614..+0x61C`,
+padding `+0x620`, and gate `+0x624`, evaluates shared ellipsoid falloff, and
+calls `00448970(finalize=1)` at influence `>= 0.01`. The extinguisher message
+route remains `finalize=0`; preserve that distinction. The fresh 16-instruction
+decoded-offset scan found no direct HoseSpray XYZ writer. `0046D1B0` receives
+the attachment subobject at HoseSpray `+0x608` and writes its subobject
+`+0x15C` (absolute `+0x764`) for animation/visuals, not contact `+0x614`.
+The attach and activation callbacks also do not write the contact point.
+Computed aliases, bulk copies, engine helper writes, and the broader hose-map
+douse path remain unresolved. Continue by tracing the `+0x614` producer and
+`RCS_DouseHose` fire-hit route, then implement both paths in the shared host
+with separate state. Evidence is in
+[`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
+[`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
+and the earlier suppression exports in the same evidence directory.
+
 ## Catalog time field wired into rescue deadline input (2026-10-19)
 
 Fresh read-only Ghidra 12.0.4 tracing reconfirmed the catalog path:
@@ -173,6 +218,8 @@ body-bearing functions and 287 external entries.
 | `result_widget_assets` | Widget selectors and `rescue.rrf` / `hose.rrf` resource tables | Complete, read-only; identified win/loss textures under IDs 71/72 and inspected authored headlines; parent renderer trace confirms the selector-to-resource path |
 | `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
 | `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
+| `runrescuebot_trace` | `0047A1F0`, `00475020`, `00455230`, initializer and recurring RescueBot context | Complete, read-only; one-shot uses Player `+0x340C`, recurring callback uses `+0x32CC`; aliasing and one-shot completion servicing unresolved |
+| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; follow-up maps rescue-player `touchhose` slot 4 and separate PlayerHose missions, but contact point producer and viewer integration remain open |
 
 ## View bob fully removed (2026-10-18)
 
