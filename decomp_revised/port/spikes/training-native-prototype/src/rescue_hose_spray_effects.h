@@ -11,6 +11,9 @@ struct RescueHoseSprayEffects {
     // The OpenGL preview treats that scalar as quad side length; this mapping
     // to geWorld_AddPolyOnce geometry remains provisional.
     static constexpr float initialParticleSizeScalar = 3.f;
+    static constexpr uint32_t firstParticleKeyDurationMs = 2000;
+    static constexpr uint32_t terminalParticleKeyDurationMs = 0;
+    static constexpr float terminalParticleSizeScalar = 5.f;
 
     static bool afterContact(Random& random, uint32_t gameClockMs,
                              float remainingFireStrength,

@@ -5963,9 +5963,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                 // proven, so reuse the preview particle path.
                                 // The initial HoseSpray template scalar is 3.0;
                                 // mapping it to a quad side length is provisional.
-                                extinguisherSprayRenderer.spawn(
-                                    effectSpawn, fire.runtime.origin, now,
-                                    RescueHoseSprayEffects::initialParticleSizeScalar);
+                                extinguisherSprayRenderer.spawnHoseSpray(
+                                    effectSpawn, fire.runtime.origin, now);
                             }
                         }
                     }

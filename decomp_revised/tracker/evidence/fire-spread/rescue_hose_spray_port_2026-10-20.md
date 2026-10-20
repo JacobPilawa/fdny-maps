@@ -73,11 +73,15 @@ starts with track key 0 selected and its size getter returns that key's scalar
 `3.0`; the later key contains `5.0`, but is not active at initialization. The
 host now passes the current `3.0` scalar through its per-particle preview-size
 field. Mapping that Genesis polygon scalar to the OpenGL quad's side length is
-provisional. The preview still reuses the extinguisher renderer's two-second
-linear motion, constant alpha 191, and resource-14 texture pair. Key advancement,
-effective lifetime, child render flags, allocation failure, final texture
-binding, source alpha, and draw cadence remain provisional or unresolved. The
-shared timer is elapsed milliseconds; callback cadence is not established.
+provisional. The preview reuses the extinguisher renderer's linear motion,
+constant alpha 191, and resource-14 texture pair. The HoseSpray path now
+advances its two-key track at the source-derived 2,000 ms key deadline: size
+changes from 3.0 to 5.0, then the zero-duration terminal key deactivates on the
+next host update through flag `0x8`. Extinguisher particle lifetime remains on
+its existing path. Child render flags, allocation failure, final texture
+binding, source alpha, and exact update/draw cadence remain provisional or
+unresolved. The interval before terminal deactivation follows the host update
+loop; retail pool scheduling is not established.
 See
 [`rescue_hose_spray_particle_trace_2026-10-20.md`](rescue_hose_spray_particle_trace_2026-10-20.md).
 
@@ -112,8 +116,9 @@ After terminal suppression it applies the residual-intensity and direct
 unsigned deadline gates, adds a shared-RNG `[10,250]` delay to the millisecond
 clock and truncates it toward zero, then draws the velocity in source axis
 order. It assumes the child pool allocation succeeds and hands the request to
-the extinguisher preview particle path; the child render flags, final resource
-binding, HoseSpray template keys/lifetime/alpha, and cadence are not ported.
+the shared preview particle path. HoseSpray's key 0 to key 1 transition and
+flag-`0x8` deactivation are ported; the child render flags, final resource
+binding, source alpha, and pool scheduling remain unresolved.
 Its source-shaped stream
 component is in
 [`rescue_hose_spray_stream.h`](../../../port/spikes/training-native-prototype/src/rescue_hose_spray_stream.h).
@@ -131,8 +136,9 @@ Player view follower `+0x34A4`; that establishes the follower chain but not
 the writer or composition that supplies the transform consumed from item
 `+0x58`. The `touchhose N` list records at `+0xCB8` are not yet tied to that
 transform. The host draws the traced dual-curve stream with a temporary color;
-resource-3 texture, UVs, alpha/material state, HoseSpray particle lifetime and
-final resource binding, and the exact item frame remain open. It applies
+resource-3 texture, UVs, alpha/material state, exact HoseSpray particle timing
+under retail pool cadence, final resource binding, and the exact item frame
+remain open. It applies
 terminal dousing and stops the existing fire loop sound immediately.
 
 The shared macOS executable and rescue-all app rebuilt successfully. Standalone
@@ -156,13 +162,31 @@ four PlayerHose maps are present. The existing Homebrew json-c macOS 27.0
 versus deployment target 13.3 linker warning remains. No tests, interactive
 run, or retail comparison was performed.
 
+## HoseSpray particle track advancement checkpoint (2026-10-20)
+
+The shared renderer now carries a HoseSpray-only copy of the source track
+state. Its main-loop update applies the 2,000 ms key-0 deadline, changes the
+preview scalar from 3.0 to 5.0 once, then deactivates on the following update
+through the configured flag-`0x8` non-looping end path. Extinguisher particles
+retain their existing preview lifetime. The 5.0-to-quad mapping and the host
+update interval remain provisional; the retail pool dispatch cadence is
+unknown. The source details are recorded in
+[`rescue_hose_spray_particle_trace_2026-10-20.md`](rescue_hose_spray_particle_trace_2026-10-20.md).
+
+`tools/build_scene_viewer_app.sh rescue-all` rebuilt the macOS target and
+rescue-all app. The standalone and packaged executables match at SHA-256
+`9711510c53ea971da144df5eacea6d9d7e09af127b92bb51ad32ab56b515d43f`. The app
+plist validated, all eight retail rescue choices were emitted, and all four
+PlayerHose maps were packaged. `git diff --check` passed. No tests, interactive
+run, or retail parity comparison was performed.
+
 ## Next work
 
-Trace the HoseSpray attachment matrix and action binding, then model template
-key advancement and resolve the child allocation/render-resource chain,
-`+0xA4` flags, and effective particle lifetime. The cooldown, spawn request,
-and initial size scalar are ported; the renderer's size-to-world mapping and
-resource binding remain provisional. Compare a controlled host contact/douse
-sequence with a retail capture when available. Keep PlayerHose's WindowFire
-stage and rescue-player HoseSpray's FireRescue suppression as independent
-mechanics.
+Trace the HoseSpray attachment matrix and action binding, then resolve the
+child allocation/render-resource chain, `+0xA4` flags, source alpha, and pool
+scheduling. The cooldown, spawn request, key advancement, flag-`0x8`
+deactivation, and initial size scalar are ported; the renderer's size-to-world
+mapping and final resource binding remain provisional. Compare a controlled
+host contact/douse sequence with a retail capture when available. Keep
+PlayerHose's WindowFire stage and rescue-player HoseSpray's FireRescue
+suppression as independent mechanics.

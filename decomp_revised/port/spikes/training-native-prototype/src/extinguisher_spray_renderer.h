@@ -8,6 +8,7 @@
 #endif
 
 #include "extinguisher_effects.h"
+#include "rescue_hose_spray_effects.h"
 #include "view_update.h"
 
 #include <algorithm>
@@ -20,22 +21,29 @@
 
 // Retail extinguisher setup 00461830 selects resource 14 for a two-second
 // particle using white color and a .75 alpha key. HoseSpray also selects
-// resource 14. rescue.rrf maps it to bsmoke.bmp + sm_alpha.bmp, though the pool
-// manager's link to that RRF is not fully resolved. This host draws a
-// camera-facing OpenGL quad in place of geWorld_AddPolyOnce; the mapping from
-// the source scalar to quad side length, orientation, key interpolation,
-// blend flags, clipping, and exact resource-manager selection remain
-// provisional.
+// resource 14 and its non-interpolated, flag-0x8 track is advanced in the
+// shared host. This host draws a camera-facing OpenGL quad in place of
+// geWorld_AddPolyOnce; source-pool cadence, scalar-to-side mapping, orientation,
+// child flags, source alpha/blend, clipping, and exact resource-manager
+// selection remain provisional.
 struct ExtinguisherSprayRenderer {
     static constexpr uint32_t lifetimeMs = 2000;
     static constexpr float previewSize = 3.f;
     static constexpr uint8_t previewAlpha = 191; // source alpha key: trunc(.75 * 255)
+    static constexpr uint32_t hoseSprayFirstKeyDurationMs =
+        RescueHoseSprayEffects::firstParticleKeyDurationMs;
+    static constexpr float hoseSprayTerminalSize =
+        RescueHoseSprayEffects::terminalParticleSizeScalar;
 
     struct Particle {
         V origin{};
         V velocity{};
         uint32_t startTime = 0;
         float quadSideLength = previewSize;
+        uint32_t hoseSprayTrackKeyStartTime = 0;
+        uint8_t hoseSprayTrackKey = 0;
+        bool usesHoseSprayTemplateTrack = false;
+        bool hoseSprayTrackActive = true;
     };
 
     GLuint texture = 0;
@@ -132,10 +140,40 @@ struct ExtinguisherSprayRenderer {
         particles.push_back({origin, request.offset, now, quadSideLength});
     }
 
+    void spawnHoseSpray(const ExtinguisherEffects::SpawnRequest& request,
+                        V origin, uint32_t now) {
+        spawn(request, origin, now, RescueHoseSprayEffects::initialParticleSizeScalar);
+        if (!request.requested) return;
+        Particle& particle = particles.back();
+        particle.hoseSprayTrackKeyStartTime = now;
+        particle.usesHoseSprayTemplateTrack = true;
+    }
+
     void prune(uint32_t now) {
         particles.erase(std::remove_if(particles.begin(), particles.end(),
-            [now](const Particle& particle) {
-                return uint32_t(now - particle.startTime) >= lifetimeMs;
+            [now](Particle& particle) {
+                if (!particle.usesHoseSprayTemplateTrack)
+                    return uint32_t(now - particle.startTime) >= lifetimeMs;
+
+                if (!particle.hoseSprayTrackActive) return true;
+                const uint32_t keyDurationMs =
+                    particle.hoseSprayTrackKey == 0 ? hoseSprayFirstKeyDurationMs :
+                    RescueHoseSprayEffects::terminalParticleKeyDurationMs;
+                const uint32_t keyDeadline = particle.hoseSprayTrackKeyStartTime +
+                                             keyDurationMs;
+                if (keyDeadline > now) return false;
+
+                // 0047D660 advances one key per update. HoseSpray has flags 0x8
+                // and a two-key non-looping track: key 1 is drawn for one host
+                // update before the following zero-duration advance deactivates it.
+                particle.hoseSprayTrackKeyStartTime = now;
+                if (particle.hoseSprayTrackKey == 0) {
+                    particle.hoseSprayTrackKey = 1;
+                    particle.quadSideLength = hoseSprayTerminalSize;
+                } else {
+                    particle.hoseSprayTrackActive = false;
+                }
+                return !particle.hoseSprayTrackActive;
             }), particles.end());
     }
 
@@ -158,7 +196,9 @@ struct ExtinguisherSprayRenderer {
         glBegin(GL_QUADS);
         for (const Particle& particle : particles) {
             const uint32_t age = uint32_t(now - particle.startTime);
-            if (age >= lifetimeMs) continue;
+            if ((!particle.usesHoseSprayTemplateTrack && age >= lifetimeMs) ||
+                (particle.usesHoseSprayTemplateTrack && !particle.hoseSprayTrackActive))
+                continue;
             const V center = particle.origin + particle.velocity * (float(age) * .001f);
             const V right = camera.axis[0] * (particle.quadSideLength * .5f);
             const V up = camera.axis[1] * (particle.quadSideLength * .5f);

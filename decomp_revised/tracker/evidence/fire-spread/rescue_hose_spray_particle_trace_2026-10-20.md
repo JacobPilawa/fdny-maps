@@ -35,13 +35,25 @@ preview size. This resolves the selected scalar but does not establish an
 exact mapping from the Genesis polygon scalar to a world-space billboard
 width.
 
-The particle track updater `0047D660` advances the current index from the
-retail clock and uses flag `0x8` when it reaches the end. The renderer calls
-that updater before retrieving the size. The track's later key transition,
-terminal-frame behavior, and effective lifetime under the caller's update
-cadence are not ported. `0047FEA0` loops over pool entries and calls
-`0047F960` once for each; the scheduler cadence of that pool dispatch remains
-unresolved.
+The particle track updater `0047D660` reads the current key duration, scales it
+by track field `+0x1C` (initialized to `1.0`), converts the millisecond
+deadline `keyStart + duration * scale * 1000` toward zero, and advances when
+that unsigned deadline is no greater than the current game clock. One call
+advances at most one key. It validates the new current and adjacent indices;
+when non-looping advancement passes the final key, flag `0x8` clears the
+particle track's active byte at `+0x30`. `0047F960` calls the track updater
+before checking that active byte and retrieving the current key's size.
+
+For HoseSpray's two keys, this means key 0 remains selected through its
+two-second duration, then one update changes the current scalar from `3.0` to
+key 1's `5.0`. Key 1 has duration zero, so the next updater call deactivates
+the particle before it submits another polygon. The host now mirrors this
+one-key-per-update progression and terminal update for HoseSpray particles in
+its shared game loop. The source pool scheduler frequency is still unresolved,
+so the time between the 2-second transition and terminal deactivation is
+host-update cadence, not a retail timing claim. `0047FEA0` loops over pool
+entries and calls `0047F960` once for each; the scheduler cadence of that pool
+dispatch remains unresolved.
 
 ## Child setup, resource lookup, and submission
 
@@ -71,9 +83,9 @@ The shared host stores a per-particle preview side length. Rescue HoseSpray
 passes the source's current key-0 scalar `3.0`; extinguisher particles keep
 their existing default `3.0`. This only makes the HoseSpray input explicit.
 The host still draws camera-facing quads with constant alpha 191 and borrowed
-two-second linear motion. Quad orientation and scalar-to-width mapping remain
-provisional. The source's key advancement, final child material, exact alpha,
-pool failure behavior, effective lifetime, and draw cadence remain open.
+linear motion. Quad orientation and scalar-to-width mapping remain provisional.
+The source's final child material, exact alpha, pool failure behavior, exact
+pool update/draw cadence, and retail timing parity remain open.
 
 This is static trace and host compilation evidence only. No interactive
 sequence, captured retail render, or parity comparison was performed.
