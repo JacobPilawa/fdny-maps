@@ -63,11 +63,20 @@ stat on a fire contact. The host's held-action sampling cadence remains
 provisional.
 
 `Total Steps` is incremented by one in `0044EA90` when its 100 ms timer is
-due; the function repeatedly samples until it chooses a sound variant
-different from the previous one, then stores the current clock, adds one, and
-requests sound playback. This is a source-backed increment trigger, but it does
-not prove that each increment represents a literal physical step. The host has
-no matching sound-selection scheduler, so this producer is not ported yet.
+due. `0045331A` calls the helper only when movement state `+0x18C` is not 5,
+byte `+0x380` is clear, byte `+0x198` is nonzero, and the source movement
+vector exceeds its small epsilon. The helper samples an index from the
+four-entry `FootStep1`–`FootStep4` array, retrying while it equals Player
+`+0x558`; it then stores the clock, increments `Total Steps`, and requests
+playback. Player `+0x558` is initialized to zero at `0044DDE6`, and a static
+instruction scan found no later writer, so the compared value is not
+established as a previous-selection field. The range helper `00498B30` consumes
+the shared generator through `00404AC0`; each retry consumes another global
+random value. The host has no matching scheduler or sound samples, so this
+transaction remains unported. This source-backed producer does not prove that
+each increment represents a literal physical step. The byte meanings, selector
+field update, and live callback cadence remain unresolved. See
+[`player_movement_state_gates_2026-10-20.md`](player_movement_state_gates_2026-10-20.md).
 
 `Jumps` at `0044E990` is gated by a 500 ms clock comparison. State `+0x18C`
 equal to 5 changes to 3 and sets `+0x100` to 400; otherwise byte `+0x12C` must

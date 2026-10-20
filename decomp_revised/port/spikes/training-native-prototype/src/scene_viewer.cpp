@@ -5853,8 +5853,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         // which selects the +/-40 degree pitch limit in 00452570.
                         constexpr float freshProfilePitchLimit =
                             40.f * 0.01745329251994329577f;
-                        pitch = std::clamp(pitch, -freshProfilePitchLimit,
-                                           freshProfilePitchLimit);
+                        // Retail raises that pitch limit to 45 degrees in
+                        // movement state 5 when the profile limit is <= 45.
+                        // Player::climbing is the current state-5 host adapter;
+                        // the separate retail +0x380 flag is not mapped yet.
+                        constexpr float stateFivePitchLimit =
+                            45.f * 0.01745329251994329577f;
+                        const float effectivePitchLimit = player.climbing &&
+                            freshProfilePitchLimit <= stateFivePitchLimit
+                                ? stateFivePitchLimit
+                                : freshProfilePitchLimit;
+                        pitch = std::clamp(pitch, -effectivePitchLimit,
+                                           effectivePitchLimit);
                         if (fireCameraAudit) {
                             fireCameraAuditYawDelta += yaw - yawBefore;
                             fireCameraAuditPitchDelta += pitch - pitchBefore;

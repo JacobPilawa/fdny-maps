@@ -35,6 +35,44 @@ The macOS `fdny-scene-viewer` target compiled with SHA-256
 warned that installed `json-c` was built for macOS 27.0 while the target is
 13.3. No tests, interactive gameplay, or retail parity check was run.
 
+## Player movement state and locomotion audit (2026-10-20)
+
+The hash-pinned Player movement block at `00452570` has no formal function
+object and remains a manual code review. It maps root state `+0x18C` state 4
+to crouch and state 5 to climb. The state-not-4 branch calls `0044E990`, then
+the root vtable `+0x64` integrator, then collision loop `0043F6D0` when
+movement byte `+0x380` is clear. State 4 queries JUMP and routes to
+`0044BCE0`; state 6 calls a separate update path.
+
+Retail selects pitch caps 20/40/70 degrees from DifficultyLevel, raises the
+cap to 45 in state 5 or when byte `+0x380` is set if the base cap is at most
+45, and uses a separate movement-vector cap of 400 normally, 260 in state 4,
+or 800 when `+0x380` is set. State 5/`+0x380` movement transforms through
+frame `+0x3320`, suppresses gravity, and uses 0.2 smoothing; normal movement
+uses 0.95 except while the contact latch is set. `Total Steps` runs only above
+a small movement epsilon and when
+state is not 5, `+0x380` is clear, and byte `+0x198` is nonzero; its 100 ms
+producer increments after selecting a footstep index different from Player
+`+0x558`. That field is initialized to zero, but no later static writer was
+found, so it is not yet established as a last-selection field. Selection
+consumes the shared RNG and may retry, affecting later random results. These
+gate bytes and the meaning of the source movement fields remain unresolved.
+
+The host now raises the default DifficultyLevel-1 pitch clamp from 40 to 45
+degrees in the `climbing` state adapter. After this change the macOS
+`fdny-scene-viewer` target compiled with SHA-256
+`0c910dfd7eac2a71921948414d02b6e50fcf6e2b51e7ea18a609e2c0da71b1f0`; linking
+warned that installed `json-c` targets macOS 27.0 while the build target is
+13.3. This is compile-only evidence. `Player::step` still substitutes
+`ground`/`climbing` booleans, fixed 400/260 values, camera pitch for frame
+`+0x3320`, and a host collision loop. Do not tune that motion as retail-parity
+behavior until the remaining movement helpers, frame updates, and byte gates
+are mapped. `Total Steps` remains unported; its global footstep samples are
+not in the scene audio bundle yet.
+See
+[`player_movement_state_gates_2026-10-20.md`](../tracker/evidence/scenario-loading/player_movement_state_gates_2026-10-20.md)
+and the Player movement/Total Steps entries in the audit ledger below.
+
 ## BModel use-mode initialization slice (2026-10-20)
 
 The shared mission scene now retains BModel use mode from authored script and
@@ -1189,7 +1227,9 @@ body-bearing functions and 287 external entries.
 | `mission_result_return_trace` | Static result widget consumer and stage return handoff | Frontend consumer, Records page decompilation, handoff export, result and exit evidence | Complete, read-only; confirmed state-1 Records page, button actions 1/2 navigation, action 0 history-back, and `PlayerStatus+0x960 == child(+0x13C)` alias; exact record fields, result timing, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
-| `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms distinct-sound selection cadence and Jumps' 500 ms gate. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is the `crouch` state and its JUMP query routes to the shared `uncrouch` helper `0044BCE0`. Separate `climb`/`unclimb` commands use state 5 and restore state 3. Completion Time and Air Time are integrated with provisional host cadence; Jumps and Total Steps remain unported. |
+| `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers and input/state gate | Current-hash producer xrefs, `0044EA90`, `0044E990`, `00451870`, and `00452749..004528F5`; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms selector scheduler and Jumps' 500 ms gate. Follow-up mapped the `0045331A` call gate and found FootStep resources absent from scene bundles. The `jump` ScriptActor branch calls `0044E990`; state-not-4 Player movement also calls it, while state 4 is crouch and its JUMP query routes to `0044BCE0`. Completion Time, Air Time, and Jumps are integrated with provisional host cadence; Total Steps remains unported. |
+| `player_motion_vectors` (Luna) | Read-only Player state, movement field, helper, and host seam audit | Hash-pinned `00452570` decomp, `0049DBC0`, collision helpers, and `core.h`; `player_movement_state_gates_2026-10-20.md` | Complete, read-only; mapped state gates, pitch/yaw accumulators and pitch transform, movement-vector caps, helper operations, and host seam. Confirmed `+0x3320` frame init/composition but not runtime basis or callback cadence; exact `00482AD0` weight and input scale remain open. No edits. |
+| `total_steps_producer` (Luna) | `0044EA90` callsite gate, sound selector/resources, and host integration seam | Current-hash Player movement disassembly, Player init, `sound.rrf`, `export_evs_bundle.py`, and `scene_audio.h` | Complete, read-only; mapped callsite `0045331A`, state/byte/movement gates, shared-RNG selector/retry, and missing scene-bundle samples. `+0x558` compares against the selected index, initializes to zero, and has no later static writer found, so it is not proven to track the prior selection. Host RNG differs and the gate bytes are unmapped; no edits. |
 | `jump_input_bridge` (Luna) | `JUMP` action registration, right-mouse polling, and Player jump producer consumers | Saved hash-pinned Ghidra exports, `0042D8C0`, `004395C0`, `00437F30`, `00451870`; `mission_stat_bmodel_liftable_pose_2026-10-20.md`; `player_jump_action_state4_2026-10-20.asm` | Complete, read-only; confirmed MOUSE_RB ID `0x105`; camera poll `0042DB06` discards its result. Player movement queries named action `JUMP` in crouch state 4 at `00453739` and routes it to `0044BCE0`, also used by ScriptActor `uncrouch`; the state-not-4 path calls the separate `0044E990` jump-stat/velocity routine. Normal-state jump/contact behavior remains open. |
 | `deadline_airtime_audit` (Luna) | Current-hash Player movement subobject, countdown fields, timeout state, and Air Time gate | `player_mission_countdown_airtime_port_2026-10-20.md`; Ghidra read-only writer scan and direct x86 instruction check | Complete, read-only; confirmed `+0x343C` countdown decrement in seconds, expiry clamp and `+0x3438=2` write, Completion Time/Air Time contributions, and the `+0x12C` zero gate. Full mission-result/outro semantics remain open. No edits. |
 | `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340`/`0044F713` hose path and `00453993` Player update producer; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution are integrated. Objects Thrown is a held-BModel transaction through Player `+0x3440`, a strict angle-under-10-degree gate, BModel trajectory state 2, Player action status 4, and one stat increment. Static all-BSP candidate coverage is enumerated; shared selection/carry uses provisional adapters while the callback-owned trajectory substep, outer update route/cadence, drop/timed-list relation, action-status label/host effect, and release sound remain open. |
