@@ -1,5 +1,7 @@
 #pragma once
-// 0044B620 / 0044AE80: pooled timed size keys and original interpolation.
+// 0044B620 / 0044AE80: pooled FireRescue size/bounds-vector keys and
+// interpolation. Retail setsize and moveto share this track at root+0x12C;
+// it feeds the component's +0x44..+0x4C extents, not world position.
 struct FireSize {
  struct Key{bool active=false;uint32_t time=0;V size;};
  std::vector<Key> keys;int first=-1,next=-1;V size{},scale{1,1,1};bool changed=false;

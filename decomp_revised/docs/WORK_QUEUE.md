@@ -12,17 +12,38 @@ Git remote.
 
 Pinned retail tracing now connects the normal owner `+0x50` manager to
 FireRescue root `+0x14` Think dispatch and places that pass before the `+0xE0`
-contact manager. Within state 4, retail calls route motion before the embedded
-timed-vector update. The shared host now advances route motion inside the
-state-4 callback before its ordinary visual-size update and avoids the prior
-duplicate size update. Exact frame cadence, timed-vector key tracks, deferred
-child lifecycle, contact-list parity, and RNG interleaving remain open. Evidence
-is in [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md).
+contact manager. Within state 4, retail advances route progress and prepares
+child/timed-vector work before the embedded visual update. The host now
+advances route progress inside the state-4 callback and preserves the
+half-radius emission threshold, without translating the source FireRescue.
+Exact frame cadence, route-generated size keys, deferred child lifecycle,
+contact-list parity, and RNG interleaving remain open. Evidence is in
+[`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md)
+and
+[`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
 The rescue-all macOS app compiled with matching standalone/package executable
-SHA-256 `5a647fd24be912eb5e10b060ea7fdb9c0c08a8eb547c090994c6b1603bb8a5cd`;
+SHA-256 `014c1a9c86bb146a7ef8ae2be05aa2d3b1233265aa687ff6580f9781d62b253f`;
 `Info.plist` validation passed. The json-c dylib still targets macOS 27.0
 while this build links for 13.3. This is compile-only evidence, not retail
 parity.
+
+## FireRescue shared timed-vector track and route translation (2026-10-20)
+
+The hash-pinned trace establishes that `setsize` and `moveto` both clear and
+populate the same timed-vector list on `root+0x12C`. Its interpolated vector at
+component `+0x44..+0x4C` feeds transformed size/bounds; it is not world
+translation. The no-`C_Model` route threshold is `H_Radius/2` and gates queued
+FireRescue child requests. The route helper's completion call `00442BF0` adds a
+pair to the PathPoint-owned `+0xE8` container, not a position setter. The host
+now advances route progress without moving the source fire. It still lacks the
+route-generated size keys and queued-child lifecycle, so no route parity claim
+is made. Evidence:
+[`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
+
+The key list itself is already modeled for authored `setsize`; interactions
+between `setsize` and `moveto` timing, exact key timestamps, rendered axis
+meaning, and child ownership/retirement remain open. The rescue-all macOS app
+was rebuilt after this correction; keep callback cadence provisional.
 
 ## Rescue timeout loss audio (2026-10-20)
 
@@ -2087,10 +2108,12 @@ the report is observed.
   remain open. See
   [`cmake_platform_boundary_2026-10-15.md`](../tracker/evidence/runtime/cmake_platform_boundary_2026-10-15.md).
 
-- **2026-10-15 FireRescue route-update checkpoint:** the shared host now keeps
-  the original FireRescue visual at its prior position until route progress
-  advances by more than half `H_Radius` on authored no-`C_Model` routes, then
-  updates it and still snaps to the PathPoint on completion. The `00448D60`
+- **2026-10-15 FireRescue route-update checkpoint (superseded 2026-10-20):**
+  the host at that checkpoint kept the original FireRescue visual at its prior
+  position until route progress advanced by more than half `H_Radius`, then
+  translated it and snapped to the PathPoint on completion. Fresh shared-track
+  tracing established that this translation was unsupported and it has been
+  removed; the threshold is a queued-child emission gate. The `00448D60`
   initializer writes `(H_Radius,H_Height,H_Radius)` at root `+0x108..+0x110` in
   this branch; MBase `mortarfire1` has radius 100 and Gas R `Fire41` radius 45.
   The existing packaged checks pass MBase (5/5 rescues), Gas R (7/7), and the
@@ -2968,11 +2991,11 @@ the report is observed.
    ordered epairs. Preserve unknown classes and properties. Trace MBase's
    EVS/shared-EVS commands and original callback cadence before dispatching.
    Retail `moveto` traces through FireRescue command parsing, shared ScriptActor
-   name lookup, state-4 update, timed-key generation, and visual vector
-   interpolation. The shared viewer now resolves PathPoints and moves the
-   original fire with source-derived progress; for authored no-`C_Model` route
-   fires it also applies the `H_Radius/2` visual-update gate. Player exposure
-   messages now drain after queued spread-child creation. Retail route-trail
+   name lookup, state-4 update, timed-key generation, and shared size/bounds
+   vector interpolation. The shared viewer now resolves PathPoints and advances
+   source route progress; for authored no-`C_Model` route fires it preserves the
+   `H_Radius/2` child-emission gate without translating the source fire. Player
+   exposure messages now drain after queued spread-child creation. Retail route-trail
    reuse/deactivation and recurring update ownership remain unresolved; exact
    transform/floor behavior, timing-key use, and callback cadence remain open.
    Bank's `vault open` command maps from map EVS
@@ -3062,7 +3085,7 @@ symptom remain open.
 | `victim_equipment_audit` | Read-only review of victim carry/rescue and equipment/goggles integration seam | Victim transaction helpers, Player loadout trace, scene viewer, fresh EXE evidence | Complete; no edits; authored PlayerRescue loadout integration implemented by root; item behavior remains open |
 | `extinguisher_port_seam` | Read-only review of generalizing Training extinguisher contacts into the shared viewer | `main.cpp`, `scene_viewer.cpp`, extinguisher/fire helpers, fresh suppression evidence | Complete; no edits; identified the camera-parent/cadence boundary; shared message path integrated |
 | `goggles_visibility_audit` | Read-only trace of goggles inventory callbacks and visibility effects | Player loadout evidence, goggles initializer/vtable, scene viewer | Complete; no edits; slot 3 is verified, visibility semantics remain unknown |
-| `fire_spread_seam` | Read-only audit of random spread integration and callback dispatch | `scene_viewer.cpp`, FireEntity components, fire-spread evidence, shared contact manager | Complete; no edits; owner +0x50 root +0x14 Think precedes +0xE0 contact dispatch in the normal static owner pass; state-4 route motion now runs inside host Think before its ordinary visual update. Exact cadence, timed-vector keys, candidate/child lifecycle, and RNG ordering remain open |
+| `fire_spread_seam` | Read-only audit of random spread integration and callback dispatch | `scene_viewer.cpp`, FireEntity components, fire-spread evidence, shared contact manager | Complete; no edits; owner +0x50 root +0x14 Think precedes +0xE0 contact dispatch in the normal static owner pass; state-4 route progress runs inside host Think before its shared size/bounds-vector update. Exact cadence, route-generated keys, candidate/child lifecycle, and RNG ordering remain open |
 | `goggles_trace` | Read-only trace of goggles vtable, selection callbacks, and scan visibility behavior | Pinned EXE vtable/data, goggles exports, Player selection path | Complete; no edits; verified target filter/range and callbacks; resource 703 and the 8.5-second effect window now drive the shared heatpulse renderer; child animation and broad visibility remain open |
 | `goggles_effect_review` | Read-only review of preview marker fidelity against the retail target update | Goggles renderer, scan runtime note, pinned EXE disassembly | Complete; no edits; corrected host billboard description; retail actor-local transform and child attachment remain open |
 | `fire_exposure_integration` | Read-only review of Player fire exposure/passout delivery seam | `player_fire_message.h`, exposure/passout helpers, scene viewer, fresh FireRescue/Player evidence | Complete; no edits; the host already wires direction indicators, pain/deadline, Serious Burns, accumulated exposure, and passout. Residual gaps are cadence and spatial/input alignment, HUD blend/pixel parity, and live retail comparison; keep timing provisional |
@@ -3072,7 +3095,7 @@ symptom remain open.
 | `fire_gate_writers` | Trace writes to the spread gate and shared state | `00448320_fresh.c`, `00447A90_fresh.c`, `0046e320_FUN_0046e320.c`, `00448d60_FUN_00448d60.c` | Complete; read-only; initial shared-state interpretation was superseded after resolving 00448D60's string setter |
 | `fire_name_gate` | Map the spread gate to authored FireRescue A_Name | `00447A90_fresh.c`, `00448320_fresh.c`, FireRescue UserData audit, retail 00448D60 disassembly | Complete; root follow-up proved the embedded string receives A_Name and the gate reads its length; unnamed generated children retain an empty string |
 | `player_position_getter` | Read-only trace of PlayerRescue candidate vtable slot +0x0C and exposure padding | `memory_004e1c40_player_rescue_vtables.json`, `00453d50_player_rescue_object_constructor_fresh.c`, `player_fire_exposure_padding_fresh_2026-10-20.c` | Complete; current-hash slot/getter map origin to root +0x4C..+0x54 and fourth falloff value to constructor-zeroed +0x74; port uses zero; callback cadence and exhaustive later-alias audit remain open |
-| `mbase_moveto_audit` | Audit the authored MBase FireRescue route against the shared host command/runtime | `mbase.evs`, MBase BSP entities, `rescue-moveto` evidence, `scripts.h`, `scene_viewer.cpp` | Complete; audit mapped PathPoint registration, `moveto` setup, state-4 progress gate, and deferred FireRescue request creation; generic drain `0049C670` later creates/registers queued objects. Follow-up confirms `0049D450` assigns route identity, root slot `+0x24` is a no-op, and per-instance reuse/deactivation plus recurring update ownership remain unresolved. Shared host applies the `H_Radius/2` gate; model-derived threshold, exact transform/floor behavior, and callback cadence remain open |
+| `mbase_moveto_audit` | Audit the authored MBase FireRescue route against the shared host command/runtime | `mbase.evs`, MBase BSP entities, `rescue-moveto` evidence, `scripts.h`, `scene_viewer.cpp` | Complete; audit mapped PathPoint registration, `moveto` setup, state-4 progress gate, and deferred FireRescue request creation; generic drain `0049C670` later creates/registers queued objects. Follow-up confirms `0049D450` assigns route identity, root slot `+0x24` is a no-op, and per-instance reuse/deactivation plus recurring update ownership remain unresolved. Shared host applies the `H_Radius/2` child-emission gate and no longer translates the source fire; route size keys, child lifecycle, and callback cadence remain open |
 | `bank_door_audit` | Audit the reported Bank M-only door symptom against live loop and controlled harness | `scene_viewer.cpp`, `bmodel_door_runtime_port.md`, Bank interaction evidence | Complete; no edits; M/N only affect inspection state; continuous aimed route opens PATH but hits static world model 0 at a 24-unit lateral offset; aligned control crosses; live route remains open |
 | `bank_collision_retail` | Trace retail swept collision and BModel transform path against Bank door result | Pinned EXE/Genesis exports, Bank entity/model inventory, `bmodel_door_runtime_port.md` | Complete; read-only; swept hull checks static and transformed models, BModel PATH updates Genesis model transforms; exact leaf and live route remain open |
 | `bank_contact_review` | Audit Bank live-loop contact/PATH ordering and reported M workaround | `scene_viewer.cpp`, Bank door route and interaction fixture | Complete; read-only; no M-to-collision path; live ordinary route still needs capture |

@@ -10,8 +10,9 @@
 /* Algorithm:\nConsumes the current and next timed-vector keys at this+0x88/+0x8c. Advances the
    current key against DAT_00502AFC, selects the next active key with a later timestamp,
    interpolates using (now-currentTime)/(nextTime-currentTime), scales each vector component by
-   +0x90/+0x94/+0x98, and updates position at +0x44/+0x48/+0x4c when the change exceeds the stored
-   threshold. This consumes the separate list populated by
+   +0x90/+0x94/+0x98, and updates the shared size/bounds vector at +0x44/+0x48/+0x4c when the
+   change exceeds the stored threshold. The vector feeds transformed visual bounds; it is not the
+   FireRescue world's translation. This consumes the separate list populated by
    AddFireRescueMotionKey.\n\nParameters:\nparam_1 is the FireRescue visual/motion subobject; the
    caller from UpdateFireRescueActor supplies root+0x12C.\n\nReturns:\nNo return value. */
 

@@ -5,19 +5,19 @@ scene export. This maps the authored command into the beginning of the native
 FireRescue path-motion setup. It maps the path updater and the two trailing values into generated timed-key timestamps.
 The callback schedule and exact author-facing timing terms remain open.
 
-## Current shared-host port (2026-10-15)
+## Current shared-host port (2026-10-20)
 
-The shared EVS host now resolves the named `RCS_PathPoint` through its
-case-insensitive `A_Name` registry and advances the original FireRescue along
-the mapped direction at the rate computed from the first operand. On the
-authored MBase and Gas R routes, the source updates that fire's visible position
-only after progress advances by more than half its `H_Radius`; the host now
-preserves this threshold and still moves to the endpoint on completion. These
-routes have no `C_Model`, so the initializer's threshold field is directly
-mapped to `H_Radius`. See
+The shared EVS host resolves the named `RCS_PathPoint` through its
+case-insensitive `A_Name` registry and advances route progress at the rate
+computed from the first operand. The current-hash follow-up established that
+the `H_Radius/2` threshold gates deferred FireRescue child requests; it does not
+move the source FireRescue's world translation. The host now preserves route
+progress and completion without directly translating the source fire. These
+authored MBase and Gas R routes have no `C_Model`, so the initializer's
+threshold field is directly mapped to `H_Radius`. See
 [`00448D60_h_radius_threshold.asm`](00448D60_h_radius_threshold.asm). The two
 trailing operands are retained as inputs but are not yet used to build retail's
-timed visual keys.
+timed visual keys or deferred child requests.
 
 The pinned updater also builds FireRescue-shaped configs and submits deferred
 map-entity spawn requests as the source actor advances. The later generic
@@ -27,8 +27,8 @@ the limits of its pool/update lifecycle in
 [`deferred_child_lifecycle_2026-10-15.md`](deferred_child_lifecycle_2026-10-15.md).
 The queued actor's recurring update, per-entity deactivation, reuse, and
 emission behavior are not fully mapped, so the host does not spawn trail
-actors. Exact transform/floor behavior for the moved source fire and the
-external callback cadence also remain open. The packaged MBase and gas_r
+actors. The source FireRescue's route-generated size track and the external
+callback cadence remain open. The packaged MBase and gas_r
 `--rescue-check` commands complete
 without an `Unimplemented EVS` report, but those controlled rescue transactions
 do not exercise or establish natural route timing or retail parity.
@@ -141,10 +141,11 @@ The path helper writes the embedded visual subobject's vector keys through
 `UpdateFireRescueTimedVectorTrack` (`0x0044AE80`) when a track is active. This
 routine advances the current key when its timestamp expires, selects the next
 active key, calculates the normalized time between them, linearly interpolates
-the vector, applies per-axis scale fields, and writes the position when the
-change exceeds its threshold. This maps the internal route-state-to-position
-interpolation path; the engine's recurring dispatch of the callback remains
-unknown. Fresh pseudocode is `0044AE80_fresh.c`.
+the vector, applies per-axis scale fields, and writes the shared size/bounds
+vector at visual `+0x44..+0x4C` when it changes beyond its threshold. This maps
+the internal route-state-to-size/bounds interpolation path; the engine's
+recurring dispatch of the callback remains unknown. Fresh pseudocode is
+`0044AE80_fresh.c`.
 
 ## Still open
 
@@ -156,8 +157,9 @@ unknown. Fresh pseudocode is `0044AE80_fresh.c`.
   parity evidence.
 - The state-4 callback is now mapped to `UpdateFireRescueActor` at
   `0x00449FE0`, which calls `AdvanceFireRescuePathMotion` at `0x00449340`.
-  The recurring dispatcher, cadence, and order relative to other game updates
-  remain unknown; see
+  Owner `+0x50` Think precedes the specialized `+0xE0` contact pass, but the
+  wider order against Player/scene updates and callback cadence remain open;
+  see
   [`fire_rescue_state4_update.md`](fire_rescue_state4_update.md).
 - The PathPoint `A_Name` to runtime string at object `+0x24` is now mapped
   through the entity initializer and ScriptEngine registration; see
@@ -178,10 +180,10 @@ or these entity indexes into the shared scene loader.
 
 ## Plain-language explanation
 
-MBase tells one fire to move toward a named point when the level starts. The
-viewer now finds that point by name and moves the original fire in steps after
-it has traveled more than half its authored radius, then reaches the endpoint.
-The original game also queues additional FireRescue entities along the route
-for a later generic spawn drain. Their eventual world setup, ownership,
-lifetime, and timing still need to be ported, so this does not establish full
-FireRescue route parity.
+MBase tells one fire to follow a named route point when the level starts. The
+viewer resolves that point and advances route progress, but retail's half-radius
+threshold queues additional FireRescue entities and updates a shared
+size/bounds track. The source FireRescue itself is not translated by the
+audited route helper. The queued entities' world setup, ownership, lifetime,
+and timing still need to be ported, so this does not establish full FireRescue
+route parity.

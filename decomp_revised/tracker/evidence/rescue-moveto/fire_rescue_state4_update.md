@@ -24,13 +24,16 @@ Binary: `FDNYFirefighter.exe`, SHA-256
   visual subobject at `root+0x12C`; when its key track is active, that routine
   calls `UpdateFireRescueTimedVectorTrack` (`0x0044AE80`). This helper consumes
   the current/next vector keys, interpolates against `DAT_00502AFC`, and updates
-  the visual position. The path updater and the visual key interpolator are now
-  mapped inside the actor callback; only the external recurring dispatcher and
-  cadence are open.
+  the shared size/bounds vector at visual `+0x44..+0x4C`; it does not set world
+  translation. The path updater and the visual key interpolator are now mapped
+  inside the actor callback; only the external recurring dispatcher and cadence
+  are open.
 - `AdvanceFireRescuePathMotion` advances the path-progress value using the
   entity rate and frame delta. Its target/completion branch resets state to 0
-  and adjusts the current position. It also contains a conditional
-  `RCS_FireRescue` factory path and timed motion-key setup.
+  and appends a route bookkeeping pair to the target PathPoint container. The
+  helper contains a conditional `RCS_FireRescue` factory path and timed
+  size/bounds-key setup; the audited path writes no FireRescue root translation.
+  See [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](fire_rescue_timed_vector_size_bounds_2026-10-20.md).
 - The earlier `moveto` mapping shows how `SetFireRescuePathPointMove`
   (`0x00448A90`) resolves the named point and enters state 4. MBase's command
   is `tell mortarfire1 (moveto mortar1 1 10 120)`.

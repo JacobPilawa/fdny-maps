@@ -76,6 +76,6 @@ phase as separate operations. It should not yet present route children as
 ordinary persistent fires or claim their update, retirement, or reuse parity.
 The request contains generated size keys, a route direction, a stagger mode,
 and source values that feed its timing track; the child visual and recurring
-callback path still depend on the unresolved lifecycle above. The source actor
-movement and its `H_Radius/2` update gate are documented separately in
+callback path still depend on the unresolved lifecycle above. Source route
+progress and its `H_Radius/2` child-emission gate are documented separately in
 [`README.md`](README.md).
