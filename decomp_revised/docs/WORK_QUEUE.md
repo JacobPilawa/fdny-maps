@@ -599,11 +599,16 @@ RRF libraries reuse numeric resource IDs for different alpha textures, so the
 
 The descriptor follow-up found no static writer or resource-loader registration
 for `0x502D40`; the pinned image has one direct reference, at the child
-constructor argument, and the on-disk descriptor bytes are zero. Next inspect
-the adjacent `00457xxx`/`00458xxx` setup paths and computed writes into the
-descriptor region, then capture runtime contents if static evidence remains
-empty. The cross-map entity and resource hashes plus bounded-search limits are
-in the linked evidence note. No effect renderer change is justified yet.
+constructor argument, and the on-disk descriptor bytes are zero. A range-wide
+Ghidra query found references to six descriptor slots plus two reads of scalar
+`0x502D0C`; the full instruction P-code scan found no constant-address STORE
+into `0x502D00..0x502DFF`. The sibling paths through `0047F850` and `0047FE70`
+only consume/store the descriptor and optionally register the object. Static
+neighbor paths are now inspected. Runtime descriptor capture or an external
+initializer is needed before assigning resources or timing; if unavailable,
+move to another supported gameplay gap rather than guessing. The cross-map
+entity and resource hashes plus search limits are in the linked evidence note.
+No effect renderer change is justified yet.
 
 ### Current-turn audit ledger (2026-10-20)
 
@@ -1705,7 +1710,7 @@ body-bearing functions and 287 external entries.
 | `rescue_mission_core_gap` (Luna) | Compare current campaign coverage against missing authored mission systems | Rescue catalog and mission evidence/queue | Complete, read-only; maps remain `loaded_inspection_only` by coverage tracker, and static Boat A Exploders are a cross-map MiscEmitter gap. Recommended tracing the C_Type=5 sequence; no edits. |
 | `exploder_setsize_trace` (Luna) | Boat A `QueExploders`, C_Type=5 construction, setsize, activation, and child setup | `boat_a.evs`, Boat A entity export, `004420F0`, `00442900`, `00445600`, `00445720`, `00444D00` | Complete, read-only; confirmed scalar immediate setsize, internal mode 2, active-byte toggle, and four child objects from descriptor `0x502D40`. Resource initialization, visible effect/timing, and shared host path remain open. |
 | `misc_emitter_renderer` (Luna) | C_Type=5 descriptor writer, parent update/render path, child registration and draw | Hash-pinned Ghidra headless listing/decompilation, executable immediate-address scan, `00444D00`, `00445490`, `0047F960` | Complete, read-only; parent slot 9 draws each child through resource lookup and `geWorld_AddPolyOnce`. Descriptor `0x502D40` has one direct xref and no direct static initializer; runtime numeric IDs/frame sequence and callback cadence remain unresolved. No edits |
-| `misc_descriptor_writer_trace` (Luna) | Search static/alias initialization for `0x502D40`; resolve child resource lookup and neighboring descriptor callsites | Current-hash saved `FDNYPort`, `InspectDataAtAddress`, direct xref/immediate scan, `0047D370`, `0047D2B0`, `0047D820`, `0047D860`, `0047D8A0`, `00493D00`, `00493650` | Complete, read-only; descriptor and neighboring records are undefined/zero on disk; only direct reference is child-constructor argument. Resolver consumes manager arrays and numeric resource IDs but does not initialize descriptor. Computed-address writers/external initialization remain possible; next trace neighboring `00457xxx`/`00458xxx` setup paths. No edits |
+| `misc_descriptor_writer_trace` (Luna) | Search static/alias initialization for `0x502D40`; resolve child resource lookup and neighboring descriptor callsites | Current-hash saved `FDNYPort`, range-wide Ghidra references and P-code STORE scan, raw immediate scan, `0047F850`, `0047FE70`, `00493D60`, descriptor consumers/resolver | Complete, read-only; refs at `0044B382`, `00445772`, `00445823`, `00445A5F`, `00445B48`, `00445CBA`, `00458E40`, plus two `0x502D0C` scalar reads; corrected call instruction is `00445CBA`. No constant-address P-code STORE in `0x502D00..0x502DFF`. Sibling paths only store/read descriptors and optionally register renderers. Computed-pointer or external initialization remains possible; runtime capture/external initializer is now required before visual behavior is ported. No edits |
 | `misc_exploder_asset_scan` (Luna) | Audit rescue-stage type-5 coverage and resource-definition candidates | Twelve typed rescue entity exports; `rescue.rrf`, `hose.rrf`, source hash checks | Complete, read-only; seven type-5 records occur in Boat A, Boat B, and Oil Rig B. `exp-00..17` is only a candidate because the RRF libraries reuse numeric IDs and the descriptor/library join is unknown. No edits |
 | `misc_emitter_host_port` | Shared type-5 MiscEmitter startup and EVS command state | `misc_emitter_runtime.h`, `scene_viewer.cpp`, current-hash `004420F0`/`004424D0` evidence | Implemented source-backed one-scalar `setsize` plus `turnon`/`turnoff` actor state and startup registration; no effect rendering, descriptor resources, or retail cadence claim |
 | `bmodel_liftable_pose_trace` | Lift-mode initializer, held-target writer, and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode plus raw update windows | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the held target at `+0x224` is now composed from movement `+0x338c` and scaled frame basis columns. The center blend follows `0.5^(frameDelta/0.1s)`; frame-to-view semantics and live callback cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no gameplay code change. |

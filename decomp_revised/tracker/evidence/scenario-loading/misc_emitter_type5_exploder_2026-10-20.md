@@ -155,24 +155,36 @@ sequence as a candidate only.
 
 A separate current-hash Ghidra/headless descriptor trace and raw immediate scan
 found no static initializer or resource-loader registration for `0x502D40`.
-Ghidra marks it undefined zero-filled `.data` with one direct data reference at
-`00445772`; the pinned executable contains that address only as the child
-constructor argument. The descriptor consumer reads `+0x0C` as the frame-record
-array, `+0x18` as a clamp/wrap flag, and resolves selected records as numeric
-resource IDs. Resource lookup through `00493D00`/`00493650` consumes renderer
-manager arrays; it does not fill this descriptor. Nearby descriptor-looking
-slots `0x502D78`, `0x502D94`, `0x502DB0`, and `0x502DCC` are also undefined and
-zero on disk, with references at `00445823`, `00445B48`, `00445A5F`/`00458E82`,
-and `0045CBBA` respectively.
+Ghidra marks `0x502D40` undefined zero-filled `.data` with one direct reference
+at `00445772`; that path passes it to `0047F850` from `00445720`. The descriptor
+consumer reads `+0x0C` as the frame-record array, `+0x18` as a clamp/wrap flag,
+and resolves selected records as numeric resource IDs. Resource lookup through
+`00493D00`/`00493650` consumes renderer manager arrays; it does not fill this
+descriptor. A range-wide Ghidra reference query over `0x502D00..0x502DFF`
+found descriptor references at `0044B382` (`0x502D08`), `00445772`
+(`0x502D40`), `00445823` (`0x502D78`), `00445B48` (`0x502D94`),
+`00445A5F` (`0x502DB0`), `00445CBA` (`0x502DCC`), and `00458E40`
+(`0x502DB0`). The `00445xxx` calls pass the latter three descriptors to
+`0047FE70`; Ghidra did not assign those calls to containing functions. The
+`00445823` path passes `0x502D78` to `0047F850`. Two more references at
+`0044B3C9` and `0044B49A` read scalar `0x502D0C`. `0047FE70` stores its
+descriptor pointer and optionally registers the object through `00493D60`,
+which sets its registration byte and appends it to the renderer list without
+populating the descriptor. `0047F850` and `0047D370` likewise only store/read
+the descriptor. The corrected call instruction address is `00445CBA` (its
+relative-call operand begins at `00445CBB`).
 
-The negative search is bounded to direct references, raw immediates, and the
-inspected constructor, renderer, and resolver paths. Computed-address writes or
-initialization outside this executable remain possible. The next static step is
-to follow the neighboring `00457xxx`/`00458xxx` setup callsites and search
-initialization paths for computed writes into `0x502D00..0x502E00`. If that
-produces no writer, runtime descriptor capture is required before assigning
-resource IDs, frame cadence, or effect lifetime. No renderer change or timing
-claim is supported by this audit.
+A range-wide scan of all Ghidra instructions found no constant-address STORE
+into `0x502D00..0x502DFF`; the raw-immediate scan found the same references and
+no extra reference to the range base. This negative result covers direct Ghidra
+references, instruction immediates, constant-address P-code stores, and the
+inspected sibling construction/registration paths. Computed-pointer writes and
+initialization outside this executable remain possible. There is no remaining
+static setup lead in these paths; runtime descriptor capture or an external
+initializer is required before assigning resource IDs, frame cadence, or effect
+lifetime. If neither is available, move to another supported gameplay gap
+rather than guess. No renderer change or timing claim is supported by this
+audit.
 
 ## Follow-up provenance
 
