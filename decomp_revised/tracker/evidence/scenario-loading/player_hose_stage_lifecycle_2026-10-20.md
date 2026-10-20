@@ -185,6 +185,18 @@ them. Result-screen feedback and mission transition remain open. The
 hash-pinned export is
 [`hose_stage_message_registration_fresh_2026-10-20.c`](hose_stage_message_registration_fresh_2026-10-20.c).
 
+## Shared-host chatter cue port
+
+The shared PlayerHose host now consumes pending start/win/loss cue events and
+routes them to `SceneAudio` as `RC_HoseLvlStart0`, `RC_HoseLvlWin0`, and
+`RC_HoseLvlLose0`. The package exporter includes these three 2D resources in
+every scene bundle. The event mapping follows the first authored hotspot
+marker, final target-cycle completion, and hotspot timer-expiry result already
+traced above. Host anchor polling, update timing, and its sound group choice
+remain provisional; no audible or retail-parity check was made. See
+[`player_hose_chatter_port_2026-10-20.md`](player_hose_chatter_port_2026-10-20.md)
+for source resource hashes and the build record.
+
 ## Hose time-warning gate
 
 The state-4 updater `004674A0` decrements the hotspot countdown and calls

@@ -70,6 +70,7 @@ struct PlayerHoseStreamPoint {
 
 struct PlayerHoseStage {
     enum class Result { Running, Won, Lost };
+    enum class ChatterRequest { None, LevelStart, LevelWin, LevelLose };
 
     static double modeTimeMultiplier(int modeIndex) {
         if (modeIndex == 0) return 1.8;
@@ -116,7 +117,14 @@ struct PlayerHoseStage {
     std::vector<PlayerHoseStreamSample> streamHistory;
     bool timeWarningSent = false;
     Result result = Result::Running;
+    ChatterRequest pendingChatter = ChatterRequest::None;
     std::string transition;
+
+    ChatterRequest takeChatterRequest() {
+        const ChatterRequest request = pendingChatter;
+        pendingChatter = ChatterRequest::None;
+        return request;
+    }
 
     static V lerp(V a, V b, float t) {
         return {a.x + (b.x - a.x) * t,
@@ -402,6 +410,7 @@ struct PlayerHoseStage {
         if (index >= pathNodes.size()) return false;
         auto& next = pathNodes[index];
         if (!next.isHotspot || next.targets.empty()) return false;
+        const bool firstHotspot = next.isFirstHotspot;
         activeHotspot = int(index);
         activeTarget = 0;
         cyclesRemaining = std::max(0, next.numCycles);
@@ -411,6 +420,7 @@ struct PlayerHoseStage {
         countdown = static_cast<float>(double(next.spotTime) * modeSpotTimeMultiplier);
         timeWarningSent = false;
         ++hotspotOrdinal;
+        if (firstHotspot) pendingChatter = ChatterRequest::LevelStart;
         for (auto& target : next.targets) {
             target.timer = 0.f;
             target.rampActive = false;
@@ -442,6 +452,7 @@ struct PlayerHoseStage {
         streamPressure = 0.f;
         streamClockSeconds = 0.f;
         streamHistory.clear();
+        pendingChatter = ChatterRequest::None;
         expectedHotspot.clear();
         transition = "Waiting for first PlayerHose hotspot anchor";
         return true;
@@ -460,6 +471,7 @@ struct PlayerHoseStage {
         // Retail state 4 checks timeout before updating input and WindowFire.
         if (countdown < 0.f) {
             result = Result::Lost;
+            pendingChatter = ChatterRequest::LevelLose;
             transition = "Hose stage lost: hotspot time expired";
             return;
         }
@@ -522,6 +534,7 @@ struct PlayerHoseStage {
 
         if (current.nextHotspot.empty()) {
             result = Result::Won;
+            pendingChatter = ChatterRequest::LevelWin;
             transition = "Hose stage won";
             return;
         }

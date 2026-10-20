@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bundle a map's authored EVS sources and referenced WAV sounds."""
+"""Bundle a map's authored EVS sources and required WAV sounds."""
 from __future__ import annotations
 
 import argparse
@@ -107,8 +107,15 @@ def parse_sound_definitions(path: Path) -> dict[str, dict]:
 
 
 def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
-    map_evs = resolve_casefold(original_root, f"Data/Maps/{map_key}.evs")
-    sources = collect_sources(map_evs, original_root)
+    try:
+        map_evs = resolve_casefold(original_root, f"Data/Maps/{map_key}.evs")
+    except FileNotFoundError:
+        # Some dedicated PlayerHose BSPs have no map-level EVS entry, but
+        # still need the source-backed chatter resources requested by their
+        # ScriptActor state machine.
+        sources = []
+    else:
+        sources = collect_sources(map_evs, original_root)
     sound_defs_path = resolve_casefold(original_root, "Data/ResDefs/sound.rrf")
     definitions = parse_sound_definitions(sound_defs_path)
     wanted = sound_names(sources, scene_package / "entities.json")
@@ -137,6 +144,9 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # keep it in every scene bundle because the shared audio device loads its
     # sample set from the first scene opened in a session.
     wanted.add("HoseSpray")
+    # Dedicated PlayerHose emits these one-entry chatter sets at the first
+    # hotspot and terminal win/loss state transitions.
+    wanted.update(("RC_HoseLvlStart0", "RC_HoseLvlWin0", "RC_HoseLvlLose0"))
     sounds_dir = scene_package / "sounds"
     sounds_dir.mkdir(parents=True, exist_ok=True)
     sound_rows = []

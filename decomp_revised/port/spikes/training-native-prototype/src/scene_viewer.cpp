@@ -5947,6 +5947,21 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                 }
                 playerHoseStage.update(dt, hoseActionActive, targetInContactVolume);
+                switch (playerHoseStage.takeChatterRequest()) {
+                    case PlayerHoseStage::ChatterRequest::LevelStart:
+                        // The retail one-entry RC_HoseLvlStart set reaches the
+                        // same 2D audio backend as other Player chatter cues.
+                        sceneAudio.play("RC_HoseLvlStart0", player.p, player.p, yaw, 1);
+                        break;
+                    case PlayerHoseStage::ChatterRequest::LevelWin:
+                        sceneAudio.play("RC_HoseLvlWin0", player.p, player.p, yaw, 1);
+                        break;
+                    case PlayerHoseStage::ChatterRequest::LevelLose:
+                        sceneAudio.play("RC_HoseLvlLose0", player.p, player.p, yaw, 1);
+                        break;
+                    case PlayerHoseStage::ChatterRequest::None:
+                        break;
+                }
                 if (playerHoseStage.transition != previousTransition &&
                     !playerHoseStage.transition.empty()) {
                     activeHint = playerHoseStage.transition;

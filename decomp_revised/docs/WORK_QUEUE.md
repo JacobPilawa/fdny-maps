@@ -42,7 +42,13 @@ callback ordering, and live retail parity remain open; see
 Retail-to-host input poll cadence, sensitivity changes after image defaults,
 stream alpha resampling and material render state, result feedback, and stage
 return flow remain open. The resource-3 texture pair and UV layout are now
-source-backed and bound in the dedicated PlayerHose host.
+source-backed and bound in the dedicated PlayerHose host. The one-entry
+`RC_HoseLvlStart/Win/Lose` resources are also routed from the modeled authored
+first-hotspot, win, and timeout events into the shared audio backend; audio
+group mapping, callback timing, and audible retail parity remain unverified.
+The three dedicated hose maps without map-level EVS files now receive a
+standalone sound manifest from the bundle exporter, alongside `const_h`'s
+authored script bundle.
 The `M_MaxPressure` alias and per-update pressure
 smoothing are now traced and tracked in the host. Retail scales the stored
 aim-velocity vector by `4000 * currentPressure` and records a separate shape scalar
@@ -804,6 +810,7 @@ body-bearing functions and 287 external entries.
 | `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms mode 2 acquisition, mode 3 slot selection, mode 1 deactivation, separate action callbacks, prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and input bindings unresolved |
 | `hose_material_trace` | PlayerHose stream component material/resource binding | `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c`, `playerhose_strip_texture_lookup_fresh_2026-10-20.c`, `hose.rrf` | Complete, read-only; confirmed resource ID 3 lookup, source-ordered polygon setup, white vertex colors, 0.15 U span, six-unit U scroll and V extent 0.9; blend/material state and runtime parity remain open |
 | `mission_result_return_trace` | Static result widget consumer and stage return handoff | `mission_outcome_frontend_consumer_fresh_2026-10-20.c`, `mission_outcome_frontend_handoff_fresh_2026-10-20.c`, result and exit evidence | Complete, read-only; confirmed static result consumer, but result timing/child-5 meaning, loss producer and full return flow remain unresolved; no guessed host transition added |
+| `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
 
 ## View bob fully removed (2026-10-18)
 

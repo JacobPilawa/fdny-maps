@@ -56,6 +56,12 @@ for map_key in $PACKAGE_KEYS; do
             --map-key "$map_key" \
             --original-root "$ORIGINAL_ROOT" \
             --scene-package "$package_dir"
+    elif [ "$map_key" = "city_h" ] || [ "$map_key" = "const_h" ] || \
+         [ "$map_key" = "dock_h" ] || [ "$map_key" = "oil_rig_h" ]; then
+        python3 "$PROJECT_ROOT/tools/export_evs_bundle.py" \
+            --map-key "$map_key" \
+            --original-root "$ORIGINAL_ROOT" \
+            --scene-package "$package_dir"
     fi
     python3 "$PROJECT_ROOT/tools/export_level_music.py" \
         --map-key "$map_key" \
