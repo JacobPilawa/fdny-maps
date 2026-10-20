@@ -21,11 +21,17 @@ for (event = events; eventCount != 0; event += 5, --eventCount) {
     if (event->dwOfs == 4) mouse->yDelta += (int32_t)event->dwData;
 }
 
+/* FUN_004395c0 sets outer action vtable 004e0b44 and its input-provider */
+/* subobject at this+8 to vtable 004e0a14. */
 /* Vtable 004e0a14 slot 3 -> 00437620, an unbounded axis accessor. */
-/* At 00437620, selector 0 FILDs owner + 0x10; selector 1 FILDs + 0x14. */
-/* The mouse subobject is offset from the DirectInput provider as passed to it. */
+/* Selector 0 FILDs provider +0x10; selector 1 FILDs provider +0x14. */
+/* Vtable 004e0a14 slot 5 -> 004394a0, an unbounded device update callback. */
+/* At 004394a0: LEA ESI,[ECX+8]; CALL 00437ab0(ESI); JMP 00437c80(ESI). */
+/* 00437ab0's +8/+c fields are therefore provider +0x10/+0x14, matching */
+/* the X/Y fields read by 00437620. */
 
 /* Vtable 004e0b44 slot 3 -> 00439310, an unbounded scaled axis wrapper. */
+/* It dispatches through the provider vtable slot 3 after adjusting this+8. */
 /* 004ff480 is initialized in the image to float32 0.10000000149011612. */
 /* Fresh direct-data-xref scan found one read at 0043931e; no runtime option */
 /* write was established, so 0.1 is the retail image default, not a proven */
@@ -49,6 +55,9 @@ for (event = events; eventCount != 0; event += 5, --eventCount) {
 /* the temporary aim frame by +pitch then -yaw, and leaves the entity frame */
 /* used by 00465ef0 as the stream source frame. */
 
-/* Static evidence only. The exact DirectInput poll/update cadence, sensitivity */
-/* overrides, x87 intermediate rounding, SDL event timing, and rendered/live */
-/* retail orientation have not been compared. */
+/* Static analysis establishes the provider's virtual poll callback and its */
+/* data flow, but not which manager dispatches that callback or how often it */
+/* runs relative to PlayerHose. The host consumes SDL relative events once per */
+/* gameplay frame. The image-default scalar may be changed by untraced user */
+/* settings. Exact x87 rounding, event-to-frame timing, live nozzle orientation, */
+/* and retail parity have not been compared. */

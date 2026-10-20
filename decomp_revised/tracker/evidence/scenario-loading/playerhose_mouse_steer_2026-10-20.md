@@ -29,6 +29,16 @@ provider value by the float at `004FF480`, then negates it. The image stores
 data-reference scan found the read at `0043931E`. A later settings write was
 not established, so this is the executable image default.
 
+The provider object chain is also resolved. `FUN_004395C0` installs the outer
+action vtable and nests the device provider at `this+8`. Provider vtable
+`004E0A14` slot 5 targets `004394A0`; that unbounded target advances `this+8`,
+calls `00437AB0` to sample the mouse, then calls `00437C80` for the associated
+keyboard state. The provider's slot-3 axis getter `00437620` reads the fields
+that the mouse poll updates through that subobject offset. This proves that
+mouse samples refresh through a virtual device-update callback. Static
+references do not identify its manager scheduler or how often it dispatches
+the callback relative to PlayerHose.
+
 `FUN_00466780` subtracts `STEER_PITCH` and `STEER_YAW` from accumulators at
 PlayerHose `+0x230` and `+0x234`. Combined with the wrapper sign, positive
 relative X/Y counts increase those accumulators by 0.1 degrees per count.
