@@ -1404,8 +1404,9 @@ int drawPreviewFires(std::vector<PreviewFire>& fires, FireRenderer& renderer, ui
     return quads;
 }
 
-int32_t roundedRouteKeyOffsetMs(float seconds) {
-    const double milliseconds = std::nearbyint(double(seconds) * 1000.0);
+int32_t truncatedRouteKeyOffsetMs(float seconds) {
+    // 004B9400 corrects its x87 nearest-integer conversion toward zero.
+    const double milliseconds = std::trunc(double(seconds) * 1000.0);
     if (!std::isfinite(milliseconds)) return 0;
     return int32_t(std::clamp(milliseconds,
         double(std::numeric_limits<int32_t>::min()),
@@ -1451,8 +1452,8 @@ void updatePreviewFirePathMotion(PreviewFire& fire, float dt, uint32_t now,
         // endpoints along the normalized route direction. It equals the
         // authored radius for the verified no-C_Model route path.
         request.keyDepth = fire.authoredRouteRadius;
-        request.firstKeyOffsetMs = roundedRouteKeyOffsetMs(motion.firstKeyOffset);
-        request.secondKeyOffsetMs = roundedRouteKeyOffsetMs(motion.secondKeyOffset);
+        request.firstKeyOffsetMs = truncatedRouteKeyOffsetMs(motion.firstKeyOffset);
+        request.secondKeyOffsetMs = truncatedRouteKeyOffsetMs(motion.secondKeyOffset);
         request.floorMe = fire.floorMe;
         if (fire.routeChildrenSmokeEnabled && ++fire.routeChildSmokeCounter > 1) {
             fire.routeChildSmokeCounter = 0;

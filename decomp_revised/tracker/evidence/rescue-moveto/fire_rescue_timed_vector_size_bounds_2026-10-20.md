@@ -97,7 +97,8 @@ these request fields:
   unit length. The first explicit timestamp is zero.
 - `00448D60` adds the generated key offsets to its current game clock before
   inserting them in the shared timed-vector track. The route updater's
-  `004B9400` rounds the offset expression to an integer. Treating the
+  `004B9400` converts the offset expression to an integer toward zero after
+  correcting x87 nearest conversion. Treating the
   untouched second/third base timestamps as zero is a host assumption until
   the FireRescue class template data is traced.
 - `M_Smoking` starts at zero in the request. If the parent has smoking enabled,

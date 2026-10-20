@@ -29,7 +29,7 @@ and
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
 The rescue-all macOS app compiled and packaged with matching standalone/app
 arm64 executable SHA-256
-`96bf6ffffb66ea9bfacbb0191cf595a590af4075cc0e276e025afd0c72d49ec7`; its
+`5f2ad43e7ae14aa49e39e0e6ee68be35133c97fa01b16e1fe87538c0874dfcc6`; its
 `Info.plist` passed validation and eight rescue choices were emitted. The
 json-c dylib still targets macOS 27.0 while this build links for 13.3. This is
 compile/package evidence only, not route runtime or retail parity.
