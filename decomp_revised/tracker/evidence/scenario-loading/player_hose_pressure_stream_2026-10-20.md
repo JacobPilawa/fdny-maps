@@ -86,11 +86,23 @@ WinMM clock converted from milliseconds by `0.001`.
 velocity and shape at `now - age`, where `age = parameter * 0.75`. For the main
 path it evaluates `source + velocity*age + (0,-1000,0)*age*age`; the
 `-1000` coefficient comes from half of the constructor's `(0,-2000,0)` vector.
-`0046C5A0` collision-tests consecutive path samples and stops building later
-sections after a hit. At full pressure and a normalized horizontal aim, the
-nominal forward travel at age `0.75` is 3000 units, with about 562.5 units of
-downward displacement. The exact four-vertex cross-section, material transfer,
-and rendered appearance remain unresolved.
+The other strip curve evaluates
+`source + (velocity + (0,-500,0))*(0.6*age) + (0,-1000,0)*(0.6*age)^2`.
+`0046C5A0` submits each quad in previous-main, previous-secondary,
+current-secondary, current-main order and collision-tests consecutive main
+path samples. It clears later strip polygons after a hit. At full pressure and
+a normalized horizontal aim, the main path's nominal forward travel at age
+`0.75` is 3000 units, with about 562.5 units of downward displacement.
+
+The strip vertices are initialized white (`255` per channel). U spans `0.15`
+and scrolls at six units per second; the secondary curve's V coordinate is
+`0.9`. `0046D6B0` asks the renderer for texture resource ID 3, and
+`00493650` searches that renderer's numeric resource array. The ID's bitmap,
+remaining UV values, and blend/material flags are unresolved. `00469F50`
+appends a supplied curve position and scalar into parallel arrays; its caller
+supplies twice the interpolated sample shape scalar after the threshold check.
+This helper trace does not identify the texture or renderer state associated
+with those points.
 
 ## Shared-host port
 
@@ -100,12 +112,10 @@ updates once per frame toward the target while its hose action is active and
 toward zero otherwise, using the source's per-update 0.2 interpolation. Its
 stream path keeps eight timestamped source/velocity/shape samples, updates
 them at 0.1 second intervals, and evaluates the source-shaped 25-section
-ballistic centerline over the 0.75 second history. The host tests each eligible
-successive path segment with the source collision flags and stops after the
-first hit. This replaces the previous single straight ray and the earlier
-incorrect interpretation of `4000 * pressure` as a final reach. It remains an
-approximation of the retail four-vertex strip; the shared host checks the
-selected target AABB against the pressure-derived 10-to-40 contact padding,
-and its blue line opacity remains provisional. Source sample and path math are
-static evidence; no interactive or retail comparison was performed for this
-checkpoint.
+dual-curve ballistic strip over the 0.75 second history. The host draws each
+quad in the traced vertex order and collision-tests its main path, stopping
+after the first hit. It has not resolved renderer resource ID 3, texture
+binding, blending, or full UV state, so material and color remain provisional.
+The shared host checks the selected target AABB against the pressure-derived
+10-to-40 contact padding. Source sample and path math are static evidence; no
+interactive or retail comparison was performed for this checkpoint.

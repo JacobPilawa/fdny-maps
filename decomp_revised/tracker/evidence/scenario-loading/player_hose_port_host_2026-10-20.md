@@ -5,11 +5,11 @@ resolves authored WindowFire target names to BSP model IDs, applies the
 source-derived numeric mode timer scale, runs a source-shaped target/cycle/
 hotspot state path, follows the authored HosePath camera rail with a
 floor-height query, and tracks the source-shaped `M_MaxPressure` scalar with a
-timestamped ballistic stream path.
+timestamped ballistic strip path.
 The shared loop now uses the traced retail delta scale,
 lower pacing threshold, and upper cap. Retail menu labels/initial mode, rail
 speed calibration, SDL tick quantization/focus-pause mapping,
-mouse-to-nozzle mapping, native pressure-to-water rendering, live dousing
+mouse-to-nozzle mapping, strip resource/UV/material binding, live dousing
 cadence, WindowFire visuals, result widget, and stage transition remain
 open.**
 This is a port checkpoint, not a live retail-parity result.
@@ -43,6 +43,8 @@ Fresh decompilation is preserved in
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 [`playerhose_stream_shape_interpolation_fresh_2026-10-20.c`](../fire-spread/playerhose_stream_shape_interpolation_fresh_2026-10-20.c),
+[`playerhose_strip_construction_fresh_2026-10-20.c`](../fire-spread/playerhose_strip_construction_fresh_2026-10-20.c),
+[`playerhose_strip_texture_lookup_fresh_2026-10-20.c`](../fire-spread/playerhose_strip_texture_lookup_fresh_2026-10-20.c),
 and the fuller authored-data and open-question inventory in
 [`player_hose_stage_lifecycle_2026-10-20.md`](player_hose_stage_lifecycle_2026-10-20.md).
 
@@ -110,18 +112,21 @@ per-update 0.2 interpolation toward that target while held and toward zero
 after release. Retail scales a stored aim-velocity vector by `4000 * pressure`
 and records the separate shape scalar `0.8 + 2.2 * pressure`. Its eight-sample
 ring covers 0.75 seconds, with samples written at 0.1 second intervals. The
-25-section consumer interpolates that source/velocity history and evaluates a
-ballistic centerline with vertical acceleration `-2000`; at full pressure its
-nominal horizontal travel is 3000 units over the 0.75 second sample lifetime.
-The host now follows this timestamped path and collision-tests successive
-segments. The strip consumer culls samples whose interpolated shape scalar is
+25-section consumer interpolates that source/velocity history and evaluates
+two ballistic curves, the second using a 0.6 age scale and a -500 Y velocity
+offset. It submits their consecutive samples as four-vertex quads and checks
+the main path for world collision; at full pressure its nominal horizontal
+travel is 3000 units over the 0.75 second sample lifetime. The host now draws
+these dual-curve quads and collision-tests successive main-path segments. The
+strip consumer culls samples whose interpolated shape scalar is
 at most 1.0 and passes twice that scalar to the curve helper. It remains unclear
 how that value transfers to rendered vertex width or color. Retail also sends
 current pressure as a WindowFire message payload; the traced timer ignores it
 as a rate input. On collision it sets the douse contact radius from 10 to 40
 using current pressure; the host checks that radius against the selected
-target's world AABB. The simple blue line still uses pressure as a provisional
-opacity proxy, and exact rendered-water appearance remains open. The earlier exact
+target's world AABB. The host does not yet bind renderer resource ID 3, which
+the retail strip constructor requests, and its opacity remains provisional.
+Exact texture, UV state and rendered-water appearance remain open. The earlier exact
 `+0x1834` instruction-text scan finds only the assignment at `00467B8A`; it
 missed the component-relative alias. The host win/loss title is not retail
 result presentation. See
@@ -251,19 +256,21 @@ comparison were made.
 
 ## Ballistic stream path follow-up (supersedes the earlier reach interpretation)
 
-Fresh traces of `0046D1B0`, `0046C000`, `0046BAD0`, and `0046BC10` separate
 Fresh traces of `0046D1B0`, `0046C000`, `0046BAD0`, `0046BC10`, `0046C2F0`,
-`0046C5A0`, and `0046D6B0` separate the stored velocity magnitude
+`0046C5A0`, `0046C480`, and `0046D6B0` separate stored velocity magnitude
 (`4000 * currentPressure`) from final travel. The sample ring holds eight
 records over 0.75 seconds and refreshes at 0.1 second intervals. The strip has
-25 nonlinear time sections, with main path point
-`source + velocity*age + (0,-1000,0)*age^2`. At full pressure and horizontal
-aim this yields 3000 units of nominal travel and 562.5 units of downward
-displacement. The host now samples the source/velocity history, builds this
-ballistic centerline, and collision-tests consecutive path segments. This
-corrects the prior single-ray port. Its line and collision still approximate
-the retail four-vertex shape; the strip scalar's visual transfer and live
-appearance remain open.
+25 nonlinear time sections. Its main point is
+`source + velocity*age + (0,-1000,0)*age^2`; the second curve uses
+`(velocity + (0,-500,0))*(0.6*age)` plus the matching gravity term. Retail
+submits each quad as previous-main, previous-secondary, current-secondary,
+current-main, with white vertex channels and a 0.15 U span scrolling at six
+units per second. At full pressure and horizontal aim, the main curve yields
+3000 units of nominal travel and 562.5 units of downward displacement. The
+host now samples both curves and draws the source-ordered quads while checking
+the main path for collision. Renderer resource ID 3 is traced to a lookup
+helper, but its bitmap, complete UV state, blend/material flags, and live
+appearance remain open; the host's color and opacity are provisional.
 
 ## Ballistic stream build (2026-10-20)
 
@@ -274,6 +281,17 @@ at `214827038a147653b9ea541846b5e96bc7b7486b30f69e0c140bc0dc5bf8d804`.
 maps remain packaged. Linking retained the existing Homebrew json-c warning
 (built for macOS 27.0 while the target links for 13.3). No tests, interactive
 run, or retail comparison were performed.
+
+## Dual-curve strip geometry build (2026-10-20)
+
+After porting the traced secondary curve and quad vertex order, the shared
+macOS target and rescue-all app rebuilt with matching standalone and packaged
+executable SHA-256
+`b2d7a1f802065a489636729ddb266a7e39df61bef528230ebe8123375bf77716`.
+`Info.plist` passed validation, the packaged catalog reports eight retail
+rescue choices, and all four PlayerHose maps are present. The existing
+Homebrew json-c macOS 27.0 versus target 13.3 warning remains. No tests,
+interactive run, or retail comparison were performed.
 
 The shared macOS target and rescue-all bundle rebuilt with matching standalone
 and packaged executable SHA-256

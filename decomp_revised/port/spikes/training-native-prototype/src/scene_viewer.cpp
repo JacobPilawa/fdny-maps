@@ -3060,19 +3060,19 @@ void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) 
     std::cout << "\n";
 }
 
-void drawPlayerHoseStream(const std::vector<V>& segments, float pressure) {
+void drawPlayerHoseStream(const std::vector<V>& vertices, float pressure) {
     glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT |
                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
-    glLineWidth(3.f);
-    // Retail renders timestamped four-vertex strips. The host draws their
-    // sampled ballistic centerline; pressure-to-opacity remains provisional.
-    glColor4f(.36f, .74f, 1.f, .82f * std::clamp(pressure, 0.f, 1.f));
-    glBegin(GL_LINES);
-    for (const V& point : segments) glVertex3f(point.x, point.y, point.z);
+    // Retail submits four-vertex, dual-curve ballistic strips. This host uses
+    // their traced geometry but has not recovered the resource-3 material.
+    glColor4f(.36f, .74f, 1.f, .3f * std::clamp(pressure, 0.f, 1.f));
+    glBegin(GL_QUADS);
+    for (const V& point : vertices) glVertex3f(point.x, point.y, point.z);
     glEnd();
     glPopAttrib();
 }
@@ -5731,7 +5731,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (dedicatedPlayerHose) playerHoseStage.advanceCameraRail(dt);
             FrameTransform cameraFrame = ViewUpdate::directEye(player.p, yaw, pitch, player.crouch);
             FrameTransform hoseAimFrame = cameraFrame;
-            std::vector<V> hoseStreamSegments;
+            std::vector<V> hoseStreamVertices;
             V hoseStreamEnd{};
             bool hoseStreamVisible = false;
             if (dedicatedPlayerHose) {
@@ -5798,22 +5798,27 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const V hoseStreamDirection = hoseAimFrame.axis[2] * -1.f;
                 const auto hoseCurve = playerHoseStage.streamCurve(
                     dt, hoseStreamStart, hoseStreamDirection);
+                if (hoseCurve.size() > 1)
+                    hoseStreamVertices.reserve((hoseCurve.size() - 1) * 4);
                 if (!hoseCurve.empty()) hoseStreamEnd = hoseCurve.front().position;
                 for (size_t i = 1; i < hoseCurve.size(); ++i) {
                     if (hoseCurve[i].shape <= 1.f) continue;
+                    // 0046C5A0 orders the quad as previous main point,
+                    // previous secondary point, current secondary point,
+                    // current main point.
+                    hoseStreamVertices.push_back(hoseCurve[i - 1].position);
+                    hoseStreamVertices.push_back(hoseCurve[i - 1].secondaryPosition);
+                    hoseStreamVertices.push_back(hoseCurve[i].secondaryPosition);
+                    hoseStreamVertices.push_back(hoseCurve[i].position);
                     const V segmentStart = hoseCurve[i - 1].position;
                     const V segmentDelta = hoseCurve[i].position - segmentStart;
                     Hit streamHit;
                     if (collision.tracePoint(segmentStart, segmentDelta, 0x43, 2, streamHit)) {
-                        hoseStreamSegments.push_back(segmentStart);
-                        hoseStreamSegments.push_back(streamHit.point);
                         hoseStreamEnd = streamHit.point;
                         streamHasWorldContact = true;
                         hoseStreamVisible = true;
                         break;
                     }
-                    hoseStreamSegments.push_back(segmentStart);
-                    hoseStreamSegments.push_back(hoseCurve[i].position);
                     hoseStreamEnd = hoseCurve[i].position;
                     hoseStreamVisible = true;
                 }
@@ -6715,7 +6720,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
             if (hoseStreamVisible)
-                drawPlayerHoseStream(hoseStreamSegments, playerHoseStage.streamPressure);
+                drawPlayerHoseStream(hoseStreamVertices, playerHoseStage.streamPressure);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};

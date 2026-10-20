@@ -38,7 +38,7 @@ The shared host now applies these thresholds with SDL ticks and `SDL_Delay(1)`.
 Focus-pause behavior for absolute-time consumers, SDL tick quantization,
 callback ordering, and live retail parity remain open; see
 [`player_hose_frame_delta_refs_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_frame_delta_refs_2026-10-20.md).
-Mouse-delta scaling, rendered stream fidelity, result feedback, and stage
+Mouse-delta scaling, stream material binding, result feedback, and stage
 return flow remain open. The `M_MaxPressure` alias and per-update pressure
 smoothing are now traced and tracked in the host. Retail scales the stored
 aim-velocity vector by `4000 * currentPressure` and records a separate shape scalar
@@ -46,9 +46,9 @@ aim-velocity vector by `4000 * currentPressure` and records a separate shape sca
 below 1, passes twice the scalar to the geometry helper, builds
 collision-tested strips, and derives a separate 10-to-40-unit contact padding.
 The shared host now follows its eight-record, 0.75-second ballistic history
-with 25 sampled sections, and gates WindowFire contact by the selected model
-AABB expanded by that radius. Its centerline and blue-beam opacity remain
-approximations; exact strip rendering is open. Do not treat the host
+with 25 sampled sections, draws the traced dual-curve quads, and gates
+WindowFire contact by the selected model AABB expanded by that radius. Its
+texture/resource binding and color/alpha remain provisional. Do not treat the host
 build as a live check or retail parity. The full port assumptions and compile
 record are in
 [`player_hose_port_host_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_port_host_2026-10-20.md).
@@ -57,15 +57,23 @@ record are in
 
 The current EXE hash-pinned trace resolves the stream's eight-record history,
 0.75-second lifetime, 0.1-second sample interval, and 25 nonlinear sections.
-The stored `4000 * pressure` vector is velocity; the centerline applies the
-interpolated historical source and aim plus `(0,-1000,0)*age^2`. The port now
-records/interpolates samples and checks successive curved segments. The macOS
-rescue-all app rebuilt with matching standalone/package SHA-256
-`214827038a147653b9ea541846b5e96bc7b7486b30f69e0c140bc0dc5bf8d804`; plist
-validation passed, with all eight rescue choices and four hose maps present.
-No tests, interactive run, or retail comparison was performed. Next, trace how
-`00469F50`'s scalar and `0046BC10`'s other vector determine the exact strip
-vertices/material, then trace the stream component's runtime gate.
+The stored `4000 * pressure` vector is velocity; the main path applies the
+interpolated source and aim plus `(0,-1000,0)*age^2`. The other curve uses
+`velocity + (0,-500,0)` at 0.6 age. Retail submits four-vertex quads in
+previous-main, previous-secondary, current-secondary, current-main order and
+checks the main curve for collision. The port now draws those dual-curve quads.
+`00469F50` appends each curve point and its associated scalar to parallel
+arrays; its caller passes twice the interpolated sample shape scalar after the
+`<=1.0` cull. Renderer resource ID 3 is traced to a numeric lookup helper, but
+the bitmap, complete UV state, and blend/material flags remain open. The
+rescue-all macOS app rebuilt with matching standalone/package SHA-256
+`b2d7a1f802065a489636729ddb266a7e39df61bef528230ebe8123375bf77716`; its
+plist passed validation, its catalog reports eight retail rescue choices, and
+its resources include all four hose maps. No tests, interactive run, or retail
+comparison was performed. The higher-value gameplay gap is the rescue-player
+HoseSpray path: connect its traced slot-4 command/contact behavior to the shared
+rescue host once the authored `touchhose` trigger path is established. Resource
+ID 3/material binding and component gate/cadence remain open stream work.
 
 The rescue-player HoseSpray contact writer is now traced through the shared
 stream-collision component: HoseSpray embeds it at `+0x608`, and
@@ -88,8 +96,9 @@ passes twice the scalar into its curve helper, builds four-vertex strips, and
 collision-tests them. After a hit, component `+0x18` interpolates from 10 to
 40 using current pressure; `00464AA0` expands the target WindowFire AABB by
 that radius before queueing contact. The source's `0.75 / 0.1` sample history,
-25 nonlinear sections, and ballistic centerline are now ported into the host.
-Exact strip rendering and scheduler cadence remain open. The WindowFire timer
+25 nonlinear sections, dual ballistic curves, and quad submission order are
+now ported into the host. Strip material and scheduler cadence remain open.
+The WindowFire timer
 still ignores the payload as a rate input.
 See
 [`player_hose_pressure_stream_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_pressure_stream_2026-10-20.md).
@@ -125,7 +134,7 @@ performed.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point and timestamped ballistic path, source-shaped temporary aim rotation, and retail-delta pacing; rail speed calibration, state-frame cadence, SDL-to-steering mapping, exact strip visuals, mode labels/initial choice, result and return flow remain provisional/open |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point and timestamped dual-curve strip geometry, source-shaped temporary aim rotation, and retail-delta pacing; rail speed calibration, state-frame cadence, SDL-to-steering mapping, strip resource/UV/material binding, mode labels/initial choice, result and return flow remain provisional/open |
 | Frame-delta clock trace | `0042bf70_frame_clock_delta_fresh.c`, frame-delta evidence note, shared SDL loop | Source producer and second-based delta traced; `>1/60` pacing and `0.1` cap ported; focus-pause/absolute-time mapping and retail parity remain open |
 
 ### Frame-clock source and pacing port (2026-10-20)
@@ -2163,7 +2172,7 @@ symptom remain open.
 | `bank_contact_review` | Audit Bank live-loop contact/PATH ordering and reported M workaround | `scene_viewer.cpp`, Bank door route and interaction fixture | Complete; read-only; no M-to-collision path; live ordinary route still needs capture |
 | `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; its separate direct-runner recommendation is implemented with all four hose maps packaged; a retail hose catalog/selector remains open |
 | `hose_runtime_data_audit` | Find a source-backed first playable PlayerHose data slice | `city_h/entities.json`, `scene_data.h`, `startup.h`, `scene_viewer.cpp`, lifecycle evidence | Complete; read-only; city_h gives a linear first hotspot path and its 29 ZF names resolve to `%Model%`; no edits; live route, exact camera, timing, collision, and WindowFire effect presentation remain open |
-| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle, pressure and sample-consumer exports | Complete; pressure alias, stored velocity scale `4000 * pressure`, separate sample shape scalar, 0.75-second/eight-record history, 25-section ballistic path, and 10-to-40 contact padding traced and ported; exact strip appearance, component gate/cadence, and pitch/path-angle relation remain open |
+| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle, pressure and sample-consumer exports | Complete; pressure alias, stored velocity scale `4000 * pressure`, separate sample shape scalar, 0.75-second/eight-record history, 25-section dual-curve quads, and 10-to-40 contact padding traced and ported; texture/resource binding, blend flags, component gate/cadence, and pitch/path-angle relation remain open |
 | `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommendation integrated as a separate route in the shared game host; authored spline/camera and stage result remain open |
 | `hose_city_data` | Map city_h's authored path, targets, and loader representation | `.local/exports/city_h/entities.json`, `scene_data.h`, lifecycle evidence | Complete; read-only; confirmed 19 path nodes, nine hotspots and 29 `%Model%` target references; no edits |
 | `hose_mode_labels` | Trace PlayerHose session mode index to retail labels/default | Pinned `004677D0`, related PlayerRescue initialization, menu and EVS evidence | Complete; read-only; exact timer factors are source-backed, but labels/default are not; difficulty-like role is suggestive only |

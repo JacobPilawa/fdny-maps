@@ -63,6 +63,7 @@ struct PlayerHoseStreamSample {
 
 struct PlayerHoseStreamPoint {
     V position{};
+    V secondaryPosition{};
     float shape = 0.f;
 };
 
@@ -100,7 +101,7 @@ struct PlayerHoseStage {
     // The shared stream component moves its output scalar 20% toward the
     // current hotspot's M_MaxPressure while held, and 20% toward zero when
     // released. Retail scales the sampled stream velocity by 4000 * this
-    // value, then retains the samples in a 0.75 second ballistic path.
+    // value, then retains the samples in a 0.75 second ballistic strip.
     float streamPressureTarget = 0.f;
     float streamPressure = 0.f;
     float streamClockSeconds = 0.f;
@@ -341,6 +342,7 @@ struct PlayerHoseStage {
         constexpr int sections = 25;
         constexpr float historySeconds = 0.75f;
         const V gravity{0.f, -2000.f, 0.f};
+        const V secondaryVelocityOffset{0.f, -500.f, 0.f};
         std::vector<PlayerHoseStreamPoint> points;
         points.reserve(sections);
         for (int i = 0; i < sections; ++i) {
@@ -350,7 +352,11 @@ struct PlayerHoseStage {
             const PlayerHoseStreamSample sample = streamSampleAt(streamClockSeconds - age);
             const V position = sample.source + sample.velocity * age +
                 gravity * (0.5f * age * age);
-            points.push_back({position, sample.shape});
+            const float secondaryAge = age * 0.6f;
+            const V secondaryPosition = sample.source +
+                (sample.velocity + secondaryVelocityOffset) * secondaryAge +
+                gravity * (0.5f * secondaryAge * secondaryAge);
+            points.push_back({position, secondaryPosition, sample.shape});
         }
         return points;
     }
