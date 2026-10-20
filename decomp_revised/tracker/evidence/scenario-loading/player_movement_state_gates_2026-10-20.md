@@ -37,6 +37,18 @@ root `+0x3430`, the view-pitch accumulator. `ESI+0x32F4` maps to root
 `+0x3434`, the view-yaw accumulator. The separate movement-vector cap is 400
 normally, 260 in state 4, and 800 when byte `ESI+0x240` is nonzero.
 
+Fresh current-hash disassembly of `0044BCE0` pins the state-4 clearance call:
+it passes Player root `+0x4C` as the query origin, root `+0x78` as the minimum
+vector, and a stack maximum `(root+0x84, DAT_004E181C, root+0x8C)` to
+`00492DF0`. The wrapper uses `geWorld_GetContents` mode 2 and treats contents
+mask `0x43` as blocked. A blocked query leaves state 4 and calls `004A11A0`
+through root `+0x508`; a clear query writes `DAT_004E181C` to root `+0x88` and
+restores state 3. The constant is 85.0 in the reviewed function export. This
+maps the retail argument sources and state writes, but the world query's
+coordinate transform and the root `+0x78..+0x8C` field layout remain open.
+Evidence: [`player_uncrouch_clearance_2026-10-20.asm`](player_uncrouch_clearance_2026-10-20.asm)
+and [`player_crouch_clearance_query_fresh_2026-10-20.c`](player_crouch_clearance_query_fresh_2026-10-20.c).
+
 When state 5 or byte `ESI+0x240` is active, the movement vector is transformed
 through the frame at `ESI+0x3320` using `004977B0`; gravity is set to zero.
 The smoothing exponent base is 0.2 for state 5, byte `ESI+0x240`, or a

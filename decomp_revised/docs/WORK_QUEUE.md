@@ -242,6 +242,15 @@ collision. This preserves the recovered local order while its movement basis
 and outer callback cadence remain provisional. See
 [`player_crouch_velocity_return_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_crouch_velocity_return_2026-10-20.asm).
 
+The follow-up `0044BCE0` trace records its exact `00492DF0` argument sources:
+origin root `+0x4C`, minimum root `+0x78`, and maximum `(root+0x84, 85.0,
+root+0x8C)`. A blocked contents-mask `0x43` query preserves crouch and requests
+the `+0x508` sound; a clear query restores state 3 and writes 85.0 to `+0x88`.
+The host's standing AABB check remains an adapter because the Genesis query
+transform and root bound fields are not yet mapped. Scope `player_uncrouch_clearance`
+is complete, read-only; evidence is in
+[`player_uncrouch_clearance_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_uncrouch_clearance_2026-10-20.asm).
+
 Retail selects pitch caps 20/40/70 degrees from DifficultyLevel, raises the
 cap to 45 in state 5 or when byte `+0x380` is set if the base cap is at most
 45, and uses a separate movement-vector cap of 400 normally, 260 in state 4,
