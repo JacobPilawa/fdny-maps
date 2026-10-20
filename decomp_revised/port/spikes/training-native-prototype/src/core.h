@@ -108,6 +108,8 @@ struct Player{
  // Jump input is still a host adapter: retail JUMP runs only in crouch state
  // 4 and calls the uncrouch clearance helper 0044BCE0. Normal-state 0044E990
  // uses a timed contact latch; its relation to a direct user action is open.
+ // The host's 25/85 max-Y values match retail constants; the world-query
+ // origin/bounds transform and callback timing are not yet matched.
  void step(float dt,float forward,float strafe,float yaw,bool jump,bool jumpEdge,bool crouchEdge,Collision& c,float pitch=0){
  collisionLatch=false;
  cooldown=std::max(0.f,cooldown-dt);if(crouchEdge){if(crouch){if(!c.solid(p,{-30,-30,-30},{30,85,30}))crouch=false;}else if(ground)crouch=true;}

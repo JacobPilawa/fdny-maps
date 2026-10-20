@@ -49,11 +49,17 @@ plays the sound at root `+0x508` and leaves state 4, or writes root `+0x88` and
 returns the state to 3. Player ScriptActor token references identify state 4
 as `crouch`: the `crouch` command sets state 4 and the `uncrouch` command calls
 the same `0044BCE0` helper. Thus the default JUMP action is a crouch-clearance /
-uncrouch action in this state. This branch does not call the `0044E990`
+uncrouch action in this state. The handler stores 25.0 at root `+0x88` for
+crouch and 85.0 when uncrouching. The latter path calls `geWorld_GetContents`
+through `00492DF0` in mode 2 with Player origin/bounds inputs; a returned
+contents mask intersecting `0x43` blocks uncrouching and preserves state 4,
+while a clear query restores state 3. The numeric heights match the shared
+host's crouch/standing max-Y values, but their coordinate mapping and callback
+timing remain provisional. This branch does not call the `0044E990`
 velocity/stat routine. When state is not 4, the update calls `0044E990` separately at
 `00453784`; that routine uses its 500 ms timer and `+0x12C` latch, independent
 of the visible `JUMP` query. The camera/input pass at `0042DB06` also queries
-MOUSE_RB but discards that call's result. The geometry query's full meaning,
+MOUSE_RB but discards that call's result. The Player origin/bounds transform,
 outer update cadence, and normal-state jump/contact behavior remain
 unresolved. See
 [`player_jump_action_state4_2026-10-20.asm`](player_jump_action_state4_2026-10-20.asm).

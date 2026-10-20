@@ -171,6 +171,8 @@ The separate state-5 branch compares the `climb` token at
 `00451B60` and calls setter `0044C0B0`; the adjacent `unclimb` branch restores
 state 3 only from state 5. Its token is recorded in
 [`player_climb_state_command_2026-10-20.asm`](player_climb_state_command_2026-10-20.asm).
-The helper's exact geometry query and mapping of normal-state jumping remain
-open; the host jump impulse and counter should not be described as
-retail-equivalent.
+The helper uses a mode-2 `geWorld_GetContents` query and blocks uncrouching
+when returned contents intersect `0x43`; its origin/bounds transform and
+callback timing remain open. The host uses matching numeric crouch/standing
+max-Y values (25/85), but the normal-state jump impulse and counter should not
+be described as retail-equivalent.

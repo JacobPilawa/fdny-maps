@@ -253,8 +253,11 @@ Separately, Player movement queries the named `JUMP` action at `00453739` only
 in state 4 and routes a true result to `0044BCE0`; the state-not-4 branch calls
 the timed `0044E990` jump/stat routine independently. ScriptActor tokens
 resolve state 4 as crouch and show `0044BCE0` also handles `uncrouch`, so
-JUMP is a crouch-clearance/uncrouch action there. The helper's geometric
-meaning and normal-state jump/contact behavior remain open. The separate
+JUMP is a crouch-clearance/uncrouch action there. The helper queries
+`geWorld_GetContents` in mode 2; returned contents intersecting `0x43` block
+uncrouching. Its source bounds use 25/85 values, matching host max-Y values,
+but origin/bounds mapping and normal-state jump/contact behavior remain open.
+The separate
 state-5 setter branch is the `climb` command, and `unclimb` restores state 3
 only from state 5. Total Steps' sound-selection cadence remains open, so Jumps
 and Objects Thrown are still unported. See
