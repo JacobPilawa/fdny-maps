@@ -3536,7 +3536,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             {"Bonus Points", {0, 0}},
             {"Rescues", {0, 0}},
             {"Longest Rescue Time", {2, 0}},
-            {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}}
+            {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}},
+            {"Fires Doused", {0, 0}}
         };
         std::set<int> enabledExitTriggers;
         std::string rescueStageRequest;
@@ -6095,7 +6096,14 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                             if (influence < 0.01f) continue;
                             fire.runtime.spray(
                                 dt, influence, true,
-                                [&] { ++rescueHoseSpray.dousedFireCount; },
+                                [&] {
+                                    ++rescueHoseSpray.dousedFireCount;
+                                    // 00448970 increments this only on the
+                                    // finalize=1 transition into FireRescue
+                                    // mode 5. The extinguisher route uses
+                                    // finalize=0 and must not count here.
+                                    addSourceStatistic(&rescueStatistics["Fires Doused"], 1);
+                                },
                                 [&] {
                                     const char* sound = fireLoopSoundName(
                                         fire.runtime.soundChoice);

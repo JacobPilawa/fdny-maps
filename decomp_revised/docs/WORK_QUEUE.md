@@ -54,14 +54,24 @@ plist validation passed and eight rescue choices were emitted. This remains a
 compile/package check, not a live bonus pickup or retail-parity check. See
 [`bonus_points_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bonus_points_port_2026-10-20.md).
 
-The outcome path is now split into page/schema evidence and runtime transition
+The outcome path is now split into profile data-flow and runtime transition
 evidence. Static tracing identifies child 5 as the Records page and maps its
 left/right actions to a selected-record index and page rebuild. A fresh
-hash-pinned follow-up maps 13 mission-stat definitions and the `Score` save-tree
-nodes, but does not yet join those keys to the exact visible record rows or
-sample profile values. Next correlate registered keys with serialized
-`stats` entries and grouping before adding a profile-backed Records model to the
-shared frontend. The builder export is
+hash-pinned follow-up traces 13 mission-stat definitions, the `Score` save-tree,
+and the win-only copy/merge from the live stat map into the per-level score
+record. `004332E0` reads that same keyed collection, so the 13 names feed the
+Records rows. Concrete profile values and the on-disk scalar/container encoding
+remain unverified. Next audit the 13 gameplay stat producers against the shared
+host and implement missing updates before returning to menu UI work. The shared
+host now increments `Fires Doused` only on the terminal HoseSpray
+`finalize=1` FireRescue transition; the extinguisher route uses `finalize=0`,
+and PlayerHose's separate WindowFire timer does not touch this rescue statistic.
+This value remains in-memory only. The rescue-all macOS bundle rebuilt with
+matching standalone/package executable SHA-256
+`90158fb8df2b516afa70a0a508f5bfd60c62a8fb062c9ae9ebe7dd21af666481`; plist
+validation passed and the catalog emits eight rescue choices. This is a
+compile/package check only, with no tests, interactive run, or retail
+comparison. The builder export is
 [`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c).
 The profile/schema trace is
 [`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md).
@@ -609,7 +619,7 @@ HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, textures, timed-child active alias, frontend consumer, and partial `Score` profile schema traced. State 1 selects child 5, now identified as Records; actions 1/2 navigate the selected-record index and rebuild its contents, while action 0 backs through menu history. The 13 registered stat keys are known, but their join to visible persisted rows and concrete profile values remains open along with timing, state-2 producer, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, textures, timed-child active alias, Records navigation, and the win-only keyed stat merge into the `Score` profile record are traced. State 1 selects child 5; the 13 registered stat keys are the page row source. Concrete profile values/save encoding, result timing, state-2 producer, message-gate lifecycle, runtime placement/alpha, replay cadence, and full outcome flow remain open |
 
 The result path uses direct calls: `00458400` invokes `0048D180` and
 `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs that child with
@@ -624,24 +634,24 @@ record and selects frontend child 5; state 2 selects child 2, the level
 selector. Child 5 calls `00436630` with menu resources 11 and 17, which map to
 `sub.bmp` and `ttl-records.bmp`, and requests arrow texture 54. It is the
 Records page. Its actions 1 and 2 move the selected-record index at child
-`+0x354` and call `004332E0`; action 0 backs through menu history. The builder
-looks up the selected level key in the saved score collection and formats
-stored entries grouped by descriptor order. `00424710` registers 13 mission
-stat keys, while the save reader/writer traces identify `Score`, `LevelName`,
-`stats`, `Name`, `LevelIndex`, and `DifficultyLevel` nodes. The exact mapping
-from those definitions to the visible persisted rows, field units, profile
-values, category layout and runtime visibility remains open. The constructor,
-callback, builder, profile mutation and schema traces are in
+`+0x354` and call `004332E0`; action 0 backs through menu history. On the
+win-only path, `00424650` looks up or creates the selected level's record,
+copies keyed mission stats through `00488710`, merges best values, then saves
+via `004243F0`. `004332E0` reads the same per-level stat collection and formats
+its stored names/values by registration ordinal. The 13 keys and raw type/merge
+selectors are traced; concrete profile values, file encoding, final layout and
+runtime visibility remain open. The constructor, callback, builder, profile
+mutation and schema traces are in
 [`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c),
 [`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c),
 [`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md),
 and [`mission_outcome_frontend_handoff_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_handoff_fresh_2026-10-20.c).
 
 The shared port has a runtime rescue-stat map but no profile-backed Records
-page model or menu route. Next correlate the 13 registered stat keys with the
-serialized `stats` values, order, and grouping, then add a shared data model and
-frontend route from the verified source. Keep the result transition unmodeled
-until runtime evidence resolves the gate lifecycle and child timing.
+page model or menu route. The existing work-queue priority pauses menu UI; next
+audit the 13 keyed gameplay-stat producers and implement the missing values in
+the shared host. Keep result-state changes unmodeled until runtime evidence
+resolves the gate lifecycle and child timing.
 Do not port guessed placement, timing, or a loss-state producer. The bounded
 scan still found no direct writer of Player `+0x3438 = 2`; if retail runtime
 access becomes available, set a write watchpoint during expiry, passout, and
@@ -935,7 +945,7 @@ body-bearing functions and 287 external entries.
 | `outcome_widget_timing` (Luna) | Result child `+0x130/+0x134` timing and sibling callers | Result widget evidence, full raw disassembly scan, and constructor chain | Complete, read-only; no direct parent-relative timing operands in full EXE scan; `0044D550` → `004576B0` → `0048D390` has no observed timing-field clear/write; allocator clearing and computed aliases remain unknown, so values stay unmodeled; no edits |
 | `next_core_gap` (Luna) | Current port/evidence audit for next cross-mission system | Work queue and rescue outcome evidence | Complete, read-only; verified ordinary all-victims exit enables authored exits/stage links and found no source-backed win/loss transition without runtime evidence; keep `+0x3438` gate separate from result state; no edits |
 | `result_child5_page_audit` (Luna) | Child 5 constructor `00432BB0`, vtable handler `004346A0`, record updater `004332E0`, menu resource table | Complete, read-only; corrected the earlier callback no-op claim; identified Records page, action 0 history-back, actions 1/2 index navigation, and dynamic selected-record rebuild; exact record field labels/layout remain open; no edits |
-| `records_schema_trace` (Luna) | `004332E0`, mission stat registry, save profile reader/writer and `Score` strings | Complete, read-only; found grouped stored-string rendering and the 13-key stat catalog; exact key-to-visible-row join, group labels, and populated profile values remain open; no edits |
+| `records_schema_trace` (Luna) | `004332E0`, mission stat registry, save profile reader/writer and `Score` strings | Complete, read-only; found grouped stored-string rendering and the 13-key stat catalog; exact win-only profile merge is recorded in the follow-up, while sample values and final pixels remain open; no edits |
 | `records_port_gap` (Luna) | Shared menu/frontend and runtime statistic state | Complete, read-only; confirmed no profile-backed Records model or menu route in the current shared port; next safe implementation requires a verified row/value join; no edits |
 | `mission_outcome_direct_offset_scan` | EXE direct stores to Player/result candidate fields `+0x960`, `+0xE24`, `+0x824`, `+0x6EC` | `.local/mission-outcome-flag-writes.txt`, `FindOffsetWrites.java` | Complete, read-only; found seven direct `+0x6EC` stores and no register-displacement store candidates for the other three offsets. Pointer aliases, computed addressing, runtime and external writers are not excluded; no edits |
 
