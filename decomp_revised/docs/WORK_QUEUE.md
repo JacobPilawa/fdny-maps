@@ -8,6 +8,32 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## Rescue CameraRescue quake slice (2026-10-20)
+
+The shared scene viewer now dispatches authored `quake` commands into a
+hash-pinned `CameraRescue` state update: strength/duration fields, 50 ms shared
+RNG sampling, 20-per-second offset smoothing, and the three-phase amplitude
+envelope follow the current `0049C890`/`0049CD80` trace. A direct scan of retail
+data corrected the earlier shorthand: it found ten command references across
+nine campaign map sources (Bank, Bar R, Boat A, Boat B, Gas R, and Oil Rig
+A-D). These static references do not establish runtime reachability.
+
+The final consumer from CameraRescue offsets `+0x4C/+0x50` into Genesis's
+rendered `geCamera` remains unresolved, so the current camera-local
+right/up translation is provisional. Cross-system RNG ordering, actor callback
+cadence, and retail visual parity also remain open. The rescue-all macOS bundle
+built with matching standalone/package SHA-256
+`2421a5019daf5a398db4e1926b3beac8d31cd4cde27a5eac32bf1c60aadab16f`; plist
+validation passed and eight rescue catalog entries were emitted. No tests,
+interactive run, or retail parity check was performed. See
+[`rescue_quake_port_2026-10-20.md`](../tracker/evidence/scenario-loading/rescue_quake_port_2026-10-20.md).
+
+Next core shared gap: continue the `addbonus` trace before choosing its port
+surface. The bounded audit maps the command to Player method `0044EF10`, a
+global bonus-stat increment, and Player event 7; the score field's HUD consumer
+and legacy reward definitions remain unresolved. Avoid inferring a score popup
+or display until that consumer is mapped.
+
 ## Dedicated PlayerHose host slice (2026-10-20)
 
 The shared `fdny-scene-viewer` host now recognizes a dedicated PlayerHose map,
@@ -1209,7 +1235,10 @@ the report is observed.
 | `axe_strike_integration_followup` | Reassess safe shared-viewer Axe hit integration against saved strike/collision/BModel traces | `00460b90_FUN_00460b90.c`, `00492ce0_collision_wrapper.c`, `0043e2a0_FUN_0043e2a0.c`, Axe port headers | Complete; AABB, mask, hit gate, and event path are integrated; Player frame mapping, live candidate list order, and hit effects remain provisional/open |
 | `axe_hit_integration_audit` | Check current Axe integration blockers and authored breakables | Read-only review of current viewer, strike/BModel Ghidra notes, Training data | Complete; first-pass sweep is viable; exact presentation pose, callback cadence, and runtime candidate order still need live comparison |
 | `axe_failure_review` | Recheck reported backward pose and inert swing against current ACT and retail traces | Read-only current source, ACT export, saved Ghidra exports; no edits | Complete; corrected timer gate to prior `<0.275` and new `>0.275` crossing; no source-backed facing flip, retail matrix remains open |
-| `rescue_shared_gap_audit` | Find a high-value shared rescue mechanic to continue after Axe; trace retail quake consumer | Read-only Ghidra audit and shared port review | Complete; CameraRescue's quake vector owner/updater is verified, but its connection to the rendered geCamera transform remains open |
+| `rescue_shared_gap_audit` | Select and trace a shared rescue mechanic; verify CameraRescue quake and rendered-camera consumer | Current-hash Ghidra decompilation, authored BSP/EVS scan, `rescue_quake_port_2026-10-20.md`, `rescue_quake.h`, `scene_viewer.cpp` | Complete for state/update and authored command port; final geCamera consumer, callback cadence, cross-system RNG order, and live parity remain open |
+| `script_command_coverage` | Find high-value shared rescue script commands missing from the host | Retail rescue BSP/EVS scan, shared script dispatcher | Complete, read-only; quake is ported; addbonus remains a broad missing command and static literals do not prove runtime triggers |
+| `bonus_award_trace` | Trace Player `addbonus` handling and award effects | `0044EF10`, Player event 7, hash-pinned retail data | Complete, read-only; global bonus statistic increments and Player event 7 is sent; HUD consumer and legacy reward definitions remain open |
+| `victim_ai_gap` | Compare recurring RescueBot and debug `runrescuebot` paths against shared host | `rescuebot_update_path_2026-10-15.md`, current shared host, hash-pinned retail code | Complete, read-only; recurring RescueBot is already modeled; debug-only `runrescuebot` is a separate one-shot with no authored calls, and no victim survival countdown was verified |
 | `finalexitloadmap_context_trace` | Determine whether the validated stage key reaches the pending loader unchanged | `00451870_player_script_command_handler.c`, `00450a70_player_finalexitloadmap_fresh.c`, `0042a260_set_pending_level_request_fresh.c`, `0047a1f0_script_command_dispatch.c` | Complete; viewer follows the authored key after the retail remaining-victim gate; checked key vs forwarded context equality and live transition timing remain open |
 | `hud_goggles_trace` | Current hint/HUD and goggles visor/scan path | `scene_viewer.cpp`, `hint_overlay.h`, `goggles_renderer.h`, `goggles_scan.h`, `0044ee50_player_hint_route_fresh.c`, `004564c0_hint_window_constructor_fresh.c`, `00462a60_goggles_visor_setup_fresh.c` | Complete; render paths are in the packaged Training binary; live pixel visibility and target effect attachment remain unverified |
 | `fire_damage_trace` | Whether Player fire exposure runs in ordinary viewer frames | `scene_viewer.cpp`, `player_fire_contact.h`, `player_fire_message.h`, `00451640_fire_exposure_trace.asm`, `docs/REVERSE_ENGINEERING_LOG.md` | Complete; handler is called per rendered frame; provisional spatial inputs and callback cadence leave user report unexplained |

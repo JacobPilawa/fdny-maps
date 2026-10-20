@@ -76,6 +76,7 @@ bool jsonNumber(J value) {
 #include "victim_rescue.h"
 #include "victim_transactions.h"
 #include "rescue_bot.h"
+#include "rescue_quake.h"
 #include "victim_proximity.h"
 #include "victim_sound.h"
 #include "fire_effects.h"
@@ -3586,6 +3587,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 gogglesScanPending = true; // 00462660(1) calls the goggles ACTION scan.
         };
         RetailFogState fogState;
+        RescueQuake rescueQuake;
         std::unique_ptr<Scripts> scriptRuntime;
         WorldStartup worldStartup;
         bool worldStartupReady = false;
@@ -3634,6 +3636,16 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
                 if (verb == "fogdisable") {
                     fogState.disable(scriptRuntime->timeMs);
+                    return true;
+                }
+                if (verb == "quake") {
+                    std::istringstream quakeArguments(arguments);
+                    float strength = 0.f, durationSeconds = 0.f;
+                    std::string trailing;
+                    if (!(quakeArguments >> strength >> durationSeconds) ||
+                        (quakeArguments >> trailing) || !std::isfinite(strength) ||
+                        !std::isfinite(durationSeconds)) return false;
+                    rescueQuake.trigger(scriptRuntime->timeMs, strength, durationSeconds);
                     return true;
                 }
                 if (entityId == playerEntityId && verb == "climb") {
@@ -6945,6 +6957,16 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             }
             const auto performanceUpdateEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
+            const V quakeOffset = rescueQuake.update(now, dt, gameplayRandom);
+            if (quakeOffset.x != 0.f || quakeOffset.y != 0.f) {
+                // 0049CD80 updates CameraRescue's +0x4c/+0x50 vector. Until
+                // its final geCamera consumer is traced, use those values as
+                // a provisional local-right/local-up presentation offset.
+                const V localOffset = ViewUpdate::add(
+                    ViewUpdate::scale(cameraFrame.axis[0], quakeOffset.x),
+                    ViewUpdate::scale(cameraFrame.axis[1], quakeOffset.y));
+                cameraFrame.position = ViewUpdate::add(cameraFrame.position, localOffset);
+            }
             int width = 1, height = 1;
             SDL_GL_GetDrawableSize(window, &width, &height);
             RenderCounters renderCounters;
