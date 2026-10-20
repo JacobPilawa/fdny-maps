@@ -6,8 +6,9 @@ shared-host 15-section stream and previous-frame terminal contact port,
 dedicated PlayerHose input path,
 PlayerHose-to-WindowFire contact-message route, dedicated hotspot
 cycle/time/win/loss state machine, and configured stage chatter sound names
-are confirmed. Host item placement/action bindings are provisional; stream
-material, action audio, splash/cooldown effects, attachment record purpose,
+are confirmed. Host item placement/action bindings are provisional; action
+sound press/stop is wired to the bundled retail `HoseSpray` resource with loop
+behavior unverified; stream material, splash/cooldown effects, attachment record purpose,
 live cadence, authored/live Construction branch entry, WindowFire `+0x10`
 authored role, stage result consumer, and mission transition remain open. A bounded
 decoded-code scan found only a WindowFire `+0x10` clear and no nonzero setter
@@ -198,8 +199,10 @@ cadence, action timing, and retail parity remain unverified.
 
 ## Remaining trace
 
-Recover the HoseSpray attachment frame and authored input/action binding;
-trace and port its action sound, cooldown timer, and splash/particle effects.
+Trace the HoseSpray attachment transform writer and authored input binding;
+port its initial 100-ms effect delay, randomized 10..250-ms contact cooldown,
+and splash/particle lifecycle. The source action sound key and callback-bound
+start/stop route are now ported with the host loop policy still provisional.
 Preserve the retail phase order: scan FireRescue candidates using the previous
 stream collision result, derive the current source/aim, then refresh the stream
 collision for the next update. Keep this path separate from dedicated

@@ -180,8 +180,9 @@ contact producer open. The shared Player host now handles authored `touchhose`
 mode-2 acquisition, slot-4 mode-3 selection, separate action callbacks, a
 15-section stream, previous-frame collision contact, and terminal FireRescue
 dousing. Its camera-derived nozzle frame and left-mouse action are provisional;
-authored bindings, item attachment composition, resource-3 material, action
-audio, cooldown effects, and particles remain open. See the
+authored bindings, item attachment composition, resource-3 material, cooldown
+effects, and particles remain open. The owned HoseSpray sound now routes to the
+named retail sample at action start/stop, with loop behavior provisional. See the
 [shared-host port note](rescue_hose_spray_port_2026-10-20.md). A follow-up maps the embedded shared stream component:
 HoseSpray item `+0x608` feeds `0046D1B0`/`0046C5A0`, which write the collision
 point and gate at item `+0x614..+0x624` consumed by `00463EF0`. It also

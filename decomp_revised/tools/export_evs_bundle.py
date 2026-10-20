@@ -133,6 +133,10 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # Extinguisher ACTION callbacks 004614E0/00461590 start ExtStart, loop
     # ExtMiddle, then stop the loop and play ExtEnd; these are not EVS commands.
     wanted.update(("ExtStart", "ExtMiddle", "ExtEnd"))
+    # Rescue HoseSpray ACTION callbacks request this owned 2D sound directly;
+    # keep it in every scene bundle because the shared audio device loads its
+    # sample set from the first scene opened in a session.
+    wanted.add("HoseSpray")
     sounds_dir = scene_package / "sounds"
     sounds_dir.mkdir(parents=True, exist_ok=True)
     sound_rows = []

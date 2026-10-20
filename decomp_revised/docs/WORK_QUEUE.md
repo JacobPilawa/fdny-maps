@@ -140,16 +140,23 @@ action byte. The shared rescue host now ports those state transitions,
 `0046D1B0`'s pressure and 15-section ballistic strip, the shared component
 collision gate, previous-frame contact ordering, and terminal FireRescue
 suppression at influence `>= 0.01`. Key 4 and held left mouse are provisional
-host controls; the camera-derived item frame is provisional. Resource-3
-material, action audio, cooldown effects, particles, authored bindings,
+host controls; the camera-derived item frame is provisional. The shared sound
+bundle and owned `HoseSpray` action press/stop are ported; held-loop behavior is
+provisional. Resource-3 material, cooldown effects, particles, authored bindings,
 attachment-record purpose, scheduler cadence, and retail parity remain open.
+The current-hash contact trace adds a 100-ms initial effect delay and
+randomized 10..250-ms cooldown for residual-fire child effects; neither effect
+spawning nor its rendered resource binding is ported. The generic equipment
+follower chain is confirmed under Player `+0x34A4`, while the exact writer into
+the transform consumed from HoseSpray `+0x58` remains unresolved.
 Details and binary/build hashes are in
 [`rescue_hose_spray_port_2026-10-20.md`](../tracker/evidence/fire-spread/rescue_hose_spray_port_2026-10-20.md).
 The shared macOS executable and rescue-all app rebuilt with matching standalone
-and packaged SHA-256 `250854c4f2db167051b9d4726b907d9d1ca8eff026ddec5f64c8be64c814f355`;
-the plist passed, eight rescue choices were emitted by the catalog build, and
-all four PlayerHose scene directories are packaged. No tests, interactive run,
-or retail comparison was performed.
+and packaged SHA-256 `aa82c474a29d0a720977130d1a0c16c5423a4c706fea7792e4da3f102f0a1a74`;
+the plist passed, eight rescue choices were emitted by the catalog build, all
+four PlayerHose scene directories are packaged, and the HoseSpray WAV hash was
+verified in each rescue scene manifest. No tests, interactive run, or retail
+comparison was performed.
 
 The pressure trace establishes a stored aim-velocity magnitude of
 `4000 * currentPressure` and a separate `0.8 + 2.2 * currentPressure` shape
@@ -619,14 +626,13 @@ The rescue-player HoseSpray update `004640F0` calls `00463EF0` while item
 action byte `+0xC58` is active. That helper reads contact `+0x614..+0x61C`,
 padding `+0x620`, and gate `+0x624`, evaluates shared ellipsoid falloff, and
 calls `00448970(finalize=1)` at influence `>= 0.01`. The extinguisher message
-route remains `finalize=0`; preserve that distinction. The fresh 16-instruction
-decoded-offset scan found no direct HoseSpray XYZ writer. The constructor,
-action callbacks, attach, setup, and update have no explicit contact-vector
-write in the examined functions. `004640F0` computes a world-space point for
-`0046D1B0` attachment visuals; that helper writes attachment state at absolute
-`+0x764`, not the contact fields read by `00463EF0`. The actual direct,
-computed, or engine-assisted producer remains unresolved; a live watchpoint on
-the allocated object is the clearest follow-up. The WindowFire `+0x10` scan
+route remains `finalize=0`; preserve that distinction. A fresh immediate-offset
+scan found no direct HoseSpray XYZ writer: `004640F0` passes the `+0x608`
+component to `0046D1B0`, which calls collision writer `0046C5A0`. The shared
+component stores the hit point, pressure-derived padding, and contact gate at
+`+0x0C..+0x1C`, corresponding to item `+0x614..+0x624`. Contact runs before
+the next collision refresh, closing the static writer route while runtime
+cadence and parity remain open. The WindowFire `+0x10` scan
 found a clear at
 `00468B01` in `00468AC0`, with no nonzero store in the examined class/manager
 methods; `0x7530` calls `00468680` directly while the separate `00468870`

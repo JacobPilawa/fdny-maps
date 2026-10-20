@@ -5910,12 +5910,20 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const bool hoseSelected = selectedItem == "hose";
                 const int hoseMode = playerLoadout.items.hoseMode;
                 const bool hoseModeUpdates = hoseMode == 1 || hoseMode == 3;
-                if (hoseSelected && hoseModeUpdates && sprayPressed)
+                if (hoseSelected && hoseModeUpdates && sprayPressed &&
+                    !rescueHoseSpray.action.active) {
                     HoseSprayAction::begin(rescueHoseSpray.action, now);
-                if (hoseSelected && (sprayReleased || !sprayHeld))
+                    // Retail action-start requests the owned 2D HoseSpray
+                    // instance. The host loops it while held; loop policy has
+                    // not been measured from the original audio backend.
+                    sceneAudio.loopOwned(playerEntityId, "HoseSpray", player.p,
+                                         player.p, yaw, 2);
+                }
+                if (rescueHoseSpray.action.active &&
+                    (sprayReleased || !sprayHeld || !hoseSelected || !hoseModeUpdates)) {
                     HoseSprayAction::end(rescueHoseSpray.action);
-                if (!hoseSelected)
-                    HoseSprayAction::end(rescueHoseSpray.action);
+                    sceneAudio.stopOwned(playerEntityId, "HoseSpray");
+                }
 
                 if (hoseSelected && hoseModeUpdates) {
                     // 00463EF0 consumes the component hit from the preceding

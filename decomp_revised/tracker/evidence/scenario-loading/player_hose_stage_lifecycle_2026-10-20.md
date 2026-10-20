@@ -32,7 +32,10 @@ through the DouseHose callback context and reads its XYZ, radius `+0x18`, active
 byte `+0x1C`, and intensity `+0x3B0`. It submits contacts through the
 DouseHose callback object's separate queue at `+0x28` via `00481A60`. This
 distinguishes the stream collision result from the callback context and its
-queue, and from the unresolved rescue HoseSpray contact fields at `+0x614`.
+queue, and from rescue HoseSpray: that separate item's contact fields at
+`+0x614..+0x624` are now traced through its embedded shared stream component
+and its `finalize=1` FireRescue call. The shared host ports that item path; its
+attachment frame, effects, input bindings, cadence, and parity remain open.
 
 ## Dousing one WindowFire target
 
@@ -268,8 +271,11 @@ which actors are active together.
 - Trace the separate stage transition, result HUD, and return flow. Treat the
   configured chatter filenames as resolved but audible playback as unverified;
   the generic rescue `PlayerStatus` result widget is not a PlayerHose consumer.
-- Separately trace the rescue-player HoseSpray contact producer at `+0x614`;
-  it is not the dedicated PlayerHose/WindowFire path.
+- The rescue-player HoseSpray contact writer is statically mapped through
+  component `+0x608` and `0046D1B0`/`0046C5A0`; its host port is recorded in
+  [`rescue_hose_spray_port_2026-10-20.md`](../fire-spread/rescue_hose_spray_port_2026-10-20.md).
+  Keep its FireRescue transaction separate from dedicated PlayerHose's
+  WindowFire message path.
 - Implement the two host routes from source-backed state and data, then perform
   controlled checks. No runtime or retail-parity claim follows from this
   static analysis.

@@ -42,14 +42,16 @@ dispatch `00470840`, which maps them to ScriptActor `touch` events. The nested
 `00475560` looks up the registered actor name and passes the command to its
 ScriptActor. Rescue `PlayerRescue` registers the name `Player`, and handler
 `00451870` sends `touchhose N` to `0044CAB0`. That command allocates and attaches
-HoseSpray in Player inventory slot 4, then selects/starts its hose mode.
+HoseSpray in Player inventory slot 4 and requests mode 2. It does not select
+the slot or start spraying; slot selection and action-start use separate paths.
 
 The static route is therefore authored and reachable from rescue maps. The
-current shared viewer already produces PropModel touch events and interprets
-nested `tell` commands, but its Player command host does not implement
-`touchhose`; it does not yet run the rescue HoseSpray item or its finalized
-FireRescue contact call. PropModel update ordering, live contact latency, and
-retail parity remain unresolved.
+shared viewer produces PropModel touch events and interprets nested `tell`
+commands; its Player host now implements slot-4 acquisition, the separate
+selection/action modes, a sampled stream collision, previous-frame contact,
+and terminal FireRescue dousing. Key `4`, held-left-mouse action, and the
+camera-derived nozzle frame are host choices. PropModel update ordering, live
+contact latency, retail input bindings, and parity remain unresolved.
 
 ## `touchhose N` argument
 
