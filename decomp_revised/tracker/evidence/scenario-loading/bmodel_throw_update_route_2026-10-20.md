@@ -97,10 +97,11 @@ owner's `ThrowObjectEnd` sound through host services in the source order. The
 outer recurring BModel callback route and cadence are not proven; this
 
 per-host-frame adapter is provisional. Player action status 3 enables the Axe
-subobject and samples its internal rectangle/frame record at time zero through
+subobject and samples its GUI rectangle/frame-style record at time zero through
 `00455BC0`; status 4 disables it. The shared renderer mirrors enable/disable
-visibility, but the frame record has no mapped equivalent in the Axe ACT mesh
-pose. A fresh caller census maps status-3 reactivation to a later mode-1
+visibility, but the GUI rectangle-style frame record has no mapped
+Player-`+0xA94` draw consumer or Axe ACT mesh link. A fresh caller census maps
+status-3 reactivation to a later mode-1
 liftable pickup through `0043D2B0` → `0044BC40`; ordinary inventory selection
 uses a separate path: `0044D080` re-enables Axe root `+0x1FC`, and `0044C2A0`
 invokes the Axe activation callback then Player status 5. This path does not

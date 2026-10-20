@@ -147,12 +147,14 @@ held-BModel throw transaction rather than arbitrary contact or generic ACTION.
 
 The Player action callback is joined to the Axe subobject. Status 3 calls
 `00455BC0`, which enables the ActorInfo, stores the current tick, samples four
-keyframe values at time zero through `00484940`, and refreshes its internal
-rectangle/frame record through `0047EDF0`/`0047EA10`. Status 4 calls `0047DC90`
-on Player `+0xA94` with false; this disables the ActorInfo and its child. The
-Player loadout evidence identifies this subobject as the Axe actor. The shared
-renderer mirrors the enable/disable state, but the frame record is not mapped
-to the Axe ACT mesh pose. Ordinary status-3 reactivation is the next mode-1
+keyframe values at time zero through `00484940`, and refreshes a GUI
+rectangle/frame-style record through `0047EDF0`/`0047EA10`. Status 4 calls
+`0047DC90` on Player `+0xA94` with false; this disables the ActorInfo and its
+child. The Player loadout evidence identifies this subobject as the Axe actor.
+The shared renderer mirrors enable/disable state. Saved helper evidence does not
+establish a GUI draw consumer for this specific record or a link to the Axe ACT
+mesh pose; see [`axe_frame_record_consumer_followup_2026-10-20.md`](axe_frame_record_consumer_followup_2026-10-20.md).
+Ordinary status-3 reactivation is the next mode-1
 liftable pickup through `0043D2B0` → `0044BC40`; ordinary Axe equip sets root
 `+0x1FC`, calls the Axe `+0x3C` callback, and then Player status 5 for the
 inventory HUD. See
@@ -198,8 +200,9 @@ remaining frame/cadence uncertainties are in
 [`bmodel_player_target_writer_fresh_2026-10-20.c`](bmodel_player_target_writer_fresh_2026-10-20.c).
 The shared equipment renderer mirrors status 3 enabling and status 4 disabling
 the Axe subobject. It does not reproduce the internal time-zero frame-record
-refresh, whose relationship to the Axe ACT mesh is unknown. Existing-Axe equip
-sets item root `+0x1FC`, and ordinary slot activation calls the Axe `+0x3C`
+refresh, whose GUI rectangle-style helper path has no established
+Player-`+0xA94` draw consumer or Axe ACT mesh link. Existing-Axe equip sets item
+root `+0x1FC`, and ordinary slot activation calls the Axe `+0x3C`
 callback followed by Player status 5 for the inventory HUD. It does not call
 status 3 or touch Player `+0xA94`, so the retail link that makes this separate
 actor visible again after status 4 remains unresolved. See

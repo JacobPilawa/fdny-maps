@@ -220,16 +220,18 @@ camera-frame substitute and per-frame cadence are provisional. State-2 motion
 is advanced inside the shared BModel update after PATH sampling and before
 timed commands; completion applies/flips the endpoint, dispatches `drop`, and
 requests `ThrowObjectEnd`. Player status 3 enables the Axe subobject and
-refreshes its internal frame record from time zero; status 4 disables it. The
-record flows through `00484940` → `0047EDF0` → `0047EA10` and its reset path
-copies frame fields, but this has not been mapped to the Axe ACT mesh pose. The
-shared first-person renderer mirrors only enable/disable visibility. Existing-Axe
-inventory equip sets root `+0x1FC`; ordinary
-selection activates the item and requests Player status 5 for the HUD, without
+refreshes its internal GUI rectangle/frame-style record from time zero; status
+4 disables it. The record flows through `00484940` → `0047EDF0` → `0047EA10`;
+saved menu/HUD evidence identifies these shared helpers as GUI rectangle/quad
+operations. No direct GUI draw consumer is established for Player `+0xA94`, and
+it has no mapped link to the Axe ACT mesh pose. The shared first-person renderer
+mirrors only enable/disable visibility. Existing-Axe inventory equip sets root
+`+0x1FC`; ordinary selection activates the item and requests Player status 5 for
+the HUD, without
 calling status 3 or touching Player `+0xA94`. A fresh direct-caller census
 resolves the source route after status 4: the sole direct status-3 callsite is
 in `0044BC40`, reached by `0043D2B0` only for BModel use mode 1. Thus a later
-liftable pickup re-enables the Axe subobject and refreshes its internal frame
+liftable pickup re-enables the Axe subobject and refreshes its GUI rectangle/frame-style
 record; ordinary re-equipping does not. The frame record's rendered effect and
 callback cadence remain unverified. The post-`drop`
 `004A11A0` call is
@@ -245,11 +247,12 @@ external caller/cadence has not been identified: the inspected `00429520`
 owner-manager pass invokes slot zero, while its contact traversal calls BModel
 slot `+0x48`; a 53-candidate literal `[reg+0x14]` scan does not exclude
 computed dispatch elsewhere. Player action status 3 enables the Axe subobject,
-stores the current tick, and refreshes an internal rectangle/frame record from
-time zero; status 4 disables it. The record has not been mapped to the Axe ACT
-mesh pose. The shared renderer mirrors only enable/disable visibility. The
-inventory-side Axe gate and mode-1 liftable reactivation route are mapped; the
-host does not mirror the internal frame-record update. Its rendered effect
+stores the current tick, and refreshes a GUI rectangle/frame-style record from
+time zero; status 4 disables it. Saved menu/HUD evidence identifies the helper
+family, but no direct GUI draw consumer is established for this record or link
+to the Axe ACT mesh pose. The shared renderer mirrors only enable/disable
+visibility. The inventory-side Axe gate and mode-1 liftable reactivation route are
+mapped; the host does not mirror the internal frame-record update. Its rendered effect
 remains unverified. Callback cadence and rendered visibility after pickup, plus
 the Player-side `ThrowObject` sound path, remain unresolved. The BModel-side
 `ThrowObjectEnd` request is connected at trajectory completion.
@@ -296,7 +299,8 @@ ACT/render effect and callback cadence remain unverified. Evidence:
 [`retail_camera_actorinfo_context_trace_2026-10-17.md`](../tracker/evidence/runtime/retail_camera_actorinfo_context_trace_2026-10-17.md),
 [`retail_camera_context_ancestry_followup_2026-10-20.md`](../tracker/evidence/runtime/retail_camera_context_ancestry_followup_2026-10-20.md),
 [`retail_camera_context_trace_2026-10-17.c`](../tracker/evidence/runtime/retail_camera_context_trace_2026-10-17.c),
-and [`axe_reactivation_followup_2026-10-20.md`](../tracker/evidence/scenario-loading/axe_reactivation_followup_2026-10-20.md).
+[`axe_reactivation_followup_2026-10-20.md`](../tracker/evidence/scenario-loading/axe_reactivation_followup_2026-10-20.md),
+and [`axe_frame_record_consumer_followup_2026-10-20.md`](../tracker/evidence/scenario-loading/axe_frame_record_consumer_followup_2026-10-20.md).
 A scan of all 21
 preserved EVS files and all `S_Script*` fields in the 17 retail BSP exports found
 no literal `drop` binding; dynamic runtime registration remains unexcluded.
@@ -323,7 +327,8 @@ and
 | `throw_release_gate` (Luna) | Player held-object gate in `00452570`; producer, target-writer, and angle-helper evidence | Complete; a non-null held pointer reaches the strict angle-under-10 branch on each Player update, without an action-edge check. Vector semantics and callback cadence remain unresolved. No edits |
 | `throw_drop_event_route` (Luna) | Throw-completion event effects; `0043D330`, `004705B0`, and authored EVS/BSP searches | Complete; trajectory `drop` dispatch does not directly mutate Player carry state or remove timed commands. No authored binding was found in preserved data; runtime registration is unexcluded. No edits |
 | `view_frame_identity` (Luna) | Distinguish Player held-target frame from throw-gate frame; frame-helper evidence and current update window | Complete, read-only; throw gate reads view follower root `+0x34A4`, refreshed before the gate; held-target writer reads root `+0x24`. Numeric relation to rendered Genesis camera remains open. No edits |
-| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use. Status 3 enables Player `+0xA94` and refreshes a time-zero internal rectangle/frame record; it is not mapped to Axe ACT pose reset or mesh animation. No code edits |
+| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use. Status 3 enables Player `+0xA94` and refreshes a time-zero GUI rectangle/frame-style record; no consumer links it to an Axe ACT pose. No code edits |
+| `axe_frame_record_consumer` (Luna) | Consumers of the `00455BC0` time-zero frame record; distinguish GUI rectangle helpers from Axe ACT render | Complete, read-only from retained hash-pinned evidence. Shared `0047EDF0`/`0047EA10` helpers are used for GUI rectangle/quad setup in menu/HUD traces, but no Player `+0xA94` draw consumer or Axe ACT link is established. No live Ghidra instance was available for a fresh complete xref census; no edits |
 | `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local Player/BModel routes to `00470740` and callback bodies are mapped, but recurring manager caller and frame ordering remain unproven. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |

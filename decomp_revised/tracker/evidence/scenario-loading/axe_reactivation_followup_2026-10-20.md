@@ -23,12 +23,18 @@ Ordinary Axe selection through `0044C2A0` calls Axe vtable `+0x3C` (`0045F9B0`),
 which activates the Axe and children and refreshes follower state. It then
 calls Player action status 5 for the inventory HUD. This path does not call
 status 3 or touch Player `+0xA94`. Separately, `004571A0` status 3 enables
-Player `+0xA94` and refreshes its internal frame record from time zero, while
+Player `+0xA94` and refreshes its GUI rectangle/frame-style record from time zero, while
 status 4 disables it. `00455BC0` stores the current tick, samples four keyframe
 values through `00484940(..., 0.0)`, and sends them through `0047EDF0` to
 `0047EA10`; status 3 takes the `0047E6D0` record-copy path. The sampled values
 are rectangle/frame fields, not an established reset of the Axe ACT mesh or its
-3D pose.
+3D pose. Saved helper evidence identifies these as GUI rectangle/frame-style
+helpers: unrelated menu widgets pass rectangle coordinates through
+`0047EDF0`, and the fire-direction HUD trace identifies `0047EA10` as 2D quad
+setup. That does not establish a GUI draw consumer for this specific
+Player `+0xA94` record. The retained evidence contains no Axe ACT consumer; a
+fresh binary-wide xref census was unavailable because no Ghidra instance was
+running. See [`axe_frame_record_consumer_followup_2026-10-20.md`](axe_frame_record_consumer_followup_2026-10-20.md).
 
 A fresh headless caller census on the pinned executable found one direct
 status-3 callsite: `0044BC61` in `0044BC40`. Its only direct caller is
@@ -36,7 +42,7 @@ status-3 callsite: `0044BC61` in `0044BC40`. Its only direct caller is
 use mode is 1. The transition stores that BModel at Player `+0x3440`, sets its
 `+0x25C` use state, calls status 3, and then sets Player state 7. Therefore a
 later mode-1 liftable pickup re-enables the Axe subobject and refreshes its
-internal frame record after status 4; ordinary Axe re-equipping is not the
+GUI rectangle/frame-style record after status 4; ordinary Axe re-equipping is not the
 reactivation route. Status 4 is the throw-side call at `0045398E`. Other direct
 status-helper callsites pass 1, 2, 5, 6, 7, or 9; status 6 targets the indexed
 child block at Player `+0x218C`, separate from `+0xA94`. The frame record's
