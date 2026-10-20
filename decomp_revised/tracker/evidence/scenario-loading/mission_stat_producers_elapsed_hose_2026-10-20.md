@@ -72,8 +72,14 @@ no matching sound-selection scheduler, so this producer is not ported yet.
 `Jumps` at `0044E990` is gated by a 500 ms clock comparison. State `+0x18C`
 equal to 5 changes to 3 and sets `+0x100` to 400; otherwise byte `+0x12C` must
 be nonzero, after which `+0x100` increases by 400. It then adds one to `Jumps`,
-requests sound, and stores the current clock. The port's collision latch is not
-yet proven equivalent to this retail byte, so no jump counter is wired.
+requests sound, and stores the current clock. The `jump` ScriptActor branch at
+`004518D4` calls this producer directly. The `+0x18C=5` setter is a separate
+handler branch at `00451B92` whose token is unresolved. Although the Player
+action map registers `JUMP` against the default `MOUSE_RB` control, no saved
+input poll path joins that action to the update or setter. The host collision
+latch has not been proven equivalent to retail `+0x12C`, so no jump counter is
+wired. See
+[`mission_stat_jump_throw_producers_2026-10-20.md`](mission_stat_jump_throw_producers_2026-10-20.md).
 
 `Air Time` at `004528B6` is in the Player update body beginning at `00452570`.
 With `ESI = Player+0x140`, the same body subtracts the seconds frame delta from
@@ -87,9 +93,14 @@ normal Y>=0.5 and later copied/cleared by the integrator. Host callback order
 and cadence remain provisional; see
 [`player_mission_countdown_airtime_port_2026-10-20.md`](player_mission_countdown_airtime_port_2026-10-20.md).
 
-The bounded movement and action-stat audits found no source-backed
-`Objects Thrown` producer. Its eligible object, trigger, and value remain
-unknown.
+The `Objects Thrown` producer is at `00453993` inside the Player movement
+update. It requires the held BModel pointer at Player `+0x3440`, then takes a
+strictly-below-10-degree vector-angle branch. The throw helper starts BModel
+trajectory state 2; Player action status 4 follows, then the held pointer is
+cleared, Player state returns to 3, and the statistic increments once. The
+source-shaped transaction exists in a Training spike but is not connected to
+the shared mission scene; see
+[`mission_stat_jump_throw_producers_2026-10-20.md`](mission_stat_jump_throw_producers_2026-10-20.md).
 
 ## Shared host change
 

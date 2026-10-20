@@ -91,7 +91,10 @@ countdown, timeout gate, and in-memory Air Time contribution. Arithmetic and
 field gates are source-backed; host callback cadence, movement-latch timing,
 and the presentation unit implied by “Gallons” remain provisional. The
 remaining unported stat producers are `Jumps`, `Total Steps`, and
-`Objects Thrown`; see
+`Objects Thrown`. Their retail producer sites are now identified, while the
+user-input bridge and state gates for `Jumps`, the sound-selection cadence for
+`Total Steps`, and integration of the held-BModel trajectory/drop lifecycle
+for `Objects Thrown` still block a source-matched host transaction. See
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
 
 ## Shared port checkpoint
@@ -113,9 +116,11 @@ interactive run, or retail comparison was performed.
 
 ## Next evidence step
 
-Finish the three remaining stat-producer traces against the shared host:
-Objects Thrown's producer, Jumps' state-field meaning, and the Total Steps
-sound-selection cadence. Separately map the exact serialized
-scalar/container encoding before adding profile persistence. Keep the result
-transition gated on separate runtime evidence, and return to the Records UI
-after core gameplay coverage improves.
+Finish the three remaining stat integrations against the shared host: map the
+JUMP action's runtime poll route and the state-5 command token, establish the
+host cadence for the Total Steps sound-selection gate, and promote the
+source-shaped held-BModel throw transaction from the Training spike into the
+shared mission scene with its trajectory, drop, and timer lifecycle. Separately
+map the exact serialized scalar/container encoding before adding profile
+persistence. Keep the result transition gated on separate runtime evidence,
+and return to the Records UI after core gameplay coverage improves.
