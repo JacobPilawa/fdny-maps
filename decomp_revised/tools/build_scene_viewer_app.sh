@@ -8,7 +8,7 @@ ACTOR_ASSETS_DIR="$PROJECT_ROOT/.local/actor_exports"
 APP_DIR="$PROJECT_ROOT/.local/FDNY Firefighters.app"
 
 if [ "$SCENE_KEY" = "rescue-all" ]; then
-    PACKAGE_KEYS="training mbase bar_r gas_r bank boat_a subway_a oil_rig_a boat_b subway_b oil_rig_b oil_rig_c oil_rig_d"
+    PACKAGE_KEYS="training mbase bar_r gas_r bank boat_a subway_a oil_rig_a boat_b subway_b oil_rig_b oil_rig_c oil_rig_d city_h const_h dock_h oil_rig_h"
     DEFAULT_SCENE_KEY="training"
 else
     PACKAGE_KEYS="$SCENE_KEY"

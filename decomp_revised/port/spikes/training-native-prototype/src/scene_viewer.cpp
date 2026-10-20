@@ -118,6 +118,7 @@ bool jsonNumber(J value) {
 #include "world_startup.h"
 #include "scene_audio.h"
 #include "hose_item_selection.h"
+#include "player_hose_stage.h"
 
 namespace {
 #if defined(__APPLE__)
@@ -277,6 +278,87 @@ float parseFloat(const std::string& text, float fallback) {
 }
 
 std::string lower(std::string value);
+
+PlayerHoseStage loadPlayerHoseStage(const SceneData& scene) {
+    PlayerHoseStage stage;
+    std::map<std::string, int> modelIndices;
+    std::map<int, J> collisionModels;
+    J entities = scene.entities();
+    for (int i = 0; i < count(entities); ++i) {
+        J entity = at(entities, i);
+        const std::string entityClass = str(field(entity, "class"));
+        if (entityClass == "RCS_PlayerHose") {
+            stage.present = true;
+            stage.playerEntity = integer(field(entity, "index"));
+            stage.spawn = parseVector(property(entity, "ZZ_location"),
+                parseVector(property(entity, "location"), {}));
+            stage.spawnYaw = parseFloat(property(entity, "C_Heading"), 0.f) *
+                0.01745329251994329577f;
+            stage.firstPathPoint = property(entity, "FirstPathPoint");
+        } else if (entityClass == "%Model%") {
+            std::string name = property(entity, "%name%");
+            if (name.empty()) name = str(field(entity, "name"));
+            const int model = int(parseFloat(property(entity, "Model"), -1.f));
+            if (!name.empty() && model >= 0) {
+                auto [found, inserted] = modelIndices.emplace(lower(name), model);
+                if (!inserted && found->second != model)
+                    throw std::runtime_error("Ambiguous hose %Model% name in scene export: " + name);
+            }
+        }
+    }
+    if (!stage.present) return stage;
+
+    J exportedCollisionModels = field(scene.collision(), "models");
+    for (int i = 0; i < count(exportedCollisionModels); ++i) {
+        J model = at(exportedCollisionModels, i);
+        collisionModels[integer(field(model, "index"))] = model;
+    }
+
+    for (int i = 0; i < count(entities); ++i) {
+        J entity = at(entities, i);
+        if (str(field(entity, "class")) != "RCS_HosePath") continue;
+        PlayerHoseHotspot path;
+        path.entity = integer(field(entity, "index"));
+        path.name = property(entity, "%name%");
+        if (path.name.empty()) path.name = str(field(entity, "name"));
+        if (path.name.empty())
+            throw std::runtime_error("RCS_HosePath has no authored name in " + scene.key());
+        path.nextPath = property(entity, "A_NextPoint");
+        path.lookAtPath = property(entity, "B_LookAtPoint");
+        path.nextHotspot = property(entity, "D_NextHotSpot");
+        if (path.nextHotspot == "<null>") path.nextHotspot.clear();
+        path.position = parseVector(property(entity, "ZZ_location"),
+            parseVector(property(entity, "location"), {}));
+        path.isHotspot = parseFloat(property(entity, "C_IsAHotSpot"), 0.f) != 0.f;
+        path.isFirstHotspot = parseFloat(property(entity, "M_IsFirstHotSpot"), 0.f) != 0.f;
+        path.maxPressure = parseFloat(property(entity, "M_MaxPressure"), 0.f);
+        path.pitchSpread = parseFloat(property(entity, "N_PitchSpread"), 45.f);
+        path.spotTime = parseFloat(property(entity, "M_SpotTime"), 0.f);
+        path.numCycles = int(parseFloat(property(entity, "Q_NumCycles"), 0.f));
+        for (int slot = 0; slot < 9; ++slot) {
+            const std::string suffix = std::to_string(slot);
+            const std::string name = property(entity, ("ZF" + suffix + "_FireModel").c_str());
+            const float sprayTime = parseFloat(
+                property(entity, ("ZF" + suffix + "_SprayTime").c_str()), 0.f);
+            path.fireModelSlots[size_t(slot)] = name;
+            path.sprayTimeSlots[size_t(slot)] = sprayTime;
+            if (name.empty() || name == "<null>") continue;
+            const auto model = modelIndices.find(lower(name));
+            if (model == modelIndices.end())
+                throw std::runtime_error("Unresolved PlayerHose target " + name + " in " + scene.key());
+            if (!collisionModels.count(model->second))
+                throw std::runtime_error("PlayerHose target has no BSP collision model: " + name);
+            path.targets.push_back({slot, model->second, name, sprayTime, 1.f, false});
+        }
+        const size_t nodeIndex = stage.pathNodes.size();
+        if (!stage.byName.emplace(path.name, nodeIndex).second)
+            throw std::runtime_error("Duplicate RCS_HosePath name in " + scene.key() + ": " + path.name);
+        stage.pathNodes.push_back(std::move(path));
+    }
+    if (stage.firstPathPoint.empty() || !stage.byName.count(stage.firstPathPoint))
+        throw std::runtime_error("PlayerHose FirstPathPoint is unresolved in " + scene.key());
+    return stage;
+}
 
 std::vector<PropModelInstance> loadPropModelInstances(J entities) {
     std::vector<PropModelInstance> result;
@@ -2976,6 +3058,22 @@ void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) 
     std::cout << "\n";
 }
 
+void drawPlayerHoseStream(V start, V end) {
+    glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT |
+                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE);
+    glLineWidth(3.f);
+    glColor4f(.36f, .74f, 1.f, .82f);
+    glBegin(GL_LINES);
+    glVertex3f(start.x, start.y, start.z);
+    glVertex3f(end.x, end.y, end.z);
+    glEnd();
+    glPopAttrib();
+}
+
 int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck,
         bool interactionCheck, bool rescueCheck, bool ambientAudioCheck,
         int triggerRenderCheckEntity,
@@ -2993,6 +3091,24 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     };
     logRescueStage("enter");
     SceneData scene = SceneData::load(package);
+    PlayerHoseStage playerHoseStage = loadPlayerHoseStage(scene);
+    const bool dedicatedPlayerHose = playerHoseStage.present;
+    if (dedicatedPlayerHose) {
+        size_t hotspots = 0, targets = 0;
+        for (const auto& path : playerHoseStage.pathNodes) {
+            if (!path.isHotspot) continue;
+            ++hotspots;
+            targets += path.targets.size();
+        }
+        if (!inspectOnly && !playerHoseStage.start())
+            throw std::runtime_error("Cannot start PlayerHose route in " + scene.key() + ": " +
+                                     playerHoseStage.transition);
+        std::cout << "Dedicated PlayerHose route: " << scene.key()
+                  << ", path nodes=" << playerHoseStage.pathNodes.size()
+                  << ", authored hotspots=" << hotspots
+                  << ", WindowFire target references=" << targets
+                  << ". Static retail order/data are mapped; this host still uses free movement and a provisional view/action mapping.\n";
+    }
     logRescueStage("scene loaded");
 #if defined(__APPLE__)
     if (!inspectOnly && !renderCheck && !interactionCheck && !rescueDiagnostic && SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
@@ -3256,6 +3372,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         int nextAmbientLoopOwner = -1000000;
         std::string activeHint;
         float activeHintRemaining = 0.f;
+        if (dedicatedPlayerHose) {
+            activeHint = playerHoseStage.transition;
+            activeHintRemaining = 2.f;
+        }
         HintOverlay hintOverlay;
         RetailHintLifetime authoredHintLifetime;
         std::string authoredHintText;
@@ -3767,7 +3887,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 J entity = at(entities, i);
                 const std::string entityClass = str(field(entity, "class"));
                 if (entityClass == "RCS_BModel" || entityClass == "RCS_BoundsTrigger" ||
-                    entityClass == "RCS_PlayerRescue" || entityClass == "RCS_PropModel")
+                    entityClass == "RCS_PlayerRescue" || entityClass == "RCS_PropModel" ||
+                    (dedicatedPlayerHose && (entityClass == "RCS_PlayerHose" ||
+                                             entityClass == "RCS_HosePath")))
                     scriptRuntime->startupEntity(entity);
             }
         }
@@ -3782,7 +3904,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                           << "retail callback cadence remains unverified.\n";
         };
         const int rescueGlobalMode = 0;
-        if (playerEntityId >= 0) {
+        if (playerEntityId >= 0 && !dedicatedPlayerHose) {
             for (int i = 0; i < count(entities); ++i) {
                 J entity = at(entities, i);
                 const int id = integer(field(entity, "index"));
@@ -5158,16 +5280,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         SDL_SetRelativeMouseMode(SDL_TRUE);
         std::cout << "WASD move, mouse look, Space/right mouse jump, C crouch, Escape releases the mouse.\n"
                   << "Press F to snap to the nearest walkable collision floor below you.\n"
-                  << "Rescue victims render from exported ACT assets; authored roam commands move them around the map.\n"
-                  << "Authored FireRescue sprites animate; left-click and hold with the extinguisher selected to suppress fires.\n"
-                  << "Victims are picked up automatically on contact. Authored BModel touch events open and close doors.\n"
-                  << "PlayerRescue authored loadouts initialize; press 1/2/3 to select equipped axe/extinguisher/goggles.\n"
-                  << "Extinguisher contacts use the recovered tool pose and fire falloff; left-click with goggles to scan nearby actors.\n"
-                  << "The extinguisher pose follows this viewer's camera transform; contact cadence is a host approximation.\n"
-                  << "Tool selection keys 1/2/3 are viewer controls.\n"
-                  << "Press E or Space near a scripted console to use it. M/N inspect PATH timing; live door poses stay in control.\n"
-                  << "Doors respond to authored touch events; PATH preview does not activate a door or change collision.\n"
-                  << "Gameplay BModel poses drive both rendering and collision; retail callback cadence remains unknown.\n";
+                  << (dedicatedPlayerHose
+                        ? "PlayerHose: left-click and hold to send the stream at the currently selected authored WindowFire target. WASD movement is a temporary host control while the retail hose spline camera is unported.\n"
+                        : "Rescue victims render from exported ACT assets; authored roam commands move them around the map.\n"
+                          "Authored FireRescue sprites animate; left-click and hold with the extinguisher selected to suppress fires.\n"
+                          "Victims are picked up automatically on contact. Authored BModel touch events open and close doors.\n"
+                          "PlayerRescue authored loadouts initialize; press 1/2/3 to select equipped axe/extinguisher/goggles.\n"
+                          "Extinguisher contacts use the recovered tool pose and fire falloff; left-click with goggles to scan nearby actors.\n"
+                          "The extinguisher pose follows this viewer's camera transform; contact cadence is a host approximation.\n"
+                          "Tool selection keys 1/2/3 are viewer controls.\n"
+                          "Press E or Space near a scripted console to use it. M/N inspect PATH timing; live door poses stay in control.\n"
+                          "Doors respond to authored touch events; PATH preview does not activate a door or change collision.\n"
+                          "Gameplay BModel poses drive both rendering and collision; retail callback cadence remains unknown.\n");
         if (fireCameraAudit)
             std::cout << "Fire camera audit is active: it logs mouse events, 250 ms view/movement samples, and extinguisher contact points and delivery while spraying.\n";
         if (performanceAudit)
@@ -5201,7 +5325,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                     if (event.key.keysym.sym == SDLK_SPACE) jumpEdge = true;
                     if (event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_e) useEdge = true;
-                    if (event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_3) {
+                    if (!dedicatedPlayerHose && event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_3) {
                         const int slot = int(event.key.keysym.sym - SDLK_0);
                         const char* name = PreviewPlayerLoadout::nameForSlot(slot);
                         const std::string previousSelection = playerLoadout.selectedName();
@@ -5300,12 +5424,24 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     yawInput -= event.motion.xrel * .0025f;
                     yaw = yawInput;
                     pitch -= event.motion.yrel * (.1f * .01745329251994329577f);
-                    // Fresh retail profiles default to DifficultyLevel 1,
-                    // which selects the +/-40 degree pitch limit in 00452570.
-                    constexpr float freshProfilePitchLimit =
-                        40.f * 0.01745329251994329577f;
-                    pitch = std::clamp(pitch, -freshProfilePitchLimit,
-                                       freshProfilePitchLimit);
+                    if (dedicatedPlayerHose) {
+                        constexpr float degree = 0.01745329251994329577f;
+                        const float yawLimit = 60.f * degree;
+                        yawInput = std::clamp(yawInput,
+                            playerHoseStage.spawnYaw - yawLimit,
+                            playerHoseStage.spawnYaw + yawLimit);
+                        yaw = yawInput;
+                        const auto* hotspot = playerHoseStage.hotspot();
+                        const float pitchLimit = (hotspot ? hotspot->pitchSpread : 45.f) * degree;
+                        pitch = std::clamp(pitch, -pitchLimit, pitchLimit);
+                    } else {
+                        // Fresh retail profiles default to DifficultyLevel 1,
+                        // which selects the +/-40 degree pitch limit in 00452570.
+                        constexpr float freshProfilePitchLimit =
+                            40.f * 0.01745329251994329577f;
+                        pitch = std::clamp(pitch, -freshProfilePitchLimit,
+                                           freshProfilePitchLimit);
+                    }
                     if (fireCameraAudit) {
                         fireCameraAuditYawDelta += yaw - yawBefore;
                         fireCameraAuditPitchDelta += pitch - pitchBefore;
@@ -5575,6 +5711,33 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             };
             const std::string selectedItem = playerLoadout.selectedName();
             FrameTransform cameraFrame = ViewUpdate::directEye(player.p, yaw, pitch, player.crouch);
+            V hoseStreamEnd{};
+            bool hoseStreamVisible = false;
+            if (dedicatedPlayerHose) {
+                const std::string previousTransition = playerHoseStage.transition;
+                int hitModel = -1;
+                const bool hoseActionActive = sprayHeld &&
+                    playerHoseStage.result == PlayerHoseStage::Result::Running;
+                if (hoseActionActive) {
+                    constexpr float streamLength = 2000.f; // 0046C5A0 traces a 2000-unit hose segment.
+                    const V streamStart = cameraFrame.position;
+                    const V streamDelta = cameraFrame.axis[2] * -streamLength;
+                    hoseStreamEnd = streamStart + streamDelta;
+                    Hit streamHit;
+                    if (collision.tracePoint(streamStart, streamDelta, 0x43, 2, streamHit)) {
+                        hoseStreamEnd = streamHit.point;
+                        hitModel = streamHit.model;
+                    }
+                    hoseStreamVisible = true;
+                }
+                playerHoseStage.update(dt, hoseActionActive, hitModel);
+                if (playerHoseStage.transition != previousTransition &&
+                    !playerHoseStage.transition.empty()) {
+                    activeHint = playerHoseStage.transition;
+                    activeHintRemaining = 2.f;
+                    std::cout << "PlayerHose: " << playerHoseStage.transition << "\n";
+                }
+            }
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);
             const bool playerMoving = !playerIncapacitated &&
                 std::sqrt(forward * forward + side * side) > 1e-7f;
@@ -6399,24 +6562,47 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }, [](const FireMessageQueue::Delivery&) {});
             }
             if (now - previousTitleUpdate >= 500) {
-                std::string title = "FDNY scene preview — " + scene.key() + " | " +
-                    std::to_string(victims.size()) + " survivors | " +
-                    (player.ground ? "grounded" : "falling") + " | xyz " +
-                    std::to_string(int(player.p.x)) + "," + std::to_string(int(player.p.y)) + "," +
-                    std::to_string(int(player.p.z));
-                title += " | rescued " + std::to_string(rescueState.exits.rescues) + "/" +
-                    std::to_string(rescueState.actors.size());
-                title += " | tool " + playerLoadout.selectedName();
-                if (!axeFeedback.empty()) title += " | axe " + axeFeedback;
-                if (axeWorldImpactCount != 0)
-                    title += " | axe impacts " + std::to_string(axeWorldImpactCount);
-                if (gogglesScan.effectWindowOpen(now))
-                    title += " | scan targets " + std::to_string(gogglesScan.targets.size());
-                if (carriedVictim.carriedVictimEntity) {
-                    auto held = std::find_if(victims.begin(), victims.end(), [&](const PreviewVictim& victim) {
-                        return victim.spawn.entity == *carriedVictim.carriedVictimEntity;
-                    });
-                    if (held != victims.end()) title += " | carrying " + held->label;
+                std::string title;
+                if (dedicatedPlayerHose) {
+                    title = "FDNY Firefighters — " + scene.key() + " | Hose stage";
+                    if (const auto* hotspot = playerHoseStage.hotspot()) {
+                        title += " | hotspot " + std::to_string(playerHoseStage.hotspotOrdinal);
+                        if (const auto* target = playerHoseStage.target()) {
+                            title += " | target " + std::to_string(playerHoseStage.activeTarget + 1) + "/" +
+                                std::to_string(hotspot->targets.size()) + " " + target->modelName;
+                            title += " | cycle " + std::to_string(hotspot->numCycles -
+                                playerHoseStage.cyclesRemaining + 1) + "/" +
+                                std::to_string(hotspot->numCycles);
+                        }
+                        title += " | time " + std::to_string(int(std::ceil(std::max(0.f,
+                            playerHoseStage.countdown))));
+                    }
+                    if (playerHoseStage.result == PlayerHoseStage::Result::Won)
+                        title += " | stage complete";
+                    else if (playerHoseStage.result == PlayerHoseStage::Result::Lost)
+                        title += " | stage failed";
+                    title += " | xyz " + std::to_string(int(player.p.x)) + "," +
+                        std::to_string(int(player.p.y)) + "," + std::to_string(int(player.p.z));
+                } else {
+                    title = "FDNY scene preview — " + scene.key() + " | " +
+                        std::to_string(victims.size()) + " survivors | " +
+                        (player.ground ? "grounded" : "falling") + " | xyz " +
+                        std::to_string(int(player.p.x)) + "," + std::to_string(int(player.p.y)) + "," +
+                        std::to_string(int(player.p.z));
+                    title += " | rescued " + std::to_string(rescueState.exits.rescues) + "/" +
+                        std::to_string(rescueState.actors.size());
+                    title += " | tool " + playerLoadout.selectedName();
+                    if (!axeFeedback.empty()) title += " | axe " + axeFeedback;
+                    if (axeWorldImpactCount != 0)
+                        title += " | axe impacts " + std::to_string(axeWorldImpactCount);
+                    if (gogglesScan.effectWindowOpen(now))
+                        title += " | scan targets " + std::to_string(gogglesScan.targets.size());
+                    if (carriedVictim.carriedVictimEntity) {
+                        auto held = std::find_if(victims.begin(), victims.end(), [&](const PreviewVictim& victim) {
+                            return victim.spawn.entity == *carriedVictim.carriedVictimEntity;
+                        });
+                        if (held != victims.end()) title += " | carrying " + held->label;
+                    }
                 }
                 if (!activeHint.empty()) title += " | " + activeHint;
                 else if (nearestUseEntity >= 0) title += " | E/Space: use";
@@ -6434,6 +6620,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         fogState, lightStyles, cameraFrame.position, yaw, pitch, width, height,
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
+            if (hoseStreamVisible) drawPlayerHoseStream(cameraFrame.position, hoseStreamEnd);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
@@ -6627,6 +6814,18 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
                         bool performanceAudit = false,
                         std::optional<float> levelField10 = std::nullopt) {
     const SceneData initialScene = SceneData::load(initialPackage);
+    if (loadPlayerHoseStage(initialScene).present) {
+        const std::string musicFile = SceneData::stringField(initialScene.music(), "file");
+        const std::string musicTrack = SceneData::stringField(initialScene.music(), "track");
+        std::optional<SceneAudio::MusicSelection> hoseMusic;
+        if (!musicFile.empty() && !musicTrack.empty())
+            hoseMusic = SceneAudio::MusicSelection{musicTrack, initialScene.resolveAsset(musicFile)};
+        // Dedicated hose maps are standalone stages; do not feed their result
+        // messages into the rescue-only linked-stage chain.
+        return run(initialPackage, false, false, false, false, false, -1,
+                   false, false, false, false, false, {}, nullptr, performanceAudit,
+                   hoseMusic ? &*hoseMusic : nullptr, levelField10);
+    }
     const std::string musicFile = SceneData::stringField(initialScene.music(), "file");
     const std::string musicTrack = SceneData::stringField(initialScene.music(), "track");
     std::optional<SceneAudio::MusicSelection> inheritedMusic;

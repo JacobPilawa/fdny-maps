@@ -8,6 +8,39 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## Dedicated PlayerHose host slice (2026-10-20)
+
+The shared `fdny-scene-viewer` host now recognizes a dedicated PlayerHose map,
+resolves its `RCS_HosePath` links and all non-null `ZF0..ZF8_FireModel` names
+to BSP model IDs, and runs a separate WindowFire target/cycle/hotspot loop.
+The held stream is gated by the active target's collision model. The existing
+rescue mission catalog stays eight entries; the default macOS bundle now
+includes `city_h`, `const_h`, `dock_h`, and `oil_rig_h` for direct launch by map
+key. This is the first playable hose interaction slice, not a completed hose
+port.
+
+The current host uses free WASD movement and the standard first-person view in
+place of PlayerHose's retail spline/camera. It treats M_SpotTime as host seconds
+and starts the WindowFire progress proxy at 1.0, decrementing by
+`dt/SprayTime`; the exact timer units and retail WindowFire initialization are
+unresolved. Mouse-delta scaling, the rendered stream, M_MaxPressure's effect,
+result feedback, and stage return flow also remain open. Do not treat the host
+build as a live check or retail parity. The full port assumptions and compile
+record are in
+[`player_hose_port_host_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_port_host_2026-10-20.md).
+
+The shared macOS executable compiled successfully with SHA-256
+`514dd0ae15bb0c733f7b1b01dca939f26eb5e5d23c1696b187ec6f3af1eb059c`.
+The rescue-all app bundle also built successfully; its embedded catalog has
+eight rescue entries and its scene resources include all four hose maps. The
+build's plist validation passed. Only the existing Homebrew json-c
+deployment-target warning appeared. No test suite or interactive run was
+performed.
+
+| Scope | Files | Status |
+| --- | --- | --- |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implemented first target/cycle/hotspot path with source-shaped collision targeting; free movement, visual/camera, target baseline, difficulty-scaled timing and result flow remain provisional/open |
+
 ## Player fire-exposure padding resolved (2026-10-20)
 
 Fresh headless Ghidra output against pinned EXE SHA-256
@@ -260,8 +293,8 @@ the source supports a six-to-five countdown-unit crossing. The countdown's
 wall-clock units, selected chatter entry, and audible playback remain
 unverified. `sound.rrf` maps warning entries 0/1 to `time4_b.wav` and
 `time5_b.wav`. See the fresh
-[`hose_pressure_path_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_pressure_path_fresh_2026-10-20.c)
-, [`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c),
+[`hose_pressure_path_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_pressure_path_fresh_2026-10-20.c),
+[`hose_time_warning_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_warning_helper_fresh_2026-10-20.c),
 and [`hose_time_floor_helper_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_time_floor_helper_fresh_2026-10-20.c).
 
 The rescue-player HoseSpray update `004640F0` calls `00463EF0` while item
@@ -1865,6 +1898,8 @@ symptom remain open.
 | `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; keep the eight-entry rescue catalog invariant and add a separate hose catalog/runner with the PlayerHose runtime; no edits |
 | `hose_runtime_data_audit` | Find a source-backed first playable PlayerHose data slice | `city_h/entities.json`, `scene_data.h`, `startup.h`, `scene_viewer.cpp`, lifecycle evidence | Complete; read-only; city_h gives a linear first hotspot path and its 29 ZF names resolve to `%Model%`; no edits; live route, exact camera, timing, collision, and WindowFire effect presentation remain open |
 | `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle and contact exports | Complete; read-only; traced pitch/yaw input accumulators and authored N_PitchSpread pitch clamp; M_MaxPressure reaches `+0x1834`, whose downstream effect remains unknown |
+| `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommended a dedicated route in the shared game host; authored spline/camera and stage result remain open |
+| `hose_city_data` | Map city_h's authored path, targets, and loader representation | `.local/exports/city_h/entities.json`, `scene_data.h`, lifecycle evidence | Complete; read-only; confirmed 19 path nodes, nine hotspots and 29 `%Model%` target references; no edits |
 | `bank_retail_collision_trace` | Resolve retail Player hull and swept collision path for Bank obstruction | Pinned EXE/Genesis exports, `core.h`, Bank door evidence | Complete; read-only; retail mins `(-30,-30,-30)`/maxs `(30,85,30)` match the port; exact leaf and live route remain open |
 | `mesh_metadata_audit` | Independently audit world-mesh face-span source correspondence | Exporter, geometry/world-mesh JSON, C++ loader | Complete; read-only; validated field mapping and recommended all-map metadata checks; no renderer change |
 | `retail_material_trace` | Search pinned retail evidence for TexInfo alpha and lightmap render semantics | Ghidra exports, material/driver evidence, Bank and Training exports | Complete; read-only; 2026-10-15 hash-pinned trace maps descriptor/RGB handoff, shared raw projection source and UV formula, two-pass ZERO/SRCCOLOR fallback and two-stage TEXTURE×CURRENT composition, clamp/linear filtering, ZWRITE and LESSEQUAL, one style-sequence step per geEngine_RenderWorld call, and the selector `wMaxSimultaneousTextures > 1`; effective ZENABLE, mip filter, selected-device path, optional face branch, host render-call rate, channel convention, rounding, and full pixel parity remain open |

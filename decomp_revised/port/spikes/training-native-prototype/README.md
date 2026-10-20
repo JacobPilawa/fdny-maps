@@ -129,7 +129,7 @@ live button use and original-game effect parity remain unverified.
 Interactive startup also prints the texture paths
 that fail during image decoding or OpenGL upload instead of silently falling
 back to gray. A fresh checkout must copy the retail inputs locally and export
-all 13 Training/rescue/stage packages for the default rescue-all bundle, or
+all 17 Training/rescue/stage packages for the default rescue-all bundle, or
 export one package and pass its key to the launcher for a development build.
 The app builder also runs
 `tools/export_victim_actors.py` if ACT assets are missing, converts their
@@ -147,6 +147,15 @@ opens the native title screen, then the eight-entry rescue mission selector.
 The old `Open FDNY Scene Preview.command` is retained as a compatibility alias.
 Pass a map key to either launcher, such as `./Open FDNY Firefighters.command
 bank`, to build and open one exported package directly for development. The
+four dedicated PlayerHose maps (`city_h`, `const_h`, `dock_h`, and `oil_rig_h`)
+are included in the rescue-all bundle and can also be launched directly by
+passing one of those keys to the launcher. This opens the shared game host's
+PlayerHose route: authored WindowFire model references are selected by path
+slot, the held stream traces BSP collision, and matching targets advance the
+authored cycle and hotspot data. The current stage host still uses free player
+movement and the standard view in place of the retail hose spline/camera, and
+the WindowFire progress baseline/result presentation remain provisional. The
+retail rescue chooser continues to list only the eight rescue catalog entries.
 The title uses retail `menu.rrf` bitmap 10 (`main.bmp`) and resource 100
 (`mcontrols.bmp` plus its alpha mask) for the GAME/SCORES/OPTIONS/EXIT labels
 at source-backed positions. GAME currently opens the port-created eight-row
