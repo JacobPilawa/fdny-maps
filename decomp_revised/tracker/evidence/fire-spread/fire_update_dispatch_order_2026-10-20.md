@@ -18,8 +18,9 @@ The saved pseudocode is in
 
 ## Root update manager route
 
-The four owner fields point to instances of the generic entity manager. Their
-freshly inspected vtables and dispatch adapters are:
+The first three owner fields point to instances of the generic entity manager;
+owner `+0xE0` is the specialized contact-list manager. Their freshly inspected
+vtables and dispatch adapters are:
 
 | Owner field | Slot 0 / member-list pass | Slot +4 / per-member callback | Manager filter |
 | --- | --- | --- | --- |
