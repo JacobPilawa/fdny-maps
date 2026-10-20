@@ -3060,7 +3060,7 @@ void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) 
     std::cout << "\n";
 }
 
-void drawPlayerHoseStream(V start, V end) {
+void drawPlayerHoseStream(V start, V end, float pressure) {
     glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT |
                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_TEXTURE_2D);
@@ -3068,7 +3068,10 @@ void drawPlayerHoseStream(V start, V end) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
     glLineWidth(3.f);
-    glColor4f(.36f, .74f, 1.f, .82f);
+    // Retail records this pressure scalar into the hose stream samples. The
+    // simple host beam uses it as provisional opacity until that renderer is
+    // recovered; this mapping is not a retail-parity claim.
+    glColor4f(.36f, .74f, 1.f, .82f * std::clamp(pressure, 0.f, 1.f));
     glBegin(GL_LINES);
     glVertex3f(start.x, start.y, start.z);
     glVertex3f(end.x, end.y, end.z);
@@ -5789,6 +5792,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 int hitModel = -1;
                 const bool hoseActionActive = sprayHeld &&
                     playerHoseStage.result == PlayerHoseStage::Result::Running;
+                playerHoseStage.updateStreamPressure(hoseActionActive);
                 if (hoseActionActive) {
                     constexpr float streamLength = 2000.f; // 0046C5A0 traces a 2000-unit hose segment.
                     // 00465EF0 offsets the stream source from the entity frame:
@@ -6695,7 +6699,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         fogState, lightStyles, cameraFrame.position, yaw, pitch, width, height,
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
-            if (hoseStreamVisible) drawPlayerHoseStream(hoseStreamStart, hoseStreamEnd);
+            if (hoseStreamVisible)
+                drawPlayerHoseStream(hoseStreamStart, hoseStreamEnd, playerHoseStage.streamPressure);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};

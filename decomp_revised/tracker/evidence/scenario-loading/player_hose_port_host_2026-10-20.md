@@ -3,12 +3,14 @@
 Status: **the shared game host loads the four dedicated PlayerHose maps,
 resolves authored WindowFire target names to BSP model IDs, applies the
 source-derived numeric mode timer scale, runs a source-shaped target/cycle/
-hotspot state path, and follows the authored HosePath camera rail with a
-floor-height query. The shared loop now uses the traced retail delta scale,
+hotspot state path, follows the authored HosePath camera rail with a
+floor-height query, and tracks the source-shaped `M_MaxPressure` stream scalar.
+The shared loop now uses the traced retail delta scale,
 lower pacing threshold, and upper cap. Retail menu labels/initial mode, rail
 speed calibration, SDL tick quantization/focus-pause mapping,
-mouse-to-nozzle mapping, live dousing cadence, WindowFire visuals, result
-widget, and stage transition remain open.**
+mouse-to-nozzle mapping, native pressure-to-water rendering, live dousing
+cadence, WindowFire visuals, result widget, and stage transition remain
+open.**
 This is a port checkpoint, not a live retail-parity result.
 
 ## Evidence and authored data
@@ -98,11 +100,18 @@ it becomes the countdown; the frame-delta trace establishes both values are
 seconds. Host mode index 2 is the default because
 the retail selector and initial index are not yet mapped. Pitch is clamped to
 the current N_PitchSpread in degrees; mapping mouse deltas to retail
-STEER_PITCH/YAW remains provisional. `M_MaxPressure` is loaded but its
-downstream use remains unknown. A fresh exact `+0x1834` instruction-text
-scan finds only the assignment at `00467B8A`; direct register aliases are not
-excluded. The simple blue beam and host
-win/loss title are not retail WindowFire or result presentation.
+STEER_PITCH/YAW remains provisional. `M_MaxPressure` at owner `+0x1834`
+aliases stream-component target `+0x3B4`, while current stream pressure is at
+owner `+0x1830` / component `+0x3B0`. The shared host tracks the source's
+per-update 0.2 interpolation toward that target while held and toward zero
+after release. Retail writes this scalar to stream sample records and sends it
+as a WindowFire message payload; the traced WindowFire timer ignores the
+payload. The simple blue beam uses the scalar as a provisional opacity proxy
+because the native sample renderer is not yet traced. The earlier exact
+`+0x1834` instruction-text scan finds only the assignment at `00467B8A`; it
+missed the component-relative alias. The host win/loss title is not retail
+result presentation. See
+[`player_hose_pressure_stream_2026-10-20.md`](player_hose_pressure_stream_2026-10-20.md).
 
 The rescue catalog still validates and displays exactly eight `rescue.rrf`
 rows. The four hose packages are available as direct launches from the bundle,
@@ -121,11 +130,13 @@ uses that initialization, ramp, arithmetic, and comparison. Its target update
 executes ramping before the host contact, but message/entity scheduling and
 frame-delta units remain provisional.
 
-A headless instruction-text scan against retail EXE SHA-256
-`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` found
-only the assignment to PlayerHose `+0x1834` at `00467B8A`; this does not rule
-out computed or aliased consumers. The full scan scope is in
-[`player_hose_pressure_scan_2026-10-20.md`](player_hose_pressure_scan_2026-10-20.md).
+A headless instruction-text scan against the pinned retail EXE found only the
+assignment to PlayerHose `+0x1834` at `00467B8A`; a follow-up resolves the
+consumer through the embedded stream component at `+0x1480`, whose `+0x3B4`
+field aliases that pressure target. The original scan scope is in
+[`player_hose_pressure_scan_2026-10-20.md`](player_hose_pressure_scan_2026-10-20.md),
+and the alias plus port are in
+[`player_hose_pressure_stream_2026-10-20.md`](player_hose_pressure_stream_2026-10-20.md).
 
 The updated shared macOS target and rescue-all bundle compiled successfully.
 Standalone and packaged executable SHA-256 values match at
@@ -213,3 +224,13 @@ executable SHA-256 values match at
 plist passed validation; all eight rescue choices and four hose scenes remain
 packaged. The existing Homebrew json-c warning remains (built for macOS 27.0,
 linked for 13.3). No tests, interactive run, or retail comparison were made.
+
+## Pressure scalar build (2026-10-20)
+
+The shared macOS target and rescue-all app rebuilt after the PlayerHose
+pressure-state update. Standalone and bundled executable SHA-256 values match
+at `3bb0928d0a5fa0974980aebeb314b4bf1d4fbf13c55bca29436eced9d674d36a`. The
+plist passed validation; the rescue catalog still has eight rows, and all
+four hose maps are packaged. The existing Homebrew json-c warning remains
+(built for macOS 27.0, linked for 13.3). No tests, interactive run, or retail
+comparison were made.

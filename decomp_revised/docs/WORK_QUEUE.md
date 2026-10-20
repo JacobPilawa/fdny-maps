@@ -39,8 +39,10 @@ Focus-pause behavior for absolute-time consumers, SDL tick quantization,
 callback ordering, and live retail parity remain open; see
 [`player_hose_frame_delta_refs_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_frame_delta_refs_2026-10-20.md).
 Mouse-delta
-scaling, rendered stream fidelity, M_MaxPressure's effect, result feedback,
-and stage return flow remain open. Do not treat the host build as a live check
+scaling, rendered stream fidelity, result feedback, and stage return flow
+remain open. The `M_MaxPressure` alias and per-update pressure smoothing are
+now traced and tracked in the host; its use in the simple beam is a provisional
+opacity proxy until the retail stream-sample consumer is found. Do not treat the host build as a live check
 or retail parity. The full port assumptions and compile record are in
 [`player_hose_port_host_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_port_host_2026-10-20.md).
 
@@ -52,6 +54,25 @@ call. This closes the static contact-vector producer gap; the authored
 `touchhose` trigger, rescue-player slot-4 host integration, live cadence, and
 parity remain open. See
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md).
+
+The dedicated PlayerHose pressure field is now resolved through the embedded
+stream component alias: hotspot `M_MaxPressure` at owner `+0x1834` aliases
+component target `+0x3B4`; current stream scalar at `+0x1830` aliases
+component `+0x3B0`. The source moves this scalar 20% toward the hotspot target
+per update while held and 20% toward zero when released, without a `dt`
+factor. The shared stage now tracks that scalar and uses it as a provisional
+opacity input for its simple beam. The scalar is also written into stream
+sample records and sent as the WindowFire message payload, but the traced
+WindowFire handler ignores that payload for completion timing. The native
+sample consumer and visual transfer remain open. See
+[`player_hose_pressure_stream_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_pressure_stream_2026-10-20.md).
+
+The shared macOS executable and rescue-all app rebuilt after the pressure
+port with matching standalone/package SHA-256
+`3bb0928d0a5fa0974980aebeb314b4bf1d4fbf13c55bca29436eced9d674d36a`. The
+bundle plist passed; all eight rescue catalog rows and four hose maps remain
+packaged. The existing json-c macOS 27.0 versus target 13.3 linker warning
+remains. No tests, interactive run, or retail comparison was performed.
 
 The first gameplay-slice executable compiled successfully with SHA-256
 `514dd0ae15bb0c733f7b1b01dca939f26eb5e5d23c1696b187ec6f3af1eb059c`.
@@ -140,12 +161,13 @@ plist passed and the eight rescue choices plus four hose scenes remain
 packaged. The existing json-c deployment-target warning remains. No tests,
 interactive run, or retail comparison was made.
 
-Two read-only Luna audits plus a root Ghidra follow-up found no implementation-
-ready semantics for `M_MaxPressure` or Construction node 36. A current-hash
-headless instruction-text scan for `0x1834` finds only the path-record write at
-`00467B8A`; this excludes a direct immediate read in the scanned instruction
-text but not computed or aliased accesses. Scan details are in
-[`player_hose_pressure_scan_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_pressure_scan_2026-10-20.md).
+Two read-only Luna audits and the first direct-offset scan did not resolve
+`M_MaxPressure`; the later shared-component alias trace does. The scan at
+`0x1834` found only the path-record write because the consumer accesses the
+same storage through component `+0x3B4`. The direct-offset scan details remain
+in [`player_hose_pressure_scan_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_pressure_scan_2026-10-20.md),
+and the resolving trace is in
+[`player_hose_pressure_stream_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_pressure_stream_2026-10-20.md).
 Construction node 36 remains outside the verified forward A rail and
 first-hotspot/D progression chain; alternate runtime entry and
 `E_NextHotSpotPathDir` semantics remain unresolved.
@@ -153,9 +175,9 @@ first-hotspot/D progression chain; alternate runtime entry and
 | Scope | Files / evidence | Status |
 | --- | --- | --- |
 | WindowFire target timer | `player_hose_stage.h`, `scene_viewer.cpp`, PlayerHose source excerpts and port-host note | Zero-start ramp, contact divisor, and strict threshold implemented; update cadence and visual parity remain open |
-| Pressure-field and Construction-branch audits | Current-hash PlayerHose instruction scan and `const_h` entity graph | Read-only complete; exact `+0x1834` scan found only the assignment; aliases and node 36 runtime entry remain unresolved |
+| Pressure-field and Construction-branch audits | PlayerHose pressure alias trace and `const_h` entity graph | Pressure target/current alias and per-update smoothing traced and added to the shared host; retail sample renderer and node 36 runtime entry remain unresolved |
 | `windowfire_threshold` (Luna) | Current-hash `00468850`/`00468680` exports and `00468870` instructions | Complete, read-only; zero-start timer, strict zero threshold, and ramp rate integrated; scheduling remains open |
-| `max_pressure_trace` (Luna) | `004677D0`, current-hash `+0x1834` instruction scan | Complete, read-only; earlier `0x194` scan was irrelevant; no direct consumer established |
+| `max_pressure_trace` (Luna) | `004677D0`, current-hash `+0x1834` instruction scan | Complete, read-only; its immediate-offset scan found the assignment; root's later component-relative alias trace and pressure port are recorded in `player_hose_pressure_stream_2026-10-20.md` |
 | `hose_construction_route` (Luna) | Hash-matched `const_h` BSP graph and `004677D0` | Complete, read-only; node 36 is not in verified A/D path; direction-property reader remains unresolved |
 
 ## PlayerHose authored rail trace and shared-host camera port (2026-10-20)
@@ -189,11 +211,12 @@ delta-time calibration is open. Exact camera/state cadence and live parity
 remain unverified. Full evidence and BSP hashes are in
 [`player_hose_curve_pipeline_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_curve_pipeline_2026-10-20.md).
 
-The function-review tracker now has 392 reviewed functions after four new
-fresh reviews (`00468050`, `0049D160`, `00468230`, and `0043B2D0`), with the
-existing `0048FF30` world probe review linked to the new camera evidence. No
-test suite or interactive run was performed. The shared macOS target compiled
-after the camera port; compilation is not retail parity.
+The function-review tracker now has 393 reviewed functions. This camera
+milestone added fresh reviews for `00468050`, `0049D160`, `00468230`, and
+`0043B2D0`, with the existing `0048FF30` world probe review linked to the
+camera evidence. The later pressure follow-up expanded review `0046D1B0` and
+added `0046C000`. No test suite or interactive run was performed; the shared
+macOS build is not retail parity.
 
 | Scope | Files | Status |
 | --- | --- | --- |
@@ -470,10 +493,15 @@ the steerable pitch in degrees; constructor `00466D60` starts its pitch/yaw
 limits at 45/60 degrees, and hotspot entry replaces the pitch limit. Helper
 `00496DD0` multiplies the angle by the degrees-to-radians constant and `0.5`
 before its sine/cosine rotation. The limit's relationship to path-angle
-progression remains open. The pressure value has no direct consumer in the
-bounded offset scan and must not be treated as stream intensity. Stream-owner
-intensity is separately at `+0x1830`. `00465EF0` calculates the nozzle aim and
-`0046D1B0` updates the stream visual. See the hose lifecycle note,
+progression remains open. The pressure value has no direct immediate-offset
+consumer because `0046D1B0` reads it through the embedded component's
+`+0x3B4` target alias. Stream-owner current scalar at `+0x1830` is component
+`+0x3B0`; the source smooths it toward the pressure target while held and
+toward zero otherwise. `00465EF0` calculates the nozzle aim and `0046D1B0`
+updates the stream sample records. The shared port tracks this scalar; its
+beam-opacity transfer remains provisional until the sample renderer is traced.
+See [`player_hose_pressure_stream_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_pressure_stream_2026-10-20.md),
+the hose lifecycle note,
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 and [`player_hose_angle_rotation_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/player_hose_angle_rotation_fresh_2026-10-20.c).
 
@@ -2091,7 +2119,7 @@ symptom remain open.
 | `bank_contact_review` | Audit Bank live-loop contact/PATH ordering and reported M workaround | `scene_viewer.cpp`, Bank door route and interaction fixture | Complete; read-only; no M-to-collision path; live ordinary route still needs capture |
 | `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; its separate direct-runner recommendation is implemented with all four hose maps packaged; a retail hose catalog/selector remains open |
 | `hose_runtime_data_audit` | Find a source-backed first playable PlayerHose data slice | `city_h/entities.json`, `scene_data.h`, `startup.h`, `scene_viewer.cpp`, lifecycle evidence | Complete; read-only; city_h gives a linear first hotspot path and its 29 ZF names resolve to `%Model%`; no edits; live route, exact camera, timing, collision, and WindowFire effect presentation remain open |
-| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle and contact exports | Complete; read-only; traced pitch/yaw input accumulators and authored N_PitchSpread pitch clamp; current-hash exact-offset scan finds only the `+0x1834` assignment; computed or aliased consumers remain unknown |
+| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle and contact exports | Complete; pitch/yaw limits and authored clamp traced; follow-up resolves the `+0x1834`/component `+0x3B4` alias and ports the per-update pressure scalar; sample renderer remains open |
 | `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommendation integrated as a separate route in the shared game host; authored spline/camera and stage result remain open |
 | `hose_city_data` | Map city_h's authored path, targets, and loader representation | `.local/exports/city_h/entities.json`, `scene_data.h`, lifecycle evidence | Complete; read-only; confirmed 19 path nodes, nine hotspots and 29 `%Model%` target references; no edits |
 | `hose_mode_labels` | Trace PlayerHose session mode index to retail labels/default | Pinned `004677D0`, related PlayerRescue initialization, menu and EVS evidence | Complete; read-only; exact timer factors are source-backed, but labels/default are not; difficulty-like role is suggestive only |

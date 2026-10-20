@@ -85,6 +85,11 @@ struct PlayerHoseStage {
     int modeIndex = 2;
     double modeSpotTimeMultiplier = 1.0;
     float countdown = 0.f;
+    // The shared stream component moves its output scalar 20% toward the
+    // current hotspot's M_MaxPressure while held, and 20% toward zero when
+    // released. The exact rendered-water transfer remains unresolved.
+    float streamPressureTarget = 0.f;
+    float streamPressure = 0.f;
     bool timeWarningSent = false;
     Result result = Result::Running;
     std::string transition;
@@ -264,6 +269,11 @@ struct PlayerHoseStage {
         target.complete = false;
     }
 
+    void updateStreamPressure(bool waterHeld) {
+        const float target = waterHeld ? streamPressureTarget : 0.f;
+        streamPressure += (target - streamPressure) * 0.2f;
+    }
+
     bool enterHotspot(size_t index) {
         if (index >= pathNodes.size()) return false;
         auto& next = pathNodes[index];
@@ -271,6 +281,7 @@ struct PlayerHoseStage {
         activeHotspot = int(index);
         activeTarget = 0;
         cyclesRemaining = std::max(0, next.numCycles);
+        streamPressureTarget = next.maxPressure;
         // Retail multiplies the authored float by a mode-selected double,
         // then stores the result back to float before entering the timer state.
         countdown = static_cast<float>(double(next.spotTime) * modeSpotTimeMultiplier);
@@ -303,6 +314,8 @@ struct PlayerHoseStage {
         cyclesRemaining = 0;
         hotspotOrdinal = 0;
         countdown = 0.f;
+        streamPressureTarget = 0.f;
+        streamPressure = 0.f;
         expectedHotspot.clear();
         transition = "Waiting for first PlayerHose hotspot anchor";
         return true;
