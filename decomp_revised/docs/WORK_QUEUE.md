@@ -26,9 +26,10 @@ activates only when its A-rail anchor is selected. If target cycles finish
 first, the host waits at that boundary. Retail
 `00490BB0` reports the selected record when it differs from its cache; the
 initial null cache therefore reports the first sample. The stream source also
-uses `00465EF0`'s frame offset, while host mouse steering remains a provisional
-nozzle direction. Rail speed is interpreted as world units per host second
-and remains provisional. The host applies the traced zero-start WindowFire
+uses `00465EF0`'s frame offset. PlayerHose mouse steering now follows the
+source-backed relative X/Y action map, image-default scale, signs, authored
+angle limits, and separate aim accumulators. Rail speed is interpreted as
+world units per host second and remains provisional. The host applies the traced zero-start WindowFire
 timer ramp and contact subtraction. The frame delta is traced through
 `0042aea0` → `0042c080` → `0042bf70`: WinMM millisecond differences are scaled
 by `0.001`, paced until the stored delta exceeds `1/60`, and capped at `0.1`.
@@ -38,8 +39,9 @@ The shared host now applies these thresholds with SDL ticks and `SDL_Delay(1)`.
 Focus-pause behavior for absolute-time consumers, SDL tick quantization,
 callback ordering, and live retail parity remain open; see
 [`player_hose_frame_delta_refs_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_frame_delta_refs_2026-10-20.md).
-Mouse-delta scaling, stream material binding, result feedback, and stage
-return flow remain open. The `M_MaxPressure` alias and per-update pressure
+Retail-to-host input poll cadence, sensitivity changes after image defaults,
+stream material binding, result feedback, and stage return flow remain open.
+The `M_MaxPressure` alias and per-update pressure
 smoothing are now traced and tracked in the host. Retail scales the stored
 aim-velocity vector by `4000 * currentPressure` and records a separate shape scalar
 `0.8 + 2.2 * currentPressure`; its strip consumer culls scalar values at or
@@ -213,7 +215,7 @@ performed.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point and timestamped dual-curve strip geometry, source-shaped temporary aim rotation, and retail-delta pacing; rail speed calibration, state-frame cadence, SDL-to-steering mapping, strip resource/UV/material binding, mode labels/initial choice, result and return flow remain provisional/open |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point and timestamped dual-curve strip geometry, source-shaped temporary aim rotation, retail-delta pacing, and default mouse scale/signs; rail speed calibration, input-poll and state-frame cadence, strip resource/UV/material binding, mode labels/initial choice, result and return flow remain provisional/open |
 | Frame-delta clock trace | `0042bf70_frame_clock_delta_fresh.c`, frame-delta evidence note, shared SDL loop | Source producer and second-based delta traced; `>1/60` pacing and `0.1` cap ported; focus-pause/absolute-time mapping and retail parity remain open |
 
 ### Frame-clock source and pacing port (2026-10-20)
@@ -258,15 +260,36 @@ temporary aim frame. The shared host now copies its rail camera frame, rotates
 the basis around axis 0 by pitch, then around the updated axis 1 by negative
 yaw, following `00496DD0` and `004476B0`'s basis-by-axis cross-product order.
 The stream source stays tied to the unrotated entity frame through `00465EF0`.
-SDL mouse values still stand in for `STEER_PITCH/YAW`, so accessor cadence,
-scale/sign mapping, additional view-angle limits, and x87 rounding remain
-open.
+A fresh trace resolves the relative-mouse action map, default scale/sign
+mapping, and angle guards; the shared host now keeps separate degree
+accumulators. Input polling cadence, user sensitivity overrides, x87 rounding,
+and live orientation remain open. See
+[`playerhose_mouse_steer_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_mouse_steer_2026-10-20.md).
 
 The standalone and rescue-all executables rebuilt at matching SHA-256
 `6e639a00367ce7bff8a95da4b98b7fc6e4805c050c1399715527c32a43692bbc`. The
 bundle plist passed validation and retains all four hose scenes and eight
 rescue catalog choices. This is compile/package evidence only; no interactive
 or retail comparison was made.
+
+### PlayerHose mouse steering port (2026-10-20)
+
+Fresh current-hash traces establish the path from DirectInput relative X/Y
+events through `MOUSE_X/Y`, the `STEER_YAW/PITCH` bindings, the 0.1-degree
+image-default scale, and the signs applied by `00466780`. The shared host now
+queues relative SDL deltas into separate PlayerHose accumulators and applies
+the authored +/-60-degree yaw limit, hotspot pitch spread, and route-relative
+world-up guard before rotating the temporary aim frame. Input poll cadence,
+post-default sensitivity settings, x87 rounding, and live orientation remain
+open; see
+[`playerhose_mouse_steer_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_mouse_steer_2026-10-20.md).
+
+The rescue-all macOS build completed with matching standalone and packaged
+executable SHA-256
+`2815935508483ab4ec56e45ec57991561a0e4ea910886c9bb0b2aa2a98084637`. Its
+plist passed, all eight rescue choices and four PlayerHose scenes are
+packaged, and the existing json-c deployment-target warning remains. No tests,
+interactive run, or retail comparison was made.
 
 ### WindowFire selected-target timer (2026-10-20)
 
@@ -2283,13 +2306,13 @@ symptom remain open.
 | `bank_contact_review` | Audit Bank live-loop contact/PATH ordering and reported M workaround | `scene_viewer.cpp`, Bank door route and interaction fixture | Complete; read-only; no M-to-collision path; live ordinary route still needs capture |
 | `hose_catalog_audit` | Identify safe catalog and bundle seams for the four hose maps | `build_rescue_mission_catalog.py`, `build_scene_viewer_app.sh`, `mission_selector.h`, `scene_viewer.cpp`, current scene exports | Complete; read-only; its separate direct-runner recommendation is implemented with all four hose maps packaged; a retail hose catalog/selector remains open |
 | `hose_runtime_data_audit` | Find a source-backed first playable PlayerHose data slice | `city_h/entities.json`, `scene_data.h`, `startup.h`, `scene_viewer.cpp`, lifecycle evidence | Complete; read-only; city_h gives a linear first hotspot path and its 29 ZF names resolve to `%Model%`; no edits; live route, exact camera, timing, collision, and WindowFire effect presentation remain open |
-| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle, pressure and sample-consumer exports | Complete; pressure alias, stored velocity scale `4000 * pressure`, separate sample shape scalar, 0.75-second/eight-record history, 25-section dual-curve quads, and 10-to-40 contact padding traced and ported; texture/resource binding, blend flags, component gate/cadence, and pitch/path-angle relation remain open |
+| `hose_pressure_trace` | Trace dedicated PlayerHose pressure, pitch limits, and steering input | `00466780`, `004677D0`, hose lifecycle, pressure and sample-consumer exports | Complete; pressure alias, stored velocity scale `4000 * pressure`, separate sample shape scalar, 0.75-second/eight-record history, 25-section dual-curve quads, 10-to-40 contact padding, relative mouse action mapping, and angle guards traced and ported; texture/resource binding, blend flags, and component gate/cadence remain open |
 | `hose_host_seam` | Identify the smallest shared-host PlayerHose integration slice | `scene_viewer.cpp`, `startup.h`, hose lifecycle exports, Training hose subcomponents | Complete; read-only; recommendation integrated as a separate route in the shared game host; authored spline/camera and stage result remain open |
 | `hose_city_data` | Map city_h's authored path, targets, and loader representation | `.local/exports/city_h/entities.json`, `scene_data.h`, lifecycle evidence | Complete; read-only; confirmed 19 path nodes, nine hotspots and 29 `%Model%` target references; no edits |
 | `hose_mode_labels` | Trace PlayerHose session mode index to retail labels/default | Pinned `004677D0`, related PlayerRescue initialization, menu and EVS evidence | Complete; read-only; exact timer factors are source-backed, but labels/default are not; difficulty-like role is suggestive only |
-| `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; corrected the cache-change return polarity; builder/samplers and +0x194 UserData/HosePath mapping are documented; shared camera rail and anchor-driven hotspot entry are ported; delta and countdown units are seconds with the source pacing/cap ported, while focus-pause mapping, state-frame timing, mouse aim, and live parity remain open |
+| `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; corrected the cache-change return polarity; builder/samplers and +0x194 UserData/HosePath mapping are documented; shared camera rail and anchor-driven hotspot entry are ported; delta and countdown units are seconds with the source pacing/cap ported, while focus-pause mapping, input-poll cadence, and live parity remain open |
 | `hose_anchor_entry` | Trace `00490BB0` record-cache semantics and `004677D0` hotspot entry timing | Current pinned EXE, Ghidra trace, PlayerHose spline and state exports | Complete, read-only; selected record is returned only on change, initial null cache reports the first record, first/D-linked anchors enter hotspot state, and state-4 countdown copies the stored timer budget; exact frame gap remains open |
-| `hose_aim_camera` | Separate PlayerHose view frame, steering frame, and nozzle/stream source point | `00466780`, `004677D0`, `00465EF0`, `00496DD0`, fresh hose exports | Complete, read-only; stream source point uses the entity frame offset while bounded steering rotates a temporary aim frame; accessor cadence, effective limits, and live orientation remain open |
+| `hose_aim_camera` | Separate PlayerHose view frame, steering frame, and nozzle/stream source point | `00466780`, `004677D0`, `00465EF0`, `00496DD0`, fresh hose exports | Complete, read-only; stream source point uses the entity frame offset, relative-mouse mapping/default scale/signs are traced and ported, and bounded steering rotates a temporary aim frame; input-poll cadence, sensitivity overrides, and live orientation remain open |
 | `hose_effect_trace_audit` | Independently audit rescue HoseSpray deadline and spawn mapping | `00463EF0_fresh.c`, `00463EF0_hose_contact.asm`, `random.h`, `rescue_hose_spray_effects.h`, `scene_viewer.cpp` | Complete, read-only; corrected the direct unsigned deadline gate and `{last,height,first}` velocity order; clock-plus-random deadline and shared RNG order match; allocation and final particle rendering remain unresolved |
 | `spray_template_trace` | `00463700`, `0047D2B0`, `0047D330`, `0047DB10`, `0047D6D0`, `0047D8A0`, `0047D820`, `0047F500`, `0047F960`, `0047FEA0`; HoseSpray renderer | Complete, read-only; corrected the initial non-interpolated scalar to key 0's 3.0 (key 1 is 5.0); `004B9400` calls are numeric conversions, not RNG; shared host now ports one-key-per-update advancement, the 2.0-to-0.0-second key timing, and flag-`0x8` deactivation; quad mapping, final material, exact effective timing, and pool cadence remain open |
 | `camhose_data_binding` | Check whether the four BSP exports and host loader expose `RCS_CamHose` spline inputs | `.local/exports/{city_h,const_h,dock_h,oil_rig_h}`, `scene_property_matrix.csv`, `SCENE_DATA_CONTRACT.md`, `scene_viewer.cpp` | Complete; read-only; confirmed no CamHose BSP entities, then constructor/UserData and HosePath offsets established route binding; CamHose is a separate helper and not the route-node source |

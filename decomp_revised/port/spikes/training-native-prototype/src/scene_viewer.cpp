@@ -3160,7 +3160,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                   << ", WindowFire target references=" << targets
                   << ", mode index=" << selectedModeIndex
                   << ", spot-time multiplier=" << PlayerHoseStage::modeTimeMultiplier(selectedModeIndex)
-                  << ". Static retail order/data are mapped; this host still uses free movement and a provisional view/action mapping.\n";
+                  << ". Static retail order/data and default mouse steering scale/signs are mapped; input-poll cadence and live parity remain open.\n";
     }
     logRescueStage("scene loaded");
 #if defined(__APPLE__)
@@ -5495,46 +5495,42 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                       << " yrel=" << event.motion.yrel << "\n";
                         continue;
                     }
-                    // Keep the same input scaling as the existing native workbench.
-                    const float yawBefore = yawInput;
-                    const float pitchBefore = pitch;
-                    yawInput -= event.motion.xrel * .0025f;
-                    yaw = yawInput;
-                    pitch -= event.motion.yrel * (.1f * .01745329251994329577f);
                     if (dedicatedPlayerHose) {
-                        constexpr float degree = 0.01745329251994329577f;
-                        const float yawLimit = 60.f * degree;
-                        yawInput = std::clamp(yawInput,
-                            playerHoseStage.spawnYaw - yawLimit,
-                            playerHoseStage.spawnYaw + yawLimit);
-                        yaw = yawInput;
-                        const auto* hotspot = playerHoseStage.hotspot();
-                        const float pitchLimit = (hotspot ? hotspot->pitchSpread : 45.f) * degree;
-                        pitch = std::clamp(pitch, -pitchLimit, pitchLimit);
+                        // PlayerHose reads relative MOUSE_X/Y through the
+                        // STEER_YAW/PITCH actions. Consume summed deltas with
+                        // the retail scale in the stage update.
+                        playerHoseStage.queueSteeringMouseDelta(
+                            event.motion.xrel, event.motion.yrel);
                     } else {
+                        // Keep the existing native workbench camera mapping.
+                        const float yawBefore = yawInput;
+                        const float pitchBefore = pitch;
+                        yawInput -= event.motion.xrel * .0025f;
+                        yaw = yawInput;
+                        pitch -= event.motion.yrel * (.1f * 0.01745329251994329577f);
                         // Fresh retail profiles default to DifficultyLevel 1,
                         // which selects the +/-40 degree pitch limit in 00452570.
                         constexpr float freshProfilePitchLimit =
                             40.f * 0.01745329251994329577f;
                         pitch = std::clamp(pitch, -freshProfilePitchLimit,
                                            freshProfilePitchLimit);
-                    }
-                    if (fireCameraAudit) {
-                        fireCameraAuditYawDelta += yaw - yawBefore;
-                        fireCameraAuditPitchDelta += pitch - pitchBefore;
-                        ++fireCameraAuditMouseEvents;
-                        std::cout << "fire-camera-audit mouse t=" << SDL_GetTicks()
-                                  << " exposed=" << (fireCameraAuditExposure ? "yes" : "no")
-                                  << " entity=" << fireCameraAuditEntity
-                                  << " captured=" << (captured ? "yes" : "no")
-                                  << " relative=" << (SDL_GetRelativeMouseMode() ? "yes" : "no")
-                                  << " focus=" << ((windowFlags & SDL_WINDOW_INPUT_FOCUS) ? "yes" : "no")
-                                  << " xrel=" << event.motion.xrel
-                                  << " yrel=" << event.motion.yrel
-                                  << " yaw=" << yawBefore << "->" << yaw
-                                  << " pitch=" << pitchBefore << "->" << pitch
-                                  << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
-                                  << "\n";
+                        if (fireCameraAudit) {
+                            fireCameraAuditYawDelta += yaw - yawBefore;
+                            fireCameraAuditPitchDelta += pitch - pitchBefore;
+                            ++fireCameraAuditMouseEvents;
+                            std::cout << "fire-camera-audit mouse t=" << SDL_GetTicks()
+                                      << " exposed=" << (fireCameraAuditExposure ? "yes" : "no")
+                                      << " entity=" << fireCameraAuditEntity
+                                      << " captured=" << (captured ? "yes" : "no")
+                                      << " relative=" << (SDL_GetRelativeMouseMode() ? "yes" : "no")
+                                      << " focus=" << ((windowFlags & SDL_WINDOW_INPUT_FOCUS) ? "yes" : "no")
+                                      << " xrel=" << event.motion.xrel
+                                      << " yrel=" << event.motion.yrel
+                                      << " yaw=" << yawBefore << "->" << yaw
+                                      << " pitch=" << pitchBefore << "->" << pitch
+                                      << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
+                                      << "\n";
+                        }
                     }
                 }
             }
@@ -5818,6 +5814,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     const V lookDirection = ViewUpdate::normalize(hosePose.lookAt - cameraPosition);
                     const float routeYaw = std::atan2(-lookDirection.x, -lookDirection.z);
                     const float routePitch = std::asin(std::clamp(lookDirection.y, -1.f, 1.f));
+                    playerHoseStage.applySteeringMouseDeltas(routePitch);
                     auto frameForAngles = [](V position, float frameYaw, float framePitch) {
                         FrameTransform frame;
                         const float cy = std::cos(frameYaw), sy = std::sin(frameYaw);
@@ -5830,9 +5827,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     cameraFrame = frameForAngles(cameraPosition, routeYaw, routePitch);
                     // 00466780 copies the rail-derived frame, rotates its
                     // basis around axis 0 by pitch, then around the updated
-                    // axis 1 by negative yaw. The retail helper uses
-                    // basis x axis; SDL values stand in for the retail
-                    // accumulators with provisional scaling and sign mapping.
+                    // axis 1 by negative yaw. The input scale/sign mapping is
+                    // source-backed; host input-poll cadence remains provisional.
                     auto rotateVectorAroundAxis = [](V vector, V axis, float angleDegrees) {
                         constexpr float degree = 0.01745329251994329577f;
                         axis = ViewUpdate::normalize(axis);
@@ -5849,9 +5845,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                             basis = rotateVectorAroundAxis(basis, axis, angleDegrees);
                     };
                     hoseAimFrame = cameraFrame;
-                    constexpr float radiansToDegrees = 57.29577951308232f;
-                    const float hosePitchDegrees = pitch * radiansToDegrees;
-                    const float hoseYawDegrees = -(yaw - playerHoseStage.spawnYaw) * radiansToDegrees;
+                    const float hosePitchDegrees = playerHoseStage.steerPitchDegrees;
+                    const float hoseYawDegrees = -playerHoseStage.steerYawDegrees;
                     rotateFrameAroundAxis(hoseAimFrame, hoseAimFrame.axis[0], hosePitchDegrees);
                     rotateFrameAroundAxis(hoseAimFrame, hoseAimFrame.axis[1], hoseYawDegrees);
                 }

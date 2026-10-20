@@ -115,7 +115,7 @@ distance between anchor processing and state-4 countdown remains unresolved.
 | `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
 | `M_SpotTime` | Multiplied by the active session mode's timer scale and stored at PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. Exact numeric scales are in [`player_hose_mode_timer_2026-10-20.md`](player_hose_mode_timer_2026-10-20.md); mode labels and the selection path are open. |
 | `M_MaxPressure` | `004677D0` copies the path record's `+0x2C` to PlayerHose `+0x1834`, aliasing stream component target `+0x3B4`. Current pressure at `+0x3B0` feeds sample geometry and contact padding; see [`player_hose_pressure_stream_2026-10-20.md`](player_hose_pressure_stream_2026-10-20.md). |
-| `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp in degrees. Its interaction with path-angle progression remains open. |
+| `N_PitchSpread` | Copied from the path record's `+0x30` to PlayerHose `+0x238`; the aiming updater uses it as a symmetric pitch clamp in degrees, then applies a separate 10-to-170-degree world-up guard. |
 | `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |
 | `ZF0..ZF8_FireModel` and paired `SprayTime` | Non-null model references create WindowFire children for the initialized context; each paired SprayTime is copied to its child's linked state. |
 
@@ -144,6 +144,9 @@ for the source chain and host update.
 The fresh rotation pseudocode is
 [`player_hose_angle_rotation_fresh_2026-10-20.c`](player_hose_angle_rotation_fresh_2026-10-20.c)
 (SHA-256 `30a8b4e2aa55a82592408fcdb8d316a242121f5bb1a6f7913bca6d985ca2bfec`).
+The mouse provider, action bindings, default scale/signs, and shared host update
+are documented in
+[`playerhose_mouse_steer_2026-10-20.md`](playerhose_mouse_steer_2026-10-20.md).
 
 `00465FB0` enters state 4, enables the linked active gates, and initializes
 the current spot-time countdown. In state 4, `004674A0` checks cycle

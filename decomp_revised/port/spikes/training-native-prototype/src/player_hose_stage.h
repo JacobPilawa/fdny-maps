@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <iterator>
 #include <map>
 #include <string>
@@ -90,6 +91,13 @@ struct PlayerHoseStage {
     float railLength = 0.f;
     float railProgress = 0.f;
     int cachedRailAnchorIndex = -1;
+    // Retail maps relative MOUSE_X/Y counts through a -0.1 scale, then
+    // PlayerHose subtracts STEER_YAW/PITCH. Keep the resulting accumulators
+    // in degrees and defer applying queued host events until the frame update.
+    float steerPitchDegrees = 0.f;
+    float steerYawDegrees = 0.f;
+    std::int64_t pendingMouseDeltaX = 0;
+    std::int64_t pendingMouseDeltaY = 0;
     std::string expectedHotspot;
     int activeHotspot = -1;
     int activeTarget = -1;
@@ -126,6 +134,29 @@ struct PlayerHoseStage {
         return {h00 * p0.x + h10 * m0.x + h01 * p1.x + h11 * m1.x,
                 h00 * p0.y + h10 * m0.y + h01 * p1.y + h11 * m1.y,
                 h00 * p0.z + h10 * m0.z + h01 * p1.z + h11 * m1.z};
+    }
+
+    void queueSteeringMouseDelta(int deltaX, int deltaY) {
+        pendingMouseDeltaX += deltaX;
+        pendingMouseDeltaY += deltaY;
+    }
+
+    void applySteeringMouseDeltas(float routePitchRadians) {
+        constexpr float radiansToDegrees = 57.29577951308232f;
+        steerYawDegrees = std::clamp(
+            steerYawDegrees + static_cast<float>(pendingMouseDeltaX) * 0.1f,
+            -60.f, 60.f);
+        const float pitchLimit = hotspot() ? hotspot()->pitchSpread : 45.f;
+        steerPitchDegrees += static_cast<float>(pendingMouseDeltaY) * 0.1f;
+        steerPitchDegrees = std::clamp(steerPitchDegrees, -pitchLimit, pitchLimit);
+        // 00466780 also keeps the aimed direction 10..170 degrees from world
+        // up. In the host's route frame this is an absolute elevation limit
+        // of +/-80 degrees, expressed as a bound on the steering accumulator.
+        const float routePitchDegrees = routePitchRadians * radiansToDegrees;
+        steerPitchDegrees = std::clamp(steerPitchDegrees,
+            routePitchDegrees - 80.f, routePitchDegrees + 80.f);
+        pendingMouseDeltaX = 0;
+        pendingMouseDeltaY = 0;
     }
 
     void buildCameraRail() {
