@@ -219,16 +219,19 @@ Player state 3, sets action status 4, and increments `Objects Thrown`. Its
 camera-frame substitute and per-frame cadence are provisional. State-2 motion
 is advanced inside the shared BModel update after PATH sampling and before
 timed commands; completion applies/flips the endpoint, dispatches `drop`, and
-requests `ThrowObjectEnd`. Player status 3 enables/resets the Axe subobject and
-status 4 disables it; the shared first-person renderer now follows those
-observed changes. Existing-Axe inventory equip sets root `+0x1FC`; ordinary
+requests `ThrowObjectEnd`. Player status 3 enables the Axe subobject and
+refreshes its internal frame record from time zero; status 4 disables it. The
+record flows through `00484940` → `0047EDF0` → `0047EA10` and its reset path
+copies frame fields, but this has not been mapped to the Axe ACT mesh pose. The
+shared first-person renderer mirrors only enable/disable visibility. Existing-Axe
+inventory equip sets root `+0x1FC`; ordinary
 selection activates the item and requests Player status 5 for the HUD, without
 calling status 3 or touching Player `+0xA94`. A fresh direct-caller census
 resolves the source route after status 4: the sole direct status-3 callsite is
 in `0044BC40`, reached by `0043D2B0` only for BModel use mode 1. Thus a later
-liftable pickup re-enables/resets the Axe subobject; ordinary re-equipping does
-not. This is static flow evidence, while callback cadence and rendered
-visibility remain unverified. The post-`drop`
+liftable pickup re-enables the Axe subobject and refreshes its internal frame
+record; ordinary re-equipping does not. The frame record's rendered effect and
+callback cadence remain unverified. The post-`drop`
 `004A11A0` call is
 verified as BModel sound playback (root `+0x124`, initialized by `004A13A0`);
 the ScriptActor timed-command array is a separate root `+0x148` pointer array
@@ -241,10 +244,13 @@ command. The BModel slot `+0x14` update route is known locally, but a recurring
 external caller/cadence has not been identified: the inspected `00429520`
 owner-manager pass invokes slot zero, while its contact traversal calls BModel
 slot `+0x48`; a 53-candidate literal `[reg+0x14]` scan does not exclude
-computed dispatch elsewhere. Player action status 3 enables/resets the Axe
-subobject and status 4 disables it; the shared renderer mirrors those observed
-states. The inventory-side Axe gate and mode-1 liftable reactivation route are
-mapped and ported. Callback cadence and rendered visibility after pickup, plus
+computed dispatch elsewhere. Player action status 3 enables the Axe subobject,
+stores the current tick, and refreshes an internal rectangle/frame record from
+time zero; status 4 disables it. The record has not been mapped to the Axe ACT
+mesh pose. The shared renderer mirrors only enable/disable visibility. The
+inventory-side Axe gate and mode-1 liftable reactivation route are mapped; the
+host does not mirror the internal frame-record update. Its rendered effect
+remains unverified. Callback cadence and rendered visibility after pickup, plus
 the Player-side `ThrowObject` sound path, remain unresolved. The BModel-side
 `ThrowObjectEnd` request is connected at trajectory completion.
 `0043D330` also sets first-child model flags bit `0x10` at `+0xCC` whenever
@@ -278,11 +284,20 @@ the outer callback schedule or equality with the Genesis camera transform. See
 [`player_throw_view_follower_refresh_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_throw_view_follower_refresh_2026-10-20.asm),
 and [`player_update_dispatch_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_update_dispatch_2026-10-20.asm), plus
 [`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](../tracker/evidence/scenario-loading/00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
-The next high-value gaps are resolving the follower/camera relation and Player
-callback schedule, and checking whether dynamic `drop` registrations add
-effects or timed-command changes. The Axe subobject's source reactivation route
-is now mapped to a later mode-1 liftable pickup; callback cadence and rendered
-visibility are still unverified. A scan of all 21
+The camera transform consumer path is mapped: `00491C60` supplies object
+`+0x10` to `geCamera_SetWorldSpaceXForm`, and `00495450` composes a parent-aware
+frame from its context. Player update `0044F340` calls `00495450` for linked
+Type-5 records, but their runtime ancestry is not statically joined to Player
+view frame `+0x3460` or follower `+0x34A4`. Resolve that context/parent identity
+and Player callback schedule, and check whether dynamic `drop` registrations
+add effects or timed-command changes. The Axe subobject's source reactivation
+route is mapped to a later mode-1 liftable pickup; the time-zero frame record's
+ACT/render effect and callback cadence remain unverified. Evidence:
+[`retail_camera_actorinfo_context_trace_2026-10-17.md`](../tracker/evidence/runtime/retail_camera_actorinfo_context_trace_2026-10-17.md),
+[`retail_camera_context_ancestry_followup_2026-10-20.md`](../tracker/evidence/runtime/retail_camera_context_ancestry_followup_2026-10-20.md),
+[`retail_camera_context_trace_2026-10-17.c`](../tracker/evidence/runtime/retail_camera_context_trace_2026-10-17.c),
+and [`axe_reactivation_followup_2026-10-20.md`](../tracker/evidence/scenario-loading/axe_reactivation_followup_2026-10-20.md).
+A scan of all 21
 preserved EVS files and all `S_Script*` fields in the 17 retail BSP exports found
 no literal `drop` binding; dynamic runtime registration remains unexcluded.
 Keep the current contact, collision, and frame adapters provisional;
@@ -308,7 +323,7 @@ and
 | `throw_release_gate` (Luna) | Player held-object gate in `00452570`; producer, target-writer, and angle-helper evidence | Complete; a non-null held pointer reaches the strict angle-under-10 branch on each Player update, without an action-edge check. Vector semantics and callback cadence remain unresolved. No edits |
 | `throw_drop_event_route` (Luna) | Throw-completion event effects; `0043D330`, `004705B0`, and authored EVS/BSP searches | Complete; trajectory `drop` dispatch does not directly mutate Player carry state or remove timed commands. No authored binding was found in preserved data; runtime registration is unexcluded. No edits |
 | `view_frame_identity` (Luna) | Distinguish Player held-target frame from throw-gate frame; frame-helper evidence and current update window | Complete, read-only; throw gate reads view follower root `+0x34A4`, refreshed before the gate; held-target writer reads root `+0x24`. Numeric relation to rendered Genesis camera remains open. No edits |
-| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use, so a later pickup re-enables/resets Player `+0xA94`; callback cadence and rendered visibility remain unverified. No code edits |
+| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. Fresh caller census found status 3 only at `0044BC40`, reached through `0043D2B0` for mode-1 liftable use. Status 3 enables Player `+0xA94` and refreshes a time-zero internal rectangle/frame record; it is not mapped to Axe ACT pose reset or mesh animation. No code edits |
 | `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local Player/BModel routes to `00470740` and callback bodies are mapped, but recurring manager caller and frame ordering remain unproven. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
@@ -1417,7 +1432,7 @@ body-bearing functions and 287 external entries.
 | `misc_emitter_host_port` | Shared type-5 MiscEmitter startup and EVS command state | `misc_emitter_runtime.h`, `scene_viewer.cpp`, current-hash `004420F0`/`004424D0` evidence | Implemented source-backed one-scalar `setsize` plus `turnon`/`turnoff` actor state and startup registration; no effect rendering, descriptor resources, or retail cadence claim |
 | `bmodel_liftable_pose_trace` | Lift-mode initializer, held-target writer, and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode plus raw update windows | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the held target at `+0x224` is now composed from movement `+0x338c` and scaled frame basis columns. The center blend follows `0.5^(frameDelta/0.1s)`; frame-to-view semantics and live callback cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no gameplay code change. |
 | `core_gap_inventory` (Luna) | Current core-gap review including Player passout mode-2 HeroDown continuation | Existing `player_herodown_tail.h`, passout port note, work queue | Complete, read-only; found the source-shaped mode-2 continuation already exists, but the shared host defaults mode to 0 and has no evidenced mode-2 scenario setup. No synthetic scenario added. |
-| `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
+| `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain. Follow-up mapped the camera setter `00491C60` and parent-aware context update `00495450`, but found no static pointer or numeric-matrix join from Type-5 camera context to the Player follower; no edits |
 | `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |
 | `bonus_widget_text_trace` (Luna) | Bonus widget style-3 text child, font profile, glyph cells, and bounds helper | `bonus_points_port_2026-10-20.md`, current-hash Ghidra trace | Complete, read-only; mapped resource 64000, printable-ASCII profile, 8x14 glyph cells, digits/minus, and child modes. Final bounds/alignment and render-state semantics remain unresolved; no edits |
 | `outcome_widget_timing` (Luna) | Result child `+0x130/+0x134` timing and sibling callers | Result widget evidence, full raw disassembly scan, and constructor chain | Complete, read-only; no direct parent-relative timing operands in full EXE scan; `0044D550` → `004576B0` → `0048D390` has no observed timing-field clear/write; allocator clearing and computed aliases remain unknown, so values stay unmodeled; no edits |

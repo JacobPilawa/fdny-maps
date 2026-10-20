@@ -15,7 +15,7 @@ if (param_1 == (int *)0x4) {
   return;
 }
 
-/* 00455BC0: action-status 3 helper for the Player Axe subobject. */
+/* 00455BC0: enables Player +0xA94, samples its frame at time 0, and refreshes its internal frame record. This does not establish a reset of the Axe ACT mesh pose. */
 void __fastcall FUN_00455bc0(void *param_1)
 {
   int *piVar1;

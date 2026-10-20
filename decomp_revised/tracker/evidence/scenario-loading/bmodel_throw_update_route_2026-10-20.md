@@ -95,19 +95,24 @@ trajectory, then processes timed commands. Throw completion applies the
 selected endpoint, flips the selector, dispatches `drop`, and requests the
 owner's `ThrowObjectEnd` sound through host services in the source order. The
 outer recurring BModel callback route and cadence are not proven; this
-per-host-frame adapter is provisional. Player action status 3 enables and
-resets the Axe subobject, while status 4 disables it; the shared renderer now
-mirrors those observed states. Ordinary inventory selection uses a separate
-path: `0044D080` re-enables Axe root `+0x1FC`, and `0044C2A0` invokes the Axe
-activation callback then Player status 5. This path does not call status 3 or
-touch Player `+0xA94`; whether the actor disabled by status 4 becomes visible
-again through another runtime route remains open. See
+
+per-host-frame adapter is provisional. Player action status 3 enables the Axe
+subobject and samples its internal rectangle/frame record at time zero through
+`00455BC0`; status 4 disables it. The shared renderer mirrors enable/disable
+visibility, but the frame record has no mapped equivalent in the Axe ACT mesh
+pose. A fresh caller census maps status-3 reactivation to a later mode-1
+liftable pickup through `0043D2B0` → `0044BC40`; ordinary inventory selection
+uses a separate path: `0044D080` re-enables Axe root `+0x1FC`, and `0044C2A0`
+invokes the Axe activation callback then Player status 5. This path does not
+call status 3 or touch Player `+0xA94`. Runtime frame/cadence and renderer
+mapping remain open. See
 [`axe_reactivation_followup_2026-10-20.md`](axe_reactivation_followup_2026-10-20.md).
 The first authored child model is
 preserved even when it has no PATH, and every nonzero `useObjectState` maps to a
 separate collision-exclusion set for swept and point/ray queries. This bit is
-not mapped to the host render flag. The status-3 Axe enable/reset and status-4
-hide are represented in the shared first-person equipment renderer.
+not mapped to the host render flag. The shared first-person equipment renderer
+represents the status-3 Axe enable and status-4 hide; it does not represent the
+time-zero internal frame-record refresh, which has no mapped ACT-render effect.
 
 A fresh raw Player-update slice at `0045387B..00453A68` shows that a non-null
 held-BModel pointer proceeds directly through held-target update and the
