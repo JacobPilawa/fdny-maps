@@ -113,5 +113,24 @@ LAB_0042d41f:
 
 /* Constructor audit: menu child 2 is FUN_0042F670; child 5 is FUN_00432BB0.
  * The former is the traced level selector. The latter creates two button
- * widgets and requests menu bitmap ID 54; its exact screen meaning is open.
+ * widgets with action IDs 1 and 2 and requests menu bitmap ID 54. Its exact
+ * screen meaning is open. */
+
+/* 004346A0 is slot 1 of child 5's vtable at 004E0668. The generic menu button
+ * callback 00435780 forwards the button's +0x04 action value to the parent
+ * vtable slot at +0x04. The child-5 buttons above therefore enter this handler
+ * with action 1 or 2; both nonzero values take the immediate return branch.
+ * Only action 0 calls 0042D460 through this+0x28, which moves menu history back.
+ * This bounded callback trace does not show what presents or enables the two
+ * buttons. */
+/* 004346A0 instruction excerpt:
+ *   MOV EAX,[ESP+0x4]
+ *   TEST EAX,EAX
+ *   JNZ 004346B3
+ *   MOV ECX,[ECX+0x28]
+ *   CALL 0042D460
+ *   RET 0x4
+ *   004346B3: RET 0x4
+ * The vtable target has no saved function boundary in the copied project;
+ * this excerpt comes from decoded instructions at the vtable entry.
  */

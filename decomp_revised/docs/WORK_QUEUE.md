@@ -458,7 +458,7 @@ HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, rescue textures, post-duration rotation, and frontend consumer traced: state 1 updates selected profile/catalog data and selects child 5; state 2 selects level-selector child 2. State-2 producer, result-child timing, child-5 content/actions, runtime placement/alpha, replay cadence, and full outcome flow remain open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, rescue textures, post-duration rotation, and frontend consumer traced: state 1 updates selected profile/catalog data and selects child 5; state 2 selects level-selector child 2. Child 5's callback ignores button action IDs 1/2 and uses action 0 for history-back; its controls/content, state-2 producer, result-child timing, runtime placement/alpha, replay cadence, and full outcome flow remain open |
 
 The result path is now known to use direct calls: `00458400` invokes
 `0048D180` and `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs
@@ -467,12 +467,15 @@ not apply to it. A fresh decoded-offset scan and decompilation now trace the
 downstream manager consumer: on result completion, manager state 1 updates the
 selected catalog/profile record and selects frontend child 5; state 2 selects
 child 2, the traced level selector. Child 5 is constructed by `00432BB0` with
-two buttons and menu bitmap ID 54, but its intended role and content are not
-identified. The focused export is
+two button actions (1/2) and menu bitmap ID 54. Its vtable callback returns
+without acting on either nonzero code; only code 0 moves the menu history back.
+This narrows but does not identify the page's controls, visibility, or content.
+The focused export is
 [`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c).
-Next, identify child 5's labels/action path and continue tracing result-child
-timing initialization through aliases or runtime evidence. Do not port guessed
-timing, placement, or a loss-state producer. The bounded scan still found no
+Next, identify child 5's label/content resources and activation conditions,
+trace the zero-action path that returns to menu history, and continue tracing
+result-child timing initialization through aliases or runtime evidence. Do not
+port guessed timing, placement, or a loss-state producer. The bounded scan still found no
 direct writer of Player `+0x3438 = 2`; if retail runtime access becomes
 available, set a write watchpoint during expiry, passout, and exit paths.
 

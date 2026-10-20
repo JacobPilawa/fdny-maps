@@ -140,6 +140,15 @@ selected ordinal and current menu-owned string. This is evidence of a
 win-triggered profile/catalog mutation; the record schema and exact progression
 semantics are not yet established.
 
+A bounded vtable callback trace narrows the child-5 actions without identifying
+their purpose. Its vtable slot 1 is `004346A0`; the two constructor-created
+buttons carry action IDs `1` and `2`, and the generic button callback forwards
+those IDs to this slot. Both nonzero values return without a page action. Only
+action `0` calls `0042D460`, which moves the menu history backward. The target
+entry has no saved function boundary in the copied Ghidra project, so this
+finding is based on its decoded instructions and the constructor/callback
+callsite chain. The buttons' visibility and expected user actions remain open.
+
 The focused export is
 [`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](mission_outcome_frontend_consumer_fresh_2026-10-20.c).
 It records the executable hash above. The control flow establishes the
