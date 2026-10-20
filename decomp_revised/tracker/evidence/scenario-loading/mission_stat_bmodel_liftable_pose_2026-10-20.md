@@ -156,13 +156,18 @@ cadence before adding carry/throw to the shared host.
 
 The Player action constructor registers `JUMP` to control ID `0x105`; the input
 name table maps that ID to `MOUSE_RB`. The `0042D8C0` camera/input pass queries
-right mouse at `0042DB06`, but discards the result. Its left-mouse query stores
-its result at Player `+0x285`. The saved static references do not join the
-right-mouse result to Player update `00453784` or producer `0044E990`. The
-literal `jump` ScriptActor branch at `004518D4` directly calls producer
-`0044E990`. The separate state-5 branch compares the `climb` token at
+right mouse at `0042DB06`, but discards the result. In the Player movement
+update, a separate `JUMP` action lookup at `00453739` runs only in root state 4
+and routes a true result to `0044BCE0`; it does not call the normal
+`0044E990` velocity/stat routine. The state-not-4 branch calls `0044E990` at
+`00453784`, independently of that action query. The literal `jump`
+ScriptActor branch at `004518D4` also directly calls producer `0044E990`. The
+state-4 query and helper are preserved in
+[`player_jump_action_state4_2026-10-20.asm`](player_jump_action_state4_2026-10-20.asm).
+The separate state-5 branch compares the `climb` token at
 `00451B60` and calls setter `0044C0B0`; the adjacent `unclimb` branch restores
 state 3 only from state 5. Its token is recorded in
 [`player_climb_state_command_2026-10-20.asm`](player_climb_state_command_2026-10-20.asm).
-The JUMP control bridge remains open;
-the host jump impulse and counter should not be described as retail-equivalent.
+The full state-4 meaning and mapping to the host's general jump controls remain
+open; the host jump impulse and counter should not be described as
+retail-equivalent.

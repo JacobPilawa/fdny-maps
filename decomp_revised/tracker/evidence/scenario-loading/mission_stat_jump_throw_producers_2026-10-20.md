@@ -42,13 +42,19 @@ the host's grounded state or keyboard jump path remains unproven.
 
 The Player action constructor registers `JUMP` at `004395C0` using control ID
 `0x105`, which the input-name constructor registers as `MOUSE_RB` at
-`00437F30`. This confirms the default action binding but not the call path from
-right-click input to the jump producer: the saved `0042D8C0` call at
-`0042DB06` discards the `MOUSE_RB` query result and proceeds into cursor
-handling. A bounded saved-callsite scan found no `JUMP` query in movement
-update `00452570` and no bridge to `00453784` or `0044E990`; it does not exclude
-indirect runtime scheduling or behavior in unsaved callees. No Space binding
-was found in that constructor.
+`00437F30`. The movement update has a separate `JUMP` action query at
+`0045370E..00453739` through `00438550`. It is reached only when Player root
+state `+0x18C` is 4; a true result calls `0044BCE0`, whose geometry query either
+plays the sound at root `+0x508` and leaves state 4, or writes root `+0x88` and
+returns the state to 3. This branch does not call the `0044E990` velocity/stat
+routine. When state is not 4, the update calls `0044E990` separately at
+`00453784`; that routine uses its 500 ms timer and `+0x12C` latch, independent
+of the visible `JUMP` query. The camera/input pass at `0042DB06` also queries
+MOUSE_RB but discards that call's result. The exact state-4 label, the geometry
+query's full meaning, outer update cadence, and mapping to the host's general
+jump controls remain unresolved. See
+[`player_jump_action_state4_2026-10-20.asm`](player_jump_action_state4_2026-10-20.asm).
+No Space binding was found in the retail Player action constructor.
 
 The shared host accepts jumps from grounded or climbing states, applies the
 same 400-unit vertical impulse, and has a 500 ms cooldown. It does not model the

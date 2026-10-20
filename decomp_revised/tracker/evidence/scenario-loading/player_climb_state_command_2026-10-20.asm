@@ -34,5 +34,7 @@
 00451bda  MOV dword ptr [EBP + 0x4c],ECX
 
 ; Ghidra data lookup: 004E1BDC is "unclimb" (ASCII 75 6E 63 6C 69 6D 62 00).
-; This resolves the state-5 command token. It does not connect the separate
-; JUMP action's MOUSE_RB query to Player update 00453784 or producer 0044E990.
+; This resolves the state-5 command token. The separate Player update JUMP
+; action query at 00453739 is state-4-only and calls 0044BCE0, not the
+; 0044E990 jump-stat/velocity routine at 00453784. See
+; player_jump_action_state4_2026-10-20.asm.
