@@ -175,12 +175,15 @@ Fresh exports and instruction listings for the suppression routine, message
 receiver, hose contact helper, and HoseSpray update are saved beside this note.
 Selected old exports and the hash-tagged old oracle/model are preserved in
 [`reference/legacy-evidence/fire-spread/`](../../../reference/legacy-evidence/fire-spread/README.md).
-The bounded 2026-10-20 contact-frame audit confirms the terminal hose route but
-does not identify a producer for item contact XYZ. It also connects the
-rescue-player `touchhose` command to HoseSpray slot 4 and distinguishes that
-route from the four dedicated `RCS_PlayerHose` scenarios; see
+The bounded 2026-10-20 contact-frame audit confirms the rescue-player HoseSpray
+terminal route but does not identify a producer for item contact XYZ. It also
+connects `touchhose` to HoseSpray slot 4 and traces the distinct dedicated
+`RCS_PlayerHose` contact message to `RCS_WindowFire`; its local timer/geometry
+response is not FireRescue suppression, and its completion semantics remain
+open. See
 [`hose_contact_frame_gap_2026-10-20.md`](hose_contact_frame_gap_2026-10-20.md)
-and its [fresh hash-pinned export](hose_contact_and_playerhose_fresh_2026-10-20.c).
+and its [HoseSpray/PlayerHose export](hose_contact_and_playerhose_fresh_2026-10-20.c)
+plus [PlayerHose/WindowFire export](playerhose_douse_windowfire_fresh_2026-10-20.c).
 
 ### Random child placement and shape
 

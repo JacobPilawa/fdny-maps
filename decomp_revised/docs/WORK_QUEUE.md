@@ -2,13 +2,11 @@
 
 Updated 2026-10-20 UTC. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
-The prior comparison-only GitHub mirror sync failed under the restricted network
-on 2026-10-19. After the user explicitly authorized occasional publishing, the
-documented compare-first workflow reviewed and pushed 60 source/documentation
-files under `decomp_revised/`; remote `main` was verified at
-`0ac27137af2b0aa39ec5214e5bccfdb0a80b422c`. Existing `decomp/` was preserved;
-retail binaries and local Ghidra/build data were not included. The source
-workspace remains intentionally uncommitted and has no configured Git remote.
+The documented compare-first mirror workflow has published prior reviewed
+checkpoints to `decomp_revised/` after explicit user authorization. Confirm the
+current remote before each checkpoint; preserve `decomp/` and exclude retail
+binaries and local Ghidra/build data. The source workspace has no configured
+Git remote.
 
 ## Player fire-exposure padding resolved (2026-10-20)
 
@@ -155,8 +153,17 @@ instead of `RCS_PlayerRescue`. Initializer `00466D60` builds its path/camera/
 douse components; update `00466780` reads hose mouse/steering input and uses
 `00465EF0` to calculate its aimed point. The examined updater uses
 `0046D1B0` for hose visuals but does not call FireRescue suppression directly.
-The wider `RCS_DouseHose` fire-hit route remains open. Do not treat this as a
-Training-only equipment feature or merge the two retail paths without evidence.
+The douse component callback `00464AA0` requires its hit gate at `+0x1C`,
+compares the hit volume with a target's virtual bounds, and queues contact
+position plus intensity through `00481A60` as message `0x7530`. `00465B90`
+creates runtime `RCS_WindowFire` actors from path-point fire references. Their
+message handler routes `0x7530` to `00468680`, which updates WindowFire's own
+timer and geometry when its `+0x2A8` state has `+0xC` and `+0xE` gates set.
+This path has no direct call to FireRescue suppression or its doused counter.
+The state producers, timer/gate meaning, and dedicated-stage completion result
+remain open. Keep it separate from rescue-player HoseSpray, which calls shared
+FireRescue suppression with `finalize=1`; the extinguisher route remains
+`finalize=0`.
 
 The rescue-player HoseSpray update `004640F0` calls `00463EF0` while item
 action byte `+0xC58` is active. That helper reads contact `+0x614..+0x61C`,
@@ -167,12 +174,15 @@ decoded-offset scan found no direct HoseSpray XYZ writer. `0046D1B0` receives
 the attachment subobject at HoseSpray `+0x608` and writes its subobject
 `+0x15C` (absolute `+0x764`) for animation/visuals, not contact `+0x614`.
 The attach and activation callbacks also do not write the contact point.
-Computed aliases, bulk copies, engine helper writes, and the broader hose-map
-douse path remain unresolved. Continue by tracing the `+0x614` producer and
-`RCS_DouseHose` fire-hit route, then implement both paths in the shared host
-with separate state. Evidence is in
+Computed aliases, bulk copies, engine helper writes, and the exact HoseSpray
+contact point remain unresolved. Next trace WindowFire `+0x2A8` state writers
+for fields `+0x8`, `+0xC`, `+0xD`, `+0xE`, and `+0x10`, then map them to authored
+stage objectives and completion. Separately trace the indirect or
+engine-assisted producer of HoseSpray `+0x614..+0x61C`; implement each
+source-backed host route with separate state. Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
+[`playerhose_douse_windowfire_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),
 and the earlier suppression exports in the same evidence directory.
 
 ## Catalog time field wired into rescue deadline input (2026-10-19)
@@ -997,18 +1007,11 @@ the report is observed.
   Evidence:
   [`player_passout_recovery_port_2026-10-14.md`](../tracker/evidence/scenario-loading/player_passout_recovery_port_2026-10-14.md)
   and [`player_oxygen_resource_and_script_path_2026-10-14.md`](../tracker/evidence/scenario-loading/player_oxygen_resource_and_script_path_2026-10-14.md).
-- **GitHub handoff (read-only check, 2026-10-14):** remote `main` is at
-  `367b8c762adf639f13b1afec4c7ae3b7fa3a9d19` (“Update Boat dirty-space
-  investigation notes”), after `6fbb453` (“Trace dirty-space Player and Axe
-  collision paths”). This checkout has no configured remote and is at local
-  snapshot `a9e5c49`, whose message records the remote `d830a4c` baseline.
-  Local handoff edits and the expanded dirty-space trace are not on GitHub; the
-  remote trace/queue still contain an earlier form of those findings. A prior
-  GitHub publish was rejected by automatic review, and its restriction is not
-  confirmed resolved. Do not invoke `tools/sync_github.py --push` or a GitHub
-  write until that restriction is resolved. The helper maps this folder into
-  `decomp_revised/` and preserves the rest of `JacobPilawa/fdny-maps`; ignored
-  Ghidra containers and retail inputs remain local.
+- **GitHub handoff:** checkpoints use `python3 tools/sync_github.py` for a
+  compare-first mirror into `decomp_revised/`, followed by a reviewed push and
+  remote SHA verification. User authorization for occasional pushes is
+  recorded in the active goal. This checkout has no configured Git remote; the
+  helper preserves `decomp/` and ignored retail inputs, Ghidra data, and builds.
 - **2026-10-14 Axe/rescue checkpoint:** left-click now waits through the
   source-mapped +100 ms Axe action deadline, starts the exported `axel.act`
   swing, and samples the strict animation-time crossing `prior < 0.275 < new`
