@@ -116,14 +116,22 @@ and correction calculations, not a confirmed hand/view pose or timing match.
 The shared mission viewer now retains BModel `useMode` (`+0x258`) after its
 authored ScriptActor bindings are known. It first assigns generic mode 2 when
 the entity has a `use` binding, then overrides to mode 1 for nonzero
-`G_Liftable` when the first child has exactly two translation keys at exact
-times 0 and 1. All 17 static mode-1 candidates in the preserved BSP scan use
-those exact values. On that success, the host also stores each path translation
-plus the first child's rotational center at the two lift endpoints and clears
-the endpoint selector, matching the source field effects at `+0x1F0/+0x1FC`
-and `+0x220`. Retail `0043BE00` calls `0043B120` for tolerant time comparisons,
-so near-equal boundary cases are currently rejected by this host initializer;
-this is a narrower data acceptance condition, not a gameplay parity result.
+`G_Liftable` when the first child has exactly two translation keys whose times
+pass retail `0043BE00`'s `0043B120(..., 2)` endpoint comparisons. The saved
+helper pseudocode and raw instructions show the call-specific behavior:
+against zero, the helper's zero sentinel accepts only the strict interval
+`(-1e-28, +1e-28)`; against one, it rounds the subtraction to binary32 and
+accepts only when the difference's exponent is below `106`, equivalent here to
+`abs(time - 1) < 2^-21`. These bounds are strict. The shared host now implements
+these two used cases in
+[`bmodel_liftable_path_times.h`](../../../port/spikes/training-native-prototype/src/bmodel_liftable_path_times.h).
+All 17 static mode-1 candidates in the preserved BSP scan use exact 0/1
+values, so this correction broadens authored-data acceptance but does not
+change their current mode. On success the host also stores each path
+translation plus the first child's rotational center at the two lift endpoints
+and clears the endpoint selector, matching the source field effects at
+`+0x1F0/+0x1FC` and `+0x220`. This is source-backed comparison behavior, not
+retail runtime parity.
 
 This slice only preserves authored mode state. The shared host still selects
 the nearest overlapping BModel with a `use` binding and dispatches `use`
@@ -142,6 +150,15 @@ The linker warned that the installed `json-c` dylib targets macOS 27.0 while
 the target links for 13.3, but completed successfully. This is a source-host
 compile check only: no app packaging, tests, interactive use, or retail
 comparison was done.
+
+After the call-specific endpoint comparison was added, the rescue-all macOS
+app rebuilt successfully. Its standalone and packaged arm64 executables both
+have SHA-256
+`74ecb482e8165934b9f847c9d3bd5abbed4648c0d28c5d1892e469af4c63e13d`. The
+bundle emitted eight rescue choices and includes all 13 rescue/stage packages
+plus four hose packages; the build script reported `Info.plist: OK`. The same
+json-c 27.0 versus 13.3 linker warning remains. No runtime, test, interactive,
+or retail-parity check was performed.
 
 The Objects Thrown branch in the previous producer trace remains a held-BModel
 transaction with a strict angle-under-10-degree gate. Static candidate coverage

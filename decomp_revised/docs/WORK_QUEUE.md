@@ -408,14 +408,26 @@ and the Player movement/Total Steps entries in the audit ledger below.
 
 The shared mission scene now retains BModel use mode from authored script and
 liftable data. A bound `use` event starts at generic mode 2; a nonzero
-`G_Liftable` overrides it with mode 1 only when the first child's PATH has
-exactly two translation keys at exact times 0 and 1. The preserved candidates
-use these exact endpoints; on success the host also stores both translation
-vectors plus the child's rotational center and clears the endpoint selector.
-Retail's time comparator is tolerant, so near-equal boundary values are not yet
-accepted. This initialization slice establishes the authored use mode; the
-selection/action/carry behavior and its current parity limits are described
-below.
+`G_Liftable` overrides it with mode 1 when the first child's PATH has exactly
+two translation keys and their times pass retail `0043B120(..., 2)` endpoint
+checks. The host now ports the call-specific strict window around zero
+(`-1e-28 < time < 1e-28`) and the strict binary32 difference bound around one
+(`abs(time - 1) < 2^-21`). Current preserved candidates already use exact
+endpoints, so this broadens data acceptance without changing their mode. On
+success the host also stores both translation vectors plus the child's
+rotational center and clears the endpoint selector. This initialization slice
+establishes authored use mode; selection/action/carry behavior and its current
+parity limits are described below. Evidence:
+[`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md)
+and [`bmodel_liftable_path_times.h`](../port/spikes/training-native-prototype/src/bmodel_liftable_path_times.h).
+The rescue-all macOS app rebuilt after this shared-code change; standalone and
+packaged arm64 executables match at SHA-256
+`74ecb482e8165934b9f847c9d3bd5abbed4648c0d28c5d1892e469af4c63e13d`. The
+bundle emitted eight rescue choices, includes all 13 rescue/stage packages and
+four hose packages, and passed its `Info.plist` check. This is compile/package
+evidence only; no runtime or retail-parity check was performed. The linker
+still warns that the installed json-c dylib targets macOS 27.0 while this app
+links for 13.3.
 
 The macOS `fdny-scene-viewer` CMake target compiled after the Player throw
 gate, BModel trajectory callback, completion event/sound route, `Objects
@@ -657,6 +669,9 @@ No effect renderer change is justified yet.
 | `playerhose_pitch_and_zero_spraytime` (root) | `player_hose_stage.h`, `playerhose_pitch_and_zero_spraytime_2026-10-20.md`, current-hash aim/douse pseudocode, `City_h.bsp` | Complete, static; the world-up guard algebraically matches the host's route-pitch interval, and authored `fire11` uses zero SprayTime through the source divide/complete path. Camera-frame join and live cadence remain provisional. |
 | `player_jump_dispatch_census` (root) | Saved hash-pinned `FDNYPort`; `FindFunctionCallers.java`; `player_jump_host_input_bridge_2026-10-20.md`; copied authored `.evs` files | Complete, read-only; `0044E990` has two direct callers (`004518D4`, `00453784`); the named-action helper's Player `JUMP` poll is state-4-only and routes to clearance. No direct action-to-ScriptActor route or authored EVS `jump` command found. Indirect/runtime route remains open; no gameplay change justified. |
 | `recent_fdny_handoff_review` (root) | Recent FDNY task summaries, `list_artifacts`, active-agent inventory | Complete; no managed worktree or pull-request attachment needs cleanup. The older level-editor task is separate and inactive. |
+| `bmodel_liftable_endpoint_time_port` (root) | Same-hash `0043BE00`/`0043B120` exports and instructions; BModel pose note; `scene_viewer.cpp` | Complete; ports the used strict zero and one endpoint windows through a dedicated shared helper. Rescue-all app compiles/packages with matched arm64 hashes; all current authored liftable endpoints remain exact. No runtime or parity claim. |
+| `axe_gap_audit` (Luna) | Axe action, child update/Think, strike, collision, inventory, and same-hash Axe evidence | Complete, read-only; the source-backed mapped behavior is already present. Remaining release/cadence, collision adapter, frame-record draw effect, and view-follower relation are unresolved; no safe Axe edit found. |
+| `carry_render_audit` (Luna) | Carry evidence, Genesis normal actor gate, `victim_rescue.h`, `scene_viewer.cpp` | Complete, read-only; pickup hide/freeze is implemented, but no retail Player-relative carry transform is evidenced. Do not add a pose adapter without recovered transform inputs. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
 

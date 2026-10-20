@@ -62,6 +62,7 @@ bool jsonNumber(J value) {
 #include "player_footsteps.h"
 #include "victim_roam_motion.h"
 #include "bmodel_contact.h"
+#include "bmodel_liftable_path_times.h"
 #include "extended.h"
 #include "zones.h"
 #include "gbsp_motion_path.h"
@@ -2394,11 +2395,10 @@ std::vector<PreviewBModelMotion> loadBModelMotions(const SceneData& scene) {
             auto prepared = RetailGbspMotion::preparePath(path->second);
             if (isFirstChild && bmodel.liftable != 0 &&
                 prepared.translation.size() == 2 &&
-                prepared.translation[0].time == 0.f &&
-                prepared.translation[1].time == 1.f) {
-                // 0043BE00 validates the first child's two endpoint times via
-                // the tolerant 0043B120 helper. Current authored liftables
-                // use exact 0/1 values; fuzzy boundary cases remain unported.
+                BModelLiftablePathTimes::matchesZero(prepared.translation[0].time) &&
+                BModelLiftablePathTimes::matchesOne(prepared.translation[1].time)) {
+                // 0043BE00 checks the first child's two endpoint times through
+                // the call-specific 0043B120 tolerance reproduced above.
                 bmodel.liftablePathHasExactModeTimes = true;
                 bmodel.liftableStart = prepared.translation[0].value + rotationalCenter;
                 bmodel.liftableEnd = prepared.translation[1].value + rotationalCenter;
