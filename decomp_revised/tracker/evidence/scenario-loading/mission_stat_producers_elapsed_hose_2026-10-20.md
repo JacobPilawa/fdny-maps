@@ -98,8 +98,9 @@ state 4 (the ScriptActor `crouch` token sets state 4), routing it to helper
 `0044BCE0`, which is also called by the `uncrouch` command. The state-not-4
 path calls this producer at `00453784` independently of the action query.
 This maps the retail `JUMPS` transaction but does not establish a direct input
-trigger for it. The host collision latch has not been proven equivalent to retail
-`+0x12C`, so no jump counter is wired. See
+trigger for it. The shared host consumes its prior collision latch, increments
+`Jumps`, and requests `Jump` for accepted host transactions; the latch's
+equivalence to retail `+0x12C` and host cadence remain provisional. See
 [`mission_stat_jump_throw_producers_2026-10-20.md`](mission_stat_jump_throw_producers_2026-10-20.md).
 
 `Air Time` at `004528B6` is in the Player update body beginning at `00452570`.

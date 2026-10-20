@@ -46,5 +46,9 @@ static direct writer was found; computed writers are not excluded. The same
 host RNG is used, but other source random consumers and callback interleaving
 are incomplete, and the Player cadence is provisional. The output of
 `HeadMotion` remains excluded from the rendered camera under the earlier
-camera-bob removal direction.
+camera-bob removal direction. The host passes SceneAudio group 1 by analogy
+with other Player one-shots; a source group assignment for these footstep
+instances has not been established. It also uses the raw digital forward/side
+input magnitude as the source movement-vector threshold adapter; full vector
+construction remains part of the incomplete Player movement port.
 
