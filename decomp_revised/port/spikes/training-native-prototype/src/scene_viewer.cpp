@@ -3533,8 +3533,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         VictimTransactionServices rescueServices;
         std::unique_ptr<VictimTransactions> rescueTransactions;
         std::map<std::string, SourceStatisticRecord> rescueStatistics{
+            {"Completion Time", {0, 0}},
             {"Bonus Points", {0, 0}},
             {"Rescues", {0, 0}},
+            {"Gallons Sprayed", {0, 0}},
             {"Longest Rescue Time", {2, 0}},
             {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}},
             {"Fires Doused", {0, 0}}
@@ -5682,6 +5684,17 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             }
             previous = now;
             if (double(dt) > 0.1) dt = 0.1f;
+            // 00452790 and 0044F724 scale the shared float frame delta by
+            // 1000 before 004B9400 truncates it toward zero. The call cadence
+            // is still provisional; use this host's paced gameplay frame.
+            const uint32_t statFrameDelta = static_cast<uint32_t>(
+                std::trunc(double(dt) * 1000.0));
+            if (!dedicatedPlayerHose && !inspectOnly && !interactionCheck &&
+                !rescueDiagnostic) {
+                // 0045277A adds the scaled frame delta to Completion Time.
+                addSourceStatistic(&rescueStatistics["Completion Time"],
+                                   statFrameDelta);
+            }
             extinguisherSprayRenderer.prune(now);
             if (scriptRuntime) scriptRuntime->timeMs = now;
             fogState.update(now);
@@ -6080,6 +6093,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
 
                 if (hoseSelected && hoseModeUpdates) {
+                    // 0044F340 calls the selected slot-4 child update and then
+                    // adds floor(frameDelta * 1000) while ACTION remains held.
+                    // This does not depend on a fire-contact hit.
+                    if (rescueHoseSpray.action.active)
+                        addSourceStatistic(&rescueStatistics["Gallons Sprayed"],
+                                           statFrameDelta);
                     // 00463EF0 consumes the component hit from the preceding
                     // 0046D1B0/0046C5A0 refresh, then the current update refreshes
                     // the point and padding for its next invocation.

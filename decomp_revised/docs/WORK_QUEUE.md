@@ -61,17 +61,22 @@ hash-pinned follow-up traces 13 mission-stat definitions, the `Score` save-tree,
 and the win-only copy/merge from the live stat map into the per-level score
 record. `004332E0` reads that same keyed collection, so the 13 names feed the
 Records rows. Concrete profile values and the on-disk scalar/container encoding
-remain unverified. Next audit the 13 gameplay stat producers against the shared
-host and implement missing updates before returning to menu UI work. The shared
-host now increments `Fires Doused` only on the terminal HoseSpray
-`finalize=1` FireRescue transition; the extinguisher route uses `finalize=0`,
-and PlayerHose's separate WindowFire timer does not touch this rescue statistic.
-This value remains in-memory only. The rescue-all macOS bundle rebuilt with
-matching standalone/package executable SHA-256
-`90158fb8df2b516afa70a0a508f5bfd60c62a8fb062c9ae9ebe7dd21af666481`; plist
-validation passed and the catalog emits eight rescue choices. This is a
-compile/package check only, with no tests, interactive run, or retail
-comparison. The builder export is
+remain unverified. A fresh producer pass added `Completion Time` by the
+source-scaled frame delta and `Gallons Sprayed` only while the selected
+slot-4 HoseSpray action is active; the inferred numeric unit and host callback
+cadence remain provisional. `Fires Doused` still increments only on the
+terminal HoseSpray `finalize=1` FireRescue transition; the extinguisher route
+uses `finalize=0`, and PlayerHose's separate WindowFire timer does not touch
+this rescue statistic. All three values remain in-memory only. The next
+producer gaps are `Air Time`, `Jumps`, `Total Steps`, and `Objects Thrown`:
+their current code gates are partly mapped, but field identity, sound-scheduler
+coupling, or producer identity remains too uncertain to add host counters. See
+[`mission_stat_producers_elapsed_hose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_producers_elapsed_hose_2026-10-20.md).
+The rescue-all macOS bundle rebuilt with matching standalone/package
+SHA-256 `b98f26372c8dc108834b8b748888abe75816d06e96049c6c9ac44efd09580a90`;
+the plist validated and eight rescue choices were emitted. This confirms
+compilation/package only, with no gameplay test, interactive run, or retail
+comparison. The prior Fires Doused builder export is
 [`mission_outcome_records_page_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_records_page_fresh_2026-10-20.c).
 The profile/schema trace is
 [`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md).
@@ -939,6 +944,9 @@ body-bearing functions and 287 external entries.
 | `mission_result_return_trace` | Static result widget consumer and stage return handoff | Frontend consumer, Records page decompilation, handoff export, result and exit evidence | Complete, read-only; confirmed state-1 Records page, button actions 1/2 navigation, action 0 history-back, and `PlayerStatus+0x960 == child(+0x13C)` alias; exact record fields, result timing, message-gate lifecycle, loss producer, and full return flow remain unresolved; no guessed host transition added |
 | `mission_result_active_alias_resource_join` | Timed result-child active-byte relationship and menu resources 11/17/54 | Pinned EXE decompilation, `menu.rrf`, original asset manifest | Complete, read-only; confirmed the active-byte alias; resources 11/17 identify the Records title/sub artwork and 54 the left-arrow pair. Result timing and exact record-field presentation remain open; no code changes |
 | `hose_shape_consumer_audit` | PlayerHose stream shape scalar and downstream consumer | `playerhose_stream_shape_interpolation_fresh_2026-10-20.c`, `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c` | Complete, read-only; constructor bytes show `+0x374 = 0.8` (`0x3f4ccccd`) and `+0x394 = 3.0`, confirming the existing `0.8 + 2.2*pressure` host formula. Scalar gates segment visibility and is passed to curve metadata; no width/color mapping or later scalar-array consumer was established. No code change. |
+| `movement_stat_audit` (Luna) | `Completion Time`, `Air Time`, `Jumps`, and `Total Steps` producers | Current-hash producer xrefs, `0044EA90`, `0044E990`, and `00452749..004528F5` instruction windows; `mission_stat_producers_elapsed_hose_2026-10-20.md` | Complete, read-only; confirmed Total Steps' 100 ms distinct-sound selection cadence and Jumps' 500 ms state gate. Follow-up resolved Completion Time's `delta × 1000` contribution and implemented it. Air Time's tested byte identity and all callback cadence remain open; no unsupported jump/air counter added. |
+| `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340` decompilation and `0044F713` instruction window; `mission_stat_producers_elapsed_hose_2026-10-20.md` | Complete, read-only; follow-up resolved Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution, now integrated into the shared hose-action path. No Objects Thrown producer was found in the bounded scan; object eligibility and trigger remain unknown. |
+| `core_gap_inventory` (Luna) | Current core-gap review including Player passout mode-2 HeroDown continuation | Existing `player_herodown_tail.h`, passout port note, work queue | Complete, read-only; found the source-shaped mode-2 continuation already exists, but the shared host defaults mode to 0 and has no evidenced mode-2 scenario setup. No synthetic scenario added. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
 | `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |
 | `bonus_widget_text_trace` (Luna) | Bonus widget style-3 text child, font profile, glyph cells, and bounds helper | `bonus_points_port_2026-10-20.md`, current-hash Ghidra trace | Complete, read-only; mapped resource 64000, printable-ASCII profile, 8x14 glyph cells, digits/minus, and child modes. Final bounds/alignment and render-state semantics remain unresolved; no edits |
