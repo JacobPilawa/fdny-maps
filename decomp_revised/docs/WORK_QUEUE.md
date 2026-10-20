@@ -219,6 +219,14 @@ is source-shaped implementation, not retail parity. Evidence is in
 [`player_update_jump_contact_order_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_update_jump_contact_order_2026-10-20.asm),
 [`player_climb_state_setter_2026-10-20.md`](../tracker/evidence/scenario-loading/player_climb_state_setter_2026-10-20.md),
 and [`mission_stat_jump_throw_producers_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_jump_throw_producers_2026-10-20.md).
+The hash-pinned input-map follow-up maps the `JUMP` registration and boolean
+binding query: `00438D70` stores the named action record, `00437410` delegates
+control-ID insertion to `00438BF0`, and `00438550` runs the bound input
+predicates. Its Player callsite remains the state-4 clearance branch; no
+action-to-ScriptActor `jump` emission was found. Keep normal-state input
+parity open. See
+[`player_jump_host_input_bridge_2026-10-20.md`](../tracker/evidence/scenario-loading/player_jump_host_input_bridge_2026-10-20.md)
+and its four fresh function exports.
 The macOS `fdny-scene-viewer` target compiled with SHA-256
 `7654a602627e04ba6585fa80758a9e067e1a21acab48cd9f820b2432ddb8165f`. Linking
 warned that installed `json-c` was built for macOS 27.0 while the target is
@@ -527,7 +535,9 @@ and
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
 | `player_contact_latch` (Luna) | `0049E0A0`, `0049DBC0`, `0043F680`, Player collision/update vtable route; current-hash headless Ghidra and collision note | Complete, read-only; confirmed accepted collision writers and Player vtable slot `+0x64` → `0043F680` → integrator, which consumes/clears the latch. Parent follow-up found the indirect call before collision loop `0043F6D0`; downward snap bypasses the writer and outer cadence remains unresolved. No edits |
 | `player_jump_contact_order` (parent follow-up) | Search of vtable slot `+0x64` references and raw Player movement window `00453784..004537DB`; saved Ghidra project | Complete, read-only; confirmed `0044E990` → integrator wrapper → collision loop within one Player movement pass. Accepted contact can set `+0x12C` for the next normal-state pass. Outer recurring cadence remains unresolved. No edits |
-| `player_jump_host_input_bridge` (root) | `core.h` JUMP edge wiring, `004395C0` action registration, `0044E990`, Player `00452570` and `00451870` routes | Complete, read-only; host normal-state `jumpEdge` is unused while the latch/timer impulse runs; retail helper has no action poll, and the action-to-ScriptActor jump producer remains untraced. No physics change justified |
+| `jump_dispatch_trace` (Luna) | `004395C0`, `0045370E..00453784`, `00451870`, ScriptActor router; current-hash saved Ghidra project | Complete, read-only; distinguished the state-4 JUMP query from the separate `jump` ScriptActor branch. No action-to-script producer found. No edits |
+| `mechanic_gap_review` (Luna) | Current work queue, gameplay evidence, shared rescue port | Complete, read-only; selected the shared Player JUMP dispatch gap for a bounded follow-up; no code edits |
+| `player_jump_host_input_bridge` (root) | `core.h`, `004395C0`, `00438550`, `00438D70`, `00437410`, `00438BF0`, Player `00452570` and `00451870` routes | Complete, read-only; named-action setup and boolean binding query are mapped. State-4 JUMP routes to clearance; state-not-4 calls `0044E990`; the action-to-ScriptActor producer remains unresolved. No physics change justified |
 
 ## Boat A type-5 Exploder trace (2026-10-20)
 

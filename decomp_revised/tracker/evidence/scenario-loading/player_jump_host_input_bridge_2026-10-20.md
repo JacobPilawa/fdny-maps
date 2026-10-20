@@ -25,3 +25,29 @@ ScriptActor event has not been established. Do not change the physics gate or
 claim normal-state input parity until that dispatcher route is traced. The
 retained `input.rrf` does not supply a `JUMP` default binding. No host code,
 build, test, runtime, or parity change was made for this review.
+
+## Input-map follow-up
+
+Fresh read-only Ghidra output from the same saved project confirms the action
+layer shape. The Player constructor first stores the named `JUMP` action through
+`00438D70` at `00439F52`; a later constructor block passes `JUMP` and control
+ID `0x105` through `00437410` to `00438BF0` (`0043AD57..0043AD80`). The
+decompilation exports are retained as
+[`00438d70_input_action_registration_fresh_2026-10-20.c`](00438d70_input_action_registration_fresh_2026-10-20.c),
+[`00437410_input_binding_add_wrapper_fresh_2026-10-20.c`](00437410_input_binding_add_wrapper_fresh_2026-10-20.c),
+and
+[`00438bf0_input_binding_insert_fresh_2026-10-20.c`](00438bf0_input_binding_insert_fresh_2026-10-20.c).
+
+`00438550` resolves the named action entry, iterates its bound input objects,
+and calls their virtual predicate at vtable offset `+4`. The first nonzero
+predicate returns an active low byte; no match leaves that byte clear. Its
+body does not invoke the ScriptActor router. The call in Player movement at
+`00453739` consumes this query only on the state-4 crouch-clearance path. See
+[`00438550_input_action_query_fresh_2026-10-20.c`](00438550_input_action_query_fresh_2026-10-20.c).
+
+This narrows the unresolved edge to any producer outside the named-action
+query and its constructor. The separate Player `jump` ScriptActor token still
+reaches `0044E990`, but no static route from the `JUMP` predicate to that token
+has been found. The normal-state impulse remains ungated in the host pending a
+source-backed bridge or a source-backed confirmation that no such bridge is
+used.
