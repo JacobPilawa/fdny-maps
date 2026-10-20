@@ -554,18 +554,24 @@ The mode-2 parent update is slot 8 (`00444D00`); its render callback is slot 9
 The child resolves its selected descriptor index through `0047D820`/`0047D860`
 and `00493D00`/`00493650`, evaluates vertex, UV, color, size, and alpha tracks,
 then submits a polygon through `geWorld_AddPolyOnce` (import slot `004DC0D0`).
-This establishes the resource lookup and draw shape, but the numeric resource
-IDs and frame sequence remain unknown. The descriptor `0x502D40` has one direct
-reference in the child-construction call and no direct initializer in the
-executable; its image bytes are zero, while writes through runtime aliases
-remain possible. Parent callback cadence also remains unresolved, so the shared
-scene has no faithful visible effect yet. No direct RNG call was found in the
-inspected mode-2 constructor/update path; resource-loader and indirect draws
-remain open. Next trace the descriptor's runtime writer or capture its resource
-IDs and frame sequence, then complete the generic child renderer and authored
-effect lifetime. Static Boat A command content does not prove natural trigger
-reachability or visible retail timing. No gameplay code, build, or runtime
-check changed in this source-only checkpoint. See
+The current-hash descriptor follow-up found no static initializer or loader
+registration for `0x502D40`: its image bytes are zero, its only direct reference
+is the child-construction argument, and the inspected lookup functions only
+consume renderer manager arrays. Computed-address or external initialization
+remains possible. The `exp-00..17` textures in `hose.rrf` are only a candidate;
+`rescue.rrf` reuses IDs 120 onward for `fflame` textures, and the active library
+namespace is unproven. A typed-export scan found seven type-5 records across
+Boat A, Boat B, and Oil Rig B; only Boat A's three `exploder` actors have a
+verified command sequence. See the map/resource inventory in
+[`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md).
+Next trace the neighboring `00457xxx`/`00458xxx` constructors and computed
+writes into `0x502D00..0x502E00`; if no static writer appears, obtain runtime
+descriptor contents before implementing child resources, timing, and effect
+lifetime. Parent callback cadence and cross-system RNG interleaving are also
+open. No renderer or timing claim is supported yet. Static Boat A content does
+not prove natural trigger reachability or visible retail timing. This
+source/evidence checkpoint changed no gameplay code or build and performed no
+runtime parity check. See
 [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md).
 
 ### Shared command-state follow-up (2026-10-20)
@@ -580,6 +586,24 @@ host update cadence. The host does not render an effect: resource descriptor
 `0x502D40`, its frame sequence, child animation timing, and parent callback
 schedule remain unresolved. Implementation details and build hash are recorded
 in [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md).
+
+### Descriptor/resource and map-coverage follow-up (2026-10-20)
+
+The typed-export audit found seven `C_Type=5` records in Boat A, Boat B, and
+Oil Rig B. Boat A contains the three scripted Exploders plus a separate
+`explosion` actor; Boat B's `<null>3` actor has null startup slots; Oil Rig B's
+`flame2`/`flame3` startup slots are empty and are not directly targeted by its
+preserved EVS. Do not infer their activation state from those fields. The two
+RRF libraries reuse numeric resource IDs for different alpha textures, so the
+`hose.rrf` `exp-*` sequence remains an unconfirmed candidate.
+
+The descriptor follow-up found no static writer or resource-loader registration
+for `0x502D40`; the pinned image has one direct reference, at the child
+constructor argument, and the on-disk descriptor bytes are zero. Next inspect
+the adjacent `00457xxx`/`00458xxx` setup paths and computed writes into the
+descriptor region, then capture runtime contents if static evidence remains
+empty. The cross-map entity and resource hashes plus bounded-search limits are
+in the linked evidence note. No effect renderer change is justified yet.
 
 ### Current-turn audit ledger (2026-10-20)
 
@@ -1681,6 +1705,8 @@ body-bearing functions and 287 external entries.
 | `rescue_mission_core_gap` (Luna) | Compare current campaign coverage against missing authored mission systems | Rescue catalog and mission evidence/queue | Complete, read-only; maps remain `loaded_inspection_only` by coverage tracker, and static Boat A Exploders are a cross-map MiscEmitter gap. Recommended tracing the C_Type=5 sequence; no edits. |
 | `exploder_setsize_trace` (Luna) | Boat A `QueExploders`, C_Type=5 construction, setsize, activation, and child setup | `boat_a.evs`, Boat A entity export, `004420F0`, `00442900`, `00445600`, `00445720`, `00444D00` | Complete, read-only; confirmed scalar immediate setsize, internal mode 2, active-byte toggle, and four child objects from descriptor `0x502D40`. Resource initialization, visible effect/timing, and shared host path remain open. |
 | `misc_emitter_renderer` (Luna) | C_Type=5 descriptor writer, parent update/render path, child registration and draw | Hash-pinned Ghidra headless listing/decompilation, executable immediate-address scan, `00444D00`, `00445490`, `0047F960` | Complete, read-only; parent slot 9 draws each child through resource lookup and `geWorld_AddPolyOnce`. Descriptor `0x502D40` has one direct xref and no direct static initializer; runtime numeric IDs/frame sequence and callback cadence remain unresolved. No edits |
+| `misc_descriptor_writer_trace` (Luna) | Search static/alias initialization for `0x502D40`; resolve child resource lookup and neighboring descriptor callsites | Current-hash saved `FDNYPort`, `InspectDataAtAddress`, direct xref/immediate scan, `0047D370`, `0047D2B0`, `0047D820`, `0047D860`, `0047D8A0`, `00493D00`, `00493650` | Complete, read-only; descriptor and neighboring records are undefined/zero on disk; only direct reference is child-constructor argument. Resolver consumes manager arrays and numeric resource IDs but does not initialize descriptor. Computed-address writers/external initialization remain possible; next trace neighboring `00457xxx`/`00458xxx` setup paths. No edits |
+| `misc_exploder_asset_scan` (Luna) | Audit rescue-stage type-5 coverage and resource-definition candidates | Twelve typed rescue entity exports; `rescue.rrf`, `hose.rrf`, source hash checks | Complete, read-only; seven type-5 records occur in Boat A, Boat B, and Oil Rig B. `exp-00..17` is only a candidate because the RRF libraries reuse numeric IDs and the descriptor/library join is unknown. No edits |
 | `misc_emitter_host_port` | Shared type-5 MiscEmitter startup and EVS command state | `misc_emitter_runtime.h`, `scene_viewer.cpp`, current-hash `004420F0`/`004424D0` evidence | Implemented source-backed one-scalar `setsize` plus `turnon`/`turnoff` actor state and startup registration; no effect rendering, descriptor resources, or retail cadence claim |
 | `bmodel_liftable_pose_trace` | Lift-mode initializer, held-target writer, and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode plus raw update windows | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the held target at `+0x224` is now composed from movement `+0x338c` and scaled frame basis columns. The center blend follows `0.5^(frameDelta/0.1s)`; frame-to-view semantics and live callback cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no gameplay code change. |
 | `core_gap_inventory` (Luna) | Current core-gap review including Player passout mode-2 HeroDown continuation | Existing `player_herodown_tail.h`, passout port note, work queue | Complete, read-only; found the source-shaped mode-2 continuation already exists, but the shared host defaults mode to 0 and has no evidenced mode-2 scenario setup. No synthetic scenario added. |
@@ -2885,7 +2911,7 @@ the report is observed.
 - The user requires every rescue mission and map/mechanic to remain in scope,
   with a cross-platform desktop port and macOS as the first playable target.
 - Gas R BSP entities 265, 280, and 309 are joined to the explosion1, explosion2, and gasoff EVS definitions. ScriptActor queue pop/order and wait deadlines are mapped, alongside BModel button1 use handling, type-1 contact candidate checks, and shared BoundsTrigger overlap-pair → touch/touching/untouch dispatch. The named-model motion join resolves button1's effective reach to 20 units. Live contact/selection, updater cadence, and original-game effect captures remain open. See the Gas R evidence linked in the scenario-loading README. The same retail Genesis.dll MOTN/PATH extent decode is now joined across Training and all seven rescue maps: 71 of 76 authored-gate BModels receive a static 48-unit reach; five motionless ladder/button models retain authored values. Per-map/entity results are in `tracker/evidence/scenario-loading/bmodel_reach_cross_map.md`, its JSON inventory, and the rescue coverage CSV. This closes only the static reach calculation; live contact and callback cadence remain open.
-- The shared Script host routes FireRescue's `setsize x y z duration` form to the targeted actor's timed `FireSize` track, including the authored key reset/current-size anchor and `clock + duration * 1000`; this enables Gas R `button1 -> gasoff` without a map-specific branch. Boat A's separate MiscEmitter `setsize 3` is statically traced as an immediate uniform scale. Its mode-2 child draw path reaches renderer resource lookup and polygon submission, but descriptor IDs/frame sequence and the shared host actor remain open. See `tracker/evidence/scenario-loading/firerescue_setsize_script_port.md` and `tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md`.
+- The shared Script host routes FireRescue's `setsize x y z duration` form to the targeted actor's timed `FireSize` track, including the authored key reset/current-size anchor and `clock + duration * 1000`; this enables Gas R `button1 -> gasoff` without a map-specific branch. Boat A's separate MiscEmitter `setsize 3` is statically traced as an immediate uniform scale, and the shared host now records its type-5 startup/EVS state. Its mode-2 child draw path reaches renderer resource lookup and polygon submission, but descriptor contents, resource IDs/frame sequence, and callback cadence remain open. See `tracker/evidence/scenario-loading/firerescue_setsize_script_port.md` and `tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md`.
 - `tracker/rescue_mission_coverage.csv` explicitly tracks Training plus all
   seven campaign rescue missions. All eight load as geometry packages in the
   inspection viewer; none is yet a playable rescue port. `level_map_inventory.csv`
