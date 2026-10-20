@@ -3893,7 +3893,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     return true;
                 }
                 if (entityId == playerEntityId && verb == "climb") {
-                    if (!player.climbing) {
+                    // 0044C0B0 enters state 5 only from another state and
+                    // only while Player +0x3440 has no held BModel. Its
+                    // accepted path clears the velocity vector at +0xFC.
+                    if (!player.climbing && !player.holdingBModel) {
                         player.climbing = true;
                         player.v = {};
                     }
@@ -7004,6 +7007,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     playerBModelActionStatus = 4;
                     axeActorVisible = false;
                     playerHeldBModel = nullptr;
+                    player.holdingBModel = false;
                     playerInteractionState = 3;
                     addSourceStatistic(&rescueStatistics["Objects Thrown"], 1);
                     std::cout << "BModel throw action: trajectory started, action status "
@@ -7186,6 +7190,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                 })) {
                             playerHeldBModel = static_cast<PreviewBModelMotion*>(
                                 transition.playerHeldObject);
+                            player.holdingBModel = playerHeldBModel != nullptr;
                             selected.useObjectState = transition.bmodelObjectState;
                             playerInteractionState = transition.playerState;
                             std::cout << "BModel lift action: entity " << selected.entity

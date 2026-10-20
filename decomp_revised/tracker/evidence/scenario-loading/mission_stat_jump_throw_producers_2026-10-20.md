@@ -78,10 +78,13 @@ No Space binding was found in the retail Player action constructor.
 The shared host now reads the previous step's collision latch before consuming
 it, applies the 400-unit impulse through the 500 ms gate, handles its climb
 state with the source's set-to-400 branch, increments `Jumps`, and requests the
-registered `Jump` sound. Current collision acceptance and host-frame cadence
-remain adapters; this is not a retail parity result. The right-mouse `JUMP`
-action only drives crouch clearance in the host, with Space retained as an
-extra alias in that state.
+registered `Jump` sound. The separate ScriptActor climb setter's state-5/no-
+held-object gate and velocity-vector clear are also mapped into the shared
+host; see [`player_climb_state_setter_2026-10-20.md`](player_climb_state_setter_2026-10-20.md).
+Current collision acceptance, climb movement, and host-frame cadence remain
+adapters; this is not a retail parity result. The right-mouse `JUMP` action
+only drives crouch clearance in the host, with Space retained as an extra
+alias in that state.
 
 ## Objects Thrown
 

@@ -21,17 +21,19 @@ the named JUMP action only to clear its standing-height obstruction.
 The shared Player step now follows that local ordering: it consumes the prior
 host collision latch for jump gating, applies the 400 impulse and 500 ms gate,
 increments `Jumps`, requests `Jump`, then resolves current collision for the
-next step. The host's accepted-normal mapping, one-step-per-host-frame cadence,
-climb-state mapping, and crouch bound transform remain provisional. This is
-source-shaped implementation, not retail parity. Evidence is in
+next step. The ScriptActor climb entry now matches the verified state-5 gate:
+it only succeeds from another state with no held BModel, then clears the
+velocity triplet. The host's accepted-normal mapping, one-step-per-host-frame
+cadence, climb movement, and crouch bound transform remain provisional. This
+is source-shaped implementation, not retail parity. Evidence is in
 [`player_jump_contact_latch_2026-10-20.md`](../tracker/evidence/scenario-loading/player_jump_contact_latch_2026-10-20.md),
 [`player_update_jump_contact_order_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_update_jump_contact_order_2026-10-20.asm),
+[`player_climb_state_setter_2026-10-20.md`](../tracker/evidence/scenario-loading/player_climb_state_setter_2026-10-20.md),
 and [`mission_stat_jump_throw_producers_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_jump_throw_producers_2026-10-20.md).
-The macOS `fdny-scene-viewer` target compiled after this change with SHA-256
-`8fa302242fc87678973bc22f2dc7c91fe6e277646c63ff5f3daf2f6ffa5ccf03`. The
-linker warned that installed `json-c` was built for macOS 27.0 while the target
-deployment is 13.3. No tests, interactive gameplay, or retail parity check was
-run.
+The macOS `fdny-scene-viewer` target compiled with SHA-256
+`7654a602627e04ba6585fa80758a9e067e1a21acab48cd9f820b2432ddb8165f`. Linking
+warned that installed `json-c` was built for macOS 27.0 while the target is
+13.3. No tests, interactive gameplay, or retail parity check was run.
 
 ## BModel use-mode initialization slice (2026-10-20)
 

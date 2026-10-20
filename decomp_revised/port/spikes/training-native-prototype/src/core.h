@@ -90,7 +90,7 @@ struct Collision{
  bool solid(V p,V mn,V mx){std::vector<int> ids;for(const auto& model:collisionModels){if(disabled.count(model.index))continue;V point=transform(p,model.origin,model.index,true);ids.clear();leaves(model.root,point+mn,point+mx,ids);for(int id:ids){auto leaf=at(field(data,"leafs"),id);int ns=integer(field(leaf,"num_sides"));if(!(integer(field(leaf,"contents"))&integer(field(data,"contents_mask")))||!ns)continue;bool inside=true;for(int s=0;s<ns;s++){auto ls=at(field(data,"leaf_sides"),integer(field(leaf,"first_side"))+s);auto plane=at(field(data,"planes"),integer(field(ls,"plane")));float sign=integer(field(ls,"side"))?-1:1;V n=vec(field(plane,"normal"))*sign;float d=num(field(plane,"distance"))*sign;for(int i=0;i<3;i++)d-=n[i]*(n[i]>0?mn[i]:mx[i]);if(dot(n,point)-d>=0){inside=false;break;}}if(inside)return true;}}return false;}
 };
 struct Player{
- V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false;float cooldown=0,ashDensity=1.f;
+ V p{-1268,-172,4692},v{},delta{};bool ground=false,crouch=false,climbing=false,holdingBModel=false;float cooldown=0,ashDensity=1.f;
  // Retail Player fields: +0x12C is a transient upward-contact latch,
  // +0x3400 is the oxygen/burn-gated safe-position snapshot, and +0x534 is
  // the separate reset checkpoint. The retail constructor zeros the snapshot
