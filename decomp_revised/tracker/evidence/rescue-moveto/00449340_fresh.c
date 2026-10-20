@@ -1,22 +1,27 @@
 
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Globals at underscore-prefixed addresses overlap smaller symbols. */
 /* Algorithm:
-   Advance the FireRescue path-motion state. The function updates the motion progress and candidate
-   position from entity fields, checks the path target and state, resets state to 0 when its
-   completion branch is reached, updates the associated FireRescue representation and timed motion
-   keys, and applies the configured floor operation.
-   
+   Advance FireRescue route progress from the frame delta and stored rate. On the
+   H_Radius/2 child-emission threshold (or route completion), construct and queue
+   a generated RCS_FireRescue request at the current visual-subobject base
+   position, update the visual-subobject base to the current route candidate,
+   populate the shared size/bounds timed-vector track, and perform the configured
+   floor operation for that generated request. The completion branch also resets
+   route state and records a pair on the target PathPoint. This body contains no
+   write to the source FireRescue root world translation at +0x4C..+0x54.
+
    Parameters:
-   param_1 is the enclosing FireRescue entity passed by UpdateFireRescueActor as receiver - 0x24.
-   
+   param_1 is the enclosing FireRescue entity passed by UpdateFireRescueActor as
+   receiver - 0x24.
+
    Returns:
    No return value.
-   
+
    Evidence:
-   UpdateFireRescueActor invokes this function only when its state field at +0x4C is 4. This
-   function reads the path progress/rate and current-target fields; the exact meanings of moveto
-   operands 3 and 4 remain unresolved. Fresh pseudocode:
-   tracker/evidence/rescue-moveto/00449340_fresh.c. EXE SHA-256
+   UpdateFireRescueActor invokes this function only when its state field at +0x4C
+   is 4. Operands 3 and 4 contribute separately scaled offsets to generated
+   integer key timestamps; their author-facing meaning remains unresolved. Fresh
+   pseudocode: tracker/evidence/rescue-moveto/00449340_fresh.c. EXE SHA-256
    4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 
 void __fastcall AdvanceFireRescuePathMotion(void *param_1)

@@ -35,20 +35,40 @@ passes. FireRescue primary vtable `004E1780` maps slot `+0x20` to
 shared base no-op. Thus the second queue initialization pass is not evidence
 that this child receives a special update callback.
 
+## Normal update-manager enrollment
+
+The common registration route applies category mask `0xFFEB`, which includes
+the FireRescue manager filter 2. On the normal owner pass, `00429520` visits
+owner field `+0x50` using generic manager slot 0 `0049C0E0`; its slot +4 adapter
+`0049C3D0` calls member root vtable slot `+0x14`. For FireRescue that slot
+reaches `00449FE0` through `0043AFE0` and `00470740`. The `+0x50` manager pass
+precedes contact manager `+0xE0`. The saved trace is in
+[`fire_update_dispatch_order_2026-10-20.md`](../fire-spread/fire_update_dispatch_order_2026-10-20.md).
+
+The generic staged-entity drain is owner service `+0x3C0`, after the manager
+passes. A child request emitted during the current `+0x50` pass is therefore
+not eligible for that already-running pass; once drained and registered it is
+eligible for the next applicable owner `+0x50` pass. This establishes static
+manager enrollment and next-pass eligibility, but not a wall-clock interval.
+The child request's location is copied from the parent visual subobject's
+pre-update base `+0x28..+0x30`; the route helper later writes its current
+candidate back to that embedded visual. It is not copied from the PathPoint.
+See [`00449340_visual_position.asm`](00449340_visual_position.asm) and
+[`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](fire_rescue_timed_vector_size_bounds_2026-10-20.md).
+
 ## Identity is separate from world/update membership
 
 `0049D450` reads the entity-handle manager at `DAT_00503A78+0x10`, asks
 `0049B810` for a two-word handle/generation pair, and stores it at root
 `+0x04/+0x08`. Matching cleanup `0049D510` calls `0049B780` with that pair.
-This route is not the generic world-list registration at `00429490`, and the
-saved evidence does not connect the handle manager to recurring FireRescue
-Think dispatch. The retained legacy audit records the handle/update boundary in
+This route is separate from the generic world-list registration at `00429490`;
+it assigns identity, while the `+0x50` manager route above establishes recurring
+Think eligibility. The retained legacy audit records the handle/update boundary in
 [`training-think-registration-audit.md`](../../../reference/previous-work/decomp/evidence/fire-update/training-think-registration-audit.md).
 
 The FireRescue root's primary slot `+0x14` is thunk `0043AFE0`, which reaches
-shared updater `00470740` and can invoke the visual Think path. The recurring
-caller for this root slot, its list ownership, and its cadence remain unknown;
-the bounded follow-up is in
+shared updater `00470740` and invokes the visual Think path from the owner's
+`+0x50` manager. Its exact cadence remains unknown; the bounded follow-up is in
 [`root-think-dispatch-query-20261012.md`](../../../reference/previous-work/decomp/evidence/fire-update/root-think-dispatch-query-20261012.md).
 
 ## Reuse, removal, and teardown limits

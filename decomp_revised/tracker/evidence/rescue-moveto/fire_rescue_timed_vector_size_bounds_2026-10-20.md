@@ -53,23 +53,43 @@ completion it resets state `+0x70` and calls `00442BF0` on the object at root
 `+0x100`. `00442BF0` forwards the pair to a container at that object's
 `+0xE8`, where `004901E0` adds a two-DWORD pair when it is not already present.
 This completion helper is route bookkeeping; it is not a transform setter.
-The audited `00449340` body contains no write to the FireRescue root world
-translation `+0x4C..+0x54`.
 
-The shared host previously moved `FireVisual::position` and `FireEntity::origin`
-at each half-radius threshold and at route completion. That behavior was not
-supported by the retail path. The host now advances route progress and keeps
-the threshold as the future child-emission boundary without translating the
-source fire. It does not yet reproduce the generated source size keys or
-deferred children.
+`FUN_0044A6A0` is a seven-byte helper whose current-hash body is `mov eax,ecx`,
+`mov byte ptr [eax+0x50],1`, `ret`. The route caller passes the visual
+subobject at root `+0x12C`, so this helper returns that same subobject and marks
+its visual/bounds state dirty. At each `00449340` emission gate, the builder
+copies visual `+0x28..+0x30` to the generated request's `ZZ_location` at
+`+0x7C..+0x84` before updating anything. Later in the same helper it writes
+the current route candidate (`local_50/local_4c/local_48`) back to visual
+`+0x28..+0x30`.
+
+This changes the embedded visual's placement, not the FireRescue root world
+translation at `+0x4C..+0x54`. The renderer effect is direct: `0044B060` uses
+the visual position for bounds/culling, and `0044A840` adds its components to
+transformed vertices written into the fourth child sprite's vertex array.
+`0047F960` consumes those child vertices for polygon submission. The existing
+same-hash visual evidence documents that consumer; the current-hash x86
+instruction excerpt for the accessor and vertex writes is retained in
+[`00449340_visual_position.asm`](00449340_visual_position.asm). The exact full
+placement chain for each of the other three flame quads remains less direct.
+
+The shared host now moves `FireVisual::position` to the clamped route candidate
+when the mapped `H_Radius/2` emission gate fires and rebuilds its placement;
+`FireEntity::origin` and root-driven sounds/proximity remain fixed. It does not
+yet instantiate the captured prior-position child or apply the generated
+source/child size keys. The prior note that the visual position should remain
+fixed confused embedded visual placement with root world translation.
 
 ## Remaining work and limits
 
 - Decode how the two trailing `moveto` values select timestamps across the
   source and child tracks, including interactions with consecutive `setsize`
   commands.
-- Port the shared route-generated size track and deferred child request,
-  then establish the queued child's setup, update ownership, and retirement.
+- Port the prior-position child request and shared route-generated size track.
+  Keep timestamp offsets provisional: trailing operands add scaled values to
+  state-dependent key times, and a separate retained x87 value is unresolved.
+- Establish queued-child setup, update ownership, and retirement before
+  claiming full route parity.
 - Trace the non-null `C_Model` dimensions path and exact rendered bounds.
 - Establish callback cadence and compare a live route before claiming
   FireRescue route parity.

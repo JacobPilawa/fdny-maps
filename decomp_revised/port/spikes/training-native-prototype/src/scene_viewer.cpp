@@ -639,8 +639,8 @@ struct PreviewFire {
         bool active = false;
         V start{}, target{}, direction{};
         float distance = 0.f, progress = 0.f, rate = 0.f;
-        float lastEmittedProgress = 0.f, updateThreshold = 0.f;
-        bool updateThresholdMapped = false;
+        float lastEmissionGateProgress = 0.f, childEmissionThreshold = 0.f;
+        bool childEmissionThresholdMapped = false;
         // Retail stores these as inputs to generated visual-key timestamps.
         // The route trail/key factory is not ported yet.
         float firstKeyOffset = 0.f, secondKeyOffset = 0.f;
@@ -649,8 +649,8 @@ struct PreviewFire {
     std::string label;
     std::string authoredName;
     bool floorMe = false;
-    float routeVisualUpdateThreshold = 0.f;
-    bool routeVisualUpdateThresholdMapped = false;
+    float routeChildEmissionThreshold = 0.f;
+    bool routeChildEmissionThresholdMapped = false;
     // 0046F930 initializes the root +0x48 name string empty. FireRescue init
     // fills it from A_Name, so an absent or empty name keeps this gate closed.
     bool spreadNameGateEnabled = false;
@@ -1303,8 +1303,8 @@ std::vector<PreviewFire> loadPreviewFires(const SceneData& scene, Collision& col
         // model-derived branch is not fully mapped, so leave it on the
         // continuous host update path until its first component is resolved.
         const std::string fireModel = property(entity, "C_Model");
-        preview.routeVisualUpdateThresholdMapped = fireModel.empty() || fireModel == "<null>";
-        preview.routeVisualUpdateThreshold =
+        preview.routeChildEmissionThresholdMapped = fireModel.empty() || fireModel == "<null>";
+        preview.routeChildEmissionThreshold =
             parseFloat(property(entity, "H_Radius"), 0.f) * 0.5f;
         const bool named = !preview.authoredName.empty();
         // 00448D60 copies UserData A_Name (root+0x78+4) into the embedded
@@ -1392,17 +1392,20 @@ void updatePreviewFirePathMotion(PreviewFire& fire, float dt) {
 
     // 00449340 accumulates route distance as frameDelta * root[+0xFC]. For
     // authored no-C_Model routes, root[+0x108] is H_Radius and this threshold
-    // gates deferred FireRescue child requests. The helper updates the shared
-    // size/bounds key track at root+0x12C; it does not translate the source
-    // FireRescue transform. Child creation and route-generated size keys remain
-    // unported, so only route progress and completion are represented.
+    // gates deferred FireRescue child requests. Retail copies the current
+    // visual-subobject position into that child, then writes the route
+    // candidate back to the visual subobject. The root world transform and
+    // FireEntity::origin remain fixed. Child creation and generated size keys
+    // are not ported yet.
     motion.progress += std::max(0.f, dt) * motion.rate;
     const bool complete = motion.progress >= motion.distance;
-    if (!complete && motion.updateThresholdMapped &&
-        motion.progress - motion.lastEmittedProgress <= motion.updateThreshold)
+    if (!complete && motion.childEmissionThresholdMapped &&
+        motion.progress - motion.lastEmissionGateProgress <= motion.childEmissionThreshold)
         return;
 
-    motion.lastEmittedProgress = motion.progress;
+    motion.lastEmissionGateProgress = motion.progress;
+    const float routeProgress = std::clamp(motion.progress, 0.f, motion.distance);
+    fire.runtime.visual.setPosition(motion.start + motion.direction * routeProgress);
     if (complete) motion.active = false;
 }
 
@@ -4235,9 +4238,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     motion.direction = motion.distance > 0.f
                         ? displacement * (1.f / motion.distance) : V{};
                     motion.progress = 0.f;
-                    motion.lastEmittedProgress = 0.f;
-                    motion.updateThreshold = fire->routeVisualUpdateThreshold;
-                    motion.updateThresholdMapped = fire->routeVisualUpdateThresholdMapped;
+                    motion.lastEmissionGateProgress = 0.f;
+                    motion.childEmissionThreshold = fire->routeChildEmissionThreshold;
+                    motion.childEmissionThresholdMapped = fire->routeChildEmissionThresholdMapped;
                     motion.rate = divisor > 0.f ? motion.distance / divisor : -divisor;
                     motion.firstKeyOffset = firstKeyOffset;
                     motion.secondKeyOffset = secondKeyOffset;

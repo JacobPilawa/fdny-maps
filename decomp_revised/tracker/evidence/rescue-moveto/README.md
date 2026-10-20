@@ -10,10 +10,12 @@ The callback schedule and exact author-facing timing terms remain open.
 The shared EVS host resolves the named `RCS_PathPoint` through its
 case-insensitive `A_Name` registry and advances route progress at the rate
 computed from the first operand. The current-hash follow-up established that
-the `H_Radius/2` threshold gates deferred FireRescue child requests; it does not
-move the source FireRescue's world translation. The host now preserves route
-progress and completion without directly translating the source fire. These
-authored MBase and Gas R routes have no `C_Model`, so the initializer's
+the `H_Radius/2` threshold gates deferred FireRescue child requests. At each
+gate retail copies the old embedded visual position to the child request, then
+moves the embedded visual to the current route candidate; it does not move the
+FireRescue root world translation. The host currently moves only the embedded
+visual at mapped gates. These authored MBase and Gas R routes have no
+`C_Model`, so the initializer's
 threshold field is directly mapped to `H_Radius`. See
 [`00448D60_h_radius_threshold.asm`](00448D60_h_radius_threshold.asm). The two
 trailing operands are retained as inputs but are not yet used to build retail's
@@ -181,9 +183,9 @@ or these entity indexes into the shared scene loader.
 ## Plain-language explanation
 
 MBase tells one fire to follow a named route point when the level starts. The
-viewer resolves that point and advances route progress, but retail's half-radius
-threshold queues additional FireRescue entities and updates a shared
-size/bounds track. The source FireRescue itself is not translated by the
-audited route helper. The queued entities' world setup, ownership, lifetime,
-and timing still need to be ported, so this does not establish full FireRescue
-route parity.
+viewer resolves that point and advances route progress. Retail's half-radius
+threshold copies the fire's current visual position into a child request, moves
+the embedded visual to the current route position, and updates a shared
+size/bounds track. The FireRescue root transform stays fixed. The queued
+entities' setup, ownership, lifetime, and timing still need to be ported, so
+this does not establish full FireRescue route parity.

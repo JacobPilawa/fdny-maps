@@ -1,4 +1,4 @@
-# FireRescue route visual-update threshold in the no-C_Model initializer path
+# FireRescue child-emission threshold in the no-C_Model initializer path
 # Binary: inputs/original/binaries/FDNYFirefighter.exe
 # SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e
 # Captured with GNU objdump -d -Mintel from the hash-pinned local executable.

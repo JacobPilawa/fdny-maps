@@ -21,10 +21,13 @@ struct FireVisual {
  }
  void sizeUpdate(uint32_t now){
   if(!enabled)return;sizes.update(now);
-  if(sizes.changed){V lo={float(double(position.x)-double(sizes.size.x)*.5),position.y,float(double(position.z)-double(sizes.size.z)*.5)};
-   V hi={float(double(position.x)+double(sizes.size.x)*.5),float(double(position.y)+double(sizes.size.y)),float(double(position.z)+double(sizes.size.z)*.5)};
-   placement.place(sizes.size,matrix,position,lo,hi);sizes.changed=false;
-  }
+  if(sizes.changed){rebuildPlacement();sizes.changed=false;}
+ }
+ void setPosition(V next){position=next;rebuildPlacement();}
+ void rebuildPlacement(){
+  V lo={float(double(position.x)-double(sizes.size.x)*.5),position.y,float(double(position.z)-double(sizes.size.z)*.5)};
+  V hi={float(double(position.x)+double(sizes.size.x)*.5),float(double(position.y)+double(sizes.size.y)),float(double(position.z)+double(sizes.size.z)*.5)};
+  placement.place(sizes.size,matrix,position,lo,hi);
  }
  // The original performs frame advancement only when this visual is drawn.
  void renderStep(uint32_t now,bool visible){if(!enabled||!visible)return;for(auto& a:animations)a.update(now,frameDurations);}

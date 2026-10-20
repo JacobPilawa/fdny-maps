@@ -59,9 +59,10 @@ and the byte-level listing
 `updatePreviewFirePathMotion` now runs as the state-4 callback supplied to
 `FireEntity::think`. It therefore runs before `FireEntity::think` performs its
 ordinary `visual.sizeUpdate`, and it no longer runs as an unconditional
-separate scene pass. The route helper marks changed dimensions and leaves the
-single ordinary size update to `FireEntity::think`; this removes the previous
-second size update for a moved FireRescue.
+separate scene pass. At a mapped emission gate, the host rebuilds placement for
+the embedded visual at the current route candidate. The separate ordinary
+size update still runs once; the route-generated child and timed size keys are
+not ported yet.
 
 This is a source-shaped ordering improvement. The host does not yet reproduce
 the retail timed-vector key track, exact update cadence, manager insertion
