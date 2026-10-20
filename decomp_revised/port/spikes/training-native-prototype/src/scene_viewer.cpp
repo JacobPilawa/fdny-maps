@@ -771,6 +771,9 @@ struct PreviewExtinguisher {
 struct PreviewRescueHoseSpray {
     HoseSprayAction::State action;
     RescueHoseSprayStream stream;
+    Follower itemFollower;
+    bool itemFollowerInitialized = false;
+    bool itemWasSelected = false;
     uint32_t dousedFireCount = 0;
 };
 
@@ -6413,6 +6416,29 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
 
                 if (hoseSelected && hoseModeUpdates) {
+                    // 0045F660 creates the HoseSpray item follower at +0x98
+                    // under Player+0x34A4 with per-axis smoothing
+                    // (.006/.009/.006). 0045F600 advances that follower only
+                    // while the item is selected. Re-selecting calls
+                    // 00483A20(..., parent, true), which copies the parent
+                    // frame before following resumes.
+                    if (!rescueHoseSpray.itemFollowerInitialized ||
+                        !rescueHoseSpray.itemWasSelected) {
+                        rescueHoseSpray.itemFollower = Follower{};
+                        rescueHoseSpray.itemFollower.smoothing =
+                            {.006f, .009f, .006f};
+                        rescueHoseSpray.itemFollower.position = cameraFrame.position;
+                        rescueHoseSpray.itemFollower.previous = cameraFrame.position;
+                        rescueHoseSpray.itemFollower.basis = cameraFrame.axis;
+                        rescueHoseSpray.itemFollowerInitialized = true;
+                    }
+                    rescueHoseSpray.itemFollower.update(cameraFrame.position, dt);
+                    // Retail copies the parent basis directly after smoothing
+                    // translation. cameraFrame stands in for Player+0x34A4;
+                    // its numeric relation to Genesis camera space is open.
+                    rescueHoseSpray.itemFollower.basis = cameraFrame.axis;
+                    rescueHoseSpray.itemWasSelected = true;
+
                     // 0044F340 calls the selected slot-4 child update and then
                     // adds floor(frameDelta * 1000) while ACTION remains held.
                     // This does not depend on a fire-contact hit.
@@ -6471,12 +6497,15 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     rescueHoseSpray.stream.clearContact();
                     rescueHoseSpray.stream.updatePressure(
                         rescueHoseSpray.action.active);
-                    // Retail transforms local nozzle point (0,0,8) through
-                    // HoseSpray +0x58 and adds 5 units of transformed aim while
-                    // active. The host uses its camera frame for that item frame
-                    // until attachment composition is recovered.
-                    V source = cameraRelativePoint(cameraFrame, 0.f, 0.f, 8.f);
-                    const V direction = hoseAimFrame.axis[2] * -1.f;
+                    // 004640F0 transforms local nozzle point (0,0,8) through
+                    // item component +0x58 and adds 5 units along its resolved
+                    // axis while active. The component's local frame is
+                    // identity; the final retail camera-space join remains
+                    // open, so use the source-shaped item follower here.
+                    FrameTransform hoseItemFrame =
+                        ExtinguisherPose::followerFrame(rescueHoseSpray.itemFollower);
+                    V source = cameraRelativePoint(hoseItemFrame, 0.f, 0.f, 8.f);
+                    const V direction = hoseItemFrame.axis[2] * -1.f;
                     if (rescueHoseSpray.action.active) source = source + direction * 5.f;
                     const auto hoseCurve = rescueHoseSpray.stream.update(
                         dt, source, direction);
@@ -6506,7 +6535,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                     hoseStreamDrawPressure = rescueHoseSpray.stream.pressure;
                 } else if (!hoseSelected) {
+                    rescueHoseSpray.itemWasSelected = false;
                     rescueHoseSpray.stream.reset();
+                } else {
+                    rescueHoseSpray.itemWasSelected = false;
                 }
             }
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);

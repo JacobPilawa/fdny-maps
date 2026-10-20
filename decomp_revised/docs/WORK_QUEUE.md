@@ -356,9 +356,11 @@ in [`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-lo
 
 | Agent | Scope and files | Status |
 | --- | --- | --- |
-| `hose_frame_writer_audit` (Luna) | Rescue HoseSpray transform chain; `equipment_actor_render_path_2026-10-13.md`, `equipment_view_frame_trace_2026-10-17.md`, `equipment_action_pose_followup_2026-10-17.md`, hose host/evidence | Complete, read-only; generic component setup and ActorInfo writer through `geActor_SetPose` are mapped under Player follower `+0x34A4`; HoseSpray numeric matrix and camera join remain open. Findings integrated into the HoseSpray evidence note. |
+| `hose_frame_writer_audit` (Luna) | Rescue HoseSpray transform chain and saved exports | Complete, read-only; resolved Player follower `+0x34A4` under view frame `+0x3460`, parent-times-local composition, generic `+0x98` follower rates, and the local nozzle offsets. HoseSpray final matrix and Genesis camera join remain open. Findings and the source-shaped item follower port are integrated below. |
 | `result_feedback_portability` (Luna) | PlayerRescue result branch and host gate; `mission_outcome_status_dispatch_2026-10-19.md`, `victim_exit.h`, `scene_viewer.cpp` | Complete, read-only; `messageGate=1` is not a safe win signal because it also represents the no-exit-zone path. A loss request has a countdown trigger, but widget duration/placement and repeated sound behavior remain unresolved; no feedback change made. |
 | `core_gap_triage` (Luna) | Shared campaign gameplay gaps; current queue, Boat A EVS/MiscEmitter evidence | Complete, read-only; recommended the authored Boat A C_Type=5 exploder state route. Shared host command-state follow-up implemented above; descriptor-based rendering remains open. |
+| `victim_ai_gap2` (Luna) | Victim AI command inventory, spawn selection, rescue handoff | Complete, read-only; `forcespawnspot <index>` is source-backed but absent from current map scripts, so it is a low-payoff capability; victim cadence remains unresolved. No edits. |
+| `hose_core_gap` (Luna) | Shared rescue HoseSpray and dedicated PlayerHose paths | Complete, read-only; the selected HoseSpray item follower is a high-value shared gameplay seam; exact view/camera matrix remains unresolved. No edits. |
 
 ## Rescue CameraRescue quake slice (2026-10-20)
 
@@ -666,8 +668,12 @@ spray: `touchhose N` creates slot 4 in mode 2, selecting slot 4 requests mode
 action byte. The shared rescue host now ports those state transitions,
 `0046D1B0`'s pressure and 15-section ballistic strip, the shared component
 collision gate, previous-frame contact ordering, and terminal FireRescue
-suppression at influence `>= 0.01`. Key 4 and held left mouse are provisional
-host controls; the camera-derived item frame is provisional. The shared sound
+suppression at influence `>= 0.01`. It now also models the generic selected
+HoseSpray item follower: re-selection copies the parent frame, translation
+follows at `.006/.009/.006`, and the parent basis is copied directly. The host
+uses `cameraFrame` as a parent proxy, so its relation to Player `+0x3460/+0x34A4`
+and Genesis camera space remains provisional. Key 4 and held left mouse are
+provisional host controls. The shared sound
 bundle and owned `HoseSpray` action press/stop are ported; held-loop behavior is
 provisional. The host now applies the 100-ms initial effect delay and, after
 terminal suppression, the residual-intensity `>=0.01` gate and direct unsigned
@@ -692,7 +698,8 @@ is parented under Player follower `+0x34A4`, then composed through
 `00497F70`/`00492110` into ActorInfo and `geActor_SetPose`. Its final numeric
 matrix, any HoseSpray-specific local mutation, and the camera/follower join
 remain unresolved; `touchhose N` attachment records are not linked to this
-transform. The host still uses a provisional camera-derived frame.
+transform. The per-item follower update is source-shaped, while the exact
+camera-space matrix and Player callback cadence remain unresolved.
 Details and binary/build hashes are in
 [`rescue_hose_spray_port_2026-10-20.md`](../tracker/evidence/fire-spread/rescue_hose_spray_port_2026-10-20.md).
 The shared macOS executable and rescue-all app rebuilt with matching standalone
@@ -701,6 +708,14 @@ the plist passed, eight rescue choices were emitted by the catalog build, all
 four PlayerHose scene directories are packaged, and the HoseSpray WAV hash was
 verified in each rescue scene manifest. No tests, interactive run, or retail
 comparison was performed.
+
+The per-item follower follow-up rebuilt the same rescue-all target with
+matching standalone and packaged SHA-256
+`6a6cd21a9237d62f2c13bf1a69a53accd82c82fee49e2366989d480a6e0c2cd5`.
+`Info.plist` validation and `git diff --check` passed; the build emitted all
+eight rescue choices and packaged all 17 scene directories. The existing
+json-c macOS 27.0 versus 13.3 linker warning remains. No tests, interactive
+run, or retail parity comparison was performed.
 
 After the fresh particle-template trace, the shared macOS target and
 rescue-all app rebuilt with matching standalone/package SHA-256

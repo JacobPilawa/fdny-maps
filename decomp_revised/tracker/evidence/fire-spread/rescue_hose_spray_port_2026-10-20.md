@@ -110,13 +110,28 @@ loop; retail pool scheduling is not established.
 See
 [`rescue_hose_spray_particle_trace_2026-10-20.md`](rescue_hose_spray_particle_trace_2026-10-20.md).
 
-The generic equipment setup helper `0045F660` also creates an item follower
-under Player view follower `+0x34A4` and stores it at item `+0x98`. HoseSpray
-setup `00463700` calls it. `UpdateHoseSpray` consumes the transform component
-at item `+0x58` to derive nozzle point/direction, but current saved evidence
-does not identify the writer/composition feeding that component. No evidence
-links the `touchhose N` intrusive-list records at `+0xCB8` to this transform.
-Keep the host's camera frame provisional.
+The generic equipment helper `0045F660` creates a follower at item `+0x15C`
+(also stored through item `+0x98`), parents it to Player view follower
+`+0x34A4`, sets translation smoothing to `.006/.009/.006`, and disables its
+settling mode. On selection, `0045F620` reparents it with the copy-parent flag;
+the base update `0045F600` calls `00483720` only while the selected byte
+`+0x158` is set. Player `+0x34A4` itself follows view frame `+0x3460`.
+`00483720` copies the parent's basis and updates translation using the
+per-axis follower flags and smoothing helper `00483140`. `004640F0` resolves
+the local nozzle point `(0,0,8)` through item component `+0x58` and adds 5
+units along its resolved axis while active. The saved setup has no
+HoseSpray-specific hand offset in the component's local transform. The
+`touchhose N` intrusive-list records at `+0xCB8` remain unrelated by current
+evidence.
+
+The shared host now applies this item-follower state while HoseSpray is
+selected, including the source smoothing rates, direct parent-basis copy, and
+copy-parent reset on selection. It uses `cameraFrame` as the parent proxy and
+retains the source local nozzle offset. This makes the item path source-shaped,
+but the proxy's relation to Player `+0x3460/+0x34A4`, the Genesis camera, and the
+retail update cadence is still provisional. The mode-2 matrix writer and
+ActorInfo consumer are traced through `00497F70`/`00492110` to
+`geActor_SetPose`; their final runtime camera-space values remain open.
 
 Retail does not establish the keyboard or mouse mapping for selecting slot 4
 or invoking these callbacks in the current evidence. The shared host exposes
@@ -154,13 +169,14 @@ collision gate, previous-frame contact ordering, and the
 The extinguisher's message path continues to use its separate nonterminal
 `finalize=0` route.
 
-The shared scene host uses the player camera frame as the HoseSpray item frame
-and mouse steering as its aim input. Both are provisional. The generic
-equipment component writer is now mapped through ActorInfo and
-`geActor_SetPose`, but the final item matrix and numeric join from Player view
-follower `+0x34A4` to the rendered Genesis camera remain open. The `touchhose N`
-list records at `+0xCB8` are not tied to that transform. The host draws the
-traced dual-curve stream with a temporary color;
+The shared scene host now models the selected item's follower state and
+transforms the local nozzle point through that frame. Its parent is represented
+by `cameraFrame`, so the relation from Player view frame `+0x3460` through
+follower `+0x34A4` to Genesis camera space is still provisional. The generic
+equipment writer/consumer path is mapped through ActorInfo and
+`geActor_SetPose`, but its final runtime matrix is not captured. Slot and
+action bindings are also provisional. The host draws the traced dual-curve
+stream with a temporary color;
 resource-3 texture, UVs, alpha/material state, exact HoseSpray particle timing
 under retail pool cadence, final resource binding, and the exact item frame
 remain open. It applies
@@ -205,13 +221,42 @@ plist validated, all eight retail rescue choices were emitted, and all four
 PlayerHose maps were packaged. `git diff --check` passed. No tests, interactive
 run, or retail parity comparison was performed.
 
-## Next work
+## HoseSpray per-item follower follow-up (2026-10-20)
 
-Trace the HoseSpray attachment matrix and action binding, then resolve the
+The shared rescue host now keeps a separate HoseSpray `Follower`. On selection
+it copies the current host parent frame, then follows its translation with the
+source `.006/.009/.006` rates while copying the parent basis. It uses that
+item frame for the source `(0,0,8)` nozzle point and the active 5-unit offset.
+The reused `Follower` implementation has prior controlled comparisons for
+400 original `00483720` states in
+[`reference/previous-work/decomp/README.md`](../../../reference/previous-work/decomp/README.md);
+no new fixture or runtime comparison was run for this item path.
+
+The retail hash remains
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`.
+Relevant saved evidence is `0045F660`/`0045F600` in
+[`retail_camera_context_trace_2026-10-17.c`](../runtime/retail_camera_context_trace_2026-10-17.c),
+the full updater in
+[`00483720_FUN_00483720.c`](../../../reference/previous-work/decomp/evidence/tool-attachment/00483720_FUN_00483720.c),
+the view-frame parent in
+[`0044d550_FUN_0044d550.c`](../../../reference/previous-work/decomp/evidence/startup-constructors/0044d550_FUN_0044d550.c),
+and the nozzle consumer in [`004640F0_fresh.c`](004640F0_fresh.c). The camera
+proxy, Player update cadence, exact mode-2 world matrix, and live camera to
+ActorInfo relation remain open.
+
+`tools/build_scene_viewer_app.sh rescue-all` rebuilt the macOS target after
+this port. Standalone and bundled executable SHA-256 both equal
+`6a6cd21a9237d62f2c13bf1a69a53accd82c82fee49e2366989d480a6e0c2cd5`; the app
+`Info.plist` validated and the build emitted all eight rescue choices. It
+bundled all 17 scene packages, including the four PlayerHose maps. The existing
+json-c macOS 27.0 versus deployment target 13.3 warning remains. `git diff
+--check` passed. No tests, interactive run, or retail parity comparison was
+performed.
+
+Next trace the item-local/mode-2 matrix writer and recover a camera/ActorInfo
+runtime capture before changing the camera-space adapter. Also resolve the
 child allocation/render-resource chain, `+0xA4` flags, source alpha, and pool
-scheduling. The cooldown, spawn request, key advancement, flag-`0x8`
-deactivation, and initial size scalar are ported; the renderer's size-to-world
-mapping and final resource binding remain provisional. Compare a controlled
-host contact/douse sequence with a retail capture when available. Keep
-PlayerHose's WindowFire stage and rescue-player HoseSpray's FireRescue
-suppression as independent mechanics.
+scheduling. Cooldown, spawn request, key advancement, flag-`0x8` deactivation,
+and initial size scalar are ported; size-to-world mapping and final resource
+binding remain provisional. Keep PlayerHose's WindowFire stage and
+rescue-player HoseSpray suppression as independent mechanics.
