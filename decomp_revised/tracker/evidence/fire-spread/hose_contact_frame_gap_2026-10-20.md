@@ -1,9 +1,11 @@
 # HoseSpray contact frame gap (2026-10-20)
 
 Status: **the HoseSpray contact gates, rescue-player `touchhose` allocation,
-dedicated PlayerHose input path, and PlayerHose-to-WindowFire contact-message
-route are confirmed; the HoseSpray world-space contact writer and the
-WindowFire douse-state completion semantics remain open.** This is static
+dedicated PlayerHose input path, PlayerHose-to-WindowFire contact-message
+route, and dedicated hotspot cycle/time/win/loss state machine are confirmed;
+the HoseSpray world-space contact writer, WindowFire `+0x10` writer,
+Construction alternate-path reachability, and result-message consumers remain
+open.** This is static
 analysis of the pinned retail `FDNYFirefighter.exe` SHA-256
 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` using
 Ghidra 12.0.4 and bounded instruction/operand searches. It is not a live hose
@@ -63,12 +65,20 @@ visual/update path.
 
 This is a WindowFire-local timer/geometry path. It contains no direct call to
 `ApplyFireSuppressionContact`, no write to FireRescue intensity/mode, and no
-increment of the shared `Fires Doused` statistic. The flag and rate writers,
-their authoring meaning, and the exact hose-stage completion/result condition
-are still unresolved. The four dedicated hose maps also have no authored
-FireRescue actors in the current inventory. Do not treat a successful WindowFire
-message as proof that a FireRescue actor has been extinguished or that a stage
-is complete. Static tracing only; no live hose run or retail parity check.
+increment of the shared `Fires Doused` statistic. The current static trace
+resolves the dedicated hotspot cycle and spot-time result path: PlayerHose
+emits `RC_HoseLvlStart`, then `RC_HoseLvlWin` or `RC_HoseLvlLose` and stores
+result 1 or 2 at `+0x198`. The WindowFire linked `+0x10` writer, authored
+alternate-path reachability, and downstream result-message consumers remain
+open. The four dedicated hose maps also have no authored FireRescue actors in
+the current inventory. A successful WindowFire message is not proof of shared
+FireRescue suppression. Static tracing only; no live hose run or retail parity
+check.
+
+The hotspot manager and its authored data are detailed in
+[`player_hose_stage_lifecycle_2026-10-20.md`](../scenario-loading/player_hose_stage_lifecycle_2026-10-20.md),
+with fresh pseudocode in
+[`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
 
 The dedicated maps therefore need their own gameplay trace and shared-host
 integration, not an assumption that they use the rescue Player's slot-4
@@ -101,15 +111,16 @@ Training host has a local hose action/pose path, but it does not establish
 either retail contact route. No contact coordinate, padding value, update
 cadence, or retail action timing is being inferred for the viewer.
 
-## Next trace
+## Remaining trace
 
 Trace the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`
 and join it to the item attachment transform consumed by `00463EF0`. Separately
-find writers for WindowFire linked state `+0x8`, `+0xC`, `+0xD`, `+0xE`, and
-`+0x10`, establish the authored meaning of the WindowFire timer/flags, then
-trace how the dedicated hose-stage objective reports completion. Implement the
-two source-backed host routes with separate states and preserve extinguisher
-`finalize=0`. Do not assign a guessed contact point or merge the paths.
+find the writer for WindowFire linked state `+0x10`, establish the authored
+meaning of remaining timer/flags, then trace the downstream consumers of the
+already identified stage result messages. Resolve the Construction alternate
+path and authored hose controls. Implement the two source-backed host routes
+with separate states and preserve extinguisher `finalize=0`. Do not assign a
+guessed contact point or merge the paths.
 
 The unrelated recurring RescueBot and `runrescuebot` paths also remain
 separate: the one-shot passes Player `+0x340C` to selector `00455230`, while
@@ -123,6 +134,8 @@ attachment helpers are in
 The dedicated douse callback, WindowFire message/state updates, and the
 path-reference actor factory are in
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](playerhose_douse_windowfire_fresh_2026-10-20.c).
+The hotspot cycle, PlayerHose state transitions, and win/loss handlers are in
+[`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
 The pre-existing HoseSpray contact and suppression exports are listed in
 [`README.md`](README.md). The temporary Ghidra project/logs and raw offset-scan
 output are outside the repository and are not part of the evidence pack.

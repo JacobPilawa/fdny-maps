@@ -1,0 +1,140 @@
+# Dedicated PlayerHose stage lifecycle (2026-10-20)
+
+## Scope and evidence quality
+
+This is a static trace of `FDNYFirefighter.exe`, SHA-256
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e`, using
+Ghidra 12.0.4, plus the current authored BSP entity exports. The exports were
+checked against their source BSP hashes. This does not establish live retail
+timing, route reachability, presentation, or parity. No port implementation
+was changed from this trace.
+
+Fresh pseudocode for the state and transition functions is in
+[`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](playerhose_hotspot_state_machine_fresh_2026-10-20.c).
+The prior dedicated contact and WindowFire trace is in
+[`playerhose_douse_windowfire_fresh_2026-10-20.c`](../fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c).
+
+## Dousing one WindowFire target
+
+The per-path manager at `00465B90` reads the `ZF0..ZF8_FireModel` and paired
+`ZF0..ZF8_SprayTime` fields in authored order. Each non-null model reference
+creates an `RCS_WindowFire` child for that path-point context; the generated
+child's linked state starts with the active, dousing, and selected gates
+cleared. The runtime linked record has the following behavior established by
+the current calls:
+
+| Linked offset | Observed behavior |
+| --- | --- |
+| `+0x04` | Receives the referenced fire model when the WindowFire context is constructed. |
+| `+0x08` | Receives the paired SprayTime value; `00468680` divides frame delta by this value while applying a contact. |
+| `+0x0C` | Active gate set or cleared for all children by `00465940`. |
+| `+0x0D` | Set by `00468850` when a selected target begins dousing; `00468680` clears it when its timer passes the global threshold. The cycle updater treats it as still in progress while set. |
+| `+0x0E` | Selects the current target for the cycle; `00465A20` clears the previous target and sets this gate on the next one. |
+| `+0x10` | Read by `00468870`; when set, its update calls `00468680`. Its writer and authored meaning are unresolved. |
+
+`00468850` begins dousing by setting linked `+0x0D`, setting WindowFire ramp
+byte `+0x25D`, zeroing its timer at `+0x258`, then recalculating geometry.
+On message `0x7530`, `00468680` requires linked `+0x0C` and `+0x0E`, subtracts
+frame delta divided by linked `+0x08` from `+0x258`, and, after crossing the
+global threshold, clears `+0x0D`, resets the timer, updates geometry, and sets
+linked `+0x0F`. The current contact trace shows a local WindowFire timer and
+geometry transition; it does not call shared FireRescue suppression or update
+the shared Fires Doused statistic. The paired SprayTime is a divisor in the
+observed operation, but its exact authored units and zero-value handling have
+not been established.
+
+`00468870` also advances the visual ramp at `+0x25D` using frame delta and
+calls the contact updater when linked `+0x10` is set. The rate and gate are
+source-derived; the time units, writer for `+0x10`, and rendered result remain
+open.
+
+A fresh full-program instruction-text search for offsets `0x2B8` and `0x2A8`
+returned 36 instructions. It found no direct object-relative `+0x2B8` field
+access; the only `0x2B8` literal outside the `+0x2A8` pointer references was a
+stack-local immediate argument at `0045B3B0`. This bounded scan does not rule out
+computed aliases, bulk copies, helper writes, or a writer that reaches the
+linked record through another pointer.
+
+## Path cycle, time budget, and stage result
+
+`00465B90` initializes a path context with the authored `Q_NumCycles` value at
+manager `+0x20`, current target index `-1`, and children for that context's
+non-null fire references. `00465A20` waits while the current target's linked
+`+0x0D` remains set. Once cleared, it deselects that target, advances the
+index, and on a full wrap resets the index to zero and decrements the remaining
+cycle count. If the count remains positive it selects the next child and calls
+`00468850`. `004658A0` is the completion check (`manager+0x20 < 1`).
+
+The PlayerHose spline updater `004677D0` resolves the authored path anchors.
+When it encounters a hotspot, it applies that record's authored fields,
+updates current and next hotspot pointers, and enters PlayerHose state 5. The
+first hotspot also emits `RC_HoseLvlStart` and clears its `M_IsFirstHotSpot`
+marker. The fields copied or consumed in this path include:
+
+| `RCS_HosePath` field | Observed use |
+| --- | --- |
+| `D_NextHotSpot` | Resolved to the next hotspot pointer for the PlayerHose state machine. |
+| `M_IsFirstHotSpot` | First-hotspot branch gates `RC_HoseLvlStart`; the marker is then cleared in the runtime record. |
+| `M_SpotTime` | Copied through a mode-dependent multiplier into PlayerHose `+0x1A84`; state entry copies it to countdown `+0x1A7C`. |
+| `M_MaxPressure` | Copied to PlayerHose `+0x1834`; downstream pressure semantics remain open. |
+| `N_PitchSpread` | Copied into the path-following state; its gameplay effect remains open. |
+| `Q_NumCycles` | Initializes manager `+0x20`, the number of complete target passes remaining for this path context. |
+| `ZF0..ZF8_FireModel` and paired `SprayTime` | Non-null model references create WindowFire children for the initialized context; each paired SprayTime is copied to its child's linked state. |
+
+`00465FB0` enters state 4, enables the linked active gates, and initializes
+the current spot-time countdown. In state 4, `004674A0` checks cycle
+completion. When all cycles are exhausted, it emits a `Hotspot %i`
+notification. If there is no next hotspot it calls `00466C50` (stage win); if
+there is one, it resets hose path/camera state and returns to path-following.
+If the countdown crosses the global threshold first, it calls `00466CE0`
+(stage loss). While neither condition is met, it updates pressure/input state
+and advances the WindowFire cycle.
+
+The win handler emits `RC_HoseLvlWin`, writes PlayerHose result field
+`+0x198 = 1`, and enters state 6. The loss handler emits `RC_HoseLvlLose`,
+writes `+0x198 = 2`, and also enters state 6. The downstream message/resource
+consumer, exact result-screen presentation, and any surrounding mission
+transition are not established by these functions.
+
+## Current authored data in the four dedicated hose maps
+
+Each report SHA-256 below was matched to the corresponding
+`inputs/original/Data/Maps/*.bsp` file before counting current exported
+`RCS_HosePath` entities. Counts are authored data, not evidence that every
+record is reachable in a live session. The fire-reference total counts
+non-null `ZF*_FireModel` properties across all path nodes; it is not the
+hotspot count.
+
+| Map | BSP SHA-256 | Path nodes | `C_IsAHotSpot=1` | Chain from `M_IsFirstHotSpot` via `D_NextHotSpot` | Authored cycles on hotspots | `M_SpotTime` range | Non-null ZF fire refs |
+| --- | --- | ---: | ---: | ---: | --- | ---: | ---: |
+| `city_h` | `9bc788dcaceb477fea52efd49cfbb2fd8f86824907d73c819280710b04fcb27a` | 19 | 9 | 9 | all 2 | 30–40 | 29 |
+| `const_h` | `f4dc99b6dd3b4465c1ba68cc29c09c075368f45f744a32a470b0663251862984` | 34 | 8 | 7 | six 2, two 3 | 13–30 | 28 |
+| `dock_h` | `17427ebd2964f31b47317e53c0881af41a05e78d57a7c95ef9783d10697a6d7c` | 17 | 5 | 5 | all 2 | 40–45 | 22 |
+| `oil_rig_h` | `6681a6ecb688f69b37bbbc25c6c0dea3f030f33880e7210c7cbed48a108bd4d0` | 13 | 6 | 6 | all 2 | 25–55 | 24 |
+| **Total** | — | **83** | **28** | **27** | — | — | **103** |
+
+Construction has one hotspot, `RCS_HosePath36`, outside the chain reached
+from its first hotspot, `RCS_HosePath12`. Its `D_NextHotSpot` points to
+`RCS_HosePath15`; this is an unresolved alternate-path or reachability
+question, not evidence of a damaged record. The same BSP has
+`RCS_HosePath45` with four fire-model references (`ScaffFire_01` through
+`ScaffFire_04`) while `C_IsAHotSpot=0`. This confirms that ZF references alone
+must not be used to classify a path node as an authored hotspot or to infer
+which actors are active together.
+
+## Open work
+
+- Find the writer and authored role for WindowFire linked state `+0x10`, then
+  resolve the exact update cadence and interaction with incoming `0x7530`.
+- Trace the Construction alternate route through `A_NextPoint`,
+  `E_NextHotSpotPathDir`, and PlayerHose pointer transitions; establish whether
+  `RCS_HosePath36` is reachable from a different authored path.
+- Resolve `M_MaxPressure`, `N_PitchSpread`, and SprayTime units/edge cases from
+  their downstream consumers.
+- Trace the `RC_HoseLvlStart/Win/Lose` receivers and the stage transition,
+  HUD/audio, and return flow.
+- Separately trace the rescue-player HoseSpray contact producer at `+0x614`;
+  it is not the dedicated PlayerHose/WindowFire path.
+- Implement the two host routes from source-backed state and data, then perform
+  controlled checks. No runtime or retail-parity claim follows from this
+  static analysis.

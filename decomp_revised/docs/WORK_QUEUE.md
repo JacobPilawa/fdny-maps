@@ -160,8 +160,21 @@ creates runtime `RCS_WindowFire` actors from path-point fire references. Their
 message handler routes `0x7530` to `00468680`, which updates WindowFire's own
 timer and geometry when its `+0x2A8` state has `+0xC` and `+0xE` gates set.
 This path has no direct call to FireRescue suppression or its doused counter.
-The state producers, timer/gate meaning, and dedicated-stage completion result
-remain open. Keep it separate from rescue-player HoseSpray, which calls shared
+Fresh tracing of `004658A0`, `00465A20`, `00465FB0`, `004674A0`, `004677D0`,
+`00468850`, `00466C50`, and `00466CE0` resolves selected/dousing gates,
+per-hotspot `Q_NumCycles`, the mode-scaled `M_SpotTime` deadline, and the
+dedicated `RC_HoseLvlStart/Win/Lose` result path. WindowFire linked `+0x10`
+still has no identified writer. Current BSP exports contain 83 HosePath nodes
+and 28 authored hotspots across four dedicated stages. Construction has an
+eighth hotspot outside the D_NextHotSpot chain from its first hotspot, and one
+non-hotspot record with ZF fire references; alternate-route reachability is
+open. The hash-pinned trace and per-map counts are in
+[`player_hose_stage_lifecycle_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_stage_lifecycle_2026-10-20.md).
+The function-review ledger now has 377 reviewed EXE functions; the tracker
+atlas, summary, and dashboard were regenerated from the CSVs. This is static
+analysis only; no dedicated hose-stage port implementation or live parity
+check was made.
+Keep this path separate from rescue-player HoseSpray, which calls shared
 FireRescue suppression with `finalize=1`; the extinguisher route remains
 `finalize=0`.
 
@@ -175,14 +188,15 @@ the attachment subobject at HoseSpray `+0x608` and writes its subobject
 `+0x15C` (absolute `+0x764`) for animation/visuals, not contact `+0x614`.
 The attach and activation callbacks also do not write the contact point.
 Computed aliases, bulk copies, engine helper writes, and the exact HoseSpray
-contact point remain unresolved. Next trace WindowFire `+0x2A8` state writers
-for fields `+0x8`, `+0xC`, `+0xD`, `+0xE`, and `+0x10`, then map them to authored
-stage objectives and completion. Separately trace the indirect or
-engine-assisted producer of HoseSpray `+0x614..+0x61C`; implement each
-source-backed host route with separate state. Evidence is in
+contact point remain unresolved. Next trace the WindowFire linked `+0x10`
+writer, Construction alternate path, and `RC_HoseLvlStart/Win/Lose` consumers;
+the hotspot cycle and stage result producer are now traced. Separately trace
+the indirect or engine-assisted producer of HoseSpray `+0x614..+0x61C`; implement
+each source-backed host route with separate state. Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
 [`playerhose_douse_windowfire_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/playerhose_douse_windowfire_fresh_2026-10-20.c),
+[`playerhose_hotspot_state_machine_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c),
 and the earlier suppression exports in the same evidence directory.
 
 ## Catalog time field wired into rescue deadline input (2026-10-19)

@@ -179,11 +179,15 @@ The bounded 2026-10-20 contact-frame audit confirms the rescue-player HoseSpray
 terminal route but does not identify a producer for item contact XYZ. It also
 connects `touchhose` to HoseSpray slot 4 and traces the distinct dedicated
 `RCS_PlayerHose` contact message to `RCS_WindowFire`; its local timer/geometry
-response is not FireRescue suppression, and its completion semantics remain
-open. See
+response is not FireRescue suppression. A fresh state-machine trace resolves
+the authored cycle counter, spot-time win/loss path, and
+`RC_HoseLvlStart/Win/Lose` outputs; the `+0x10` writer, route reachability, and
+downstream message consumers remain open. See
 [`hose_contact_frame_gap_2026-10-20.md`](hose_contact_frame_gap_2026-10-20.md)
 and its [HoseSpray/PlayerHose export](hose_contact_and_playerhose_fresh_2026-10-20.c)
-plus [PlayerHose/WindowFire export](playerhose_douse_windowfire_fresh_2026-10-20.c).
+plus [PlayerHose/WindowFire export](playerhose_douse_windowfire_fresh_2026-10-20.c),
+and the [hotspot lifecycle note](../scenario-loading/player_hose_stage_lifecycle_2026-10-20.md)
+with its [fresh state-machine export](../scenario-loading/playerhose_hotspot_state_machine_fresh_2026-10-20.c).
 
 ### Random child placement and shape
 
