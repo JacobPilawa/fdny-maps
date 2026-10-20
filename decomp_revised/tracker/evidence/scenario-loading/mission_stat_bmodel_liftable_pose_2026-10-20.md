@@ -8,6 +8,8 @@ The follow-up used read-only Ghidra 12.0.4 headless analysis against the saved
 `.local/mission-lifecycle-ghidra/FDNYPort` project with `-noanalysis`. Fresh
 pseudocode for the liftable initializer, pose helpers, and vector comparison is
 in [`bmodel_liftable_pose_fresh_2026-10-20.c`](bmodel_liftable_pose_fresh_2026-10-20.c).
+The Player-side held-target writer is reconstructed from a fresh raw-instruction
+window in [`bmodel_player_target_writer_fresh_2026-10-20.c`](bmodel_player_target_writer_fresh_2026-10-20.c).
 
 The asset pass was reproduced with
 [`audit_liftable_bmodels.py`](../../../tools/audit_liftable_bmodels.py) across
@@ -72,26 +74,51 @@ child's rotational center and XForm translation through `0043BC80`, compares
 the resulting center with BModel root `+0x224` through `0043B340`/`0043B120`,
 and, when the comparison requests correction, passes current and target vectors
 through `00482FC0`. That helper incorporates the shared frame delta at
-`00502B04`; its scaling helper, the literal 0.1 passed at the call site, and
-callback cadence are not yet mapped closely enough to claim exact smoothing
-parity.
+`00502B04`. The fresh raw-instruction trace below resolves its weight formula
+and the caller's `0.1f` duration; callback cadence remains unknown, so the
+shared host cannot claim exact smoothing parity.
 
 `0043BAA0` applies the resulting point across every BModel child: it reads each
 child's rotational center and XForm, derives a translation from target point
 minus rotational center, writes the transformed model, and refreshes aggregate
-bounds through `0043B7A0`. The source of the carried Player's target point at
-`+0x224`, including its relation to the hand/view pose, remains unresolved.
-This is enough to specify the shared host adapter's model-transform boundary,
-but not enough to claim faithful attachment placement or timing.
+bounds through `0043B7A0`.
+
+The Player-side target writer is now located at `00453902..00453913` in the
+Player movement update. The Player movement subobject at root `+0x140` uses
+`+0x3300` for the held BModel pointer (root `+0x3440`) and `+0x338c` as one
+input vector. The Player root vtable at `0x004E1C48` dispatches slot `+0x18`
+to `GetScriptActorSubobject` (`0049D760`), which returns the embedded frame at
+root `+0x24`; its vtable is installed as `0x004DFC30` by
+`ConstructPlayerRescueEntity` (`00453D50`). Before storing the target, the
+update copies the frame's third basis column (`+0x1c..+0x24`) and scales it by
+90.0, copies the second basis column (`+0x10..+0x18`) and scales it by -60.0,
+then adds both to movement-subobject `+0x338c`. The result is written to held
+BModel `+0x224` before `0043BD90` applies center correction. `0042D050` is
+componentwise vector addition; `00446390`, `0049E770`, and `00447830` are the
+corresponding scale and basis-copy helpers. The exact arithmetic is established
+by the current-hash instruction window; the source block still has no function
+boundary in the saved Ghidra project.
+
+The semantics of movement-subobject `+0x338c`, how its frame basis relates to
+the retail camera/view follower, and the update cadence are not established.
+The correction factor is resolved from the raw instruction window:
+`00482FC0` computes `oldWeight = binary32(pow(0.5, frameDelta / 0.1f))` and
+blends `currentCenter * oldWeight + target * (1 - oldWeight)`. This is a
+0.1-second half-life in the source formula. `0043BD90` applies the blended
+center to all children and then caches target `+0x224` at `+0x230`; callback
+cadence remains unknown. See
+[`bmodel_center_correction_smoothing_fresh_2026-10-20.asm`](bmodel_center_correction_smoothing_fresh_2026-10-20.asm).
+The writer therefore specifies the shared host adapter's source-shaped target
+and correction calculations, not a confirmed hand/view pose or timing match.
 
 The Objects Thrown branch in the previous producer trace remains a held-BModel
 transaction with a strict angle-under-10-degree gate. Static candidate coverage
-is now mapped, but the shared mission scene still lacks the complete
-selection/carry/pose/trajectory/drop/timer path. No counter was wired, no build
-or gameplay test was run, and no retail parity claim is made. Next trace the
-Player-side writer of the held target vector and the cadence around `0045391F`,
-then promote the source-shaped sequence into the shared mission host with a
-cross-platform BModel transform service.
+and the held target's source arithmetic are now mapped, but the shared mission
+scene still lacks the complete selection/carry/pose/trajectory/drop/timer path.
+No counter was wired, no build or gameplay test was run, and no retail parity
+claim is made. Next resolve the `+0x338c`/frame-to-view relation and correction
+cadence, then promote the source-shaped sequence into the shared mission host
+with a cross-platform BModel transform service.
 
 ## JUMP control bridge status
 

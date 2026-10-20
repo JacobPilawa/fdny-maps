@@ -8,6 +8,26 @@ current remote before each checkpoint; preserve `decomp/` and exclude retail
 binaries and local Ghidra/build data. The source workspace has no configured
 Git remote.
 
+## Boat A type-5 Exploder trace (2026-10-20)
+
+Boat A's authored `QueExploders` sends one-scalar `setsize 3` and `turnon` to
+three `RCS_MiscEmitter` actors, waits one script second, then sends `turnoff`.
+The actors are `C_Type=5`; retail construction selects internal emitter mode 2.
+`setsize` is an immediate uniform-scale update. `turnon`/`turnoff` toggle the
+emitter active byte, and the mode-2 setup creates four child render objects
+from descriptor pointer `0x502D40`. This is a distinct command shape from
+FireRescue's timed three-component `setsize`.
+
+The descriptor's dynamic resource binding and mode-2 child update/draw behavior
+remain unresolved, so the shared scene host has no faithful effect yet. The
+current `setsize` branch still handles only `PreviewFire`. Next trace the
+descriptor initializer, child consumer, update cadence, and any MiscEmitter RNG
+draws; then add the generic cross-platform actor path. Static Boat A command
+content does not prove natural trigger reachability or visible retail timing.
+No gameplay code, build, or runtime check changed in this source-only
+checkpoint. See
+[`misc_emitter_type5_exploder_2026-10-20.md`](../tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md).
+
 ## Rescue CameraRescue quake slice (2026-10-20)
 
 The shared scene viewer now dispatches authored `quake` commands into a
@@ -77,12 +97,23 @@ hash-pinned Ghidra trace maps `G_Liftable` through `0043C670`/`0043BE00` to
 BModel mode 1 only when the first child has the required PATH; a scan of all 17
 preserved BSPs found 17 static mode-1 candidates among 18 liftable BModels. The
 same trace maps held-child transform correction through `0043BD90` and
-`0043BAA0`, but the Player-side target-vector writer and carry cadence remain
-open. JUMP's registered MOUSE_RB query is observed in `0042D8C0` at `0042DB06`
+`0043BAA0`. A fresh raw-instruction pass located the Player-side writer at
+`00453902..00453913`: held target `+0x224` is the movement-subobject vector
+`+0x338c`, plus 90 times the embedded frame's third basis column, minus 60
+times its second basis column; `0043BD90` then applies center correction. The
+vector arithmetic is source-backed, while `+0x338c` semantics, its frame-to-view
+relation, and update cadence remain open. The correction scale is now mapped:
+`oldWeight = binary32(pow(0.5, frameDelta / 0.1f))`, blending the current child
+center toward the target before caching `+0x224`; cadence is still unverified.
+JUMP's registered MOUSE_RB query is observed in `0042D8C0` at `0042DB06`
 with its return discarded; no bridge to the Player producer was found. The
 state-5 token and Total Steps' sound-selection cadence also remain open, so
 Jumps and Objects Thrown are still unported. See
 [`mission_stat_bmodel_liftable_pose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_bmodel_liftable_pose_2026-10-20.md).
+The raw writer slice is in
+[`bmodel_player_target_writer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/bmodel_player_target_writer_fresh_2026-10-20.c).
+The correction blend disassembly is in
+[`bmodel_center_correction_smoothing_fresh_2026-10-20.asm`](../tracker/evidence/scenario-loading/bmodel_center_correction_smoothing_fresh_2026-10-20.asm).
 See [`mission_stat_producers_elapsed_hose_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_producers_elapsed_hose_2026-10-20.md)
 and [`mission_stat_jump_throw_producers_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_stat_jump_throw_producers_2026-10-20.md).
 After the countdown and Air Time changes, the rescue-all macOS bundle rebuilt
@@ -971,7 +1002,10 @@ body-bearing functions and 287 external entries.
 | `deadline_airtime_audit` (Luna) | Current-hash Player movement subobject, countdown fields, timeout state, and Air Time gate | `player_mission_countdown_airtime_port_2026-10-20.md`; Ghidra read-only writer scan and direct x86 instruction check | Complete, read-only; confirmed `+0x343C` countdown decrement in seconds, expiry clamp and `+0x3438=2` write, Completion Time/Air Time contributions, and the `+0x12C` zero gate. Full mission-result/outro semantics remain open. No edits. |
 | `spray_throw_stat_audit` (Luna) | `Gallons Sprayed` and `Objects Thrown` producers | Current-hash `0044F340`/`0044F713` hose path and `00453993` Player update producer; `mission_stat_jump_throw_producers_2026-10-20.md` | Complete, read-only; Gallons Sprayed's slot-4/action gate and `delta × 1000` contribution are integrated. Objects Thrown is a held-BModel transaction through Player `+0x3440`, a strict angle-under-10-degree gate, BModel trajectory state 2, Player action status 4, and one stat increment. Static all-BSP candidate coverage is now enumerated; selection, Player target pose, and trajectory/drop/timer adapters remain open, and the shared mission scene is not wired. |
 | `throw_authored_coverage` (Luna) | Authored liftable BModels across retail BSP maps and links to the carry path | All-map BSP entity/MOTN/PATH scan; `liftable_bmodel_map_inventory_2026-10-20.json` | Complete, read-only; identified 18 `G_Liftable` BModels in seven of 17 maps. Parent Ghidra follow-up confirmed `0043C670` dispatches nonzero `G_Liftable` to `0043BE00`; 17 have first-child PATH data passing the static two-key time checks. Boat A entity 192 has no child model. Static data does not prove selection/runtime reachability. |
-| `bmodel_liftable_pose_trace` | Lift-mode initializer and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the Player update invokes center correction before the throw branch. Frame smoothing details, the Player-side target-vector writer, and live cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no code change. |
+| `liftable_host_seam` (Luna) | Shared BModel use/carry path against held-target and smoothing traces | `scene_viewer.cpp`, `bmodel_use.h`, `training_liftable_sequence.h`, current-hash evidence | Complete, read-only; the existing Training spike is not the live shared carry path. Safe first live seam is use-mode initialization/action gating; held pose needs the unresolved frame-to-view adapter, so no gameplay edit was made. |
+| `rescue_mission_core_gap` (Luna) | Compare current campaign coverage against missing authored mission systems | Rescue catalog and mission evidence/queue | Complete, read-only; maps remain `loaded_inspection_only` by coverage tracker, and static Boat A Exploders are a cross-map MiscEmitter gap. Recommended tracing the C_Type=5 sequence; no edits. |
+| `exploder_setsize_trace` (Luna) | Boat A `QueExploders`, C_Type=5 construction, setsize, activation, and child setup | `boat_a.evs`, Boat A entity export, `004420F0`, `00442900`, `00445600`, `00445720`, `00444D00` | Complete, read-only; confirmed scalar immediate setsize, internal mode 2, active-byte toggle, and four child objects from descriptor `0x502D40`. Resource initialization, visible effect/timing, and shared host path remain open. |
+| `bmodel_liftable_pose_trace` | Lift-mode initializer, held-target writer, and Player-side BModel center-correction helpers | Fresh current-hash `0043BE00`, `0043BC80`, `0043BD90`, `0043BAA0`, `00482FC0`, `0043B120` pseudocode plus raw update windows | Complete, read-only; mode 1 requires first-child PATH data and stores two endpoints; the held target at `+0x224` is now composed from movement `+0x338c` and scaled frame basis columns. The center blend follows `0.5^(frameDelta/0.1s)`; frame-to-view semantics and live callback cadence remain unresolved. Evidence is in `mission_stat_bmodel_liftable_pose_2026-10-20.md`; no gameplay code change. |
 | `core_gap_inventory` (Luna) | Current core-gap review including Player passout mode-2 HeroDown continuation | Existing `player_herodown_tail.h`, passout port note, work queue | Complete, read-only; found the source-shaped mode-2 continuation already exists, but the shared host defaults mode to 0 and has no evidenced mode-2 scenario setup. No synthetic scenario added. |
 | `axe_parent_chain` (Luna) | Player `0044F340`, follower `+0x34A4`, type-5 camera context and ActorInfo evidence | Complete, read-only; confirmed frame update order and separate held-item parent chain, but no static pointer or numeric-matrix join from the scene-root camera context to the Player follower; no edits |
 | `window_fire_writer` (Luna) | `00465B90`, `00468870`, `00468AC0`, linked record `+0x10`; current-hash Ghidra project | Complete, read-only; no confirmed nonzero writer; `00468AC0` clears the byte, while message `0x7530` bypasses the recurring gate. A broader all-program operand scan is recorded in the evidence note; alias/runtime semantics remain unresolved; no edits |
@@ -2157,7 +2191,7 @@ the report is observed.
 - The user requires every rescue mission and map/mechanic to remain in scope,
   with a cross-platform desktop port and macOS as the first playable target.
 - Gas R BSP entities 265, 280, and 309 are joined to the explosion1, explosion2, and gasoff EVS definitions. ScriptActor queue pop/order and wait deadlines are mapped, alongside BModel button1 use handling, type-1 contact candidate checks, and shared BoundsTrigger overlap-pair → touch/touching/untouch dispatch. The named-model motion join resolves button1's effective reach to 20 units. Live contact/selection, updater cadence, and original-game effect captures remain open. See the Gas R evidence linked in the scenario-loading README. The same retail Genesis.dll MOTN/PATH extent decode is now joined across Training and all seven rescue maps: 71 of 76 authored-gate BModels receive a static 48-unit reach; five motionless ladder/button models retain authored values. Per-map/entity results are in `tracker/evidence/scenario-loading/bmodel_reach_cross_map.md`, its JSON inventory, and the rescue coverage CSV. This closes only the static reach calculation; live contact and callback cadence remain open.
-- The shared Script host now routes the retail FireRescue `setsize x y z duration` form to the targeted actor's timed `FireSize` track, including the authored key reset/current-size anchor and the `clock + duration * 1000` target. This enables Gas R `button1 -> gasoff`'s six size commands without a map-specific branch. The port uses SDL ticks and host frame updates; live button use, retail visual timing, and original-game effect parity remain open. Boat A's separate exploder `setsize 3` path is not covered. See `tracker/evidence/scenario-loading/firerescue_setsize_script_port.md`.
+- The shared Script host routes FireRescue's `setsize x y z duration` form to the targeted actor's timed `FireSize` track, including the authored key reset/current-size anchor and `clock + duration * 1000`; this enables Gas R `button1 -> gasoff` without a map-specific branch. Boat A's separate MiscEmitter `setsize 3` is now statically traced as an immediate uniform scale, but its child renderer and shared host path remain open. See `tracker/evidence/scenario-loading/firerescue_setsize_script_port.md` and `tracker/evidence/scenario-loading/misc_emitter_type5_exploder_2026-10-20.md`.
 - `tracker/rescue_mission_coverage.csv` explicitly tracks Training plus all
   seven campaign rescue missions. All eight load as geometry packages in the
   inspection viewer; none is yet a playable rescue port. `level_map_inventory.csv`
