@@ -175,8 +175,10 @@ Fresh exports and instruction listings for the suppression routine, message
 receiver, hose contact helper, and HoseSpray update are saved beside this note.
 Selected old exports and the hash-tagged old oracle/model are preserved in
 [`reference/legacy-evidence/fire-spread/`](../../../reference/legacy-evidence/fire-spread/README.md).
-The bounded 2026-10-20 contact-frame audit confirms the rescue-player HoseSpray
-terminal route but does not identify a producer for item contact XYZ. It also
+The 2026-10-20 contact-frame audit initially left the rescue-player HoseSpray
+contact producer open. A follow-up maps the embedded shared stream component:
+HoseSpray item `+0x608` feeds `0046D1B0`/`0046C5A0`, which write the collision
+point and gate at item `+0x614..+0x624` consumed by `00463EF0`. It also
 connects `touchhose` to HoseSpray slot 4 and traces the distinct dedicated
 `RCS_PlayerHose` contact message to `RCS_WindowFire`; its local timer/geometry
 response is not FireRescue suppression. A fresh state-machine trace resolves

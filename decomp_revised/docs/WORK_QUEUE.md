@@ -44,6 +44,15 @@ and stage return flow remain open. Do not treat the host build as a live check
 or retail parity. The full port assumptions and compile record are in
 [`player_hose_port_host_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_port_host_2026-10-20.md).
 
+The rescue-player HoseSpray contact writer is now traced through the shared
+stream-collision component: HoseSpray embeds it at `+0x608`, and
+`0046D1B0`/`0046C5A0` refresh its hit point, padding, and gate for
+`00463EF0`. The latter runs before that refresh in each `UpdateHoseSpray`
+call. This closes the static contact-vector producer gap; the authored
+`touchhose` trigger, rescue-player slot-4 host integration, live cadence, and
+parity remain open. See
+[`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md).
+
 The first gameplay-slice executable compiled successfully with SHA-256
 `514dd0ae15bb0c733f7b1b01dca939f26eb5e5d23c1696b187ec6f3af1eb059c`.
 The rescue-all app bundle also built successfully; its embedded catalog has
@@ -499,7 +508,8 @@ methods; `0x7530` calls `00468680` directly while the separate `00468870`
 recurring branch is gated by that byte. Its authored role and indirect/runtime
 writers remain open. The configured chatter resource names and request path
 are traced; result presentation and mission transition remain open. The
-HoseSpray contact producer and Construction branch entry also remain open.
+HoseSpray contact writer is statically resolved through the shared component;
+its natural `touchhose` trigger/host route and Construction branch entry remain open.
 Implement each source-backed host route with separate state. Evidence is in
 [`hose_contact_frame_gap_2026-10-20.md`](../tracker/evidence/fire-spread/hose_contact_frame_gap_2026-10-20.md),
 [`hose_contact_and_playerhose_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/hose_contact_and_playerhose_fresh_2026-10-20.c),
@@ -552,7 +562,7 @@ body-bearing functions and 287 external entries.
 | `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
 | `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
 | `runrescuebot_trace` | `0047A1F0`, `00475020`, `00455230`, initializer and recurring RescueBot context | Complete, read-only; one-shot uses Player `+0x340C`, recurring callback uses `+0x32CC`; aliasing and one-shot completion servicing unresolved |
-| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; follow-up maps rescue-player `touchhose` slot 4 and separate PlayerHose missions, but contact point producer and viewer integration remain open |
+| `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; follow-up maps the shared component collision writer plus rescue-player `touchhose` slot 4 and separate PlayerHose missions; natural trigger and slot-4 host integration remain open |
 
 ## View bob fully removed (2026-10-18)
 
