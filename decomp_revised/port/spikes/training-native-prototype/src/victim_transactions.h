@@ -122,6 +122,10 @@ struct VictimTransactions {
   void refreshSelectedItem(){runtime.services.refreshSelectedItem();}
   void enableExitTrigger(int entity){runtime.services.enableExitTrigger(entity);}
  };
+ RescueExitResult refreshFinalExitAvailability(){
+  ExitOps ops{*this};
+  return processRescueExits(state.exits,state.entities,zones,ops);
+ }
  struct ReleaseOps : VictimFrameOps {
   VictimTransactions& runtime;
   VictimRuntimeActor& actor;
@@ -144,7 +148,7 @@ struct VictimTransactions {
   }
   void resetPlayerRescue(){runtime.services.setEntityCarryMode(false);}
   void checkExits(TrainingVictimReleaseState&){
-   ExitOps ops{runtime};processRescueExits(runtime.state.exits,runtime.state.entities,runtime.zones,ops);
+   runtime.refreshFinalExitAvailability();
   }
  };
  bool escape(){

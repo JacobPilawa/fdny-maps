@@ -255,10 +255,9 @@ the fire’s current width and depth, with extra padding for the player. Vertica
 distance counts about twice as heavily as the same horizontal distance. This
 means the damage area is flatter vertically than it is wide. Fire size, player
 position, and fire strength all matter, so the visible flame edge is not an
-exact safety boundary. The exact player-padding value is still unresolved in
-the current retail trace: an older note recorded 45 units, while the preview
-uses a provisional 30. Neither number should be treated as a confirmed retail
-distance.
+exact safety boundary. The PlayerRescue getter's fourth float is initialized to
+zero by its constructor, so retail uses zero extra player padding in this
+falloff call. Callback cadence and the emitter scale remain unresolved.
 
 The game also checks visibility between the player and the fire. If that check
 reports an obstruction, the ordinary-fire exposure is reduced to one tenth of

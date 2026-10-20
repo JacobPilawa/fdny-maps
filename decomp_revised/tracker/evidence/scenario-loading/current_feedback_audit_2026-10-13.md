@@ -1,5 +1,9 @@
 # Current gameplay feedback audit
 
+The fourth-float fire-exposure padding listed as open in this historical
+snapshot was resolved on 2026-10-20 to constructor-initialized zero. See
+[`player_fire_exposure_padding_fresh_2026-10-20.c`](../fire-spread/player_fire_exposure_padding_fresh_2026-10-20.c).
+
 Recorded 2026-10-13 from the current shared viewer, saved hash-pinned retail
 Ghidra evidence, and read-only subagent reviews. No source files were changed
 by the audit agents. No live Ghidra instance or interactive desktop capture
@@ -84,20 +88,21 @@ evidence does not support general night vision or a broad visibility change.
 above the strict threshold. Current-hash PlayerRescue slot `+0x0C` maps to
 thunk `0049DB90`; its archived body export returns transformed world XYZ.
 
-**Current implementation:** the normal viewer frame loop updates Player
-movement, then tests fire candidates and calls
+**Current implementation at the 2026-10-13 snapshot:** the normal viewer frame
+loop updates Player movement, then tests fire candidates and calls
 `handlePlayerFireMessage7531`. This is not a disconnected helper. The host
-uses fire visual X/Z size, a 30-unit movement-hull padding, unit emitter scale,
+used fire visual X/Z size, a 30-unit movement-hull padding, unit emitter scale,
 suppression strength as intensity, a host BSP visibility trace, and a `.0001`
 influence cutoff. Candidate evaluation is per FireRescue instance; retail's
 four-record gate is stored at `FireRescue+0xB8`, so the viewer's frame-wide
 four-record cap has been removed. Exact per-instance record reset timing
 remains unresolved.
 
-**Still open:** these host inputs are provisional; the retail candidate
-getter's fourth float, emitter scale binding, callback/candidate scheduling,
-exact coordinate alignment, minimum influence, and visibility equivalence
-remain unresolved. The audit cannot identify which condition explains the
+**Still open at the 2026-10-13 snapshot:** these host inputs were provisional;
+the retail candidate getter's fourth float, emitter scale binding,
+callback/candidate scheduling, exact coordinate alignment, minimum influence,
+and visibility equivalence remained unresolved. The getter value was later
+resolved; the audit cannot identify which condition explains the
 reported lack of damage without observing the live route. Do not increase
 damage or enlarge fire volumes by guesswork.
 

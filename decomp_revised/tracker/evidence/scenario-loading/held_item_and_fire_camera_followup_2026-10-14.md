@@ -158,7 +158,9 @@ at `FireRescue+0xB8`. The shared viewer had mistakenly kept the count outside
 the fire loop, so four earlier fires could suppress all later fire candidates
 in that frame. The viewer now evaluates its single Player candidate once per
 FireRescue and does not impose a global four-fire cap. Exact retail reset
-timing, candidate padding/scale, and single-fire damage cadence remain open;
+timing, emitter scale, and single-fire damage cadence remain open. Player
+exposure padding was later resolved to constructor-initialized zero; see
+[`player_fire_exposure_padding_fresh_2026-10-20.c`](../fire-spread/player_fire_exposure_padding_fresh_2026-10-20.c).
 this change only removes the proven cross-fire gate mismatch.
 
 The Training app rebuilt successfully with that change. Its packaged and CMake

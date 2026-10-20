@@ -84,10 +84,10 @@ the live FireVisual X/Z size, fire intensity weighting, world-visibility
 attenuation, and the 500-unit max-axis gate. One Player candidate is evaluated
 per FireRescue; retail's four-record limit is stored on each FireRescue at
 `+0xB8`, so the viewer does not cap the whole fire loop at four records. Exact
-per-instance record reset timing remains unknown. The host supplies the preview Player's 30-unit horizontal hull
-radius as candidate padding, a provisional stand-in for the unresolved fourth
-float returned by the retail Player getter. Emitter scale remains unit-valued
-because its FireEmitter mapping is unresolved.
+per-instance record reset timing remains unknown. Fresh constructor tracing
+resolves the returned buffer's fourth float at PlayerRescue `+0x74` to zero;
+the host now uses zero padding rather than the former 30-unit hull radius.
+Emitter scale remains unit-valued because its FireEmitter mapping is unresolved.
 Fire callback cadence, record reset ordering, the exact minimum-influence
 constant, and alignment of the host movement origin to the retail transform
 remain provisional. The `Serious Burns` display is an ephemeral local counter,

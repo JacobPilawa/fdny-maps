@@ -4,10 +4,10 @@
 #include <cmath>
 
 // Retail 004483A0 exposure candidate math, using the live shared FireVisual
-// size as the two volume extents. Retail's fourth candidate value remains
-// unresolved; the viewer currently supplies its 30-unit horizontal player
-// collision radius as a provisional padding value. Emitter scale also remains
-// explicit because its FireEmitter mapping is not yet verified.
+// size as the two volume extents. PlayerRescue's constructor initializes the
+// fourth float after its returned XYZ buffer to zero (+0x74); the viewer passes
+// that source-derived padding. Emitter scale remains explicit because its
+// FireEmitter mapping is not yet verified.
 struct PlayerFireContact {
     int maxAxisDistance = 0;
     float spatialFalloff = 0.f;

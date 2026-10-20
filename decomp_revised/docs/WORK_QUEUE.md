@@ -1,11 +1,215 @@
 # Work queue and current handoff
 
-Updated 2026-10-17. This file records the next decompilation and port tasks so
+Updated 2026-10-20 UTC. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
-The documented comparison-only GitHub mirror sync was attempted again at
-22:17 UTC but could not resolve `github.com`; no changes were published. The
+The documented comparison-only GitHub mirror sync was attempted again on
+2026-10-19 at 22:17 UTC but could not resolve `github.com`; no changes were published. The
 existing GitHub handoff note records a prior automatic-review rejection for
 pushes, so this checkpoint was not pushed.
+
+## Player fire-exposure padding resolved (2026-10-20)
+
+Fresh headless Ghidra output against pinned EXE SHA-256
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` traces
+the PlayerRescue constructor chain through `0049D8C0`, which initializes the
+fourth float at root `+0x74` to `0.0f`. FireRescue callback `004483A0` passes
+that element `[3]` to `0044A7A0`; getter `0049D790` and cache-copy helper
+`00441E90` update only XYZ. The shared port now passes zero padding in both
+unobstructed and visibility-attenuated Player exposure calculations, replacing
+the former provisional 30-unit movement-hull padding. Exact callback cadence,
+later arbitrary aliases, emitter scale and the minimum-influence constant
+remain open; no retail watchpoint or natural exposure capture was available.
+
+The fresh pseudocode and trace are in
+[`player_fire_exposure_padding_fresh_2026-10-20.c`](../tracker/evidence/fire-spread/player_fire_exposure_padding_fresh_2026-10-20.c)
+and [`player_rescue_candidate_getter.md`](../tracker/evidence/fire-spread/player_rescue_candidate_getter.md).
+The shared macOS `fdny-scene-viewer` target rebuilt successfully. The resulting
+executable at
+`port/spikes/training-native-prototype/.local/build-scene-viewer/fdny-scene-viewer`
+has SHA-256 `a05e9fbfb5e8f4d467738282a1a44e58e885eda2545fa18d3462b912142a11a8`.
+Linking emitted the existing Homebrew `json-c` deployment-target warning
+(library built for macOS 27.0, target linked for 13.3). This compile-only check
+does not establish fire-damage feel or retail parity.
+
+| Scope | Files | Status |
+| --- | --- | --- |
+| Player fire falloff padding | `scene_viewer.cpp`, `player_fire_contact.h`, `player_rescue_candidate_getter.md`, fresh export, function-review CSV | Implemented using constructor-backed `0.0f`; callback cadence, possible later aliases, emitter scale, cutoff and live damage behavior remain open |
+
+## Mission outcome status dispatch traced (2026-10-20)
+
+Fresh headless Ghidra 12.0.4 analysis of pinned EXE SHA-256
+`4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` maps the
+Player status callback's result path. When the status is visible, Player
+`+0x3438 == 1` selects widget state `0x47`, dispatches `RC_ResLvlWin`, and
+requests the `RescueWin` owner sound; state `2` selects `0x48`, dispatches
+`RC_ResLvlLose`, and requests `RescueLose`. The separate chatter sets each have
+one authored sound entry. Their direct sound files and dispatch chain are
+recorded in
+[`mission_outcome_status_dispatch_2026-10-19.md`](../tracker/evidence/scenario-loading/mission_outcome_status_dispatch_2026-10-19.md),
+with fresh pseudocode in
+[`mission_outcome_state_fresh_2026-10-19.c`](../tracker/evidence/scenario-loading/mission_outcome_state_fresh_2026-10-19.c),
+the timed widget helper trace in
+[`mission_outcome_widget_fresh_2026-10-19.c`](../tracker/evidence/scenario-loading/mission_outcome_widget_fresh_2026-10-19.c),
+renderer/resource lookup trace in
+[`mission_outcome_widget_resource_fresh_2026-10-19.c`](../tracker/evidence/scenario-loading/mission_outcome_widget_resource_fresh_2026-10-19.c),
+and sibling widget caller trace in
+[`mission_outcome_widget_callers_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_widget_callers_fresh_2026-10-20.c).
+
+Decoded-instruction scanning found direct initialization of `+0x3438` to zero
+and two final-exit writers setting it to one; no direct state-2 write appeared
+in the bounded scan. The direct state-2 writer and meaning, audio replay cadence, relationship to
+`time:`/`+0x343C`, and complete score/outro/return path remain unresolved. The
+timed widget selector mapping is now traced through the generic renderer into
+the authored rescue resource table: `0x47`/71 draws `paperwin-r.bmp`, and
+`0x48`/72 draws `paperlose-r.bmp`, both with `paperwin_a.bmp`; the hose set has
+its own textures at those IDs. Child timing initialization, placement, alpha
+behavior and rendered runtime appearance remain unverified. A fresh direct
+operand scan found no assignments to the result child's `+0x130/+0x134` timing
+fields; alias/computed writes remain possible. The `1000/5000` values in
+`0048D330` belong to sibling widget constructors `00458B20` and `004653F0`,
+not the Player result child created through `004576B0`/`0048D390`. This is
+static source and resource evidence only; no natural mission
+completion or retail parity check was made. The current host still uses
+`RescueExitState.messageGate` for the message gate and does not implement this
+result feedback. Do not wire a guessed timeout or loss transition. The
+function-review ledger reached 351 after the sixteen status/chatter/widget
+reviews and now contains 355 current EXE functions following the four
+PlayerRescue exposure-padding reviews.
+
+| Scope | Files | Status |
+| --- | --- | --- |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, four fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch and authored rescue textures traced through renderer; state-2 writer, result-child timing initialization/placement/alpha/runtime pixels, replay cadence, timer relation, and full outcome flow open |
+
+The result path is now known to use direct calls: `00458400` invokes
+`0048D180` and `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs
+that child with `0048D390`. The sibling timing setter's `1000/5000` defaults do
+not apply to it. Next, trace the result child's allocation/parent initialization
+for computed or aliased writes to `+0x130/+0x134`; do not port guessed timing,
+placement, or a loss transition. The loss-state audit found no further static
+producer candidate. If retail runtime access becomes available, set a write
+watchpoint on Player `+0x3438` during expiry, passout, and exit paths.
+
+## RescueBot lifecycle implemented from fresh retail trace (2026-10-20)
+
+Fresh Ghidra 12.0.4 analysis of the pinned EXE, plus direct x86 instruction
+checks, resolved the recurring RescueBot attempt limit, target selector,
+response timers, active-victim deadline, victim state-6 hide transition, and
+drop-off call to the shared final-exit refresh. The fresh eight-function
+decompilation is saved in
+[`rescuebot_lifecycle_fresh_2026-10-19.c`](../tracker/evidence/scenario-loading/rescuebot_lifecycle_fresh_2026-10-19.c).
+The shared port now implements this lifecycle in
+[`rescue_bot.h`](../port/spikes/training-native-prototype/src/rescue_bot.h)
+and [`scene_viewer.cpp`](../port/spikes/training-native-prototype/src/scene_viewer.cpp),
+including authored `norescuebot` handling and reuse of the existing final-exit
+transaction. Player `+0x3530` is counted against the source mode formula
+`int(totalVictims * factor + 0.5)` with factors 0.4, 0.25, or 0.0; the
+constant 0.5 at `0x004DE6F8` was read from the pinned binary.
+
+The native path runs only after an explicit `setrescuebot 1`. Training sets
+the field to 0; no other preserved rescue map script sets it, and the retail
+default byte remains unresolved. The callback's initializer-object identity,
+the viewer's per-render-frame cadence, and its crouch/climb Player-state
+adapter are provisional. The separate authored `runrescuebot` one-shot path
+is still open. No natural RescueBot playthrough or retail parity check was
+made.
+
+The macOS `fdny-scene-viewer` target compiles with this change; output SHA-256:
+`a91c67e52ccbf31881881e0ea3daca69b76664f98be3abd89c5a556be69f6ae8`.
+The macOS rescue-all app was packaged at
+`.local/FDNY Firefighters.app`; its bundled executable has the same SHA-256.
+The bundle contains 13 rescue map stages and the catalog reports eight
+campaign choices in source order. `Info.plist` passes `plutil -lint`. The app
+was not launched, so this packaging check does not establish runtime behavior.
+The function-review ledger gained five fresh function reviews, bringing its
+count to 335. `tools/build_tracker.py` regenerated the function atlas, summary,
+and dashboard from the reconciled CSVs. `git diff --check` passes. These build
+and static checks are not mission or retail-parity checks.
+
+| Scope | Files | Status |
+| --- | --- | --- |
+| Recurring RescueBot behavior | `rescue_bot.h`, `scene_viewer.cpp`, `victim_transactions.h`, RescueBot evidence, function-review CSVs | Implemented behind explicit enable; frame cadence and initial object identity provisional |
+| RescueBot enable defaults and one-shot command | RescueBot evidence and authored script inventory | One-shot entry rechecked at `00475020` → selector `00455230` on Player `+0x340C`; port dispatch and relation to recurring context `+0x32CC` remain open. Retail default enable byte is unresolved. |
+
+## Catalog time field wired into rescue deadline input (2026-10-19)
+
+Fresh read-only Ghidra 12.0.4 tracing reconfirmed the catalog path:
+`thegame.lev` `time:` is multiplied by 60 into level record `+0x10`, and
+Player initializer `0044D550` applies the current mode multiplier into Player
+`+0x343C`. Caller tracing found three uses of deadline helper `004541A0`:
+Player escape (`00451160`), a RescueBot prompt/deadline routine (`00454BA0`),
+and a RescueBot update (`00455580`). The field is therefore a deadline input,
+not a confirmed mission countdown. Mission timer HUD, expiry, results and
+outro behavior remain untraced.
+
+The rescue chooser now carries the selected record `+0x10` through the full
+linked stage chain, replacing the fixed `600.0f` input in the shared rescue
+adapter. The macOS rescue-all bundle rebuilt at SHA-256
+`4deb4e9bc0ea82352bf2f0971270ce5fefd0c2898023811c0356e686056a60f4`; the
+eight retail rows report their source-derived field values through
+`--mission-catalog-check`. This is a controlled package check, not a natural
+rescue, RescueBot cadence, mission-result, or retail-parity check. Details:
+[`catalog_time_rescue_deadline_port_2026-10-19.md`](../tracker/evidence/runtime/catalog_time_rescue_deadline_port_2026-10-19.md).
+
+The tracker audit also found 13 manual instruction-slice reviews recorded in
+the reviewed-function count even though the active saved Ghidra project has no
+function objects at those addresses. Their rows and evidence are preserved in
+`tracker/manual_code_reviews.csv`; the reviewed-function history has been
+reconciled against current Ghidra function boundaries. The function atlas and
+dashboard were regenerated from the corrected CSVs. Current reviewed-function
+count: 330. A fresh read-only `ExportFunctionInventory` output matched the
+checked-in EXE inventory exactly: 6,111 total records, including 5,824
+body-bearing functions and 287 external entries.
+
+### Delegated audit ledger (2026-10-19 to 2026-10-20)
+
+| Scope | Files / evidence reviewed | Status |
+| --- | --- | --- |
+| `completion_port_audit` | Rescue completion/exit traces and shared transaction path | Complete, read-only; confirmed the already-integrated victim release and final-exit adapter, while natural completion, result flow, and outro remain unresolved |
+| `retail_exit_trace` | `00440CE0`, `00450A70`, `0042A260`, `0042AEA0`, `0042AB00`, linked-stage package evidence | Complete, read-only; static gates and stage loading are verified; authored-key/context identity and live transition timing remain open |
+| `mission_gap_audit` | Mission completion and outcome paths in the queue/evidence and pinned EXE | Complete, read-only; selected terminal result flow as the next shared gap and cautioned against inventing a deadline/result path |
+| `rescuebot_context_audit` | Player `+0x32CC` recurring RescueBot and `+0x340C` one-shot dispatch | Complete, read-only; confirms separate initialization and one-shot path bypasses recurring gate; context aliasing and live `runrescuebot` behavior remain open |
+| `mission_result_state_trace` | Player `+0x3438` field uses and status/chatter callback | Complete, read-only; state-1 final-exit writers and visible win/loss dispatch mapped; no direct state-2 writer in the bounded instruction scan |
+| `loss_state_producer` | Player `+0x3438`, `+0x343C`, and direct writer references | Complete, read-only; no direct state-2 writer or link from the deadline helper in the bounded scan; recommends a runtime write watchpoint if runtime tracing becomes available |
+| `result_widget_assets` | Widget selectors and `rescue.rrf` / `hose.rrf` resource tables | Complete, read-only; identified win/loss textures under IDs 71/72 and inspected authored headlines; parent renderer trace confirms the selector-to-resource path |
+| `result_widget_timing` | Result child constructors/update path and sibling timed-widget callers | Complete, read-only; result path directly calls `0048D390`/`0048D180`/`0048D1A0`; `0048D330` 1000/5000 defaults belong to other caller paths and cannot be transferred |
+| `loss_state_indirect` | Retained `+0x3438` field evidence and documented static paths | Complete, read-only; no additional producer candidate in retained static artifacts; arbitrary aliases remain open, recommends a retail write watchpoint |
+
+## View bob fully removed (2026-10-18)
+
+The user still saw bob after the partial fix below and explicitly requested
+complete removal. Both playable hosts now use `ViewUpdate::directEye`: Player
+position plus fixed standing/crouching eye height and mouse yaw/pitch. Normal
+camera construction has no head-motion update, item animation offsets, or
+follower output. The shared viewer also passes zero head motion to passout.
+The separate Training host previously still applied the full movement bob;
+that path now uses the same fixed eye camera. This is an intentional user
+preference, rather than a claim of retail camera parity.
+
+Both native targets compile. A temporary native harness exercised actual
+`Player::step` and the camera helper on the exported flat room for eight
+seconds at 30/60/120 Hz, standing and crouched: all six cases had zero camera
+vertical range while walking. The three local preview/game app executables
+were replaced atomically and match SHA-256
+`9a046b691d6e19765fb21159918d96b48c0d07da7cb0003f79bd6892c1b0ff16`.
+An already-running process must be closed and reopened to load the change.
+
+## Earlier partial walking-camera fix (2026-10-18, superseded)
+
+Comparing the current viewer against its committed version identified the
+regression: the recent camera edit started routing ordinary walking and
+crouching through `HeadMotion` and the thresholded view follower. Retail's
+movement records have vertical amplitudes up to 10 units. The prior ordinary
+camera used the Player's direct eye position and did not apply those offsets.
+The normal path now passes zero head motion and uses the direct `ViewUpdate`
+frame position, retaining pitch and held-item offsets but bypassing the
+stateful follower. The passout path still uses the source-shaped bob and
+follower. The rebuilt app executable matches the build output at SHA-256
+`717cb02f64a27f59d7f47be6a024e53ece03bc5f77128cc72d722a85255947a7`;
+`git diff --check` passes. No interactive walking capture was run, so the
+user should confirm the next launch feels stable. This checkout has no Git
+remote configured; the existing publishing handoff documents an automatic
+review restriction, so this checkpoint remains local rather than routing
+around that restriction.
 
 ## Current priority (2026-10-17)
 
@@ -406,7 +610,7 @@ the report is observed.
 | `rescue_script_surface_followup` | Find broad missing authored Player/trigger behavior across campaign rescues | `00451870`, `00451560`, `00458400`, copied rescue actor inventory, shared host | Complete; all seven campaign rescues author oxygen toggles; shared oxygen state/commands, smoothed gauge/needle draw, resource-702 visor transition, child sounds, and category-volume selector effects are integrated; catalog MP3 music and oxygen stream gain are now wired; the manager flag, menu playback, audible parity, retail blend/visual parity, warning, cadence, and fog pixel parity remain open |
 | `victim_hazard_reactions_followup` | Recheck Player passout and carried-victim drop timing/integration | `00450FB0`, `00451080`, `0044FF10`, `0044CD10`, `victim_transactions.h`, `scene_viewer.cpp` | Complete; fire uses passout argument 1 and oxygen argument 0; the shared host wires the separate `+0x3400` safe snapshot, `+0x534` reset checkpoint, carried-victim drop, floor placement, status tail, and strict state-6 recovery delay. Eight controlled map checks cover drop/reset/re-pickup; natural hazard entry, retail scheduler cadence, mode-2 HeroDown, and live camera parity remain open. See `player_passout_recovery_port_2026-10-14.md`. |
 | `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, level-loader and stream helpers, `scene_audio.h` | Complete; four MP3 assets and catalog choices are hash-pinned; selector-2 level start/loop and linked-stage `+0x0C` inheritance are traced and ported, with oxygen stream gain; menu-track startup, FMOD streaming behavior, and audible parity remain open |
-| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h` | Complete; `time:` is parsed into record +0x10 but no consumer is traced; completion/outro remain unresolved. Early rescue EVS `tell` loadout commands may precede Player registration and be dropped; ordering needs follow-up |
+| `mission_lifecycle_audit` | Find the highest-impact start/objective/completion/level-end gap | Read-only; `rescue_completion_and_exit_path.md`, `MBASE_RESCUE_SLICE.md`, `mission_selector.h`, and `catalog_time_rescue_deadline_port_2026-10-19.md` | Complete; `time:` reaches Player `+0x343C` and feeds `004541A0` from escape and two RescueBot callers; port carries the selected field through linked stages. It is not a confirmed mission countdown. Result/outro and natural completion remain unresolved. The port replays early shared-EVS loadout tells after four World updates; retail callback cadence and final selected-tool parity remain open |
 | `equipment_gap_audit` | Check held-tool rendering/action/audio against current evidence | Read-only; `extinguisher_scene_viewer_runtime.md`, equipment source headers, retail hash-pinned traces | Complete; eligible particle requests draw provisional smoke; packaged SDL rejection of malformed source BMP is fixed by a local 24-bit conversion; natural hit/suppression remain unverified; Axe matrix remains open |
 | `axe_animation_trace` | Recheck reported Axe swing direction against the selected ACT and retail view transform | Read-only pinned retail/Ghidra trace; both Axe ACTs, `ItemViewPose`, `scene_viewer.cpp` | Complete; ordinary first equip uses model 1 `axe.act`, model 6 is duplicate-gated, and both have positive early local-Z motion; corrected asset mapping is integrated but camera-space direction remains open pending retail ActorInfo matrix values |
 | `extinguisher_failure_trace` | Trace why the shared extinguisher appears inert and find retail effect lifecycle | `00461F80`/pool trace, contact helpers, `scene_viewer.cpp` | Ongoing; no deterministic input/queue/suppression drop found; retail doubles influence before the quadratic response, so near-2 center-contact influence has little effect; retail RGB suppression tint is now ported; parent-frame/cadence and successful live contacts remain unresolved |
@@ -431,9 +635,10 @@ the report is observed.
   `bcbd5e3803e036a2b9b2240ad81e8f162c04773f1104c9617182e6876fd29121`;
   catalog loading (8/8), offscreen title/selector rendering, and controlled
   rescue transactions (13/13) pass. These do not establish interactive launch,
-  natural completion, or retail parity. Per-level `time:` fields are authored,
-  but timer/HUD/expiry/result handlers have not been traced; `0044C360` remains
-  an unverified no-final-exit path, not a proven outro. See
+  natural completion, or retail parity. Per-level `time:` reaches Player
+  `+0x343C` and three deadline-helper paths, including two RescueBot routines;
+  no mission countdown, HUD, expiry or result flow is established. `0044C360`
+  remains an unverified no-final-exit path, not a proven outro. See
   [`rescue_front_end_entry_flow_port_2026-10-17.md`](../tracker/evidence/runtime/rescue_front_end_entry_flow_port_2026-10-17.md).
 
 - **2026-10-17 retail menu asset checkpoint:** the earlier title-art build
@@ -930,8 +1135,9 @@ the report is observed.
   gate, candidate sweep, child shape/lifetime, and deferred creation. Its
   once-per-rendered-frame cadence and dynamic-child RNG/lifecycle remain
   provisional. Current-hash getter disassembly confirms Player::p matches the
-  retail PlayerRescue candidate origin; the fourth exposure value and callback
-  cadence remain open. The gate at
+  retail PlayerRescue candidate origin. Fresh constructor tracing resolves its
+  fourth exposure value at root +0x74 to zero; callback cadence remains open.
+  The gate at
   root +0x48 maps to nonempty FireRescue A_Name; unnamed authored fires and
   generated children are gated out. PlayerRescue slot +0x0C is
   now mapped through current-hash disassembly to body 0049D790; the viewer
@@ -939,14 +1145,12 @@ the report is observed.
   the retail nonempty A_Name gate; generated unnamed children do not become
   spread parents. Player message `0x7531` now reaches the traced pain, burn
   accumulation, and passout path; retail pain/passout WAVs are bundled. Fire
-  contact scheduling, the retail Player getter's fourth value, emitter scale
-  and the minimum influence constant remain provisional. The viewer now uses
-  its 30-unit player hull radius as provisional candidate padding, so exposure
-  can reach the player body around the authored fire volume. This corrects an
-  overly restrictive zero-padding adapter, but live damage feel still needs a
-  desktop capture. A read-only audit confirmed this path is called in the
+  contact scheduling, emitter scale and the minimum influence constant remain
+  provisional. The viewer now uses zero padding from the Player getter's
+  constructor-initialized +0x74 field. Live damage feel still needs a desktop
+  capture. A read-only audit confirmed this path is called in the
   ordinary rendered frame loop; plausible non-contact causes remain the
-  approximate volume/padding/scale/visibility inputs, an inactive fire state,
+  approximate volume/scale/visibility inputs, an inactive fire state,
   or a player already in failed state. No interactive observation identified
   which applies. Spray particles and original item
   charge/refill parity remain open. Earlier MiscEmitter and other class RNG
@@ -1497,7 +1701,7 @@ symptom remain open.
 | `fire_48_subobject` | Trace FireRescue root +0x48 construction and default state | `0044a330_firerescue_constructor.c`, `0046f930_FUN_0046f930.c`, startup initialization | Complete; read-only; found the shared empty-string pointer; initializer setter chain was completed with retail disassembly |
 | `fire_gate_writers` | Trace writes to the spread gate and shared state | `00448320_fresh.c`, `00447A90_fresh.c`, `0046e320_FUN_0046e320.c`, `00448d60_FUN_00448d60.c` | Complete; read-only; initial shared-state interpretation was superseded after resolving 00448D60's string setter |
 | `fire_name_gate` | Map the spread gate to authored FireRescue A_Name | `00447A90_fresh.c`, `00448320_fresh.c`, FireRescue UserData audit, retail 00448D60 disassembly | Complete; root follow-up proved the embedded string receives A_Name and the gate reads its length; unnamed generated children retain an empty string |
-| `player_position_getter` | Read-only trace of PlayerRescue candidate vtable slot +0x0C | `memory_004e1c40_player_rescue_vtables.json`, `00453d50_player_rescue_object_constructor_fresh.c`, current-hash disassembly of 0049DB90/0049D790 | Complete; current-hash slot and thunk body map to root transform origin at +0x4C..+0x54; Player::p matches; fourth exposure value and callback cadence remain open |
+| `player_position_getter` | Read-only trace of PlayerRescue candidate vtable slot +0x0C and exposure padding | `memory_004e1c40_player_rescue_vtables.json`, `00453d50_player_rescue_object_constructor_fresh.c`, `player_fire_exposure_padding_fresh_2026-10-20.c` | Complete; current-hash slot/getter map origin to root +0x4C..+0x54 and fourth falloff value to constructor-zeroed +0x74; port uses zero; callback cadence and exhaustive later-alias audit remain open |
 | `mbase_moveto_audit` | Audit the authored MBase FireRescue route against the shared host command/runtime | `mbase.evs`, MBase BSP entities, `rescue-moveto` evidence, `scripts.h`, `scene_viewer.cpp` | Complete; audit mapped PathPoint registration, `moveto` setup, state-4 progress gate, and deferred FireRescue request creation; generic drain `0049C670` later creates/registers queued objects. Follow-up confirms `0049D450` assigns route identity, root slot `+0x24` is a no-op, and per-instance reuse/deactivation plus recurring update ownership remain unresolved. Shared host applies the `H_Radius/2` gate; model-derived threshold, exact transform/floor behavior, and callback cadence remain open |
 | `bank_door_audit` | Audit the reported Bank M-only door symptom against live loop and controlled harness | `scene_viewer.cpp`, `bmodel_door_runtime_port.md`, Bank interaction evidence | Complete; no edits; M/N only affect inspection state; continuous aimed route opens PATH but hits static world model 0 at a 24-unit lateral offset; aligned control crosses; live route remains open |
 | `bank_collision_retail` | Trace retail swept collision and BModel transform path against Bank door result | Pinned EXE/Genesis exports, Bank entity/model inventory, `bmodel_door_runtime_port.md` | Complete; read-only; swept hull checks static and transformed models, BModel PATH updates Genesis model transforms; exact leaf and live route remain open |

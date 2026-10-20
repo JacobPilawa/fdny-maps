@@ -318,3 +318,45 @@ No audit capture was available at the documented
 `/private/tmp/fdny-camera-equipment-audit.log` path during this recheck. The
 user's reported jostle and swing direction therefore remain unconfirmed in the
 current packaged build.
+
+## Walking camera shake regression follow-up (2026-10-18)
+
+The ordinary camera regression was found by comparing the current viewer diff
+with its committed version. The earlier ordinary path left the camera at the
+Player eye position; only passout used `ViewUpdate` and its stateful follower.
+The newer path applied `HeadMotion` to ordinary movement too, including retail
+movement modes with 8–10 unit amplitudes, and routed that position through the
+thresholded follower. The retail amplitudes themselves were not changed.
+
+The ordinary path now supplies zero head-motion offset and uses
+`ViewUpdate`'s direct world-frame position instead of the follower result. It
+keeps the existing camera pitch and held-item offsets. This disables normal
+idle and walking bob and prevents the unverified follower from affecting the
+walking camera. Passout still uses its separate head-motion and follower path.
+The rebuilt `fdny-scene-viewer` and the existing app-bundle executable match at
+SHA-256 `717cb02f64a27f59d7f47be6a024e53ece03bc5f77128cc72d722a85255947a7`;
+`git diff --check` passes. No interactive gameplay capture was run, so the
+user-visible result remains for the next launch to confirm.
+
+## Complete bob removal requested by the user (2026-10-18)
+
+The prior change still composed item view/aim animation offsets into the normal
+camera, and the independent Training executable still applied `HeadMotion`.
+Both playable hosts now construct the normal camera with `ViewUpdate::directEye`
+from Player position, fixed eye height (70 standing, 10 crouched), yaw and
+pitch. No movement phase, breathing, item pose, or camera follower enters this
+frame. Passout retains its timed transition but receives zero head-motion
+offset. The recovered retail math and diagnostic fixtures remain available;
+the playable camera intentionally follows the user's no-bob preference.
+
+Both `fdny-scene-viewer` and `fdny-training` compile. A temporary native harness
+used actual `Player::step`, exported `custom_editor_check/collision.json`, and
+`directEye` for eight seconds of alternating left/right walking at 30, 60 and
+120 Hz, standing and crouched. All six cases produced exactly zero vertical
+camera range, with horizontal travel above 100 units. This verifies flat-floor
+walking, not a visual retail comparison. The game app and both older local
+preview app executables were updated atomically and share SHA-256
+`9a046b691d6e19765fb21159918d96b48c0d07da7cb0003f79bd6892c1b0ff16`.
+The Training executable hash is
+`bd49ad1c1c8c48cc6d6bb3457e3acc3aae68177f0f72cf4626c0f947f2c9aa00`.
+An existing running game must be restarted to load the new executable.

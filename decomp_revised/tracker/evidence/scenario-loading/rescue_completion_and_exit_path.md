@@ -84,6 +84,14 @@ The `finalexitloadmap` command reaches `HandlePlayerFinalExitLoadMap` (`0x00450A
 
 The shared viewer has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. A controlled `--rescue-check` dispatches all six authored `finalexitloadmap` touch bindings after all victims are rescued, verifies that each key loads a matching sibling package, and confirms the command remains gated after the first rescue. All 13 bundled rescue/stage packages pass their rescue checks. The adapter uses the command key because the retail helper's separate forwarded context has not been proven equal. Live exit contact, trigger enable timing, retail request identity, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
 
+Fresh tracing of the Player status callback now confirms that Player `+0x3438`
+is also read as a result state: value `1` dispatches win feedback and value `2`
+dispatches loss feedback while the status is visible. The direct final-exit
+writers set `1`; the state-2 writer, widget appearance, audio replay cadence,
+and connection to the deadline field are unresolved. The port's field remains
+a message gate and does not yet model this result feedback. See
+[`mission_outcome_status_dispatch_2026-10-19.md`](mission_outcome_status_dispatch_2026-10-19.md).
+
 ## Current uncertainty and next trace
 
 - `tell player ...` uses first-match, case-insensitive actor-name lookup. Static factory, class, and vtable evidence resolves rescue-map `Player` to `RCS_PlayerRescue`; the separate `RCS_PlayerHose` class appears in hose-map BSPs. Live load execution, insertion order, and command delivery timing still need a runtime capture. See [named actor dispatch](named_script_actor_dispatch.md), the [PlayerRescue factory path](player_rescue_factory_and_spawn_path.md), and the [hash-checked 17-BSP class inventory](../rescue_exit_trigger_inventory.md).

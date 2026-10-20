@@ -1345,7 +1345,7 @@ int main(int argc,char** argv){try{
  FireRenderer fireRenderer;fireRenderer.load(std::filesystem::path(assetDirectory())/"fire-sprites");std::vector<FireEntity> renderFixture;int fireQuads=0;
  if(fireRenderCheck){Random shared(4357);int cycle=0;FireEntity fire;fire.initialize(shared,0,cycle,{824,-120,-2092},150,250,0,true,true,[&](FireVisual& v){FireFloor::alignInWorld(v,collision);},[](int){});fire.visual.sizeUpdate(0);renderFixture.push_back(fire);}
  TextOverlay overlay;std::map<int,bool> touching,propTouching;ExtinguisherContacts liveExtinguisherContacts;FireMessageQueue liveFireMessages;
- bool running=true,captured=true,actionHeld=false,actionPressed=false,actionReleased=false,usePressed=false;float yaw=3*3.14159265f/180,pitch=0;GameClock clock;clock.origin=SDL_GetTicks();auto actorMotions=field(trainingManAsset,"motions");for(const auto& spawn:victimSpawns)if(spawn.motionInitialized&&spawn.initialMotion>=0){auto motion=at(actorMotions,spawn.initialMotion);auto& animation=victimActorStates.at(spawn.entity).animation;animation.select(spawn.initialMotion,num(field(motion,"start")),num(field(motion,"end")),spawn.initialMotionSpeed,clock.current);}bool jumpEdge=false,crouchEdge=false;FrameTransform playerFrame;HeadMotion headMotion;ExtinguisherPose::CallbackState extinguisherAction;HoseSprayAction::State hoseSprayAction;float extinguisherPhase=0;
+ bool running=true,captured=true,actionHeld=false,actionPressed=false,actionReleased=false,usePressed=false;float yaw=3*3.14159265f/180,pitch=0;GameClock clock;clock.origin=SDL_GetTicks();auto actorMotions=field(trainingManAsset,"motions");for(const auto& spawn:victimSpawns)if(spawn.motionInitialized&&spawn.initialMotion>=0){auto motion=at(actorMotions,spawn.initialMotion);auto& animation=victimActorStates.at(spawn.entity).animation;animation.select(spawn.initialMotion,num(field(motion,"start")),num(field(motion,"end")),spawn.initialMotionSpeed,clock.current);}bool jumpEdge=false,crouchEdge=false;ExtinguisherPose::CallbackState extinguisherAction;HoseSprayAction::State hoseSprayAction;float extinguisherPhase=0;
  // 0044D550 configures the player-view follower. The extinguisher constructor
  // attaches its tool follower to it; 00461F80 advances that follower only while active.
  Follower playerViewFollower;playerViewFollower.flags=0x2e;playerViewFollower.threshold={20,1000,20};playerViewFollower.settling={.05f,0,.05f};playerViewFollower.smoothing={0,.05f,0};playerViewFollower.held=true;
@@ -1360,13 +1360,11 @@ int main(int argc,char** argv){try{
  // 40-degree pitch cap. SDL relative-Y units are not calibrated to the old backend.
  while(running){SDL_Event event;while(SDL_PollEvent(&event)){if(event.type==SDL_QUIT)running=false;if(event.type==SDL_KEYDOWN&&!event.key.repeat){auto key=event.key.keysym.sym;if(key==SDLK_ESCAPE){captured=!captured;SDL_SetRelativeMouseMode(captured?SDL_TRUE:SDL_FALSE);}if(key==SDLK_SPACE)jumpEdge=true;if(key==SDLK_SPACE||key==SDLK_LSHIFT||key==SDLK_RSHIFT)usePressed=true;if(key==SDLK_c||key==SDLK_LCTRL||key==SDLK_RCTRL)crouchEdge=true;if(key==SDLK_1||key==SDLK_KP_1)selectEquipment("axe");if(key==SDLK_2||key==SDLK_KP_2)selectEquipment("extinguisher");}if(event.type==SDL_MOUSEBUTTONDOWN){if(event.button.button==SDL_BUTTON_RIGHT)jumpEdge=true;if(event.button.button==SDL_BUTTON_LEFT&&!actionHeld){actionHeld=true;actionPressed=true;}}if(event.type==SDL_MOUSEBUTTONUP&&event.button.button==SDL_BUTTON_LEFT&&actionHeld){actionHeld=false;actionReleased=true;}if(event.type==SDL_MOUSEMOTION&&captured){yaw-=event.motion.xrel*.0025f;pitch-=event.motion.yrel*(0.1f*0.01745329251994329577f);pitch=std::clamp(pitch,-40.f*0.01745329251994329577f,40.f*0.01745329251994329577f);}}
  if(!clock.tick(SDL_GetTicks())){SDL_Delay(1);continue;}float dt=clock.dt;startupTick();auto keys=SDL_GetKeyboardState(nullptr);float moveForward=captured?float(keys[SDL_SCANCODE_W]-keys[SDL_SCANCODE_S]):0.f;float moveSide=captured?.75f*float(keys[SDL_SCANCODE_D]-keys[SDL_SCANCODE_A]):0.f;if(captured)player.step(dt,moveForward,moveSide,yaw,keys[SDL_SCANCODE_SPACE]||(SDL_GetMouseState(nullptr,nullptr)&SDL_BUTTON(SDL_BUTTON_RIGHT)),jumpEdge,crouchEdge,collision,pitch);jumpEdge=crouchEdge=false;for(auto& door:doors)door.update(dt,collision);vm.advance(clock.current);
- // 00452570 tests the movement vector against 1e-7. 0044F340 then chooses
- // the 00491140 mode from that flag, player state, and active-view byte.
- bool moving=std::sqrt(moveForward*moveForward+moveSide*moveSide)>1e-7f;int playerState=player.crouch?4:3;int requestedHeadMode=HeadMotion::viewMode(playerState,true,moving);auto headOffset=headMotion.update(requestedHeadMode,dt);
- playerFrame.position=player.p;float headingCos=std::cos(yaw),headingSin=std::sin(yaw);playerFrame.axis={V{headingCos,0,-headingSin},V{0,1,0},V{headingSin,0,headingCos}};
- // Extinguisher ACT is static; its item view/aim offsets remain zero. ACTION
- // is MOUSE_LB (00437F30/004395C0), with callbacks before this view update.
- V itemViewOffset{},itemAimOffset{};float viewAngle=pitch*57.29577951308232f;float viewHeight=playerState==4?10.f:70.f;
+ // Match the shared viewer: camera motion comes only from Player movement
+ // and mouse look, with a fixed eye height and no procedural bob.
+ const auto directCamera=ViewUpdate::directEye(player.p,yaw,pitch,player.crouch);
+ playerViewFollower.position=playerViewFollower.previous=directCamera.position;
+ playerViewFollower.basis=directCamera.axis;
  // 0044C2A0 switches the selected item through slot +0x3c. The extinguisher
  // setter 00461270 clears its ACTION state when the item is deselected.
  if(selected!=previousSelected){
@@ -1383,7 +1381,6 @@ int main(int argc,char** argv){try{
  if(actionPressed&&selected=="hose")HoseSprayAction::begin(hoseSprayAction,clock.current);
  if(actionReleased&&selected=="hose")HoseSprayAction::end(hoseSprayAction);
  actionPressed=actionReleased=false;
- V headPosition{headOffset.x,headOffset.y,headOffset.z};auto viewResult=ViewUpdate::transition(playerFrame,headPosition,itemViewOffset,itemAimOffset,{0,0,0},{0,0,0},viewHeight,1.f,viewAngle,dt,playerViewFollower,playerState==4);playerViewFollower=viewResult.follower;
  auto useTarget=UseManager::select(playerViewFollower.position,playerViewFollower.basis[2],valveCandidates,itemInventory.hoseMode,attachedValve);
  if(usePressed){usePressed=false;if(useTarget.index>=0){const auto& valve=trainingValves[size_t(useTarget.index)];auto result=TrainingHoseInteraction::use(valve,useTarget.action,itemInventory,hosePoseList,hoseAttachmentFrame,attachedValve);if(result.ownerCalled)selected=itemName(itemInventory.selected);if(result.forwardUseEvent)vm.dispatch(result.targetEntity,"use");}}
  auto extinguisherIt=itemFollowers.find("extinguisher");bool extinguisherEquipped=selected=="extinguisher";
@@ -1428,8 +1425,7 @@ int main(int argc,char** argv){try{
   auto* identity=static_cast<TrainingEntityIdentity*>(trainingRoutes.resolve(route,generation));if(!identity||!identity->fire)return {};
   auto* target=identity->fire;return [&,target](uint32_t message,const void* payload){ExtinguisherEffects::deliverContact(message,payload,dt,*target);};
  },[](const FireMessageQueue::Delivery&){});
- // The camera entity is parented to the player follower at +34a4. Use that
- // recovered world basis and position as the renderer's inverse view transform.
+ // Render from the same fixed eye frame used by tool contacts.
  V cameraPosition=playerViewFollower.position;
  hintRemaining=std::max(0.f,hintRemaining-dt);
  for(int i=0;i<count(entities);i++){auto e=at(entities,i);auto bounds=field(e,"bounds");if(!bounds)continue;V lo=vec(field(bounds,"mins")),hi=vec(field(bounds,"maxs"));int id=integer(field(e,"index"));float reach=0;if(str(field(e,"class"))=="RCS_BModel"){auto sourceReach=bmodelReachByEntity.find(id);if(sourceReach==bmodelReachByEntity.end())throw std::runtime_error("Missing source-mapped Training BModel reach for entity "+std::to_string(id));reach=sourceReach->second;}V mn=player.p+V{-30,-30,-30},mx=player.p+player.maxs();bool inside=BModelContact::overlapsExpanded(lo,hi,mn,mx,reach);

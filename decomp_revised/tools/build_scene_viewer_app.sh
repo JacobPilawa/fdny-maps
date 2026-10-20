@@ -92,6 +92,10 @@ if [ "$SCENE_KEY" = "rescue-all" ]; then
         --output "$APP_DIR/Contents/Resources/rescue_missions.json"
 fi
 
+if [ "$SCENE_KEY" = "rescue-all" ]; then
+    python3 "$PROJECT_ROOT/level_editor/compiler.py"
+fi
+
 cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

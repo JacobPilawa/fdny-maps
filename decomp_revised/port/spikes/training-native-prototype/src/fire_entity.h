@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 // Original placed, unheaded fire path from 00448D60. World floor placement,
 // named loop playback and Think services remain explicit host callbacks.
 struct FireEntity {
@@ -24,20 +25,27 @@ struct FireEntity {
    double factor=(double(radius)-24.0)/(288.0-24.0);factor=std::clamp(factor,0.0,1.0);suppression.sprayTime=float(factor*3.0+1.0);
   }
  }
+ void setInitialStrength(float value){
+  suppression.strength=std::clamp(value,0.f,1.f);
+  const float opacity=suppression.strength>=.5f?1.f:suppression.strength*2.f;
+  alpha=std::min(opacity,.999f);glowAlpha=std::min(float(double(alpha)*1.5),1.f);
+  tintForStrength(suppression.strength);
+ }
+ void tintForStrength(float strength){
+  constexpr float threshold=.8f; // pinned retail _DAT_004E1680
+  if(strength>=threshold){rgbTint={1.f,1.f,1.f};rgbOverride=false;return;}
+  const float t=strength/threshold,remaining=1.f-t;
+  rgbTint={float(double(.9f)*remaining+double(t)),
+           float(double(.3f)*remaining+double(t)),
+           float(double(.1f)*remaining+double(t))};
+  rgbOverride=true;
+ }
  void think(uint32_t now,float dt,const std::function<void()>& light,
   const std::function<void()>& bookkeeping,const std::function<void()>& advanceRoute){
   update.think(suppression,dt,light,bookkeeping,advanceRoute,[&]{visual.sizeUpdate(now);},
    [&](float scale){visual.sizes.scale={1,scale,1};},
    [&](float input){alpha=std::min(input,.999f);glowAlpha=std::min(float(double(alpha)*1.5),1.f);},
-   [&](float strength){
-    constexpr float threshold=.8f; // pinned retail _DAT_004E1680
-    if(strength>=threshold){rgbTint={1.f,1.f,1.f};rgbOverride=false;return;}
-    const float t=strength/threshold,remaining=1.f-t;
-    rgbTint={float(double(.9f)*remaining+double(t)),
-             float(double(.3f)*remaining+double(t)),
-             float(double(.1f)*remaining+double(t))};
-    rgbOverride=true;
-   });
+   [&](float strength){tintForStrength(strength);});
  }
  void spray(float dt,float influence,bool terminal,const std::function<void()>& countDoused,const std::function<void()>& stopSound){
   suppression.spray(dt,influence,terminal,countDoused,stopSound);

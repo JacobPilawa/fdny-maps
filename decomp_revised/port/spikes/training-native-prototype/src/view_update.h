@@ -43,6 +43,16 @@ struct FrameTransform {
 // timed-transition caller; caller-supplied fractions/endpoints remain inputs.
 struct ViewUpdate {
  using E=Extended;
+ // Fixed eye camera for playable hosts. No movement phase, breathing, item
+ // animation, or follower is allowed to add motion to this frame.
+ static FrameTransform directEye(V position,float yaw,float pitch,bool crouching){
+  FrameTransform frame;
+  const float cy=std::cos(yaw),sy=std::sin(yaw);
+  const float cp=std::cos(pitch),sp=std::sin(pitch);
+  frame.position={position.x,position.y+(crouching?10.f:70.f),position.z};
+  frame.axis={V{cy,0,-sy},V{sy*sp,cp,cy*sp},V{sy*cp,-sp,cy*cp}};
+  return frame;
+ }
  static constexpr double axisDotLimit=.999;
  static E fromLongDouble(long double value){
   if(value==0)return {};

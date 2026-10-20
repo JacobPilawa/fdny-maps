@@ -57,7 +57,6 @@ bool jsonNumber(J value) {
 }
 
 #include "core.h"
-#include "head_motion.h"
 #include "view_update.h"
 #include "victim_roam_motion.h"
 #include "bmodel_contact.h"
@@ -76,6 +75,7 @@ bool jsonNumber(J value) {
 #include "mission_selector.h"
 #include "victim_rescue.h"
 #include "victim_transactions.h"
+#include "rescue_bot.h"
 #include "victim_proximity.h"
 #include "victim_sound.h"
 #include "fire_effects.h"
@@ -525,6 +525,8 @@ struct PreviewVictim {
     std::string actorStem, label;
     int runtimeModelId = 12;
     bool hasRoamCommand = false, roaming = false, randomRoamDirection = true;
+    bool noRescueBot = false;
+    uint32_t botRescueField1F0 = 0;
     int roamState = 4;
     float roamRadius = 0.f, roamSpeed = 36.f, pickupRadius = 60.f;
     float facingDegrees = 0.f;
@@ -1070,6 +1072,8 @@ std::vector<PreviewFire> loadPreviewFires(const SceneData& scene, Collision& col
                 if (floorMe) FireFloor::alignInWorld(visual, collision);
             },
             [](int) { /* start after SceneAudio loads the bundled FireBurn resources */ });
+        preview.runtime.setInitialStrength(std::clamp(
+            parseFloat(property(entity, "FDNY_InitialStrength"), 1.f), 0.f, 1.f));
         preview.runtime.visual.sizeUpdate(now);
         fires.push_back(std::move(preview));
     }
@@ -1446,7 +1450,13 @@ std::vector<PreviewVictim> loadPreviewVictims(
             std::istringstream tokens(command);
             std::string verb;
             tokens >> verb;
-            if (lower(verb) != "roam") continue;
+            verb = lower(verb);
+            if (verb == "norescuebot") {
+                // 0045CDB0 writes the VictimRescue+0x1FD exclusion byte.
+                victim.noRescueBot = true;
+                continue;
+            }
+            if (verb != "roam") continue;
             float radius = 0.f;
             if (tokens >> radius) {
                 victim.hasRoamCommand = true;
@@ -2974,7 +2984,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         bool fireCameraAudit,
         const std::string& equipmentOrientationCheck,
         std::string* nextRescueStage = nullptr, bool performanceAudit = false,
-        const SceneAudio::MusicSelection* inheritedMusic = nullptr) {
+        const SceneAudio::MusicSelection* inheritedMusic = nullptr,
+        std::optional<float> levelField10 = std::nullopt) {
     const bool rescueDiagnostic = rescueCheck || ambientAudioCheck;
     auto logRescueStage = [&](const char* stage) {
         if (rescueCheck) std::cerr << "rescue-check: " << stage << std::endl;
@@ -3029,6 +3040,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     bool victimPickupHudRendererLoaded = false;
     std::filesystem::path actorAssetRoot;
     VictimTransactionState rescueState;
+    RescueBotState rescueBotState;
     auto& carriedVictim = rescueState.player;
     try {
 #if defined(__APPLE__)
@@ -3458,6 +3470,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     player.rescueBotEnabled = value != 0;
                     return true;
                 }
+                if (verb == "norescuebot") {
+                    auto victim = std::find_if(victims.begin(), victims.end(),
+                        [&](const PreviewVictim& item) { return item.spawn.entity == entityId; });
+                    if (victim == victims.end()) return false;
+                    victim->noRescueBot = true;
+                    return true;
+                }
                 if (entityId == playerEntityId && verb == "toolcmd" &&
                     lower(arguments) == "extinguisher refill") {
                     extinguisher.charge = 1.f;
@@ -3762,6 +3781,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 std::cout << "World startup EVS: delayed full pass completed after four host World updates; "
                           << "retail callback cadence remains unverified.\n";
         };
+        const int rescueGlobalMode = 0;
         if (playerEntityId >= 0) {
             for (int i = 0; i < count(entities); ++i) {
                 J entity = at(entities, i);
@@ -3815,10 +3835,12 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             };
             rescueServices.readClock = [] { return uint32_t(SDL_GetTicks()); };
             rescueServices.readPlayerField18C = [&] { return carriedVictim.carriedVictimEntity ? 4 : 3; };
-            rescueServices.readGlobalMode = [] { return 0; };
-            // The scene package does not yet carry the selected catalog time
-            // word; 600 seconds is the retail initializer's null-field fallback.
-            rescueServices.readPlayerField343C = [] { return 600.f; };
+            rescueServices.readGlobalMode = [rescueGlobalMode] { return rescueGlobalMode; };
+            // Retail initializes Player+0x343C from active level +0x10,
+            // applies the mode multiplier, and uses 600.0f when no level is active.
+            rescueServices.readPlayerField343C = [levelField10, rescueGlobalMode] {
+                return initializePlayerDeadlineInput(levelField10, rescueGlobalMode);
+            };
             rescueServices.setActorFlags = [&](int entity, uint32_t flags) {
                 auto actor = rescueState.actors.find(entity);
                 if (actor == rescueState.actors.end()) return;
@@ -3972,6 +3994,122 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             rescueTransactions.reset(new VictimTransactions{
                 rescueState, rescueServices, zones, gameplayRandom});
         }
+        auto advanceRescueBot = [&](uint32_t now) {
+            if (!player.rescueBotEnabled.value_or(false) || playerIncapacitated ||
+                !rescueTransactions) return;
+            if (!rescueBotState.schedulesInitialized) {
+                initializeRescueBotSchedules(
+                    rescueBotState, now,
+                    initializePlayerDeadlineInput(levelField10, rescueGlobalMode),
+                    rescueGlobalMode, gameplayRandom);
+                return;
+            }
+
+            syncVictimsToRescueState();
+            if (rescueBotState.activeVictim && rescueBotDeadlineDue(
+                    now, rescueBotState.activeDeadline)) {
+                // 00455580 refreshes final-exit availability at bot drop-off.
+                rescueTransactions->refreshFinalExitAvailability();
+                std::cout << "RESCUEBOT: Victim dropped off\n";
+                rescueBotState.activeVictim.reset();
+                postponeRescueBotAttemptIfFuture(rescueBotState, now);
+                rescueBotState.nextMessageDeadline =
+                    nextRescueBotMessageDeadline(now, gameplayRandom);
+            }
+
+            const int sourcePlayerState = playerIncapacitated ? 6 :
+                (player.climbing ? 5 : (player.crouch ? 4 : 3));
+            const bool regularPlayerState = sourcePlayerState == 3 ||
+                sourcePlayerState == 4 || sourcePlayerState == 5;
+            if (!rescueBotState.activeVictim && regularPlayerState &&
+                rescueBotDeadlineDue(now, rescueBotState.nextAttemptDeadline)) {
+                const int32_t maximum = rescueBotMaximum(
+                    rescueState.exits.total, rescueGlobalMode);
+                if (int32_t(rescueState.exits.field3530) < maximum) {
+                    std::vector<RescueBotCandidate> candidates;
+                    candidates.reserve(rescueState.actors.size());
+                    for (const auto& entity : rescueState.entities) {
+                        if (entity.type != 2) continue;
+                        auto actor = rescueState.actors.find(entity.entity);
+                        auto victim = std::find_if(victims.begin(), victims.end(),
+                            [&](const PreviewVictim& item) {
+                                return item.spawn.entity == entity.entity;
+                            });
+                        if (actor == rescueState.actors.end() || victim == victims.end()) continue;
+                        candidates.push_back({entity.entity, actor->second.state,
+                            victim->noRescueBot, victim->spawn.selectedPosition});
+                    }
+                    auto target = selectRescueBotCandidate(
+                        candidates, player.p, [&](V start, V end) {
+                            Hit sight;
+                            return collision.tracePoint(start, end, 0x43, 2, sight);
+                        });
+                    if (target) {
+                        auto actor = rescueState.actors.find(*target);
+                        auto victim = std::find_if(victims.begin(), victims.end(),
+                            [&](const PreviewVictim& item) {
+                                return item.spawn.entity == *target;
+                            });
+                        if (actor != rescueState.actors.end() && victim != victims.end()) {
+                            static const char* reports[] = {
+                                "I've located %s, and am heading for the nearest exit.",
+                                "I just located %s.  I'm heading to an exit.",
+                                "[Cough cough]  I've located %s, proceeding to exit.",
+                                "I found %s.  Heading to the nearest exit...",
+                                "I just found %s.  Let's get these people to safety!",
+                                "I've spotted %s here.  I'll take care of this one!",
+                                "I'm taking %s to safety.  Over and out.",
+                                "I just spotted %s here.  I'll handle this one!"
+                            };
+                            const uint32_t reportIndex = gameplayRandom.bounded(8u);
+                            std::string name = victim->spawn.name;
+                            if (name.empty() || name == "<null>") name = "survivor";
+                            activeHint = reports[reportIndex];
+                            const size_t marker = activeHint.find("%s");
+                            if (marker != std::string::npos)
+                                activeHint.replace(marker, 2, name);
+                            activeHintRemaining = 6.f;
+
+                            ++rescueState.exits.field3530;
+                            actor->second.state = 6;
+                            victim->pickup.state = 6;
+                            if (scriptRuntime) scriptRuntime->dispatch(*target, "botrescue");
+                            victim->botRescueField1F0 = std::numeric_limits<uint32_t>::max();
+                            actor->second.animation.playing = false;
+                            victim->animation.playing = false;
+                            victim->roaming = false;
+                            rescueServices.setActorFlags(*target, 0);
+                            rescueBotState.activeVictim = *target;
+                            rescueBotState.activeDeadline =
+                                startRescueBotCarryDeadline(now, gameplayRandom);
+                            std::cout << "RESCUEBOT: Rescuing " << name << " (entity "
+                                      << *target << ")\n";
+                        }
+                    }
+                }
+                // 00455580 schedules another attempt after every due attempt,
+                // including a maximum-count or no-candidate result.
+                setPlayerRescueDeadline(rescueBotState.nextAttemptDeadline,
+                    initializePlayerDeadlineInput(levelField10, rescueGlobalMode),
+                    rescueGlobalMode, now, gameplayRandom);
+            }
+
+            if (rescueBotDeadlineDue(now, rescueBotState.nextMessageDeadline)) {
+                static const char* prompts[] = {
+                    "Let's move!",
+                    "Let's get this fire under control!",
+                    "Come on, let's hussle!",
+                    "We're counting on you!",
+                    "Hurry up, we're running out of time!"
+                };
+                activeHint = prompts[gameplayRandom.bounded(5u)];
+                activeHintRemaining = 6.f;
+                postponeRescueBotAttemptIfFuture(rescueBotState, now);
+                rescueBotState.nextMessageDeadline =
+                    nextRescueBotMessageDeadline(now, gameplayRandom);
+            }
+            syncRescueStateToVictims();
+        };
         if ((interactionCheck || rescueDiagnostic || renderCheck) && scriptRuntime) {
             // These diagnostics do not enter the interactive frame loop. Drive
             // the source-mapped four WorldEntity callbacks so their EVS state
@@ -4963,7 +5101,6 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         bool running = true, captured = true, jumpEdge = false;
         bool useEdge = false, sprayHeld = false, sprayPressed = false, sprayReleased = false;
         float pitch = 0.f;
-        HeadMotion passoutHeadMotion;
         Follower playerViewFollower;
         bool playerViewInitialized = false;
         bool previewMotionsPlaying = false;
@@ -5310,6 +5447,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 player.step(dt, forward, side, yaw, jumpDown,
                     jumpEdge && !usingConsole, crouchEdge, collision, pitch);
             }
+            // Player::Think calls the RescueBot callback after movement and
+            // collision. Host frame cadence remains provisional.
+            if (!playerIncapacitated && !passoutRecoveredThisFrame)
+                advanceRescueBot(now);
             sceneAudio.updateOwnedListeners(player.p, yaw);
             updatePreviewFireLoopSounds(fires, sceneAudio, player.p, yaw);
             jumpEdge = false;
@@ -5349,7 +5490,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         fire.runtime.visual.position,
                         fire.runtime.visual.sizes.size.x,
                         fire.runtime.visual.sizes.size.z,
-                        30.f, // Host PlayerRescue hull radius; retail getter +0x0C's fourth float is open.
+                        0.f, // Retail PlayerRescue initializes getter buffer +0x0C's fourth float (+0x74) to zero.
                         1.f, fire.runtime.suppression.strength,
                         candidatePosition, false);
                     // Retail 004483A0 first rejects candidates beyond its
@@ -5369,7 +5510,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                             fire.runtime.visual.position,
                             fire.runtime.visual.sizes.size.x,
                             fire.runtime.visual.sizes.size.z,
-                            30.f, // Host PlayerRescue hull radius; retail getter +0x0C's fourth float is open.
+                            0.f, // Retail PlayerRescue initializes getter buffer +0x0C's fourth float (+0x74) to zero.
                             1.f, fire.runtime.suppression.strength,
                             candidatePosition, true)
                         : unobstructedContact;
@@ -5433,34 +5574,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             };
             const std::string selectedItem = playerLoadout.selectedName();
-            FrameTransform cameraFrame;
+            FrameTransform cameraFrame = ViewUpdate::directEye(player.p, yaw, pitch, player.crouch);
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);
-            const float cameraCosPitch = std::cos(pitch), cameraSinPitch = std::sin(pitch);
-            cameraFrame.position = {player.p.x, player.p.y + (player.crouch ? 10.f : 70.f), player.p.z};
-            cameraFrame.axis = {
-                V{cameraCosYaw, 0.f, -cameraSinYaw},
-                V{cameraSinYaw * cameraSinPitch, cameraCosPitch, cameraCosYaw * cameraSinPitch},
-                V{cameraSinYaw * cameraCosPitch, -cameraSinPitch, cameraCosYaw * cameraCosPitch}
-            };
             const bool playerMoving = !playerIncapacitated &&
                 std::sqrt(forward * forward + side * side) > 1e-7f;
             const int playerViewState = playerIncapacitated
                 ? playerFireState.state : (player.crouch ? 4 : 3);
-            const int headMode = HeadMotion::viewMode(playerViewState, true, playerMoving);
-            const HeadMotion::Output headOffset = passoutHeadMotion.update(headMode, dt);
             const bool usePassoutCamera = playerFireState.state == 6;
-            if (!playerViewInitialized) {
-                playerViewFollower = Follower{};
-                playerViewFollower.flags = 0x2e;
-                playerViewFollower.threshold = {20.f, 1000.f, 20.f};
-                playerViewFollower.settling = {.05f, 0.f, .05f};
-                playerViewFollower.smoothing = {0.f, .05f, 0.f};
-                playerViewFollower.held = true;
-                playerViewFollower.position = cameraFrame.position;
-                playerViewFollower.previous = cameraFrame.position;
-                playerViewFollower.basis = cameraFrame.axis;
-                playerViewInitialized = true;
-            }
             // The ACT swing is finite, but axeActionStarted used to remain
             // set after its endpoint. That kept advancing ItemViewPose's
             // one-second wrapping clock forever, feeding its hand offsets
@@ -5489,24 +5609,34 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             // positive input pitch means looking up, so its local-X roll must
             // use the opposite sign to produce the same camera frame.
             if (usePassoutCamera) {
+                if (!playerViewInitialized) {
+                    playerViewFollower = Follower{};
+                    playerViewFollower.flags = 0x2e;
+                    playerViewFollower.threshold = {20.f, 1000.f, 20.f};
+                    playerViewFollower.settling = {.05f, 0.f, .05f};
+                    playerViewFollower.smoothing = {0.f, .05f, 0.f};
+                    playerViewFollower.held = true;
+                    playerViewFollower.position = cameraFrame.position;
+                    playerViewFollower.previous = cameraFrame.position;
+                    playerViewFollower.basis = cameraFrame.axis;
+                    playerViewInitialized = true;
+                }
                 const float fraction = playerPassoutViewFactor(playerFireState, now);
                 const auto view = ViewUpdate::transition(
-                    playerFrame, {headOffset.x, headOffset.y, headOffset.z},
+                    playerFrame, {},
                     itemViewOffset, itemAimOffset, {0.f, -20.f, -30.f},
                     {-60.f, 1000.f, 0.f}, 70.f, fraction,
                     -pitch * 57.29577951308232f, dt, playerViewFollower, false);
                 playerViewFollower = view.follower;
             } else {
-                const float viewHeight = playerViewState == 4 ? 10.f : 70.f;
-                const auto view = ViewUpdate::transition(
-                    playerFrame, {headOffset.x, headOffset.y, headOffset.z},
-                    itemViewOffset, itemAimOffset, {}, {}, viewHeight, 1.f,
-                    -pitch * 57.29577951308232f, dt, playerViewFollower,
-                    playerViewState == 4);
-                playerViewFollower = view.follower;
+                // Use only directEye above. Item animation offsets and the
+                // view follower must never move the ordinary camera.
+                playerViewInitialized = false;
             }
-            cameraFrame.position = playerViewFollower.position;
-            cameraFrame.axis = playerViewFollower.basis;
+            if (usePassoutCamera) {
+                cameraFrame.position = playerViewFollower.position;
+                cameraFrame.axis = playerViewFollower.basis;
+            }
             if (fireCameraAudit &&
                 (fireCameraAuditNextPoseSample == 0 ||
                  static_cast<int32_t>(now - fireCameraAuditNextPoseSample) >= 0)) {
@@ -5517,11 +5647,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                           << " selected=" << selectedItem
                           << " moving=" << (playerMoving ? "yes" : "no")
                           << " playerState=" << playerViewState
-                          << " headRequested=" << headMode
-                          << " headCurrent=" << passoutHeadMotion.currentMode
-                          << " headPhase=" << passoutHeadMotion.phaseX << ","
-                          << passoutHeadMotion.phaseY << "," << passoutHeadMotion.phaseZ
-                          << " headOffset=" << headOffset.x << "," << headOffset.y << "," << headOffset.z
+                          << " headBob=disabled"
                           << " player=" << player.p.x << "," << player.p.y << "," << player.p.z
                           << " velocity=" << player.v.x << "," << player.v.y << "," << player.v.z
                           << " input=" << forward << "," << side
@@ -6498,7 +6624,8 @@ int runVictimRoamMotionCheck() {
 }
 
 int runRescueSceneChain(const std::filesystem::path& initialPackage,
-                        bool performanceAudit = false) {
+                        bool performanceAudit = false,
+                        std::optional<float> levelField10 = std::nullopt) {
     const SceneData initialScene = SceneData::load(initialPackage);
     const std::string musicFile = SceneData::stringField(initialScene.music(), "file");
     const std::string musicTrack = SceneData::stringField(initialScene.music(), "track");
@@ -6519,7 +6646,7 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
         std::string nextStage;
         const int result = run(currentPackage, false, false, false, false, false, -1,
                                false, false, false, false, false, {}, &nextStage, performanceAudit,
-                               inheritedMusic ? &*inheritedMusic : nullptr);
+                               inheritedMusic ? &*inheritedMusic : nullptr, levelField10);
         if (result != 0 || nextStage.empty()) return result;
         currentPackage = currentPackage.parent_path() / nextStage;
         std::cout << "Loading linked rescue package: " << currentPackage << "\n";
@@ -6546,24 +6673,42 @@ int runRescueMissionSelectionLoop(const std::filesystem::path& resourcesRoot,
             const auto& choice = choices[*selected];
             std::cout << "Selected rescue mission catalog ordinal " << choice.catalogOrdinal
                       << ": " << choice.key << " (" << choice.title << ")\n";
-            runRescueSceneChain(choice.scenePackage, performanceAudit);
+            runRescueSceneChain(choice.scenePackage, performanceAudit, choice.levelField10);
         }
     }
 }
 
 int runRescueMissionCatalogCheck(const std::filesystem::path& resourcesRoot) {
     const auto choices = loadRescueMissionChoices(resourcesRoot);
+    size_t retailCount = 0;
+    size_t customCount = 0;
     for (const auto& choice : choices) {
         const SceneData scene = SceneData::load(choice.scenePackage);
         if (scene.key() != choice.key)
             throw std::runtime_error("Bundled rescue key does not match scene package: " + choice.key);
-        std::cout << "Mission package check: ordinal " << choice.catalogOrdinal << " "
-                  << choice.key << " (" << choice.title << "), entities="
-                  << count(scene.entities()) << ", meshes="
-                  << count(field(scene.worldMesh(), "groups")) << "\n";
+        std::cout << "Mission package check: ";
+        if (choice.catalogOrdinal >= 0) {
+            ++retailCount;
+            std::cout << "ordinal " << choice.catalogOrdinal << " " << choice.key
+                      << " (" << choice.title << "), entities="
+                      << count(scene.entities()) << ", meshes="
+                      << count(field(scene.worldMesh(), "groups"))
+                      << ", level+0x10=" << choice.levelField10.value_or(1200.f)
+                      << ", Player+0x343C(mode 0)="
+                      << initializePlayerDeadlineInput(choice.levelField10, 0) << "\n";
+        } else {
+            ++customCount;
+            std::cout << "custom " << choice.key << " (" << choice.title
+                      << "), entities=" << count(scene.entities())
+                      << ", meshes=" << count(field(scene.worldMesh(), "groups"))
+                      << ", Player+0x343C(no level record, mode 0)="
+                      << initializePlayerDeadlineInput(choice.levelField10, 0) << "\n";
+        }
     }
-    std::cout << "Mission catalog check: all " << choices.size()
-              << " retail rescue entries load through SceneData.\n";
+    std::cout << "Mission catalog check: all " << retailCount
+              << " retail rescue entries";
+    if (customCount) std::cout << " and " << customCount << " custom packages";
+    std::cout << " load through SceneData.\n";
     return 0;
 }
 

@@ -18,8 +18,9 @@ Retail `004483A0` rejects candidates outside its 500-unit max-axis gate and
 computes volume falloff before requesting visibility. The port now evaluates
 the unobstructed potential contact first and skips LOS when influence is below
 the existing `.0001` cutoff. At the authored Bank spawn, only one of 72 fires
-is within the retail 500-unit gate. The candidate padding and cutoff constants
-remain provisional for damage behavior, but the ordering mirrors retail.
+is within the retail 500-unit gate. Player exposure padding is resolved to
+zero from the PlayerRescue constructor; the cutoff constant remains provisional
+for damage behavior, while this ordering mirrors retail.
 
 `Collision` now caches each model's index, root, origin, and authored bounds
 once at load. `trace`, `tracePoint`, and `solid` use those compact records

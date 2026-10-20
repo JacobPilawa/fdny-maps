@@ -40,13 +40,15 @@ confirms the retail menu constructor loads `data\\resdefs\\menu.rrf` through
 [`retail_menu_widget_trace_2026-10-17.md`](retail_menu_widget_trace_2026-10-17.md).
 
 The authored level catalog also contains per-level `time:` values and distinct
-`menumusic:` / `music:` fields. Existing static evidence does not yet show how
-the time limit reaches a HUD, expires, or affects mission completion, nor where
-menu and level music streams begin or switch. Mission objective/result/outro
-semantics remain open; specifically, the no-final-exit `0044C360` path is not
-verified as a mission outro. See
+`menumusic:` / `music:` fields. A 2026-10-19 follow-up traced `time:` through
+record `+0x10` into Player `+0x343C` and three uses of deadline helper
+`004541A0`, including two RescueBot routines. The port now carries the selected
+value through linked rescue stages. This field is not proven to drive a mission
+countdown or HUD. Mission objective/result/outro semantics remain open;
+specifically, the no-final-exit `0044C360` path is not verified as a mission
+outro. See
 [`rescue_completion_and_exit_path.md`](../scenario-loading/rescue_completion_and_exit_path.md)
-and [`the catalog-loader trace`](../scenario-loading/lev_rrf_catalog_loader_trace_fresh.md).
+and [`catalog_time_rescue_deadline_port_2026-10-19.md`](catalog_time_rescue_deadline_port_2026-10-19.md).
 
 ## Controlled verification
 
@@ -70,9 +72,11 @@ and [`the catalog-loader trace`](../scenario-loading/lev_rrf_catalog_loader_trac
 
 ## Next work
 
-Port the retail career and scores/options child pages, then replace the
-eight-row list with the single-record selector using authored briefing images,
-map coordinates, marker, and button actions. Trace menu/level stream callsites,
-then use the level-specific time field only after its expiry/result path is
-mapped. Resolve the early mission-start equipment `tell` handoff described in
-[`entity_factory_queue_update_order.md`](../scenario-loading/entity_factory_queue_update_order.md): the first shared `rescue.evs` loadout tells run before Player ScriptActor registration and are dropped; the later full EVS load is delayed by four World callbacks, but its order against the BSP entity pump is still unresolved. The copied MP3s and `menumusic`/per-level catalog choices are present, but playback start/switch/stop/loop triggers remain untraced. Keep natural rescue flow and retail parity separate from controlled transaction results.
+Menu work remains paused per the user request. Continue tracing menu/level
+stream callsites when it resumes. The shared port schedules the full EVS pass
+after four World updates so early `rescue.evs` loadout tells can reach the
+registered Player; exact retail callback cadence and final selected-tool
+parity remain unresolved. The copied MP3s and `menumusic`/per-level catalog
+choices are present, but playback start/switch/stop/loop triggers remain
+untraced. Keep natural rescue flow and retail parity separate from controlled
+transaction results.

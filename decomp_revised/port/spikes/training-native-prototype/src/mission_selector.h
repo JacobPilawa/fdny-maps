@@ -20,6 +20,8 @@ struct RescueMissionChoice {
     std::string key;
     std::string title;
     std::filesystem::path scenePackage;
+    // Parsed thegame.lev record +0x10 (authored `time` multiplied by 60).
+    std::optional<float> levelField10;
 };
 
 enum class RescueTitleAction : size_t {
@@ -53,6 +55,15 @@ inline std::vector<RescueMissionChoice> loadRescueMissionChoices(
         choice.key = str(field(entry, "key"));
         choice.title = str(field(entry, "title"));
         const std::string rrf = str(field(entry, "rrf"));
+        J catalogTime = field(entry, "time");
+        choice.levelField10 = 1200.f; // Level-record constructor default at 00422800.
+        if (catalogTime) {
+            const auto timeType = json_object_get_type(catalogTime);
+            if (timeType != json_type_int && timeType != json_type_double)
+                throw std::runtime_error("Invalid time value in bundled rescue catalog: " + choice.key);
+            // Catalog parser 00423160 stores the authored float times 60.0f.
+            choice.levelField10 = float(json_object_get_double(catalogTime)) * 60.f;
+        }
         std::string foldedRrf = rrf;
         std::transform(foldedRrf.begin(), foldedRrf.end(), foldedRrf.begin(), [](unsigned char ch) {
             return char(std::tolower(ch));
@@ -69,6 +80,26 @@ inline std::vector<RescueMissionChoice> loadRescueMissionChoices(
             throw std::runtime_error("Rescue scene package is missing: " + choice.scenePackage.string());
         priorOrdinal = choice.catalogOrdinal;
         result.push_back(std::move(choice));
+    }
+    // Authored port packages supplement the source-ordered retail catalog.
+    const auto customPath = resourcesRoot / "custom_missions.json";
+    if (std::filesystem::is_regular_file(customPath)) {
+        SceneJson custom(json_object_from_file(customPath.string().c_str()));
+        J customEntries = field(custom.get(), "entries");
+        for (int i = 0; i < count(customEntries); ++i) {
+            J entry = at(customEntries, i);
+            const std::string key = str(field(entry, "key"));
+            const std::string title = str(field(entry, "title"));
+            if (key.rfind("custom_", 0) != 0 || key.size() > 55 || title.empty() ||
+                !std::all_of(key.begin(), key.end(), [](unsigned char ch) {
+                    return (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '_';
+                }) || !seen.insert(key).second)
+                throw std::runtime_error("Invalid custom mission catalog entry");
+            const auto package = resourcesRoot / "scenes" / key;
+            if (!std::filesystem::is_regular_file(package / "report.json"))
+                throw std::runtime_error("Custom scene package is missing: " + package.string());
+            result.push_back({-1, key, title, package});
+        }
     }
     return result;
 }
@@ -401,8 +432,9 @@ inline float drawRescueMissionChooser(const std::vector<RescueMissionChoice>& ch
     const float rowTop = float(height) * .75f;
     const float left = float(width) * .18f;
     const float right = float(width) * .82f;
-    for (size_t i = 0; i < choices.size(); ++i) {
-        const float top = rowTop - float(i) * rowPitch;
+    const size_t first = (selected / 8) * 8;
+    for (size_t i = first; i < std::min(first + 8, choices.size()); ++i) {
+        const float top = rowTop - float(i - first) * rowPitch;
         const float bottom = top - rowHeight;
         const bool isSelected = i == selected;
         glColor4f(isSelected ? .48f : .08f, isSelected ? .075f : .105f,
@@ -428,7 +460,8 @@ inline float drawRescueMissionChooser(const std::vector<RescueMissionChoice>& ch
                            isSelected ? .83f : .88f);
     }
 
-    const std::string controls = "UP DOWN SELECT    ENTER EXPLORE    ESC BACK";
+    const std::string controls = "UP DOWN SELECT    ENTER EXPLORE    ESC BACK    PAGE " +
+        std::to_string(selected / 8 + 1) + "/" + std::to_string((choices.size() + 7) / 8);
     const float controlsScale = std::clamp(float(width) / 700.f, 1.6f, 2.2f);
     drawRescueMenuText((float(width) - controls.size() * 6.f * controlsScale) * .5f,
                        float(height) * .075f, controls, controlsScale,
@@ -494,8 +527,9 @@ inline std::optional<size_t> chooseRescueMission(
                 const float rowPitch = std::min(50.f, float(drawableHeight) * .064f);
                 const float rowTop = float(drawableHeight) * .75f;
                 if (mouseX >= left && mouseX <= right) {
-                    for (size_t i = 0; i < choices.size(); ++i) {
-                        const float top = rowTop - float(i) * rowPitch;
+                    const size_t first = (selected / 8) * 8;
+                    for (size_t i = first; i < std::min(first + 8, choices.size()); ++i) {
+                        const float top = rowTop - float(i - first) * rowPitch;
                         if (mouseY <= top && mouseY >= top - rowHeight) {
                             selected = i;
                             if (event.type == SDL_MOUSEBUTTONDOWN &&

@@ -95,12 +95,13 @@ inside the damage volume when q <= R
 Vertical separation counts twice as much as the same horizontal separation,
 so the volume is flattened vertically. Influence fades toward its edge, is
 weighted by fire strength, and is reduced to one tenth when the visibility
-query reports an obstruction. The precise player-padding value is unresolved;
-older notes and the viewer differ, so neither should be treated as a confirmed
-retail distance.
+query reports an obstruction. Fresh constructor tracing resolves the fourth
+float in the PlayerRescue position buffer to zero, so the source-backed player
+padding is `0.0f`. Callback cadence and other fire-volume inputs remain open.
 
 **Evidence:** [callback and 500-unit gate](../tracker/evidence/fire-spread/004483A0_fresh.c),
 [fire-volume falloff formula](../tracker/evidence/fire-spread/0044A7A0_fresh.c),
+[PlayerRescue padding trace](../tracker/evidence/fire-spread/player_fire_exposure_padding_fresh_2026-10-20.c),
 [fire evidence overview](../tracker/evidence/fire-spread/README.md).
 
 ## Survivor and RescueBot checks

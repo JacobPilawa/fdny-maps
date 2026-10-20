@@ -109,8 +109,8 @@ dynamic fire mechanics, or interactive desktop presentation.
 uses the source-derived ellipsoid falloff and visibility attenuation, and sends
 accepted influences through Player message `0x7531`. The shared handler updates
 pain/burn deadlines and enters failed state 6 at the retail exposure threshold;
-the retail pain and passout WAVs are bundled. The host uses its 30-unit player
-hull radius as provisional padding because the fourth float returned by the
-retail candidate getter remains unresolved. Fire volume extents, candidate
-origin alignment, contact scheduling, and the minimum-influence constant also
+the retail pain and passout WAVs are bundled. Fresh constructor tracing
+resolves the fourth float returned by the retail PlayerRescue candidate getter
+to zero, and the host now uses that value instead of the 30-unit hull radius.
+Fire volume extents, contact scheduling, and the minimum-influence constant
 remain provisional. No interactive damage capture has been made.

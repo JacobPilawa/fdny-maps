@@ -1,0 +1,105 @@
+{
+  "format": "fdny-editor-v1",
+  "key": "custom_test_room",
+  "title": "Empty Test Room",
+  "items": [
+    {
+      "kind": "floor",
+      "position": [
+        0,
+        -32,
+        0
+      ],
+      "size": [
+        1536,
+        32,
+        1536
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        0,
+        0,
+        -784
+      ],
+      "size": [
+        1600,
+        320,
+        32
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        0,
+        0,
+        784
+      ],
+      "size": [
+        1600,
+        320,
+        32
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        -784,
+        0,
+        0
+      ],
+      "size": [
+        32,
+        320,
+        1536
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        784,
+        0,
+        0
+      ],
+      "size": [
+        32,
+        320,
+        1536
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        0,
+        320,
+        0
+      ],
+      "size": [
+        1600,
+        32,
+        1600
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "spawn",
+      "position": [
+        0,
+        32,
+        400
+      ],
+      "size": [
+        60,
+        115,
+        60
+      ],
+      "rotation": 0
+    }
+  ]
+}

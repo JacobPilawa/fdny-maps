@@ -37,14 +37,18 @@ calls `0x00447A90` at `0x0044838E`.
 
 FireRescue's callback asks candidate vtable slot `+0x0C` for a position
 buffer. Current-hash PlayerRescue vtable bytes and constructor evidence map
-that slot to thunk `0049DB90`; the archived body export routes it to
-`0049D790`. Current-hash disassembly confirms that the body transforms local
-origin through root transform `+0x24` and returns XYZ at `+0x68..+0x70`.
-Player's local origin is canonical translation `+0x4C..+0x54`; its floor-hit
-writer refreshes the derived cache after updating that translation. The viewer
-uses the matching movement origin, `Player::p`, through an explicit adapter.
-The fourth float used by exposure and callback cadence remain open. See
-[`player_rescue_candidate_getter.md`](player_rescue_candidate_getter.md).
+that slot to thunk `0049DB90`; the body routes to `0049D790`. The body
+transforms local origin through root transform `+0x24` and returns XYZ at
+`+0x68..+0x70`. Player's local origin is canonical translation
+`+0x4C..+0x54`; its floor-hit writer refreshes the derived cache after updating
+that translation. The fourth float read by the exposure callback is root
+`+0x74`; the constructor chain `00453D50 -> 0043F610 -> 0049DF30 -> 0049D8C0`
+initializes it to zero, while the getter and cache-copy helper write only XYZ.
+The viewer now supplies zero padding. Callback cadence and later aliased writes
+remain open. See
+[`player_rescue_candidate_getter.md`](player_rescue_candidate_getter.md) and
+the fresh export
+[`player_fire_exposure_padding_fresh_2026-10-20.c`](player_fire_exposure_padding_fresh_2026-10-20.c).
 
 The spread checks in `00448320` and `00447A90` read the length at `+4` of the
 reference-counted string pointer stored at FireRescue root `+0x48`. Constructor

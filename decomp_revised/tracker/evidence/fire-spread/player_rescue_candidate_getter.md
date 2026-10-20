@@ -28,6 +28,23 @@ origin, so `playerRescueCandidateWorldOrigin()` returns it directly. Retail
 and host collision bounds also agree (`(-30,-30,-30)` to `(30,85,30)`, with
 the source crouch height at 25); no position or hull adjustment is indicated.
 
+## Fourth exposure value resolved
+
+The same PlayerRescue getter returns a pointer at root `+0x68`, and
+`004483A0` passes element `[3]` from that pointer to `ComputeFireVolumeFalloff`.
+That is root `+0x74`. Fresh hash-pinned Ghidra output traces the normal
+constructor chain `00453D50 -> 0043F610 -> 0049DF30 -> 0049D8C0`; `0049D8C0`
+explicitly initializes root `+0x74` to zero. `0049D790` writes only XYZ at
+`+0x68/+0x6C/+0x70`, and the mapped floor cache copy `00441E90` writes three
+components. The shared port now passes `0.0f` padding for Player exposure
+instead of the provisional 30-unit movement-hull radius.
+
+This establishes the value for the normal construction path and reviewed
+position-cache updates. It does not rule out every possible later aliased
+write, and no retail runtime watchpoint was available. The independent callback
+cadence question remains open. The fresh export is
+[`player_fire_exposure_padding_fresh_2026-10-20.c`](player_fire_exposure_padding_fresh_2026-10-20.c).
+
 Classification:
 
 - **Verified current hash:** `004483A0` requests candidate slot `+0x0C`; the
@@ -38,19 +55,19 @@ Classification:
   the cache at `+0x68..+0x70`.
 - **Corroborated by field writers:** Player translation `+0x4C..+0x54` is
   canonical; `0043F810` refreshes the derived origin cache after writing it.
-- **Still open:** the fourth value read by the exposure path and its
-  initialization, callback cadence, and relative order with other updates.
-  These do not change the mapped candidate position.
+- **Verified by fresh hash-pinned constructor trace:** the fourth value at
+  PlayerRescue `+0x74` is initialized to `0.0f`; getter and floor cache helper
+  write only XYZ. Later aliased writes are not exhaustively ruled out.
+- **Still open:** callback cadence and its relative order with other updates.
 
 The shared viewer now calls its source-shaped `0x7531` fire-exposure handler
-from the ordinary frame loop. This adapter and call site do not establish
-retail exposure callback cadence or the required fourth-float value; see
+from the ordinary frame loop and supplies the constructor-backed zero padding.
+This adapter does not establish retail exposure callback cadence; see
 [`player_hud_goggles_equipment_fire_viewer_runtime.md`](../scenario-loading/player_hud_goggles_equipment_fire_viewer_runtime.md).
 
 ## Plain-language explanation
 
-Retail asks the PlayerRescue actor for the world position of the middle of its
-root frame. That point is the same translation the viewer already stores in
-`Player::p`, so the port can pass `Player::p` directly. The position alignment
-is now source-backed; the exact callback timing and one separate exposure
-value are still unknown.
+Retail asks PlayerRescue for a world point and a fourth falloff value. The
+point is the same translation the viewer stores in `Player::p`; its adjacent
+fourth value is initialized to zero by the constructor. The port now uses both
+source-backed values. Callback timing remains open.

@@ -1,0 +1,340 @@
+{
+  "format": "fdny-editor-v1",
+  "key": "custom_test_room",
+  "title": "Empty Test Room",
+  "items": [
+    {
+      "kind": "floor",
+      "position": [
+        0,
+        -32,
+        0
+      ],
+      "size": [
+        1536,
+        32,
+        1536
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        0,
+        0,
+        -784
+      ],
+      "size": [
+        1600,
+        320,
+        32
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        0,
+        0,
+        784
+      ],
+      "size": [
+        1600,
+        320,
+        32
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        -784,
+        0,
+        0
+      ],
+      "size": [
+        32,
+        320,
+        1536
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        784,
+        0,
+        0
+      ],
+      "size": [
+        32,
+        320,
+        1536
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "wall",
+      "position": [
+        0,
+        320,
+        0
+      ],
+      "size": [
+        1600,
+        32,
+        1600
+      ],
+      "rotation": 60
+    },
+    {
+      "kind": "spawn",
+      "position": [
+        0,
+        32,
+        400
+      ],
+      "size": [
+        60,
+        115,
+        60
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "ramp",
+      "position": [
+        0,
+        0,
+        128
+      ],
+      "size": [
+        256,
+        128,
+        384
+      ],
+      "rotation": 180
+    },
+    {
+      "kind": "survivor",
+      "position": [
+        128,
+        0,
+        -320
+      ],
+      "size": [
+        40,
+        100,
+        40
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "object",
+      "position": [
+        448,
+        0,
+        128
+      ],
+      "size": [
+        96,
+        96,
+        96
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "fire",
+      "position": [
+        480,
+        0,
+        -224
+      ],
+      "size": [
+        64,
+        96,
+        64
+      ],
+      "rotation": 0
+    },
+    {
+      "kind": "source_model",
+      "label": "<null>5",
+      "sourceMap": "bar_r",
+      "sourceModel": 60,
+      "position": [
+        1472,
+        0,
+        1952
+      ],
+      "size": [
+        128.009765625,
+        8,
+        15.99932861328125
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "source_model",
+      "label": "<null>5",
+      "sourceMap": "bar_r",
+      "sourceModel": 60,
+      "position": [
+        352,
+        0,
+        -608
+      ],
+      "size": [
+        128.009765625,
+        8,
+        15.99932861328125
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "source_model",
+      "label": "<null>5",
+      "sourceMap": "bar_r",
+      "sourceModel": 60,
+      "position": [
+        256,
+        0,
+        -256
+      ],
+      "size": [
+        128.009765625,
+        8,
+        15.99932861328125
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "source_model",
+      "label": "oil barrel 2",
+      "sourceMap": "oil_rig_b",
+      "sourceModel": 9,
+      "position": [
+        32,
+        0,
+        -384
+      ],
+      "size": [
+        63.99993896484375,
+        99.1319580078125,
+        64.000732421875
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "source_model",
+      "label": "oil barrel 2",
+      "sourceMap": "oil_rig_b",
+      "sourceModel": 9,
+      "position": [
+        32,
+        0,
+        -256
+      ],
+      "size": [
+        63.99993896484375,
+        99.1319580078125,
+        64.000732421875
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "source_model",
+      "label": "oil barrel 2",
+      "sourceMap": "oil_rig_b",
+      "sourceModel": 9,
+      "position": [
+        -32,
+        0,
+        -288
+      ],
+      "size": [
+        63.99993896484375,
+        99.1319580078125,
+        64.000732421875
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "source_model",
+      "label": "oil barrel 2",
+      "sourceMap": "oil_rig_b",
+      "sourceModel": 9,
+      "position": [
+        -64,
+        0,
+        -448
+      ],
+      "size": [
+        63.99993896484375,
+        99.1319580078125,
+        64.000732421875
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": 0,
+      "texture": null
+    },
+    {
+      "kind": "survivor",
+      "label": "<null>17",
+      "position": [
+        -352,
+        0,
+        64
+      ],
+      "size": [
+        40,
+        100,
+        40
+      ],
+      "survivorType": "girl",
+      "roam": 100,
+      "pickupRadius": 60,
+      "rotation": 0
+    }
+  ]
+}

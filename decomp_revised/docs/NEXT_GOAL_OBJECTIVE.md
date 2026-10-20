@@ -2,19 +2,11 @@
 
 Work in `decomp_revised`.
 
-Continue the full, faithful 1:1 gameplay port of the retail game. Keep improving the playable build, cover every rescue mission, and prioritize core mechanics and mission progression. Build for macOS first while keeping shared code cross-platform. Do not turn this into a Training-only remake or a separate visual viewer.
+Continue working toward a full, faithful 1:1 reproduction of the retail game, including its missions, gameplay, presentation, and engine behavior. Keep the playable build progressing, cover every rescue mission, and build for macOS first while keeping shared code cross-platform. Do not turn this into a Training-only remake or a separate visual viewer.
 
 Start by checking the current checkout, `docs/WORK_QUEUE.md`, relevant evidence and build notes, and recent Codex conversations. Reuse existing work and identify unfinished handoffs that should be cleaned up. Treat current files and verified tool results as authoritative; confirm old claims before relying on them. The work queue records current technical status and open questions.
 
-Trace retail behavior and authored game data with Ghidra when useful, then implement findings in the shared port. Record binary hashes and evidence, and label uncertain timing or behavior as provisional. Make steady playable progress and distinguish controlled checks from retail parity.
-
-After resolving any urgent loose ends, focus on these areas according to current evidence and impact:
-
-1. Held equipment: verify Axe, extinguisher, and other hand models have the correct orientation, animations, sounds, selection, and working actions.
-2. Rendering: bring lighting, textures, materials, effects, and HUD presentation in line with retail.
-3. Audio: trace and add the retail background music and its level/menu playback behavior.
-4. Front end: replace the startup scene-preview popup with a main menu and level-selection flow.
-5. Mission lifecycle: implement and verify clear level-start, objective, completion, and level-end/transition behavior.
+Use the work queue and evidence notes to choose the next useful step toward the full reproduction. Resolve urgent loose ends where practical, then make steady progress on the highest-value gaps supported by current evidence. Trace retail behavior and authored game data with Ghidra when useful, then implement findings in the shared port. Record binary hashes and evidence, label uncertain timing or behavior as provisional, and distinguish controlled checks from retail parity.
 
 Use a few `gpt-6-luna` subagents for independent, bounded tasks when helpful. Avoid overlapping edits; keep a small ledger of each scope, files, and status, and integrate useful findings into the work queue and evidence notes. Ask no optional questions that would halt progress: make reasonable assumptions, record them, and continue. Ask only if a missing answer would materially change the work or make safe progress impossible.
 
