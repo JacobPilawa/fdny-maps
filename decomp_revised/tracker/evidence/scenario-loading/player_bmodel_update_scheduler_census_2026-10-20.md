@@ -65,6 +65,26 @@ searches recorded 53 `[reg+0x14]` call/jump candidates but did not identify a
 Player/BModel receiver. These negative static searches do not exclude a
 computed dispatch path or an unexamined update loop.
 
+## App callback passes are a separate route
+
+The same-hash retained app-pass evidence also excludes the visible app callback
+list as the Player/BModel root `+0x14` scheduler. `0049A310` traverses the list
+at owner `+0x7C`, calling active children at vtable `+0x74`, pending-removal
+children at `+0x6C`, and the owner at `+0x60`; `00499E60` traverses the same
+list and calls child vtable `+0x70`. The owner `+0x60` route reaches the
+separate game update. No available evidence shows PlayerRescue or BModel root
+objects registered as children in this app list. These calls therefore do not
+establish a recurring root `+0x14` route, while an unexamined or computed
+dispatch elsewhere remains possible. See the retained [app prepass](../runtime-loop/0049a310_app_prepass.c),
+[app postpass](../runtime-loop/00499e60_app_postpass.c), and
+[idle-loop dispatch](../runtime-loop/00499410_app_idle_loop.c).
+
+A follow-up attempt to reopen these functions with this turn's headless Ghidra
+launcher failed before project load because LaunchSupport tried to access its
+saved JDK path outside the writable workspace. This conclusion is a bounded
+review of the existing hash-pinned outputs above, not a fresh Ghidra query or
+runtime observation.
+
 ## Current boundary
 
 The retail class admission and contact traversal are statically mapped, but
@@ -80,6 +100,7 @@ Relevant evidence:
 - [Entity contact-manager admission and dispatch](rescue_contact_manager_route.md)
 - [Owner manager callback order](../runtime-loop/00429520_world_owner_pass.c)
 - [Owner `+0x3C4` service construction and drain](../runtime-loop/0042b2c0_owner_work_service_constructor_fresh_2026-10-20.c)
+- [App callback prepass](../runtime-loop/0049a310_app_prepass.c), [postpass](../runtime-loop/00499e60_app_postpass.c), and [idle-loop order](../runtime-loop/00499410_app_idle_loop.c)
 - [WorldEntity slot `+0x14` scheduler boundary](worldentity_callback_dispatch_boundary.md)
 
 No gameplay code, build, tests, runtime capture, or retail parity check changed

@@ -17,9 +17,14 @@ Ghidra caller query found only local wrappers/thunks directly referencing
 spawn and registration path admits PlayerRescue (type 1) and BModel (type 4)
 to the contact manager, but its normal owner `+0xE0` pass dispatches root
 `+0x48` contact callbacks through `0049BD20`. It does not establish the
-recurring `+0x14` caller. Keep callback cadence and Player/BModel order
-provisional. Next identify the hidden update manager/list or obtain a bounded
-retail runtime trace after launch/capture prerequisites are verified. Evidence:
+recurring `+0x14` caller. The retained same-hash app pre/post pass evidence also
+shows child slots `+0x74`/`+0x70` and removal slot `+0x6C`, with no evidence
+that PlayerRescue or BModel roots register in that list. A fresh headless
+follow-up could not open Ghidra because its launcher failed before project
+load; this app-pass conclusion reviews the retained hash-pinned outputs. Keep
+callback cadence and Player/BModel order provisional. Next identify the hidden
+update manager/list or obtain a bounded retail runtime trace after
+launch/capture prerequisites are verified. Evidence:
 [`player_bmodel_update_scheduler_census_2026-10-20.md`](../tracker/evidence/scenario-loading/player_bmodel_update_scheduler_census_2026-10-20.md).
 The owner tail service at `+0x3C4` is separately mapped to `0049C820`; its
 bounded callback window drains queued items through item vtable slot `+0` or
@@ -557,6 +562,7 @@ and
 | `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local routes to `00470740` are mapped; no recurring manager caller or Player/BModel frame ordering is proven. Follow-up contact census separates root `+0x48` contact callbacks from `+0x14` updates. No edits |
 | `player_registration_path` (Luna) | PlayerRescue/BModel admission masks, type lists, and root `+0x14` scheduler; same-hash registration evidence and owner pass | Complete, read-only; PlayerRescue type 1 and BModel type 4 are eligible for contact-manager admission, whose owner `+0xE0` pass calls root `+0x48`; recurring `+0x14` caller and Player category mask remain open. No edits |
 | `owner_tail_service_census` (root) | `0042B2C0`, nested vtables `004DF8E8/004DF8F8`, owner `00429520`, code window `0049C820` | Complete, read-only; `+0x3C4` drains queued items using item slot `+0` or `+0x2C`, not root `+0x14`; queued item classes/producers remain open. No edits |
+| `app_callback_registry_route` (Luna) | `0049A310`, `00499E60`, `00499410`, Player/BModel update routes; retained hash-pinned outputs | Complete, read-only; app pre/post passes dispatch child slots `+0x74`/`+0x70`, removal uses `+0x6C`, and no Player/BModel root registration is evidenced. Fresh headless launcher failed before project load; recurring root `+0x14` manager remains unresolved. No edits |
 | `jump_input_bridge_followup` (Luna) | `JUMP` MOUSE_RB poll and Player jump/climb ScriptActor branches; saved Ghidra caller corpus and `player_climb_state_command_2026-10-20.asm` | Complete, read-only; parent raw-instruction follow-up corrected the bounded scan: movement queries `JUMP` only in state 4 and routes it to `0044BCE0`; matching ScriptActor tokens resolve state 4 as crouch and this helper as uncrouch. The separate state-not-4 path calls `0044E990`. No edits |
 | `player_jump_physics` (Luna) | `0044E990`, `0044CD10`, jump callers, timer and vertical-velocity gates; current-hash headless Ghidra | Complete, read-only; confirmed the 500 ms gate, state-5 impulse/reset branch, contact-latch-gated normal branch, coupled `Jumps`/sound transaction, and reset of `+0x388` plus neighboring timers. Parent follow-up established local update order; outer cadence remains unresolved. No edits |
 | `player_contact_latch` (Luna) | `0049E0A0`, `0049DBC0`, `0043F680`, Player collision/update vtable route; current-hash headless Ghidra and collision note | Complete, read-only; confirmed accepted collision writers and Player vtable slot `+0x64` → `0043F680` → integrator, which consumes/clears the latch. Parent follow-up found the indirect call before collision loop `0043F6D0`; downward snap bypasses the writer and outer cadence remains unresolved. No edits |
