@@ -452,21 +452,29 @@ completion or retail parity check was made. The current host still uses
 `RescueExitState.messageGate` for the message gate and does not implement this
 result feedback. Do not wire a guessed timeout or loss transition. The
 function-review ledger reached 351 after the sixteen status/chatter/widget
-reviews, 355 after the four PlayerRescue exposure-padding reviews, and 365
-after ten fresh HoseSpray/PlayerHose contact-path reviews.
+reviews, 355 after the four PlayerRescue exposure-padding reviews, 365 after
+ten fresh HoseSpray/PlayerHose contact-path reviews, and 410 after the recent
+HoseSpray, result-widget, and frontend-consumer batches.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch and authored rescue textures traced; post-duration 1800-degree quad rotation and manager state-1/2 handoff confirmed; state-2 writer, result-child duration/tail initialization, desktop placement/alpha/runtime pixels, replay cadence, timer relation, and full outcome flow remain open |
+| Mission outcome state and feedback | `mission_outcome_status_dispatch_2026-10-19.md`, fresh Ghidra exports, `rescue_completion_and_exit_path.md`, function-review CSV | Win/loss dispatch, rescue textures, post-duration rotation, and frontend consumer traced: state 1 updates selected profile/catalog data and selects child 5; state 2 selects level-selector child 2. State-2 producer, result-child timing, child-5 content/actions, runtime placement/alpha, replay cadence, and full outcome flow remain open |
 
 The result path is now known to use direct calls: `00458400` invokes
 `0048D180` and `0048D1A0` on `PlayerStatus+0x824`, while `004576B0` constructs
 that child with `0048D390`. The sibling timing setter's `1000/5000` defaults do
-not apply to it. Next, trace the result child's allocation/parent initialization
-for computed or aliased writes to `+0x130/+0x134`; do not port guessed timing,
-placement, or a loss transition. The loss-state audit found no further static
-producer candidate. If retail runtime access becomes available, set a write
-watchpoint on Player `+0x3438` during expiry, passout, and exit paths.
+not apply to it. A fresh decoded-offset scan and decompilation now trace the
+downstream manager consumer: on result completion, manager state 1 updates the
+selected catalog/profile record and selects frontend child 5; state 2 selects
+child 2, the traced level selector. Child 5 is constructed by `00432BB0` with
+two buttons and menu bitmap ID 54, but its intended role and content are not
+identified. The focused export is
+[`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](../tracker/evidence/scenario-loading/mission_outcome_frontend_consumer_fresh_2026-10-20.c).
+Next, identify child 5's labels/action path and continue tracing result-child
+timing initialization through aliases or runtime evidence. Do not port guessed
+timing, placement, or a loss-state producer. The bounded scan still found no
+direct writer of Player `+0x3438 = 2`; if retail runtime access becomes
+available, set a write watchpoint during expiry, passout, and exit paths.
 
 ## RescueBot lifecycle implemented from fresh retail trace (2026-10-20)
 

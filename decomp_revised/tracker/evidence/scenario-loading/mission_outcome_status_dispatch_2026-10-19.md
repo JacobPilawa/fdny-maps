@@ -118,6 +118,35 @@ requests, and the result child's timing-field values, desktop placement, and
 rendered runtime appearance for widget states `0x47` and `0x48` are not
 established here.
 
+## Follow-up: frontend result-state consumer (2026-10-20)
+
+The saved Ghidra project was copied to ignored `.local/mission-lifecycle-ghidra`
+and opened headlessly for this read-only follow-up. A decoded-instruction scan
+for manager offsets `+0x6EC` and `+0x6E4`, followed by fresh decompilation,
+confirms that `ProcessEverGameUpdate` (`0042AEA0`) consumes the result state
+written by `004295B0`. State `1` calls `00424650` with the currently selected
+level ordinal from the menu selection record; state `2` skips that call. Both
+paths reset frontend rendering/navigation state and switch menu child: state
+`2` selects child index `2`, while the other written state (`1`) selects child
+index `5` through `0042D3E0`.
+
+Existing same-hash constructor evidence identifies child `2` as the level
+selector (`0042F670`). Fresh constructor review identifies child `5` as
+`00432BB0`, a two-button page that also requests menu bitmap ID `54`; its label,
+intended controls, visible content, and runtime meaning remain unknown. In the
+win-only `00424650` path, the selected catalog entry is looked up, a profile
+record is obtained or created, and fields in that record are updated with the
+selected ordinal and current menu-owned string. This is evidence of a
+win-triggered profile/catalog mutation; the record schema and exact progression
+semantics are not yet established.
+
+The focused export is
+[`mission_outcome_frontend_consumer_fresh_2026-10-20.c`](mission_outcome_frontend_consumer_fresh_2026-10-20.c).
+It records the executable hash above. The control flow establishes the
+frontend child indices and the win-only mutation, but not the result child's
+duration, page-5 presentation, map-loading handoff, or natural runtime timing.
+No host transition was added from these static findings alone.
+
 ## Open state and limits
 
 The direct decoded-operand scan found no store of value `2` to `Player+0x3438`.
@@ -131,8 +160,11 @@ callback, or other mechanism may set it.
 [`catalog_time_rescue_deadline_port_2026-10-19.md`](../runtime/catalog_time_rescue_deadline_port_2026-10-19.md).
 This status trace finds no direct connection from that field or its helper to
 the `+0x3438 == 2` branch. A mission countdown, deadline expiry result, score
-screen, complete outro, and return-to-menu flow remain open. The existing port
-does not yet implement the status widget, win/loss feedback, or loss state.
+screen, complete outro, and complete presentation remain open. The frontend
+manager's result consumer is now traced to child 5 for win and the level
+selector (child 2) for loss; the host does not yet implement that result
+feedback or return flow. PlayerHose has a separate result field and no
+confirmed consumer, so do not apply this rescue result path to it.
 
 These findings are static decompilation and resource-definition checks. No
 retail runtime, natural mission completion, audio capture, rendered result
