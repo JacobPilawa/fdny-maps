@@ -118,7 +118,10 @@ For Player exposure, that field is the first flame sprite's alpha override:
 `00449FE0` derives it from suppression strength, `0044A610` clamps it to
 `0.999`, and `0047F1F0` writes the child `+0xD0` value while enabling its
 `+0xD4` override. The separate glow alpha is not used by this falloff. The
-initial override value and callback order remain open; see
+sprite constructor sets `+0xD4` false before the first alpha write, but no
+initialization for `+0xD0` was found in the inspected path. The regular heap
+branch requests no zero-fill. The actual first value and callback order remain
+open; see
 [`fire_emitter_alpha_exposure_2026-10-20.md`](fire_emitter_alpha_exposure_2026-10-20.md).
 
 The Player vtable message handler `DispatchPlayerMessage` (`0x00453A70`)

@@ -534,8 +534,11 @@ visual sprite pointer. `00449FE0` derives that alpha from suppression strength,
 `0044A610` clamps it to `0.999`, and `0047F1F0` stores it while enabling the
 child alpha override. The shared Player contact path now uses `FireEntity::alpha`
 instead of a unit multiplier. This closes the steady-state emitter-alpha
-mapping, while the first value before the initial actor update and callback
-ordering remain unresolved. Evidence and host limitations are recorded in
+mapping. Sprite construction sets override flag `+0xD4` to zero through
+`0047F500`, but no initialization of the multiplier at `+0xD0` was found.
+Its first value and callback ordering remain unresolved; the ordinary allocator
+path does not request zero-fill, and this is not proof of a retail bug. Evidence
+and host limitations are recorded in
 [`fire_emitter_alpha_exposure_2026-10-20.md`](../tracker/evidence/fire-spread/fire_emitter_alpha_exposure_2026-10-20.md).
 The rescue-all macOS compile/package build completed with matching standalone
 and app executable SHA-256
