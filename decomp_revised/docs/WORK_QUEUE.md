@@ -46,7 +46,7 @@ performed.
 
 | Scope | Files | Status |
 | --- | --- | --- |
-| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, and source-derived stream point; speed calibration, exact state-frame cadence, mouse steering, visuals, WindowFire baseline, countdown units, mode labels/initial choice, result and return flow remain provisional/open |
+| PlayerHose gameplay host | `scene_viewer.cpp`, `player_hose_stage.h`, macOS bundle script, port-host evidence note | Implements anchor-driven hotspot activation, target/cycle flow, authored spline camera rail, source-derived stream point, and the source-shaped temporary aim rotation order; speed calibration, state-frame cadence, SDL-to-steering mapping, visuals, WindowFire baseline, countdown units, mode labels/initial choice, result and return flow remain provisional/open |
 
 ### Anchor event and stream source follow-up (2026-10-20)
 
@@ -66,6 +66,23 @@ plist validation passed. No interactive run, test suite, controlled retail
 comparison, or parity claim was made. Exact scheduler-frame timing, rail
 speed calibration, steering accessors and clamps, WindowFire baseline, and
 retail result/return flow remain open.
+
+### Temporary PlayerHose aim-frame rotation (2026-10-20)
+
+Fresh `00466780` evidence distinguishes the rail-derived entity frame from the
+temporary aim frame. The shared host now copies its rail camera frame, rotates
+the basis around axis 0 by pitch, then around the updated axis 1 by negative
+yaw, following `00496DD0` and `004476B0`'s basis-by-axis cross-product order.
+The stream source stays tied to the unrotated entity frame through `00465EF0`.
+SDL mouse values still stand in for `STEER_PITCH/YAW`, so accessor cadence,
+scale/sign mapping, additional view-angle limits, and x87 rounding remain
+open.
+
+The standalone and rescue-all executables rebuilt at matching SHA-256
+`6e639a00367ce7bff8a95da4b98b7fc6e4805c050c1399715527c32a43692bbc`. The
+bundle plist passed validation and retains all four hose scenes and eight
+rescue catalog choices. This is compile/package evidence only; no interactive
+or retail comparison was made.
 
 ## PlayerHose authored rail trace and shared-host camera port (2026-10-20)
 

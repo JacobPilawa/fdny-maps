@@ -74,12 +74,15 @@ The host maps left-button hold to `MOUSE_LB`, traces a 2000-unit segment from
 the retail-shaped `00465EF0` frame offset with the same `0x43/2`
 world-collision arguments seen in the retail stream collision, and only
 advances the currently selected target when the hit BSP model matches that
-target's authored model. Direction uses a provisional mouse offset around the
-rail-derived view; retail's separate pitch/yaw accumulators, clamps, and
-matrix-rotation order are not yet ported. It decrements the hotspot countdown
-before the dousing update, applies the authored SprayTime divisor, and presents
-the current hotspot, target, cycle, and timer in the window title. WASD
-movement is disabled in dedicated rail mode.
+target's authored model. The temporary aim basis follows retail's pitch-around-
+axis-0 then negative-yaw-around-updated-axis-1 order, including the helper's
+basis-by-axis cross-product order, with source point and direction kept
+separate. SDL deltas stand in for retail's separate pitch/yaw accumulators;
+their accessor cadence, scale/sign mapping, effective view-angle limit, and
+exact matrix rounding remain provisional. It decrements the hotspot countdown
+before the dousing update, applies the authored SprayTime divisor, and presents the
+current hotspot, target, cycle, and timer in the window title. WASD movement
+is disabled in dedicated rail mode.
 
 The host's WindowFire meter is intentionally only a first gameplay proxy. It
 starts at 1.0 and decays by `dt / SprayTime`; `SprayTime <= 0` completes on the
@@ -138,6 +141,17 @@ plist validated, all four hose maps are packaged, and the rescue catalog has
 eight entries. The build emitted the existing Homebrew `json-c` deployment
 warning (library built for macOS 27.0 while the target links for 13.3). No
 interactive run, tests, or retail comparison were performed.
+
+The steering-frame follow-up rotates a temporary copy of the rail-derived aim
+basis around pitch axis 0 and then negative yaw around the updated axis 1.
+The host matches `00496DD0`'s half-angle rotation through its equivalent
+vector formula and uses the same `basis × axis` term as `004476B0`. SDL angle
+mapping remains provisional. The rebuilt standalone and bundled executables
+match at SHA-256
+`6e639a00367ce7bff8a95da4b98b7fc6e4805c050c1399715527c32a43692bbc`. The
+rescue-all plist passed validation; all four hose maps and eight rescue choices
+remain packaged. This is a compile/package check only, not interactive or
+retail parity evidence.
 
 ## Authored rail build
 

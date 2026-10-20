@@ -99,6 +99,8 @@ height, and constructs a camera frame toward the interpolated B target. It
 advances at 500 units per host second as an explicitly provisional timing
 assumption. It offsets the stream source along the rail frame using the
 `00465EF0` expression and applies host mouse steering around the rail-derived
-aim; mouse scaling, accumulator behavior, and rotation order remain
-provisional. The build is a code compilation check, not a controlled retail
-comparison or parity result.
+aim. The temporary aim basis follows the source rotation order (pitch around
+axis 0, then negative yaw around the updated axis 1) and the source helper's
+basis-by-axis cross-product order; SDL input scaling/sign and accumulator
+cadence remain provisional. The build is a code compilation check, not a
+controlled retail comparison or parity result.

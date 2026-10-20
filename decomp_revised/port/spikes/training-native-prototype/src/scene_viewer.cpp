@@ -5749,11 +5749,32 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         return frame;
                     };
                     cameraFrame = frameForAngles(cameraPosition, routeYaw, routePitch);
-                    // Retail feeds separate STEER_YAW/PITCH values to nozzle
-                    // aiming. Preserve mouse steering as a provisional offset
-                    // around the authored rail look direction.
-                    hoseAimFrame = frameForAngles(
-                        cameraPosition, routeYaw + (yaw - playerHoseStage.spawnYaw), routePitch + pitch);
+                    // 00466780 copies the rail-derived frame, rotates its
+                    // basis around axis 0 by pitch, then around the updated
+                    // axis 1 by negative yaw. The retail helper uses
+                    // basis x axis; SDL values stand in for the retail
+                    // accumulators with provisional scaling and sign mapping.
+                    auto rotateVectorAroundAxis = [](V vector, V axis, float angleDegrees) {
+                        constexpr float degree = 0.01745329251994329577f;
+                        axis = ViewUpdate::normalize(axis);
+                        const float radians = angleDegrees * degree;
+                        const float cosine = std::cos(radians);
+                        const float sine = std::sin(radians);
+                        // 004476B0 is called as Cross(axis, basis) but returns
+                        // basis x axis, so preserve that argument convention.
+                        return vector * cosine + ViewUpdate::cross(vector, axis) * sine +
+                            axis * (dot(axis, vector) * (1.f - cosine));
+                    };
+                    auto rotateFrameAroundAxis = [&](FrameTransform& frame, V axis, float angleDegrees) {
+                        for (V& basis : frame.axis)
+                            basis = rotateVectorAroundAxis(basis, axis, angleDegrees);
+                    };
+                    hoseAimFrame = cameraFrame;
+                    constexpr float radiansToDegrees = 57.29577951308232f;
+                    const float hosePitchDegrees = pitch * radiansToDegrees;
+                    const float hoseYawDegrees = -(yaw - playerHoseStage.spawnYaw) * radiansToDegrees;
+                    rotateFrameAroundAxis(hoseAimFrame, hoseAimFrame.axis[0], hosePitchDegrees);
+                    rotateFrameAroundAxis(hoseAimFrame, hoseAimFrame.axis[1], hoseYawDegrees);
                 }
                 const std::string previousTransition = playerHoseStage.transition;
                 int hitModel = -1;
