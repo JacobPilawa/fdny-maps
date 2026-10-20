@@ -1,12 +1,15 @@
 # HoseSpray contact frame gap (2026-10-20)
 
 Status: **the HoseSpray contact gates and contact-vector writer,
-rescue-player `touchhose` allocation, dedicated PlayerHose input path,
+rescue-player `touchhose` allocation, selection/mode/action boundary,
+shared-host 15-section stream and previous-frame terminal contact port,
+dedicated PlayerHose input path,
 PlayerHose-to-WindowFire contact-message route, dedicated hotspot
 cycle/time/win/loss state machine, and configured stage chatter sound names
-are confirmed; the shared rescue-player slot-4 HoseSpray host integration,
-authored/live Construction branch entry, WindowFire `+0x10` authored role,
-stage result consumer, and mission transition remain open. A bounded
+are confirmed. Host item placement/action bindings are provisional; stream
+material, action audio, splash/cooldown effects, attachment record purpose,
+live cadence, authored/live Construction branch entry, WindowFire `+0x10`
+authored role, stage result consumer, and mission transition remain open. A bounded
 decoded-code scan found only a WindowFire `+0x10` clear and no nonzero setter
 in the examined class/manager methods.** This is static
 analysis of the pinned retail `FDNYFirefighter.exe` SHA-256
@@ -178,11 +181,13 @@ and `SearchPlayerOffsets` are retained under `tools/ghidra-scripts/` for
 reproduction. Computed aliases outside this shared-component path and dynamic
 retail parity remain untested.
 
-The shared viewer's Player host now handles the authored `touchhose N` command,
+The shared viewer's Player host handles the authored `touchhose N` command,
 creates the slot-4 HoseSpray state, and rebuilds its attachment record list
-with the source-derived 24-scaled count. The viewer still lacks the retail item
-attachment/frame update, previous-frame contact scan, and `finalize=1`
-FireRescue transaction. The `touchhose N` value is traced into an attachment-list count:
+with the source-derived 24-scaled count. It now ports slot selection mode 3,
+separate action callbacks, the sampled stream and world collision gate, prior-
+frame contact scan, and `finalize=1` FireRescue transaction. The item frame is
+camera-derived and the left-mouse action is a host mapping; retail attachment
+and input bindings remain unresolved. The `touchhose N` value is traced into an attachment-list count:
 `00482780` scales by 24 and divides by item `+0xCB0`, then `00485D20` builds
 that many 0x30-byte records. The list record purpose and argument units remain
 open; see
@@ -193,14 +198,15 @@ cadence, action timing, and retail parity remain unverified.
 
 ## Remaining trace
 
-Port the rescue HoseSpray attachment/frame update, shared stream collision, and
-`finalize=1` transaction into the shared host. Preserve the retail
-phase order: scan FireRescue candidates using the previous stream collision
-result, derive the current source/aim, then refresh the stream collision for
-the next update. Keep this path separate from dedicated PlayerHose's WindowFire
-message route and the extinguisher `finalize=0` path. The authored trigger
-route and argument-to-list count formula are statically mapped; PropModel
-callback scheduling and live delivery timing remain open. Separately establish the authored
+Recover the HoseSpray attachment frame and authored input/action binding;
+trace and port its action sound, cooldown timer, and splash/particle effects.
+Preserve the retail phase order: scan FireRescue candidates using the previous
+stream collision result, derive the current source/aim, then refresh the stream
+collision for the next update. Keep this path separate from dedicated
+PlayerHose's WindowFire message route and the extinguisher `finalize=0` path.
+The authored trigger route and argument-to-list count formula are statically
+mapped; PropModel callback scheduling, live delivery timing, and retail parity
+remain open. Separately establish the authored
 meaning of WindowFire linked `+0x10` and whether an indirect/external writer
 sets it, then trace result presentation and mission transition for the
 registered stage chatter keys. Resolve the Construction alternate path and

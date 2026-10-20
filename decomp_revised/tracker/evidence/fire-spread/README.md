@@ -176,9 +176,13 @@ receiver, hose contact helper, and HoseSpray update are saved beside this note.
 Selected old exports and the hash-tagged old oracle/model are preserved in
 [`reference/legacy-evidence/fire-spread/`](../../../reference/legacy-evidence/fire-spread/README.md).
 The 2026-10-20 contact-frame audit initially left the rescue-player HoseSpray
-contact producer open. The shared Player host now handles the authored
-`touchhose` command and slot-4 attachment-list count; its item frame update and
-contact/dousing transaction remain open. A follow-up maps the embedded shared stream component:
+contact producer open. The shared Player host now handles authored `touchhose`
+mode-2 acquisition, slot-4 mode-3 selection, separate action callbacks, a
+15-section stream, previous-frame collision contact, and terminal FireRescue
+dousing. Its camera-derived nozzle frame and left-mouse action are provisional;
+authored bindings, item attachment composition, resource-3 material, action
+audio, cooldown effects, and particles remain open. See the
+[shared-host port note](rescue_hose_spray_port_2026-10-20.md). A follow-up maps the embedded shared stream component:
 HoseSpray item `+0x608` feeds `0046D1B0`/`0046C5A0`, which write the collision
 point and gate at item `+0x614..+0x624` consumed by `00463EF0`. It also
 connects `touchhose` to HoseSpray slot 4 and traces the distinct dedicated

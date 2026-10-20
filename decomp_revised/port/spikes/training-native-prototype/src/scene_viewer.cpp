@@ -118,8 +118,10 @@ bool jsonNumber(J value) {
 #include "world_startup.h"
 #include "scene_audio.h"
 #include "hose_item_selection.h"
+#include "hose_spray_action.h"
 #include "hose_spray_pose_list.h"
 #include "player_hose_stage.h"
+#include "rescue_hose_spray_stream.h"
 
 namespace {
 #if defined(__APPLE__)
@@ -676,8 +678,16 @@ struct PreviewPlayerLoadout {
             case 1: return "axe";
             case 2: return "extinguisher";
             case 3: return "goggles";
+            case 4: return "hose";
             default: return "none";
         }
+    }
+
+    void syncHoseMode(int previous, HoseItemSelection::Result& result) {
+        if (previous == 4 && items.selected != 4 && items.hoseMode == 3)
+            HoseItemSelection::setMode(items, 1, result);
+        if (items.selected == 4 && items.hoseMode == 2)
+            HoseItemSelection::setMode(items, 3, result);
     }
 
     bool equip(const std::string& name) {
@@ -693,16 +703,21 @@ struct PreviewPlayerLoadout {
             return true;
         }
         item.present = true;
+        const int previous = items.selected;
         HoseItemSelection::Result result;
         HoseItemSelection::selectSlot(items, slot, false, result);
+        syncHoseMode(previous, result);
         return true;
     }
 
     bool select(const std::string& name) {
-        const int slot = slotForName(name);
+        const int slot = lower(name) == "hose" ? 4 : slotForName(name);
         if (slot == 0) return false;
+        const int previous = items.selected;
         HoseItemSelection::Result result;
-        return HoseItemSelection::selectSlot(items, slot, false, result);
+        if (!HoseItemSelection::selectSlot(items, slot, false, result)) return false;
+        syncHoseMode(previous, result);
+        return true;
     }
 
     TouchHoseResult touchhose(int argument) {
@@ -740,6 +755,12 @@ struct PreviewExtinguisher {
     float charge = 1.f;
     bool followerInitialized = false;
     bool hasWorldFrame = false;
+};
+
+struct PreviewRescueHoseSpray {
+    HoseSprayAction::State action;
+    RescueHoseSprayStream stream;
+    uint32_t dousedFireCount = 0;
 };
 
 struct PreviewRoamObstacle {
@@ -3349,6 +3370,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         bool playerIncapacitated = false;
         PreviewPlayerLoadout playerLoadout;
         PreviewExtinguisher extinguisher;
+        PreviewRescueHoseSpray rescueHoseSpray;
         AxeActionCallbacks::State axeActionState;
         ItemViewPose::Result axeItemViewPose;
         bool axeSwingActive = false;
@@ -5379,7 +5401,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     }
                     if (event.key.keysym.sym == SDLK_SPACE) jumpEdge = true;
                     if (event.key.keysym.sym == SDLK_SPACE || event.key.keysym.sym == SDLK_e) useEdge = true;
-                    if (!dedicatedPlayerHose && event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_3) {
+                    if (!dedicatedPlayerHose && event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_4) {
                         const int slot = int(event.key.keysym.sym - SDLK_0);
                         const char* name = PreviewPlayerLoadout::nameForSlot(slot);
                         const std::string previousSelection = playerLoadout.selectedName();
@@ -5779,6 +5801,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             std::vector<V> hoseStreamVertices;
             V hoseStreamEnd{};
             bool hoseStreamVisible = false;
+            float hoseStreamDrawPressure = 0.f;
             if (dedicatedPlayerHose) {
                 const PlayerHoseCameraPose hosePose = playerHoseStage.cameraPose();
                 if (hosePose.valid) {
@@ -5836,6 +5859,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 const bool hoseActionActive = sprayHeld &&
                     playerHoseStage.result == PlayerHoseStage::Result::Running;
                 playerHoseStage.updateStreamPressure(hoseActionActive);
+                hoseStreamDrawPressure = playerHoseStage.streamPressure;
                 // 00465EF0 offsets the source from the entity frame; the aim
                 // direction comes from 00466780's temporary rotated frame.
                 const V hoseStreamStart = cameraFrame.position + cameraFrame.axis[2] * 10.f +
@@ -5880,6 +5904,87 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     activeHint = playerHoseStage.transition;
                     activeHintRemaining = 2.f;
                     std::cout << "PlayerHose: " << playerHoseStage.transition << "\n";
+                }
+            }
+            if (!dedicatedPlayerHose) {
+                const bool hoseSelected = selectedItem == "hose";
+                const int hoseMode = playerLoadout.items.hoseMode;
+                const bool hoseModeUpdates = hoseMode == 1 || hoseMode == 3;
+                if (hoseSelected && hoseModeUpdates && sprayPressed)
+                    HoseSprayAction::begin(rescueHoseSpray.action, now);
+                if (hoseSelected && (sprayReleased || !sprayHeld))
+                    HoseSprayAction::end(rescueHoseSpray.action);
+                if (!hoseSelected)
+                    HoseSprayAction::end(rescueHoseSpray.action);
+
+                if (hoseSelected && hoseModeUpdates) {
+                    // 00463EF0 consumes the component hit from the preceding
+                    // 0046D1B0/0046C5A0 refresh, then the current update refreshes
+                    // the point and padding for its next invocation.
+                    if (rescueHoseSpray.action.active &&
+                        rescueHoseSpray.stream.contactGate) {
+                        for (auto& fire : fires) {
+                            fire.runtime.visual.sizeUpdate(now);
+                            const float influence = FireContact::influence(
+                                fire.runtime.visual.sizes.size,
+                                fire.runtime.visual.position,
+                                rescueHoseSpray.stream.contactPoint,
+                                rescueHoseSpray.stream.contactPadding,
+                                fire.runtime.alpha);
+                            if (influence < 0.01f) continue;
+                            fire.runtime.spray(
+                                dt, influence, true,
+                                [&] { ++rescueHoseSpray.dousedFireCount; },
+                                [&] {
+                                    const char* sound = fireLoopSoundName(
+                                        fire.runtime.soundChoice);
+                                    if (sound && fire.loopSoundStarted) {
+                                        sceneAudio.stopOwned(fire.entity, sound);
+                                        fire.loopSoundStarted = false;
+                                    }
+                                });
+                        }
+                    }
+
+                    rescueHoseSpray.stream.clearContact();
+                    rescueHoseSpray.stream.updatePressure(
+                        rescueHoseSpray.action.active);
+                    // Retail transforms local nozzle point (0,0,8) through
+                    // HoseSpray +0x58 and adds 5 units of transformed aim while
+                    // active. The host uses its camera frame for that item frame
+                    // until attachment composition is recovered.
+                    V source = cameraRelativePoint(cameraFrame, 0.f, 0.f, 8.f);
+                    const V direction = hoseAimFrame.axis[2] * -1.f;
+                    if (rescueHoseSpray.action.active) source = source + direction * 5.f;
+                    const auto hoseCurve = rescueHoseSpray.stream.update(
+                        dt, source, direction);
+                    if (hoseCurve.size() > 1)
+                        hoseStreamVertices.reserve((hoseCurve.size() - 1) * 4);
+                    for (size_t i = 1; i < hoseCurve.size(); ++i) {
+                        if (hoseCurve[i].shape <= 1.f) continue;
+                        hoseStreamVertices.push_back(hoseCurve[i - 1].position);
+                        hoseStreamVertices.push_back(hoseCurve[i - 1].secondaryPosition);
+                        hoseStreamVertices.push_back(hoseCurve[i].secondaryPosition);
+                        hoseStreamVertices.push_back(hoseCurve[i].position);
+                        const V segmentStart = hoseCurve[i - 1].position;
+                        const V segmentDelta = hoseCurve[i].position - segmentStart;
+                        Hit streamHit;
+                        if (collision.tracePoint(segmentStart, segmentDelta, 0x43, 2,
+                                                streamHit)) {
+                            rescueHoseSpray.stream.contactGate = true;
+                            rescueHoseSpray.stream.contactPoint = streamHit.point;
+                            rescueHoseSpray.stream.contactPadding =
+                                rescueHoseSpray.stream.collisionPadding();
+                            hoseStreamEnd = streamHit.point;
+                            hoseStreamVisible = true;
+                            break;
+                        }
+                        hoseStreamEnd = hoseCurve[i].position;
+                        hoseStreamVisible = true;
+                    }
+                    hoseStreamDrawPressure = rescueHoseSpray.stream.pressure;
+                } else if (!hoseSelected) {
+                    rescueHoseSpray.stream.reset();
                 }
             }
             const float cameraCosYaw = std::cos(yaw), cameraSinYaw = std::sin(yaw);
@@ -6765,7 +6870,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
             if (hoseStreamVisible)
-                drawPlayerHoseStream(hoseStreamVertices, playerHoseStage.streamPressure);
+                drawPlayerHoseStream(hoseStreamVertices, hoseStreamDrawPressure);
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
