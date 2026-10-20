@@ -28,11 +28,28 @@ validation passed and eight rescue catalog entries were emitted. No tests,
 interactive run, or retail parity check was performed. See
 [`rescue_quake_port_2026-10-20.md`](../tracker/evidence/scenario-loading/rescue_quake_port_2026-10-20.md).
 
-Next core shared gap: continue the `addbonus` trace before choosing its port
-surface. The bounded audit maps the command to Player method `0044EF10`, a
-global bonus-stat increment, and Player event 7; the score field's HUD consumer
-and legacy reward definitions remain unresolved. Avoid inferring a score popup
-or display until that consumer is mapped.
+## Rescue Bonus Points command and statistic (2026-10-20)
+
+The shared scene host now handles Player `addbonus` commands from the authored
+`bonusitems.evs` bindings and accumulates the signed amount in the existing
+32-bit `Bonus Points` result-stat state. Ghidra maps the command through
+`00451870` to `0044EF10`, then `00486980`; Player event 7 resets the score
+widget animation. The Player update reads the same stat and formats the score
+as `%i` in the widget at Player `+0x480` through `004574C0` and `0048C2A0`.
+
+The widget's exact screen layout, rendering material/font, and animation curve
+remain open; no score popup or placement is guessed. The authored source has a
+duplicate `BONUS63` entry and no inferred `BONUS64`; source bytes are preserved.
+The rescue-all macOS app rebuilt with standalone/package SHA-256
+`272e7ded3656858dde3c6a90533908835048a0e2b4375c18475a55452559aacd`; plist
+validation passed and the build emitted eight rescue choices. This is a
+compile/package check, not a live bonus pickup or retail-parity check. See
+[`bonus_points_port_2026-10-20.md`](../tracker/evidence/scenario-loading/bonus_points_port_2026-10-20.md).
+
+Next core gap: finish tracing the bonus widget's initialization/layout and
+event-7 animation, then connect it to the shared HUD when the placement and
+visibility behavior are source-backed. Continue afterward with the next
+unimplemented cross-mission command/mechanic in the current coverage audit.
 
 ## Dedicated PlayerHose host slice (2026-10-20)
 
@@ -1236,8 +1253,8 @@ the report is observed.
 | `axe_hit_integration_audit` | Check current Axe integration blockers and authored breakables | Read-only review of current viewer, strike/BModel Ghidra notes, Training data | Complete; first-pass sweep is viable; exact presentation pose, callback cadence, and runtime candidate order still need live comparison |
 | `axe_failure_review` | Recheck reported backward pose and inert swing against current ACT and retail traces | Read-only current source, ACT export, saved Ghidra exports; no edits | Complete; corrected timer gate to prior `<0.275` and new `>0.275` crossing; no source-backed facing flip, retail matrix remains open |
 | `rescue_shared_gap_audit` | Select and trace a shared rescue mechanic; verify CameraRescue quake and rendered-camera consumer | Current-hash Ghidra decompilation, authored BSP/EVS scan, `rescue_quake_port_2026-10-20.md`, `rescue_quake.h`, `scene_viewer.cpp` | Complete for state/update and authored command port; final geCamera consumer, callback cadence, cross-system RNG order, and live parity remain open |
-| `script_command_coverage` | Find high-value shared rescue script commands missing from the host | Retail rescue BSP/EVS scan, shared script dispatcher | Complete, read-only; quake is ported; addbonus remains a broad missing command and static literals do not prove runtime triggers |
-| `bonus_award_trace` | Trace Player `addbonus` handling and award effects | `0044EF10`, Player event 7, hash-pinned retail data | Complete, read-only; global bonus statistic increments and Player event 7 is sent; HUD consumer and legacy reward definitions remain open |
+| `script_command_coverage` | Find high-value shared rescue script commands missing from the host | Retail rescue BSP/EVS scan, shared script dispatcher | Complete; quake and Player `addbonus` are ported; static literals do not prove runtime triggers |
+| `bonus_award_trace` | Trace Player `addbonus` handling, result stat, and HUD widget | `0044EF10`, `00458400`, `004574C0`, Player event 7, hash-pinned retail data | Complete for award/stat routing and numeric widget consumer; exact initialization/layout and animation curve remain open |
 | `victim_ai_gap` | Compare recurring RescueBot and debug `runrescuebot` paths against shared host | `rescuebot_update_path_2026-10-15.md`, current shared host, hash-pinned retail code | Complete, read-only; recurring RescueBot is already modeled; debug-only `runrescuebot` is a separate one-shot with no authored calls, and no victim survival countdown was verified |
 | `finalexitloadmap_context_trace` | Determine whether the validated stage key reaches the pending loader unchanged | `00451870_player_script_command_handler.c`, `00450a70_player_finalexitloadmap_fresh.c`, `0042a260_set_pending_level_request_fresh.c`, `0047a1f0_script_command_dispatch.c` | Complete; viewer follows the authored key after the retail remaining-victim gate; checked key vs forwarded context equality and live transition timing remain open |
 | `hud_goggles_trace` | Current hint/HUD and goggles visor/scan path | `scene_viewer.cpp`, `hint_overlay.h`, `goggles_renderer.h`, `goggles_scan.h`, `0044ee50_player_hint_route_fresh.c`, `004564c0_hint_window_constructor_fresh.c`, `00462a60_goggles_visor_setup_fresh.c` | Complete; render paths are in the packaged Training binary; live pixel visibility and target effect attachment remain unverified |

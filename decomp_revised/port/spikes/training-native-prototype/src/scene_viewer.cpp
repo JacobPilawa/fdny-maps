@@ -3485,6 +3485,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         VictimTransactionServices rescueServices;
         std::unique_ptr<VictimTransactions> rescueTransactions;
         std::map<std::string, SourceStatisticRecord> rescueStatistics{
+            {"Bonus Points", {0, 0}},
             {"Rescues", {0, 0}},
             {"Longest Rescue Time", {2, 0}},
             {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}}
@@ -3636,6 +3637,22 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
                 if (verb == "fogdisable") {
                     fogState.disable(scriptRuntime->timeMs);
+                    return true;
+                }
+                if (entityId == playerEntityId && verb == "addbonus") {
+                    char* end = nullptr;
+                    const long long parsed = std::strtoll(arguments.c_str(), &end, 10);
+                    if (end == arguments.c_str() ||
+                        parsed < std::numeric_limits<int32_t>::min() ||
+                        parsed > std::numeric_limits<int32_t>::max()) return false;
+                    while (*end && std::isspace(static_cast<unsigned char>(*end))) ++end;
+                    if (*end != '\0') return false;
+
+                    // 0044EF10 adds its signed int argument to the global
+                    // "Bonus Points" statistic through 00486980. The source
+                    // stores the total as a wrapping 32-bit word.
+                    addSourceStatistic(&rescueStatistics["Bonus Points"],
+                                       static_cast<uint32_t>(static_cast<int32_t>(parsed)));
                     return true;
                 }
                 if (verb == "quake") {
