@@ -42,6 +42,7 @@ python3 "$PROJECT_ROOT/tools/export_victim_feedback_sprites.py"
 python3 "$PROJECT_ROOT/tools/export_hint_font.py"
 python3 "$PROJECT_ROOT/tools/export_fire_sprites.py"
 python3 "$PROJECT_ROOT/tools/export_extinguisher_spray_sprites.py"
+python3 "$PROJECT_ROOT/tools/export_playerhose_stream_sprites.py"
 
 ORIGINAL_ROOT="$PROJECT_ROOT/inputs/original"
 for map_key in $PACKAGE_KEYS; do

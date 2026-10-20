@@ -124,9 +124,11 @@ how that value transfers to rendered vertex width or color. Retail also sends
 current pressure as a WindowFire message payload; the traced timer ignores it
 as a rate input. On collision it sets the douse contact radius from 10 to 40
 using current pressure; the host checks that radius against the selected
-target's world AABB. The host does not yet bind renderer resource ID 3, which
-the retail strip constructor requests, and its opacity remains provisional.
-Exact texture, UV state and rendered-water appearance remain open. The earlier exact
+target's world AABB. Dedicated PlayerHose now binds resource 3 from `hose.rrf`
+and follows the constructor's four-corner UV layout. Its alpha resampling,
+filter/wrap choice, AddPoly flag `0x20`, blending, cadence, and live appearance
+remain provisional. Rescue PlayerRescue HoseSpray stays on the separate preview
+renderer. The earlier exact
 `+0x1834` instruction-text scan finds only the assignment at `00467B8A`; it
 missed the component-relative alias. The host win/loss title is not retail
 result presentation. See

@@ -40,7 +40,9 @@ Focus-pause behavior for absolute-time consumers, SDL tick quantization,
 callback ordering, and live retail parity remain open; see
 [`player_hose_frame_delta_refs_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_frame_delta_refs_2026-10-20.md).
 Retail-to-host input poll cadence, sensitivity changes after image defaults,
-stream material binding, result feedback, and stage return flow remain open.
+stream alpha resampling and material render state, result feedback, and stage
+return flow remain open. The resource-3 texture pair and UV layout are now
+source-backed and bound in the dedicated PlayerHose host.
 The `M_MaxPressure` alias and per-update pressure
 smoothing are now traced and tracked in the host. Retail scales the stored
 aim-velocity vector by `4000 * currentPressure` and records a separate shape scalar
@@ -50,9 +52,10 @@ collision-tested strips, and derives a separate 10-to-40-unit contact padding.
 The shared host now follows its eight-record, 0.75-second ballistic history
 with 25 sampled sections, draws the traced dual-curve quads, and gates
 WindowFire contact by the selected model AABB expanded by that radius. Its
-texture/resource binding and color/alpha remain provisional. Do not treat the host
-build as a live check or retail parity. The full port assumptions and compile
-record are in
+resource-3 pair and four-corner UV layout now follow the retail trace; alpha
+resampling, filter/wrap choice, material flag `0x20`, and blend state remain
+provisional. PlayerRescue HoseSpray stays on its separate preview path. Do not
+treat the host build as a live check or retail parity. The full port assumptions and compile record are in
 [`player_hose_port_host_2026-10-20.md`](../tracker/evidence/scenario-loading/player_hose_port_host_2026-10-20.md).
 
 ### Ballistic PlayerHose stream follow-up (2026-10-20)
@@ -66,8 +69,8 @@ previous-main, previous-secondary, current-secondary, current-main order and
 checks the main curve for collision. The port now draws those dual-curve quads.
 `00469F50` appends each curve point and its associated scalar to parallel
 arrays; its caller passes twice the interpolated sample shape scalar after the
-`<=1.0` cull. Renderer resource ID 3 is traced to a numeric lookup helper, but
-the bitmap, complete UV state, and blend/material flags remain open. The
+`<=1.0` cull. Renderer resource ID 3, its `hose.rrf` bitmap pair, and the exact
+four-corner UV state are now traced and used; blend/material flags remain open. The
 rescue-all macOS app rebuilt with matching standalone/package SHA-256
 `b2d7a1f802065a489636729ddb266a7e39df61bef528230ebe8123375bf77716`; its
 plist passed validation, its catalog reports eight retail rescue choices, and
@@ -84,6 +87,27 @@ deactivation on the next host update. HoseSpray child allocation, render
 flags, final texture binding, size-to-world mapping, authored bindings,
 attachment-record purpose, exact pool cadence, and retail parity remain open. See
 [`rescue_hose_spray_port_2026-10-20.md`](../tracker/evidence/fire-spread/rescue_hose_spray_port_2026-10-20.md).
+
+### PlayerHose resource-3 texture binding (2026-10-20)
+
+Fresh same-hash traces confirm `0046D6B0` requests renderer resource 3 through
+manager lookup `00493D00` → `00493650`. Current `hose.rrf` declares ID 3 as
+`hdstream.bmp` plus `hdstream_a.bmp`; resource 5 is the separate
+`hosewater.bmp`. `0046C5A0` scrolls U by `-delta*6`, with the four
+source-ordered vertices using `(u,0)`, `(u+.15,0)`, `(u,.9)`, and
+`(u+.15,.9)`. The shared PlayerHose renderer now draws this pair with white
+vertex colors; rescue HoseSpray remains on its independent preview renderer.
+The alpha bitmap is 128x64 while the color bitmap is 64x64, so host resampling
+is provisional. Filter/wrap behavior, AddPoly flag `0x20`, blending, component
+render cadence, and live parity remain open. See
+[`playerhose_stream_texture_binding_2026-10-20.md`](../tracker/evidence/scenario-loading/playerhose_stream_texture_binding_2026-10-20.md).
+
+The rescue-all macOS build and bundle match at SHA-256
+`2db429ecb40fd0d16a1a11e9420d0d440691b32aee7570f42ae37dd7251c76df`.
+Its plist validates, its retail rescue catalog has eight entries, and all four
+PlayerHose packages and the resource-3 texture bundle are present. This is a
+compile/package checkpoint only, not an interactive check or retail parity
+result.
 
 The rescue-player HoseSpray contact writer is now traced through the shared
 stream-collision component: HoseSpray embeds it at `+0x608`, and
@@ -778,6 +802,8 @@ body-bearing functions and 287 external entries.
 | `suppression_core_trace` | `004640F0`, `00463EF0`, `00448970`, HoseSpray offsets and shared viewer loadout | Complete, read-only; confirmed terminal HoseSpray finalize path and nonterminal extinguisher path; shared component collision writer and authored trigger are mapped; shared host ports selection/action state, stream collision, previous-frame contact, terminal dousing, effect cooldown/spawn request, and two-key particle track, with attachment frame, particle material/flags, size mapping, and retail cadence open |
 | `touchhose_authored` | Preserved BSP/EVS strings, PropModel contact, named ScriptActor dispatch | Complete, read-only; verified 16 commands in 12 BSPs with full hashes; static authored route reaches PlayerRescue `touchhose`, while runtime cadence remains open |
 | `hosespray_retail_path` | Current-hash HoseSpray constructor, update/contact order, slot-4 command path, and `touchhose N` | Complete, read-only; confirms mode 2 acquisition, mode 3 slot selection, mode 1 deactivation, separate action callbacks, prior-frame collision use and `finalize=1`; N scales an attachment-list record count by 24 and divides by owner `+0xCB0`; record purpose and input bindings unresolved |
+| `hose_material_trace` | PlayerHose stream component material/resource binding | `playerhose_stream_component_consumer_fresh_2026-10-20.c`, `playerhose_strip_construction_fresh_2026-10-20.c`, `playerhose_strip_texture_lookup_fresh_2026-10-20.c`, `hose.rrf` | Complete, read-only; confirmed resource ID 3 lookup, source-ordered polygon setup, white vertex colors, 0.15 U span, six-unit U scroll and V extent 0.9; blend/material state and runtime parity remain open |
+| `mission_result_return_trace` | Static result widget consumer and stage return handoff | `mission_outcome_frontend_consumer_fresh_2026-10-20.c`, `mission_outcome_frontend_handoff_fresh_2026-10-20.c`, result and exit evidence | Complete, read-only; confirmed static result consumer, but result timing/child-5 meaning, loss producer and full return flow remain unresolved; no guessed host transition added |
 
 ## View bob fully removed (2026-10-18)
 
@@ -2313,6 +2339,7 @@ symptom remain open.
 | `hose_curve_trace` | Trace PlayerHose builder, sampled curve records, and runtime sampler | `004661A0`, `00490510`, `004905A0`, `00490D00`, `00490AB0`, `00490BB0`, `004677D0` | Complete; corrected the cache-change return polarity; builder/samplers and +0x194 UserData/HosePath mapping are documented; shared camera rail and anchor-driven hotspot entry are ported; delta and countdown units are seconds with the source pacing/cap ported, while focus-pause mapping, input-poll cadence, and live parity remain open |
 | `hose_anchor_entry` | Trace `00490BB0` record-cache semantics and `004677D0` hotspot entry timing | Current pinned EXE, Ghidra trace, PlayerHose spline and state exports | Complete, read-only; selected record is returned only on change, initial null cache reports the first record, first/D-linked anchors enter hotspot state, and state-4 countdown copies the stored timer budget; exact frame gap remains open |
 | `hose_aim_camera` | Separate PlayerHose view frame, steering frame, and nozzle/stream source point | `00466780`, `004677D0`, `00465EF0`, `00496DD0`, fresh hose exports | Complete, read-only; stream source point uses the entity frame offset, relative-mouse mapping/default scale/signs are traced and ported, and bounded steering rotates a temporary aim frame; input-poll cadence, sensitivity overrides, and live orientation remain open |
+| `hose_mouse_port_audit` | Independently audit relative-mouse signs, scale, rotation order, and pitch guard in the PlayerHose port | `playerhose_mouse_steer_2026-10-20.md`, `player_hose_stage.h`, `scene_viewer.cpp`, pinned retail excerpts | Complete, read-only; confirmed positive X/Y counts increase yaw/pitch by 0.1 degrees and the route-relative guard matches retail's 10-to-170-degree world-up bound; settings, poll cadence, and runtime parity remain open |
 | `hose_effect_trace_audit` | Independently audit rescue HoseSpray deadline and spawn mapping | `00463EF0_fresh.c`, `00463EF0_hose_contact.asm`, `random.h`, `rescue_hose_spray_effects.h`, `scene_viewer.cpp` | Complete, read-only; corrected the direct unsigned deadline gate and `{last,height,first}` velocity order; clock-plus-random deadline and shared RNG order match; allocation and final particle rendering remain unresolved |
 | `spray_template_trace` | `00463700`, `0047D2B0`, `0047D330`, `0047DB10`, `0047D6D0`, `0047D8A0`, `0047D820`, `0047F500`, `0047F960`, `0047FEA0`; HoseSpray renderer | Complete, read-only; corrected the initial non-interpolated scalar to key 0's 3.0 (key 1 is 5.0); `004B9400` calls are numeric conversions, not RNG; shared host now ports one-key-per-update advancement, the 2.0-to-0.0-second key timing, and flag-`0x8` deactivation; quad mapping, final material, exact effective timing, and pool cadence remain open |
 | `camhose_data_binding` | Check whether the four BSP exports and host loader expose `RCS_CamHose` spline inputs | `.local/exports/{city_h,const_h,dock_h,oil_rig_h}`, `scene_property_matrix.csv`, `SCENE_DATA_CONTRACT.md`, `scene_viewer.cpp` | Complete; read-only; confirmed no CamHose BSP entities, then constructor/UserData and HosePath offsets established route binding; CamHose is a separate helper and not the route-node source |

@@ -121,6 +121,7 @@ bool jsonNumber(J value) {
 #include "hose_spray_action.h"
 #include "hose_spray_pose_list.h"
 #include "player_hose_stage.h"
+#include "player_hose_stream_renderer.h"
 #include "rescue_hose_spray_effects.h"
 #include "rescue_hose_spray_stream.h"
 
@@ -1062,6 +1063,41 @@ std::filesystem::path locateExtinguisherSpraySprites(
     }
     throw std::runtime_error("Cannot find rescue.rrf resource-14 particle textures "
                              "under actor_exports/extinguisher-spray or copied game data");
+}
+
+std::filesystem::path locatePlayerHoseStreamSprites(
+        const SceneData& scene, const std::filesystem::path& actorAssets) {
+    auto hasStreamPair = [](const std::filesystem::path& candidate) {
+        return std::filesystem::is_regular_file(candidate / "hdstream.bmp") &&
+               std::filesystem::is_regular_file(candidate / "hdstream_a.bmp");
+    };
+    if (const char* overridePath = std::getenv("FDNY_GAME_DATA_DIR")) {
+        const std::filesystem::path root = overridePath;
+        for (const auto& candidate : {root / "sprites", root / "Sprites",
+                                      root / "Data" / "sprites", root / "Data" / "Sprites"})
+            if (hasStreamPair(candidate)) return candidate;
+        throw std::runtime_error("FDNY_GAME_DATA_DIR has no hose.rrf resource-3 stream texture pair: " +
+                                 root.string());
+    }
+    const auto bundled = actorAssets / "playerhose-stream";
+    if (hasStreamPair(bundled)) return bundled;
+    if (const char* overridePath = std::getenv("FDNY_ACTOR_ASSETS_DIR")) {
+        const auto candidate = std::filesystem::path(overridePath) / "playerhose-stream";
+        if (hasStreamPair(candidate)) return candidate;
+    }
+    for (auto root = scene.root(); !root.empty();) {
+        for (const auto& candidate : {
+                 root / "actor_exports" / "playerhose-stream",
+                 root.parent_path() / "actor_exports" / "playerhose-stream",
+                 root / "inputs" / "original" / "Data" / "sprites",
+                 root / "inputs" / "original" / "Data" / "Sprites"})
+            if (hasStreamPair(candidate)) return candidate;
+        const auto parent = root.parent_path();
+        if (parent == root) break;
+        root = parent;
+    }
+    throw std::runtime_error("Cannot find hose.rrf resource-3 stream textures under "
+                             "actor_exports/playerhose-stream or copied game data");
 }
 
 std::vector<std::string> victimSpawnScripts(J entity) {
@@ -3106,7 +3142,7 @@ void printSpawnCollision(const SceneData& scene, V spawn, Collision& collision) 
     std::cout << "\n";
 }
 
-void drawPlayerHoseStream(const std::vector<V>& vertices, float pressure) {
+void drawRescuePlayerHoseStreamPreview(const std::vector<V>& vertices, float pressure) {
     glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT |
                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_TEXTURE_2D);
@@ -3114,8 +3150,9 @@ void drawPlayerHoseStream(const std::vector<V>& vertices, float pressure) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthMask(GL_FALSE);
-    // Retail submits four-vertex, dual-curve ballistic strips. This host uses
-    // their traced geometry but has not recovered the resource-3 material.
+    // Rescue PlayerRescue HoseSpray has a separate particle path and remains
+    // an untextured preview here; dedicated PlayerHose uses the source-bound
+    // resource-3 renderer below.
     glColor4f(.36f, .74f, 1.f, .3f * std::clamp(pressure, 0.f, 1.f));
     glBegin(GL_QUADS);
     for (const V& point : vertices) glVertex3f(point.x, point.y, point.z);
@@ -3199,6 +3236,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     bool fireRendererLoaded = false;
     ExtinguisherSprayRenderer extinguisherSprayRenderer;
     bool extinguisherSprayRendererLoaded = false;
+    PlayerHoseStreamRenderer playerHoseStreamRenderer;
+    bool playerHoseStreamRendererLoaded = false;
     FireDirectionRenderer fireDirectionRenderer;
     bool fireDirectionRendererLoaded = false;
     GogglesRenderer gogglesRenderer;
@@ -3311,6 +3350,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             extinguisherSprayRenderer.load(
                 locateExtinguisherSpraySprites(scene, actorAssetRoot));
             extinguisherSprayRendererLoaded = true;
+            if (dedicatedPlayerHose) {
+                playerHoseStreamRenderer.load(
+                    locatePlayerHoseStreamSprites(scene, actorAssetRoot));
+                playerHoseStreamRendererLoaded = true;
+            }
             fireDirectionRenderer.load(locateFireDirectionSprites(scene));
             fireDirectionRendererLoaded = true;
             gogglesRenderer.load(locateGogglesSprites(scene));
@@ -4947,9 +4991,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     if (prop.second->renderer) prop.second->renderer->release();
                 fireRenderer.release();
                 extinguisherSprayRenderer.release();
+                if (playerHoseStreamRendererLoaded) playerHoseStreamRenderer.release();
                 fireDirectionRenderer.release();
                 fireRendererLoaded = false;
                 extinguisherSprayRendererLoaded = false;
+                playerHoseStreamRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
                 headlessContext.destroy();
@@ -5024,9 +5070,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     if (prop.second->renderer) prop.second->renderer->release();
                 fireRenderer.release();
                 extinguisherSprayRenderer.release();
+                if (playerHoseStreamRendererLoaded) playerHoseStreamRenderer.release();
                 fireDirectionRenderer.release();
                 fireRendererLoaded = false;
                 extinguisherSprayRendererLoaded = false;
+                playerHoseStreamRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
                 headlessContext.destroy();
@@ -5169,11 +5217,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     if (prop.second->renderer) prop.second->renderer->release();
                 fireRenderer.release();
                 extinguisherSprayRenderer.release();
+                if (playerHoseStreamRendererLoaded) playerHoseStreamRenderer.release();
                 fireDirectionRenderer.release();
                 gogglesRenderer.release();
                 hintOverlay.release();
                 fireRendererLoaded = false;
                 extinguisherSprayRendererLoaded = false;
+                playerHoseStreamRendererLoaded = false;
                 fireDirectionRendererLoaded = false;
 #if defined(__APPLE__)
                 headlessContext.destroy();
@@ -5267,12 +5317,14 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (prop.second->renderer) prop.second->renderer->release();
             fireRenderer.release();
             extinguisherSprayRenderer.release();
+            if (playerHoseStreamRendererLoaded) playerHoseStreamRenderer.release();
             fireDirectionRenderer.release();
             if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
             if (victimPickupHudRendererLoaded) victimPickupHudRenderer.release();
             hintOverlay.release();
             fireRendererLoaded = false;
             extinguisherSprayRendererLoaded = false;
+            playerHoseStreamRendererLoaded = false;
             fireDirectionRendererLoaded = false;
             oxygenHudRendererLoaded = false;
 #if defined(__APPLE__)
@@ -6887,8 +6939,14 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                         fogState, lightStyles, cameraFrame.position, yaw, pitch, width, height,
                         performanceAudit ? &renderCounters : nullptr,
                         &cameraFrame);
-            if (hoseStreamVisible)
-                drawPlayerHoseStream(hoseStreamVertices, hoseStreamDrawPressure);
+            if (hoseStreamVisible) {
+                if (dedicatedPlayerHose)
+                    playerHoseStreamRenderer.draw(
+                        hoseStreamVertices, playerHoseStage.streamClockSeconds);
+                else
+                    drawRescuePlayerHoseStreamPreview(
+                        hoseStreamVertices, hoseStreamDrawPressure);
+            }
             drawPreviewPropModels(propModels, propModelAssets);
             const auto performanceSceneEnd = performanceAudit
                 ? PerformanceClock::now() : PerformanceClock::time_point{};
@@ -7014,6 +7072,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (prop.second->renderer) prop.second->renderer->release();
         if (fireRendererLoaded) fireRenderer.release();
         if (extinguisherSprayRendererLoaded) extinguisherSprayRenderer.release();
+        if (playerHoseStreamRendererLoaded) playerHoseStreamRenderer.release();
         if (fireDirectionRendererLoaded) fireDirectionRenderer.release();
         if (gogglesRendererLoaded) gogglesRenderer.release();
         if (oxygenHudRendererLoaded) oxygenHudRenderer.release();
@@ -7031,6 +7090,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             if (prop.second->renderer) prop.second->renderer->release();
         fireRenderer.release();
         extinguisherSprayRenderer.release();
+        if (playerHoseStreamRendererLoaded) playerHoseStreamRenderer.release();
         fireDirectionRenderer.release();
         gogglesRenderer.release();
         oxygenHudRenderer.release();
