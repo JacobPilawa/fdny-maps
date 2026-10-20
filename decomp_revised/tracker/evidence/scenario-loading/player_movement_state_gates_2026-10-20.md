@@ -56,28 +56,41 @@ name and constructor default have not been established, so it should not be
 treated as movement speed.
 
 The code converts movement input to a vector, applies the selected vector cap,
-smooths toward it, calls `0044EA90` only when state is not 5, byte
-`ESI+0x240` is clear, byte `ESI+0x58` (root `+0x198`) is nonzero, and the
-movement magnitude exceeds the small epsilon at `004E1C10`. The helper uses a
-100 ms gate and increments `Total Steps` after selecting an index different
-from Player `+0x558`. The `FootStep1`–`FootStep4` sound list is appended during
-Player initialization. `+0x558` is initialized to zero, but a static
-instruction scan found no later writer; its role as a prior-selection field is
-unproven. Selection uses the shared RNG through `00498B30`/`00404AC0`, so
-retry count affects the global random stream. Byte `+0x380` is initialized
-clear, set by the `DBG_TOGGLE_SPECT` action path, and cleared by the `JUMP`
-action path. Byte `+0x198` gates the Total Steps helper, but its initial value
-and meaning remain unresolved. Live callback cadence is also open. See
-[`player_movement_gate_bytes_2026-10-20.md`](player_movement_gate_bytes_2026-10-20.md)
-and the accompanying Total Steps callsite audit in
-`mission_stat_producers_elapsed_hose_2026-10-20.md`.
+smooths toward it, and calls `0044EA90` only when state is not 5, byte
+`ESI+0x240` (root `+0x380`) is clear, byte `ESI+0x58` (root `+0x198`) is
+nonzero, and the movement magnitude exceeds the small epsilon at `004E1C10`.
+The helper uses a 100 ms gate and increments `Total Steps` after selecting an
+index different from Player `+0x558`. The `FootStep1`–`FootStep4` sound list
+is appended during Player initialization. `+0x558` is initialized to zero,
+but a static instruction scan found no later writer; its role as a
+prior-selection field is unproven. Selection uses the shared RNG through
+`00498B30`/`00404AC0`, so retry count affects the global random stream. Byte
+`+0x380` is initialized clear, set by the `DBG_TOGGLE_SPECT` action path, and
+cleared by the `JUMP` action path.
+
+The host now advances the source-shaped head-motion Y history after its Player
+step and reads the previous sample-pattern flag before the next step. Its
+`PlayerFootsteps` scheduler applies the 100 ms clock gate, four-sound
+random-range/retry selector, `Total Steps` increment, and `FootStep1`–`4`
+request. The source's first `+0x198` value, any computed writer to `+0x558`,
+shared RNG interleaving, +0x380 debug action path, and live callback cadence
+remain unresolved. The host begins with the +0x198-equivalent false and
+`+0x558` rejection index zero. See
+[`player_total_steps_and_headmotion_2026-10-20.asm`](player_total_steps_and_headmotion_2026-10-20.asm).
+
+The follow-up Player frame trace confirms that `0044F340` refreshes the
+locomotion frame's up axis as world `+Y`; a later indirect setter derives the
+third basis column from selected-item view/aim data. Frame position and parent
+are untouched during this refresh. Runtime equipment vector, final axes, and
+outer update cadence remain open. See
+[`player_locomotion_frame_axes_2026-10-20.md`](player_locomotion_frame_axes_2026-10-20.md).
 
 ## Shared host comparison and limits
 
 The shared scene host now raises its default DifficultyLevel-1 pitch clamp
 from 40 to 45 degrees while the `climbing` state adapter is active, matching
-the retail state-5 threshold branch. The separate retail `+0x380` flag remains
-unrepresented. The host `Player::step` in
+the retail state-5 threshold branch. The separate retail `+0x380` action
+remains unrepresented. The host `Player::step` in
 `port/spikes/training-native-prototype/src/core.h` still uses synthetic
 `ground`, `crouch`, and `climbing` flags; fixed 400/260 movement-vector caps; a
 camera-pitch substitute for the `+0x3320` movement transform; and a local
@@ -85,9 +98,9 @@ collision/integration loop. Difficulty selection beyond the fresh-profile
 default, byte `+0x380`, and state 6 are not represented. Do not infer retail
 motion parity from the current `Player::step`.
 
-Next, resolve the meaning/default of `+0x3310`, runtime updates and world axes
-of the `+0x3320` frame, indirect frame-setter arguments, and source movement
-input scale before changing host movement vectors. The pitch/yaw fields
+Next, resolve the meaning/default of `+0x3310`, runtime axes and indirect
+equipment-vector argument of the `+0x3320` frame, and source movement input
+scale before changing host movement vectors. The pitch/yaw fields
 `+0x32F0/+0x32F4`, core frame/vector helpers, and smoothing exponent
 relationship are mapped. Continue tracing initialization/writers for the
 `+0x198` Total Steps gate, then separate source movement from host

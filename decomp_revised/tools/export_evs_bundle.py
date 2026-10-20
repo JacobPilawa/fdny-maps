@@ -144,6 +144,10 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # keep it in every scene bundle because the shared audio device loads its
     # sample set from the first scene opened in a session.
     wanted.add("HoseSpray")
+    # Player initialization appends FootStep1-4 to its shared sound list;
+    # 0044EA90 selects one at runtime outside EVS. Keep all four in every
+    # scene package because SceneAudio loads only the first package's samples.
+    wanted.update(("FootStep1", "FootStep2", "FootStep3", "FootStep4"))
     # Dedicated PlayerHose emits these one-entry chatter sets at the first
     # hotspot and terminal win/loss state transitions.
     wanted.update(("RC_HoseLvlStart0", "RC_HoseLvlWin0", "RC_HoseLvlLose0"))

@@ -58,6 +58,8 @@ bool jsonNumber(J value) {
 
 #include "core.h"
 #include "view_update.h"
+#include "head_motion.h"
+#include "player_footsteps.h"
 #include "victim_roam_motion.h"
 #include "bmodel_contact.h"
 #include "extended.h"
@@ -3523,6 +3525,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             sampleBModelState(bmodel, collision);
         const uint32_t gameplayStart = SDL_GetTicks();
         Random gameplayRandom(gameplayStart);
+        PlayerFootsteps playerFootsteps;
+        HeadMotion playerHeadMotion;
         if (!inspectOnly && (!interactionCheck || rescueDiagnostic)) {
             logRescueStage("loading FireRescue actors");
             fires = loadPreviewFires(scene, collision, gameplayRandom, gameplayStart, fireDividerCycle);
@@ -3706,6 +3710,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             {"Air Time", {0, 0}},
             {"Bonus Points", {0, 0}},
             {"Jumps", {0, 0}},
+            {"Total Steps", {0, 0}},
             {"Objects Thrown", {0, 0}},
             {"Rescues", {0, 0}},
             {"Gallons Sprayed", {0, 0}},
@@ -6052,6 +6057,23 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 !dedicatedPlayerHose && !playerIncapacitated &&
                 !passoutRecoveredThisFrame && rescueState.exits.messageGate != 2;
             if (hostPlayerSteppedThisFrame) {
+                // 0045331A consumes the preceding 0044F340 sample-pattern
+                // byte before this pass refreshes it later in the update.
+                // The +0x380 debug latch is not exposed by the host and remains
+                // clear in this adapter.
+                const bool playerInputMoving =
+                    std::hypot(double(forward), double(side)) > 1e-7;
+                const bool stepEligible = !player.climbing &&
+                    playerHeadMotion.upwardTrend && playerInputMoving;
+                const int footstep = playerFootsteps.update(
+                    now, 4, stepEligible, gameplayRandom);
+                if (footstep >= 0) {
+                    addSourceStatistic(&rescueStatistics["Total Steps"], 1);
+                    sceneAudio.playOwned(playerEntityId,
+                        "FootStep" + std::to_string(footstep + 1),
+                        player.p, player.p, yaw, 1);
+                }
+
                 // The source movement update returns after its timeout write.
                 const bool acceptedJump = player.step(dt, forward, side, yaw, jumpDown,
                     jumpEdge && !usingConsole, crouchEdge, collision, pitch);
@@ -6060,6 +6082,18 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     sceneAudio.playOwned(playerEntityId, "Jump", player.p, player.p,
                                          yaw, 1);
                 }
+                // 0044F340 follows the movement/collision work. Its local
+                // minimum in the Y sample history becomes the +0x198 gate
+                // read by the next Player pass. The callback cadence and
+                // initial retail byte value are still unresolved.
+                const int playerState = player.climbing ? 5 : (player.crouch ? 4 : 3);
+                playerHeadMotion.update(HeadMotion::viewMode(
+                    playerState, player.collisionLatch, playerInputMoving), dt);
+            } else if (!dedicatedPlayerHose && playerIncapacitated &&
+                       !passoutRecoveredThisFrame && rescueState.exits.messageGate != 2) {
+                // State 6 takes a separate path but still calls 0044F340.
+                playerHeadMotion.update(HeadMotion::viewMode(
+                    6, player.collisionLatch, false), dt);
             }
             // Player::Think calls the RescueBot callback after movement and
             // collision. Host frame cadence remains provisional.

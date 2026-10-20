@@ -72,10 +72,18 @@ playback. Player `+0x558` is initialized to zero at `0044DDE6`, and a static
 instruction scan found no later writer, so the compared value is not
 established as a previous-selection field. The range helper `00498B30` consumes
 the shared generator through `00404AC0`; each retry consumes another global
-random value. The host has no matching scheduler or sound samples, so this
-transaction remains unported. This source-backed producer does not prove that
-each increment represents a literal physical step. The byte meanings, selector
-field update, and live callback cadence remain unresolved. See
+random value. The shared rescue loop now samples the preceding `+0x198` value,
+applies the 100 ms clock check and shared-RNG selection/retry, increments
+`Total Steps`, and requests the chosen 2D resource. `0044F340` calls
+`00491140` to update `+0x198` from a three-sample head-motion Y local minimum
+after this movement pass's gate read. The host applies that ordering through
+`PlayerFootsteps` and `HeadMotion`; evidence is in
+[`player_total_steps_and_headmotion_2026-10-20.asm`](player_total_steps_and_headmotion_2026-10-20.asm).
+This source-backed producer does not prove that each increment represents a
+literal physical step. The first `+0x198` value remains unknown; host false is
+a deterministic adapter. `+0x558` is initialized to zero and no later static
+direct writer was found, but computed writers are not excluded. Host RNG
+interleaving and Player callback cadence remain provisional. See
 [`player_movement_state_gates_2026-10-20.md`](player_movement_state_gates_2026-10-20.md).
 
 `Jumps` at `0044E990` is gated by a 500 ms clock comparison. State `+0x18C`

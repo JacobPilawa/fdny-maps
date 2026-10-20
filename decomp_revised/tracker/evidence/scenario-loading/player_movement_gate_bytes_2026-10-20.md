@@ -35,17 +35,27 @@ debug action path.
 00453701  MOV dword ptr [ESI + 0x4c],0x3 ; root state +0x18C
 ```
 
-## Player `+0x198`: Total Steps gate, initial value unresolved
+## Player `+0x198`: Total Steps gate, writer resolved; initial value unresolved
 
 In the movement block, `[ESI+0x58]` aliases Player root byte `+0x198`. At
 `00453306` it is read after the state-not-5 and `+0x380`-clear checks; a
 nonzero value permits the `0044EA90` Total Steps/footstep helper call at
 `0045331A` when the movement vector also passes its magnitude threshold.
 Player construction calls `00491460(root+0x198)`. The inspected initializer
-and constructor chain do not explicitly assign byte zero of that subobject;
-allocation defaults or writes through another alias/base path remain
-possible. Its meaning and initial value are not established, so the gate
-should remain provisional in the host.
+and constructor chain do not explicitly assign byte zero of that subobject.
+The byte is later written by `00491140`, called from `0044F340`: it is cleared,
+then set when the middle of three successive head-motion Y samples is strictly
+lower than both neighbors. Thus the writer and sample predicate are known;
+the gameplay interpretation as a step/trough signal is based on its use by the
+`Total Steps` gate. The first/default value remains unresolved because the
+constructor omits the byte write and no allocator guarantee has been shown.
+
+The movement pass reads the existing byte at `00453306..00453312`, calls
+`0044EA90` at `0045331A`, and only later calls `0044F340` at `00453860` to
+refresh it. This makes the gate a prior-callback sample state, subject to the
+still-unknown recurring callback schedule and object reuse behavior. The host
+uses a deterministic false initial byte and updates the sample predicate after
+its Player step.
 
 ```text
 00453306  MOV AL,byte ptr [ESI + 0x58] ; root +0x198
@@ -54,7 +64,8 @@ should remain provisional in the host.
 0045331A  CALL 0x0044ea90             ; Total Steps / footstep producer
 ```
 
-This byte is only proven to gate that callsite; the evidence does not establish
-that it is a dedicated “footstep enabled” field. Continue the writer and
-constructor audit before assigning a gameplay meaning.
+The byte is only proven to gate the `Total Steps` callsite and to be set from
+the sample pattern above. The sample pattern is exact; the semantic label is
+provisional. The host does not currently render the HeadMotion output into the
+camera, following the earlier camera-bob removal direction.
 

@@ -43,8 +43,9 @@ struct FrameTransform {
 // timed-transition caller; caller-supplied fractions/endpoints remain inputs.
 struct ViewUpdate {
  using E=Extended;
- // Fixed eye camera for playable hosts. No movement phase, breathing, item
- // animation, or follower is allowed to add motion to this frame.
+ // Fixed eye camera for the playable host. HeadMotion is updated separately
+ // for Player gameplay gates, but the user's prior camera-bob removal remains
+ // in force until its presentation scale is explicitly revisited.
  static FrameTransform directEye(V position,float yaw,float pitch,bool crouching){
   FrameTransform frame;
   const float cy=std::cos(yaw),sy=std::sin(yaw);
