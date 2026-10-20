@@ -79,15 +79,23 @@ Fresh read-only decompilations of the called vector helpers are in
 `0044BED0` selects BModel endpoint `+0x1FC..+0x204` when selector byte `+0x220`
 is zero, or endpoint `+0x1F0..+0x1F8` when nonzero. `0043B2D0` subtracts the
 Player movement vector at `+0x338C` from that selected endpoint. `0049E770`
-copies Player frame `+0x3364` vector `+0x1C..+0x24`, which the held-target trace
-identifies as its third basis column. `00497AA0` takes the normalized dot-product
-angle between that frame vector and the endpoint displacement. It compares the
+copies movement-subobject `+0x3364`, which is Player root `+0x34A4`, the Player
+view follower's vector at `+0x1C..+0x24`. The held-target writer uses a distinct
+Player-root `+0x24` frame returned by the vtable slot at root `+0x18`; it does
+not identify the throw-gate vector. The Player update calls `0044F340` at
+`00453860` before its held-pointer check at `0045387B`; `0044F340` refreshes the
+view follower with `00483720`. This ties the gate to the follower refreshed by
+that Player update pass, but not to the visible Genesis camera transform or an
+outer Player callback schedule. The raw instruction window is recorded in
+[`player_throw_view_follower_refresh_2026-10-20.asm`](player_throw_view_follower_refresh_2026-10-20.asm).
+`00497AA0` takes the normalized dot-product angle between the follower vector
+and the endpoint displacement. It compares the
 result with `004E169C`, verified as binary32 `10.0`. Angles strictly below 10
 degrees take the throw path; equality, larger angles, and unordered comparisons
 go to a side-selection branch. There is no intervening button or action-edge
 check, so the angle gate runs on every Player update that reaches this
-held-pointer branch. The source vector meanings are now mapped; the host
-camera-to-Player frame relation and Player callback cadence remain unresolved.
+held-pointer branch. The host still substitutes its camera basis; the follower
+to camera mapping and Player callback cadence remain unresolved.
 
 The throw path calls `0043B580`, which stores the current clock on the BModel,
 sets trajectory acceleration to -384, computes duration from endpoint distance
@@ -104,8 +112,13 @@ The Player action callback is joined to the Axe subobject. Status 3 calls
 `00455BC0`, which enables the ActorInfo and resets its motion state. Status 4
 calls `0047DC90` on Player `+0xA94` with false; this disables the ActorInfo and
 its child. The Player loadout evidence identifies this subobject as the Axe
-actor. The shared renderer now mirrors these two states. Normal equipment
-selection reactivation remains untraced. The Player constructor registers
+actor. The shared renderer now mirrors these two states. Existing-Axe equip
+sets root `+0x1FC`; normal slot activation calls the Axe `+0x3C` callback and
+then Player status 5 for the inventory HUD. It does not call status 3 or touch
+Player `+0xA94`, so the retail link that makes this separate actor visible
+again after status 4 remains unresolved. See
+[`axe_reactivation_followup_2026-10-20.md`](axe_reactivation_followup_2026-10-20.md).
+The Player constructor registers
 `ThrowObject` on the Axe subobject, but the release-side sound dispatch was not
 found; the BModel separately registers `ThrowObjectEnd` on its root `+0x124`
 sound instance. The fresh status-helper excerpts are in
@@ -145,9 +158,14 @@ the result at held BModel `+0x224` before correction. Its exact evidence and
 remaining frame/cadence uncertainties are in
 [`bmodel_player_target_writer_fresh_2026-10-20.c`](bmodel_player_target_writer_fresh_2026-10-20.c).
 The shared equipment renderer mirrors status 3 enabling/resetting and status 4
-disabling the Axe subobject. Ordinary equipment-selection reactivation is not
-traced. Player frame/callback cadence adapters and data-dependent drop/timer
-effects remain port work. Static authored candidate coverage is now
+disabling the Axe subobject. Existing-Axe equip sets item root `+0x1FC`, and
+ordinary slot activation calls the Axe `+0x3C` callback followed by Player
+status 5 for the inventory HUD. It does not call status 3 or touch Player
+`+0xA94`, so the retail link that makes this separate actor visible again after
+status 4 remains unresolved. See
+[`axe_reactivation_followup_2026-10-20.md`](axe_reactivation_followup_2026-10-20.md).
+Player frame/callback cadence adapters and data-dependent drop/timer effects
+remain port work. Static authored candidate coverage is now
 accounted for across every preserved BSP; it does not establish runtime
 reachability or which objects participate in rescue objectives.
 
@@ -156,10 +174,16 @@ reachability or which objects participate in rescue objectives.
 `Objects Thrown` now increments at the shared throw transaction, and the
 source-shaped trajectory, completion event, and end-sound request are wired to
 the shared BModel scene update. The source block evaluates its angle gate on
-each held Player update without a separate input edge. The host substitutes its
-camera basis for the embedded Player frame and samples the callback once per
-frame; both mappings remain provisional. `Jumps` still needs the retail input,
-state, and contact-latch route mapped to the host movement transaction.
+each held Player update without a separate input edge. The host substitutes
+its camera basis for the throw gate's Player view follower at root `+0x34A4`
+and for the separate held-target frame at root `+0x24`; it samples the callback
+once per host frame. Both adapters and the host cadence remain provisional.
+`Jumps` still needs the retail input, state, and contact-latch route mapped to
+the host movement transaction.
+The local retail Player route is root slot `+0x14` → wrapper `0044FE20` →
+`00470740(Player+0x140)` → movement slot zero → `00452570`; the recurring outer
+manager and cadence remain unknown. See
+[`player_update_dispatch_2026-10-20.asm`](player_update_dispatch_2026-10-20.asm).
 `Total Steps` remains coupled to the 100 ms footstep-sound variant scheduler documented in
 [`mission_stat_producers_elapsed_hose_2026-10-20.md`](mission_stat_producers_elapsed_hose_2026-10-20.md).
 This is static decompilation evidence only: no gameplay check, build, or retail

@@ -51,9 +51,9 @@ void __thiscall FUN_0049e770(void *this, undefined4 *param_1)
 
 /* Player update 0x00452570 at 0x00453930 selects the BModel endpoint, then
  * 0x0045393B subtracts the Player movement vector at +0x338C. The subsequent
- * 0x0045394E call copies Player frame +0x3364's vector at +0x1C, previously
- * identified as its third basis column in
- * bmodel_player_target_writer_fresh_2026-10-20.c. Both values are passed to
- * ComputeVectorAngleDegrees at 0x00453964; see
- * 00497aa0_compute_vector_angle_degrees_fresh.c.
+ * 0x0045394E call copies movement-subobject +0x3364 = Player-root +0x34A4,
+ * the Player view follower's vector at +0x1C. This is distinct from the
+ * held-target writer's Player-root +0x24 frame, returned by the vtable slot
+ * at root +0x18. Both values are passed to ComputeVectorAngleDegrees at
+ * 0x00453964; see 00497aa0_compute_vector_angle_degrees_fresh.c.
  */

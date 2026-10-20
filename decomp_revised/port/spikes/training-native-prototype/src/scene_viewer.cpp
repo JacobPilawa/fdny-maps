@@ -6977,17 +6977,20 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     extinguisher.localPose, extinguisher.follower);
             }
             if (playerHeldBModel) {
-                // Player+0x338C supplies the Player origin; the source writer
-                // adds frame column 3 * 90 and column 2 * -60. The camera
-                // basis is the current host adapter for that Player frame.
+                // The target writer uses the Player root +0x24 frame returned
+                // by vtable slot +0x18, adding its column 3 * 90 and column 2
+                // * -60 to Player movement position +0x338C. The camera basis
+                // is a provisional host adapter for this separate frame.
                 const V heldTarget = player.p + cameraFrame.axis[2] * 90.f -
                                      cameraFrame.axis[1] * 60.f;
                 applyHeldBModelTarget(*playerHeldBModel, collision, heldTarget, dt);
 
-                // The retail Player update evaluates this strict angle gate on
-                // every held-object update, without an input-edge check. Its
-                // Player frame is not yet proven equivalent to this camera
-                // basis, so this adapter remains provisional.
+                // The retail Player update refreshes its view follower in
+                // 0044F340, then evaluates this strict angle gate on every
+                // held-object update without an input-edge check. The gate
+                // reads follower root +0x34A4, not the held-target frame above.
+                // This camera-basis substitution remains provisional: its
+                // relation to the follower's Genesis world transform is open.
                 const V selectedEndpoint = playerHeldBModel->liftableEndpointSelector == 0
                     ? playerHeldBModel->liftableEnd : playerHeldBModel->liftableStart;
                 if (bmodelThrowAngleDegrees(selectedEndpoint, player.p, cameraFrame.axis[2]) < 10.f &&

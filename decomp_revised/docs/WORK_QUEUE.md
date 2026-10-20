@@ -54,7 +54,10 @@ is advanced inside the shared BModel update after PATH sampling and before
 timed commands; completion applies/flips the endpoint, dispatches `drop`, and
 requests `ThrowObjectEnd`. Player status 3 enables/resets the Axe subobject and
 status 4 disables it; the shared first-person renderer now follows those
-observed changes. Normal equipment-selection reactivation is not traced. The post-`drop`
+observed changes. Existing-Axe inventory equip sets root `+0x1FC`; ordinary
+selection activates the item and requests Player status 5 for the HUD, without
+calling status 3 or touching Player `+0xA94`. Whether another runtime route
+reenables that actor after status 4 remains unresolved. The post-`drop`
 `004A11A0` call is
 verified as BModel sound playback (root `+0x124`, initialized by `004A13A0`);
 the ScriptActor timed-command array is a separate root `+0x148` pointer array
@@ -67,10 +70,12 @@ command. The BModel slot `+0x14` update route is known locally, but a recurring
 external caller/cadence has not been identified: the inspected `00429520`
 owner-manager pass invokes slot zero, while its contact traversal calls BModel
 slot `+0x48`; a 53-candidate literal `[reg+0x14]` scan does not exclude
-computed dispatch elsewhere. The throw transaction's status 4 calls
-`0047DC90` on Player `+0xA94` with false, which hides the Axe subobject; its
-high-level action name, shared-host visual state, and release-side sound
-request remain unresolved.
+computed dispatch elsewhere. Player action status 3 enables/resets the Axe
+subobject and status 4 disables it; the shared renderer mirrors those observed
+states. The inventory-side Axe gate is mapped and ported, but the link that
+reenables Player `+0xA94` after status 4 is unresolved; the Player-side
+`ThrowObject` sound path also remains unresolved. The BModel-side `ThrowObjectEnd`
+request is connected at trajectory completion.
 `0043D330` also sets first-child model flags bit `0x10` at `+0xCC` whenever
 BModel state `+0x25C` is nonzero. Hash-pinned Genesis collision traces show
 that both swept-hull and point/ray scans skip a model with this bit set. The
@@ -82,15 +87,30 @@ no retail renderer consumer has been established for bit `0x10`.
 A fresh raw Player update slice at `0045387B..00453A68` shows that a non-null
 held-object pointer immediately enters target and angle calculation. The
 strict angle-under-10 branch starts the throw and increments `Objects Thrown`;
-there is no button or action-edge check in that block. Player callback cadence
-remains unknown. Fresh helper decompilation identifies the first vector as the
-selected BModel endpoint minus Player movement position `+0x338C`, and the other
-as the Player frame's third basis column. The angle is computed between these
-vectors; the relation between that embedded frame and the host camera basis is
-still unresolved. The next high-value gaps are resolving the Player frame and
-callback schedule, tracing normal Axe reactivation during equipment selection,
-and determining whether dynamic `drop` registrations add
-effects or timed-command changes. A scan of all 21
+there is no button or action-edge check in that block. The local Player route
+is root slot `+0x14` → wrapper `0044FE20` → `00470740(Player+0x140)` → movement
+slot zero → `00452570`; the recurring outer manager and cadence remain unknown.
+Fresh helper decompilation identifies the first vector as the
+selected BModel endpoint minus Player movement position `+0x338C`. In the angle
+gate, ESI is the Player movement subobject at root `+0x140`; `[ESI+0x3364]`
+therefore addresses Player root `+0x34A4`, whose constructor initializes the
+view follower. The gate compares against that follower's third basis column at
+`+0x1C`. This is distinct from the held-target writer's root `+0x24` frame,
+returned by Player vtable slot `+0x18`; keep the two bases separate. The host
+still uses its camera basis as a provisional approximation of the view
+follower basis. The relation between the follower and rendered Genesis camera,
+and Player callback cadence, remain unverified. The Player update calls
+`0044F340` at `00453860`; that helper refreshes follower root `+0x34A4` with
+`00483720` before the held-pointer check. This proves same-pass ordering, not
+the outer callback schedule or equality with the Genesis camera transform. See
+[`equipment_view_frame_trace_2026-10-17.md`](../tracker/evidence/scenario-loading/equipment_view_frame_trace_2026-10-17.md),
+[`player_throw_view_follower_refresh_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_throw_view_follower_refresh_2026-10-20.asm),
+and [`player_update_dispatch_2026-10-20.asm`](../tracker/evidence/scenario-loading/player_update_dispatch_2026-10-20.asm), plus
+[`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](../tracker/evidence/scenario-loading/00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
+The next high-value gaps are resolving the follower/camera relation and Player
+callback schedule, determining how Player `+0xA94` becomes visible after status
+4, and checking whether dynamic `drop` registrations add effects or
+timed-command changes. A scan of all 21
 preserved EVS files and all `S_Script*` fields in the 17 retail BSP exports found
 no literal `drop` binding; dynamic runtime registration remains unexcluded.
 Keep the current contact, collision, and frame adapters provisional;
@@ -115,6 +135,9 @@ and
 | `bmodel_first_child_flag` (Luna) | Retail `0043D330` flag writer and Genesis collision consumers; `genesis_collision_functions.c`, BModel route evidence, `scene_viewer.cpp` | Complete; bit `0x10` at first child `+0xCC` excludes that model from swept-hull and point/ray queries while state `+0x25C` is nonzero. Renderer use remains unproven. No edits |
 | `throw_release_gate` (Luna) | Player held-object gate in `00452570`; producer, target-writer, and angle-helper evidence | Complete; a non-null held pointer reaches the strict angle-under-10 branch on each Player update, without an action-edge check. Vector semantics and callback cadence remain unresolved. No edits |
 | `throw_drop_event_route` (Luna) | Throw-completion event effects; `0043D330`, `004705B0`, and authored EVS/BSP searches | Complete; trajectory `drop` dispatch does not directly mutate Player carry state or remove timed commands. No authored binding was found in preserved data; runtime registration is unexcluded. No edits |
+| `view_frame_identity` (Luna) | Distinguish Player held-target frame from throw-gate frame; frame-helper evidence and current update window | Complete, read-only; throw gate reads view follower root `+0x34A4`, refreshed before the gate; held-target writer reads root `+0x24`. Numeric relation to rendered Genesis camera remains open. No edits |
+| `axe_reactivation_trace` (Luna) | Existing Axe equip, selection gate, action status, and child update state after status 4 | Complete, read-only; existing branch `0044D080` enables root `+0x1FC`; ordinary selection calls item `+0x3C` then Player status 5. It does not call status 3 or touch Player `+0xA94`; post-throw visibility route remains open. No edits |
+| `player_update_cadence` (Luna) | Player and BModel root slot `+0x14` recurring update callers/cadence; `player_update_dispatch_2026-10-20.asm` | Complete, read-only; local Player/BModel routes to `00470740` and callback bodies are mapped, but recurring manager caller and frame ordering remain unproven. No edits |
 
 ## Boat A type-5 Exploder trace (2026-10-20)
 
@@ -216,10 +239,12 @@ preserved BSPs found 17 static mode-1 candidates among 18 liftable BModels. The
 same trace maps held-child transform correction through `0043BD90` and
 `0043BAA0`. A fresh raw-instruction pass located the Player-side writer at
 `00453902..00453913`: held target `+0x224` is the movement-subobject vector
-`+0x338c`, plus 90 times the embedded frame's third basis column, minus 60
-times its second basis column; `0043BD90` then applies center correction. The
-vector arithmetic is source-backed, while `+0x338c` semantics, its frame-to-view
-relation, and update cadence remain open. The correction scale is now mapped:
+`+0x338c`, plus 90 times Player root `+0x24` frame column three, minus 60
+times column two; the Player vtable slot `+0x18` supplies this frame.
+`0043BD90` then applies center correction. The target writer's `+0x24` frame is
+separate from the throw gate's view follower at root `+0x34A4`. The vector
+arithmetic is source-backed, while `+0x338c` semantics, both frame-to-view
+relations, and update cadence remain open. The correction scale is now mapped:
 `oldWeight = binary32(pow(0.5, frameDelta / 0.1f))`, blending the current child
 center toward the target before caching `+0x224`; cadence is still unverified.
 JUMP's registered MOUSE_RB query is observed in `0042D8C0` at `0042DB06`

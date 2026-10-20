@@ -80,11 +80,14 @@ host.
 The trajectory is a substep of the BModel ScriptActor update, not a separately
 identified scheduler. The shared mission scene now wires the strict Player
 angle-under-10 gate to the source-shaped throw setup, clears carry state, sets
-Player state 3/action status 4, and increments `Objects Thrown`. The angle gate
-uses the selected endpoint and the host camera's third basis column as a
-provisional stand-in for the embedded Player frame. It runs on each held-object
-host update because the source block has no input-edge check. The mapping from
-that host frame to the retail Player frame and the Player update cadence remain
+Player state 3/action status 4, and increments `Objects Thrown`. The source
+gate reads Player view follower root `+0x34A4`, refreshed by `0044F340` earlier
+in the same Player update pass. The held-target writer instead reads Player
+root `+0x24`; these are distinct frames. The host camera's third basis column
+is a provisional substitute for the follower basis and the separate held-
+target frame adapter. The gate runs on each held-object host update because
+the source block has no input-edge check. The follower's numeric relationship
+to the rendered Genesis camera and the outer Player update cadence remain
 unknown.
 
 The shared BModel update samples its ordinary PATH pose, advances state-2
@@ -94,8 +97,13 @@ owner's `ThrowObjectEnd` sound through host services in the source order. The
 outer recurring BModel callback route and cadence are not proven; this
 per-host-frame adapter is provisional. Player action status 3 enables and
 resets the Axe subobject, while status 4 disables it; the shared renderer now
-mirrors those observed states. Ordinary equipment-selection reactivation
-remains untraced. The first authored child model is
+mirrors those observed states. Ordinary inventory selection uses a separate
+path: `0044D080` re-enables Axe root `+0x1FC`, and `0044C2A0` invokes the Axe
+activation callback then Player status 5. This path does not call status 3 or
+touch Player `+0xA94`; whether the actor disabled by status 4 becomes visible
+again through another runtime route remains open. See
+[`axe_reactivation_followup_2026-10-20.md`](axe_reactivation_followup_2026-10-20.md).
+The first authored child model is
 preserved even when it has no PATH, and every nonzero `useObjectState` maps to a
 separate collision-exclusion set for swept and point/ray queries. This bit is
 not mapped to the host render flag. The status-3 Axe enable/reset and status-4
@@ -109,12 +117,16 @@ trajectory, calls Player action status 4, clears the held pointer, restores
 Player state 3, increments `Objects Thrown`, and calls the common Player action
 dispatcher. Fresh helper decompilation resolves the compared values to the
 selected BModel endpoint minus Player movement position `+0x338C`, and the
-third basis column copied from the Player frame. The relation between that
-embedded frame and the host camera, and the outer Player callback cadence,
-remain unresolved. See
+third basis column at Player view follower root `+0x34A4`. The held-target
+writer's root `+0x24` frame is separate. The Player update calls `0044F340`
+immediately before its held-object branch; that helper refreshes the follower
+with `00483720`. This establishes a same-pass source relationship, not numeric
+identity with the Genesis camera or outer callback cadence. See
 [`00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm`](00452570_held_bmodel_throw_gate_fresh_2026-10-20.asm).
 The helper outputs are in
 [`bmodel_throw_gate_vectors_fresh_2026-10-20.c`](bmodel_throw_gate_vectors_fresh_2026-10-20.c).
+The caller and refresh excerpt is in
+[`player_throw_view_follower_refresh_2026-10-20.asm`](player_throw_view_follower_refresh_2026-10-20.asm).
 No gameplay test, interactive run, or retail-parity claim is made here.
 
 See [BModel update notes](bmodel_update.md), [throw-stat producer trace](mission_stat_jump_throw_producers_2026-10-20.md),
