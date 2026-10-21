@@ -94,6 +94,6 @@ The two queue passes matter to random state as well as spot availability. FireRe
 
 - Prove the retail UserData key-to-field mapping from authored FireRescue `H_Radius` to runtime `+0x88`; account for FireRescue movement and scripted size changes in obstacle centers/radii.
 - Identify remaining victim numeric state meanings and `+0x180`; capture the visible forward-axis interpretation for the 45-degree gate.
-- Capture whether Bar R's unhandled `setskin 2` fields are dispatched and logged; interpret numeric-only script values and other victim command fields.
+- `setskin` and `playanim` have no supported gameplay effect in the inspected retail dispatch path (`playanim` explicitly logs unimplemented; `setskin` has no branch). Runtime dispatch/logging of those authored values remains unobserved; do not invent a skin or animation port. Numeric-only script values and other victim command fields remain unresolved.
 - Establish the victim callback caller/cadence and capture original-game spawn draws, movement, obstacle behavior, and rescue completion for parity.
 - Keep integrating the shared behavior for every rescue mission and Training; the authored map values are inputs, not evidence of runtime completion.
