@@ -1523,10 +1523,9 @@ void drainPreviewFireRouteQueue(std::vector<PreviewFire>& fires, Collision& coll
         child.runtime.initialize(
             random, now, dividerCycle, request.position,
             request.radius, request.height,
-            // K_SprayTime is untouched in this generated request. The host
-            // applies its zero/unset class-data proxy, then FireRescue's
-            // existing radius-based normalization; the class-template value
-            // remains an open source field.
+            // 00448210 clears the full UserData block for new and recycled
+            // request records, so this untouched K_SprayTime is source-backed
+            // zero. 00448D60 normalizes near-zero values through 00447770.
             0.f, false, request.smoking,
             [&](FireVisual& visual) {
                 std::copy(headingMatrix, headingMatrix + 9, visual.matrix);

@@ -23,9 +23,15 @@ route heading, floor flag, alternating smoke bit, and three generated size
 keys. At the same gate it resets the parent's shared `setsize`/`moveto` track,
 then inserts zero at global clock minus 10 and the no-model root dimensions at
 global clock plus the clamped route-rate delay. `00448D60` adds the child
-relative key times to its current game clock. The host currently uses zero for
-untouched child class-template values and generated timestamp bases; full
-child-template defaults and object-pool eligibility remain open.
+relative key times to its current game clock. The route builder obtains its
+`0x88`-byte UserData block from the `00448210` class-data allocator, which
+clears both new and recycled blocks before the builder fills route fields and
+active keys. The host's zero values for untouched generated fields and key
+data are therefore source-backed for this path. In particular, zero
+`K_SprayTime` is normalized by `00448D60` through the radius range helper
+`00447770`, matching the host's modeled range. X87 edge rounding, generic
+placed-entity defaults, and object-root reuse eligibility remain open; see
+[`fire_rescue_route_userdata_allocation_2026-10-21.md`](fire_rescue_route_userdata_allocation_2026-10-21.md).
 
 The pinned updater also builds FireRescue-shaped configs and submits deferred
 map-entity spawn requests as the source actor advances. The later generic
@@ -34,9 +40,11 @@ registration. A follow-up maps the FireRescue factory, handle assignment, and
 the limits of its pool/update lifecycle in
 [`deferred_child_lifecycle_2026-10-15.md`](deferred_child_lifecycle_2026-10-15.md).
 The queued actor's recurring update, per-entity deactivation, and reuse are not
-fully mapped. Reused retail roots reinitialize their UserData and rerun
-`00448D60`, but the host still creates fresh actors. External callback cadence
-also remains open. A bounded direct-store census maps constructor/reuse resets
+fully mapped. Reused retail roots attach the submitted UserData pointer through
+`0049D160` and rerun `00448D60`; the route request allocator zeroes new and
+recycled UserData blocks before submission, but the host still creates fresh
+actors. External callback cadence also remains open. A bounded direct-store
+census maps constructor/reuse resets
 of root `+0x1C` but found no direct FireRescue-root nonzero writer; pointer
 aliases and computed writes remain possible. See
 [`fire_rescue_pool_eligibility_writer_census_2026-10-20.md`](fire_rescue_pool_eligibility_writer_census_2026-10-20.md).

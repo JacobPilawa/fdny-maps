@@ -21,6 +21,9 @@ struct FireEntity {
   visual.position=authored;visual.sizes.add({float(double(radius)*.75),float(double(height)*.25),float(double(radius)*.75)},now,now);
   origin={authored.x,float(double(authored.y)+4),authored.z};
   if(floor)floor(visual);if(named)playLoop(soundChoice);
+  // 00448D60 replaces near-zero K_SprayTime with 1 + 3 * the clamped
+  // 00447770 radius fraction over [24,288]. Host double math can differ at
+  // the original x87 extended-precision edges.
   if(double(suppression.sprayTime)<double(1e-28f)&&double(suppression.sprayTime)>double(-1e-28f)){
    double factor=(double(radius)-24.0)/(288.0-24.0);factor=std::clamp(factor,0.0,1.0);suppression.sprayTime=float(factor*3.0+1.0);
   }

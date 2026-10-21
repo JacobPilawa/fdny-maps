@@ -262,10 +262,11 @@ now queues the captured prior-position request and creates a fresh route child
 after represented contact candidates, with the no-model three-key size track,
 floor flag, heading, and alternating smoke request. At the same route gate it
 now resets the parent's shared size track to the confirmed zero anchor and
-`root+0x108` target, using the clamped route-rate delay. It uses zero/unset
-proxies for untouched child template fields and child key-time bases. Generated
-child template defaults, reuse eligibility, frame cadence, contact-list
-parity, and RNG interleaving remain open. Evidence is in
+`root+0x108` target, using the clamped route-rate delay. The route request
+allocator clears all UserData before the builder fills route fields and active
+key times, so untouched route-child fields and key bases start at zero. Root
+reuse eligibility, frame cadence, contact-list parity, and RNG interleaving
+remain open. Evidence is in
 [`fire_update_dispatch_order_2026-10-20.md`](../tracker/evidence/fire-spread/fire_update_dispatch_order_2026-10-20.md)
 and
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
@@ -300,18 +301,32 @@ completion call `00442BF0` adds a pair to the PathPoint-owned `+0xE8` container,
 not a transform setter. The host now moves the parent visual at each mapped
 emission gate and instantiates its generated no-model child after represented
 contacts; root transform/origin stay fixed. The parent and child size keys are
-source-backed, while untouched template values remain incomplete, so no route
-parity claim is made. Evidence:
+source-backed, including untouched generated UserData fields cleared by the
+class-data allocator, so the known route fields now have no class-template
+assumption. Full route parity is still open. Evidence:
 [`fire_rescue_timed_vector_size_bounds_2026-10-20.md`](../tracker/evidence/rescue-moveto/fire_rescue_timed_vector_size_bounds_2026-10-20.md).
 
 The key list itself is modeled for authored `setsize`; `moveto` now resets
 that shared list, replacing any prior `setsize` keys with a zero anchor and the
-parent's no-model dimensions. Generated child template timestamp bases,
-model-derived thresholds, and child ownership/retirement remain open. For the
+parent's no-model dimensions. Generated child UserData and unused key slots are
+cleared before route fields are populated. Model-derived thresholds and child
+ownership/retirement remain open. For the
 no-model child, operands 3/4 scale to its key timestamp offsets, and
 `00448D60` adds those offsets to its current clock. The source's retained x87
 extent is the separation between route-direction endpoints; authored seconds
 remain an inference. Keep callback cadence provisional.
+
+Fresh current-hash Ghidra follow-up resolved the generated request's untouched
+fields: descriptor `00448070` routes UserData allocation through `00448210`,
+which clears the full `0x88`-byte block for both new and recycled records.
+`00449340` then fills route-specific fields and active keys. Its untouched
+`ZZ_spawn_message`, `K_SprayTime`, and `N_IsAlive` are zero; `00448D60` maps
+near-zero `K_SprayTime` through the same 24-to-288 radius normalization already
+represented by the host. This resolves the generated-child zero defaults and
+timestamp-base uncertainty without establishing generic placed-entity
+defaults or root-object retirement. The host's x87-edge and callback cadence
+remain provisional. See
+[`fire_rescue_route_userdata_allocation_2026-10-21.md`](../tracker/evidence/rescue-moveto/fire_rescue_route_userdata_allocation_2026-10-21.md).
 
 ### Bounded agent ledger
 
@@ -320,14 +335,15 @@ remain an inference. Keep callback cadence provisional.
 | `route_timing_keys` | `00449340_fresh.c`, `00449340_timing_key_offsets.asm`, timed-vector note | Complete; trailing args are scaled into existing timestamps; x87 value and meanings remain open; no edits |
 | `route_child_lifecycle` | deferred-spawn queue, FireRescue factory/manager path, UserData layout | Complete; child manager enrollment/next-pass eligibility mapped; retirement/reuse unresolved; no edits |
 | `route_visual_origin` | `0044A6A0`, `0044B060`, `0044A840`, route caller writes | Complete; proved pre-update child location and visible parent visual move; no edits |
-| `route_request_schema` | `00449340` request stores, `00448D60`, typed UserData audit | Complete; mapped no-model generated child fields and alternating smoke; inherited template defaults remain open; no edits |
-| `route_key_timing` | `00449340` x86, `004B9400`, `00448D60` key consumer | Complete; established three child keys, global-clock addition, retained distance; base timestamp and authored units remain provisional; no edits |
+| `route_request_schema` | `00449340` request stores, `00448D60`, typed UserData audit | Complete; mapped no-model child fields, alternating smoke, zeroed untouched fields, and active keys; generic placed-entity defaults remain open |
+| `route_key_timing` | `00449340` x86, `004B9400`, `00448D60` key consumer | Complete; established three child keys, global-clock addition, retained distance; request allocation clears key storage before active timestamps are written; authored units remain provisional |
 | `route_model_threshold` | current MBase/Gas R typed exports, `00448D60` model branch | Complete; only two authored `moveto` actors, both no-model; generic model bounds unresolved; no edits |
 | `route_parent_track` | `00449340` x86 and `0044B620` track helper | Complete; parent clears shared `setsize`/route track and inserts zero at clock-10 plus root+108 at clamped route-rate delay; host implementation updated |
-| `route_template_defaults` | FireRescue typedef, 15 mission BSPs, class registration `00448070`, constructor `0044A330` | Complete; placed epairs do not prove generated-template defaults; spawn message, spray time, alive and child timestamp bases remain unresolved; no edits |
-| `route_factory_reuse` | FireRescue factory, vtable `004475F0`, registration `00448D60`, broad `+0x1C` writer census | Complete; UserData and visual setup are reinitialized; direct constructor/reuse resets are mapped, but no direct nonzero root writer was found; aliases, computed writes and retirement remain unresolved; no edits |
-| `route_template_pipeline` | `00449340`, `0049B760`/`0049B690`, `00429C00`, `0049D130`/`0049D4C0`, factory/constructor/setup evidence | Complete, read-only; confirmed the request-to-factory chain and that the builder/constructor do not prove untouched template values; no edits |
-| `class_template_source` | original Data inventory, RRF, BSP exports, FireRescue typed schemas | Complete, read-only; no separate class-template file exists in the copied source snapshot, and placed actor values cannot establish generated defaults; no edits |
+| `route_template_defaults` | FireRescue typedef, 15 mission BSPs, class registration `00448070`, constructor `0044A330` | Complete; route builder allocates and clears its own 0x88-byte UserData before assigning route fields; placed BSP defaults remain separate; no edits |
+| `route_factory_reuse` | FireRescue factory, vtable `004475F0`, registration `00448D60`, broad `+0x1C` writer census | Complete; route UserData allocator clears new and recycled blocks; root factory eligibility, aliases, computed writes and child retirement remain unresolved; no edits |
+| `route_template_pipeline` | `00449340`, `0049B760`/`0049B690`, `00429C00`, `0049D130`/`0049D4C0`, factory/constructor/setup evidence | Complete, read-only; request-to-factory path confirmed, route class allocator zeroes generated data, and `0049D160` attaches/size-checks the pointer; no edits |
+| `route_userdata_allocation` | `00448070`, `00448210`, `004479B0`, `00449340`, `00448D60`, `00447770` | Complete, read-only; fresh and recycled 0x88-byte blocks are cleared, zero `K_SprayTime` normalizes by radius as modeled; x87 edge rounding and live reuse timing remain open |
+| `class_template_source` | original Data inventory, RRF, BSP exports, FireRescue typed schemas | Complete, read-only; no separate class-template file exists; route-child zero defaults come from the descriptor allocator, and placed actor values remain separate; no edits |
 
 ## Rescue timeout loss audio (2026-10-20)
 

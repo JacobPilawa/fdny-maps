@@ -133,13 +133,16 @@ these request fields:
 The pinned request/factory path is `00449340` → `0049B760`/`0049B690` class
 lookup → `00429C00` descriptor lookup → `0049D130`/`0049D4C0` submission →
 factory `0044A470`. A fresh root uses constructor `0044A330`; its FireRescue
-UserData initialization is `0049D160`, and setup then runs `00448D60`. Neither
-the request builder nor the inspected constructor/reuse path establishes the
-inherited values for untouched fields. The local original snapshot includes
-map BSPs, EVS, ACT, and RRF resource definitions but no separate
-`RCS_FireRescue` class-template/default manifest. The decoded BSP entity JSON
-contains placed actor values only and is not evidence for generated-child
-defaults.
+UserData initialization is `0049D160`, and setup then runs `00448D60`. Descriptor
+`00448070` installs a class-data allocator at vtable slot `+0`; the route
+builder calls it before filling the request. A fresh hash-pinned trace shows
+that `00448210` zeroes all `0x88` UserData bytes both when allocating a new
+block and when reusing an available cached block. The root constructor and
+reuse method then use `0049D160` to attach and size-check that pointer;
+`0049D160` itself does not clear the data. The dynamic route request therefore
+has proven zero values for untouched fields, distinct from placed BSP
+defaults. See
+[`fire_rescue_route_userdata_allocation_2026-10-21.md`](fire_rescue_route_userdata_allocation_2026-10-21.md).
 
 - `F_FireType`, `C_Model`, and `A_Name` are explicitly zero. The dynamic child
   therefore has no named-fire loop and does not pass the name gate used by
@@ -159,13 +162,15 @@ defaults.
 - `00448D60` adds the generated key offsets to its current game clock before
   inserting them in the shared timed-vector track. The route updater's
   `004B9400` converts the offset expression to an integer toward zero after
-  correcting x87 nearest conversion. Treating the
-  untouched second/third base timestamps as zero is a host assumption until
-  the FireRescue class template data is traced.
+  correcting x87 nearest conversion. The route request allocator clears all
+  UserData first, and `00449340` writes each active key's value and timestamp;
+  unused key data starts at zero.
 - `M_Smoking` starts at zero in the request. If the parent has smoking enabled,
   its `+0x118` counter enables smoke on every second qualifying route child.
-  `ZZ_spawn_message`, `K_SprayTime`, and `N_IsAlive` are not written by this
-  request builder and continue to come from the class-data template.
+  `ZZ_spawn_message`, `K_SprayTime`, and `N_IsAlive` are not written by the
+  request builder and remain zero from the allocator's clear. The `00448D60`
+  initializer normalizes this zero `K_SprayTime` from radius through
+  `00447770`; that is the same radius-based range currently used by the host.
 
 Only two authored `moveto` FireRescue actors appear in the current typed scene
 and script exports: MBase `mortarfire1` to `mortar1` and Gas R `Fire42` across
@@ -193,26 +198,24 @@ the state-4 callback, resets the parent's shared size track with the two keys
 above, then moves/rebuilds the parent embedded visual. It drains the child
 request after represented contact candidates. The fresh-child approximation
 has no name, copied floor behavior, alternating smoke, route heading, and the
-generated three-key size track. For portable simulation it currently treats
-untouched class-template fields and initial key timestamp bases as zero/unset.
-Retail factory reuse reinitializes UserData and reruns FireRescue visual setup,
-but host pooling and reuse eligibility remain unresolved. Untouched template
-defaults, x87 edge behavior, exact callback cadence, sprite/RNG interleaving,
-and child retirement remain open. The renderer currently projects the route
+generated three-key size track. The route request allocator clears every
+UserData byte before those fields are filled, including when it recycles a
+cached data block, so untouched generated-child fields and unused key data
+begin at zero. The host's zero `K_SprayTime` value and radius-based
+normalization are source-backed; x87 edge behavior remains open. Retail factory
+reuse attaches the new request's UserData and reruns FireRescue visual setup,
+but root reuse eligibility, host pooling, ownership, and child retirement
+remain unresolved. Exact callback cadence and sprite/RNG interleaving also
+remain open. The renderer currently projects the route
 vector to horizontal yaw for child orientation; the full retail heading frame
 is not established. This is a source-backed host slice, not live route,
 gameplay, or retail parity.
 
 ## Remaining work and limits
 
-- Decode how the two trailing `moveto` values select timestamps across the
-  source and child tracks, including the untouched base timestamp fields and
-  interactions with consecutive `setsize` commands. The current host uses
-  zero for the generated request's inherited timestamp bases.
-- Match x87 conversion at parent route-delay integer boundaries and determine
-  whether untouched generated-child timestamp bases differ from the current
-  host's zero proxy. The parent route track is now represented; child offsets
-  still use a provisional zero base.
+- Match x87 conversion at parent route-delay integer boundaries and generated
+  key-time edges. The route request's active key count, values, and timestamps
+  are written by `00449340`; unused data starts at zero.
 - Establish queued-child setup, update ownership, and retirement before
   claiming full route parity.
 - Trace the non-null `C_Model` dimensions path and exact rendered bounds.

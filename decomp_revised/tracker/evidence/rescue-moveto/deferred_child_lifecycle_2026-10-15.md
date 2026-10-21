@@ -78,12 +78,18 @@ factory body does not show a reset of this byte. **2026-10-20 correction:**
 the reused object's slot `+0x28` resolves to `004475F0`. That method calls
 `0049D310` to copy request `+0x0C` into root `+0x0C` and clear root bytes
 `+0x10`, `+0x1C`, and `+0x1D`, then calls `0049D160(request, root+0x78, 0x88)`
-to reinitialize the FireRescue UserData region. After factory selection,
+to attach the request's UserData pointer and validate the registered size.
+`0049D160` does not clear the pointed-to bytes. For the generated route path,
+the class descriptor's `00448210` allocator has already cleared the full
+UserData record, including a recycled record, before the request is submitted;
+see [`fire_rescue_route_userdata_allocation_2026-10-21.md`](fire_rescue_route_userdata_allocation_2026-10-21.md).
+After factory selection,
 `0044A470` sets `+0x1D` and `0049D450` assigns a fresh identity handle. Generic
 queue registration then reruns `00448D60`; this visual initializer resets the
 timed size track, dimensions, origin and transient visual state before the
-child enters normal manager updates. Therefore a reused entry does not simply
-retain its old UserData or visual initialization state.
+child enters normal manager updates. For route-generated children, the data
+record itself is zeroed during the request's descriptor allocation and then
+attached here; visual setup also runs again on root reuse.
 
 The eligibility check still reads root byte `+0x1C`, but the complete set of
 runtime writers and its meaning across a live lifetime are not established.
