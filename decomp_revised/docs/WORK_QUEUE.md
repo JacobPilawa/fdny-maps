@@ -131,10 +131,16 @@ been running in mode 0. Existing profile values are not loaded, and mode-2
 HeroDown spawning remains unsupported; see
 [`rescue_profile_difficulty_mode_port_2026-10-21.md`](../tracker/evidence/scenario-loading/rescue_profile_difficulty_mode_port_2026-10-21.md).
 Fresh read-only headless Ghidra then mapped `0044FF10`'s mode-2 gate, 3-actor
-cap, `0x34`-byte `RCS_VictimRescue` request, and `0049D130`/`0049D4C0`
-submission. The generic post-submit factory callback, actor/resource
-initialization, live inventory, render, and contact registration remain open;
-trace those before enabling mode 2. See
+cap, and `0x34`-byte `RCS_VictimRescue` request. A fresh queue-to-actor follow-
+up confirms `0049D4C0` reaches the `0042B1A0` shared linked queue, whose normal
+pump calls factory `0045DF80`, root registration `00429490`, then VictimRescue
+passes `0045B690` and `0045D5B0`. The request's `herodown` field is `D_Type`,
+which resolves to Model 30 / `vic_HeroDown.act`; it is not the actor `A_Name`.
+The shared helper currently labels that field `scriptName` and reads A_Name for
+the live count, so fix the type/name distinction before enabling mode 2. The
+dynamic victim still needs its live preview/runtime inventory and render
+integration, floor/default behavior reconciliation, contact/cleanup path, and
+profile UI selection. See
 [`player_herodown_factory_route_2026-10-21.md`](../tracker/evidence/scenario-loading/player_herodown_factory_route_2026-10-21.md).
 
 The VictimRescue owner Think adapter's extra root `+0x10` gate is now checked
@@ -386,6 +392,7 @@ remain provisional. See
 
 | Scope | Evidence/files inspected | Status |
 |---|---|---|
+| `dynamic_victim_host_audit` (Luna) | `scene_viewer.cpp`, `victim_transactions.h`, `startup.h`, HeroDown evidence | Complete, read-only; identified required `victims`/actor-map/entity-inventory insertion points, separate A_Name/D_Type storage, ACT asset cache, and list-driven contact path. No edits/build/tests. |
 | `route_timing_keys` | `00449340_fresh.c`, `00449340_timing_key_offsets.asm`, timed-vector note | Complete; trailing args are scaled into existing timestamps; x87 value and meanings remain open; no edits |
 | `route_child_lifecycle` | deferred-spawn queue, FireRescue factory/manager path, UserData layout; independent read-only retirement follow-up | Complete; request creation, factory selection, cleared UserData, and next-pass manager eligibility are mapped; no per-child world removal, root `+0x1C` eligibility transition, root `+0x1D` reset, or UserData return to `004479B0` path was established; cadence and ordinary-play reuse remain unresolved |
 | `route_visual_origin` | `0044A6A0`, `0044B060`, `0044A840`, route caller writes | Complete; proved pre-update child location and visible parent visual move; no edits |
