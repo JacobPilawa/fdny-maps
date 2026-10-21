@@ -130,6 +130,12 @@ also corrects mode-dependent rescue deadline and RescueBot formulas that had
 been running in mode 0. Existing profile values are not loaded, and mode-2
 HeroDown spawning remains unsupported; see
 [`rescue_profile_difficulty_mode_port_2026-10-21.md`](../tracker/evidence/scenario-loading/rescue_profile_difficulty_mode_port_2026-10-21.md).
+Fresh read-only headless Ghidra then mapped `0044FF10`'s mode-2 gate, 3-actor
+cap, `0x34`-byte `RCS_VictimRescue` request, and `0049D130`/`0049D4C0`
+submission. The generic post-submit factory callback, actor/resource
+initialization, live inventory, render, and contact registration remain open;
+trace those before enabling mode 2. See
+[`player_herodown_factory_route_2026-10-21.md`](../tracker/evidence/scenario-loading/player_herodown_factory_route_2026-10-21.md).
 
 The VictimRescue owner Think adapter's extra root `+0x10` gate is now checked
 against its source-backed constructor default. Common initializer `0049D420`

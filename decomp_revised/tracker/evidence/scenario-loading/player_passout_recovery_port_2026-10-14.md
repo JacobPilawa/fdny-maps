@@ -123,3 +123,5 @@ mapped; equipped-item offsets, view-updater cadence, and rendered parity
 against retail remain open. The viewer's fixed global mode 1 matches the
 fresh/reset retail profile default; loaded-profile difficulty and the mode-2
 HeroDown spawn/count branch remain unsupported.
+The fresh current-hash HeroDown descriptor and staged-factory boundary are
+recorded in [`player_herodown_factory_route_2026-10-21.md`](player_herodown_factory_route_2026-10-21.md); dynamic actor construction and resource selection remain open.
