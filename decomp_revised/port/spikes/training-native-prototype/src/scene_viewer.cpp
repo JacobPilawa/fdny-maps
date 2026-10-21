@@ -8016,9 +8016,10 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
     std::filesystem::path currentPackage = initialPackage;
     std::set<std::string> visited;
     // Active-record finalexitloadmap requests skip retail's explicit stat
-    // collection reinitialization. Carry the host map through linked run()
-    // contexts as a provisional approximation; opaque flush callbacks still
-    // leave actual retail retention unresolved.
+    // collection reinitialization, and the linked request flush clears result
+    // state before the win-only profile commit branch. Carry the host map
+    // through linked run() contexts to match the mapped no-reset branch;
+    // indirect flush callbacks and runtime retention remain unverified.
     RescueStatisticsMap missionStatistics = makeInitialRescueStatistics();
     for (int stageCount = 0; stageCount < 16; ++stageCount) {
         std::string currentKey = lower(currentPackage.filename().string());
