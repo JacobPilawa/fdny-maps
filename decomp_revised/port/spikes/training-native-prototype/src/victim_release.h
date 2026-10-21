@@ -2,10 +2,11 @@
 
 #include <cstdint>
 #include <cassert>
+#include <limits>
 #include "victim_rescue.h"
 
-// Training Player::escape (00451160) and its rescue-release helper (0045C000).
-// This is an explicit transaction only; it does not imply a frame schedule.
+// Training Player::escape (00451160), its release helper (0045C000), and the
+// separate VictimRescue state-6 Think consumer (004599B0).
 using TrainingVictimReleaseState = VictimPickupPlayerState;
 
 struct TrainingVictimReleaseActor : VictimPickupActorState {
@@ -14,6 +15,37 @@ struct TrainingVictimReleaseActor : VictimPickupActorState {
     uint32_t rescueEnd = 0;   // +0x1F0
     uint8_t rescueActive = 0; // +0x1FC
 };
+
+struct VictimReleaseThinkStep {
+    bool due = false;
+    uint32_t worldActorFlags = 0;
+};
+
+// VictimRescue state 6's retail Think handler (004599B0). The host supplies
+// one call per represented owner Think pass; this helper intentionally does
+// not turn the per-call 5 ms counter decrement into elapsed-time arithmetic.
+inline VictimReleaseThinkStep advanceVictimReleaseThink(
+    TrainingVictimReleaseActor& victim, uint32_t now) {
+    if (victim.state != 6 ||
+        victim.rescueEnd == std::numeric_limits<uint32_t>::max() ||
+        !(victim.rescueStart < now && victim.rescueEnd < now)) {
+        return {};
+    }
+
+    // Retail also requests a stop for a non-null VictimRescue sound instance
+    // at +0x154 on this first expired deadline. That instance is not retained
+    // by the current host actor model, so audio remains an adapter gap.
+    victim.rescueStart = 0;
+    victim.rescueTimer -= 5u;
+    if (victim.rescueTimer == 0) {
+        victim.rescueActive = 0;
+        victim.rescueEnd = std::numeric_limits<uint32_t>::max();
+    } else {
+        victim.rescueEnd = now + victim.rescueTimer;
+        victim.rescueActive = victim.rescueActive == 0 ? 1 : 0;
+    }
+    return {true, victim.rescueActive != 0 ? 0x400u : 0u};
+}
 
 // Ops provide the native frame/math and neighboring Player effects. The call
 // order below follows the source. Each frame callback maps to one call group

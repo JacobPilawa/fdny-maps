@@ -2,8 +2,12 @@
    4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e.
    Reached through VictimRescue's embedded updater vtable at root +0xD4. */
 
-/* State 5 returns without the common child/audio update; state 6 advances its
-   release animation, and state 7 enters the roam movement implementation. */
+/* State 5 returns without the common child/audio update; state 6 reaches the
+   deadline-driven release visibility pulse in 004599B0, while state 7 enters
+   the roam movement implementation. The release tick uses VictimRescue's own
+   +0x1F4/+0x1F0 deadlines and +0x1F8 counter; it is separate from RescueBot's
+   state-6 sentinel path. The post-dispatch actor animation update remains in
+   00480D50. */
 void __fastcall UpdateVictimActorThinkDispatch(int param_1)
 {
   int state;

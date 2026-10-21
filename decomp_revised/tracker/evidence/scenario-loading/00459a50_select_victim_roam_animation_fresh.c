@@ -1,9 +1,12 @@
 /* Fresh Ghidra decompilation: SelectVictimRoamAnimation at 0x00459a50; FDNYFirefighter.exe SHA-256 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e. */
 
 
-/* Called by StartVictimRoam after at least one initial candidate passes. Selects through the victim
-   animation controller at +0x170; the +0x180==6 branch selects animations 3-5 and changes movement
-   scalar +0x228. Meaning of the +0x180 discriminator is unresolved. */
+/* Called by StartVictimRoam after at least one initial candidate passes.
+   00480D00 initializes animation context +0x170 and stores geActor motion
+   count at context +0x10 (VictimRescue +0x180). With six motions, this
+   two-entry roam selector chooses motions 3-5 and may change movement scalar
+   +0x228; with any other count, it chooses within that count at speed 0.2 and
+   writes state 4. */
 
 void __thiscall SelectVictimRoamAnimation(void *this,int param_1)
 

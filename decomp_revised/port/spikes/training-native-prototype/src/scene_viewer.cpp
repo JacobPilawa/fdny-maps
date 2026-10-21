@@ -4803,6 +4803,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
 
                             ++rescueState.exits.field3530;
                             actor->second.state = 6;
+                            actor->second.rescueEnd =
+                                std::numeric_limits<uint32_t>::max();
                             victim->pickup.state = 6;
                             if (scriptRuntime) scriptRuntime->dispatch(*target, "botrescue");
                             victim->botRescueField1F0 = std::numeric_limits<uint32_t>::max();
@@ -7361,6 +7363,23 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             pendingBModelContactEvents.clear();
             pendingBoundsTriggerContactEvents.clear();
             pendingPropModelContactEvents.clear();
+
+            // VictimRescue state 6 consumes the release timer in its owner
+            // Think callback. The counter drops by 5 per due callback, and
+            // the SDL clock plus rendered-frame Think cadence are provisional
+            // host inputs. RescueBot state 6 carries the retail UINT32_MAX
+            // deadline sentinel and therefore bypasses this pulse lifecycle.
+            if (rescueTransactions && rescueServices.setActorFlags) {
+                for (const auto& victim : victims) {
+                    auto actor = rescueState.actors.find(victim.spawn.entity);
+                    if (actor == rescueState.actors.end()) continue;
+                    const VictimReleaseThinkStep step =
+                        advanceVictimReleaseThink(actor->second, now);
+                    if (step.due)
+                        rescueServices.setActorFlags(victim.spawn.entity,
+                                                     step.worldActorFlags);
+                }
+            }
 
             // VictimRescue root slot +0x14 reaches its embedded actor updater;
             // state 7 calls UpdateVictimRoamMovement (0045B220). Retail's

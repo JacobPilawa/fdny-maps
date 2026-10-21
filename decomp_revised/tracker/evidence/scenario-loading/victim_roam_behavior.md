@@ -23,7 +23,7 @@ The Bar R BSP contains three VictimRescue `S_Script*` values equal to `setskin 2
 
 ## Roam startup and per-update movement
 
-`StartVictimRoam` stores the parsed roam float at `+0x224`, writes numeric state `7` at `+0x120`, copies the current location at `+0x4C` to the target at `+0x1C8`, initializes the movement input at `+0x228` to `36.0`, and calls `BuildVictimRoamObstacleList` (`0x0045C4D0`). The validator's `+0x218` center is initialized from the original authored victim location in `InitializeVictimRescueEntity`; random alternate-spot selection later changes the current actor location, not that center. Startup tries four offsets around the selected spawn: `(5,0,5)`, `(5,0,-5)`, `(-5,0,5)`, and `(-5,0,-5)`. If none pass `ValidateVictimRoamCandidate` (`0x0045AB40`), it logs `is stuck when spawned!` and writes state `4`; otherwise it calls `SelectVictimRoamAnimation` (`0x00459A50`). These are observed numeric state values; semantic names for states 4 and 7 are not assumed.
+`StartVictimRoam` stores the parsed roam float at `+0x224`, writes numeric state `7` at `+0x120`, copies the current location at `+0x4C` to the target at `+0x1C8`, initializes the movement input at `+0x228` to `36.0`, and calls `BuildVictimRoamObstacleList` (`0x0045C4D0`). The validator's `+0x218` center is initialized from the original authored victim location in `InitializeVictimRescueEntity`; random alternate-spot selection later changes the current actor location, not that center. Startup tries four offsets around the selected spawn: `(5,0,5)`, `(5,0,-5)`, `(-5,0,5)`, and `(-5,0,-5)`. If none pass `ValidateVictimRoamCandidate` (`0x0045AB40`), it logs `is stuck when spawned!` and writes state `4`; otherwise it calls `SelectVictimRoamAnimation` (`0x00459A50`). State 7 is the dispatcher's roam-movement branch; state 4 is reached by failed startup or the non-six-motion animation fallback. No broader semantic label is assigned to state 4.
 
 The obstacle builder iterates world entities whose kind field is `6`. The FireRescue constructor (`0x0044A330`) installs primary vtable `0x004E1780` and writes `6` to root `+0x18`, identifying these records as `RCS_FireRescue`. Its virtual radius slot (`vtable+0x0C`, `0x0044A310`) returns `root+0x7C`; the builder reads returned `+0x0C`, so the runtime radius is at FireRescue `+0x88`. Values below 24 or above 1200 are logged and clamped to that range. It includes fires whose center is within `fire radius + victim roam radius`, then stores the center and `(fire radius + 48)^2`. A candidate inside any stored expanded sphere is rejected. The builder logs `Max obstacles exceeded ... decrease radius!` when the post-insertion count is greater than 9. The exact retail UserData binding from authored `H_Radius` to runtime `+0x88` remains unproven; the preview uses `H_Radius` as its static map-data proxy.
 
@@ -43,6 +43,18 @@ manager `+0xE0`, the shared viewer now advances roaming victims before sampling
 contacts. Host frame delta, exact Think-list order, and live collision/pickup
 parity remain provisional. See
 [`victim_roam_think_phase_2026-10-21.md`](victim_roam_think_phase_2026-10-21.md).
+
+The animation context resolves the former `+0x180` question: `00480D00` stores
+`geActor_GetMotionCount` at context `+0x10`, which is VictimRescue root `+0x180`.
+`SelectVictimRoamAnimation` (`00459A50`) uses that count. If it is not six, the
+selector chooses a motion within the count at speed `0.2` and writes state 4;
+the six-motion branch keeps the state-7 roam path and selects among motions
+3–5. Startup also writes state 4 when all four initial candidate probes fail.
+This describes the observed branches without assigning an unsupported
+semantic label such as “idle” to state 4. The exact rendered pose remains
+unverified. Current-hash exports for the selector and animation-context
+initializer are in
+[`victim_release_lifecycle_and_motion_context_fresh_2026-10-21.c`](victim_release_lifecycle_and_motion_context_fresh_2026-10-21.c).
 
 This helper's sole retail caller is the state-7 handler. It computes `step = globalFrameDelta * movementScalar`; it snaps to the target only when `step > 0` and squared remaining distance is strictly less than `step²`. Otherwise it advances by a normalized target delta scaled by `step`. The viewer's former arbitrary `step > 0.2` snap gate was removed. The turn helper `00482AA0` applies `old * pow(0.5, frameDelta / 0.3) + adjustedDesired * (1 - pow(...))`, where the caller first adjusts the desired angle to its nearest equivalent around the old heading. The viewer now uses this exponential blend instead of a linear `dt * 8` interpolation. The 0.3-second half-life and strict arrival comparison are verified from the pinned executable; the viewer's rendered-frame delta is still a host input. The updater uses a random 6–18-unit direction for its initial/random mode; otherwise it follows its last step direction when the player is outside the 432-unit gate. Nearer the player, the 432 gate compares the player with the victim's current waypoint, then requires a 45-degree victim-facing check and a clear segment from that waypoint to the player. If those pass, the initial 12-unit horizontal candidate points toward the player. It is reversed away if the Player is carrying a victim, is closer than 48 units to the waypoint, or is facing more than 45 degrees away from the waypoint. The 48 and 192 thresholds are squared-distance comparisons against 2,304 and 36,864 respectively; the 192-unit branch consumes a random draw whose return is discarded. If the Player-relative gates fail, the updater continues the previous step direction. Failed normal candidates are retried at half length and +30 degrees, then -60 degrees from that alternative; if both fail, random mode is re-enabled. The retail callback period remains unresolved.
 
@@ -93,7 +105,7 @@ The two queue passes matter to random state as well as spot availability. FireRe
 ## Remaining evidence gaps
 
 - Prove the retail UserData key-to-field mapping from authored FireRescue `H_Radius` to runtime `+0x88`; account for FireRescue movement and scripted size changes in obstacle centers/radii.
-- Identify remaining victim numeric state meanings and `+0x180`; capture the visible forward-axis interpretation for the 45-degree gate.
+- Capture the visible forward-axis interpretation for the victim's 45-degree gate. State 4 remains behaviorally described by its observed animation-selection and failed-start writes; no broader semantic name is assigned.
 - `setskin` and `playanim` have no supported gameplay effect in the inspected retail dispatch path (`playanim` explicitly logs unimplemented; `setskin` has no branch). Runtime dispatch/logging of those authored values remains unobserved; do not invent a skin or animation port. Numeric-only script values and other victim command fields remain unresolved.
 - Establish the victim callback caller/cadence and capture original-game spawn draws, movement, obstacle behavior, and rescue completion for parity.
 - Keep integrating the shared behavior for every rescue mission and Training; the authored map values are inputs, not evidence of runtime completion.
