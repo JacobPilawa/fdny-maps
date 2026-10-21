@@ -24,7 +24,7 @@ and the corrected [Player/BModel census](../tracker/evidence/scenario-loading/pl
 The exact 12-byte `0049C3D0` vtable adapter boundary is now present in the
 generated function inventory from a fresh headless Ghidra export on a
 disposable project copy. `python3 tools/build_tracker.py` rebuilds cleanly at
-7,968 function records and 502 reviewed EXE functions.
+7,968 function records and 503 reviewed EXE functions.
 
 The shared scene now buffers BModel, BoundsTrigger, and PropModel ScriptActor
 contact-pair events across one host update iteration: it drains the preceding
@@ -236,8 +236,13 @@ ScriptEngine `+0x94` aliases `0x00503044`, the table used by `00470FC0`, and
 `DIFFICULTY` and `LEVEL` after the flush. `DIFFICULTY` is formatted from
 selected-object `EverGame+0x6E4` field `+0x2C`, while `LEVEL` comes from the
 active level record at `+0x688`; the selected-object writer remains unresolved.
-The host already creates a fresh `Scripts` object per stage, but its hardcoded
-`DIFFICULTY="1"` has not yet been compared with the retail value.
+The host already creates a fresh `Scripts` object per stage, and its
+`DIFFICULTY="1"` default matches the retail constructor default for a fresh
+profile: `00423DB0` stores `1` at profile `+0x2C`, serialized as
+`DifficultyLevel`. Existing saves can override that field, and the
+EverGame `+0x6E4` selected-profile writer remains unresolved, so the value used
+with a loaded profile is still unknown. See
+[`profile_difficulty_constructor_default_2026-10-21.md`](../tracker/evidence/scenario-loading/profile_difficulty_constructor_default_2026-10-21.md).
 The host's scene reconstruction matches this entity lifetime at a coarse
 level, while its statistics-map carry remains provisional. Exact transition
 presentation and cadence remain provisional. See
@@ -2446,7 +2451,8 @@ the report is observed.
 | `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; mapped direct world-resource actor/bitmap/world cleanup and ScriptEngine cleanup; corrected `+0x94` alias to the script-variable table at `0x00503044`, which is cleared then reseeded with DIFFICULTY/LEVEL; element callbacks and indirect mission/profile/stat effects remain open |
 | `linked_flush_direct_state_audit` (Luna/root correction) | Check whether nested world-resource and ScriptEngine flush helpers directly clear linked-stage profile, stats, or script variables | Current-hash `004944E0`, `00493EA0`, `00470ED0`, `0043B6E0`, `0043EE40`, `00470FC0`, `00471030`, `004443E0`; [format evidence](../tracker/evidence/scenario-loading/004443e0_difficulty_format_fresh_2026-10-21.asm); headless Ghidra output under `/private/tmp/fdny-stageflush-out` and `/private/tmp/fdny-difficulty-out.log` | Complete, read-only; root address audit corrected the initial alias reading: ScriptEngine `+0x94` is `0x00503044`, and `00470ED0` clears it through `0043EE40`; `00471030` reseeds DIFFICULTY from selected-object `+0x6E4/+0x2C` formatted with `%i` and LEVEL from the active level record. Selected-object writer and mission-stat/profile retention remain open |
 | `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit; host now carries one mission-stat map through linked `run()` contexts as a provisional approximation, while opaque flush effects leave retail persistence unknown |
-| `stat_manager_pointer_lifecycle` (Luna) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `manager-offsets.log`, pending-loader consumers | Complete, read-only; constructor clears `+0x6E4` before loading profile records; later writer remains unresolved because direct-offset scans can miss aliases/adjusted bases |
+| `stat_manager_pointer_lifecycle` (Luna/root follow-up) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `00423DB0`, `00471030`, selector callers, manager-offset scan | Complete, read-only; manager clears `+0x6E4` before loading records; independent follow-up still finds no selected-record writer. Fresh profile constructor sets `+0x2C=1` (`DifficultyLevel`), matching the host's new-profile seed only; loaded value and selected-object path remain unresolved |
+| `profile_difficulty_constructor_default` (root) | Compare host `DIFFICULTY="1"` seed with retail's fresh-profile field | Current-hash `00423DB0`, serializer `00424DC0`, post-flush `00471030`, formatter `004443E0` | Complete, read-only; fresh profile constructor writes `1` at `+0x2C`, serialized as `DifficultyLevel`; saved `.rb` values may override it and the selected-profile writer/runtime path remains open |
 | `player_state_flush_audit` (Luna/root follow-up) | Determine whether PlayerRescue or player state survives the linked-stage pre-load flush | `0042A070`, `00429EF0`, owner `+0x3C4` service, `0042B1A0`, `0049C820`, PlayerRescue vtable/factory, hash-pinned BSP inventory | Complete, read-only; the flush drains the queued callback in-process; the base initializer clears PlayerRescue `+0x1D`, and the known factory path has no positive store, so the known branch calls root slot 0 (`00454060`) to clean up/free; computed or indirect byte writes remain open. A new BSP creates a fresh PlayerRescue. Other profile/global/stat state remains unresolved; see `linked_stage_player_rescue_lifetime_2026-10-21.md` |
 | `hud_goggles_trace` | Current hint/HUD and goggles visor/scan path | `scene_viewer.cpp`, `hint_overlay.h`, `goggles_renderer.h`, `goggles_scan.h`, `0044ee50_player_hint_route_fresh.c`, `004564c0_hint_window_constructor_fresh.c`, `00462a60_goggles_visor_setup_fresh.c` | Complete; render paths are in the packaged Training binary; live pixel visibility and target effect attachment remain unverified |
 | `fire_damage_trace` | Whether Player fire exposure runs in ordinary viewer frames | `scene_viewer.cpp`, `player_fire_contact.h`, `player_fire_message.h`, `00451640_fire_exposure_trace.asm`, `docs/REVERSE_ENGINEERING_LOG.md` | Complete; handler is called per rendered frame; provisional spatial inputs and callback cadence leave user report unexplained |
