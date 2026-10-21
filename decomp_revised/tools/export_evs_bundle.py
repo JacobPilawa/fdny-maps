@@ -134,6 +134,13 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # bank so later linked stages can play their victims' configured samples.
     wanted.update(("BoyRescue", "WomanRescue", "ManRescue", "GirlRescue",
                    "DogBark1", "FighterRescue"))
+    # VictimRescue's non-state-6 owner Think update also requests its configured
+    # Beckon collection; preserve the order in victims.srf for RNG selection.
+    wanted.update(("BoyBeckon1", "BoyBeckon2", "BoyBeckon3",
+                   "WomanBeckon1", "WomanBeckon2", "WomanBeckon3",
+                   "ManBeckon1", "ManBeckon2", "ManBeckon3",
+                   "GirlBeckon1", "GirlBeckon2", "GirlBeckon3",
+                   "DogBark2", "DogBark3", "FighterBeckon"))
     # The Player sound tables configure these shared 2D resources outside EVS:
     # 00451560 plays Breathe/OxyRelease around oxygen depletion/recovery, while
     # 00455AB0/00455F60 play the visor transition and lock events.

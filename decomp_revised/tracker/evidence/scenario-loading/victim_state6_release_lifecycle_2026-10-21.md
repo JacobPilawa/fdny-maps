@@ -61,17 +61,40 @@ source. The per-type keys are mapped from `Data/ResDefs/victims.srf`; their
 3D sample definitions come from `Data/ResDefs/sound.rrf`, and the bundle
 exporter includes the voices in each scene's shared sample bank. The host does
 not reproduce the retail manager's deferred queue or controller object, and
-rendered-frame cadence and audible parity remain unverified. Separately, the
-non-state-6 `0048D8F0` Beckon update is still not connected to host playback.
+rendered-frame cadence and audible parity remain unverified.
+
+## Non-state-6 Beckon requests
+
+Fresh current-hash `0045BEA0` evidence shows that state 5 returns early, state 6
+uses the release timer above, and all other states call the attached sound
+controller at `+0x154` after state-specific work. The preserved `0048D8F0`
+address export in
+[`reference/previous-work/decomp/evidence/rng-callers/0048d8f0_FUN_0048d8f0.c`](../../../reference/previous-work/decomp/evidence/rng-callers/0048d8f0_FUN_0048d8f0.c)
+checks its deadline against the global clock, draws the configured delay,
+chooses an ordered Beckon entry, adjusts away from the previous entry with a
+random neighboring choice, then requests that sound instance through
+`004A11A0`. The export is preserved prior work; no fresh Ghidra body export was
+made for `0048D8F0` in this pass.
+
+The shared host now calls its existing `VictimSoundChoices::update` after each
+victim's roam work and before the next sampled contact pass. Movement and sound
+selection stay in one per-victim loop so their shared-RNG draws remain
+interleaved in owner callback order. It uses the same host RNG stream and
+ordered per-type names/delays from `victims.srf`, then plays the selected
+resource as an entity-owned 3D voice. The exporter includes all authored
+Beckon and Rescue keys in every scene bundle for linked stages.
+The retail manager's deferred queue, exact callback interval/list order, audio
+mixing, and audible parity remain unverified. See the shared
+[`victim_spawn_rng_port_coverage.md`](victim_spawn_rng_port_coverage.md).
 The sound request wrapper and manager path are preserved in
 [`mission_result_sound_requests_fresh_2026-10-20.c`](mission_result_sound_requests_fresh_2026-10-20.c)
 and [`004a0be0_dispatch_or_queue_sound_fresh.c`](004a0be0_dispatch_or_queue_sound_fresh.c).
 
-The rescue-all macOS app compiled and packaged after this port. The standalone
-and app-bundle arm64 executables match at SHA-256
-`ec2629d9c08e754eeee0f431b39bf3aa584233522575a85dc8d28926314dab0f`. All 17
-scene sound manifests include the six configured Rescue resources; eight
-rescue choices and `Info.plist` validation passed. The linker warns that
+The rescue-all macOS app compiled and packaged after the victim sound update.
+The standalone and app-bundle arm64 executables match at SHA-256
+`e2fbccad13174f6438ffb2a7321ea694cda3f0a59ebc8ae37894e5b4e90d197f`. All 17
+scene sound manifests include the 21 authored Beckon and Rescue resources;
+eight rescue choices and `Info.plist` validation passed. The linker warns that
 json-c targets macOS 27.0 while this app targets macOS 13.3. Compile/package
 evidence only; no gameplay tests, interactive runtime, audio capture, or
 retail parity check was run.

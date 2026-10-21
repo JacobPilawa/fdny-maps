@@ -620,6 +620,7 @@ struct PreviewVictim {
     VictimSpawn spawn;
     VictimPickupActorState pickup;
     VictimSoundChoices sounds;
+    VictimSoundProfile soundProfile;
     ActorAnimation animation;
     std::string actorStem, label;
     int runtimeModelId = 12;
@@ -1788,6 +1789,7 @@ std::vector<PreviewVictim> loadPreviewVictims(
         // VictimRescue constructs its sound controller before selecting the
         // actor model/motion; its initial deadline consumes one shared draw.
         victim.sounds.initialize(random);
+        victim.soundProfile = victimSoundProfile(spawn.type);
         VictimActorResource resource = resolveVictimActor(spawn.type, random);
         auto assetIt = assets.find(resource.stem);
         if (assetIt == assets.end()) {
@@ -1862,32 +1864,39 @@ std::vector<PreviewVictim> loadPreviewVictims(
     return victims;
 }
 
+template <class AfterThink>
 void updateRoamingVictims(std::vector<PreviewVictim>& victims, Collision& collision,
                           Random& random, const Player& player, float playerYaw,
-                          bool playerCarryingVictim, float dt) {
+                          bool playerCarryingVictim, float dt, AfterThink&& afterThink) {
     for (auto& victim : victims) {
-        // Victim state 5 is carried; state 6 is the timed release animation.
-        if (!victim.roaming || victim.roamState != 7 ||
-            victim.pickup.state == 5 || victim.pickup.state == 6) continue;
+        // State 5 returns from the retail owner callback; state 6 runs its
+        // separate release handler and does not service the Beckon controller.
+        if (victim.pickup.state == 5 || victim.pickup.state == 6) continue;
 
-        updateVictimRoamTarget(victim, collision, random, player.p, playerYaw,
-                               playerCarryingVictim);
-        V delta = victim.roamTarget - victim.spawn.selectedPosition;
-        const double distanceSquared = victimRoamDistanceSquared(delta);
-        if (distanceSquared > 36.0) {
-            const float desired = float(std::atan2(-delta.x, delta.z) *
-                                        (180.0 / 3.14159265358979323846));
-            // Retail 00482AA0 applies 0.5^(frameDelta / 0.3) to the old
-            // heading. Its update callback cadence is still unresolved, so
-            // dt remains this viewer's rendered-frame delta.
-            victim.facingDegrees = blendVictimRoamHeading(
-                victim.facingDegrees, desired, dt);
-            victim.spawn.selectedHeading = (victim.facingDegrees - 180.f) / 30.f;
+        if (victim.roaming && victim.roamState == 7) {
+            updateVictimRoamTarget(victim, collision, random, player.p, playerYaw,
+                                   playerCarryingVictim);
+            V delta = victim.roamTarget - victim.spawn.selectedPosition;
+            const double distanceSquared = victimRoamDistanceSquared(delta);
+            if (distanceSquared > 36.0) {
+                const float desired = float(std::atan2(-delta.x, delta.z) *
+                                            (180.0 / 3.14159265358979323846));
+                // Retail 00482AA0 applies 0.5^(frameDelta / 0.3) to the old
+                // heading. Its update callback cadence is unresolved, so dt
+                // remains this viewer's rendered-frame delta.
+                victim.facingDegrees = blendVictimRoamHeading(
+                    victim.facingDegrees, desired, dt);
+                victim.spawn.selectedHeading = (victim.facingDegrees - 180.f) / 30.f;
+            }
+
+            const float stepLength = victim.roamSpeed * dt;
+            victim.spawn.selectedPosition = advanceVictimRoamPosition(
+                victim.spawn.selectedPosition, victim.roamTarget, stepLength);
         }
 
-        const float stepLength = victim.roamSpeed * dt;
-        victim.spawn.selectedPosition = advanceVictimRoamPosition(
-            victim.spawn.selectedPosition, victim.roamTarget, stepLength);
+        // The retail victim callback performs its actor-state work, then its
+        // attached sound-controller update, before advancing to the next root.
+        afterThink(victim);
     }
 }
 
@@ -7380,7 +7389,7 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                                                      step.worldActorFlags);
                     if (step.requestRescueSound) {
                         sceneAudio.playOwned(victim.spawn.entity,
-                            victimRescueSoundName(victim.spawn.type),
+                            victim.soundProfile.rescueName,
                             victim.spawn.selectedPosition, player.p, yaw, 2);
                     }
                 }
@@ -7392,7 +7401,26 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             // roaming victims at this phase boundary before sampling contacts.
             // The host delta and cross-type Think-list order remain provisional.
             updateRoamingVictims(victims, collision, gameplayRandom, player, yaw,
-                                 carriedVictim.carriedVictimEntity.has_value(), dt);
+                carriedVictim.carriedVictimEntity.has_value(), dt,
+                [&](PreviewVictim& victim) {
+                    // 0045BEA0 runs 0048D8F0 for non-state-6 states except
+                    // carry state 5. Keep per-victim movement and sound draws
+                    // together so shared-RNG order follows each owner callback.
+                    if (!rescueTransactions) return;
+                    auto actor = rescueState.actors.find(victim.spawn.entity);
+                    if (actor == rescueState.actors.end() ||
+                        actor->second.state == 5 || actor->second.state == 6 ||
+                        victim.soundProfile.beckonCount <= 0) return;
+                    const int choice = victim.sounds.update(
+                        gameplayRandom, now, victim.soundProfile.beckonCount,
+                        victim.soundProfile.minBeckonDelay,
+                        victim.soundProfile.maxBeckonDelay);
+                    if (choice >= 0) {
+                        sceneAudio.playOwned(victim.spawn.entity,
+                            victim.soundProfile.beckonNames[size_t(choice)],
+                            victim.spawn.selectedPosition, player.p, yaw, 2);
+                    }
+                });
 
             std::map<int, bool> currentBModelContacts;
             const V playerMinimum = player.p + V{-30.f, -30.f, -30.f};

@@ -1,22 +1,58 @@
 #pragma once
-// Authored VictimRescue `Rescue` resources from Data/ResDefs/victims.srf.
+// Authored VictimRescue `Beckon`/`Rescue` resources from Data/ResDefs/victims.srf.
+#include <array>
 #include <algorithm>
 #include <cctype>
 #include <cstdint>
 #include <string>
+#include "random.h"
 
-// Fatman keeps the ManRescue behavior/audio record even when its renderer
-// model is selected from a different actor variant.
-inline std::string victimRescueSoundName(const std::string& type) {
+struct VictimSoundProfile {
+ std::array<std::string,3> beckonNames{};
+ int beckonCount=0;
+ std::string rescueName;
+ float minBeckonDelay=0.f,maxBeckonDelay=0.f;
+};
+
+// The ordered names and delays follow Data/ResDefs/victims.srf. Fatman keeps
+// the Man behavior/audio profile even when its renderer model is randomized.
+inline VictimSoundProfile victimSoundProfile(const std::string& type) {
  std::string key=type;
  std::transform(key.begin(),key.end(),key.begin(),[](unsigned char ch){return char(std::tolower(ch));});
- if(key=="woman")return "WomanRescue";
- if(key=="man"||key=="fatman")return "ManRescue";
- if(key=="girl")return "GirlRescue";
- if(key=="dog")return "DogBark1";
- if(key=="herodown")return "FighterRescue";
- // boy, boy1, and the VictimRescue resource fallback use the first profile.
- return "BoyRescue";
+ VictimSoundProfile profile;
+ if(key=="woman") {
+  profile.beckonNames={"WomanBeckon1","WomanBeckon2","WomanBeckon3"};
+  profile.beckonCount=3;profile.rescueName="WomanRescue";
+  profile.minBeckonDelay=15.f;profile.maxBeckonDelay=30.f;return profile;
+ }
+ if(key=="man"||key=="fatman") {
+  profile.beckonNames={"ManBeckon1","ManBeckon2","ManBeckon3"};
+  profile.beckonCount=3;profile.rescueName="ManRescue";
+  profile.minBeckonDelay=5.f;profile.maxBeckonDelay=10.f;return profile;
+ }
+ if(key=="girl") {
+  profile.beckonNames={"GirlBeckon1","GirlBeckon2","GirlBeckon3"};
+  profile.beckonCount=3;profile.rescueName="GirlRescue";
+  profile.minBeckonDelay=5.f;profile.maxBeckonDelay=10.f;return profile;
+ }
+ if(key=="dog") {
+  profile.beckonNames={"DogBark1","DogBark2","DogBark3"};
+  profile.beckonCount=3;profile.rescueName="DogBark1";
+  profile.minBeckonDelay=5.f;profile.maxBeckonDelay=10.f;return profile;
+ }
+ if(key=="herodown") {
+  profile.beckonNames[0]="FighterBeckon";
+  profile.beckonCount=1;profile.rescueName="FighterRescue";
+  profile.minBeckonDelay=1.5f;profile.maxBeckonDelay=1.5f;return profile;
+ }
+ // boy, boy1, and the current host's unknown-type fallback use the first row.
+ profile.beckonNames={"BoyBeckon1","BoyBeckon2","BoyBeckon3"};
+ profile.beckonCount=3;profile.rescueName="BoyRescue";
+ profile.minBeckonDelay=5.f;profile.maxBeckonDelay=10.f;return profile;
+}
+
+inline std::string victimRescueSoundName(const std::string& type) {
+ return victimSoundProfile(type).rescueName;
 }
 
 // 0048D8F0: unsigned eligibility check, delay draw, sound choice, optional
