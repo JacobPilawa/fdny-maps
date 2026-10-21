@@ -7378,6 +7378,11 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     if (step.due)
                         rescueServices.setActorFlags(victim.spawn.entity,
                                                      step.worldActorFlags);
+                    if (step.requestRescueSound) {
+                        sceneAudio.playOwned(victim.spawn.entity,
+                            victimRescueSoundName(victim.spawn.type),
+                            victim.spawn.selectedPosition, player.p, yaw, 2);
+                    }
                 }
             }
 

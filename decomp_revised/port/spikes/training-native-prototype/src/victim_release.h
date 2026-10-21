@@ -19,6 +19,7 @@ struct TrainingVictimReleaseActor : VictimPickupActorState {
 struct VictimReleaseThinkStep {
     bool due = false;
     uint32_t worldActorFlags = 0;
+    bool requestRescueSound = false;
 };
 
 // VictimRescue state 6's retail Think handler (004599B0). The host supplies
@@ -32,9 +33,11 @@ inline VictimReleaseThinkStep advanceVictimReleaseThink(
         return {};
     }
 
-    // Retail also requests a stop for a non-null VictimRescue sound instance
-    // at +0x154 on this first expired deadline. That instance is not retained
-    // by the current host actor model, so audio remains an adapter gap.
+    // Retail requests the configured VictimRescue sound instance at +0x154
+    // on this first expired deadline. RequestSoundInstancePlayback receives a
+    // null optional command here, which forwards the configured Rescue sample
+    // to the sound manager's play path.
+    const bool requestRescueSound = victim.rescueStart != 0;
     victim.rescueStart = 0;
     victim.rescueTimer -= 5u;
     if (victim.rescueTimer == 0) {
@@ -44,7 +47,7 @@ inline VictimReleaseThinkStep advanceVictimReleaseThink(
         victim.rescueEnd = now + victim.rescueTimer;
         victim.rescueActive = victim.rescueActive == 0 ? 1 : 0;
     }
-    return {true, victim.rescueActive != 0 ? 0x400u : 0u};
+    return {true, victim.rescueActive != 0 ? 0x400u : 0u, requestRescueSound};
 }
 
 // Ops provide the native frame/math and neighboring Player effects. The call

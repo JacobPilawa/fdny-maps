@@ -24,7 +24,7 @@ and the corrected [Player/BModel census](../tracker/evidence/scenario-loading/pl
 The exact 12-byte `0049C3D0` vtable adapter boundary is now present in the
 generated function inventory from a fresh headless Ghidra export on a
 disposable project copy. `python3 tools/build_tracker.py` rebuilds cleanly at
-7,968 function records and 492 reviewed EXE functions.
+7,968 function records and 498 reviewed EXE functions.
 
 The shared scene now buffers BModel, BoundsTrigger, and PropModel ScriptActor
 contact-pair events across one host update iteration: it drains the preceding
@@ -123,10 +123,21 @@ deadlines and 5-per-due-Think counter, distinguish RescueBot's `UINT32_MAX`
 sentinel path, and show that `+0x180` is the Actor motion count used by the
 roam-animation selector. The shared scene now applies the regular release's
 `0x400` visibility pulses and final hide before contact sampling, while
-preserving the RescueBot sentinel. Host clock/callback cadence and the attached
-victim sound-stop request remain open. See
+preserving the RescueBot sentinel. The first due callback now requests the
+victim type's configured Rescue sample through the host's entity-owned 3D audio
+voice. The source wrapper forwards a null optional command to the sound
+manager's playback path; it is not a stop request. The host does not model the
+retail deferred sound queue, and recurring non-state-6 Beckon selection,
+callback cadence, and audible parity remain open. See
 [`victim_state6_release_lifecycle_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_state6_release_lifecycle_2026-10-21.md)
 and the expanded [victim roam evidence](../tracker/evidence/scenario-loading/victim_roam_behavior.md).
+The rescue-all macOS app compiled and packaged after this audio update; its
+standalone and app-bundle arm64 executables match at SHA-256
+`ec2629d9c08e754eeee0f431b39bf3aa584233522575a85dc8d28926314dab0f`. All 17
+scene sound manifests include the six configured Rescue samples, eight rescue
+choices are present, and `Info.plist` validates. The linker still warns that
+json-c targets macOS 27.0 while the app targets 13.3. Compile/package only;
+no tests, gameplay run, audio capture, or retail parity check.
 The macOS `rescue-all` target compiled and packaged after this change. The
 standalone and packaged arm64 executables match at SHA-256
 `5085d0b19c28d28cbfa061afd740d420d9c26928acd288f39125008d44ac45db`; the
@@ -2381,7 +2392,7 @@ the report is observed.
 | `held_tool_orientation_delta` | Independently recheck backward-facing Axe/extinguisher pose against retail | Current viewer source, ACT assets, pinned Ghidra evidence; read-only | Complete; no source-backed axis/root correction, retail camera-space matrix and same-view capture remain open |
 | `victim_movement_verify` | Verify victim roam step and turn helpers against retail instructions | Saved hash-pinned Ghidra output; read-only | Complete; strict target-arrival gate and exponential 0.3-second half-life turn are verified and ported; callback cadence remains open |
 | `victim_roam_gate_reconciliation` (Luna) | Reconcile target updater center/radius and Player-relative angle operands | `0045AE50`, `0045B220`, `00459C70`, `00490130`, `0048FEA0`; pinned PE constants; viewer live position | Complete, read-only; apparent 36-vs-72 mismatch was a stale decomp comment; host uses live position; `0x004E2328=5184.0` matches the 72-unit gate, `0x004E2338=36.0` is the distinct turn threshold; retail and host query mask `0x43`/flags `2` match; collision result parity remains unverified |
-| `victim_roam_think_phase` (root) | Trace VictimRescue registration and state-6/state-7 Think updates into owner Think/contact order | `0045DDD0`, `00459990`, `0045BEA0`, `004599B0`, `0045B220`, `00429490`, `00429520`; release lifecycle evidence and `scene_viewer.cpp` | Complete; state 6 now applies its per-due-Think 5 decrement, `0x400` visibility pulse, and terminal hide; state 7 roaming remains before contact sampling. RescueBot sentinel is kept separate. Retail callback cadence, attached sound stop, list order, and runtime parity remain open |
+| `victim_roam_think_phase` (root) | Trace VictimRescue registration and state-6/state-7 Think updates into owner Think/contact order | `0045DDD0`, `00459990`, `0045BEA0`, `004599B0`, `0045B220`, `00429490`, `00429520`; release lifecycle evidence and `scene_viewer.cpp` | Complete; state 6 applies its per-due-Think 5 decrement, `0x400` visibility pulse, terminal hide, and one-time configured Rescue sample request; state 7 roaming remains before contact sampling. RescueBot sentinel is kept separate. Retail callback cadence, recurring Beckon playback, list order, and runtime parity remain open |
 | `fire_hud_widget_trace` | Trace HUD child construction, resource IDs, and placement for the four fire sectors | Read-only Ghidra trace; `tracker/evidence/scenario-loading/fire_direction_hud_trace_2026-10-14.md` | Complete; resource 50 pair and exact rotated quads are mapped; first-pass port draws the live sector bytes; retail blend remains open |
 | `gebm_truecolor_trace` follow-up | Cross-check natural victim and exit contact against retail source | `0045A070`, `00453A70`, `00450440` exports; `victim_transactions.h`, `scene_viewer.cpp` | Complete; confirmed the outer `+0x3438` dispatcher gate and inner carry gate; direct overlap bypass was identified and routed through the mapper; delivery cadence remains provisional |
 | `natural_rescue_bounds_audit` | Resolve the type-1 PlayerRescue `+0x0C` interface consumed by victim pickup | `0045A070`, PlayerRescue vtable/getter, `0044D550`, crouch and uncrouch traces; pickup adapter | Complete; getter returns origin plus six bounds values, and retail standing/crouched extents match the host `VictimPickupBox`; runtime cadence and natural pickup parity remain open |

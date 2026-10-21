@@ -1,4 +1,24 @@
 #pragma once
+// Authored VictimRescue `Rescue` resources from Data/ResDefs/victims.srf.
+#include <algorithm>
+#include <cctype>
+#include <cstdint>
+#include <string>
+
+// Fatman keeps the ManRescue behavior/audio record even when its renderer
+// model is selected from a different actor variant.
+inline std::string victimRescueSoundName(const std::string& type) {
+ std::string key=type;
+ std::transform(key.begin(),key.end(),key.begin(),[](unsigned char ch){return char(std::tolower(ch));});
+ if(key=="woman")return "WomanRescue";
+ if(key=="man"||key=="fatman")return "ManRescue";
+ if(key=="girl")return "GirlRescue";
+ if(key=="dog")return "DogBark1";
+ if(key=="herodown")return "FighterRescue";
+ // boy, boy1, and the VictimRescue resource fallback use the first profile.
+ return "BoyRescue";
+}
+
 // 0048D8F0: unsigned eligibility check, delay draw, sound choice, optional
 // repeat-neighbor draw. Delay is in seconds; the routine converts to
 // milliseconds and adds the unsigned original game time before truncating.
