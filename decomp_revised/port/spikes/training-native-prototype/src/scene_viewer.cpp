@@ -3528,6 +3528,26 @@ void drawRescuePlayerHoseStreamPreview(const std::vector<V>& vertices, float pre
     glPopAttrib();
 }
 
+using RescueStatisticsMap = std::map<std::string, SourceStatisticRecord>;
+
+RescueStatisticsMap makeInitialRescueStatistics() {
+    return {
+        {"Completion Time", {0, 0}},
+        {"Air Time", {0, 0}},
+        {"Bonus Points", {0, 0}},
+        {"Jumps", {0, 0}},
+        {"Total Steps", {0, 0}},
+        {"Objects Thrown", {0, 0}},
+        {"Rescues", {0, 0}},
+        {"Gallons Sprayed", {0, 0}},
+        {"Longest Rescue Time", {2, 0}},
+        {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}},
+        {"Fires Doused", {0, 0}},
+        {"Axe Hits", {0, 0}},
+        {"Serious Burns", {0, 0}}
+    };
+}
+
 int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck,
         bool interactionCheck, bool rescueCheck, bool ambientAudioCheck,
         int triggerRenderCheckEntity,
@@ -3538,7 +3558,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         std::string* nextRescueStage = nullptr, bool performanceAudit = false,
         const SceneAudio::MusicSelection* inheritedMusic = nullptr,
         std::optional<float> levelField10 = std::nullopt,
-        std::optional<int> hoseModeIndex = std::nullopt) {
+        std::optional<int> hoseModeIndex = std::nullopt,
+        RescueStatisticsMap* linkedMissionStatistics = nullptr) {
     const bool rescueDiagnostic = rescueCheck || ambientAudioCheck;
     auto logRescueStage = [&](const char* stage) {
         if (rescueCheck) std::cerr << "rescue-check: " << stage << std::endl;
@@ -3871,21 +3892,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
         TrainingZones zones(TrainingZones::LabelMode::CaseSensitive);
         VictimTransactionServices rescueServices;
         std::unique_ptr<VictimTransactions> rescueTransactions;
-        std::map<std::string, SourceStatisticRecord> rescueStatistics{
-            {"Completion Time", {0, 0}},
-            {"Air Time", {0, 0}},
-            {"Bonus Points", {0, 0}},
-            {"Jumps", {0, 0}},
-            {"Total Steps", {0, 0}},
-            {"Objects Thrown", {0, 0}},
-            {"Rescues", {0, 0}},
-            {"Gallons Sprayed", {0, 0}},
-            {"Longest Rescue Time", {2, 0}},
-            {"Shortest Rescue Time", {1, std::numeric_limits<uint32_t>::max()}},
-            {"Fires Doused", {0, 0}},
-            {"Axe Hits", {0, 0}},
-            {"Serious Burns", {0, 0}}
-        };
+        RescueStatisticsMap stageRescueStatistics = makeInitialRescueStatistics();
+        RescueStatisticsMap& rescueStatistics = linkedMissionStatistics
+            ? *linkedMissionStatistics : stageRescueStatistics;
         std::set<int> enabledExitTriggers;
         std::string rescueStageRequest;
         if (nextRescueStage) nextRescueStage->clear();
@@ -7931,6 +7940,11 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
 
     std::filesystem::path currentPackage = initialPackage;
     std::set<std::string> visited;
+    // Active-record finalexitloadmap requests skip retail's explicit stat
+    // collection reinitialization. Carry the host map through linked run()
+    // contexts as a provisional approximation; opaque flush callbacks still
+    // leave actual retail retention unresolved.
+    RescueStatisticsMap missionStatistics = makeInitialRescueStatistics();
     for (int stageCount = 0; stageCount < 16; ++stageCount) {
         std::string currentKey = lower(currentPackage.filename().string());
         if (!visited.insert(currentKey).second) {
@@ -7940,7 +7954,8 @@ int runRescueSceneChain(const std::filesystem::path& initialPackage,
         std::string nextStage;
         const int result = run(currentPackage, false, false, false, false, false, -1,
                                false, false, false, false, false, {}, &nextStage, performanceAudit,
-                               inheritedMusic ? &*inheritedMusic : nullptr, levelField10);
+                               inheritedMusic ? &*inheritedMusic : nullptr, levelField10,
+                               std::nullopt, &missionStatistics);
         if (result != 0 || nextStage.empty()) return result;
         currentPackage = currentPackage.parent_path() / nextStage;
         std::cout << "Loading linked rescue package: " << currentPackage << "\n";

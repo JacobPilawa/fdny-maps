@@ -35,8 +35,21 @@ definitions; see [the score-profile trace](mission_outcome_score_profile_fresh_2
 
 This does not prove that cumulative live statistics survive the transition:
 the `0042A070` flush invokes several helpers whose full side effects remain
-unknown. The host also creates its `rescueStatistics` map inside each `run()`
-invocation, so the current linked scene chain does not carry that map into the
-next stage. Keep persistence unresolved until the remaining manager-pointer
-lifecycle and opaque flush paths are traced; carrying values may be a port
-choice, but is not a verified retail behavior.
+unknown. The host now passes one `rescueStatistics` map through the linked
+`run()` calls, based on the skipped explicit reset. This is a provisional port
+choice, not verified retail behavior. Keep persistence unresolved until the
+score/profile pointer lifecycle and opaque flush paths are traced or a
+controlled retail comparison becomes available.
+
+## Score/profile pointer initialization
+
+The retail EverGame constructor (`0042B860`) calls `00425090` with
+`EverGame+0x6CC`. The fresh decompilation shows `00425090` clearing its
+`param_1[6]` field, which is `EverGame+0x6E4`, to null before it loads or
+creates the per-player `.rb` score records in the manager's record array. This
+establishes the initial value, not the later selected-record assignment:
+`0042AB00` and `0042AEA0` consume `EverGame+0x6E4`, but the direct displacement
+scan does not find a nonzero writer. That scan may miss an adjusted base or
+indirect write, so the assignment path remains open. The saved fresh body and
+source hash are in
+[`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c).
