@@ -34,12 +34,21 @@ collection at the stat manager's `+0x30` and conditionally registers the rescue
 definitions; see [the score-profile trace](mission_outcome_score_profile_fresh_2026-10-20.md).
 
 This does not prove that cumulative live statistics survive the transition:
-the `0042A070` flush invokes several helpers whose full side effects remain
-unknown. The host now passes one `rescueStatistics` map through the linked
-`run()` calls, based on the skipped explicit reset. This is a provisional port
-choice, not verified retail behavior. Keep persistence unresolved until the
-score/profile pointer lifecycle and opaque flush paths are traced or a
-controlled retail comparison becomes available.
+the `0042A070` flush invokes helpers whose full side effects remain unknown.
+The host now passes one `rescueStatistics` map through the linked `run()` calls,
+based on the skipped explicit reset. This is a provisional port choice, not
+verified retail behavior. The score/profile manager constructor initializes
+EverGame `+0x6E4` to null, but its later selected-record writer remains
+unresolved. The flush drains manager lists and de-duplicates entity pointers
+against the owner service's pending-work queue before enqueueing a
+`SetEntityFactoryRequestPending` request. PlayerRescue is statically admitted
+to the drained Think list, but the full callback effect and any restoration
+into the fresh PlayerRescue remain unresolved. Every rescue/stage BSP creates
+a PlayerRescue through its ordinary spawn path; that does not prove which
+gameplay fields carry across the transition.
+See [the flush and Player lifetime boundary](level_transition_flush_2026-10-21.md).
+Keep statistics and Player-state persistence unresolved until those paths are
+mapped or a controlled retail comparison becomes available.
 
 ## Score/profile pointer initialization
 
