@@ -4496,7 +4496,10 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 std::cout << "World startup EVS: delayed full pass completed after four host World updates; "
                           << "retail callback cadence remains unverified.\n";
         };
-        const int rescueGlobalMode = 0;
+        // Fresh retail profiles default DifficultyLevel to 1. The Scripts
+        // runtime uses the same seed; reading existing profile saves remains
+        // outside this playable mission path.
+        const int rescueGlobalMode = Scripts::FreshProfileDifficulty;
         // Player+0x343C begins from the selected .lev time, scaled by mode.
         // 00452570 then subtracts the frame delta in seconds on every Player
         // update; this is the remaining timer value used by later callbacks.
@@ -8079,15 +8082,15 @@ int runRescueMissionCatalogCheck(const std::filesystem::path& resourcesRoot) {
                       << count(scene.entities()) << ", meshes="
                       << count(field(scene.worldMesh(), "groups"))
                       << ", level+0x10=" << choice.levelField10.value_or(1200.f)
-                      << ", Player+0x343C(mode 0)="
-                      << initializePlayerDeadlineInput(choice.levelField10, 0) << "\n";
+                      << ", Player+0x343C(mode 1)="
+                      << initializePlayerDeadlineInput(choice.levelField10, Scripts::FreshProfileDifficulty) << "\n";
         } else {
             ++customCount;
             std::cout << "custom " << choice.key << " (" << choice.title
                       << "), entities=" << count(scene.entities())
                       << ", meshes=" << count(field(scene.worldMesh(), "groups"))
-                      << ", Player+0x343C(no level record, mode 0)="
-                      << initializePlayerDeadlineInput(choice.levelField10, 0) << "\n";
+                      << ", Player+0x343C(no level record, mode 1)="
+                      << initializePlayerDeadlineInput(choice.levelField10, Scripts::FreshProfileDifficulty) << "\n";
         }
     }
     std::cout << "Mission catalog check: all " << retailCount

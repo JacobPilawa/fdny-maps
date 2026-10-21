@@ -2,8 +2,8 @@
 
 Status: the shared viewer runs the mapped delayed recovery transaction and
 renders the source-shaped state-6 camera blend. The Player frame scheduler,
-selected-item view offsets, and mode-2 HeroDown path remain incomplete or
-unverified.
+selected-item view offsets, loaded-profile difficulty, and mode-2 HeroDown path
+remain incomplete or unverified.
 
 ## Plain-language explanation
 
@@ -44,8 +44,10 @@ performs floor placement.
   floor placement, and the survivor-status message.
 - The rescue-all app was rebuilt with this path. The interactive one-second
   camera blend is not rendered because its full retail camera inputs are not
-  available. The viewer currently exposes global mode 0; its mode-2 HeroDown
-  spawn/count callback fails explicitly if reached.
+  available. The viewer now uses global mode 1, matching a fresh/reset retail
+  profile. It does not load an existing profile's difficulty; its mode-2
+  HeroDown spawn/count path remains unsupported and fails explicitly if
+  reached.
 
 ## Evidence and verification
 
@@ -118,5 +120,6 @@ Targeted checks on 2026-10-15:
 
 No live camera capture was made. The state-6 timing and endpoints are source
 mapped; equipped-item offsets, view-updater cadence, and rendered parity
-against retail remain open. The viewer still fixes global mode at 0, so the
-mode-2 HeroDown spawn/count branch remains unsupported.
+against retail remain open. The viewer's fixed global mode 1 matches the
+fresh/reset retail profile default; loaded-profile difficulty and the mode-2
+HeroDown spawn/count branch remain unsupported.

@@ -63,12 +63,13 @@ existing `rescue_missions.json` `time` field, including the retail record
 default when absent. The selection loop passes it into `runRescueSceneChain`,
 which passes the same selected record field through each linked rescue stage.
 The runtime adapter now calls the existing
-`initializePlayerDeadlineInput` implementation with the current mode. A
+`initializePlayerDeadlineInput` implementation with fresh-profile mode 1. A
 non-catalog single-map or custom-level launch follows the retail no-level
-fallback; its initializer-scaled result is `900.0f` in the port's current
-mode 0. Difficulty selection remains outside this port path.
+fallback; its initializer-scaled result is `900.0f`. Modes 0 and 1 both use
+the same `1.5` initializer multiplier, but later rescue-deadline behavior
+differs. Existing saved-profile difficulty is not loaded.
 
-| Rescue row | Authored `time` | Level `+0x10` | Player `+0x343C` in current mode 0 |
+| Rescue row | Authored `time` | Level `+0x10` | Player `+0x343C` in fresh-profile mode 1 |
 |---|---:|---:|---:|
 | Training | 500 | 30000 | 45000 |
 | MBase | 5 | 300 | 450 |
@@ -80,7 +81,9 @@ mode 0. Difficulty selection remains outside this port path.
 | Oil Rig A | 10 | 600 | 900 |
 
 The column values demonstrate the parser and initializer arithmetic. No unit
-or mission-expiry interpretation is assigned to the catalog label.
+or mission-expiry interpretation is assigned to the catalog label. Since
+modes 0 and 1 share this initializer multiplier, the table values do not show
+the later deadline-factor difference.
 
 ## Build and limits
 

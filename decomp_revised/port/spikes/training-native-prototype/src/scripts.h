@@ -18,12 +18,13 @@ struct Scripts{
  struct Queued{int entity;std::string command,source;bool startup=false;};
  struct ActorQueue{std::deque<Queued> commands;uint32_t waitUntil=0;bool waiting=false;};
  struct Binding{std::string event,command,source;};
+ static constexpr int FreshProfileDifficulty=1;
  uint32_t timeMs=0;bool definitionsOnly=false;std::map<std::string,std::string,CaseInsensitiveVariableLess> variables;std::map<std::string,std::string> files;std::map<int,std::vector<Binding>> bindings;std::map<int,ActorQueue> actorQueues;std::set<std::string> once,reported;
  std::function<void(std::string,float)> hint;
  std::function<bool(int,std::string)> host;
  std::function<int(std::string)> findEntity;
  static std::string foldFile(std::string value){std::transform(value.begin(),value.end(),value.begin(),[](unsigned char c){return static_cast<char>(std::tolower(c));});return value;}
- explicit Scripts(J bundle){auto sources=field(bundle,"sources");for(int i=0;i<count(sources);i++){auto source=at(sources,i);auto path=str(field(source,"path"));files[foldFile(path.substr(path.find_last_of('/')+1))]=str(field(source,"text"));}variables["LEVEL"]="training";variables["DIFFICULTY"]="1";}
+ explicit Scripts(J bundle){auto sources=field(bundle,"sources");for(int i=0;i<count(sources);i++){auto source=at(sources,i);auto path=str(field(source,"path"));files[foldFile(path.substr(path.find_last_of('/')+1))]=str(field(source,"text"));}variables["LEVEL"]="training";variables["DIFFICULTY"]=std::to_string(FreshProfileDifficulty);}
  static bool equalInsensitive(const std::string& left,const std::string& right){CaseInsensitiveVariableLess less;return !less(left,right)&&!less(right,left);}
  void report(std::string command,std::string source){auto key=source+":"+command;if(reported.insert(key).second)std::cerr<<"Unimplemented EVS: "<<key<<"\n";}
  // 00471310 -> 0047A130 -> 004799E0: the early file pass admits only

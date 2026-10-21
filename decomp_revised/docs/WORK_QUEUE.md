@@ -124,6 +124,13 @@ guessed victim pose to the camera. Exact retail appearance while carrying
 remains open. See
 [`victim_carried_render_boundary_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_carried_render_boundary_2026-10-21.md).
 
+The viewer's rescue mode now defaults to 1, matching the fresh/reset retail
+profile `DifficultyLevel` and its existing `DIFFICULTY="1"` script seed. This
+also corrects mode-dependent rescue deadline and RescueBot formulas that had
+been running in mode 0. Existing profile values are not loaded, and mode-2
+HeroDown spawning remains unsupported; see
+[`rescue_profile_difficulty_mode_port_2026-10-21.md`](../tracker/evidence/scenario-loading/rescue_profile_difficulty_mode_port_2026-10-21.md).
+
 The VictimRescue owner Think adapter's extra root `+0x10` gate is now checked
 against its source-backed constructor default. Common initializer `0049D420`
 clears the byte, after which `00459990` forwards to the embedded actor updater;
@@ -2867,7 +2874,7 @@ the report is observed.
   recovery now uses the strict >1000 ms gate, mapped `+0x3400` safe snapshot,
   separate `+0x534` reset checkpoint, carried-victim drop, floor placement, and
   status tail. The host currently models constructor-default cleanup state and
-  mode 0; mode-2 HeroDown, equipped-item view offsets, and retail update cadence
+  fresh-profile mode 1; mode-2 HeroDown, equipped-item view offsets, and retail update cadence
   remain open. Eight controlled rescue checks also exercise one passout/drop/reset/
   re-pick-up per map; they do not prove natural passout or retail timing.
   Evidence:
