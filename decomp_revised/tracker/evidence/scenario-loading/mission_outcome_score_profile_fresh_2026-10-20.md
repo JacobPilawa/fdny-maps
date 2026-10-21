@@ -85,8 +85,9 @@ skips `00424710` and therefore skips both the unconditional collection clear
 and optional catalog registration. The branch-level no-reset behavior and the
 host's linked map carry are compared in
 [`linked_stage_stat_collection_lifetime_2026-10-21.md`](linked_stage_stat_collection_lifetime_2026-10-21.md).
-This remains static evidence; selected-profile assignment, indirect flush
-callbacks, and runtime values are open.
+This remains static evidence. The selected-profile assignment is mapped in
+[`profile_selection_pointer_writer_2026-10-21.md`](profile_selection_pointer_writer_2026-10-21.md);
+indirect flush callbacks, loaded values, and runtime behavior remain open.
 
 The shared macOS port currently has an in-memory rescue-stat map but no
 profile-backed Records page model or menu route. The title-menu action still

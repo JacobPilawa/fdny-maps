@@ -42,9 +42,13 @@ in `004944E0`, `00493EA0`, and `00470ED0`. ScriptEngine `+0x94` aliases
 `0x00503044`, the same variable container used by `00470FC0`, so the flush
 clears its old entries through `0043EE40`; `00471030` then stores fresh
 `DIFFICULTY` and `LEVEL` values after the flush. `DIFFICULTY` comes from the
-selected object at EverGame `+0x6E4`, field `+0x2C`, formatted with `%i`; the
-selected-object writer is unresolved. `LEVEL` comes from the active level
-record's first string field at `+0x688`. World-resource actor and container
+selected object at EverGame `+0x6E4`, field `+0x2C`, formatted with `%i`.
+The profile-menu writer is statically resolved: slot events 0 through 5 call
+`004239C0` on the manager embedded at `EverGame+0x6CC`, storing the selected
+record at manager `+0x18` (`EverGame+0x6E4`) before opening level-selector child
+2. See [the profile selection route](profile_selection_pointer_writer_2026-10-21.md).
+The live selected slot and loaded value are not captured. `LEVEL` comes from
+the active level record's first string field at `+0x688`. World-resource actor and container
 callbacks still leave mission-stat/profile side effects open. The `004443E0`
 callsite and formatter anchors are in
 [`004443e0_difficulty_format_fresh_2026-10-21.asm`](004443e0_difficulty_format_fresh_2026-10-21.asm).
@@ -71,10 +75,8 @@ mapped or a controlled retail comparison becomes available.
 The retail EverGame constructor (`0042B860`) calls `00425090` with
 `EverGame+0x6CC`. The fresh decompilation shows `00425090` clearing its
 `param_1[6]` field, which is `EverGame+0x6E4`, to null before it loads or
-creates the per-player `.rb` score records in the manager's record array. This
-establishes the initial value, not the later selected-record assignment:
-`0042AB00` and `0042AEA0` consume `EverGame+0x6E4`, but the direct displacement
-scan does not find a nonzero writer. That scan may miss an adjusted base or
-indirect write, so the assignment path remains open. The saved fresh body and
-source hash are in
+creates the per-player `.rb` score records in the manager's record array.
+`00430060` routes selected profile-slot events to `004239C0`, whose non-null
+record branch writes the indexed record pointer into manager `+0x18`
+(`EverGame+0x6E4`). The saved fresh body and source hash are in
 [`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c).

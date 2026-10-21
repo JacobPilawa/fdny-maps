@@ -68,8 +68,11 @@ field. After this clear, `00471030` writes `DIFFICULTY` and `LEVEL` back into
 the same container. The raw entry instructions load the object at
 EverGame `+0x6E4`, read its `+0x2C` dword, and pass that integer to
 `004443E0`; the helper formats it through a `%i` string before storing the
-result as `DIFFICULTY`. The selected-object writer for `+0x6E4` remains
-unresolved, so the runtime value is not established here. `LEVEL` is sourced
+result as `DIFFICULTY`. The profile-menu selection handler writes the selected
+profile pointer to `+0x6E4` through `004239C0`; the static route is documented in
+[`profile_selection_pointer_writer_2026-10-21.md`](profile_selection_pointer_writer_2026-10-21.md).
+No live menu selection or loaded `.rb` value was captured, so the runtime value
+is not established here. `LEVEL` is sourced
 from the first string member of the active level record at EverGame `+0x688`.
 The table's old entries do not carry through this flush; map scripts may
 populate new entries as the next level starts. This does not establish

@@ -29,11 +29,11 @@ collection clear as well. The function is not called at all when fallback
 byte `+0x14` is zero.
 
 The pre-load flush's direct world-resource and ScriptEngine cleanup does not
-target the profile object's `+0x30` collection. Script callbacks and the
-EverGame `+0x6E4` selected-profile writer remain incompletely traced, so static
-evidence establishes the normal loader branch's reset behavior, not live
-runtime values or every indirect effect. The independent pointer audit still
-finds no selected-record writer.
+target the profile object's `+0x30` collection. The selected-profile writer is
+now mapped through profile-menu callback `00430060` and manager setter
+`004239C0`; the live selected slot, loaded values, and all indirect callback
+effects remain unobserved. Static evidence establishes the normal loader
+branch's reset behavior, not runtime parity or every indirect effect.
 
 ## Shared-port comparison
 
@@ -41,8 +41,8 @@ finds no selected-record writer.
 loop and passes it through each scene's `run()` call. This matches the mapped
 branch-level fact that linked loads skip the explicit profile stat-collection
 reset. The host map is not the retail profile object, and no runtime parity is
-claimed while selected-profile assignment and indirect cleanup effects remain
-open. The relevant host code is in
+claimed while indirect cleanup effects and live selected-profile values remain
+unverified. The relevant host code is in
 [`scene_viewer.cpp`](../../../port/spikes/training-native-prototype/src/scene_viewer.cpp).
 
 The profile's separate win-result save path is `00424650`; it copies live

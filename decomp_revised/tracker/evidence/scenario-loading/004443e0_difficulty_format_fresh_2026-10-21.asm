@@ -5,8 +5,8 @@
 ;
 ; 00471030 obtains the integer passed to 004443E0 from the selected object
 ; at EverGame +0x6E4, field +0x2C. It stores the formatted result under
-; script variable DIFFICULTY. The selected-object writer for +0x6E4 is
-; unresolved; these instructions establish the data source, not its value.
+; script variable DIFFICULTY. The static selected-object writer is the profile
+; menu route through 00430060 -> 004239C0; no live slot/value was captured.
 
 00471048  MOV EAX,[0x00502AAC]
 0047104D  MOV EAX,[EAX + 0x6E4]

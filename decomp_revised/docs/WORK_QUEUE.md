@@ -216,11 +216,13 @@ stat initializer call. `00424710` first clears the stat collection at profile
 `+0x30`, then conditionally registers 13 definitions; skipping the function
 also skips that clear. The host carries one mission-stat map through linked
 `run()` calls, matching this branch-level reset behavior, though its map is not
-the retail profile object. Opaque flush callbacks and unresolved EverGame
-`+0x6E4` score/profile pointer assignment leave live data parity unproven.
-`0042B860` calls `00425090`, which initializes that field
-to null before loading profile records; its later selected-record writer is
-not yet mapped. Retail's ordinary BSP spawn path creates a fresh PlayerRescue
+the retail profile object. Opaque flush callbacks and live selected-profile
+values leave data parity unproven. The profile-menu callback statically assigns
+`EverGame+0x6E4` through the embedded manager; see
+[`profile_selection_pointer_writer_2026-10-21.md`](../tracker/evidence/scenario-loading/profile_selection_pointer_writer_2026-10-21.md).
+`0042B860` calls `00425090`, which initializes that field to null before loading
+profile records; the later profile-menu event assigns the selected record.
+Retail's ordinary BSP spawn path creates a fresh PlayerRescue
 for every rescue/stage map; its common mask admits the root to a manager list
 that the flush drains. `00429EF0` compares the root pointer to the owner's
 pending-work queue and calls `SetEntityFactoryRequestPending` when no matching
@@ -237,16 +239,20 @@ ScriptEngine `+0x94` aliases `0x00503044`, the table used by `00470FC0`, and
 `00470ED0` clears it through `0043EE40`; `00471030` then repopulates
 `DIFFICULTY` and `LEVEL` after the flush. `DIFFICULTY` is formatted from
 selected-object `EverGame+0x6E4` field `+0x2C`, while `LEVEL` comes from the
-active level record at `+0x688`; the selected-object writer remains unresolved.
+active level record at `+0x688`. Profile selection events 0 through 5 call
+`004239C0` to assign the embedded record pointer before opening level-selector
+child 2; actual selected slots and loaded values remain unobserved.
 The host already creates a fresh `Scripts` object per stage, and its
 `DIFFICULTY="1"` default matches the retail constructor default for a fresh
 profile: `00423DB0` stores `1` at profile `+0x2C`, serialized as
-`DifficultyLevel`. Existing saves can override that field, and the
-EverGame `+0x6E4` selected-profile writer remains unresolved, so the value used
-with a loaded profile is still unknown. See
+`DifficultyLevel`. Existing saves can override that field, and profile-menu
+selection writes the loaded record to EverGame `+0x6E4`; the value used with a
+particular loaded profile remains unknown without a sample save or runtime
+capture. See
 [`profile_difficulty_constructor_default_2026-10-21.md`](../tracker/evidence/scenario-loading/profile_difficulty_constructor_default_2026-10-21.md).
 The host's scene reconstruction matches this entity lifetime at a coarse
-level, while its statistics-map carry remains provisional. Exact transition
+level, matching the stat no-reset branch at the lifecycle boundary; this is
+not a runtime parity result. Exact transition
 presentation and cadence remain provisional. See
 [`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../tracker/evidence/runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c).
 The Player factory and owner work-queue boundary are documented in
@@ -2451,10 +2457,10 @@ the report is observed.
 | `rescuebot_allocator_audit` (Luna) | `00454080`, `004A5A84`, `004B7D5F`, `0049D450`, constructor chain | Pinned EXE direct disassembly and constructor-default evidence note | Complete, read-only; confirmed no full-object clear and a flags-zero process-heap path, while leaving allocator mode/threshold and default unresolved; root follow-up below resolves the size cap |
 | `rescuebot_allocator_limit_trace` (root) | `004BE659`, `004BF34F`, `004B7D5F`, `004A5A84`, `00454080` | Pinned EXE direct disassembly and constructor-default evidence note | Complete, read-only; mode-3 small-block requests cap at 1016 bytes, so the 0x3580 PlayerRescue allocation bypasses that pool; process-heap reuse/default remains unresolved |
 | `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; mapped direct world-resource actor/bitmap/world cleanup and ScriptEngine cleanup; corrected `+0x94` alias to the script-variable table at `0x00503044`, which is cleared then reseeded with DIFFICULTY/LEVEL; element callbacks and indirect mission/profile/stat effects remain open |
-| `linked_flush_direct_state_audit` (Luna/root correction) | Check whether nested world-resource and ScriptEngine flush helpers directly clear linked-stage profile, stats, or script variables | Current-hash `004944E0`, `00493EA0`, `00470ED0`, `0043B6E0`, `0043EE40`, `00470FC0`, `00471030`, `004443E0`; [format evidence](../tracker/evidence/scenario-loading/004443e0_difficulty_format_fresh_2026-10-21.asm); headless Ghidra output under `/private/tmp/fdny-stageflush-out` and `/private/tmp/fdny-difficulty-out.log` | Complete, read-only; root address audit corrected the initial alias reading: ScriptEngine `+0x94` is `0x00503044`, and `00470ED0` clears it through `0043EE40`; `00471030` reseeds DIFFICULTY from selected-object `+0x6E4/+0x2C` formatted with `%i` and LEVEL from the active level record. Selected-object writer and mission-stat/profile retention remain open |
-| `linked_stage_stat_retention` (Luna/root follow-up) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; `00424710`/`004883D0`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; linked loads clear request fallback and skip `00424710` entirely; that function clears the profile `+0x30` collection before optional registration, so the host's linked-map carry matches the static no-reset branch. Selected-profile assignment, indirect callbacks, values, and runtime parity remain open; see `linked_stage_stat_collection_lifetime_2026-10-21.md` |
-| `stat_manager_pointer_lifecycle` (Luna/root follow-up) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `00423DB0`, `00471030`, selector callers, manager-offset scan | Complete, read-only; manager clears `+0x6E4` before loading records; independent follow-up still finds no selected-record writer. Fresh profile constructor sets `+0x2C=1` (`DifficultyLevel`), matching the host's new-profile seed only; loaded value and selected-object path remain unresolved |
-| `profile_difficulty_constructor_default` (root) | Compare host `DIFFICULTY="1"` seed with retail's fresh-profile field | Current-hash `00423DB0`, serializer `00424DC0`, post-flush `00471030`, formatter `004443E0` | Complete, read-only; fresh profile constructor writes `1` at `+0x2C`, serialized as `DifficultyLevel`; saved `.rb` values may override it and the selected-profile writer/runtime path remains open |
+| `linked_flush_direct_state_audit` (Luna/root correction) | Check whether nested world-resource and ScriptEngine flush helpers directly clear linked-stage profile, stats, or script variables | Current-hash `004944E0`, `00493EA0`, `00470ED0`, `0043B6E0`, `0043EE40`, `00470FC0`, `00471030`, `004443E0`; [format evidence](../tracker/evidence/scenario-loading/004443e0_difficulty_format_fresh_2026-10-21.asm); headless Ghidra output under `/private/tmp/fdny-stageflush-out` and `/private/tmp/fdny-difficulty-out.log` | Complete, read-only; root address audit corrected the initial alias reading: ScriptEngine `+0x94` is `0x00503044`, and `00470ED0` clears it through `0043EE40`; `00471030` reseeds DIFFICULTY from selected-object `+0x6E4/+0x2C` formatted with `%i` and LEVEL from the active level record. The profile-menu writer is mapped in `profile_selection_pointer_writer_2026-10-21.md`; indirect callbacks, loaded values, and runtime parity remain open |
+| `linked_stage_stat_retention` (Luna/root follow-up) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; `00424710`/`004883D0`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; linked loads clear request fallback and skip `00424710` entirely; that function clears the profile `+0x30` collection before optional registration, so the host's linked-map carry matches the static no-reset branch. The selected-profile writer is resolved; indirect callbacks, values, and runtime parity remain open; see `linked_stage_stat_collection_lifetime_2026-10-21.md` |
+| `stat_manager_pointer_lifecycle` (Luna/root follow-up) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `00423DB0`, `00430060`, `004239C0`, `00471030`, manager-offset scan | Complete, read-only; manager clears `+0x6E4` before loading records; profile-menu slot events 0–5 call `004239C0`, which writes the selected record pointer at manager `+0x18` (`EverGame+0x6E4`) before switching to selector child 2. The live selected slot and loaded `.rb` value remain unobserved; see `profile_selection_pointer_writer_2026-10-21.md` |
+| `profile_difficulty_constructor_default` (root) | Compare host `DIFFICULTY="1"` seed with retail's fresh-profile field | Current-hash `00423DB0`, serializer `00424DC0`, post-flush `00471030`, formatter `004443E0`, profile route `00430060`/`004239C0` | Complete, read-only; fresh profile construction and career reset write `1` at `+0x2C`, serialized as `DifficultyLevel`; menu selection assigns loaded records to `+0x6E4`, but `.rb` values and live runtime use are not captured |
 | `player_state_flush_audit` (Luna/root follow-up) | Determine whether PlayerRescue or player state survives the linked-stage pre-load flush | `0042A070`, `00429EF0`, owner `+0x3C4` service, `0042B1A0`, `0049C820`, PlayerRescue vtable/factory, hash-pinned BSP inventory | Complete, read-only; the flush drains the queued callback in-process; the base initializer clears PlayerRescue `+0x1D`, and the known factory path has no positive store, so the known branch calls root slot 0 (`00454060`) to clean up/free; computed or indirect byte writes remain open. A new BSP creates a fresh PlayerRescue. Other profile/global/stat state remains unresolved; see `linked_stage_player_rescue_lifetime_2026-10-21.md` |
 | `hud_goggles_trace` | Current hint/HUD and goggles visor/scan path | `scene_viewer.cpp`, `hint_overlay.h`, `goggles_renderer.h`, `goggles_scan.h`, `0044ee50_player_hint_route_fresh.c`, `004564c0_hint_window_constructor_fresh.c`, `00462a60_goggles_visor_setup_fresh.c` | Complete; render paths are in the packaged Training binary; live pixel visibility and target effect attachment remain unverified |
 | `fire_damage_trace` | Whether Player fire exposure runs in ordinary viewer frames | `scene_viewer.cpp`, `player_fire_contact.h`, `player_fire_message.h`, `00451640_fire_exposure_trace.asm`, `docs/REVERSE_ENGINEERING_LOG.md` | Complete; handler is called per rendered frame; provisional spatial inputs and callback cadence leave user report unexplained |

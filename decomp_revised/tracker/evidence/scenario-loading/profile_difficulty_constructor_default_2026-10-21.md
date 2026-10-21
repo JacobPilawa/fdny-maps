@@ -26,16 +26,17 @@ The raw formatter anchors are in
 ## Limits and port implication
 
 The manager first clears EverGame `+0x6E4` and then loads or creates profile
-records into its list. The independent current-hash writer audit found no
-assignment of a loaded record to that selected-profile field. Selector
-activation and level selection consume the pointer but do not establish its
-writer. The object selected at runtime and any loaded `.rb` value therefore
-remain unresolved; no sample save was present in the preserved inputs.
+records into its list. The profile menu callback routes slot events 0 through 5
+to `004239C0`, which writes the indexed record to the selected-profile field;
+see [the selection pointer route](profile_selection_pointer_writer_2026-10-21.md).
+The static assignment path is resolved, but no sample save or live menu capture
+was present, so the selected slot's actual loaded `DifficultyLevel` remains
+unknown.
 
 The host's per-stage `Scripts` default `DIFFICULTY="1"` matches a freshly
-constructed retail profile. This does not establish parity for an existing
-save or for the unresolved selected-profile path, so no loaded-profile value
-is inferred from the constructor default. See also
+constructed retail profile and the menu's profile-reset path. This does not
+establish parity for an existing save, so no loaded-profile value is inferred
+from the constructor default. See also
 [`mission_outcome_score_profile_fresh_2026-10-20.md`](mission_outcome_score_profile_fresh_2026-10-20.md),
 [`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c),
 and [`selector_initial_ordinal_resolution.md`](selector_initial_ordinal_resolution.md).
