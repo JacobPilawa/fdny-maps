@@ -13,9 +13,10 @@ bodies and current-hash identity are saved in
 
 ## What the static trace establishes
 
-`0042AC0A` calls `00424710` during level-load setup. With its flag set,
-`00424710` builds the stat-definition collection at object `+0x30` and
-registers 13 named entries through `00488660`:
+`0042AC0A` calls `00424710` during level-load setup. `00424710` first clears
+the existing collection at object `+0x30` through `004883D0`; its flag then
+controls whether it rebuilds the stat-definition collection and registers 13
+named entries through `00488660`:
 
 | Order | Key | Raw `(type, mode, initial, aux +0x18, aux +0x28)` arguments |
 | ---: | --- | --- |
@@ -78,6 +79,14 @@ registered keys are the Records-page row source, with the raw type selectors
 and best-value merge behavior above. The saved inputs do not include a sample
 profile, so concrete stored values, full nested serialization details, and
 final pixel placement remain unverified.
+
+The linked `finalexitloadmap` request clears its fallback byte, so the loader
+skips `00424710` and therefore skips both the unconditional collection clear
+and optional catalog registration. The branch-level no-reset behavior and the
+host's linked map carry are compared in
+[`linked_stage_stat_collection_lifetime_2026-10-21.md`](linked_stage_stat_collection_lifetime_2026-10-21.md).
+This remains static evidence; selected-profile assignment, indirect flush
+callbacks, and runtime values are open.
 
 The shared macOS port currently has an in-memory rescue-stat map but no
 profile-backed Records page model or menu route. The title-menu action still

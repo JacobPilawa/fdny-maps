@@ -29,9 +29,11 @@ The field consumed by the loader is therefore known, and the raw static trace pr
 when EverGame `+0x688` is non-null, and clears request fallback byte `+0x14`.
 `ProcessLevelLoadRequest` (`0042AB00`) only calls `00424710` when that fallback
 byte is nonzero. The normal linked `finalexitloadmap` path therefore skips this
-explicit stat-collection reinitialization. When called, `00424710` clears the
-collection at the stat manager's `+0x30` and conditionally registers the rescue
-definitions; see [the score-profile trace](mission_outcome_score_profile_fresh_2026-10-20.md).
+entire stat initializer call. When called, `00424710` first clears the
+collection at the stat manager's `+0x30` through `004883D0`, then conditionally
+registers the rescue definitions. Since the linked branch skips the call, it
+also skips that clear; see [the linked-stage lifetime audit](linked_stage_stat_collection_lifetime_2026-10-21.md)
+and [the score-profile trace](mission_outcome_score_profile_fresh_2026-10-20.md).
 
 This does not prove that cumulative live statistics survive the transition:
 the `0042A070` flush invokes helpers whose full side effects remain unknown.
@@ -48,11 +50,12 @@ callsite and formatter anchors are in
 [`004443e0_difficulty_format_fresh_2026-10-21.asm`](004443e0_difficulty_format_fresh_2026-10-21.asm).
 See the
 [nested flush callee trace](level_transition_flush_2026-10-21.md#nested-world-resource-and-script-engine-effects).
-The host now passes one `rescueStatistics` map through the linked `run()` calls,
-based on the skipped explicit reset. This is a provisional port choice, not
-verified retail behavior. The score/profile manager constructor initializes
-EverGame `+0x6E4` to null, but its later selected-record writer remains
-unresolved. The flush drains manager lists and de-duplicates entity pointers
+The host passes one `rescueStatistics` map through the linked `run()` calls,
+matching the static branch-level fact that linked loads skip the stat
+collection clear. The host map is not the retail profile object, so runtime
+values and full parity remain unverified. The score/profile manager constructor
+initializes EverGame `+0x6E4` to null, but its later selected-record writer
+remains unresolved. The flush drains manager lists and de-duplicates entity pointers
 against the owner service's pending-work queue before enqueueing a
 `SetEntityFactoryRequestPending` request. PlayerRescue is statically admitted
 to the drained Think list, but the full callback effect and any restoration
