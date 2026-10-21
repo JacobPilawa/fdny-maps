@@ -114,6 +114,16 @@ cadence. The linked-stage runner already preserves its mission-stat map across
 packages. Natural travel, contact timing, and end-to-end stage completion
 remain unverified.
 
+A fresh current-hash headless follow-up mapped the carried-victim render
+boundary: pickup stores Player `+0x3534`, sets victim state 5, clears its
+ActorInfo flags, and the state-5 updater returns early. A direct displacement
+scan found no render/matrix consumer of that Player field; the scan is not
+alias-complete and does not rule out a separate Player/equipment draw route.
+Keep the source-backed ordinary-world visibility filter and do not attach a
+guessed victim pose to the camera. Exact retail appearance while carrying
+remains open. See
+[`victim_carried_render_boundary_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_carried_render_boundary_2026-10-21.md).
+
 The VictimRescue owner Think adapter's extra root `+0x10` gate is now checked
 against its source-backed constructor default. Common initializer `0049D420`
 clears the byte, after which `00459990` forwards to the embedded actor updater;

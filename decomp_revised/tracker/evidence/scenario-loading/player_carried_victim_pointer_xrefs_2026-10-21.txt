@@ -1,0 +1,14 @@
+FDNYFirefighter.exe SHA-256: 4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e
+Ghidra: 12.0.4 headless, fresh disposable import; script SearchPlayerOffsets.java
+Search: immediate x86 displacement 0x3534; not an alias-complete pointer analysis.
+
+0044cef3 0044cd10 FUN_0044cd10 :: MOV dword ptr [ESI + 0x3534],EBX
+0044ff51 0044ff10 FUN_0044ff10 :: MOV ECX,dword ptr [EBP + 0x3534]
+0044ff73 0044ff10 FUN_0044ff10 :: MOV ECX,dword ptr [EBP + 0x3534]
+0044ff8e 0044ff10 FUN_0044ff10 :: MOV dword ptr [EBP + 0x3534],EDI
+00450443 00450440 FUN_00450440 :: MOV EAX,dword ptr [ESI + 0x3534]
+00450451 00450440 FUN_00450440 :: MOV dword ptr [ESI + 0x3534],ECX
+0045117b 00451160 FUN_00451160 :: MOV EAX,dword ptr [ESI + 0x3534]
+00451341 00451160 FUN_00451160 :: MOV ECX,dword ptr [ESI + 0x3534]
+0045136b 00451160 FUN_00451160 :: MOV dword ptr [ESI + 0x3534],0x0
+0045b037 0045ae50 FUN_0045ae50 :: MOV EAX,dword ptr [ECX + 0x3534]
