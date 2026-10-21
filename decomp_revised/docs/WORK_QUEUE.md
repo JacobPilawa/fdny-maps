@@ -135,10 +135,12 @@ check.
 The RescueBot default audit rechecked the pinned PlayerRescue factory and
 constructor path. The only direct `Player+0x32E4` store found is the
 `setrescuebot` command; the `+0x32CC` component and embedded sound-instance
-constructors do not initialize that byte. The ordinary allocation branch uses
-`HeapAlloc` flags zero, and a pool path may be used. Static evidence therefore
-does not establish a deterministic retail default. Keep the host's explicit
-script-enable gate and leave allocator/pool reuse, the `+0x340C` initializer
+constructors do not initialize that byte. A follow-up allocator trace confirms
+the `0x3580`-byte PlayerRescue object bypasses the small-block pool, whose
+initializer caps requests at 1016 bytes, and reaches `HeapAlloc` with flags
+zero. The allocation path does not request zero-fill, so it still provides no
+deterministic default. Keep the host's explicit script-enable gate and leave
+process-heap reuse, any indirect writer, the `+0x340C` initializer
 relationship, and live callback cadence open. Evidence:
 [`rescuebot_constructor_default_audit_2026-10-21.md`](../tracker/evidence/scenario-loading/rescuebot_constructor_default_audit_2026-10-21.md).
 Do not infer an always-on or always-off campaign default from Training's
@@ -2404,7 +2406,9 @@ the report is observed.
 | `rescue_chain_retention_audit` (Luna) | Review natural rescue contact and linked-stage state retention | Current `scene_viewer.cpp`, contact/flush evidence, hash-pinned PlayerRescue factory and owner queue | Complete, read-only; natural BoundsTrigger overlap is already buffered through the next owner Think pass, and mission stats already span linked host runs; the known PlayerRescue byte path selects cleanup/free during flush and a new BSP creates its replacement; other persisted state and indirect byte writes remain unresolved |
 | `rescue_chain_retention_followup` (Luna) | Victim approach/pickup/carry/release, exit availability/finalexit, linked-stage handoff | Same-hash final-exit exports, `victim_exit.h`, `scene_viewer.cpp` | Complete, read-only; identified exact 32-bit wrapping subtraction in both terminal exit handlers; the shared helper now ports it; no natural-runtime claim |
 | `core_gameplay_gap_followup` (Luna) | Prioritize missing Player movement/held-item frame, Axe, BModel, RescueBot, and rescue mechanics | Current work queue, shared host, RescueBot evidence | Complete, read-only; recommended tracing RescueBot's unset enable-byte constructor path instead of outcome UI or speculative frame corrections; root follow-up found no source-defined default and recorded the allocation caveat |
-| `rescuebot_constructor_default_trace` (root) | PlayerRescue allocation, `00453D50`, `00481C40`, `004A13A0`, `Player+0x32E4` | Same-hash saved constructor body plus direct `objdump` and offset-write census; new constructor-default evidence note | Complete, read-only; no direct constructor assignment found, ordinary HeapAlloc path requests no zero-fill, pool/runtime default remains unresolved; no enable default changed |
+| `rescuebot_constructor_default_trace` (root) | PlayerRescue allocation, `00453D50`, `00481C40`, `004A13A0`, `Player+0x32E4` | Same-hash saved constructor body plus direct `objdump` and offset-write census; constructor-default evidence note | Complete, read-only; constructors do not assign the byte and the process heap path requests no zero-fill; no enable default changed |
+| `rescuebot_allocator_audit` (Luna) | `00454080`, `004A5A84`, `004B7D5F`, `0049D450`, constructor chain | Pinned EXE direct disassembly and constructor-default evidence note | Complete, read-only; confirmed no full-object clear and a flags-zero process-heap path, while leaving allocator mode/threshold and default unresolved; root follow-up below resolves the size cap |
+| `rescuebot_allocator_limit_trace` (root) | `004BE659`, `004BF34F`, `004B7D5F`, `004A5A84`, `00454080` | Pinned EXE direct disassembly and constructor-default evidence note | Complete, read-only; mode-3 small-block requests cap at 1016 bytes, so the 0x3580 PlayerRescue allocation bypasses that pool; process-heap reuse/default remains unresolved |
 | `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; static order matches exports; channel iteration and wrapper-slot clearing are now described separately; helper effects and retained game state remain open |
 | `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit; host now carries one mission-stat map through linked `run()` contexts as a provisional approximation, while opaque flush effects leave retail persistence unknown |
 | `stat_manager_pointer_lifecycle` (Luna) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `manager-offsets.log`, pending-loader consumers | Complete, read-only; constructor clears `+0x6E4` before loading profile records; later writer remains unresolved because direct-offset scans can miss aliases/adjusted bases |
