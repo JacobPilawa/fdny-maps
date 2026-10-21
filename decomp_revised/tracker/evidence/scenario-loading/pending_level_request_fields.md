@@ -21,4 +21,22 @@ These are behavioral labels, not recovered C++ member names or confirmed field t
 
 HandlePlayerFinalExitLoadMap (00450A70) builds and checks data\\maps\\<command-key>.bsp from its parsed command argument. On success it passes the original command-key reference to SetPendingLevelRequest (0042A260), which stores that value in the request block's +0x00 map-name field. ProcessLevelLoadRequest later appends .bsp to the stored field. Raw x86 stack offsets establishing the shared key are recorded in [the pending-key dataflow note](finalexitloadmap_pending_key_dataflow_2026-10-20.md).
 
-The field consumed by the loader is therefore known, and the raw static trace proves it receives the same key used in the existence check. Runtime stage completion and unload behavior remain follow-up work.
+The field consumed by the loader is therefore known, and the raw static trace proves it receives the same key used in the existence check. The static pre-load flush sequence is mapped in [level transition flush](level_transition_flush_2026-10-21.md); live stage completion, replacement presentation, callback timing, and cross-stage state retention remain follow-up work.
+
+## Linked-stage stat-reset boundary
+
+`SetPendingLevelRequest` (`0042A260`) copies the active level record's metadata
+when EverGame `+0x688` is non-null, and clears request fallback byte `+0x14`.
+`ProcessLevelLoadRequest` (`0042AB00`) only calls `00424710` when that fallback
+byte is nonzero. The normal linked `finalexitloadmap` path therefore skips this
+explicit stat-collection reinitialization. When called, `00424710` clears the
+collection at the stat manager's `+0x30` and conditionally registers the rescue
+definitions; see [the score-profile trace](mission_outcome_score_profile_fresh_2026-10-20.md).
+
+This does not prove that cumulative live statistics survive the transition:
+the `0042A070` flush invokes several helpers whose full side effects remain
+unknown. The host also creates its `rescueStatistics` map inside each `run()`
+invocation, so the current linked scene chain does not carry that map into the
+next stage. Keep persistence unresolved until the remaining manager-pointer
+lifecycle and opaque flush paths are traced; carrying values may be a port
+choice, but is not a verified retail behavior.

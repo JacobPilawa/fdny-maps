@@ -12,4 +12,4 @@ Fresh outputs: 0042a260_set_pending_level_request_fresh.c and .asm; 0042ab00_pro
 
 ## Limits and next trace
 
-The pending block's map-name field is identified at EverGame+0x660, and the loader's .bsp builder reads it from offset +0x00. The raw stack trace closes the static identity question: the checked command key is the value stored at +0x660. Capture a successful stage transition and the preceding-world unload to resolve runtime behavior; callback cadence and visual parity remain unverified.
+The pending block's map-name field is identified at EverGame+0x660, and the loader's .bsp builder reads it from offset +0x00. The raw stack trace closes the static identity question: the checked command key is the value stored at +0x660. Fresh headless Ghidra tracing now maps the static flush order before the next World request; see [level transition flush](level_transition_flush_2026-10-21.md). A successful live stage transition, presentation during world replacement, callback cadence, and cross-stage state retention remain unverified.

@@ -1,6 +1,6 @@
 # Work queue and current handoff
 
-Updated 2026-10-20 UTC. This file records the next decompilation and port tasks so
+Updated 2026-10-21 UTC. This file records the next decompilation and port tasks so
 research can continue without redoing the old project review or recent audits.
 The documented compare-first mirror workflow has published prior reviewed
 checkpoints to `decomp_revised/` after explicit user authorization. Confirm the
@@ -24,7 +24,7 @@ and the corrected [Player/BModel census](../tracker/evidence/scenario-loading/pl
 The exact 12-byte `0049C3D0` vtable adapter boundary is now present in the
 generated function inventory from a fresh headless Ghidra export on a
 disposable project copy. `python3 tools/build_tracker.py` rebuilds cleanly at
-7,968 function records and 488 reviewed EXE functions.
+7,968 function records and 492 reviewed EXE functions.
 
 The shared scene now buffers BModel, BoundsTrigger, and PropModel ScriptActor
 contact-pair events across one host update iteration: it drains the preceding
@@ -34,22 +34,36 @@ frame-parity claim. FireRescue and VictimRescue mapper paths remain separate.
 The selected-level WorldEntity also joins the `+0x50` list through the generic
 spawn queue; its delayed EVS loads on the fourth normal Think callback after
 registration, rather than a proven number of frames. Next return to the
-highest remaining shared gameplay gap: contact-driven rescue progression and
-its final-exit handoff, while retaining runtime cadence as provisional.
+highest remaining shared gameplay gap: natural contact-driven rescue
+progression through the campaign and cross-stage state retention. Keep contact
+cadence and transition presentation provisional without a retail runtime capture.
 
 The Oil Rig `finalexitloadmap` stage-key seam is now closed statically. Raw x86
 stack offsets show that the same authored key used for the `data\\maps\\<key>.bsp`
 existence check is stored at EverGame `+0x660`; the shared host already selects
-the sibling package from that key. Live transition completion and world unload
-remain open. See
-[`finalexitloadmap_pending_key_dataflow_2026-10-20.md`](../tracker/evidence/scenario-loading/finalexitloadmap_pending_key_dataflow_2026-10-20.md).
-The host's `runRescueSceneChain` currently tears down one scene run and enters
-the sibling package while carrying its inherited music selection and level
-duration. Retail instead consumes the pending request through EverGame and the
-World factory queue. Exact teardown and cross-stage gameplay-state retention
-are not yet established, so the re-entry path remains an approximation.
+the sibling package from that key. A fresh headless trace maps the static
+pre-load flush: two queue interfaces are cleared, four manager lists are
+drained through the shared owner service, the active level pointer is cleared,
+and the requested record is then rebound before the World request is queued.
+The helper effects in several global services remain partially mapped. See
+[`finalexitloadmap_pending_key_dataflow_2026-10-20.md`](../tracker/evidence/scenario-loading/finalexitloadmap_pending_key_dataflow_2026-10-20.md)
+and [`level_transition_flush_2026-10-21.md`](../tracker/evidence/scenario-loading/level_transition_flush_2026-10-21.md).
+The host's `runRescueSceneChain`
+currently tears down one scene run and enters the sibling package while
+carrying its inherited music selection and level duration. Retail performs the
+flush in-process. On the mapped linked `finalexitloadmap` path, the setter copies
+active-record metadata and clears the request fallback byte; the loader only
+calls `00424710` for a nonzero fallback byte, so this path skips that explicit
+stat-collection reinitialization. The opaque flush helpers still leave live
+cross-stage retention unproven, and the host's `rescueStatistics` map is local
+to each `run()` call. Do not treat carrying it across stages as verified retail
+behavior. Exact transition presentation and cadence also remain provisional;
+the re-entry path is still an approximation. See
+[`pending_level_request_fields.md`](../tracker/evidence/scenario-loading/pending_level_request_fields.md)
+and [`mission_outcome_score_profile_fresh_2026-10-20.md`](../tracker/evidence/scenario-loading/mission_outcome_score_profile_fresh_2026-10-20.md).
 
-The rescue-all macOS app compiled and packaged after this change. Standalone
+At the prior port checkpoint, the rescue-all macOS app compiled and packaged.
+Standalone
 and app executable SHA-256 match at
 `c70e43e4a2c308861b5e6cf4197920e763540d3dc86821e112ca3a20dd0361c3`; the
 bundle contains eight source-ordered rescue choices and `Info.plist` validates.
@@ -2206,6 +2220,8 @@ the report is observed.
 | `finalexitloadmap_context_trace` | Determine whether the validated stage key reaches the pending loader unchanged | `00451870_player_script_command_handler.c`, raw callsite disassembly, `00450a70_player_finalexitloadmap_fresh.c`, `0042a260_set_pending_level_request_fresh.c`, `finalexitloadmap_pending_key_dataflow_2026-10-20.md` | Complete; the checked key is the same string stored at EverGame `+0x660`; viewer follows the authored key after the remaining-victim gate; live transition completion and timing remain open |
 | `outcome_frontend_audit` (Luna) | Result-card/frontend return source path and shared host boundary | Current result widget/handoff exports and rescue host | Complete, read-only; win selects Records after a win-only selected-level record merge, loss selects the level selector; exact widget timing and persistence remain open, so menu work stays behind the active gameplay gaps |
 | `exit_contact_host_audit` (Luna) | Compare exit/contact source phase and linked-stage host adapter | BoundsTrigger/final-exit traces and shared host | Complete, read-only; one-iteration contact buffer matches static Think-before-contact phase; independently identified pending-key question, which raw stack review now resolves; natural live overlap and transition remain unverified |
+| `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; static order matches exports; channel iteration and wrapper-slot clearing are now described separately; helper effects and retained game state remain open |
+| `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit, but opaque flush effects leave persistence unknown; host statistics are per-`run()` |
 | `hud_goggles_trace` | Current hint/HUD and goggles visor/scan path | `scene_viewer.cpp`, `hint_overlay.h`, `goggles_renderer.h`, `goggles_scan.h`, `0044ee50_player_hint_route_fresh.c`, `004564c0_hint_window_constructor_fresh.c`, `00462a60_goggles_visor_setup_fresh.c` | Complete; render paths are in the packaged Training binary; live pixel visibility and target effect attachment remain unverified |
 | `fire_damage_trace` | Whether Player fire exposure runs in ordinary viewer frames | `scene_viewer.cpp`, `player_fire_contact.h`, `player_fire_message.h`, `00451640_fire_exposure_trace.asm`, `docs/REVERSE_ENGINEERING_LOG.md` | Complete; handler is called per rendered frame; provisional spatial inputs and callback cadence leave user report unexplained |
 | `player_fire_turn` | Retail `0044BB00` fire-facing side effects and HUD consumers | Read-only hash-pinned EXE instruction audit; `00452570`/`00456090` saved exports | Complete; retail sets four transient sector bytes and never changes camera yaw; exact sector map recovered |
