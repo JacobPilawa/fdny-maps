@@ -7362,6 +7362,14 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
             pendingBoundsTriggerContactEvents.clear();
             pendingPropModelContactEvents.clear();
 
+            // VictimRescue root slot +0x14 reaches its embedded actor updater;
+            // state 7 calls UpdateVictimRoamMovement (0045B220). Retail's
+            // owner Think pass runs before the +0xE0 contact pass, so advance
+            // roaming victims at this phase boundary before sampling contacts.
+            // The host delta and cross-type Think-list order remain provisional.
+            updateRoamingVictims(victims, collision, gameplayRandom, player, yaw,
+                                 carriedVictim.carriedVictimEntity.has_value(), dt);
+
             std::map<int, bool> currentBModelContacts;
             const V playerMinimum = player.p + V{-30.f, -30.f, -30.f};
             const V playerMaximum = player.p + player.maxs();
@@ -7553,8 +7561,6 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 activeHintRemaining = std::max(0.f, activeHintRemaining - dt);
                 if (activeHintRemaining == 0.f) activeHint.clear();
             }
-            updateRoamingVictims(victims, collision, gameplayRandom, player, yaw,
-                                 carriedVictim.carriedVictimEntity.has_value(), dt);
             if (gogglesScan.effectsActive)
                 gogglesScan.followTargets(buildGogglesScanCandidates());
             if (gogglesScanPending) {

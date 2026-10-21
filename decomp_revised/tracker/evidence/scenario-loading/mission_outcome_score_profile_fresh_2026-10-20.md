@@ -50,6 +50,18 @@ iterates its `Score` entries. `00425990` reads the `Score` root and recognizes
 preserved inputs contain no sample save, so concrete on-disk values and all
 nested serialization details remain unverified.
 
+A fresh read-only trace of profile manager initializer `00425090` resolves the
+working-directory-relative path: it calls `GetCurrentDirectoryA`, appends
+`Saves\\`, and passes that directory to `00409B40`, which calls
+`CreateDirectoryA` at path separators. For each profile it formats
+`saves\\player%i.rb`; existing files load through `00424140`, while a missing
+file path is assigned to the new profile object before `004243F0` initializes
+and saves it. This establishes the directory and filename pattern, not the
+serialized RichBinary payload layout or values. See
+[`00409b40_create_profile_directory_fresh_2026-10-21.c`](00409b40_create_profile_directory_fresh_2026-10-21.c)
+and
+[`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c).
+
 On the win-only path, `00424650` looks up or creates the selected level's
 score record, copies the live stat collection from manager `+0x30` into that
 record through `00488710`, marks the record active, then calls `004243F0` to
@@ -99,7 +111,9 @@ A follow-up then connected the remaining `Axe Hits` and `Serious Burns`
 producers to the same runtime map; details and host limitations are in
 [`mission_stat_axe_burn_host_port_2026-10-20.md`](mission_stat_axe_burn_host_port_2026-10-20.md).
 All 13 registered keys now have in-memory producer coverage in the shared
-mission host. Profile serialization and the Records page remain unported.
+mission host. Profile serialization and the Records page remain unported. The
+profile path is now known, but save-format and host-storage mapping remain
+deferred while core gameplay gaps take priority.
 
 ## Shared port checkpoint
 

@@ -57,6 +57,16 @@ path. Their local slot `+0x14` routes reach the pair drains
 `00440DC0` and `00444050`, respectively. Exact manager-list residence remains
 a static constructor/registration conclusion, not a runtime observation.
 
+VictimRescue also reaches the Think manager through the common root
+initializer: `0045DDD0` calls `0049D8C0` → `0049D420`, which sets eligibility
+mask `0xFFEB`, and the generic spawn queue registers it through `00429490`.
+Its primary vtable slot `+0x14` points to `00459990`, which forwards to the
+embedded updater at root `+0xD4` via `00470740`. That subobject's vtable entry
+`0045BEA0` calls `0045B220` for state 7. The shared viewer now advances victim
+roam in its pre-contact phase to match the verified owner-Think-before-contact
+boundary. Exact interval and within-list order remain unknown; see
+[`victim_roam_think_phase_2026-10-21.md`](victim_roam_think_phase_2026-10-21.md).
+
 The selected-level `World` factory uses the same spawn queue: `0049C670`
 creates `WorldEntity` through `0049E300` and calls `00429490` before batch
 initialization. Its constructor changes the common mask to

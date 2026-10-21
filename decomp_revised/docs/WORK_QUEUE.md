@@ -45,11 +45,19 @@ and maxs. `0044D550` initializes the hull to `(-30,-30,-30)` / `(30,85,30)`;
 the Player `CROUCH` command writes max Y 25, and successful uncrouch restores
 85. This confirms the shared `VictimPickupBox` fields and crouch-aware height
 against retail's static layout. It does not establish callback cadence, natural
-pickup timing, or all-map runtime parity. Natural victim travel and mission
-progression remain the next useful shared gameplay work. Evidence:
+pickup timing, or all-map runtime parity. A fresh current-hash route now places
+the state-7 roam update in VictimRescue's owner Think callback; the shared host
+advances roaming before contact sampling, matching the static Think-before-
+contact phase. Natural victim travel and mission progression remain the next
+shared gameplay work, with interval and runtime parity unresolved. Evidence:
 [`victim_pickup_message_path.md`](../tracker/evidence/scenario-loading/victim_pickup_message_path.md),
 [`0044d550_player_rescue_entity_init_fresh.c`](../tracker/evidence/scenario-loading/0044d550_player_rescue_entity_init_fresh.c),
 and [`player_crouch_command_gate_2026-10-20.md`](../tracker/evidence/scenario-loading/player_crouch_command_gate_2026-10-20.md).
+The rescue-all macOS app rebuilt after the pre-contact movement update with
+matching standalone/package SHA-256
+`f81d1d2885f53f5249202266b8e1f8bc5e83e633d01d6be7ce2cd508b63c5d9f`;
+eight rescue choices and `Info.plist` validation passed. This is
+compile/package evidence only.
 
 The contact manager invokes each active root's `+0x48` callback against every
 candidate in each selected typed list; `0049BD20` does not spatially prune
@@ -89,7 +97,14 @@ host request. Geometry-result parity across Genesis and the host BSP traversal
 remains open; no gameplay code changed.
 See
 [`victim_roam_target_gate_reconciliation_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_roam_target_gate_reconciliation_2026-10-21.md).
-Continue next with natural victim travel and rescue mission progression; the
+The VictimRescue root slot `+0x14` now traces through `00459990` and embedded
+state dispatcher `0045BEA0` to `0045B220`; common mask `0xFFEB` admits the root
+to the owner Think manager. Since Think runs before contact production, the
+host now advances victims before its sampled contact pass. The host uses its
+existing paced-loop delta and has no evidence for retail per-class list order
+or exact cadence. See
+[`victim_roam_think_phase_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_roam_think_phase_2026-10-21.md).
+Continue with natural victim travel and rescue mission progression; the
 pickup-box and typed-list dispatch findings are static boundaries, not a
 natural-playthrough validation.
 
@@ -847,7 +862,16 @@ hash-pinned follow-up traces 13 mission-stat definitions, the `Score` save-tree,
 and the win-only copy/merge from the live stat map into the per-level score
 record. `004332E0` reads that same keyed collection, so the 13 names feed the
 Records rows. Concrete profile values and the on-disk scalar/container encoding
-remain unverified. A fresh producer pass added `Completion Time` by the
+remain unverified. A fresh initializer trace now resolves the working-directory-
+relative `Saves\\player%i.rb` path: existing files load through `00424140`,
+while missing profiles initialize and save through `004243F0`; `00409B40`
+creates the directory components. This does not reveal the serialized
+RichBinary payload layout or establish host storage parity, so profile
+serialization and Records remain paused behind core gameplay gaps. Evidence:
+[`00409b40_create_profile_directory_fresh_2026-10-21.c`](../tracker/evidence/scenario-loading/00409b40_create_profile_directory_fresh_2026-10-21.c)
+and
+[`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../tracker/evidence/runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c).
+A fresh producer pass added `Completion Time` by the
 source-scaled frame delta and `Gallons Sprayed` only while the selected
 slot-4 HoseSpray action is active; it also carries the Player seconds
 countdown, its timeout write to result state 2, and the Air Time counter's
@@ -2292,6 +2316,7 @@ the report is observed.
 | `victim_ai_gap` | Compare recurring RescueBot and debug `runrescuebot` paths against shared host | `rescuebot_update_path_2026-10-15.md`, current shared host, hash-pinned retail code | Complete, read-only; recurring RescueBot is already modeled; debug-only `runrescuebot` is a separate one-shot with no authored calls, and no victim survival countdown was verified |
 | `finalexitloadmap_context_trace` | Determine whether the validated stage key reaches the pending loader unchanged | `00451870_player_script_command_handler.c`, raw callsite disassembly, `00450a70_player_finalexitloadmap_fresh.c`, `0042a260_set_pending_level_request_fresh.c`, `finalexitloadmap_pending_key_dataflow_2026-10-20.md` | Complete; the checked key is the same string stored at EverGame `+0x660`; viewer follows the authored key after the remaining-victim gate; live transition completion and timing remain open |
 | `outcome_frontend_audit` (Luna) | Result-card/frontend return source path and shared host boundary | Current result widget/handoff exports and rescue host | Complete, read-only; win selects Records after a win-only selected-level record merge, loss selects the level selector; exact widget timing and persistence remain open, so menu work stays behind the active gameplay gaps |
+| `profile_storage_path_trace` (root) | `00425090`, `00409B40`, profile initialization/load/save path | Read-only current-hash Ghidra 12.0.4 headless export; `00409b40_create_profile_directory_fresh_2026-10-21.c`, `00425090_profile_manager_initializer_fresh_2026-10-21.c` | Complete; resolves working-directory-relative `Saves\\player%i.rb`, directory creation, existing-file load and missing-profile initialization/save paths; RichBinary payload layout and host mapping remain open; no gameplay code/build/test/runtime/parity change |
 | `exit_contact_host_audit` (Luna) | Compare exit/contact source phase and linked-stage host adapter | BoundsTrigger/final-exit traces and shared host | Complete, read-only; one-iteration contact buffer matches static Think-before-contact phase; independently identified pending-key question, which raw stack review now resolves; natural live overlap and transition remain unverified |
 | `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; static order matches exports; channel iteration and wrapper-slot clearing are now described separately; helper effects and retained game state remain open |
 | `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit; host now carries one mission-stat map through linked `run()` contexts as a provisional approximation, while opaque flush effects leave retail persistence unknown |
@@ -2330,6 +2355,7 @@ the report is observed.
 | `held_tool_orientation_delta` | Independently recheck backward-facing Axe/extinguisher pose against retail | Current viewer source, ACT assets, pinned Ghidra evidence; read-only | Complete; no source-backed axis/root correction, retail camera-space matrix and same-view capture remain open |
 | `victim_movement_verify` | Verify victim roam step and turn helpers against retail instructions | Saved hash-pinned Ghidra output; read-only | Complete; strict target-arrival gate and exponential 0.3-second half-life turn are verified and ported; callback cadence remains open |
 | `victim_roam_gate_reconciliation` (Luna) | Reconcile target updater center/radius and Player-relative angle operands | `0045AE50`, `0045B220`, `00459C70`, `00490130`, `0048FEA0`; pinned PE constants; viewer live position | Complete, read-only; apparent 36-vs-72 mismatch was a stale decomp comment; host uses live position; `0x004E2328=5184.0` matches the 72-unit gate, `0x004E2338=36.0` is the distinct turn threshold; retail and host query mask `0x43`/flags `2` match; collision result parity remains unverified |
+| `victim_roam_think_phase` (root) | Trace VictimRescue registration and state-7 roam callback into owner Think/contact order; move host update to source-supported phase | `0045DDD0`, `00459990`, `0045BEA0`, `0045B220`, `00429490`, `00429520`; `victim_roam_think_phase_2026-10-21.md`, `scene_viewer.cpp` | Complete; mask `0xFFEB` admits VictimRescue to owner Think, primary slot +0x14 reaches state-7 roam, and Think precedes contact; host movement moved before contact sampling. Retail interval, list order, and runtime parity remain provisional |
 | `fire_hud_widget_trace` | Trace HUD child construction, resource IDs, and placement for the four fire sectors | Read-only Ghidra trace; `tracker/evidence/scenario-loading/fire_direction_hud_trace_2026-10-14.md` | Complete; resource 50 pair and exact rotated quads are mapped; first-pass port draws the live sector bytes; retail blend remains open |
 | `gebm_truecolor_trace` follow-up | Cross-check natural victim and exit contact against retail source | `0045A070`, `00453A70`, `00450440` exports; `victim_transactions.h`, `scene_viewer.cpp` | Complete; confirmed the outer `+0x3438` dispatcher gate and inner carry gate; direct overlap bypass was identified and routed through the mapper; delivery cadence remains provisional |
 | `natural_rescue_bounds_audit` | Resolve the type-1 PlayerRescue `+0x0C` interface consumed by victim pickup | `0045A070`, PlayerRescue vtable/getter, `0044D550`, crouch and uncrouch traces; pickup adapter | Complete; getter returns origin plus six bounds values, and retail standing/crouched extents match the host `VictimPickupBox`; runtime cadence and natural pickup parity remain open |
