@@ -4200,10 +4200,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (entityId == playerEntityId && verb == "finalexit") {
                     const uint32_t total = rescueState.exits.total == std::numeric_limits<uint32_t>::max()
                         ? uint32_t(rescueState.actors.size()) : rescueState.exits.total;
-                    const uint64_t accounted = uint64_t(rescueState.exits.field3530) +
-                        uint64_t(rescueState.exits.rescues);
-                    const uint32_t remaining = accounted >= total ? 0u :
-                        total - uint32_t(accounted);
+                    const uint32_t remaining = remainingRescuesForFinalExit(
+                        total, rescueState.exits.field3530, rescueState.exits.rescues);
                     if (remaining == 0) {
                         rescueState.exits.messageGate = 1;
                         dispatchRescueWinFeedback();
@@ -4214,7 +4212,8 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                     if (remaining == 1) {
                         activeHint = "There is still one survivor remaining.";
                     } else {
-                        activeHint = "There are still " + std::to_string(remaining) + " survivors remaining.";
+                        activeHint = "There are still " +
+                            std::to_string(static_cast<int32_t>(remaining)) + " survivors remaining.";
                     }
                     activeHintRemaining = 7.f;
                     return true;
@@ -4222,14 +4221,13 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 if (entityId == playerEntityId && verb == "finalexitloadmap") {
                     const uint32_t total = rescueState.exits.total == std::numeric_limits<uint32_t>::max()
                         ? uint32_t(rescueState.actors.size()) : rescueState.exits.total;
-                    const uint64_t accounted = uint64_t(rescueState.exits.field3530) +
-                        uint64_t(rescueState.exits.rescues);
-                    const uint32_t remaining = accounted >= total ? 0u :
-                        total - uint32_t(accounted);
+                    const uint32_t remaining = remainingRescuesForFinalExit(
+                        total, rescueState.exits.field3530, rescueState.exits.rescues);
                     if (remaining != 0) {
                         activeHint = remaining == 1
                             ? "There is still one survivor remaining."
-                            : "There are still " + std::to_string(remaining) + " survivors remaining.";
+                            : "There are still " +
+                                std::to_string(static_cast<int32_t>(remaining)) + " survivors remaining.";
                         activeHintRemaining = 7.f;
                         return true;
                     }

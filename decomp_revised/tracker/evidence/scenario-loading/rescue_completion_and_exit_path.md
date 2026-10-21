@@ -104,6 +104,15 @@ verified. See [`rescue_win_feedback_port_2026-10-20.md`](rescue_win_feedback_por
 
 The `finalexitloadmap` command reaches `HandlePlayerFinalExitLoadMap` (`0x00450A70`). It checks `data\\maps\\<key>.bsp`, applies the same remaining-victim gate, and, when accepted, queues a pending level request with the original command key and `data\\resdefs\\rescue.rrf`. Raw stack offsets confirm the same key is checked and stored at EverGame `+0x660`; see [the key dataflow trace](finalexitloadmap_pending_key_dataflow_2026-10-20.md). Fresh headless Ghidra tracing maps the in-process flush sequence called before the new World request is queued; see [level transition flush](level_transition_flush_2026-10-21.md). Live stage handoff, replacement presentation, and cross-stage state retention remain open.
 
+The terminal `finalexit` and `finalexitloadmap` handlers both compute the
+remaining count with two 32-bit subtractions and accept only an exact zero
+remainder. The shared host now uses this wraparound rule for both handlers;
+the previous widened-and-clamped calculation could accept an over-counted
+state. The shared exit-availability path uses the same wrapped arithmetic
+before its signed-positive check. This is a static-source correction and has
+not been checked against corrupted counters or natural retail gameplay. See
+[`rescue_final_exit_wrap_arithmetic_2026-10-21.md`](rescue_final_exit_wrap_arithmetic_2026-10-21.md).
+
 The shared viewer has a bounded adapter for this route: after the remaining-victim gate, it resolves the authored key to a sibling exported scene package and continues the same rescue run. This covers the authored Boat A→B, Subway A→B, and Oil Rig A→B→C→D chains. A controlled `--rescue-check` dispatches all six authored `finalexitloadmap` touch bindings after all victims are rescued, verifies that each key loads a matching sibling package, and confirms the command remains gated after the first rescue. All 13 bundled rescue/stage packages pass their rescue checks. The adapter uses the authored command key, matching the static retail request path. Live exit contact, trigger enable timing, transition completion, and full mission completion remain open. See [the stage transition port checkpoint](rescue_stage_transition_port_2026-10-14.md).
 
 Fresh tracing of the Player status callback confirms that Player `+0x3438` is

@@ -114,6 +114,36 @@ cadence. The linked-stage runner already preserves its mission-stat map across
 packages. Natural travel, contact timing, and end-to-end stage completion
 remain unverified.
 
+## Rescue final-exit counter arithmetic (2026-10-21)
+
+The standalone `finalexit` and linked-stage `finalexitloadmap` handlers now use
+retail's two-step 32-bit subtraction and accept only an exact zero remainder.
+The former widened-and-clamped host calculation could open an exit when rescue
+counters exceeded the total. `victim_exit.h` now provides one shared wrapped
+count helper used by both command handlers and the already source-shaped
+exit-availability branch. Nonzero hints format the signed 32-bit value passed
+by retail. This only changes inconsistent-counter edge cases; it does not
+establish natural exit timing or runtime parity. See
+[`rescue_final_exit_wrap_arithmetic_2026-10-21.md`](../tracker/evidence/scenario-loading/rescue_final_exit_wrap_arithmetic_2026-10-21.md).
+The rescue-all macOS app rebuilt successfully at matching standalone/app SHA-256
+`6d83512a8bd33163eb551ed0259cd2839b03d2c87f1bee8c650beeaafe18ffa8`; all 18
+scene packages and eight rescue choices are present, and `Info.plist` validates.
+The linker still warns that Homebrew `json-c` targets macOS 27.0 while the
+target is 13.3. Compile/package only; no tests, gameplay run, or retail parity
+check.
+
+The RescueBot default audit rechecked the pinned PlayerRescue factory and
+constructor path. The only direct `Player+0x32E4` store found is the
+`setrescuebot` command; the `+0x32CC` component and embedded sound-instance
+constructors do not initialize that byte. The ordinary allocation branch uses
+`HeapAlloc` flags zero, and a pool path may be used. Static evidence therefore
+does not establish a deterministic retail default. Keep the host's explicit
+script-enable gate and leave allocator/pool reuse, the `+0x340C` initializer
+relationship, and live callback cadence open. Evidence:
+[`rescuebot_constructor_default_audit_2026-10-21.md`](../tracker/evidence/scenario-loading/rescuebot_constructor_default_audit_2026-10-21.md).
+Do not infer an always-on or always-off campaign default from Training's
+explicit command or other maps' missing command.
+
 The Bar R script literals do not provide another supported victim feature:
 the hash-pinned VictimRescue dispatcher routes `playanim` to a helper that
 logs it as unimplemented, and neither inspected dispatcher handles `setskin`.
@@ -2372,6 +2402,9 @@ the report is observed.
 | `profile_storage_path_trace` (root) | `00425090`, `00409B40`, profile initialization/load/save path | Read-only current-hash Ghidra 12.0.4 headless export; `00409b40_create_profile_directory_fresh_2026-10-21.c`, `00425090_profile_manager_initializer_fresh_2026-10-21.c` | Complete; resolves working-directory-relative `Saves\\player%i.rb`, directory creation, existing-file load and missing-profile initialization/save paths; RichBinary payload layout and host mapping remain open; no gameplay code/build/test/runtime/parity change |
 | `exit_contact_host_audit` (Luna) | Compare exit/contact source phase and linked-stage host adapter | BoundsTrigger/final-exit traces and shared host | Complete, read-only; one-iteration contact buffer matches static Think-before-contact phase; independently identified pending-key question, which raw stack review now resolves; natural live overlap and transition remain unverified |
 | `rescue_chain_retention_audit` (Luna) | Review natural rescue contact and linked-stage state retention | Current `scene_viewer.cpp`, contact/flush evidence, hash-pinned PlayerRescue factory and owner queue | Complete, read-only; natural BoundsTrigger overlap is already buffered through the next owner Think pass, and mission stats already span linked host runs; the known PlayerRescue byte path selects cleanup/free during flush and a new BSP creates its replacement; other persisted state and indirect byte writes remain unresolved |
+| `rescue_chain_retention_followup` (Luna) | Victim approach/pickup/carry/release, exit availability/finalexit, linked-stage handoff | Same-hash final-exit exports, `victim_exit.h`, `scene_viewer.cpp` | Complete, read-only; identified exact 32-bit wrapping subtraction in both terminal exit handlers; the shared helper now ports it; no natural-runtime claim |
+| `core_gameplay_gap_followup` (Luna) | Prioritize missing Player movement/held-item frame, Axe, BModel, RescueBot, and rescue mechanics | Current work queue, shared host, RescueBot evidence | Complete, read-only; recommended tracing RescueBot's unset enable-byte constructor path instead of outcome UI or speculative frame corrections; root follow-up found no source-defined default and recorded the allocation caveat |
+| `rescuebot_constructor_default_trace` (root) | PlayerRescue allocation, `00453D50`, `00481C40`, `004A13A0`, `Player+0x32E4` | Same-hash saved constructor body plus direct `objdump` and offset-write census; new constructor-default evidence note | Complete, read-only; no direct constructor assignment found, ordinary HeapAlloc path requests no zero-fill, pool/runtime default remains unresolved; no enable default changed |
 | `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; static order matches exports; channel iteration and wrapper-slot clearing are now described separately; helper effects and retained game state remain open |
 | `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit; host now carries one mission-stat map through linked `run()` contexts as a provisional approximation, while opaque flush effects leave retail persistence unknown |
 | `stat_manager_pointer_lifecycle` (Luna) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `manager-offsets.log`, pending-loader consumers | Complete, read-only; constructor clears `+0x6E4` before loading profile records; later writer remains unresolved because direct-offset scans can miss aliases/adjusted bases |

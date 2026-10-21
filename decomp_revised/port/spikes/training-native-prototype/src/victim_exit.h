@@ -11,6 +11,15 @@ struct RescueExitState {
  uint32_t messageGate=0,field5CC=0; // Player+0x3438 result/message gate and +0x5CC
  std::string prompt; // +0x5D0
 };
+
+// 00450A00 and 00450A70 perform two 32-bit SUB instructions and accept only
+// an exact zero remainder. Keep unsigned wraparound so over-counted state
+// does not accidentally pass the exit gate.
+inline uint32_t remainingRescuesForFinalExit(uint32_t total,
+ uint32_t field3530,uint32_t rescues){
+ return total-field3530-rescues;
+}
+
 struct RescueExitEntity {
  int entity=-1,type=0;
  bool matchesFinalExit=false; // Result of source 0046ED70 binding tests.
@@ -33,7 +42,8 @@ RescueExitResult processRescueExits(RescueExitState& state,
   ops.refreshMembership();
  }
  // Two SUBs then TEST/JG: positive wrapped int32 remainder returns.
- uint32_t remainder=state.total-state.field3530-state.rescues;
+ uint32_t remainder=remainingRescuesForFinalExit(
+  state.total,state.field3530,state.rescues);
  if(remainder!=0&&(remainder&0x80000000u)==0)return RescueExitResult::survivorsRemaining;
  std::vector<int> triggers;
  std::vector<const TrainingZone*> exitZones;
