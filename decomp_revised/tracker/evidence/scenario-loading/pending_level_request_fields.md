@@ -36,9 +36,17 @@ definitions; see [the score-profile trace](mission_outcome_score_profile_fresh_2
 This does not prove that cumulative live statistics survive the transition:
 the `0042A070` flush invokes helpers whose full side effects remain unknown.
 Follow-up decompilation mapped direct world-resource and ScriptEngine cleanup
-in `004944E0`, `00493EA0`, and `00470ED0`; the latter does not directly clear
-the separate script-variable table. Its array/container cleanup and the world
-resource actor callbacks still leave indirect state effects open. See the
+in `004944E0`, `00493EA0`, and `00470ED0`. ScriptEngine `+0x94` aliases
+`0x00503044`, the same variable container used by `00470FC0`, so the flush
+clears its old entries through `0043EE40`; `00471030` then stores fresh
+`DIFFICULTY` and `LEVEL` values after the flush. `DIFFICULTY` comes from the
+selected object at EverGame `+0x6E4`, field `+0x2C`, formatted with `%i`; the
+selected-object writer is unresolved. `LEVEL` comes from the active level
+record's first string field at `+0x688`. World-resource actor and container
+callbacks still leave mission-stat/profile side effects open. The `004443E0`
+callsite and formatter anchors are in
+[`004443e0_difficulty_format_fresh_2026-10-21.asm`](004443e0_difficulty_format_fresh_2026-10-21.asm).
+See the
 [nested flush callee trace](level_transition_flush_2026-10-21.md#nested-world-resource-and-script-engine-effects).
 The host now passes one `rescueStatistics` map through the linked `run()` calls,
 based on the skipped explicit reset. This is a provisional port choice, not

@@ -24,7 +24,7 @@ and the corrected [Player/BModel census](../tracker/evidence/scenario-loading/pl
 The exact 12-byte `0049C3D0` vtable adapter boundary is now present in the
 generated function inventory from a fresh headless Ghidra export on a
 disposable project copy. `python3 tools/build_tracker.py` rebuilds cleanly at
-7,968 function records and 501 reviewed EXE functions.
+7,968 function records and 502 reviewed EXE functions.
 
 The shared scene now buffers BModel, BoundsTrigger, and PropModel ScriptActor
 contact-pair events across one host update iteration: it drains the preceding
@@ -229,8 +229,15 @@ found positive store; the only direct positive store in the pinned image is in
 the pooled FireRescue factory. Under the known PlayerRescue path, slot `+0` is
 `00454060`, which runs cleanup and frees the object. Computed or indirect byte
 writes are not excluded. The next BSP then constructs a new PlayerRescue.
-Profile, score, mission-stat,
-script-variable, and other global state may still persist or repopulate values.
+Profile, score, mission-stat, and other global state may still persist or
+repopulate values. Script-variable retention is resolved separately:
+ScriptEngine `+0x94` aliases `0x00503044`, the table used by `00470FC0`, and
+`00470ED0` clears it through `0043EE40`; `00471030` then repopulates
+`DIFFICULTY` and `LEVEL` after the flush. `DIFFICULTY` is formatted from
+selected-object `EverGame+0x6E4` field `+0x2C`, while `LEVEL` comes from the
+active level record at `+0x688`; the selected-object writer remains unresolved.
+The host already creates a fresh `Scripts` object per stage, but its hardcoded
+`DIFFICULTY="1"` has not yet been compared with the retail value.
 The host's scene reconstruction matches this entity lifetime at a coarse
 level, while its statistics-map carry remains provisional. Exact transition
 presentation and cadence remain provisional. See
@@ -2436,8 +2443,8 @@ the report is observed.
 | `rescuebot_constructor_default_trace` (root) | PlayerRescue allocation, `00453D50`, `00481C40`, `004A13A0`, `Player+0x32E4` | Same-hash saved constructor body plus direct `objdump` and offset-write census; constructor-default evidence note | Complete, read-only; constructors do not assign the byte and the process heap path requests no zero-fill; no enable default changed |
 | `rescuebot_allocator_audit` (Luna) | `00454080`, `004A5A84`, `004B7D5F`, `0049D450`, constructor chain | Pinned EXE direct disassembly and constructor-default evidence note | Complete, read-only; confirmed no full-object clear and a flags-zero process-heap path, while leaving allocator mode/threshold and default unresolved; root follow-up below resolves the size cap |
 | `rescuebot_allocator_limit_trace` (root) | `004BE659`, `004BF34F`, `004B7D5F`, `004A5A84`, `00454080` | Pinned EXE direct disassembly and constructor-default evidence note | Complete, read-only; mode-3 small-block requests cap at 1016 bytes, so the 0x3580 PlayerRescue allocation bypasses that pool; process-heap reuse/default remains unresolved |
-| `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; mapped direct world-resource actor/bitmap/world cleanup and ScriptEngine array/container reset plus self-registration; element callbacks and indirect mission/profile/stat effects remain open |
-| `linked_flush_direct_state_audit` (Luna) | Check whether nested world-resource and ScriptEngine flush helpers directly clear linked-stage profile, stats, or script variables | Current-hash `004944E0`, `00493EA0`, `00470ED0`, `0043B6E0`, `0043EE40`, `00470FC0`, `00471030`; headless Ghidra output under `/private/tmp/fdny-stageflush-out` | Complete, read-only; no direct script-variable-table clear in `00470ED0`, and `00471030` writes DIFFICULTY/LEVEL after the flush; resource/array callbacks may have indirect effects, so retail persistence remains unresolved |
+| `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; mapped direct world-resource actor/bitmap/world cleanup and ScriptEngine cleanup; corrected `+0x94` alias to the script-variable table at `0x00503044`, which is cleared then reseeded with DIFFICULTY/LEVEL; element callbacks and indirect mission/profile/stat effects remain open |
+| `linked_flush_direct_state_audit` (Luna/root correction) | Check whether nested world-resource and ScriptEngine flush helpers directly clear linked-stage profile, stats, or script variables | Current-hash `004944E0`, `00493EA0`, `00470ED0`, `0043B6E0`, `0043EE40`, `00470FC0`, `00471030`, `004443E0`; [format evidence](../tracker/evidence/scenario-loading/004443e0_difficulty_format_fresh_2026-10-21.asm); headless Ghidra output under `/private/tmp/fdny-stageflush-out` and `/private/tmp/fdny-difficulty-out.log` | Complete, read-only; root address audit corrected the initial alias reading: ScriptEngine `+0x94` is `0x00503044`, and `00470ED0` clears it through `0043EE40`; `00471030` reseeds DIFFICULTY from selected-object `+0x6E4/+0x2C` formatted with `%i` and LEVEL from the active level record. Selected-object writer and mission-stat/profile retention remain open |
 | `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit; host now carries one mission-stat map through linked `run()` contexts as a provisional approximation, while opaque flush effects leave retail persistence unknown |
 | `stat_manager_pointer_lifecycle` (Luna) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `manager-offsets.log`, pending-loader consumers | Complete, read-only; constructor clears `+0x6E4` before loading profile records; later writer remains unresolved because direct-offset scans can miss aliases/adjusted bases |
 | `player_state_flush_audit` (Luna/root follow-up) | Determine whether PlayerRescue or player state survives the linked-stage pre-load flush | `0042A070`, `00429EF0`, owner `+0x3C4` service, `0042B1A0`, `0049C820`, PlayerRescue vtable/factory, hash-pinned BSP inventory | Complete, read-only; the flush drains the queued callback in-process; the base initializer clears PlayerRescue `+0x1D`, and the known factory path has no positive store, so the known branch calls root slot 0 (`00454060`) to clean up/free; computed or indirect byte writes remain open. A new BSP creates a fresh PlayerRescue. Other profile/global/stat state remains unresolved; see `linked_stage_player_rescue_lifetime_2026-10-21.md` |

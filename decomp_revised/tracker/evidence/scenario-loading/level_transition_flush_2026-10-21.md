@@ -57,13 +57,26 @@ cleanup at `+0x94`, clears the array at `+0xB0`, and then registers the
 ScriptEngine object again through `00470DD0`. The shared array-clear helper
 `0043B6E0` calls its configured per-element callback for occupied entries;
 the container helper also releases nested contents. Therefore the wrapper
-does not provide a complete account of indirect effects. The decompiled
-`00470ED0` body does not directly reference the separate script-variable
-table at `DAT_00503044`; `00471030` writes `DIFFICULTY` and `LEVEL` there
-after the flush. This only rules out a direct clear in that body: callbacks,
-actor destruction, or other helpers may still affect mission statistics,
-profile selection, or other game state. No linked-stage persistence result
-is established.
+does not provide a complete account of indirect effects. More specifically,
+the flush passes `&DAT_00502FB0`, so ScriptEngine `+0x94` is absolute
+`0x00503044`. `StoreScriptVariableValue` (`00470FC0`) passes that same address
+to `FindScriptVariableEntry`. Thus `00470ED0` directly clears the script
+variable container through `0043EE40`: it empties its entry array through
+`0043B6E0`, releases its auxiliary allocation, and zeros container fields
+`+0x04..+0x14`. This corrects the initial interpretation of the `+0x94`
+field. After this clear, `00471030` writes `DIFFICULTY` and `LEVEL` back into
+the same container. The raw entry instructions load the object at
+EverGame `+0x6E4`, read its `+0x2C` dword, and pass that integer to
+`004443E0`; the helper formats it through a `%i` string before storing the
+result as `DIFFICULTY`. The selected-object writer for `+0x6E4` remains
+unresolved, so the runtime value is not established here. `LEVEL` is sourced
+from the first string member of the active level record at EverGame `+0x688`.
+The table's old entries do not carry through this flush; map scripts may
+populate new entries as the next level starts. This does not establish
+mission-stat or profile retention: world-resource destruction and
+per-element/container callbacks may still have other side effects.
+The caller and format-helper instruction anchors are preserved in
+[`004443e0_difficulty_format_fresh_2026-10-21.asm`](004443e0_difficulty_format_fresh_2026-10-21.asm).
 
 The fresh callee trace used a disposable headless Ghidra project and the
 pinned executable hash above; the primary saved project was not modified.
@@ -104,7 +117,14 @@ Retail performs an in-process runtime flush before queuing the next World.
 The shared host currently returns from one `run()` invocation and enters the
 sibling package through `runRescueSceneChain`, retaining inherited music and
 the selected level duration while reconstructing the rest of its local scene
-state. This is a coarse stage-transition approximation, not a parity claim.
+state. The host creates a fresh `Scripts` instance for each scene, so its
+script-variable lifetime resets at the stage boundary too; it currently seeds
+`DIFFICULTY` as `1` and replaces `LEVEL` with the scene key. Retail instead
+reseeds `LEVEL` from the active level record and derives `DIFFICULTY` from the
+selected profile object at EverGame `+0x6E4`, field `+0x2C`. The profile-object
+selection path and value are still open, so the host's `DIFFICULTY="1"` seed
+has not been compared with retail. This is a coarse stage-transition
+approximation, not a parity claim.
 
 The trace narrows direct resource and ScriptEngine cleanup, but does not
 establish which profile values, cumulative statistics, Player loadout, or
