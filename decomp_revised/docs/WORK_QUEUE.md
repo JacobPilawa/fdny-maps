@@ -51,6 +51,14 @@ progression remain the next useful shared gameplay work. Evidence:
 [`0044d550_player_rescue_entity_init_fresh.c`](../tracker/evidence/scenario-loading/0044d550_player_rescue_entity_init_fresh.c),
 and [`player_crouch_command_gate_2026-10-20.md`](../tracker/evidence/scenario-loading/player_crouch_command_gate_2026-10-20.md).
 
+The contact manager invokes each active root's `+0x48` callback against every
+candidate in each selected typed list; `0049BD20` does not spatially prune
+pairs first. The host's victim loop is therefore pair-complete for the normal
+authored case of one PlayerRescue and the active victims. It still bypasses
+manager membership/category gates and does not prove simultaneous-overlap
+ordering, dynamic registration, or host-frame cadence. Compare natural pickup
+and roam progression across all rescue packages before changing this loop.
+
 The Oil Rig `finalexitloadmap` stage-key seam is now closed statically. Raw x86
 stack offsets show that the same authored key used for the `data\\maps\\<key>.bsp`
 existence check is stored at EverGame `+0x660`; the shared host already selects
@@ -2290,6 +2298,7 @@ the report is observed.
 | `fire_hud_widget_trace` | Trace HUD child construction, resource IDs, and placement for the four fire sectors | Read-only Ghidra trace; `tracker/evidence/scenario-loading/fire_direction_hud_trace_2026-10-14.md` | Complete; resource 50 pair and exact rotated quads are mapped; first-pass port draws the live sector bytes; retail blend remains open |
 | `gebm_truecolor_trace` follow-up | Cross-check natural victim and exit contact against retail source | `0045A070`, `00453A70`, `00450440` exports; `victim_transactions.h`, `scene_viewer.cpp` | Complete; confirmed the outer `+0x3438` dispatcher gate and inner carry gate; direct overlap bypass was identified and routed through the mapper; delivery cadence remains provisional |
 | `natural_rescue_bounds_audit` | Resolve the type-1 PlayerRescue `+0x0C` interface consumed by victim pickup | `0045A070`, PlayerRescue vtable/getter, `0044D550`, crouch and uncrouch traces; pickup adapter | Complete; getter returns origin plus six bounds values, and retail standing/crouched extents match the host `VictimPickupBox`; runtime cadence and natural pickup parity remain open |
+| `natural_rescue_pair_dispatch_audit` | Determine whether the contact manager prefilters candidates before VictimRescue pickup callbacks | `0049BD20`, `0049BC90`, `0045A070`, PlayerRescue/victim map inventory, host victim scan | Complete; dispatcher traverses every candidate in selected typed lists, without spatial pruning; host is pair-complete for one PlayerRescue plus active victims but omits membership/category gates and proven within-class order |
 | `propmodel_port_review` follow-up | Review BoundsTrigger gating and new victim-message integration | `scene_viewer.cpp`, `00440CE0`, `00440DC0`, `00470840` exports | Complete; confirmed `+0x164` visual gate and contact/render independence; caught and removed an unsupported Player-carry producer gate |
 | `victim_message_pump` follow-up | Map the owner `+0x3BC` message drain and its order after contact callbacks | Preserved same-hash Ghidra exports for `00429520`, `0049B610`, and `004DF8CC` | Complete; same `00429520` invocation drains messages submitted during its earlier `+0xE0` contact pass; outer rendered-frame and Player update order remain open |
 | `rescue_contact_gap` follow-up | Check final-exit enablement against BoundsTrigger contact semantics | `004504C0`, `00440F50`, `00440CE0`, `00470840`, authored exit inventory | Complete; exit availability is a model/render state, not a contact gate; persistent overlap remains `touching`, so no synthetic `touch` is source-supported |
