@@ -39,6 +39,36 @@ store. The loader then initializes the request's resource definition and
 queues the selected BSP through the World factory path documented in
 [`world_factory_resolution.md`](world_factory_resolution.md).
 
+## Nested world-resource and script-engine effects
+
+A fresh read-only decompilation of the called bodies on the same executable
+hash resolves part of step 5. `004944E0` calls `00493EA0` on its argument
+plus `0x08`, then clears the argument's dword at `+0x170`. `00493EA0`
+processes its active actor array at `+0x7C` (length `+0x80`): for each
+non-null actor whose byte `+0x0C` is set, it calls vtable slot 0 with
+argument 1, then clears the slot. It logs when a non-null actor has that byte
+unset. It also destroys the `geActor` and frees records in the `+0x30` list,
+detaches and destroys bitmaps in the `+0x48` list, clears the corresponding
+collections, and removes/frees the `geWorld` at `+0x78`. Actor and resource
+callbacks may have effects beyond these direct operations.
+
+`00470ED0` clears the ScriptEngine actor array at `+0x7C`, runs the container
+cleanup at `+0x94`, clears the array at `+0xB0`, and then registers the
+ScriptEngine object again through `00470DD0`. The shared array-clear helper
+`0043B6E0` calls its configured per-element callback for occupied entries;
+the container helper also releases nested contents. Therefore the wrapper
+does not provide a complete account of indirect effects. The decompiled
+`00470ED0` body does not directly reference the separate script-variable
+table at `DAT_00503044`; `00471030` writes `DIFFICULTY` and `LEVEL` there
+after the flush. This only rules out a direct clear in that body: callbacks,
+actor destruction, or other helpers may still affect mission statistics,
+profile selection, or other game state. No linked-stage persistence result
+is established.
+
+The fresh callee trace used a disposable headless Ghidra project and the
+pinned executable hash above; the primary saved project was not modified.
+This is static code evidence, not a runtime transition capture.
+
 ## Player recreation and owner work-queue boundary
 
 The same pinned executable's generic spawn path creates one `RCS_PlayerRescue`
@@ -76,11 +106,12 @@ sibling package through `runRescueSceneChain`, retaining inherited music and
 the selected level duration while reconstructing the rest of its local scene
 state. This is a coarse stage-transition approximation, not a parity claim.
 
-The trace does not establish which profile values, cumulative statistics,
-Player loadout, or other game-level state persist across the retail flush. It
-also does not establish a successful live transition, exact callback timing,
-or the presentation during world replacement. Keep those questions open until
-they are traced or captured.
+The trace narrows direct resource and ScriptEngine cleanup, but does not
+establish which profile values, cumulative statistics, Player loadout, or
+other game-level state persist across the retail flush. It also does not
+establish a successful live transition, exact callback timing, or the
+presentation during world replacement. Keep those questions open until they
+are traced or captured.
 
 ## Fresh export
 
