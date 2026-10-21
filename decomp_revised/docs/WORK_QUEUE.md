@@ -105,8 +105,14 @@ existing paced-loop delta and has no evidence for retail per-class list order
 or exact cadence. See
 [`victim_roam_think_phase_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_roam_think_phase_2026-10-21.md).
 Continue with natural victim travel and rescue mission progression; the
-pickup-box and typed-list dispatch findings are static boundaries, not a
-natural-playthrough validation.
+pickup-box, typed-list dispatch, and overlap-to-event bridge are static
+boundaries, not a natural-playthrough validation. A fresh shared-host audit
+confirmed that Player/BoundsTrigger overlap produces buffered
+`touch`/`touching`/`untouch` events consumed on the next owner Think pass,
+matching the mapped Think-before-contact phase at the host's provisional
+cadence. The linked-stage runner already preserves its mission-stat map across
+packages. Natural travel, contact timing, and end-to-end stage completion
+remain unverified.
 
 The Bar R script literals do not provide another supported victim feature:
 the hash-pinned VictimRescue dispatcher routes `playanim` to a helper that
@@ -173,14 +179,22 @@ not yet mapped. Retail's ordinary BSP spawn path creates a fresh PlayerRescue
 for every rescue/stage map; its common mask admits the root to a manager list
 that the flush drains. `00429EF0` compares the root pointer to the owner's
 pending-work queue and calls `SetEntityFactoryRequestPending` when no matching
-request is present. The callback's complete effect and any restoration into the
-fresh PlayerRescue remain unmapped. Thus the host re-entry also does not claim
-retail Player-state lifetime. Exact transition presentation and cadence remain
-provisional. See
+request is present. The queued work is processed before the flush returns:
+`0049C820` dispatches root slot `+0` with argument 1 when byte `+0x1D` is zero.
+The PlayerRescue base initializer clears it, and the normal factory path has no
+found positive store; the only direct positive store in the pinned image is in
+the pooled FireRescue factory. Under the known PlayerRescue path, slot `+0` is
+`00454060`, which runs cleanup and frees the object. Computed or indirect byte
+writes are not excluded. The next BSP then constructs a new PlayerRescue.
+Profile, score, mission-stat,
+script-variable, and other global state may still persist or repopulate values.
+The host's scene reconstruction matches this entity lifetime at a coarse
+level, while its statistics-map carry remains provisional. Exact transition
+presentation and cadence remain provisional. See
 [`00425090_profile_manager_initializer_fresh_2026-10-21.c`](../tracker/evidence/runtime-loop/00425090_profile_manager_initializer_fresh_2026-10-21.c).
 The Player factory and owner work-queue boundary are documented in
 [`level_transition_flush_2026-10-21.md`](../tracker/evidence/scenario-loading/level_transition_flush_2026-10-21.md)
-and [`player_rescue_factory_and_spawn_path.md`](../tracker/evidence/scenario-loading/player_rescue_factory_and_spawn_path.md).
+and [`linked_stage_player_rescue_lifetime_2026-10-21.md`](../tracker/evidence/scenario-loading/linked_stage_player_rescue_lifetime_2026-10-21.md).
 The rescue-all macOS app rebuilt successfully; standalone and packaged arm64 executables match
 at SHA-256 `ed386596cf2994457fb99e8c991a19aa0ef9740ff9df8f58effbb88118b1c5d0`,
 with eight source-ordered rescue choices and 13 rescue/stage packages. The
@@ -2357,10 +2371,11 @@ the report is observed.
 | `outcome_frontend_audit` (Luna) | Result-card/frontend return source path and shared host boundary | Current result widget/handoff exports and rescue host | Complete, read-only; win selects Records after a win-only selected-level record merge, loss selects the level selector; exact widget timing and persistence remain open, so menu work stays behind the active gameplay gaps |
 | `profile_storage_path_trace` (root) | `00425090`, `00409B40`, profile initialization/load/save path | Read-only current-hash Ghidra 12.0.4 headless export; `00409b40_create_profile_directory_fresh_2026-10-21.c`, `00425090_profile_manager_initializer_fresh_2026-10-21.c` | Complete; resolves working-directory-relative `Saves\\player%i.rb`, directory creation, existing-file load and missing-profile initialization/save paths; RichBinary payload layout and host mapping remain open; no gameplay code/build/test/runtime/parity change |
 | `exit_contact_host_audit` (Luna) | Compare exit/contact source phase and linked-stage host adapter | BoundsTrigger/final-exit traces and shared host | Complete, read-only; one-iteration contact buffer matches static Think-before-contact phase; independently identified pending-key question, which raw stack review now resolves; natural live overlap and transition remain unverified |
+| `rescue_chain_retention_audit` (Luna) | Review natural rescue contact and linked-stage state retention | Current `scene_viewer.cpp`, contact/flush evidence, hash-pinned PlayerRescue factory and owner queue | Complete, read-only; natural BoundsTrigger overlap is already buffered through the next owner Think pass, and mission stats already span linked host runs; the known PlayerRescue byte path selects cleanup/free during flush and a new BSP creates its replacement; other persisted state and indirect byte writes remain unresolved |
 | `stage_flush_review` (Luna) | Review linked-stage flush order and host comparison | `level_transition_flush_2026-10-21.md`; fresh headless Ghidra export; shared host | Complete, read-only; static order matches exports; channel iteration and wrapper-slot clearing are now described separately; helper effects and retained game state remain open |
 | `linked_stage_stat_retention` (Luna) | Check conditional stat reset and host statistics lifetime | `pending_level_request_fields.md`; score-profile and request-loader exports; `scene_viewer.cpp` | Complete, read-only; active-record linked loads clear the fallback byte and skip explicit `00424710` reinit; host now carries one mission-stat map through linked `run()` contexts as a provisional approximation, while opaque flush effects leave retail persistence unknown |
 | `stat_manager_pointer_lifecycle` (Luna) | Trace construction and assignment of EverGame `+0x6E4` score/profile object | `0042B860`, `00425090`, `manager-offsets.log`, pending-loader consumers | Complete, read-only; constructor clears `+0x6E4` before loading profile records; later writer remains unresolved because direct-offset scans can miss aliases/adjusted bases |
-| `player_state_flush_audit` (Luna) | Determine whether PlayerRescue or player state survives the linked-stage pre-load flush | `0042A070`, `00429EF0`, owner `+0x3C4` service, `0042B1A0`, PlayerRescue factory/spawn path, hash-pinned BSP inventory | Complete, read-only; PlayerRescue root is admitted to a list that the flush drains; the owner queue de-duplicates raw entity pointers and enqueues absent requests, but the request callback effect and restoration into a newly spawned PlayerRescue remain unresolved |
+| `player_state_flush_audit` (Luna/root follow-up) | Determine whether PlayerRescue or player state survives the linked-stage pre-load flush | `0042A070`, `00429EF0`, owner `+0x3C4` service, `0042B1A0`, `0049C820`, PlayerRescue vtable/factory, hash-pinned BSP inventory | Complete, read-only; the flush drains the queued callback in-process; the base initializer clears PlayerRescue `+0x1D`, and the known factory path has no positive store, so the known branch calls root slot 0 (`00454060`) to clean up/free; computed or indirect byte writes remain open. A new BSP creates a fresh PlayerRescue. Other profile/global/stat state remains unresolved; see `linked_stage_player_rescue_lifetime_2026-10-21.md` |
 | `hud_goggles_trace` | Current hint/HUD and goggles visor/scan path | `scene_viewer.cpp`, `hint_overlay.h`, `goggles_renderer.h`, `goggles_scan.h`, `0044ee50_player_hint_route_fresh.c`, `004564c0_hint_window_constructor_fresh.c`, `00462a60_goggles_visor_setup_fresh.c` | Complete; render paths are in the packaged Training binary; live pixel visibility and target effect attachment remain unverified |
 | `fire_damage_trace` | Whether Player fire exposure runs in ordinary viewer frames | `scene_viewer.cpp`, `player_fire_contact.h`, `player_fire_message.h`, `00451640_fire_exposure_trace.asm`, `docs/REVERSE_ENGINEERING_LOG.md` | Complete; handler is called per rendered frame; provisional spatial inputs and callback cadence leave user report unexplained |
 | `player_fire_turn` | Retail `0044BB00` fire-facing side effects and HUD consumers | Read-only hash-pinned EXE instruction audit; `00452570`/`00456090` saved exports | Complete; retail sets four transient sector bytes and never changes camera yaw; exact sector map recovered |
@@ -2404,6 +2419,7 @@ the report is observed.
 | `victim_message_pump` follow-up | Map the owner `+0x3BC` message drain and its order after contact callbacks | Preserved same-hash Ghidra exports for `00429520`, `0049B610`, and `004DF8CC` | Complete; same `00429520` invocation drains messages submitted during its earlier `+0xE0` contact pass; outer rendered-frame and Player update order remain open |
 | `rescue_contact_gap` follow-up | Check final-exit enablement against BoundsTrigger contact semantics | `004504C0`, `00440F50`, `00440CE0`, `00470840`, authored exit inventory | Complete; exit availability is a model/render state, not a contact gate; persistent overlap remains `touching`, so no synthetic `touch` is source-supported |
 | `carry_presentation_trace` | Trace what retail displays while Player carries a VictimRescue actor | Same-hash EXE pickup/status exports, Genesis actor-render gate, `scene_viewer.cpp` | Complete; pickup hides and freezes the world victim; Player status key semantics are unresolved and no Player-relative carried-body transform was found |
+| `carried_victim_transform_followup` (Luna) | Check whether state-5 VictimRescue has a Player-relative render or transform update | Same-hash pickup/state-5/render evidence and shared viewer | Complete, read-only; pickup hides/freezes the world victim and no transform write or carried-body draw path is established; do not invent pose math without a retail runtime capture |
 | `rescue_script_surface_followup` | Find broad missing authored Player/trigger behavior across campaign rescues | `00451870`, `00451560`, `00458400`, copied rescue actor inventory, shared host | Complete; all seven campaign rescues author oxygen toggles; shared oxygen state/commands, smoothed gauge/needle draw, resource-702 visor transition, child sounds, and category-volume selector effects are integrated; catalog MP3 music and oxygen stream gain are now wired; the manager flag, menu playback, audible parity, retail blend/visual parity, warning, cadence, and fog pixel parity remain open |
 | `victim_hazard_reactions_followup` | Recheck Player passout and carried-victim drop timing/integration | `00450FB0`, `00451080`, `0044FF10`, `0044CD10`, `victim_transactions.h`, `scene_viewer.cpp` | Complete; fire uses passout argument 1 and oxygen argument 0; the shared host wires the separate `+0x3400` safe snapshot, `+0x534` reset checkpoint, carried-victim drop, floor placement, status tail, and strict state-6 recovery delay. Eight controlled map checks cover drop/reset/re-pickup; natural hazard entry, retail scheduler cadence, mode-2 HeroDown, and live camera parity remain open. See `player_passout_recovery_port_2026-10-14.md`. |
 | `music_path_audit` | Compare catalog-authored menu/level music with the shared audio host | Read-only; `thegame.lev`, level-loader and stream helpers, `scene_audio.h` | Complete; four MP3 assets and catalog choices are hash-pinned; selector-2 level start/loop and linked-stage `+0x0C` inheritance are traced and ported, with oxygen stream gain; menu-track startup, FMOD streaming behavior, and audible parity remain open |

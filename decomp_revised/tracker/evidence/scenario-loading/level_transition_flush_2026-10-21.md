@@ -60,10 +60,13 @@ service queue at `owner + 0x10` for the same first-dword pointer. If no matching
 queue node exists, it calls owner slot `+0x04` with `(entity, 1)`;
 `SetEntityFactoryRequestPending` (`0042B1A0`) appends that pointer and flag to
 a 0x0C-byte queue node. This is pending-work de-duplication, not a retained-ID
-list. The trace does not identify the full effect of the queued PlayerRescue
-callback or show which Player fields, loadout, or mission state are restored
-for the newly spawned BSP. Keep Player-state survival unresolved; the host's
-stage re-entry is not a retail-lifetime claim.
+list. A static follow-up resolves the PlayerRescue callback branch: its normal
+factory path leaves byte `+0x1D` zero, so `0049C820` calls root slot `+0` with
+argument 1. PlayerRescue slot `+0` is `00454060`, which runs cleanup and frees
+the root. A later BSP creates a fresh PlayerRescue. This establishes entity
+lifetime, not the fate of separate Player fields, loadout sources, mission
+statistics, or profile/global state. See
+[`linked_stage_player_rescue_lifetime_2026-10-21.md`](linked_stage_player_rescue_lifetime_2026-10-21.md).
 
 ## Port implication and limits
 
