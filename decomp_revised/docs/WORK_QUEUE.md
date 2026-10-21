@@ -24,7 +24,7 @@ and the corrected [Player/BModel census](../tracker/evidence/scenario-loading/pl
 The exact 12-byte `0049C3D0` vtable adapter boundary is now present in the
 generated function inventory from a fresh headless Ghidra export on a
 disposable project copy. `python3 tools/build_tracker.py` rebuilds cleanly at
-7,968 function records and 499 reviewed EXE functions.
+7,968 function records and 501 reviewed EXE functions.
 
 The shared scene now buffers BModel, BoundsTrigger, and PropModel ScriptActor
 contact-pair events across one host update iteration: it drains the preceding
@@ -113,6 +113,17 @@ matching the mapped Think-before-contact phase at the host's provisional
 cadence. The linked-stage runner already preserves its mission-stat map across
 packages. Natural travel, contact timing, and end-to-end stage completion
 remain unverified.
+
+The VictimRescue owner Think adapter's extra root `+0x10` gate is now checked
+against its source-backed constructor default. Common initializer `0049D420`
+clears the byte, after which `00459990` forwards to the embedded actor updater;
+the shared host's ordinary spawned-victim update therefore matches the
+verified default. A broad `+0x10` store scan is too aliased to exclude a later
+generic/indirect writer, and no reachable authored transition or retail
+runtime value was established. No guessed suppression behavior was added.
+Keep a conditional updater gate as an open gap, together with cadence, list
+order, and gameplay runtime parity. See
+[`victim_root_think_suppression_gate_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_root_think_suppression_gate_2026-10-21.md).
 
 ## Rescue final-exit counter arithmetic (2026-10-21)
 
