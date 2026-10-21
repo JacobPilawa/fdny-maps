@@ -38,6 +38,19 @@ highest remaining shared gameplay gap: natural contact-driven rescue
 progression through the campaign and cross-stage state retention. Keep contact
 cadence and transition presentation provisional without a retail runtime capture.
 
+The PlayerRescue pickup-box interface is now resolved statically. VictimRescue
+`0045A070` calls type-1 PlayerRescue slot `+0x0C` and reads a ten-float record
+from the getter's `+0x68` origin cache: origin XYZ, one padding float, then mins
+and maxs. `0044D550` initializes the hull to `(-30,-30,-30)` / `(30,85,30)`;
+the Player `CROUCH` command writes max Y 25, and successful uncrouch restores
+85. This confirms the shared `VictimPickupBox` fields and crouch-aware height
+against retail's static layout. It does not establish callback cadence, natural
+pickup timing, or all-map runtime parity. Natural victim travel and mission
+progression remain the next useful shared gameplay work. Evidence:
+[`victim_pickup_message_path.md`](../tracker/evidence/scenario-loading/victim_pickup_message_path.md),
+[`0044d550_player_rescue_entity_init_fresh.c`](../tracker/evidence/scenario-loading/0044d550_player_rescue_entity_init_fresh.c),
+and [`player_crouch_command_gate_2026-10-20.md`](../tracker/evidence/scenario-loading/player_crouch_command_gate_2026-10-20.md).
+
 The Oil Rig `finalexitloadmap` stage-key seam is now closed statically. Raw x86
 stack offsets show that the same authored key used for the `data\\maps\\<key>.bsp`
 existence check is stored at EverGame `+0x660`; the shared host already selects
@@ -2276,6 +2289,7 @@ the report is observed.
 | `victim_movement_verify` | Verify victim roam step and turn helpers against retail instructions | Saved hash-pinned Ghidra output; read-only | Complete; strict target-arrival gate and exponential 0.3-second half-life turn are verified and ported; callback cadence remains open |
 | `fire_hud_widget_trace` | Trace HUD child construction, resource IDs, and placement for the four fire sectors | Read-only Ghidra trace; `tracker/evidence/scenario-loading/fire_direction_hud_trace_2026-10-14.md` | Complete; resource 50 pair and exact rotated quads are mapped; first-pass port draws the live sector bytes; retail blend remains open |
 | `gebm_truecolor_trace` follow-up | Cross-check natural victim and exit contact against retail source | `0045A070`, `00453A70`, `00450440` exports; `victim_transactions.h`, `scene_viewer.cpp` | Complete; confirmed the outer `+0x3438` dispatcher gate and inner carry gate; direct overlap bypass was identified and routed through the mapper; delivery cadence remains provisional |
+| `natural_rescue_bounds_audit` | Resolve the type-1 PlayerRescue `+0x0C` interface consumed by victim pickup | `0045A070`, PlayerRescue vtable/getter, `0044D550`, crouch and uncrouch traces; pickup adapter | Complete; getter returns origin plus six bounds values, and retail standing/crouched extents match the host `VictimPickupBox`; runtime cadence and natural pickup parity remain open |
 | `propmodel_port_review` follow-up | Review BoundsTrigger gating and new victim-message integration | `scene_viewer.cpp`, `00440CE0`, `00440DC0`, `00470840` exports | Complete; confirmed `+0x164` visual gate and contact/render independence; caught and removed an unsupported Player-carry producer gate |
 | `victim_message_pump` follow-up | Map the owner `+0x3BC` message drain and its order after contact callbacks | Preserved same-hash Ghidra exports for `00429520`, `0049B610`, and `004DF8CC` | Complete; same `00429520` invocation drains messages submitted during its earlier `+0xE0` contact pass; outer rendered-frame and Player update order remain open |
 | `rescue_contact_gap` follow-up | Check final-exit enablement against BoundsTrigger contact semantics | `004504C0`, `00440F50`, `00440CE0`, `00470840`, authored exit inventory | Complete; exit availability is a model/render state, not a contact gate; persistent overlap remains `touching`, so no synthetic `touch` is source-supported |

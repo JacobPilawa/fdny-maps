@@ -1,13 +1,18 @@
 #pragma once
 
-// Source path: Player bounds from 0044D550/0044BCB0/0044BCE0 and the
-// victim callback predicate in 0045A070. The callback's world-box origin is
-// supplied by Player vtable slot +0x0c (0049DB90 -> 0049D790).
+// Source path: Player bounds from 0044D550/00451870/0044BCE0 and the victim
+// callback predicate in 0045A070. Player vtable slot +0x0c
+// (0049DB90 -> 0049D790) returns a record beginning with world XYZ and
+// followed by the PlayerRescue mins at +0x78 and maxs at +0x84. The fourth
+// float at +0x74 is padding for this callback; 0045A070 reads the three mins
+// and three maxs from indices [4..6] and [7..9].
 struct VictimPickupBox {
  V origin, mins, maxs;
 };
 
 inline VictimPickupBox victimPickupBox(const Player& player,V worldOrigin){
+ // 0044D550 initializes mins=(-30,-30,-30), maxs=(30,85,30). CROUCH
+ // writes max Y=25 at root +0x88; UNCROUCH restores the authored 85.
  return {worldOrigin,{-30,-30,-30},player.maxs()};
 }
 

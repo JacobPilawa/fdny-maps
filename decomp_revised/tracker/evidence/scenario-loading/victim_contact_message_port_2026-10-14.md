@@ -58,8 +58,14 @@ the same `00429520` invocation. This is a verified same-call boundary; the
 outer update's rendered-frame cadence and Player movement's order relative to
 the owner pass remain unresolved. The host drains after its per-frame
 candidate scan to match that local producer-before-drain order, but the mapping
-to host frames remains provisional. The host still uses Player movement
-origin as the `+0x0C` world-box adapter.
+to host frames remains provisional. The host supplies Player movement origin
+as the origin element of the `+0x0C` record and its source-backed mins/maxs.
+PlayerRescue initialization `0044D550` sets mins `(-30,-30,-30)` and maxs
+`(30,85,30)`; the `CROUCH` handler writes max Y 25 at `+0x88`, and successful
+uncrouch restores 85. The getter writes only origin XYZ at `+0x68..+0x70`,
+leaving the adjacent padding and six bound fields for this shared callback
+record. This statically supports the host `VictimPickupBox` shape. Contact
+cadence and live pickup timing remain unverified.
 
 The queue-service trace is preserved in the [owner deferred-service audit](../../../reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/owner-deferred-service-trace.md), the [0049B610 drain export](../../../reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/0049b610_FUN_0049b610.c), and the [00429520 owner pass](../../../reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/app-callback-registration/00429520_FUN_00429520.c). Those exports are from the same executable hash recorded above; the preserved [owner-call inventory](../../../reference/previous-work/decomp/evidence/item-pose/live-extinguisher/message-components/owner-vtable-indirect-call-inventory.md) records SHA-256 `4b3b4dc1cc0b05bcb42c8e27ac6f6ca72fe5f7064ca8122fda7d41e7f6d2fc3e` and read-only Ghidra provenance.
 
@@ -88,8 +94,10 @@ not establish live contact cadence or original-game visual/gameplay parity.
 - Compare the verified owner-call message drain against the Player movement
   update and rendered-frame cadence; only the local same-call ordering is
   closed.
-- Resolve the retail Player bounds frame and compare pickup positions across
-  all seven rescue missions, Training, and later rescue stages.
+- Compare natural pickup positions across all seven rescue missions, Training,
+  and later rescue stages. The PlayerRescue box layout and standing/crouched
+  extents are now mapped statically; callback cadence and live pickup timing
+  remain open.
 - Compare rendered trigger visibility and multi-trigger event ordering against
   an original-game capture.
 - Extend the transaction through release animation, rescue statistics, exit

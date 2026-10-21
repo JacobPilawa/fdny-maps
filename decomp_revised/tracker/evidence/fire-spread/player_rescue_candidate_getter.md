@@ -65,6 +65,20 @@ from the ordinary frame loop and supplies the constructor-backed zero padding.
 This adapter does not establish retail exposure callback cadence; see
 [`player_hud_goggles_equipment_fire_viewer_runtime.md`](../scenario-loading/player_hud_goggles_equipment_fire_viewer_runtime.md).
 
+## Shared getter record used by victim pickup
+
+VictimRescue also calls candidate slot `+0x0C` from `0045A070`. For the
+PlayerRescue root, the returned pointer starts at `+0x68`; pickup interprets
+the surrounding record as origin XYZ at indices `[0..2]`, the fourth-float
+padding at `[3]`, mins at `[4..6]`, and maxs at `[7..9]`. Those last six values
+are Player root `+0x78..+0x8c`, initialized by `0044D550` to
+`(-30,-30,-30)` / `(30,85,30)`. The Player `CROUCH` command changes max Y at
+`+0x88` to 25, and a successful uncrouch restores it to 85. This extends the
+getter's point interpretation for FireRescue without changing the meaning of
+the FireRescue falloff's first three coordinates. The shared port's
+`VictimPickupBox` uses the same position and crouch-aware extents; only natural
+callback cadence and runtime parity remain open.
+
 ## Plain-language explanation
 
 Retail asks PlayerRescue for a world point and a fourth falloff value. The
