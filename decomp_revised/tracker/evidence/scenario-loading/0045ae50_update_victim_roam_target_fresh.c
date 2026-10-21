@@ -2,9 +2,11 @@
 
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-/* When the victim is within 36 units of its current target, computes a subsequent candidate using
+/* When the victim is within 72 units of its current target, computes a subsequent candidate using
    stored direction/target fields and player position, validates candidates, and updates target
-   state. The helper passed 432.0 and some target-selection constants are not semantically resolved.
+   state. The gate reads 0x004e2328 (5184.0) from the pinned image; 0x004e2338 (36.0) is the
+   separate movement turn-distance-squared threshold in UpdateVictimRoamMovement. The helper
+   passed 432.0 and some target-selection constants are not semantically resolved.
     */
 
 void __fastcall UpdateVictimRoamTarget(int *param_1)

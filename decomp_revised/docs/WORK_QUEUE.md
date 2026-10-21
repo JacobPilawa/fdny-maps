@@ -59,6 +59,40 @@ manager membership/category gates and does not prove simultaneous-overlap
 ordering, dynamic registration, or host-frame cadence. Compare natural pickup
 and roam progression across all rescue packages before changing this loop.
 
+The pickup HUD is now joined with its separate Player chatter request:
+`RC_VictPick` cycles its two registered entries by incrementing the set cursor
+before selection, so the shared adapter requests index 1 first and alternates
+with index 0. Successful release requests the one-entry `RC_VictDrop` cue only
+when the source remaining-survivor arithmetic is signed-positive; the lazy
+type-2 count and zone-membership refresh are also routed. The bundle exporter
+includes these three WAV resources in every scene package. Configured-entry
+enumeration order, the status-message text, audible/mixer behavior, natural
+rescue timing, and retail parity remain open. See
+[`victim_pickup_chatter_port_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_pickup_chatter_port_2026-10-21.md).
+The rescue-all macOS build compiled and packaged with matching standalone/app
+arm64 executable SHA-256
+`e27c580b1e619f5f1e3a334afd83e7fd5186331f5fcca72c4e08f881ec996adf`; all 17
+scene sound manifests contain the three resources and `Info.plist` validates.
+The linker warning about json-c 27.0 versus the macOS 13.3 target remains.
+This is compile/package and manifest evidence only, not an audio or runtime
+check.
+
+A read-only reconciliation of the victim target updater found no confirmed
+host mismatch: `0x004E2328` is 5184.0 (72 squared), and the host compares the
+target to its live victim position with the same strict outer guard. The
+separate `0x004E2338` value is 36.0 and controls when the retail actor turns
+toward its waypoint. The original-center candidate bound and live-position
+target gate are distinct in both implementations. The earlier “36 units”
+decomp comment was corrected. The saved `0x0048FEA0` export resolves the
+retail visibility query to mask `0x43` and mode-zero flags `2`, matching the
+host request. Geometry-result parity across Genesis and the host BSP traversal
+remains open; no gameplay code changed.
+See
+[`victim_roam_target_gate_reconciliation_2026-10-21.md`](../tracker/evidence/scenario-loading/victim_roam_target_gate_reconciliation_2026-10-21.md).
+Continue next with natural victim travel and rescue mission progression; the
+pickup-box and typed-list dispatch findings are static boundaries, not a
+natural-playthrough validation.
+
 The Oil Rig `finalexitloadmap` stage-key seam is now closed statically. Raw x86
 stack offsets show that the same authored key used for the `data\\maps\\<key>.bsp`
 existence check is stored at EverGame `+0x660`; the shared host already selects
@@ -2295,10 +2329,12 @@ the report is observed.
 | `fire_camera_path_audit` | Recheck angle writers and fire-entry event order | `scene_viewer.cpp`, `player_fire_message.h`, pinned retail fire exports, held-tool follow-up note | Complete; SDL relative motion is the sole angle writer; opt-in audit now marks pain/passout; live stationary-input trace is still needed |
 | `held_tool_orientation_delta` | Independently recheck backward-facing Axe/extinguisher pose against retail | Current viewer source, ACT assets, pinned Ghidra evidence; read-only | Complete; no source-backed axis/root correction, retail camera-space matrix and same-view capture remain open |
 | `victim_movement_verify` | Verify victim roam step and turn helpers against retail instructions | Saved hash-pinned Ghidra output; read-only | Complete; strict target-arrival gate and exponential 0.3-second half-life turn are verified and ported; callback cadence remains open |
+| `victim_roam_gate_reconciliation` (Luna) | Reconcile target updater center/radius and Player-relative angle operands | `0045AE50`, `0045B220`, `00459C70`, `00490130`, `0048FEA0`; pinned PE constants; viewer live position | Complete, read-only; apparent 36-vs-72 mismatch was a stale decomp comment; host uses live position; `0x004E2328=5184.0` matches the 72-unit gate, `0x004E2338=36.0` is the distinct turn threshold; retail and host query mask `0x43`/flags `2` match; collision result parity remains unverified |
 | `fire_hud_widget_trace` | Trace HUD child construction, resource IDs, and placement for the four fire sectors | Read-only Ghidra trace; `tracker/evidence/scenario-loading/fire_direction_hud_trace_2026-10-14.md` | Complete; resource 50 pair and exact rotated quads are mapped; first-pass port draws the live sector bytes; retail blend remains open |
 | `gebm_truecolor_trace` follow-up | Cross-check natural victim and exit contact against retail source | `0045A070`, `00453A70`, `00450440` exports; `victim_transactions.h`, `scene_viewer.cpp` | Complete; confirmed the outer `+0x3438` dispatcher gate and inner carry gate; direct overlap bypass was identified and routed through the mapper; delivery cadence remains provisional |
 | `natural_rescue_bounds_audit` | Resolve the type-1 PlayerRescue `+0x0C` interface consumed by victim pickup | `0045A070`, PlayerRescue vtable/getter, `0044D550`, crouch and uncrouch traces; pickup adapter | Complete; getter returns origin plus six bounds values, and retail standing/crouched extents match the host `VictimPickupBox`; runtime cadence and natural pickup parity remain open |
 | `natural_rescue_pair_dispatch_audit` | Determine whether the contact manager prefilters candidates before VictimRescue pickup callbacks | `0049BD20`, `0049BC90`, `0045A070`, PlayerRescue/victim map inventory, host victim scan | Complete; dispatcher traverses every candidate in selected typed lists, without spatial pruning; host is pair-complete for one PlayerRescue plus active victims but omits membership/category gates and proven within-class order |
+| `victim_pickup_chatter_trace` (Luna) | Trace pickup/release chatter registration, cursor selection, and resource mapping | `004895C0`, `00489200`, `004897C0`, `00489110`; `sound.rrf`, WAV manifest, shared viewer/exporter | Complete, read-only; source flag-1 playback increments the per-key cursor before selection, yielding index 1 then 0 for `RC_VictPick` assuming RRF entry order. Shared port requests the alternating pickup cues and conditional `RC_VictDrop0`; mixer/audibility and configured enumeration order remain unverified |
 | `propmodel_port_review` follow-up | Review BoundsTrigger gating and new victim-message integration | `scene_viewer.cpp`, `00440CE0`, `00440DC0`, `00470840` exports | Complete; confirmed `+0x164` visual gate and contact/render independence; caught and removed an unsupported Player-carry producer gate |
 | `victim_message_pump` follow-up | Map the owner `+0x3BC` message drain and its order after contact callbacks | Preserved same-hash Ghidra exports for `00429520`, `0049B610`, and `004DF8CC` | Complete; same `00429520` invocation drains messages submitted during its earlier `+0xE0` contact pass; outer rendered-frame and Player update order remain open |
 | `rescue_contact_gap` follow-up | Check final-exit enablement against BoundsTrigger contact semantics | `004504C0`, `00440F50`, `00440CE0`, `00470840`, authored exit inventory | Complete; exit availability is a model/render state, not a contact gate; persistent overlap remains `touching`, so no synthetic `touch` is source-supported |

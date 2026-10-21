@@ -3637,6 +3637,9 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
     bool oxygenHudRendererLoaded = false;
     VictimPickupHudRenderer victimPickupHudRenderer;
     bool victimPickupHudRendererLoaded = false;
+    // Player's RC_VictPick TChatterSet starts at cursor 0 and the retail
+    // flag-1 path increments before selecting an entry (00489200/00489110).
+    int victimPickupChatterCursor = 0;
     BonusPointsHudRenderer bonusPointsHudRenderer;
     bool bonusPointsHudRendererLoaded = false;
     std::filesystem::path actorAssetRoot;
@@ -4576,10 +4579,27 @@ int run(const std::filesystem::path& package, bool inspectOnly, bool renderCheck
                 }
             };
             rescueServices.updateVictimStatus = [&](int action) {
-                if (action == 1)
+                if (action == 1) {
                     victimPickupHudRenderer.begin(rescueServices.readClock());
+                    ++victimPickupChatterCursor;
+                    if (victimPickupChatterCursor >= 2) victimPickupChatterCursor = 0;
+                    sceneAudio.play("RC_VictPick" + std::to_string(victimPickupChatterCursor),
+                                    player.p, player.p, yaw, 1);
+                }
                 if (action != 2) return;
                 victimPickupHudRenderer.hide();
+                if (rescueState.exits.total == std::numeric_limits<uint32_t>::max()) {
+                    rescueState.exits.total = 0;
+                    rescueState.exits.total = uint32_t(std::count_if(
+                        rescueState.entities.begin(), rescueState.entities.end(),
+                        [](const RescueExitEntity& entity) { return entity.type == 2; }));
+                    rescueServices.setRescueStatisticTotal(rescueState.exits.total);
+                    if (rescueTransactions) rescueTransactions->refreshMembership();
+                }
+                const uint32_t remaining = rescueState.exits.total -
+                    rescueState.exits.field3530 - rescueState.exits.rescues;
+                if (remaining != 0 && (remaining & 0x80000000u) == 0)
+                    sceneAudio.play("RC_VictDrop0", player.p, player.p, yaw, 1);
                 if (!carriedVictim.carriedVictimEntity) return;
                 const int entity = *carriedVictim.carriedVictimEntity;
                 auto actor = rescueState.actors.find(entity);

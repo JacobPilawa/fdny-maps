@@ -126,6 +126,9 @@ def export(map_key: str, original_root: Path, scene_package: Path) -> dict:
     # Player status update 00458400 dispatches RC_OxygenLow once below 0.25;
     # its one-entry chatter set is advanced and played by 00489110.
     wanted.add("RC_OxygenLow0")
+    # Player pickup/release status actions request these chatter sets outside
+    # EVS. RC_VictPick has two sequential entries; RC_VictDrop is one entry.
+    wanted.update(("RC_VictPick0", "RC_VictPick1", "RC_VictDrop0"))
     # The Player sound tables configure these shared 2D resources outside EVS:
     # 00451560 plays Breathe/OxyRelease around oxygen depletion/recovery, while
     # 00455AB0/00455F60 play the visor transition and lock events.
