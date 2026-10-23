@@ -1,0 +1,11 @@
+{"type":"start","schema":"fdny-trajectory-v1","recorder_version":"1.1","stage":"training","started_utc":"2000-01-01T00:00:00.000Z","run":1,"victim_tracking":true,"coordinate_system":"Genesis3D original units; Y up","sampling":"synthetic example","time_basis":"wall clock milliseconds","input_basis":"synthetic example"}
+{"type":"sample","n":0,"t_ms":0,"game_dt_s":0.1,"position":[0,0,0],"velocity":[200,0,0],"body_forward":[1,0,0],"pitch_deg":0,"player_state_raw":3,"ground_contact_raw":1,"tool_slot_raw":1,"keys_mask":1,"bounds_min":[-30,-30,-30],"bounds_max":[30,85,30]}
+{"type":"victim_sample","id":"v001","name":"example_victim","t_ms":0,"position":[0,0,100],"body_forward":[1,0,0],"state_raw":7,"bounds_min":[-24,-24,-24],"bounds_max":[24,24,24]}
+{"type":"sample","n":1,"t_ms":100,"game_dt_s":0.1,"position":[20,0,0],"velocity":[200,0,0],"body_forward":[1,0,0],"pitch_deg":0,"player_state_raw":3,"ground_contact_raw":1,"tool_slot_raw":1,"keys_mask":1,"bounds_min":[-30,-30,-30],"bounds_max":[30,85,30]}
+{"type":"victim_sample","id":"v001","name":"example_victim","t_ms":100,"position":[20,0,100],"body_forward":[1,0,0],"state_raw":7,"bounds_min":[-24,-24,-24],"bounds_max":[24,24,24]}
+{"type":"sample","n":2,"t_ms":200,"game_dt_s":0.1,"position":[40,0,0],"velocity":[200,0,0],"body_forward":[1,0,0],"pitch_deg":0,"player_state_raw":4,"ground_contact_raw":1,"tool_slot_raw":1,"keys_mask":1,"bounds_min":[-30,-30,-30],"bounds_max":[30,25,30]}
+{"type":"victim_sample","id":"v001","name":"example_victim","t_ms":200,"position":[40,0,100],"body_forward":[1,0,0],"state_raw":7,"bounds_min":[-24,-24,-24],"bounds_max":[24,24,24]}
+{"type":"sample","n":3,"t_ms":300,"game_dt_s":0.1,"position":[60,0,0],"velocity":[200,0,0],"body_forward":[1,0,0],"pitch_deg":0,"player_state_raw":3,"ground_contact_raw":1,"tool_slot_raw":1,"keys_mask":1,"bounds_min":[-30,-30,-30],"bounds_max":[30,85,30]}
+{"type":"victim_sample","id":"v001","name":"example_victim","t_ms":300,"position":[60,0,100],"body_forward":[1,0,0],"state_raw":7,"bounds_min":[-24,-24,-24],"bounds_max":[24,24,24]}
+{"type":"victim_end","id":"v001","t_ms":310}
+{"type":"end","reason":"synthetic_example","samples":4,"elapsed_ms":320}

@@ -1,0 +1,11 @@
+/build/
+/toolchain/
+/test-output*/
+/Recordings/
+/backups/
+__pycache__/
+*.pyc
+*.log
+*.pdb
+*.lib
+FDNYRecorder.ini

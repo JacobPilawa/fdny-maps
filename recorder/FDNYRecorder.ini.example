@@ -1,0 +1,5 @@
+[Recorder]
+Enabled=1
+RecordVictims=1
+; Set a writable Windows path, or a path mapped by Wine. The installer fills this in.
+OutputDirectory=C:\Games\FDNY\Recordings
