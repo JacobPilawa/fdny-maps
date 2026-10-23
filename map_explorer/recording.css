@@ -1,0 +1,59 @@
+/* A compact transport stays visible; optional controls live in Settings. */
+#recordingPanel{position:absolute;z-index:4;left:16px;bottom:86px;display:flex;flex-direction:column;gap:8px;width:min(620px,calc(100% - 32px));min-width:min(320px,calc(100% - 32px));max-width:calc(100% - 32px);max-height:min(65vh,calc(100% - 110px));padding:10px 12px 13px;background:#fffffff5;color:#34473b;border:1px solid #d5ddd1;border-radius:10px;box-shadow:0 6px 24px #1c2c241a;backdrop-filter:blur(12px);touch-action:auto;overflow:hidden;resize:horizontal;container:recording / inline-size}
+#recordingPanel[data-expanded=true]{resize:both;min-height:230px}
+#recordingPanel[hidden],#recordingPanel [hidden]{display:none!important}
+#recordingPanel button{color:#52634f;padding:5px 8px;min-height:27px;font-size:11px;border-radius:5px}
+#recordingPanel button:hover{background:#eaf0e6;color:#233d2c}
+#recordingPanel button:disabled{opacity:.35}
+.recHeading{display:flex;align-items:center;gap:7px;flex-shrink:0;min-width:0}
+.recHeading>b{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.recDot{width:6px;height:6px;border-radius:50%;background:#348682;flex-shrink:0}
+#recordingPanel .recSettingsToggle{display:flex;gap:6px;font-size:10px;color:#6f7d69}
+.recSettingsToggle>span{display:inline-block;transition:transform .15s}
+.recSettingsToggle[aria-expanded=true]>span{transform:rotate(180deg)}
+.recSettingsToggle.hasNotice::before{content:'';width:4px;height:4px;border-radius:50%;background:#b58c43}
+#recordingPanel .recClose{font-size:15px;color:#8b9785;min-width:25px;padding:3px}
+.recTimeline{display:grid;grid-template-columns:auto minmax(40px,1fr) auto auto;gap:9px;align-items:center;flex-shrink:0;min-width:0}
+.recTransport{display:flex;align-items:center;gap:0;border:1px solid #dce3d7;border-radius:6px;background:#f4f7f0;overflow:hidden}
+#recordingPanel .recTransport button{border-radius:0;min-width:24px;padding:4px 6px}
+#recordingPanel .recTransport .recPlay{color:#3b5e49;min-width:30px;font-size:12px}
+#recordingPanel .recTimeline>input{width:100%;min-width:0;accent-color:#567696;margin:0;height:20px;cursor:pointer}
+.recTimeline output{white-space:nowrap;font:10px ui-monospace,monospace;color:#71806b;font-variant-numeric:tabular-nums}
+#recordingPanel select{width:auto;padding:5px 7px;background:#f7f9f4;color:#40543e;border:1px solid #d9e2d3;border-radius:5px;font-size:11px;min-width:0}
+#recordingPanel .recTimeline select{width:46px;padding:4px;font-size:10px}
+.recSettings{min-height:0;overflow:auto;border-top:1px solid #e4e9e0;padding-top:12px;scrollbar-width:thin}
+.recSettingsGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px}
+.recSection{margin:0;padding:0;min-width:0;border:0}
+.recSection legend{padding:0;margin:0 0 8px;color:#87917e;font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase}
+#recordingPanel .recSection>select{width:100%;max-width:220px;margin-bottom:9px}
+.recChecks{display:flex;flex-wrap:wrap;gap:8px 12px}
+.recChecks label,.recFollow{display:inline-flex;align-items:center;gap:5px;font-size:10px;white-space:nowrap;color:#63725c}
+#recordingPanel input[type=checkbox]{accent-color:#67876a;margin:0;width:12px;height:12px}
+.recButtonGroup{display:inline-flex;border:1px solid #d9e2d3;border-radius:5px;overflow:hidden;background:#f7f9f4;margin-bottom:11px}
+#recordingPanel .recButtonGroup button{border-radius:0;font-size:10px;padding:5px 9px}
+.recButtonGroup button+button{border-left:1px solid #d9e2d3}
+.recFollow{display:flex}
+.recAppearance{grid-column:1/-1;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.recAppearance label{display:flex;align-items:center;gap:8px;font-size:10px;color:#63725c}
+.recAppearance input[type=color]{width:27px;height:23px;padding:2px;border:1px solid #d4ddce;border-radius:4px;background:#fff;cursor:pointer}
+.recAppearance input[type=range]{width:115px;accent-color:#6b856e;margin:0}
+.recAppearance output{font:10px ui-monospace,monospace;min-width:30px;color:#7b8873}
+.recDetails{border-top:1px solid #e4e9e0;margin-top:13px;padding-top:9px;color:#75836c;font-size:10px}
+.recDetails>summary{cursor:pointer;display:flex;align-items:center;gap:7px;list-style:none;min-height:23px}
+.recDetails>summary::-webkit-details-marker{display:none}
+.recDetails>summary::before{content:'›';font-size:13px;transition:transform .15s}
+.recDetails[open]>summary::before{transform:rotate(90deg)}
+.recDetails>summary>span{margin-left:auto;font-size:9px;color:#98a18e;text-align:right}
+.recLegend{display:flex;align-items:center;gap:7px;font-size:9px;color:#89937f;margin:8px 0}
+.recLegend i{height:3px;width:100px;border-radius:2px;background:linear-gradient(90deg,hsl(260 85% 48%),hsl(210 85% 48%),hsl(150 85% 48%),hsl(90 85% 48%),hsl(45 85% 48%),hsl(0 85% 48%))}
+.recReadout{font:10px/1.7 ui-monospace,monospace;color:#65745d;overflow-wrap:anywhere}
+.recNote{font-size:10px;color:#8b9580;line-height:1.5;margin-top:3px}
+.recSettingsFooter{display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:5px;gap:12px}
+#recordingPanel .recSettingsFooter button{color:#73846a;font-size:10px;padding-left:0}
+.recResizeHint{font-size:9px;color:#a4ac9a;user-select:none}
+#recordingPanel .recMapReturn{align-self:flex-start;font-size:10px;color:#977e42}
+#view:has(#recordingPanel:not([hidden])) #zoom{bottom:calc(98px + var(--recording-panel-height,90px))}
+@container recording (max-width:430px){.recTimeline{gap:5px}.recTimeline output{font-size:9px}.recSettingsGrid{gap:12px}.recAppearance{gap:12px}.recAppearance input[type=range]{width:85px}.recDetails>summary>span{max-width:150px}.recResizeHint{display:none}}
+@media(max-width:700px){#recordingPanel{left:8px;bottom:86px;width:calc(100% - 16px);min-width:min(300px,calc(100% - 16px));max-width:calc(100% - 16px);padding:9px 10px 12px}}
+
+.recHeading .recFollow{flex-shrink:0;margin-right:4px;font-size:10px}
