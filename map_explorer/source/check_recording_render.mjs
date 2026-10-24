@@ -20,22 +20,38 @@ for(const input of [fixture,...process.argv.slice(2).map(p=>fs.readFileSync(p,'u
   Object.assign(r,{trace:parseRecording(input),mode:'full',time:0,showPlayer:true,showVictims:true,xray:true,group:null,playerColor:'#ff0000',thickness:3});
   const state={data:{key:'training'},scene:new THREE.Scene(),mode:'3d',width:1280,height:720,heightClip:[],low:-Infinity,high:Infinity,scale:.1,offsetX:0,offsetY:0};
   let followed=null,snapped=null,redraws=0;
-  r.host={state:()=>state,focusPoint:p=>followed=p,focusBounds:b=>snapped=b,redraw:()=>redraws++};r.update3D();assert.equal(state.scene.children.length,1);
+  r.host={state:()=>state,focusPoint:p=>followed=p,focusBounds:b=>snapped=b,redraw:()=>redraws++};r.updateSingle3D();assert.equal(state.scene.children.length,1);
   const full=r.lines[0].line.geometry.instanceCount;assert(full>0);
-  r.time=r.trace.duration/2;r.mode='scrub';r.update3D();assert(r.lines[0].line.geometry.instanceCount<full);
-  r.thickness=11;r.playerColor='#ff00aa';r.update3D();assert.equal(r.lines[0].line.material.uniforms.width.value,11);assert.equal(r.proxies[0].pill.material.color.getHexString(),'ff00aa');
-  r.sync=()=>{};r.follow=true;r.seek(150);assert(followed);assert(redraws>0);r.snap();assert(snapped);assert.equal(snapped.max[0]-snapped.min[0],800);r.follow=false;
+  r.time=r.trace.duration/2;r.mode='scrub';r.updateSingle3D();assert(r.lines[0].line.geometry.instanceCount<full);
+  r.thickness=11;r.playerColor='#ff00aa';r.updateSingle3D();assert.equal(r.lines[0].line.material.uniforms.width.value,11);assert.equal(r.proxies[0].pill.material.color.getHexString(),'ff00aa');
+  const controller=Object.create(RecordingMode.prototype);Object.assign(controller,{recordings:[r],trace:r.trace,followIndex:0,host:r.host,follow:true,sync:()=>{}});controller.seek(150);assert(followed);assert(redraws>0);controller.snap();assert(snapped);assert.equal(snapped.max[0]-snapped.min[0],1100);
   for(const [stateRaw,height] of [[4,55],[3,115]]){
     const s=r.trace.samples.find(s=>s.player_state_raw===stateRaw);if(!s)continue;
-    r.time=s.t_ms;r.update3D();assert.equal(r.proxies[0].box.scale.y,height);assert.equal(r.proxies[0].box.scale.x,60);
+    r.time=s.t_ms;r.updateSingle3D();assert.equal(r.proxies[0].box.scale.y,height);assert.equal(r.proxies[0].box.scale.x,60);
   }
   if(r.trace.victims.length){
-    r.time=200;r.update3D();assert(r.proxies[1].group.visible);assert.equal(r.proxies[1].group.position.x,50);
-    r.time=2000;r.update3D();assert.equal(r.proxies[1].group.visible,false);
+    r.time=200;r.updateSingle3D();assert(r.proxies[1].group.visible);assert.equal(r.proxies[1].group.position.x,50);
+    r.time=2000;r.updateSingle3D();assert.equal(r.proxies[1].group.visible,false);
   }
-  state.data.key='bank';r.update3D();assert.equal(r.group.visible,false);state.data.key='training';r.update3D();assert.equal(r.group.visible,true);
+  state.data.key='bank';r.updateSingle3D();assert.equal(r.group.visible,false);state.data.key='training';r.updateSingle3D();assert.equal(r.group.visible,true);
   let strokes=0,boxes=0;const widths=[];const c=new Proxy({measureText:t=>({width:t.length*7}),stroke:()=>strokes++,strokeRect:()=>boxes++},{get:(o,k)=>k in o?o[k]:(()=>{}),set:(o,k,v)=>{if(k==='lineWidth')widths.push(v);o[k]=v;return true;}});
-  r.draw2D(c);assert(strokes>0&&boxes>0);assert(widths.includes(11));
+  r.drawSingle2D(c);assert(strokes>0&&boxes>0);assert(widths.includes(11));
   let disposed=0;r.group.traverse(o=>o.geometry?.addEventListener('dispose',()=>disposed++));r.dispose();assert(disposed>0);assert.equal(state.scene.children.length,0);
 }
 console.log('PASS: 2D draw, 3D tracks, scrubbing, player hull states, victim positions/lifetimes, map mismatch and GPU cleanup');
+
+// One clock drives unequal runs and freezes the shorter player in both renderers.
+const state={data:{key:'training'},scene:new THREE.Scene(),mode:'3d',width:800,height:600,heightClip:[],low:-Infinity,high:Infinity};
+const runs=[1000,2000].map((duration,i)=>{
+  const r=Object.create(RecordingMode.prototype);
+  const trace=parseRecording([start,...samples.filter(s=>s.t_ms<=duration)].map(s=>JSON.stringify(s)).join('\n'));
+  Object.assign(r,{trace,host:{state:()=>state},time:0,mode:'scrub',group:null,showPlayer:true,showVictims:true,xray:true,playerColor:i?'#2878c7':'#d33f49',thickness:3});return r;
+});
+const controller=Object.create(RecordingMode.prototype);Object.assign(controller,{recordings:runs,time:1500});
+assert.equal(controller.duration,2000);controller.update3D();
+assert.equal(runs[0].time,1000);assert.equal(runs[1].time,1500);
+assert.equal(runs[0].proxies[0].group.position.x,100);assert.equal(runs[1].proxies[0].group.position.x,150);
+assert.notEqual(runs[0].proxies[0].pill.material.color.getHexString(),runs[1].proxies[0].pill.material.color.getHexString());
+controller.time=2000;controller.update3D();assert.equal(runs[0].proxies[0].group.position.x,100);assert.equal(runs[1].proxies[0].group.position.x,200);
+controller.dispose();assert.equal(state.scene.children.length,0);
+console.log('PASS: shared timeline, distinct colors, unequal recording durations, final-frame hold and multi-recording cleanup');

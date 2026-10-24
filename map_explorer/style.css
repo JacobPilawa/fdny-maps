@@ -15,9 +15,35 @@
 
 #surfaceTools .triggerBoundsToggle{display:flex;align-items:center;gap:5px;cursor:pointer;color:#947512}#triggerBounds{margin:0;accent-color:#c49a1b}.object .triggerBoxToggle{padding:3px 5px;font-size:13px;color:#a28a39;flex-shrink:0}.triggerBoxToggle.active,.triggerBoxToggle.inspectorAction.active{background:#fff5cc;color:#987612;border-color:#e8d490}.triggerBoxToggle:hover{background:#fff8de;color:#947512}.triggerBoxToggle.inspectorAction{font-size:11px;padding:5px 8px;color:#a28a39}
 
-#extraVolumeMenu{position:relative;margin:0}#extraVolumeMenu>summary{font-size:11px;padding:4px;cursor:pointer;white-space:nowrap}.volumeMenu{position:absolute;left:0;top:28px;width:155px;padding:8px;background:#fff;border:1px solid #d7dfd2;border-radius:7px;box-shadow:0 5px 20px #27391c1c}.volumeMenu label{display:flex;align-items:center;gap:6px;padding:6px 3px;cursor:pointer}.volumeMenu label:first-child{color:#008246}.volumeMenu label:last-child{color:#865aae}.volumeMenu input{margin:0;accent-color:currentColor}.entityVolumeToggle{color:var(--volume-color);margin-right:5px}.entityVolumeToggle.active{color:var(--volume-color);background:#eef1eb;border-color:currentColor}
+#extraVolumeMenu{position:relative;margin:0}#extraVolumeMenu>summary{font-size:11px;padding:4px;cursor:pointer;white-space:nowrap}.volumeMenu{position:absolute;left:0;top:28px;width:155px;padding:8px;background:#fff;border:1px solid #d7dfd2;border-radius:7px;box-shadow:0 5px 20px #27391c1c}.volumeMenu label{display:flex;align-items:center;gap:6px;padding:6px 3px;cursor:pointer}.volumeMenu label:has(#pickupVolumes){color:#008246}.volumeMenu label:has(#brushVolumes){color:#865aae}.volumeMenu input{margin:0;accent-color:currentColor}.entityVolumeToggle{color:var(--volume-color);margin-right:5px}.entityVolumeToggle.active{color:var(--volume-color);background:#eef1eb;border-color:currentColor}
 /* Optional authored-data tools stay compact and collapsed. */
 #zoneSelect{width:calc(100% - 20px);margin:0 10px 8px;font-size:12px;background:#fff;color:#47524b;border:1px solid #dce1da;padding:5px 7px;border-radius:4px}
 .motionControls{padding:4px 9px 10px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}.motionControls select,.motionControls input[type=range]{width:100%;min-width:0}.motionControls select{font-size:12px;background:#fff;border:1px solid #dce1da;padding:5px}.motionControls label{display:flex;gap:4px;font-size:12px}.motionControls button{padding:3px 9px}.motionControls output{font:11px ui-monospace,monospace;color:#64716b}#surfaceTools>label{display:flex;align-items:center;gap:4px;white-space:nowrap}#surfaceTools>label input{margin:0}#victimState{font-size:11px}.scriptChips{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}.scriptChips button,.connectionPick{font-size:11px;padding:4px 6px}.connectionPick{display:block;margin:4px 0;width:100%;text-align:left}#scriptDialog{width:min(760px,90vw);max-height:85vh;padding:0;background:#fafbf8;border:1px solid #cbd4ca;border-radius:8px;color:#26342a}#scriptDialog::backdrop{background:#17291b66}.scriptBody{padding:12px 16px;overflow:auto;max-height:calc(85vh - 60px)}.meaningTable{border-collapse:collapse;width:100%;font-size:12px;margin:8px 0}.meaningTable th,.meaningTable td{padding:7px;text-align:left;vertical-align:top;border-bottom:1px solid #dce1da}.meaningTable td:first-child{width:35%;overflow-wrap:anywhere}.meaningTable code{white-space:normal;font-size:11px}.meaningTable th{font-weight:500;color:#68756b}#details .meaningTable{font-size:11px}#details .meaningTable td{padding:5px}#details details{margin:10px 0}.scriptBody .script{white-space:pre-wrap;overflow-wrap:anywhere}
 #objects .motionObject .motionPlay{flex-shrink:0;padding:3px 7px;font-size:12px;color:#85619e}#objects .motionObject .motionPlay:disabled{opacity:.3;cursor:default}#objects .motionDot{font-size:10px;min-width:18px}#objects .motionControls{border-bottom:1px solid #e2e6df;margin:0 8px 5px;padding:5px 4px 9px}#objects .motionControls input[type=range]{accent-color:#956bb0}
 #details .conditionsPanel>summary{font:500 12px/1.5 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#4c6050;padding:5px 0}#details .scriptCards{display:grid;gap:7px;margin:7px 0 12px;min-width:0}#details .scriptCard{min-width:0;padding:9px 10px;background:#f5f7f2;border:1px solid #e0e6dc;border-radius:5px}#details .scriptCard.condition{border-left:3px solid #b9a160}#details .scriptCard code{display:block;font:500 11px/1.5 ui-monospace,monospace;white-space:normal;overflow-wrap:break-word;word-break:normal;color:#384c3d}#details .scriptCard p{font:12px/1.55 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;white-space:normal;overflow-wrap:break-word;word-break:normal;margin:5px 0 0;color:#657267}#scriptDialog .meaningTable{min-width:0;width:100%;table-layout:fixed;font:12px/1.55 Inter,ui-sans-serif,sans-serif}#scriptDialog .meaningTable th,#scriptDialog .meaningTable td{position:static;white-space:normal;word-break:normal;overflow-wrap:break-word;font:inherit;width:auto;padding:8px 10px;vertical-align:top;background:transparent}#scriptDialog .meaningTable th:first-child,#scriptDialog .meaningTable td:first-child{width:34%}#scriptDialog .meaningTable code{font:11px/1.5 ui-monospace,monospace;white-space:normal;overflow-wrap:break-word}#motionControls[hidden]{display:none!important}
+
+/* Compact optional overlays and height slicing beside the viewer controls. */
+.entityTableButton{flex-shrink:0;justify-content:flex-start;padding:12px 5px;border-top:1px solid var(--edge);border-radius:0;font-size:11px}
+#extraVolumeMenu .volumeMenu{width:235px;max-width:calc(100vw - 48px)}
+.volumeMenu button{display:flex;width:100%;text-align:left;justify-content:flex-start;margin:3px 0}
+#sliceMenu{position:relative;margin:0}
+#sliceMenu>summary{font-size:11px;padding:4px;white-space:nowrap}
+#sliceMenu #height{position:absolute;top:28px;left:auto;right:0;bottom:auto;width:310px;max-width:calc(100vw - 48px);padding:12px;flex-wrap:wrap;gap:8px}
+#height>label:first-child{flex-wrap:wrap;min-width:0;width:100%}
+#height input[type=range]{width:100%;flex:auto}
+#height output{margin-left:auto}
+#height .roof{display:flex!important;margin-left:0}
+#status{bottom:12px}#zoom{bottom:45px}#flightHint{bottom:45px}
+@media(max-width:600px){.volumeMenu #links,.volumeMenu #radii{display:flex}#sliceMenu #height{position:fixed;top:150px;right:12px;left:auto}}
+
+/* Optional connections use neutral styling until enabled. */
+#surfaceTools .volumeMenu button{background:transparent;border-color:transparent;color:#647269}
+#surfaceTools .volumeMenu button:hover{background:#edf2eb;color:#263d2e}
+#surfaceTools .volumeMenu button.active{background:#e6f1e7;border-color:#bed6c0;color:#27724c}
+.volumeConnections{border-top:1px solid var(--edge);margin-top:6px;padding-top:6px}
+#sidebar .listtools{flex-shrink:0;padding:8px 4px;margin-top:4px}
+#sidebar #zoneSelect{flex-shrink:0;width:100%;margin:0 0 8px}
+#uploadRecording{white-space:nowrap;font-size:11px}
+
+#flightHint{border:1px solid #d7dfd2;padding:9px 11px;line-height:1.6;background:#fffffff0;box-shadow:0 2px 8px #22331b08;touch-action:auto}
+#flightHint b{color:#405c48;font-weight:600}
