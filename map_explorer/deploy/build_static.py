@@ -5,9 +5,9 @@ import hashlib,json,shutil
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'dist'
-files=[ROOT/name for name in ['app.js','style.css','recording.js','recording-data.js','recording.css','collision-overlay.js','flight.js','textured-world.js','entity-volumes.js','animation.js','victim-models.js','script-info.js']]
+files=[ROOT/name for name in ['level-editor.js','level-editor.css','app.js','style.css','recording.js','recording-data.js','recording.css','collision-overlay.js','flight.js','textured-world.js','entity-volumes.js','animation.js','victim-models.js','script-info.js']]
 for name in ['vendor','data','reference_pdfs','source/scripts']:
-    files.extend(p for p in (ROOT/name).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
+    files.extend(p for p in (ROOT/name).rglob('*') if p.is_file() and '__pycache__' not in p.parts and not any(part.startswith('.') for part in p.relative_to(ROOT).parts))
 manifest=json.loads((ROOT/'data/manifest.json').read_text())
 for item in manifest:
     folder=ROOT/'source'/item['key']

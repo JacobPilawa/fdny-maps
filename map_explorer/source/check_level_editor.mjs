@@ -1,0 +1,23 @@
+// CPU-side editor geometry/placement checks; no browser or game interaction.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {pathToFileURL,fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const url=pathToFileURL(root+'vendor/three.module.min.js').href;
+const THREE=await import(url);
+const source=fs.readFileSync(root+'level-editor.js','utf8').replace("from 'three'",`from '${url}'`);
+const {LevelEditor}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const editor=Object.create(LevelEditor.prototype);
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(50,1,1,10000);camera.position.set(0,800,1);camera.lookAt(0,0,0);camera.updateMatrixWorld();
+const floor=new THREE.Mesh(new THREE.BoxGeometry(1000,10,1000),new THREE.MeshBasicMaterial());floor.position.y=-5;floor.userData.pickIds=[];scene.add(floor);scene.updateMatrixWorld(true);
+const state={scene,camera,mode:'3d',data:{key:'training'},renderer:{domElement:{getBoundingClientRect:()=>({left:0,top:0,width:1000,height:1000})}}};
+const trigger={name:'custom_hint1',center:[0,0,0],size:[120,160,120],message:'Test',seconds:5};
+Object.assign(editor,{host:{state:()=>state,redraw:()=>{}},active:true,selected:0,placing:true,project:{source:'training',triggers:[trigger]},group:null,dirty:true,render(){this.dirty=true;},status(message){throw Error(message);}});
+editor.update3D();assert.equal(editor.group.children.length,2);assert.deepEqual(editor.group.children[0].geometry.parameters,{width:120,height:160,depth:120,widthSegments:1,heightSegments:1,depthSegments:1});
+assert(editor.pointerClick({clientX:500,clientY:500}));assert.equal(trigger.center[1],80);assert.equal(editor.placing,false);
+editor.update3D();assert.deepEqual(editor.group.children[0].position.toArray(),trigger.center);
+trigger.size=[60,55,60];editor.dirty=true;editor.update3D();assert.equal(editor.group.children[0].geometry.parameters.height,55);
+state.data.key='bank';editor.update3D();assert.equal(editor.group.visible,false);assert.equal(editor.pointerClick({clientX:500,clientY:500}),false);
+state.data.key='training';editor.active=false;editor.update3D();assert.equal(editor.group.visible,false);
+editor.dispose();assert.equal(scene.children.length,1);
+console.log('PASS: editor box geometry, surface placement, selection state, map mismatch, close and disposal');

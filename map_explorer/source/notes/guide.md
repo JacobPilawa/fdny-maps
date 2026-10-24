@@ -136,7 +136,7 @@ Key findings:
 From the repo root:
 
 ```bash
-cd map_explorer
+cd path/to/map_explorer
 python3 -m http.server 8000
 ```
 

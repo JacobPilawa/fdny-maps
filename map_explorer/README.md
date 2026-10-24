@@ -4,6 +4,10 @@ All 17 April 30 maps, original labels, complete entity tables, source BSPs, 34 o
 
 Run `./start.sh`, then open http://127.0.0.1:4180 . Requires Python 3. Set `FDNY_MAP_PORT` to use another port.
 
+### Local retail level editing
+
+Open **⋯ → Level Edit** on the local Python server to place hint triggers in an existing rescue map and export a reversible retail-game test for the first Hose slot. See [LEVEL_EDIT.md](LEVEL_EDIT.md) for editing, installation, restoration and limitations. The editor does not modify the installed game; the exported installer is a separate step.
+
 ### Local gameplay recordings
 
 Open **⋯ → Upload recording** and choose one `fdny-trajectory-v1` JSONL file. The upload is read locally in the browser; no recording is sent to a server or saved into the published assets. The viewer selects the recorded map and reveals a small playback panel. No playback controls are shown before an upload.
@@ -41,6 +45,13 @@ Public site: https://fdny-maps.piececounter.workers.dev/
 `wrangler.json` deploys only Workers Static Assets, with no custom Worker code, database, KV, R2, Durable Objects, scheduled jobs, or paid cache product. Static asset requests and storage are free under Cloudflare's current pricing. The build rejects packages above the Free limit of 20,000 files or 25 MiB per file.
 
 Run `python3 deploy/build_static.py` from this folder, then `npx wrangler deploy --config wrangler.json` using your Cloudflare login. The build uses an explicit public file list and content-versioned URLs with one-year browser caching. The root page revalidates so future deployments load the current version. Original BSPs, conversation archives, local research notes, deployment credentials, and local tools stay outside the public package. GitHub is not required for direct CLI deployment.
+
+### GitHub synchronization
+
+This local viewer checkout has a standalone history and intentionally disables direct pushes. The public repository at `https://github.com/JacobPilawa/fdny-maps` keeps the viewer under `map_explorer/`. Publish reviewed viewer files through a fresh clone of its current `main`, keeping the other repository folders intact. Never merge this checkout's older history into the public repository. Exclude local credentials, recordings, logs, caches and `dist/`. Commit and push the reviewed files in the clean clone, and commit the same source snapshot locally.
+
+After rebuilding and deploying, `deploy/build-report.json` records the asset fingerprint and `deploy/deployment.json` records the Cloudflare deployment version and verification status. Recording upload works on the public site; retail Level Edit requires `./start.sh` locally.
+
 
 Pricing reference: https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/
 Limits reference: https://developers.cloudflare.com/workers/platform/limits/

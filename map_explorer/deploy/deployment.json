@@ -1,27 +1,19 @@
 {
-  "release": "7642b16d4aa441c6",
-  "asset_files": 619,
+  "release": "47c9633250009403",
+  "asset_files": 624,
   "maps": 17,
-  "total_bytes": 123008489,
+  "total_bytes": 123056572,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
   "paid_storage_bindings": [],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "f908301e-8063-4bf7-b516-d20328a9e877",
-  "verified_live": true,
+  "cloudflare_version_id": "4e2b9ca5-7359-4c63-8dd8-7620ee347062",
+  "verified_live": false,
+  "verification_note": "Cloudflare CLI confirmed deployment. User will perform live testing.",
   "checks": [
-    "17-map inventory/motion data check passed: unique IDs, finite motion transforms, valid links/zones, unchanged texture polygon order",
-    "274 motion previews; 192 supplemental controllers; 78 bonus objects; 17 refills; 230 emitters",
-    "Major event rest transforms and catwalk timing checked; JavaScript syntax and Python compilation passed",
-    "New optional layers reset off; sidebar groups and motion panel start collapsed",
-    "Live release and application, motion and actor assets verified through CLI HTTP; no computer use or browser automation",
-    "Static-only deployment; no paid storage bindings; largest asset below 25 MiB",
-    "Motion is a collapsed legend category with independent dot toggles, per-row 3D play buttons and inline slider",
-    "Inspector motion button uses playback, not selection; targeted check confirms it starts immediately and preserves the 3D camera",
-    "Brush collisions, brush bounds and linked trigger boxes share motion transforms; collider motion checked",
-    "Conditions/consequences opens by default using stacked cards; script-dialog tables scoped to avoid original entity-table styling",
-    "Live revised application, stylesheet and motion-map data match local files through CLI HTTP",
-    "Controller-style Fly controls: WASD moves, arrows continuously change yaw/pitch, combined steering/movement checked, arrows alone do not translate, map focused on Fly entry; syntax and live application verified through CLI"
+    "Recording parser and timeline checks passed before user requested no further testing.",
+    "Recording rendering, map data, editor geometry, retail exports and local API checks passed before user requested no further testing.",
+    "Local and clean GitHub checkout builds produced identical asset fingerprint."
   ]
 }
