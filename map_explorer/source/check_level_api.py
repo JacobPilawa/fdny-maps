@@ -11,7 +11,7 @@ try:
     project={'schema':'fdny-level-edit-v1','source':'training','source_sha256':info['source_sha256'],'triggers':[{'name':'http_hint','center':info['spawn'],'size':[120,160,120],'message':'HTTP export test','seconds':5}]}
     request=urllib.request.Request(base+'/api/level-edit/export',data=json.dumps(project).encode(),headers={'Content-Type':'application/json'},method='POST')
     with urllib.request.urlopen(request) as response:
-        assert response.headers['Content-Type']=='application/zip';z=zipfile.ZipFile(io.BytesIO(response.read()));assert 'Data/Maps/fdny_edit.bsp' in z.namelist()
+        assert response.headers['Content-Type']=='application/zip';z=zipfile.ZipFile(io.BytesIO(response.read()));assert {'Data/Maps/fdny_edit.bsp','FDNY_Custom_ILs.asl','custom-splits.lss','README.txt'}<=set(z.namelist());assert not any(name.endswith(('.py','.json','.lev')) for name in z.namelist())
     for headers in [{'Origin':'https://example.com'},{'Host':'example.com'},{'Sec-Fetch-Site':'cross-site'}]:
         try:urllib.request.urlopen(urllib.request.Request(base+'/api/level-edit/missions',headers=headers));raise AssertionError('Cross-site request accepted')
         except urllib.error.HTTPError as e:assert e.code==403

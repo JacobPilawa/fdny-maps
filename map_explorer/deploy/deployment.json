@@ -1,8 +1,8 @@
 {
-  "release": "9b3bd4cf8403d96d",
+  "release": "799f826f4ffeadf8",
   "asset_files": 624,
   "maps": 17,
-  "total_bytes": 123090936,
+  "total_bytes": 123091033,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
@@ -633,11 +633,12 @@
     "victim-models.js"
   ],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "c772e04a-cb2f-4a41-8197-d3e2150b5897",
+  "cloudflare_version_id": "7826b6c6-0b0a-4973-91d8-7445332dc4c5",
   "verified_live": false,
   "verification_note": "Cloudflare CLI confirmed deployment. No browser/visual testing performed.",
   "checks": [
-    "Editor regressions passed, including empty-space deselection and reselection in Select, Move and Resize.",
-    "Source change is limited to empty-space selection handling; geometry and undo history are preserved."
+    "Minimal exports passed for all eight supported missions, including script dependency reuse and manual catalog edits.",
+    "Live local Training export contains five required new game files, one ASL, one LSS and one README; no installer, replacement catalog or JSON extras.",
+    "Editor regressions, autosplitter generation and API checks passed."
   ]
 }
