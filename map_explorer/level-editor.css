@@ -1,1 +1,42 @@
-#levelEditor{position:absolute;right:14px;top:14px;width:360px;min-width:280px;max-width:calc(100% - 28px);max-height:calc(100% - 28px);overflow:auto;resize:both;z-index:30;border:1px solid #cbd4c8;border-radius:10px;background:rgba(250,252,249,.97);color:#304739;box-shadow:0 5px 24px #20362a26;font:12px/1.45 system-ui;padding:12px;box-sizing:border-box}#levelEditor[hidden]{display:none}#levelEditor .le-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}#levelEditor small{font-weight:400;color:#6f7f70;margin-left:6px}#levelEditor button{font-size:12px;padding:5px 8px;cursor:pointer}#levelEditor label{display:flex;gap:6px;align-items:center;margin:7px 0}#levelEditor select,#levelEditor input,#levelEditor textarea{min-width:0;box-sizing:border-box;border:1px solid #cbd4c8;border-radius:4px;padding:5px;color:inherit;background:#fff;font:inherit}#levelEditor select,#levelEditor textarea,#levelEditor label>input{flex:1;width:100%}#levelEditor textarea{resize:vertical}#levelEditor .le-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}#levelEditor .le-row>label,#levelEditor .le-row>select{flex:1}#levelEditor fieldset{border:1px solid #d9dfd5;border-radius:6px;margin:12px 0 8px;padding:8px}#levelEditor .le-coordinates{display:grid;grid-template-columns:42px 1fr 1fr 1fr;gap:5px;align-items:center}#levelEditor .le-coordinates label{display:block;color:#6b796b}#levelEditor .le-coordinates input{display:block;width:100%}#levelEditor .le-help,#levelEditor [data-status]{color:#687a69;font-size:11px;margin:9px 0 0}#levelEditor [data-status].error{color:#ac3434}#levelEditor .le-body[hidden]{display:none}
+#app.editor-mode{grid-template-columns:290px minmax(0,1fr);grid-template-rows:52px minmax(0,1fr)}
+#app.editor-mode #sidebar,#app.editor-mode #inspector,#app.editor-mode #overlay,#app.editor-mode #sidebarToggle,#app.editor-mode #mapSelect,#app.editor-mode header .seg,#app.editor-mode #fly,#app.editor-mode #labels,#app.editor-mode #uploadRecording,#app.editor-mode #toolsMenu{display:none!important}
+#app.editor-mode #view{grid-column:2;grid-row:2}
+#levelEditor{grid-column:1;grid-row:2;min-width:0;overflow:auto;background:#f6f8f4;border-right:1px solid #d5ded0;color:#304739;font:12px/1.45 system-ui;box-sizing:border-box}
+#levelEditor[hidden]{display:none}
+#levelEditor .le-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid #d5ded0;background:#f6f8f4;position:sticky;top:0;z-index:1}
+#levelEditor button{font-size:12px;padding:5px 7px;cursor:pointer;border:1px solid #d5ded0;background:#fff;color:#304739}
+#levelEditor button:hover{background:#e9f0e5}
+#levelEditor button[aria-pressed=true]{background:#287454;color:#fff;border-color:#287454}
+#levelEditor label{display:flex;gap:6px;align-items:center;margin:6px 0}
+#levelEditor select,#levelEditor input,#levelEditor textarea{min-width:0;box-sizing:border-box;border:1px solid #cbd4c8;border-radius:4px;padding:4px;color:inherit;background:#fff;font:inherit}
+#levelEditor select,#levelEditor textarea,#levelEditor label>input{flex:1;width:100%}
+#levelEditor input[type=checkbox]{flex:none;width:auto;accent-color:#287454}
+#levelEditor textarea{resize:vertical}
+#levelEditor .le-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+#levelEditor .le-row>label,#levelEditor .le-row>select{flex:1}
+#levelEditor .le-section{padding:10px 14px;border-bottom:1px solid #dce3d8}
+#levelEditor h3{font-size:11px;font-weight:600;margin:0 0 8px;color:#52674e;display:flex;justify-content:space-between;align-items:center}
+#levelEditor h3>span{font-weight:400;color:#83907e}
+#levelEditor h4{font-size:10px;font-weight:400;margin:5px 0;color:#788673}
+#levelEditor small,#levelEditor .le-help,#levelEditor [data-status]{color:#788673;font-size:10px}
+#levelEditor .le-help{margin:6px 0}
+#levelEditor [data-status]{margin:10px 14px}
+#levelEditor [data-status]:empty{display:none}
+#levelEditor [data-status].error{color:#ac3434}
+#levelEditor .le-summary ol{margin:0;padding-left:25px;font-variant-numeric:tabular-nums}
+#levelEditor .le-summary li{padding:3px 0 3px 2px}
+#levelEditor .le-summary li::marker{color:#83907e}
+#levelEditor .le-summary li>button{max-width:calc(100% - 44px);padding:3px 5px;text-align:left;justify-content:flex-start;overflow-wrap:anywhere}
+#levelEditor .le-summary li>small{float:right;padding-top:4px;font-size:9px}
+#levelEditor .le-summary li>span{display:inline-block;padding:3px 5px}
+#levelEditor .le-coordinates{display:grid;grid-template-columns:42px 1fr 1fr 1fr;gap:5px;align-items:center;margin:8px 0}
+#levelEditor .le-coordinates label{display:block;color:#6b796b;font-size:10px;margin:0}
+#levelEditor .le-coordinates input{display:block;width:100%}
+#levelEditor .le-trigger-list{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+#levelEditor .le-trigger-list button{justify-content:flex-start;text-align:left;overflow-wrap:anywhere}
+#levelEditor .le-grid .le-row+.le-row{margin-top:4px}
+#levelEditor .le-grid select{width:50px;flex:none}
+#levelEditor .le-remove{margin-left:auto;color:#a3483c}
+#levelEditor .le-export small{display:block;margin-top:8px}
+#app.editor-mode #webgl canvas{cursor:crosshair}
+@media(max-width:650px){#app.editor-mode{grid-template-columns:240px minmax(0,1fr)}#levelEditor .le-section,#levelEditor .le-head{padding:10px}}

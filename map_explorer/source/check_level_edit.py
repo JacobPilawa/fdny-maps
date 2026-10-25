@@ -1,5 +1,6 @@
 """Retail export checks; never installs into the real game."""
 import io,json,struct,subprocess,sys,tempfile,zipfile
+from xml.etree import ElementTree as ET
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import level_edit as l
@@ -42,9 +43,26 @@ for mission in l.missions(game):
     manifest=json.loads(z.read('manifest.json'))
     for name,meta in manifest['files'].items():assert l.digest(z.read(name))==meta['sha256']
     assert l.digest(raw)==info['source_sha256']
+    # Checkpoints use real script markers, reset on load, stable IDs and ordered splits.
+    for i,t in enumerate(triggers):t.update(checkpoint=True,split_label='Checkpoint <'+str(i+1)+'> & test')
+    timed=zipfile.ZipFile(io.BytesIO(l.export_project(game,project)));profile=json.loads(timed.read('timing/checkpoints.json'))
+    assert profile['status']==('generated-asl-live-validation-pending' if l.splitter_directory() else 'requires-autosplitter-support') and profile['runtime_map']==l.KEY
+    assert profile['default_stage_finishes']==info['stage_finishes']
+    assert profile['map_sha256']==l.digest(timed.read('Data/Maps/'+l.KEY+'.bsp'))
+    entities=[l.Bsp.pairs(e) for e in l.Bsp(timed.read('Data/Maps/'+l.KEY+'.bsp')).entities]
+    for t,c in zip(triggers,profile['checkpoints']):
+        assert c['trigger']==t['name'] and c['label']==t['split_label']
+        assert ('set '+c['variable']+' 0').encode() in timed.read('Data/Maps/'+l.KEY+'.evs')
+        e=next(e for e in entities if e.get('A_Name')==t['name'])
+        assert 'set '+c['variable']+' 1' in e['S_Script01'] and 'hint ' in e['S_Script01']
+    segments=ET.fromstring(timed.read('timing/custom-splits.lss')).findall('Segments/Segment/Name')
+    assert [s.text for s in segments]==[t['split_label'] for t in triggers]+[s+' complete' for s in profile['default_stage_finishes']]
+    assert l.checkpoint_variable(triggers[0])==profile['checkpoints'][0]['id']
+    assert any(n.endswith('.asl') for n in timed.namelist())==bool(l.splitter_directory())
+    if l.splitter_directory():assert 'vars.customVariables' in timed.read('timing/FDNY_Custom_ILs.asl').decode()
     # Text-only edit preserves every geometry chunk.
     t=info['triggers'][0];edit={k:t[k] for k in ('name','center','size')};edit.update(existing_entity=t['entity'],message='Existing hint replaced',seconds=4)
-    project['triggers']=[edit];text_only=zipfile.ZipFile(io.BytesIO(l.export_project(game,project)));b=l.Bsp(text_only.read('Data/Maps/'+l.KEY+'.bsp'))
+    edit['checkpoint']=True;project['triggers']=[edit];text_only=zipfile.ZipFile(io.BytesIO(l.export_project(game,project)));b=l.Bsp(text_only.read('Data/Maps/'+l.KEY+'.bsp'))
     assert all(b.payload[typ]==before.payload[typ] for typ in before.payload if typ!=16)
     assert len(b.entities)==len(before.entities)
     print(mission['key']+': two independent boxes, topology, original chunks, catalog, and existing hint verified')

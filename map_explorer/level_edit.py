@@ -1,7 +1,8 @@
 """Local-only retail GBSP trigger editing and mod export. Never writes game files."""
 from __future__ import annotations
-import hashlib,io,json,math,os,re,struct,zipfile
+import hashlib,importlib.util,io,json,math,os,re,struct,zipfile
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 ROOT=Path(__file__).resolve().parent
 KEY='fdny_edit'
@@ -9,6 +10,11 @@ SCHEMA='fdny-level-edit-v1'
 MAX_TRIGGERS=32
 
 def digest(b):return hashlib.sha256(b).hexdigest()
+def splitter_directory():
+    explicit=os.environ.get('FDNY_TAS_DIR')
+    candidates=[Path(explicit)/'livesplit'] if explicit else [parent/'fdny-tas/livesplit' for parent in ROOT.parents]
+    return next((p for p in candidates if all((p/name).is_file() for name in ['custom_triggers.py','FDNY_ILs.asl','FDNY_rescue%.asl'])),None)
+
 def game_directory():
     explicit=os.environ.get('FDNY_GAME_DIR')
     candidates=[Path(explicit)] if explicit else []
@@ -158,6 +164,9 @@ class Bsp:
         root=clone_node(m[0]);center=[(lo[i]+hi[i])/2 for i in range(3)]
         return self.append(1,'<2i9f8iI',[root,0,*lo,*hi,*center,first_face,m[12],new_leaf,m[14],-1,0,0,0,0])
 
+def stage_finishes(key):
+    return {'boat_a':['boat_a','boat_b'],'subway_a':['subway_a','subway_b'],'oil_rig_a':['oil_rig_a','oil_rig_b','oil_rig_c','oil_rig_d']}.get(key,[key])
+
 def describe(game,key):
     if key not in {m['key'] for m in missions(game)}:raise ValueError('Choose an existing rescue mission')
     raw=child(game/'Data/Maps',key+'.bsp').read_bytes();b=Bsp(raw);triggers=[];spawn=[0,0,0]
@@ -170,7 +179,7 @@ def describe(game,key):
         if any(hi[a]<=lo[a] for a in range(3)):continue
         scripts=[d.get('S_Script%02d'%n,'') for n in range(1,11)]
         triggers.append(dict(entity=i,name=d.get('A_Name',str(i)),center=[(lo[a]+hi[a])/2 for a in range(3)],size=[hi[a]-lo[a] for a in range(3)],scripts=scripts))
-    return dict(key=key,source_sha256=digest(raw),spawn=spawn,triggers=triggers)
+    return dict(key=key,source_sha256=digest(raw),spawn=spawn,triggers=triggers,stage_finishes=stage_finishes(key),custom_autosplitter=splitter_directory() is not None)
 
 def validate(project):
     if not isinstance(project,dict) or project.get('schema')!=SCHEMA:raise ValueError('Unsupported level project')
@@ -190,11 +199,37 @@ def validate(project):
         if not isinstance(message,str) or not 1<=len(message)<=240 or any(ord(c)<32 or ord(c)>126 or c in '()' for c in message):raise ValueError('Use 1–240 plain ASCII characters without parentheses for the message')
         seconds=t.get('seconds')
         if type(seconds) not in (int,float) or not math.isfinite(seconds) or not 1<=seconds<=30:raise ValueError('Message duration must be 1–30 seconds')
+        if type(t.get('checkpoint',False)) is not bool:raise ValueError('Checkpoint must be true or false')
+        if 'split_label' in t and (not isinstance(t['split_label'],str) or not 1<=len(t['split_label'].strip())<=80 or any(ord(c)<32 for c in t['split_label'])):raise ValueError('Split labels require 1–80 characters without control characters')
         if t.get('existing_entity') is not None:
             n=t['existing_entity']
             if type(n) is not int or n<0 or n in existing:raise ValueError('An existing trigger can only be edited once')
             existing.add(n)
     return records
+
+def checkpoint_variable(trigger):
+    # Independent of label/order; safe script identifier even for authored names.
+    return 'FDNY_CP_'+digest(trigger['name'].casefold().encode())[:16]
+
+def split_files(project,edits,map_bytes):
+    checkpoints=[dict(id=checkpoint_variable(t),label=t.get('split_label',t['name']),trigger=t['name'],variable=checkpoint_variable(t),from_value='0',to_value='1',center=t['center'],size=t['size']) for t in edits if t.get('checkpoint',False)]
+    # The selected map is cloned; subsequent stage exits still load stock maps.
+    stages=stage_finishes(project['source'])
+    profile=dict(schema='fdny-checkpoints-v1',status='requires-autosplitter-support',source_map=project['source'],runtime_map=KEY,map_sha256=digest(map_bytes),activation='game-script-variable',reset='Variables set to 0 by exported map EVS on each load; checkpoints set their variable to 1 on touch.',order='listed; once per attempt; out-of-order first activations invalidate checkpoint timing until restart',checkpoints=checkpoints,default_stage_finishes=stages,finish_detection='Preserve upstream stage/win detection; apply the source map guard to the cloned runtime map. Final-stage end-sound slots on clones need live verification.',timing='Retain upstream Game Time and load removal. Variable polling is not a frame-exact event timestamp.')
+    run=ET.Element('Run',version='1.7.0');ET.SubElement(run,'GameIcon');ET.SubElement(run,'GameName').text='FDNY Firefighter'
+    ET.SubElement(run,'CategoryName').text=project['source']+' custom checkpoints'
+    metadata=ET.SubElement(run,'Metadata');ET.SubElement(metadata,'Run',id='');ET.SubElement(metadata,'Platform',usesEmulator='False');ET.SubElement(metadata,'Region');ET.SubElement(metadata,'Variables')
+    ET.SubElement(run,'Offset').text='00:00:00';ET.SubElement(run,'AttemptCount').text='0';ET.SubElement(run,'AttemptHistory');segments=ET.SubElement(run,'Segments')
+    for label in [c['label'] for c in checkpoints]+[s+' complete' for s in stages]:
+        segment=ET.SubElement(segments,'Segment');ET.SubElement(segment,'Name').text=label;ET.SubElement(segment,'Icon');times=ET.SubElement(segment,'SplitTimes');ET.SubElement(times,'SplitTime',name='Personal Best');ET.SubElement(segment,'BestSegmentTime');ET.SubElement(segment,'SegmentHistory')
+    ET.SubElement(run,'AutoSplitterSettings')
+    directory=splitter_directory()
+    if directory:
+        spec=importlib.util.spec_from_file_location('fdny_custom_triggers',directory/'custom_triggers.py');generator=importlib.util.module_from_spec(spec);spec.loader.exec_module(generator)
+        generated={output:generator.generate(profile,(directory/source).read_text()).encode() for output,source in [('timing/FDNY_Custom_ILs.asl','FDNY_ILs.asl'),('timing/FDNY_Custom_rescue%.asl','FDNY_rescue%.asl')]}
+        profile['status']='generated-asl-live-validation-pending'
+        generated.update({'timing/checkpoints.json':json.dumps(profile,indent=2).encode(),'timing/custom-splits.lss':ET.tostring(run,encoding='utf-8',xml_declaration=True),'timing/README.txt':b'''Custom checkpoint timing\n\n1. Install the level using the ZIP's main README.\n2. In LiveSplit, open custom-splits.lss (File -> Open Splits -> From File).\n3. Edit Layout -> + -> Control -> Scriptable Auto Splitter. Choose\n   FDNY_Custom_ILs.asl in that component's settings. Use only one autosplitter.\n4. Select Game Time for load removal. Start Custom trigger test in the game.\n\nThe IL script resets at the menu; the rescue% variant requires manual resets\nand a run-wide split list if you use it across several missions. Both are\nstandalone ASLs: Python, checkpoints.json and FDNYCore are not needed at runtime.\nDo not select the stock ASL for this custom split list.\n\nCheckpoints read the real touch-script variables in listed order, once per\nattempt. Repeated touches do not split twice. Out-of-order or missing markers\nstop splitting until you restart. A checkpoint and finish observed together\nare emitted in checkpoint-first order. Default stage transitions and load\nremoval come from the upstream v2.2 scripts; cloned-map wins use the player\nmission-result value because custom names have no stock end-sound slot.\n\nGenerated C# and memory-layout fixtures can be tested without the game.\nReal-game touch timing, the cloned-map finish and your Wine/LiveSplit setup\nstill require gameplay validation. Keep this ZIP to restore the game.\n'''});return generated
+    return {'timing/checkpoints.json':json.dumps(profile,indent=2).encode(),'timing/custom-splits.lss':ET.tostring(run,encoding='utf-8',xml_declaration=True),'timing/README.txt':b'''Custom checkpoint timing\n\nOpen custom-splits.lss in LiveSplit to load the ordered segment names. This file\ndoes not install or change an autosplitter. The existing upstream ASL does NOT\nread custom checkpoints, and its stock map-name guards do not cover fdny_edit.\nDo not expect automatic custom splits until the reader extension is implemented.\n\ncheckpoints.json describes the future reader contract, not known memory addresses.\nEach named trigger executes a real touch script that sets its dedicated variable\nto 1 and displays its hint. The exported map EVS initializes these variables to 0.\nThe reader must locate script variables, watch 0 -> 1, enforce order/once per\nattempt, reset on restart, and preserve upstream start/load/stage/win behavior.\nIt must recognize runtime map fdny_edit as the selected source map; end-sound\nbehavior on cloned maps and script-variable lifetime require live verification.\nDo not identify checkpoints by visible hint text or hard-coded heap addresses.\nDefault stage/win segments follow the custom checkpoints in the split list.\nUnmodified later stages retain their original destinations and finish detection.\nThis export contains no ASL changes; autosplitter work remains separate.\n'''}
 
 def export_project(game,project):
     if (game/'.fdny-level-edit-backup').exists():raise ValueError('Restore the previous Level Edit install before exporting another version (use install.py --restore from that export).')
@@ -204,6 +239,7 @@ def export_project(game,project):
     bsp=Bsp(raw);original_names={bsp.pairs(e).get('A_Name','').casefold() for e in bsp.entities}
     for t in edits:
         script=f"touch: hint {t['seconds']:g} ({t['message']})"
+        if t.get('checkpoint',False):script=f"touch: cmd [set {checkpoint_variable(t)} 1, hint {t['seconds']:g} ({t['message']})]"
         if t.get('existing_entity') is not None:
             i=t['existing_entity'];known=next((x for x in info['triggers'] if x['entity']==i),None)
             if not known or t['name']!=known['name']:raise ValueError('Existing trigger is not valid')
@@ -245,6 +281,10 @@ def export_project(game,project):
             if suffix=='evs':continue
             raise
         files['Data/Maps/'+KEY+'.'+suffix]=rewrite(p.read_text(encoding='latin1')).encode('latin1') if suffix=='evs' else p.read_bytes()
+    if any(t.get('checkpoint',False) for t in edits):
+        evs='Data/Maps/'+KEY+'.evs'
+        resets=''.join('set '+checkpoint_variable(t)+' 0\r\n' for t in edits if t.get('checkpoint',False))
+        files[evs]=resets.encode()+files.get(evs,b'')
     for name,text in scripts.items():files['Data/Scripts/'+name]=text.encode('latin1')
     catalog_raw=(game/'Data/ResDefs/thegame.lev').read_bytes();text,records=catalog(catalog_raw)
     source=next(r for r in records if r['key']==key);slot=next((r for r in records if r['key'] in ('dock_h',KEY)),None)
@@ -260,7 +300,9 @@ def export_project(game,project):
         manifest['files'][name]={'sha256':digest(value),'original_sha256':digest(target.read_bytes()) if target.exists() else None}
     files['manifest.json']=json.dumps(manifest,indent=2).encode();files['project.json']=json.dumps(project,indent=2).encode()
     files['install.py']=(ROOT/'level_install.py').read_bytes()
+    files.update(split_files(project,edits,files['Data/Maps/'+KEY+'.bsp']))
     files['README.txt']=b'''FDNY retail trigger proof of concept\n\nQuit the game before installing or restoring. Unzip this entire archive.\nRequires Python 3. Run from the extracted folder:\n\n  python3 install.py "/path/to/FDNY.app"\n\nThis is a dry run. To apply after checking the output:\n\n  python3 install.py "/path/to/FDNY.app" --install\n\nYou can also supply the FireFighter American Hero game folder.\nSelect Custom trigger test in the first Hose mission slot (formerly Pier Fire).\nThe slot uses rescue resources and the selected source mission. Walk into the\nnew box to see its touch hint. Existing mission triggers still operate.\nMulti-stage exits retain their original destination maps.\n\nTo restore the original catalog and remove only the added mod files:\n\n  python3 install.py "/path/to/FDNY.app" --restore\n\nBackups live in .fdny-level-edit-backup inside the game folder.\nDo not delete that backup until you restore. Restore before installing another\nexport. Installation refuses changed files rather than overwriting them.\nExport files are structurally validated; live gameplay testing is still needed.\nNew boxes are nonblocking hint volumes, not walls or new level geometry.\nDo not redistribute original BSPs, textures or other retail assets.\n'''
+    files['README.txt']+=b'\nTiming: timing/custom-splits.lss contains your split names; timing/checkpoints.json\ndescribes trigger markers. Read timing/README.txt for LiveSplit setup and whether\ncustom ASLs were bundled. Gameplay validation is still required.\n'
     out=io.BytesIO()
     with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
         for name,value in files.items():z.writestr(name,value)

@@ -6,7 +6,7 @@ Run `./start.sh`, then open http://127.0.0.1:4180 . Requires Python 3. Set `FDNY
 
 ### Local retail level editing
 
-Open **⋯ → Level Edit** on the local Python server to place hint triggers in an existing rescue map and export a reversible retail-game test for the first Hose slot. See [LEVEL_EDIT.md](LEVEL_EDIT.md) for editing, installation, restoration and limitations. The editor does not modify the installed game; the exported installer is a separate step.
+Open **☰ → Custom Triggers** on the local Python server for a dedicated editing mode: place volumes on a height-adjustable grid, draw their footprints, and move/resize with axis handles. Export a reversible retail-game test for the first Hose slot, checkpoint markers and a LiveSplit split list. If the local fdny-tas checkpoint generator is available, exports also bundle standalone custom ASLs; live gameplay validation remains pending. See [LEVEL_EDIT.md](LEVEL_EDIT.md) for editing, installation, restoration and limitations. The editor does not modify the installed game; the exported installer is a separate step.
 
 ### Local gameplay recordings
 
@@ -50,7 +50,7 @@ Run `python3 deploy/build_static.py` from this folder, then `npx wrangler deploy
 
 This local viewer checkout has a standalone history and intentionally disables direct pushes. The public repository at `https://github.com/JacobPilawa/fdny-maps` keeps the viewer under `map_explorer/`. Publish reviewed viewer files through a fresh clone of its current `main`, keeping the other repository folders intact. Never merge this checkout's older history into the public repository. Exclude local credentials, recordings, logs, caches and `dist/`. Commit and push the reviewed files in the clean clone, and commit the same source snapshot locally.
 
-After rebuilding and deploying, `deploy/build-report.json` records the asset fingerprint and `deploy/deployment.json` records the Cloudflare deployment version and verification status. Recording upload works on the public site; retail Level Edit requires `./start.sh` locally.
+After rebuilding and deploying, `deploy/build-report.json` records the asset fingerprint and `deploy/deployment.json` records the Cloudflare deployment version and verification status. Recording upload works on the public site; Custom Triggers requires `./start.sh` locally.
 
 
 Pricing reference: https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/
