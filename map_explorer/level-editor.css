@@ -1,5 +1,5 @@
 #app.editor-mode{grid-template-columns:300px minmax(0,1fr);grid-template-rows:52px minmax(0,1fr)}
-#app.editor-mode #sidebar,#app.editor-mode #inspector,#app.editor-mode #overlay,#app.editor-mode #sidebarToggle,#app.editor-mode #mapSelect,#app.editor-mode header .seg,#app.editor-mode #fly,#app.editor-mode #labels,#app.editor-mode #uploadRecording,#app.editor-mode #toolsMenu{display:none!important}
+#app.editor-mode #sidebar,#app.editor-mode #inspector,#app.editor-mode #overlay,#app.editor-mode #sidebarToggle,#app.editor-mode #mapSelect,#app.editor-mode header .seg,#app.editor-mode #labels,#app.editor-mode #uploadRecording,#app.editor-mode #toolsMenu{display:none!important}
 #app.editor-mode #view{grid-column:2;grid-row:2}
 #levelEditor{grid-column:1;grid-row:2;min-width:0;overflow:auto;background:#f6f8f4;border-right:1px solid #d5ded0;color:#304739;font:12px/1.45 system-ui;box-sizing:border-box}
 #levelEditor[hidden]{display:none}
@@ -47,4 +47,4 @@
 #levelEditor .le-grid select{width:50px;flex:none}
 #app.editor-mode #webgl canvas{cursor:default}
 @media(max-width:650px){#app.editor-mode{grid-template-columns:250px minmax(0,1fr)}#levelEditor .le-section,#levelEditor .le-head,#levelEditor .le-toolbar{padding-left:10px;padding-right:10px}}
-#app.editor-mode #surfaceTools>span,#app.editor-mode #surfaceUndo,#app.editor-mode #flightHint{display:none!important}
+#app.editor-mode #surfaceTools>span,#app.editor-mode #surfaceUndo{display:none!important}

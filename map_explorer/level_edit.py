@@ -1,4 +1,4 @@
-"""Local-only retail GBSP trigger editing and mod export. Never writes game files."""
+"""Retail GBSP trigger editing and mod export. Never writes game files."""
 from __future__ import annotations
 import hashlib,io,math,os,re,struct,zipfile
 from pathlib import Path
@@ -272,10 +272,14 @@ GAME
 4. Start FDNY and choose "Custom trigger test" in the first Hose slot.
 
 LIVESPLIT
-1. Open custom-splits.lss in LiveSplit.
-2. Edit Layout -> + -> Control -> Scriptable Auto Splitter.
-   Select FDNY_Custom_ILs.asl. Disable any other autosplitter.
-3. Use Game Time. Keep the ASL file in this extracted folder.
+1. Save your regular splits and layout first. Open custom-splits.lss.
+2. Edit Layout -> Layout Settings -> Scriptable Auto Splitter:
+   change its script to FDNY_Custom_ILs.asl. If missing, add it using
+   Edit Layout -> + -> Control -> Scriptable Auto Splitter.
+   Use only one autosplitter; disable any autosplitter in Edit Splits.
+3. Use Game Time. Save Layout As a separate custom layout (.lsl).
+   Keep the ASL in this extracted folder. To switch back, open your regular
+   splits AND layout. These custom splits are for individual missions.
 
 TO UNDO
 Restore your backups and remove the custom files you added.

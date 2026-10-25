@@ -95,6 +95,18 @@ try{
     assert(key('n'));assert(e.pending);assert(key('Escape'));assert.equal(e.pending,null);assert.equal(e.project.triggers.length,2);assert.equal(e.tool,'select');
     const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','New volume','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed volumes','Split order'])assert(e.panel.innerHTML.includes(text));
   });
+  await check('flight keys pass through; entering the current mission preserves its camera',async({editor:e,state,camera})=>{
+    let handled=false;
+    const key=k=>{handled=false;e.keyDown({key:k,target:{tagName:'CANVAS'},preventDefault(){handled=true;},stopImmediatePropagation(){}});return handled;};
+    assert.equal(key('f'),false);
+    state.flying=true;e.tool='select';for(const k of ['w','a','s','d','q','e','Shift','ArrowUp','Escape'])assert.equal(key(k),false);assert.equal(e.tool,'select');
+    assert(key('.'));assert(key('n'));assert(e.pending);e.cancelInteraction();
+    state.flying=false;assert(key('s'));assert.equal(e.tool,'resize');
+    const position=camera.position.clone(),target=state.controls.target.clone();let roof=false;
+    e.host.loadStage=()=>{throw Error('Current stage should not reload');};e.host.setMode=()=>{throw Error('Current 3D mode should not reset');};e.host.cutRoof=()=>{roof=true;};
+    e.browserExport=true;e.missions=[{key:'training',info:{source_sha256:'test',spawn:[0,30,0],triggers:[],stage_finishes:['training']}}];
+    await e.load('training');assert(roof);assert(camera.position.equals(position));assert(state.controls.target.equals(target));
+  });
   await check('map mismatch/closing hide overlays and release geometry',({editor:e,state})=>{
     e.tool='move';e.update3D();assert(e.group.visible);state.data.key='bank';e.update3D();assert.equal(e.group.visible,false);assert.equal(e.pointerClick(event()),false);state.data.key='training';e.active=false;e.update3D();assert.equal(e.group.visible,false);
   });

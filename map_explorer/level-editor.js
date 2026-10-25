@@ -11,11 +11,17 @@ export class LevelEditor {
     window.addEventListener('beforeunload',e=>{if(this.project?.triggers.length){e.preventDefault();e.returnValue='';}});
     window.addEventListener('keydown',e=>this.keyDown(e),true);
     window.addEventListener('blur',()=>{this.endDrag(true);this.finishPlacement(true);});
-    if(['localhost','127.0.0.1','[::1]'].includes(location.hostname))this.init();
+    this.init();
   }
   async api(path,options){const r=await fetch('/api/level-edit/'+path,options);if(!r.ok){let error;try{error=(await r.json()).error;}catch{}throw Error(error||'Local editor server unavailable. Restart the viewer using start.sh.');}return r;}
-  async init(){try{this.missions=(await (await this.api('missions')).json()).missions;document.getElementById('levelEdit').hidden=false;}catch{ /* Static hosting has no retail editor backend. */ }}
-  async open(){this.active=true;this.panel.hidden=false;this.host.view.parentElement.classList.add('editor-mode');document.getElementById('levelEdit').setAttribute('aria-pressed','true');if(!this.project){this.render();await this.load(this.missions?.some(m=>m.key===this.host.state().data?.key)?this.host.state().data.key:'training');}else{await this.host.loadStage(this.project.source);this.host.setMode('3d');this.render();}this.host.redraw();}
+  async init(){
+    try{
+      if(['localhost','127.0.0.1','[::1]'].includes(location.hostname))try{this.missions=(await(await this.api('missions')).json()).missions;}catch{}
+      if(!this.missions){const r=await fetch('data/editor/missions.json');if(!r.ok)throw Error('Rescue missions unavailable.');this.missions=await r.json();this.browserExport=true;}
+      document.getElementById('levelEdit').hidden=false;
+    }catch(error){console.error(error);}
+  }
+  async open(){this.active=true;this.panel.hidden=false;this.host.view.parentElement.classList.add('editor-mode');document.getElementById('levelEdit').setAttribute('aria-pressed','true');if(!this.project){this.render();await this.load(this.missions?.some(m=>m.key===this.host.state().data?.key)?this.host.state().data.key:'training');}else{if(this.host.state().data?.key!==this.project.source)await this.host.loadStage(this.project.source);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.render();}this.host.redraw();}
   close(){this.cancelInteraction();this.active=false;this.panel.hidden=true;this.host.view.parentElement.classList.remove('editor-mode');document.getElementById('levelEdit').setAttribute('aria-pressed','false');this.host.redraw();}
   status(message,error=false){const el=this.panel.querySelector('[data-status]');if(el){el.textContent=message;el.classList.toggle('error',error);}}
   snapshot(){return this.project?{project:clone(this.project),selected:this.selected}:null;}
@@ -53,8 +59,9 @@ export class LevelEditor {
   keyDown(e){
     if(!this.active||e.target?.isContentEditable||/input|select|textarea/i.test(e.target?.tagName||''))return;
     const modifier=e.ctrlKey||e.metaKey,key=e.key.toLowerCase();let action;
+    if(!modifier&&(key==='f'||(this.host.state().flying&&['w','a','s','d','q','e','shift','arrowup','arrowdown','arrowleft','arrowright','escape'].includes(key))))return;
     if(modifier)action=({z:e.shiftKey?'redo':'undo',y:'redo',c:'copy',v:'paste',d:'duplicate',s:'save'})[key];
-    else if(!e.altKey)action=({v:'selectTool',n:'add',g:'move',s:'resize',f:'focus',delete:'delete',backspace:'delete',escape:'cancel'})[key];
+    else if(!e.altKey)action=({v:'selectTool',n:'add',g:'move',s:'resize','.':'focus',delete:'delete',backspace:'delete',escape:'cancel'})[key];
     if(!action)return;e.preventDefault();e.stopImmediatePropagation();if(e.repeat&&['add','paste','duplicate','delete'].includes(action))return;
     this.command(action).catch(err=>this.status(err.message,true));
   }
@@ -68,7 +75,7 @@ export class LevelEditor {
     this.panel.innerHTML=`<div class="le-head"><strong>Custom Triggers</strong><button data-action="close">Exit</button></div>
     ${p?`<div class="le-toolbar"><div class="le-modes"><button data-action="selectTool" aria-pressed="${!busy&&this.tool==='select'}">Select <kbd>V</kbd></button><button data-action="add" aria-pressed="${busy}" ${p.triggers.length>=32?'disabled':''}>＋ New volume <kbd>N</kbd></button><button data-action="move" aria-pressed="${!busy&&this.tool==='move'}" ${editable?'':'disabled'}>Move <kbd>G</kbd></button><button data-action="resize" aria-pressed="${!busy&&this.tool==='resize'}" ${editable?'':'disabled'}>Resize <kbd>S</kbd></button></div>
     <div class="le-actions"><button data-action="copy" title="Copy · Ctrl/⌘ C" ${t&&!busy?'':'disabled'}>Copy</button><button data-action="paste" title="Paste · Ctrl/⌘ V" ${this.clipboard&&p.triggers.length<32?'':'disabled'}>Paste</button><button data-action="duplicate" title="Duplicate · Ctrl/⌘ D" ${t&&!busy&&p.triggers.length<32?'':'disabled'}>Duplicate</button><button data-action="delete" title="Delete · undo restores the volume" ${t&&!busy?'':'disabled'}>Delete</button></div>
-    <div class="le-row"><button data-action="undo" title="Undo · Ctrl/⌘ Z" ${this.pending||this.undoStack?.length?'':'disabled'}>↶ Undo</button><button data-action="redo" title="Redo · Ctrl/⌘ Shift Z" ${this.redoStack?.length?'':'disabled'}>↷ Redo</button><button data-action="focus" title="Find selected volume · F" ${t?'':'disabled'}>Find <kbd>F</kbd></button></div><p class="le-help">${hint}</p></div>
+    <div class="le-row"><button data-action="undo" title="Undo · Ctrl/⌘ Z" ${this.pending||this.undoStack?.length?'':'disabled'}>↶ Undo</button><button data-action="redo" title="Redo · Ctrl/⌘ Shift Z" ${this.redoStack?.length?'':'disabled'}>↷ Redo</button><button data-action="focus" title="Find selected volume · ." ${t?'':'disabled'}>Find <kbd>.</kbd></button></div><p class="le-help">${hint}</p></div>
     <div class="le-tabs" role="group" aria-label="Editor panels"><button data-action="volumesTab" aria-pressed="${this.tab!=='splits'}">Volumes (${p.triggers.length})</button><button data-action="splitsTab" aria-pressed="${this.tab==='splits'}">Split order</button></div>
     ${this.tab==='splits'?this.splitSummary():`<div class="le-section le-trigger-list" role="group" aria-label="Placed volumes">${p.triggers.length?p.triggers.map((x,i)=>`<button data-action="select" data-index="${i}" aria-pressed="${i===this.selected}"><span class="le-volume-kind">${x.checkpoint?'●':'○'}</span><span class="le-volume-label">${escape(x.split_label||x.name)}</span>${x.existing_entity!=null?'<small>fixed</small>':''}</button>`).join(''):'<p class="le-help">No placed volumes. Choose New volume, then click the grid.</p>'}</div>
     ${t&&!busy?`<div class="le-section"><h3>Selected volume</h3><label>Label <input data-field="split_label" maxlength="80" value="${escape(t.split_label||t.name)}"></label><label><input type="checkbox" data-field="checkpoint" ${t.checkpoint?'checked':''}> Include in splits</label>${!editable?'<p class="le-help">Authored volume: duplicate it to get an editable copy.</p>':''}<button data-action="details" aria-expanded="${!!this.details}">${this.details?'Hide':'Show'} exact values & hint</button>
@@ -79,7 +86,7 @@ export class LevelEditor {
     <p data-status role="status"></p>`;this.dirty=true;this.host.redraw();
   }
   missionControls(){return `<div class="le-row"><select data-field="mission" aria-label="Rescue mission"><option value="">Choose a mission…</option>${(this.missions||[]).map(m=>`<option value="${escape(m.key)}" ${this.project?.source===m.key?'selected':''}>${escape(m.title)}</option>`).join('')}</select><button data-action="load">Load</button></div>`;}
-  async load(key,project=null){if(!key)throw Error('Choose a rescue mission.');const info=await(await this.api('mission?key='+encodeURIComponent(key))).json();if(project&&project.source_sha256!==info.source_sha256)throw Error('Project source map differs from your installed game.');await this.host.loadStage(key);this.host.setMode('3d');this.info=info;this.project=project||{schema:'fdny-level-edit-v1',source:key,source_sha256:info.source_sha256,triggers:[]};Object.assign(this,{selected:this.project.triggers.length?0:-1,placing:false,pending:null,pickGrid:false,showExisting:false,showMission:false,undoStack:[],redoStack:[],tool:'select',tab:'volumes',gridY:info.spawn[1]-30});this.render();this.viewPreset(false);}
+  async load(key,project=null){if(!key)throw Error('Choose a rescue mission.');const info=this.browserExport?this.missions.find(m=>m.key===key)?.info:await(await this.api('mission?key='+encodeURIComponent(key))).json();if(!info)throw Error('Choose a rescue mission.');if(project&&project.source_sha256!==info.source_sha256)throw Error('Project source map differs from your installed game.');const sameView=this.host.state().data?.key===key&&this.host.state().mode==='3d';if(this.host.state().data?.key!==key)await this.host.loadStage(key);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.host.cutRoof?.();this.info=info;this.project=project||{schema:'fdny-level-edit-v1',source:key,source_sha256:info.source_sha256,triggers:[]};Object.assign(this,{selected:this.project.triggers.length?0:-1,placing:false,pending:null,pickGrid:false,showExisting:false,showMission:false,undoStack:[],redoStack:[],tool:'select',tab:'volumes',gridY:info.spawn[1]-30});this.render();if(!sameView)this.viewPreset(false);}
   async click(e){const button=e.target.closest('[data-action]');if(button)return this.command(button.dataset.action,button.dataset.index,button);}
   async command(action,index,button){
     const t=this.project?.triggers[this.selected];
@@ -115,7 +122,7 @@ export class LevelEditor {
     }
     if(action==='export'){
       this.status('Building game + LiveSplit package…');if(button)button.disabled=true;
-      try{const r=await this.api('export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.project)});this.download(await r.blob(),'fdny-level-edit-'+this.project.source+'.zip');this.status('Package downloaded. Follow README.txt for the manual game edit and LiveSplit setup.');}finally{if(button)button.disabled=false;}
+      try{let blob;if(this.browserExport){const {exportPackage}=await import('./editor-export.js');blob=await exportPackage(clone(this.project),message=>this.status(message));}else{const r=await this.api('export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.project)});blob=await r.blob();}this.download(blob,'fdny-level-edit-'+this.project.source+'.zip');this.status('Package downloaded. Follow README.txt for the manual game edit and LiveSplit setup.');}finally{if(button)button.disabled=false;}
     }
   }
   propertyEdit(change){
