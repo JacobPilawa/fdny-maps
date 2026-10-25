@@ -55,3 +55,30 @@ assert.notEqual(runs[0].proxies[0].pill.material.color.getHexString(),runs[1].pr
 controller.time=2000;controller.update3D();assert.equal(runs[0].proxies[0].group.position.x,100);assert.equal(runs[1].proxies[0].group.position.x,200);
 controller.dispose();assert.equal(state.scene.children.length,0);
 console.log('PASS: shared timeline, distinct colors, unequal recording durations, final-frame hold and multi-recording cleanup');
+
+// Automatic single-run gradients and explicit metric coloring share both render paths.
+const one=runs[0];one.multi=false;one.trailColorMode='auto';
+assert.equal(one.effectiveTrailMode(),'time');assert.notEqual(one.trailTint(0),one.trailTint(one.trace.samples.length-1));
+one.multi=true;assert.equal(one.trailTint(0),one.playerColor);
+for(const mode of ['time','distance','speed','acceleration']){one.trailColorMode=mode;one.dispose();one.updateSingle3D();assert(one.lines[0].line.geometry.attributes.colorStart);}
+controller.dispose();
+const {trailMetrics}=await import(url('recording-data.js'));
+const points=[{t_ms:0,position:[0,0,0]},{t_ms:100,position:[10,0,0]},{t_ms:200,position:[30,0,0]},{t_ms:300,position:[60,0,0]},{t_ms:10000,position:[10000,0,0]},{t_ms:10100,position:[10010,0,0]}];
+const metrics=trailMetrics(points);
+assert.equal(metrics.speed[1],100);assert.equal(metrics.speed[2],200);assert.equal(metrics.acceleration[2],1000);
+assert(metrics.speedRank[1]<metrics.speedRank[2]);assert(metrics.speedRank[2]<metrics.speedRank[3]);
+assert.equal(metrics.speed[4],null);assert.equal(metrics.acceleration[5],null);assert.equal(metrics.distance[4],60);
+assert.equal(trailMetrics([{t_ms:0,position:[0,0,0]},{t_ms:0,position:[1,0,0]}]).speed[1],null);
+console.log('PASS: automatic gradients, metric render modes, speed/acceleration, percentiles, gap and duplicate-time handling');
+
+// Verify actual GPU color values, not just attribute presence: CSS HSL syntax
+// accepted by canvas is not necessarily understood by Three.Color.set().
+one.multi=false;
+for(const mode of ['time','distance','speed','acceleration','player']){
+  one.trailColorMode=mode;one.dispose();one.updateSingle3D();
+  const colors=one.lines[0].line.geometry.attributes.colorStart;
+  assert(colors.count>0);
+  for(let i=0;i<colors.count;i++)assert(Math.min(colors.getX(i),colors.getY(i),colors.getZ(i))<.99,mode+' must not produce white segments');
+  if(mode==='time'||mode==='distance')assert.notDeepEqual([colors.getX(0),colors.getY(0),colors.getZ(0)],[colors.getX(colors.count-1),colors.getY(colors.count-1),colors.getZ(colors.count-1)]);
+}
+one.dispose();console.log('PASS: GPU trail colors stay nonwhite in every mode and rainbow endpoints differ');

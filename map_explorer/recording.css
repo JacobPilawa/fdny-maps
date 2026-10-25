@@ -61,3 +61,6 @@
 .recPlayerSelect{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:11px}
 #recordingPanel .recPlayerSelect select{flex:1;max-width:100%}
 #recordingPanel [data-rec=followSelect]{max-width:220px;font-size:10px}
+
+.recTrailLegend{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:10px;line-height:1.5;color:#71806b}
+.recTrailLegend i{flex-shrink:0;width:100px;height:5px;border-radius:3px;background:linear-gradient(90deg,hsl(260 85% 48%),hsl(195 85% 48%),hsl(130 85% 48%),hsl(65 85% 48%),hsl(0 85% 48%))}

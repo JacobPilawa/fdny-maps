@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {parseRecording,frameAt,indexAt,boundsFor,canJoin,MAX_RECORDING_BYTES} from './recording-data.js';
+import {parseRecording,frameAt,indexAt,boundsFor,canJoin,timeColor,trailMetrics,MAX_RECORDING_BYTES} from './recording-data.js';
 
 const clock=ms=>`${Math.floor(ms/60000)}:${(ms/1000%60).toFixed(2).padStart(5,'0')}`;
 const RECORDING_COLORS=['#d33f49','#2878c7','#9b51b6','#d47b16','#008875','#bd468d'];
@@ -44,8 +44,8 @@ export class RecordingMode {
         <label class="recPlayerSelect" data-rec="playerSelectLabel" hidden>Player settings <select data-rec="playerSelect" aria-label="Player settings"></select></label><div class="recSettingsGrid">
           <fieldset class="recSection"><legend>View</legend><div class="recChecks"><label><input data-rec="player" type="checkbox" checked>Player &amp; hitbox</label><label data-rec="victimsLabel"><input data-rec="victims" type="checkbox" checked>Victims</label><label data-rec="xrayLabel"><input data-rec="xray" type="checkbox" checked>Through walls</label></div></fieldset>
           <fieldset class="recSection"><legend>Camera</legend><div class="recButtonGroup"><button data-rec="fit">Fit track</button><button data-rec="focus">Snap to player</button></div></fieldset>
-          <fieldset class="recSection recAppearance"><legend>Appearance</legend><label>Player color<input data-rec="color" type="color" value="#ff0000" aria-label="Player color"></label><label class="recThickness">Track width<input data-rec="thickness" type="range" min="1" max="14" step="1" value="3" aria-label="Track thickness"><output data-rec="thicknessValue">3 px</output></label></fieldset>
-        </div>
+          <fieldset class="recSection recAppearance"><legend>Appearance</legend><label>Trail color<select data-rec="trailColor" aria-label="Trail color"><option value="time">Elapsed time</option><option value="distance">Distance traveled</option><option value="speed">Speed · percentile</option><option value="acceleration">Acceleration · percentile</option><option value="player">Player color</option></select></label><label>Player color<input data-rec="color" type="color" value="#ff0000" aria-label="Player color"></label><label class="recThickness">Track width<input data-rec="thickness" type="range" min="1" max="14" step="1" value="3" aria-label="Track thickness"><output data-rec="thicknessValue">3 px</output></label></fieldset>
+        </div><div class="recTrailLegend" data-rec="trailLegend"></div>
         <details class="recDetails"><summary>Recording details <span data-rec="stats"></span></summary><div class="recReadout" data-rec="readout"></div><div class="recNote" data-rec="note"></div></details>
         <div class="recSettingsFooter"><span class="recResizeHint">Drag corner to resize</span></div>
       </div><button class="recMapReturn" data-rec="map" hidden>Return to recorded map</button>`;
@@ -68,6 +68,7 @@ export class RecordingMode {
     this.el.playerSelect.onchange=()=>{this.settingsIndex=Number(this.el.playerSelect.value);this.syncPlayerSettings();this.sync();};
     this.el.followSelect.onchange=()=>{this.follow=this.el.followSelect.value!=='';if(this.follow){this.followIndex=Number(this.el.followSelect.value);this.snap();}};
     this.el.follow.onchange=()=>{this.follow=this.el.follow.checked;if(this.follow)this.snap();};
+    this.el.trailColor.onchange=()=>{const r=this.settingsRecording();if(r){r.trailColorMode=this.el.trailColor.value;r.dispose();this.syncTrailLegend();host.redraw();}};
     this.el.color.oninput=()=>{const r=this.settingsRecording();if(r){r.playerColor=this.el.color.value;r.dispose();}host.redraw();};
     this.el.thickness.oninput=()=>{const r=this.settingsRecording();if(r)r.thickness=Number(this.el.thickness.value);this.el.thicknessValue.textContent=this.el.thickness.value+' px';host.redraw();};
     this.el.map.onclick=async()=>{try{await host.loadStage(this.trace.stage);this.sync();host.redraw();}catch(e){host.error(e.message);}};
@@ -86,7 +87,7 @@ export class RecordingMode {
   followRecording(){return this.recordings[this.followIndex]||this.recordings[0];}
   syncPlayerSettings(){
     const r=this.settingsRecording();if(!r)return;
-    this.el.player.checked=r.showPlayer;this.el.victims.checked=r.showVictims;this.el.xray.checked=r.xray;
+    this.el.trailColor.value=r.effectiveTrailMode();this.syncTrailLegend();this.el.player.checked=r.showPlayer;this.el.victims.checked=r.showVictims;this.el.xray.checked=r.xray;
     this.el.color.value=r.playerColor;this.el.thickness.value=r.thickness;this.el.thicknessValue.textContent=r.thickness+' px';
   }
   updatePlayerSelectors(){
@@ -121,6 +122,7 @@ export class RecordingMode {
       Object.assign(r,{host:this.host,trace,time:0,mode:'scrub',group:null,showPlayer:true,showVictims:true,xray:true,playerColor:RECORDING_COLORS[this.recordings.length%RECORDING_COLORS.length],thickness:3});
       this.recordings.push(r);
     }
+    for(const r of this.recordings){r.multi=this.recordings.length>1;r.dispose();}
     this.trace=this.recordings[0].trace;this.time=0;this.playing=false;this.follow=true;this.el.follow.checked=true;
     this.updatePlayerSelectors();this.panel.hidden=false;this.host.error(null);this.sync();this.snap();this.host.redraw();
   }
@@ -181,6 +183,24 @@ export class RecordingMode {
   snap(){if(!this.trace||!this.matches())return;const p=frameAt(this.followRecording().trace.samples,this.time).position;this.host.focusBounds({min:[p[0]-550,p[1]-150,p[2]-550],max:[p[0]+550,p[1]+250,p[2]+550]});}
   focus(){if(!this.trace||!this.matches())return;const p=frameAt(this.followRecording().trace.samples,this.time).position;this.host.focusPoint(p);}
   victimFrame(track){if(this.time<track.samples[0].t_ms||track.end!==null&&this.time>=track.end)return null;return frameAt(track.samples,this.time);}
+  effectiveTrailMode(){return !this.trailColorMode||this.trailColorMode==='auto'?(this.multi?'player':'time'):this.trailColorMode;}
+  trailFraction(i){
+    const mode=this.effectiveTrailMode();if(mode==='time')return this.trace.samples[i].t_ms/(this.trace.duration||1);
+    const m=this.metrics||(this.metrics=trailMetrics(this.trace.samples));
+    if(mode==='distance')return m.distance[i]/(m.distance.at(-1)||1);
+    return mode==='speed'?m.speedRank[i]:m.accelerationRank[i];
+  }
+  trailTint(i){if(this.effectiveTrailMode()==='player')return this.playerColor;const f=this.trailFraction(i);return f===null?'#9aa39b':timeColor(f);}
+  syncTrailLegend(){
+    const r=this.settingsRecording();if(!r)return;const mode=r.effectiveTrailMode(),el=this.el.trailLegend;el.replaceChildren();
+    if(mode==='player'){el.textContent='Track matches player color.';return;}
+    const ramp=document.createElement('i');el.append(ramp);
+    if(mode==='speed'||mode==='acceleration'){
+      const metrics=r.metrics||(r.metrics=trailMetrics(r.trace.samples)),values=metrics[mode],ranks=metrics[mode+'Rank'];
+      const quantile=q=>{let best=null;for(let i=0;i<values.length;i++)if(values[i]!==null&&(best===null||Math.abs(ranks[i]-q)<Math.abs(ranks[best]-q)))best=i;return best===null?'—':Math.round(values[best]).toLocaleString();};
+      el.append(`Slow / low → fast / high · P50 ${quantile(.5)} · P90 ${quantile(.9)} · P99 ${quantile(.99)} ${mode==='speed'?'u/s':'u/s²'}. Percentiles within this recording; gray = unavailable. Acceleration is magnitude, including turns.`);
+    }else el.append(mode==='time'?'Start → end · elapsed time':'Start → end · cumulative distance');
+  }
   draw2D(c){for(const r of this.recordings){r.time=Math.min(this.time,r.trace.duration);r.drawSingle2D(c);}}
   drawSingle2D(c){
     if(!this.trace||!this.matches())return;
@@ -193,8 +213,8 @@ export class RecordingMode {
         const a=samples[i-1],b=samples[i];if(this.mode==='scrub'&&a.t_ms>this.time)break;
         if(!canJoin(a,b)||(a.position[1]<h.low&&b.position[1]<h.low)||(a.position[1]>h.high&&b.position[1]>h.high))continue;
         const end=this.mode==='scrub'&&b.t_ms>this.time?frameAt(samples,this.time):b;
-        const nextBucket=victim?0:Math.floor(128*b.t_ms/(tr.duration||1));
-        if(bucket!==nextBucket){if(bucket!==null)c.stroke();bucket=nextBucket;c.strokeStyle=victim?'#008574':this.playerColor;c.beginPath();}
+        const nextBucket=victim?'#008574':this.trailTint(i);
+        if(bucket!==nextBucket){if(bucket!==null)c.stroke();bucket=nextBucket;c.strokeStyle=nextBucket;c.beginPath();}
         c.moveTo(...screen(a.position));c.lineTo(...screen(end.position));
       }
       if(bucket!==null)c.stroke();
@@ -227,7 +247,7 @@ export class RecordingMode {
     const addLine=(samples,victim=false)=>{
       const positions=[],colors=[],endTimes=[],col=new THREE.Color();
       for(let i=1;i<samples.length;i++)if(canJoin(samples[i-1],samples[i])){
-        for(const s of [samples[i-1],samples[i]]){positions.push(...s.position);if(victim)col.set('#008574');else col.set(this.playerColor);colors.push(col.r,col.g,col.b);}
+        for(const s of [samples[i-1],samples[i]]){positions.push(...s.position);if(victim)col.set('#008574');else if(this.effectiveTrailMode()==='player')col.set(this.playerColor);else{const f=this.trailFraction(s===samples[i-1]?i-1:i);if(f===null)col.set('#9aa39b');else col.setHSL(260/360*(1-Math.max(0,Math.min(1,f))),.85,.48);}colors.push(col.r,col.g,col.b);}
         endTimes.push(samples[i].t_ms);
       }
       const line=thickTrack(positions,colors,victim ? .65 : .95);line.renderOrder=10;

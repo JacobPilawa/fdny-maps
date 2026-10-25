@@ -1,8 +1,8 @@
 {
-  "release": "dddc666f79ebd3ba",
+  "release": "63b461d32edc5568",
   "asset_files": 624,
   "maps": 17,
-  "total_bytes": 123061291,
+  "total_bytes": 123065766,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
@@ -633,12 +633,12 @@
     "victim-models.js"
   ],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "bc4a7546-bd50-4fbf-8eeb-ca77a5f35839",
+  "cloudflare_version_id": "65975de7-e134-48be-aae0-78d0fc89f5e2",
   "verified_live": false,
-  "verification_note": "Cloudflare CLI confirmed deployment. User performs browser testing.",
+  "verification_note": "Cloudflare CLI confirmed deployment; user tested locally.",
   "checks": [
-    "Recording parser and rendering checks passed, including shared timeline and final-frame holds.",
-    "Map feature checks and git diff whitespace checks passed.",
-    "Local and clean GitHub checkout builds produced identical asset fingerprint."
+    "Recording parser and render checks passed, including metric percentiles and actual nonwhite GPU colors.",
+    "Whitespace checks passed.",
+    "Local and clean GitHub builds produced identical asset fingerprint."
   ]
 }
