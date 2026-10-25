@@ -219,7 +219,7 @@ export class LevelEditor {
     s.camera.updateMatrixWorld();s.scene.updateMatrixWorld(true);const rect=s.renderer.domElement.getBoundingClientRect(),ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1),s.camera);
     if(this.pickGrid){const targets=[];s.scene.traverse(x=>{if(x.isMesh&&x.userData.pickIds&&!x.userData.levelEdit){let visible=true;for(let p=x;p;p=p.parent)if(!p.visible)visible=false;if(visible&&x.geometry?.attributes.position)targets.push(x);}});const hit=ray.intersectObjects(targets,false).find(h=>{const material=Array.isArray(h.object.material)?h.object.material[h.face.materialIndex]:h.object.material;return !(material.clippingPlanes||[]).some(p=>p.distanceToPoint(h.point)<0);});if(!hit){this.status('No visible surface here. Try Top view or orbit to expose a floor.',true);return true;}this.gridY=Math.round(hit.point.y*10)/10;this.pickGrid=false;this.render();return true;}
     if(this.placing){if(this.previewPlacement(e))this.commitPlacement();else this.status('Choose Top view to place on an edge-on grid.',true);return true;}
-    const hit=this.pickVolume(ray);if(hit)this.select(hit.object.userData.triggerIndex);else if(this.tool==='select'){this.selected=-1;this.render();}return true;
+    const hit=this.pickVolume(ray);if(hit)this.select(hit.object.userData.triggerIndex);else{this.selected=-1;this.render();}return true;
   }
 
   update3D(){

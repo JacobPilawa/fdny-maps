@@ -46,6 +46,7 @@ try{
     e.pointerClick(event(-2000,-2000));assert.equal(e.selected,-1);await e.command('delete');assert.equal(e.project.triggers.length,1);
     e.select(0);await e.command('move');e.update3D();assert(e.gizmo);assert.equal(e.undoStack.length,0);
     await e.command('selectTool');e.update3D();assert(!e.gizmo);assert.equal(e.project.triggers.length,1);
+    for(const tool of ['select','move','resize']){e.tool=tool;e.select(0);e.update3D();e.pointerClick(event(-2000,-2000));assert.equal(e.selected,-1);e.update3D();assert(!e.gizmo);e.pointerClick(screen([0,60,0]));assert.equal(e.selected,0);assert.equal(e.tool,tool);assert.equal(e.project.triggers.length,1);assert.equal(e.undoStack.length,0);}
   });
   await check('axis movement/resize snap, fixed opposite face, limits, cancel and single-step undo',async ctx=>{
     const {editor:e,controls}=ctx;e.tool='move';e.snap=8;let point=handleEvent(ctx,0,0),before=copy(e.project);assert(e.beginDrag(point));assert.equal(controls.enabled,false);let d=e.drag;
