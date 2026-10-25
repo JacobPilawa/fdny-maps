@@ -19,7 +19,7 @@ The **Split order** summary lists every exported segment in order: custom checkp
 
 New boxes have **Include in splits** enabled. Set their split labels and use **↑ Earlier / ↓ Later** to arrange checkpoint order. Uncheck it for a hint-only box. Old projects remain hint-only until enabled; existing hint boxes can also be marked as checkpoints.
 
-The export includes `timing/custom-splits.lss` (ordered segment names) and `timing/checkpoints.json` (the reader profile). When a sibling `fdny-tas/livesplit/custom_triggers.py` is available, it also bundles `FDNY_Custom_ILs.asl` and `FDNY_Custom_rescue%.asl`. Set `FDNY_TAS_DIR=/path/to/fdny-tas` before starting the server if that checkout lives elsewhere. The stock ASLs stay unchanged; these are generated standalone variants. Without the generator, the ZIP's timing README explains that ASL generation is still required.
+Every export is one ZIP containing the custom game files, installer/restorer, editable project, checkpoint JSON, LiveSplit split list, and both standalone custom ASLs (`timing/FDNY_Custom_ILs.asl` and `timing/FDNY_Custom_rescue%.asl`). Generation is entirely contained in this viewer: `livesplit/custom_triggers.py` uses the bundled, unmodified v2.2 templates from [RichardFranksComputer/fdny-tas](https://github.com/RichardFranksComputer/fdny-tas/tree/660b272efd921b8aa38b862fce1dd77c7031824b/livesplit). No sibling checkout or network access is needed. The template revision is recorded in the generator; generated scripts and game assets are export outputs, not source templates.
 
 After installing the level, open the `.lss` in LiveSplit, add **Control → Scriptable Auto Splitter** in Edit Layout, and select the bundled **FDNY_Custom_ILs.asl**. Use **Game Time** and only one autosplitter. Python/JSON/FDNYCore are not needed while running. The rescue% variant keeps manual resets and needs a run-wide split list if used across missions. Generated scripts pass synthetic action checks and LiveSplit parser/compiler loading; real-game contact timing and cloned-map completion still need gameplay validation. Read `timing/README.txt` in the ZIP.
 
@@ -48,7 +48,23 @@ python3 install.py "/path/to/FDNY.app" --restore
 
 The installer backs up overwritten files under `.fdny-level-edit-backup` inside the game folder, records added files, and refuses to restore changed files. Keep this backup and the export until you restore. **Restore before exporting another version**, then install the new export. This keeps baseline hashes and backups consistent.
 
-For manual inspection, all generated game files live under the ZIP's `Data/` directory. It includes `Maps/fdny_edit.bsp`, the source briefing/preview and map script when present, namespaced script dependencies, and `ResDefs/thegame.lev`. Avoid dragging only a BSP over `dock_h.bsp`: the Hose catalog would still select Hose resources. Use the provided installer to replace the full required set and preserve a verified restore path.
+### What installation changes
+
+The installer copies only the `Data/` files listed in `manifest.json`. Each ZIP's main README lists the exact paths. It does not patch the game executable, DLLs or ASIs, and does not install LiveSplit files into the game.
+
+| Game-relative path | Action |
+| --- | --- |
+| `Data/Maps/fdny_edit.bsp` | Add the cloned source map with custom trigger geometry and scripts. The original source BSP stays in place. |
+| `Data/Maps/fdny_edit.evs` | Add the rewritten map script and checkpoint zero-initialization (present when the source has a script or checkpoints exist). |
+| `Data/Maps/fdny_edit.brf` | Add the copied source briefing. |
+| `Data/Maps/fdny_edit.bmp` | Add the copied source preview image. |
+| `Data/Scripts/fdnyedit_*.evs` | Add the map's required script dependencies, with namespaced references. The exact set depends on the source mission. |
+| `Data/ResDefs/thegame.lev` | Replace the catalog with a version whose first Hose slot points to `fdny_edit`, title `Custom trigger test`, and `rescue.rrf`. Other catalog entries are preserved. |
+| `.fdny-level-edit-backup/` | Create backups of overwritten files and `state.json` recording hashes and added paths. Normally the only stock file replaced is the catalog. |
+
+Before copying, it verifies the package hashes and expected original game-file hashes; without `--install` it only reports that check. During installation it backs up overwritten files, records added paths, then copies the listed files into the game directory. If a copy raises an I/O error, it attempts to roll back. Restore verifies installed/backup hashes, puts overwritten originals back, deletes added files, and removes the backup. It refuses changed files instead of overwriting later edits.
+
+This reuses the first Hose menu slot; it does not add another menu entry or overwrite the source rescue mission. Exits to subsequent stages still load stock maps. Only one custom test can be installed at a time; restore before installing another export.
 
 ## Format and scope
 
@@ -64,6 +80,7 @@ The local server binds to loopback and rejects cross-site API requests. Static b
 python3 source/check_level_edit.py
 python3 source/check_level_api.py
 node source/check_level_editor.mjs
+python3 -I source/check_livesplit.py
 node source/check_recording.mjs
 node source/check_recording_render.mjs
 node source/check_features.mjs

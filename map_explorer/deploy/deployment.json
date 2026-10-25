@@ -1,8 +1,8 @@
 {
-  "release": "c2e8c937397b3c14",
+  "release": "c49916dd3ca0e760",
   "asset_files": 624,
   "maps": 17,
-  "total_bytes": 123081824,
+  "total_bytes": 123081741,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
@@ -633,12 +633,12 @@
     "victim-models.js"
   ],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "a7f961de-7d92-4d11-bb66-d96e028a8d9d",
+  "cloudflare_version_id": "288f7078-909b-441d-b2ed-cb9ec86fb748",
   "verified_live": false,
-  "verification_note": "Cloudflare CLI confirmed successful deployment. Public HTTP verification returned 403; no browser testing performed.",
+  "verification_note": "Cloudflare CLI confirmed deployment; public HTTP verification returned 403. No browser testing performed.",
   "checks": [
-    "Map, recording and editor CPU checks passed.",
-    "Export tests passed for all eight rescue missions, including generated ASL bundling.",
-    "Generated ASL actions passed 53 synthetic C# assertions; three variants loaded in LiveSplit 1.8.37. Live gameplay not tested."
+    "Export tests passed for all eight rescue missions, including generated ASLs and installer restore.",
+    "Isolated viewer-only export passed without any fdny-tas checkout.",
+    "Generator and editor CPU checks passed; bundled ASL templates match pinned upstream. Live gameplay remains unverified."
   ]
 }

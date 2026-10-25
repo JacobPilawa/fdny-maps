@@ -1,5 +1,5 @@
 """Retail export checks; never installs into the real game."""
-import io,json,struct,subprocess,sys,tempfile,zipfile
+import io,json,shutil,struct,subprocess,sys,tempfile,zipfile
 from xml.etree import ElementTree as ET
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -42,11 +42,12 @@ for mission in l.missions(game):
         if i!=1:assert old[i]['fields']==new[i]['fields']
     manifest=json.loads(z.read('manifest.json'))
     for name,meta in manifest['files'].items():assert l.digest(z.read(name))==meta['sha256']
+    assert all(name.encode() in z.read('README.txt') for name in manifest['files'])
     assert l.digest(raw)==info['source_sha256']
     # Checkpoints use real script markers, reset on load, stable IDs and ordered splits.
     for i,t in enumerate(triggers):t.update(checkpoint=True,split_label='Checkpoint <'+str(i+1)+'> & test')
     timed=zipfile.ZipFile(io.BytesIO(l.export_project(game,project)));profile=json.loads(timed.read('timing/checkpoints.json'))
-    assert profile['status']==('generated-asl-live-validation-pending' if l.splitter_directory() else 'requires-autosplitter-support') and profile['runtime_map']==l.KEY
+    assert profile['status']=='generated-asl-live-validation-pending' and profile['runtime_map']==l.KEY
     assert profile['default_stage_finishes']==info['stage_finishes']
     assert profile['map_sha256']==l.digest(timed.read('Data/Maps/'+l.KEY+'.bsp'))
     entities=[l.Bsp.pairs(e) for e in l.Bsp(timed.read('Data/Maps/'+l.KEY+'.bsp')).entities]
@@ -58,8 +59,8 @@ for mission in l.missions(game):
     segments=ET.fromstring(timed.read('timing/custom-splits.lss')).findall('Segments/Segment/Name')
     assert [s.text for s in segments]==[t['split_label'] for t in triggers]+[s+' complete' for s in profile['default_stage_finishes']]
     assert l.checkpoint_variable(triggers[0])==profile['checkpoints'][0]['id']
-    assert any(n.endswith('.asl') for n in timed.namelist())==bool(l.splitter_directory())
-    if l.splitter_directory():assert 'vars.customVariables' in timed.read('timing/FDNY_Custom_ILs.asl').decode()
+    assert {'timing/FDNY_Custom_ILs.asl','timing/FDNY_Custom_rescue%.asl'}<=set(timed.namelist())
+    assert 'vars.customVariables' in timed.read('timing/FDNY_Custom_ILs.asl').decode()
     # Text-only edit preserves every geometry chunk.
     t=info['triggers'][0];edit={k:t[k] for k in ('name','center','size')};edit.update(existing_entity=t['entity'],message='Existing hint replaced',seconds=4)
     edit['checkpoint']=True;project['triggers']=[edit];text_only=zipfile.ZipFile(io.BytesIO(l.export_project(game,project)));b=l.Bsp(text_only.read('Data/Maps/'+l.KEY+'.bsp'))
@@ -79,3 +80,18 @@ with tempfile.TemporaryDirectory() as td:
     assert catalog.read_bytes()==(game/'Data/ResDefs/thegame.lev').read_bytes()
     assert not (fake/'Data/Maps/fdny_edit.bsp').exists();assert not (fake/'.fdny-level-edit-backup').exists()
 print('Installer dry run, install, changed-file refusal, and restore passed in a temporary fake game')
+with tempfile.TemporaryDirectory() as td:
+    # Copy only the viewer's export code: no sibling fdny-tas checkout or imports.
+    isolated=Path(td)/'viewer';isolated.mkdir()
+    for name in ['level_edit.py','level_install.py']:shutil.copy2(l.ROOT/name,isolated/name)
+    shutil.copytree(l.ROOT/'livesplit',isolated/'livesplit',ignore=shutil.ignore_patterns('__pycache__'))
+    project=json.loads(zipfile.ZipFile(io.BytesIO(example)).read('project.json'));project['triggers'][0]['checkpoint']=True
+    code="""import io,json,sys,zipfile
+sys.path.insert(0,sys.argv[1])
+import level_edit as l
+from pathlib import Path
+z=zipfile.ZipFile(io.BytesIO(l.export_project(Path(sys.argv[2]),json.load(sys.stdin))))
+assert {'timing/FDNY_Custom_ILs.asl','timing/FDNY_Custom_rescue%.asl','timing/custom-splits.lss','Data/Maps/fdny_edit.bsp'}<=set(z.namelist())
+"""
+    subprocess.run([sys.executable,'-I','-c',code,str(isolated),str(game)],input=json.dumps(project),text=True,check=True)
+print('Standalone viewer export passed without an fdny-tas checkout')

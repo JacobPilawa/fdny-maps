@@ -6,7 +6,7 @@ Run `./start.sh`, then open http://127.0.0.1:4180 . Requires Python 3. Set `FDNY
 
 ### Local retail level editing
 
-Open **☰ → Custom Triggers** on the local Python server for a dedicated editing mode: place volumes on a height-adjustable grid, draw their footprints, and move/resize with axis handles. Export a reversible retail-game test for the first Hose slot, checkpoint markers and a LiveSplit split list. If the local fdny-tas checkpoint generator is available, exports also bundle standalone custom ASLs; live gameplay validation remains pending. See [LEVEL_EDIT.md](LEVEL_EDIT.md) for editing, installation, restoration and limitations. The editor does not modify the installed game; the exported installer is a separate step.
+Open **☰ → Custom Triggers** on the local Python server for a dedicated editing mode: place volumes on a height-adjustable grid, draw their footprints, and move/resize with axis handles. Export a reversible retail-game test for the first Hose slot, checkpoint markers and a LiveSplit split list. Each ZIP bundles the custom level, reversible installer, split list and standalone custom ASLs, using the viewer's own generator and pinned upstream templates. No fdny-tas checkout is needed; live gameplay validation remains pending. See [LEVEL_EDIT.md](LEVEL_EDIT.md) for editing, installation, restoration and limitations. The editor does not modify the installed game; the exported installer is a separate step.
 
 ### Local gameplay recordings
 
