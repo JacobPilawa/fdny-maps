@@ -8,7 +8,7 @@ const THREE=await import(url);
 const source=fs.readFileSync(root+'level-editor.js','utf8').replace("from 'three'",`from '${url}'`);
 const {LevelEditor}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const copy=value=>JSON.parse(JSON.stringify(value));
-const volume=(name='volume1')=>({name,center:[0,60,0],size:[120,120,120],message:'Test',seconds:5,checkpoint:true,split_label:name});
+const volume=(name='volume1')=>({name,center:[0,60,0],size:[120,120,120],label:name});
 const event=(x=500,y=500,extra={})=>({button:0,buttons:0,pointerId:1,clientX:x,clientY:y,preventDefault(){},stopImmediatePropagation(){},...extra});
 function setup(triggers=[volume()]){
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(50,1,1,10000);camera.position.set(400,400,600);camera.lookAt(0,60,0);camera.updateMatrixWorld();
@@ -62,7 +62,7 @@ try{
   });
   await check('copy/paste/duplicate use independent geometry, unique IDs/labels and undoable deletion',async({editor:e})=>{
     const original=copy(e.project.triggers[0]);await e.command('copy');assert.equal(e.undoStack.length,0);await e.command('paste');assert.equal(e.project.triggers.length,2);
-    let pasted=e.project.triggers[1];assert.notEqual(pasted.name,original.name);assert.notEqual(pasted.split_label,original.split_label);assert.match(pasted.name,/^[A-Za-z][A-Za-z0-9_]{0,39}$/);assert.deepEqual(e.project.triggers[0],original);assert.notEqual(pasted.size,e.project.triggers[0].size);
+    let pasted=e.project.triggers[1];assert.notEqual(pasted.name,original.name);assert.notEqual(pasted.label,original.label);assert.match(pasted.name,/^[A-Za-z][A-Za-z0-9_]{0,39}$/);assert.deepEqual(e.project.triggers[0],original);assert.notEqual(pasted.size,e.project.triggers[0].size);
     e.history();assert.equal(e.project.triggers.length,1);e.history(true);assert.equal(e.project.triggers.length,2);
     const clipboard=copy(e.clipboard);await e.command('duplicate');assert.deepEqual(e.clipboard,clipboard);assert.equal(e.project.triggers.length,3);assert.equal(new Set(e.project.triggers.map(t=>t.name)).size,3);
     const before=copy(e.project);await e.command('delete');assert.equal(e.project.triggers.length,2);e.history();assert.deepEqual(e.project,before);e.history(true);assert.equal(e.project.triggers.length,2);
@@ -76,16 +76,13 @@ try{
     e.project.triggers[0].existing_entity=5;e.project.triggers[0].name='Authored hint';await e.command('duplicate');assert.equal(e.project.triggers[0].existing_entity,5);assert.equal(e.project.triggers[1].existing_entity,undefined);assert.match(e.project.triggers[1].name,/^[A-Za-z][A-Za-z0-9_]{0,39}$/);
     while(e.project.triggers.length<32)e.project.triggers.push(volume('other'+e.project.triggers.length));const before=copy(e.project);e.newVolume();await e.command('paste');assert.deepEqual(e.project,before);assert(!e.pending);
   });
-  await check('property edits and split ordering undo correctly; same-mission Load preserves the project',async({editor:e})=>{
-    e.project.triggers=[volume('First <door>'),{...volume('hint_only'),checkpoint:false},volume('Second')];e.info.stage_finishes=['boat_a','boat_b'];e.selected=0;
-    let summary=e.splitSummary();assert(summary.indexOf('First &lt;door&gt;')<summary.indexOf('Second'));assert(summary.indexOf('Second')<summary.indexOf('boat_a complete'));assert(summary.indexOf('boat_a complete')<summary.indexOf('boat_b complete'));assert(!summary.includes('hint_only'));
-    const before=copy(e.project);await e.command('later');assert.equal(e.selected,2);e.history();assert.deepEqual(e.project,before);
-    const renders=e.renderCount;await e.change({target:{dataset:{field:'split_label'},value:'Renamed'}});assert.equal(e.renderCount,renders);assert.equal(e.project.triggers[0].split_label,'Renamed');e.history();assert.deepEqual(e.project,before);
+  await check('checkpoint labels undo correctly; same-mission Load preserves the project',async({editor:e})=>{
+    const before=copy(e.project),renders=e.renderCount;await e.change({target:{dataset:{field:'label'},value:'Renamed'}});assert.equal(e.renderCount,renders);assert.equal(e.project.triggers[0].label,'Renamed');e.history();assert.deepEqual(e.project,before);
     e.panel.querySelector=selector=>selector==='[data-field=mission]'?{value:'training'}:null;await e.command('load');assert.deepEqual(e.project,before);
   });
   await check('a failed project import leaves the current draft and its undo history intact',async({editor:e})=>{
-    e.edit(()=>{e.project.triggers[0].split_label='Keep this draft';});const before=copy(e.project),history=copy(e.undoStack);
-    e.api=async()=>({json:async()=>({source_sha256:'actual',spawn:[0,30,0],triggers:[]})});e.host.loadStage=async()=>{throw Error('Should not load a mismatched map');};
+    e.edit(()=>{e.project.triggers[0].label='Keep this draft';});const before=copy(e.project),history=copy(e.undoStack);
+    e.missions=[{key:'training',info:{source_sha256:'actual',spawn:[0,30,0],triggers:[]}}];e.host.loadStage=async()=>{throw Error('Should not load a mismatched map');};
     await assert.rejects(e.load('training',{...before,source_sha256:'different'}),/differs/);assert.deepEqual(e.project,before);assert.deepEqual(e.undoStack,history);
   });
   await check('keyboard shortcuts respect text inputs, avoid viewer hotkeys, and undo/cancel safely',async({editor:e})=>{
@@ -93,7 +90,7 @@ try{
     assert.equal(key('Delete',{target:{tagName:'INPUT'}}),false);assert.equal(e.project.triggers.length,1);
     assert(key('c',{ctrlKey:true}));assert(key('v',{ctrlKey:true}));assert.equal(e.project.triggers.length,2);assert(key('z',{ctrlKey:true}));assert.equal(e.project.triggers.length,1);assert(key('z',{ctrlKey:true,shiftKey:true}));assert.equal(e.project.triggers.length,2);
     assert(key('n'));assert(e.pending);assert(key('Escape'));assert.equal(e.pending,null);assert.equal(e.project.triggers.length,2);assert.equal(e.tool,'select');
-    const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','New volume','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed volumes','Split order'])assert(e.panel.innerHTML.includes(text));
+    const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','New volume','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed volumes','Export checkpoints'])assert(e.panel.innerHTML.includes(text));
   });
   await check('flight keys pass through; entering the current mission preserves its camera',async({editor:e,state,camera})=>{
     let handled=false;

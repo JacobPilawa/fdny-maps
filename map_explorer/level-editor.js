@@ -13,13 +13,8 @@ export class LevelEditor {
     window.addEventListener('blur',()=>{this.endDrag(true);this.finishPlacement(true);});
     this.init();
   }
-  async api(path,options){const r=await fetch('/api/level-edit/'+path,options);if(!r.ok){let error;try{error=(await r.json()).error;}catch{}throw Error(error||'Local editor server unavailable. Restart the viewer using start.sh.');}return r;}
   async init(){
-    try{
-      if(['localhost','127.0.0.1','[::1]'].includes(location.hostname))try{this.missions=(await(await this.api('missions')).json()).missions;}catch{}
-      if(!this.missions){const r=await fetch('data/editor/missions.json');if(!r.ok)throw Error('Rescue missions unavailable.');this.missions=await r.json();this.browserExport=true;}
-      document.getElementById('levelEdit').hidden=false;
-    }catch(error){console.error(error);}
+    try{const r=await fetch('data/editor/missions.json');if(!r.ok)throw Error('Rescue missions unavailable.');this.missions=await r.json();document.getElementById('levelEdit').hidden=false;}catch(error){console.error(error);}
   }
   async open(){this.active=true;this.panel.hidden=false;this.host.view.parentElement.classList.add('editor-mode');document.getElementById('levelEdit').setAttribute('aria-pressed','true');if(!this.project){this.render();await this.load(this.missions?.some(m=>m.key===this.host.state().data?.key)?this.host.state().data.key:'training');}else{if(this.host.state().data?.key!==this.project.source)await this.host.loadStage(this.project.source);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.render();}this.host.redraw();}
   close(){this.cancelInteraction();this.active=false;this.panel.hidden=true;this.host.view.parentElement.classList.remove('editor-mode');document.getElementById('levelEdit').setAttribute('aria-pressed','false');this.host.redraw();}
@@ -42,7 +37,7 @@ export class LevelEditor {
   paste(){
     if(!this.clipboard||this.project.triggers.length>=32)return;
     const t=clone(this.clipboard.trigger);delete t.existing_entity;t.name=this.uniqueName(t.name+'_copy');
-    const base=(this.clipboard.trigger.split_label||this.clipboard.trigger.name).slice(0,65)+' copy',labels=new Set(this.project.triggers.map(x=>x.split_label||x.name));let label=base,n=2;while(labels.has(label))label=base+' '+n++;t.split_label=label;
+    const base=(this.clipboard.trigger.label||this.clipboard.trigger.name).slice(0,65)+' copy',labels=new Set(this.project.triggers.map(x=>x.label||x.name));let label=base,n=2;while(labels.has(label))label=base+' '+n++;t.label=label;
     const step=(this.snap||16)*2*(this.pasteOffset=(this.pasteOffset||0)+1);
     if(this.clipboard.source!==this.project.source){const target=this.host.state().controls?.target;t.center=[target?.x??this.info.spawn[0],this.gridY+t.size[1]/2,target?.z??this.info.spawn[2]];}
     else for(const a of [0,2])t.center[a]=Math.max(-100000,Math.min(100000,t.center[a]+step));
@@ -51,9 +46,9 @@ export class LevelEditor {
   newVolume(){
     if(!this.project||this.project.triggers.length>=32)return;this.cancelInteraction();
     const selected=this.project.triggers[this.selected];if(selected)this.gridY=selected.center[1]-selected.size[1]/2;
-    const target=this.host.state().controls?.target,name=this.uniqueName(),labels=new Set(this.project.triggers.map(x=>x.split_label||x.name));let n=1;while(labels.has('Checkpoint '+n))n++;
+    const target=this.host.state().controls?.target,name=this.uniqueName(),labels=new Set(this.project.triggers.map(x=>x.label||x.name));let n=1;while(labels.has('Checkpoint '+n))n++;
     // A preview is not a project volume. Navigation/cancellation cannot move or delete placed boxes.
-    this.pending={name,center:[target?.x??this.info.spawn[0],this.gridY+60,target?.z??this.info.spawn[2]],size:[120,120,120],message:'Checkpoint reached!',seconds:5,checkpoint:true,split_label:'Checkpoint '+n};
+    this.pending={name,center:[target?.x??this.info.spawn[0],this.gridY+60,target?.z??this.info.spawn[2]],size:[120,120,120],label:'Checkpoint '+n};
     this.placing=true;this.pendingVisible=false;this.tab='volumes';this.render();
   }
   keyDown(e){
@@ -65,10 +60,6 @@ export class LevelEditor {
     if(!action)return;e.preventDefault();e.stopImmediatePropagation();if(e.repeat&&['add','paste','duplicate','delete'].includes(action))return;
     this.command(action).catch(err=>this.status(err.message,true));
   }
-  splitSummary(){
-    const p=this.project;if(!p)return '';const checkpoints=p.triggers.map((trigger,index)=>({trigger,index})).filter(x=>x.trigger.checkpoint),stages=this.info?.stage_finishes||[p.source];
-    return `<div class="le-section le-summary"><h3>Split order <span>${checkpoints.length+stages.length}</span></h3><ol aria-label="Split order">${checkpoints.map(({trigger:t,index},order)=>`<li><button data-action="select" data-index="${index}" aria-pressed="${index===this.selected}">${escape(t.split_label||t.name)}</button><span class="le-order"><button data-action="earlier" data-index="${index}" aria-label="Move ${escape(t.split_label||t.name)} earlier" ${order===0?'disabled':''}>↑</button><button data-action="later" data-index="${index}" aria-label="Move ${escape(t.split_label||t.name)} later" ${order===checkpoints.length-1?'disabled':''}>↓</button></span></li>`).join('')}${stages.map(stage=>`<li><span>${escape(stage)} complete</span><small>Default</small></li>`).join('')}</ol></div>`;
-  }
   render(){
     const p=this.project,t=p?.triggers[this.selected],editable=t&&t.existing_entity==null,busy=this.placing;
     const hint=busy?'Preview only · click to place, or drag a footprint. Esc cancels.':this.pickGrid?'Click a floor to set placement height.':this.tool==='move'?'Drag a box along the floor, or drag X / Y / Z arrows.':this.tool==='resize'?'Drag a face handle to resize. The opposite face stays fixed.':'Click a box to select it. Drag empty space to orbit.';
@@ -76,17 +67,16 @@ export class LevelEditor {
     ${p?`<div class="le-toolbar"><div class="le-modes"><button data-action="selectTool" aria-pressed="${!busy&&this.tool==='select'}">Select <kbd>V</kbd></button><button data-action="add" aria-pressed="${busy}" ${p.triggers.length>=32?'disabled':''}>＋ New volume <kbd>N</kbd></button><button data-action="move" aria-pressed="${!busy&&this.tool==='move'}" ${editable?'':'disabled'}>Move <kbd>G</kbd></button><button data-action="resize" aria-pressed="${!busy&&this.tool==='resize'}" ${editable?'':'disabled'}>Resize <kbd>S</kbd></button></div>
     <div class="le-actions"><button data-action="copy" title="Copy · Ctrl/⌘ C" ${t&&!busy?'':'disabled'}>Copy</button><button data-action="paste" title="Paste · Ctrl/⌘ V" ${this.clipboard&&p.triggers.length<32?'':'disabled'}>Paste</button><button data-action="duplicate" title="Duplicate · Ctrl/⌘ D" ${t&&!busy&&p.triggers.length<32?'':'disabled'}>Duplicate</button><button data-action="delete" title="Delete · undo restores the volume" ${t&&!busy?'':'disabled'}>Delete</button></div>
     <div class="le-row"><button data-action="undo" title="Undo · Ctrl/⌘ Z" ${this.pending||this.undoStack?.length?'':'disabled'}>↶ Undo</button><button data-action="redo" title="Redo · Ctrl/⌘ Shift Z" ${this.redoStack?.length?'':'disabled'}>↷ Redo</button><button data-action="focus" title="Find selected volume · ." ${t?'':'disabled'}>Find <kbd>.</kbd></button></div><p class="le-help">${hint}</p></div>
-    <div class="le-tabs" role="group" aria-label="Editor panels"><button data-action="volumesTab" aria-pressed="${this.tab!=='splits'}">Volumes (${p.triggers.length})</button><button data-action="splitsTab" aria-pressed="${this.tab==='splits'}">Split order</button></div>
-    ${this.tab==='splits'?this.splitSummary():`<div class="le-section le-trigger-list" role="group" aria-label="Placed volumes">${p.triggers.length?p.triggers.map((x,i)=>`<button data-action="select" data-index="${i}" aria-pressed="${i===this.selected}"><span class="le-volume-kind">${x.checkpoint?'●':'○'}</span><span class="le-volume-label">${escape(x.split_label||x.name)}</span>${x.existing_entity!=null?'<small>fixed</small>':''}</button>`).join(''):'<p class="le-help">No placed volumes. Choose New volume, then click the grid.</p>'}</div>
-    ${t&&!busy?`<div class="le-section"><h3>Selected volume</h3><label>Label <input data-field="split_label" maxlength="80" value="${escape(t.split_label||t.name)}"></label><label><input type="checkbox" data-field="checkpoint" ${t.checkpoint?'checked':''}> Include in splits</label>${!editable?'<p class="le-help">Authored volume: duplicate it to get an editable copy.</p>':''}<button data-action="details" aria-expanded="${!!this.details}">${this.details?'Hide':'Show'} exact values & hint</button>
-    ${this.details?`<div class="le-coordinates">${['center','size'].map(kind=>`<span>${kind==='center'?'Position':'Size'}</span>${['X','Y','Z'].map((axis,a)=>`<label>${axis}<input type="number" step="1" ${kind==='size'?'min="8" max="10000"':''} data-vector="${kind}" data-axis="${a}" value="${t[kind][a]}" ${editable?'':'readonly'}></label>`).join('')}`).join('')}</div><label>Trigger ID <input data-field="name" value="${escape(t.name)}" maxlength="40" ${editable?'':'readonly'}></label><label>Hint <textarea data-field="message" rows="2" maxlength="240">${escape(t.message)}</textarea></label><label>Seconds <input data-field="seconds" type="number" min="1" max="30" value="${t.seconds}"></label>`:''}</div>`:''}
-    <div class="le-section le-grid"><h3>Placement & view</h3><div class="le-row"><label>Height <input data-field="gridY" aria-label="Placement height" type="number" step="${this.snap}" value="${this.gridY}"></label><button data-action="pickGrid">${this.pickGrid?'Cancel':'Pick floor'}</button></div><div class="le-row"><label>Snap <select data-field="snap">${[1,8,16,32].map(n=>`<option ${this.snap===n?'selected':''}>${n}</option>`).join('')}</select></label><button data-action="top">Top</button><button data-action="perspective">Perspective</button></div></div>`}
-    <div class="le-section"><h3>${escape(this.missions?.find(m=>m.key===p.source)?.title||p.source)}</h3><button data-action="mission">${this.showMission?'Cancel mission change':'Change mission…'}</button>${this.showMission?this.missionControls():''}<button data-action="existing">Edit an authored volume…</button>${this.showExisting?`<div class="le-row"><select data-field="existing" aria-label="Existing trigger"><option value="">Choose a volume…</option>${this.info.triggers.map(x=>`<option value="${x.entity}">${escape(x.name)}</option>`).join('')}</select><button data-action="useExisting">Use</button></div>`:''}</div>
-    <div class="le-section le-export"><div class="le-row"><button data-action="save" title="Editable JSON, saved separately from the game package">Save project</button><button data-action="import">Open project</button><button data-action="export" ${p.triggers.length&&!busy?'':'disabled'}>Export package</button></div></div>`:this.missionControls()}
+    <div class="le-section le-trigger-list" role="group" aria-label="Placed volumes"><h3>Checkpoints (${p.triggers.length})</h3>${p.triggers.length?p.triggers.map((x,i)=>`<button data-action="select" data-index="${i}" aria-pressed="${i===this.selected}"><span class="le-volume-label">${escape(x.label||x.name)}</span></button>`).join(''):'<p class="le-help">No checkpoints yet. Choose New volume, then click the grid.</p>'}</div>
+    ${t&&!busy?`<div class="le-section"><h3>Selected checkpoint</h3><label>Label <input data-field="label" maxlength="80" value="${escape(t.label||t.name)}"></label><p class="le-help">Displays elapsed level time, for example 00:15:243. Each checkpoint fires once per attempt.</p><button data-action="details" aria-expanded="${!!this.details}">${this.details?'Hide':'Show'} exact values</button>
+    ${this.details?`<div class="le-coordinates">${['center','size'].map(kind=>`<span>${kind==='center'?'Position':'Size'}</span>${['X','Y','Z'].map((axis,a)=>`<label>${axis}<input type="number" step="1" ${kind==='size'?'min="8" max="10000"':''} data-vector="${kind}" data-axis="${a}" value="${t[kind][a]}"></label>`).join('')}`).join('')}</div>`:''}</div>`:''}
+    <div class="le-section le-grid"><h3>Placement & view</h3><div class="le-row"><label>Height <input data-field="gridY" aria-label="Placement height" type="number" step="${this.snap}" value="${this.gridY}"></label><button data-action="pickGrid">${this.pickGrid?'Cancel':'Pick floor'}</button></div><div class="le-row"><label>Snap <select data-field="snap">${[1,8,16,32].map(n=>`<option ${this.snap===n?'selected':''}>${n}</option>`).join('')}</select></label><button data-action="top">Top</button><button data-action="perspective">Perspective</button></div></div>
+    <div class="le-section"><h3>${escape(this.missions?.find(m=>m.key===p.source)?.title||p.source)}</h3><button data-action="mission">${this.showMission?'Cancel mission change':'Change mission…'}</button>${this.showMission?this.missionControls():''}<button data-action="existing">Use existing bounds…</button>${this.showExisting?`<div class="le-row"><select data-field="existing" aria-label="Existing trigger"><option value="">Choose a volume…</option>${this.info.triggers.map(x=>`<option value="${x.entity}">${escape(x.name)}</option>`).join('')}</select><button data-action="useExisting">Use</button></div>`:''}</div>
+    <div class="le-section le-export"><button data-action="export" ${p.triggers.length&&!busy?'':'disabled'}>Export checkpoints</button><p class="le-help">Requires the practice-checkpoint FDNYCore build. Put ${escape(p.source)}.txt in the game's Checkpoints folder, beside FDNYFirefighter.exe. Restart the mission. V toggles timestamps (saved).</p><div class="le-row"><button data-action="save">Save project</button><button data-action="import">Open project</button></div></div>`:this.missionControls()}
     <p data-status role="status"></p>`;this.dirty=true;this.host.redraw();
   }
   missionControls(){return `<div class="le-row"><select data-field="mission" aria-label="Rescue mission"><option value="">Choose a mission…</option>${(this.missions||[]).map(m=>`<option value="${escape(m.key)}" ${this.project?.source===m.key?'selected':''}>${escape(m.title)}</option>`).join('')}</select><button data-action="load">Load</button></div>`;}
-  async load(key,project=null){if(!key)throw Error('Choose a rescue mission.');const info=this.browserExport?this.missions.find(m=>m.key===key)?.info:await(await this.api('mission?key='+encodeURIComponent(key))).json();if(!info)throw Error('Choose a rescue mission.');if(project&&project.source_sha256!==info.source_sha256)throw Error('Project source map differs from your installed game.');const sameView=this.host.state().data?.key===key&&this.host.state().mode==='3d';if(this.host.state().data?.key!==key)await this.host.loadStage(key);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.host.cutRoof?.();this.info=info;this.project=project||{schema:'fdny-level-edit-v1',source:key,source_sha256:info.source_sha256,triggers:[]};Object.assign(this,{selected:this.project.triggers.length?0:-1,placing:false,pending:null,pickGrid:false,showExisting:false,showMission:false,undoStack:[],redoStack:[],tool:'select',tab:'volumes',gridY:info.spawn[1]-30});this.render();if(!sameView)this.viewPreset(false);}
+  async load(key,project=null){if(!key)throw Error('Choose a rescue mission.');const info=this.missions?.find(m=>m.key===key)?.info;if(!info)throw Error('Choose a rescue mission.');if(project&&project.source_sha256!==info.source_sha256)throw Error('Project source map differs from this mission.');const sameView=this.host.state().data?.key===key&&this.host.state().mode==='3d';if(this.host.state().data?.key!==key)await this.host.loadStage(key);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.host.cutRoof?.();this.info=info;this.project=project||{schema:'fdny-level-edit-v1',source:key,source_sha256:info.source_sha256,triggers:[]};Object.assign(this,{selected:this.project.triggers.length?0:-1,placing:false,pending:null,pickGrid:false,showExisting:false,showMission:false,undoStack:[],redoStack:[],tool:'select',tab:'volumes',gridY:info.spawn[1]-30});this.render();if(!sameView)this.viewPreset(false);}
   async click(e){const button=e.target.closest('[data-action]');if(button)return this.command(button.dataset.action,button.dataset.index,button);}
   async command(action,index,button){
     const t=this.project?.triggers[this.selected];
@@ -94,7 +84,6 @@ export class LevelEditor {
     if(action==='cancel'){this.cancelInteraction();this.tool='select';this.render();return;}
     if(action==='select'){this.select(Number(index));return;}
     if(action==='selectTool'||action==='move'||action==='resize'){if(action!=='selectTool'&&(!t||t.existing_entity!=null))return;this.cancelInteraction();this.tool=action==='selectTool'?'select':action;this.render();return;}
-    if(action==='volumesTab'||action==='splitsTab'){this.cancelInteraction();this.tab=action==='splitsTab'?'splits':'volumes';this.render();return;}
     if(action==='add'){this.newVolume();return;}
     if(action==='copy'){if(!this.pending)this.copy();this.render();return;}
     if(action==='paste'){this.paste();return;}
@@ -109,20 +98,16 @@ export class LevelEditor {
     if(action==='useExisting'){
       const value=this.panel.querySelector('[data-field=existing]').value;if(value==='')throw Error('Choose an existing trigger.');const original=this.info.triggers.find(x=>x.entity===Number(value));
       if(this.project.triggers.some(x=>x.existing_entity===original.entity))throw Error('That trigger is already in this draft.');
-      const hint=original.scripts.map(s=>s.match(/^\s*touch:\s*hint\s+([\d.]+)\s+\((.*)\)\s*$/i)).find(Boolean);
-      this.edit(()=>{this.project.triggers.push({name:original.name,existing_entity:original.entity,center:[...original.center],size:[...original.size],message:hint?.[2]||'Custom trigger works!',seconds:hint?Number(hint[1]):5});this.selected=this.project.triggers.length-1;this.showExisting=false;});this.focus();return;
-    }
-    if(action==='earlier'||action==='later'){
-      const selected=index==null?this.selected:Number(index),list=this.project.triggers,step=action==='earlier'?-1:1;if(!list[selected]?.checkpoint)return;let j=selected+step;while(j>=0&&j<list.length&&!list[j].checkpoint)j+=step;
-      if(j>=0&&j<list.length)this.edit(()=>{[list[selected],list[j]]=[list[j],list[selected]];this.selected=j;});return;
+      this.edit(()=>{this.project.triggers.push({name:this.uniqueName(),label:original.name,center:[...original.center],size:[...original.size]});this.selected=this.project.triggers.length-1;this.showExisting=false;});this.focus();return;
     }
     if(action==='save'){this.download(new Blob([JSON.stringify(this.project,null,2)],{type:'application/json'}),'fdny-level-project.json');return;}
     if(action==='import'){
-      const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=async()=>{try{if(!input.files[0])return;if(input.files[0].size>100000)throw Error('Project file is too large.');const p=JSON.parse(await input.files[0].text());if(p.schema!=='fdny-level-edit-v1'||!Array.isArray(p.triggers)||p.triggers.length>32||p.triggers.some(t=>!t||typeof t.name!=='string'||typeof t.message!=='string'||!Number.isFinite(t.seconds)||t.seconds<1||t.seconds>30||['center','size'].some(k=>!Array.isArray(t[k])||t[k].length!==3||t[k].some(v=>!Number.isFinite(v)||Math.abs(v)>100000))||t.size.some(v=>v<8||v>10000)||(t.checkpoint!=null&&typeof t.checkpoint!=='boolean')||(t.split_label!=null&&(typeof t.split_label!=='string'||!t.split_label.trim()||t.split_label.length>80||/[\u0000-\u001f]/.test(t.split_label)))))throw Error('Not a valid Custom Triggers project.');if(this.project?.triggers.length&&!confirm('Replace the current draft?'))return;this.cancelInteraction();await this.load(p.source,p);}catch(err){this.status(err.message,true);}};input.click();return;
+      const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=async()=>{try{if(!input.files[0])return;if(input.files[0].size>100000)throw Error('Project file is too large.');const p=JSON.parse(await input.files[0].text());if(p.schema!=='fdny-level-edit-v1'||!Array.isArray(p.triggers)||p.triggers.length>32)throw Error('Not a valid Custom Triggers project.');p.triggers=p.triggers.map((t,i)=>({name:typeof t.name==='string'?t.name:'volume'+(i+1),label:t.label??t.split_label??t.name,center:t.center,size:t.size}));if(p.triggers.length){const {checkpointFile}=await import('./checkpoints.js');checkpointFile(p);}if(this.project?.triggers.length&&!confirm('Replace the current draft?'))return;this.cancelInteraction();await this.load(p.source,p);}catch(err){this.status(err.message,true);}};input.click();return;
     }
     if(action==='export'){
-      this.status('Building game + LiveSplit package…');if(button)button.disabled=true;
-      try{let blob;if(this.browserExport){const {exportPackage}=await import('./editor-export.js');blob=await exportPackage(clone(this.project),message=>this.status(message));}else{const r=await this.api('export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(this.project)});blob=await r.blob();}this.download(blob,'fdny-level-edit-'+this.project.source+'.zip');this.status('Package downloaded. Follow README.txt for the manual game edit and LiveSplit setup.');}finally{if(button)button.disabled=false;}
+      const {checkpointFile}=await import('./checkpoints.js');
+      this.download(new Blob([checkpointFile(this.project)],{type:'text/plain'}),this.project.source+'.txt');
+      this.status('Downloaded. Put the file in the game’s Checkpoints folder, restart the mission, and press V to enable timestamps.');
     }
   }
   propertyEdit(change){
@@ -131,15 +116,14 @@ export class LevelEditor {
     // or steal focus from the next field. Refresh only the affected row/buttons.
     for(const action of ['undo','redo']){const button=this.panel.querySelector(`[data-action="${action}"]`);if(button)button.disabled=!(action==='undo'?this.undoStack?.length:this.redoStack?.length);}
     const t=this.project.triggers[this.selected],row=this.panel.querySelector(`[data-action=select][data-index="${this.selected}"]`);
-    const label=row?.querySelector('.le-volume-label'),kind=row?.querySelector('.le-volume-kind');if(label)label.textContent=t.split_label||t.name;if(kind)kind.textContent=t.checkpoint?'●':'○';
+    const label=row?.querySelector('.le-volume-label');if(label)label.textContent=t.label||t.name;
   }
   async change(e){const t=this.project?.triggers[this.selected],el=e.target;
     if(el.dataset.field==='snap'){this.snap=Number(el.value);this.render();return;}
     if(el.dataset.field==='gridY'){const y=Number(el.value);if(Number.isFinite(y)&&Math.abs(y)<=100000)this.gridY=y;this.render();return;}
     if(!t)return;
     if(el.dataset.vector){const value=Number(el.value);if(!Number.isFinite(value)||Math.abs(value)>100000||(el.dataset.vector==='size'&&(value<8||value>10000))){el.value=t[el.dataset.vector][Number(el.dataset.axis)];this.status('Use finite coordinates within 100000 and sizes between 8 and 10000.',true);return;}this.propertyEdit(()=>{t[el.dataset.vector][Number(el.dataset.axis)]=value;});}
-    else if(el.dataset.field==='checkpoint')this.propertyEdit(()=>{t.checkpoint=el.checked;});
-    else if(['name','message','seconds','split_label'].includes(el.dataset.field))this.propertyEdit(()=>{t[el.dataset.field]=el.dataset.field==='seconds'?Number(el.value):el.value;});
+    else if(el.dataset.field==='label')this.propertyEdit(()=>{t.label=el.value;});
   }
   revealSelection(){const t=this.project?.triggers[this.selected],s=this.host.state();if(!t||!s.camera||s.mode!=='3d')return;s.camera.updateMatrixWorld();const p=new THREE.Vector3(...t.center).project(s.camera);if(Math.abs(p.x)>.9||Math.abs(p.y)>.9||p.z< -1||p.z>1)this.focus();}
   focus(){const t=this.project?.triggers[this.selected];if(t)this.host.focusBounds({min:t.center.map((v,a)=>v-t.size[a]/2),max:t.center.map((v,a)=>v+t.size[a]/2)});}

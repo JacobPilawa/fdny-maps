@@ -1,12 +1,12 @@
 # FDNY map explorer
 
-All 17 April 30 maps, original labels, complete entity tables, source BSPs, 34 original PDFs, scripts, and relevant AI/RNG research are copied into this folder. The app loads map data on demand and uses local JavaScript dependencies; viewing needs no internet connection. Public package export loads its browser runtime on demand.
+All 17 April 30 maps, original labels, complete entity tables, source BSPs, 34 original PDFs, scripts, and relevant AI/RNG research are copied into this folder. The app loads map data on demand; viewing and checkpoint export use local JavaScript dependencies.
 
 Run `./start.sh`, then open http://127.0.0.1:4180 . Requires Python 3. Set `FDNY_MAP_PORT` to use another port.
 
 ### Custom Triggers
 
-Open **☰ → Custom Triggers** on the public site or locally for a 3D editing layer: place volumes on a height-adjustable grid, draw their footprints, and move/resize with axis handles. Export a reversible retail-game test for the first Hose slot, checkpoint markers and a LiveSplit split list. Each minimal ZIP contains only new game files, one ASL, one split list and a short README explaining the manual mission-catalog edit. Generation uses the viewer's own code and pinned upstream template. No fdny-tas checkout is needed; live gameplay validation remains pending. See [LEVEL_EDIT.md](LEVEL_EDIT.md) for editing, installation, restoration and limitations. Fly and roof/slice controls are shared with the viewer. Public export needs no local game files or Python installation. The editor does not modify the installed game; recipients copy the new files and edit one catalog entry themselves.
+Open **☰ → Custom Triggers** on the public site or locally. Place checkpoints on the 3D grid and move/resize them with axis handles; Fly and roof/slice controls remain available. **Export checkpoints** downloads one small `<mission>.txt` file. Put it in `Checkpoints/` beside `FDNYFirefighter.exe`, start that mission and press **V** to enable timestamp hints. Requires the new FDNYCore practice-checkpoint build. FDNYCore saves the toggle setting and displays elapsed level time as `mm:ss:ddd` once per checkpoint per attempt. No custom BSP, catalog edit, clipboard import, installer, Python runtime or LiveSplit setup is needed. See [LEVEL_EDIT.md](LEVEL_EDIT.md).
 
 ### Local gameplay recordings
 
@@ -44,13 +44,13 @@ Public site: https://fdny-maps.piececounter.workers.dev/
 
 `wrangler.json` deploys only Workers Static Assets, with no custom Worker code, database, KV, R2, Durable Objects, scheduled jobs, or paid cache product. Static asset requests and storage are free under Cloudflare's current pricing. The build rejects packages above the Free limit of 20,000 files or 25 MiB per file.
 
-Run `python3 deploy/build_static.py` from this folder, then `npx wrangler deploy --config wrangler.json` using your Cloudflare login. The build uses an explicit public file list and content-versioned URLs with one-year browser caching. The root page revalidates so future deployments load the current version. Only the eight compressed mission sources needed for editing are added under `data/editor/`; conversation archives, local research notes, credentials and other local tools stay outside the public package. GitHub is not required for direct CLI deployment.
+Run `python3 deploy/build_static.py` from this folder, then `npx wrangler deploy --config wrangler.json` using your Cloudflare login. The build uses an explicit public file list and content-versioned URLs with one-year browser caching. The root page revalidates so future deployments load the current version. Checkpoint editing includes only small mission/bounds metadata under `data/editor/`; source BSP packages, local research notes, credentials and local tools stay outside the public package. GitHub is not required for direct CLI deployment.
 
 ### GitHub synchronization
 
 This local viewer checkout has a standalone history and intentionally disables direct pushes. The public repository at `https://github.com/JacobPilawa/fdny-maps` keeps the viewer under `map_explorer/`. Publish reviewed viewer files through a fresh clone of its current `main`, keeping the other repository folders intact. Never merge this checkout's older history into the public repository. Exclude local credentials, recordings, logs, caches and `dist/`. Commit and push the reviewed files in the clean clone, and commit the same source snapshot locally.
 
-After rebuilding and deploying, `deploy/build-report.json` records the asset fingerprint and `deploy/deployment.json` records the Cloudflare deployment version and verification status. Recording upload and Custom Triggers work on the public site. The latter uses the shared exporter in a browser worker and loads Pyodide 0.27.7 from jsDelivr on its first export.
+After rebuilding and deploying, `deploy/build-report.json` records the asset fingerprint and `deploy/deployment.json` records the Cloudflare deployment version and verification status. Recording upload and Custom Triggers work on the public site. Checkpoint export runs directly in JavaScript with no server or downloaded runtime.
 
 
 Pricing reference: https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/

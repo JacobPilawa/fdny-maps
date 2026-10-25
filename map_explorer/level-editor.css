@@ -28,18 +28,9 @@
 #levelEditor .le-modes button{justify-content:flex-start}
 #levelEditor .le-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:8px 0}
 #levelEditor .le-actions button{padding:5px 3px}
-#levelEditor .le-tabs{display:flex;gap:5px;padding:8px 14px;border-bottom:1px solid #dce3d8}
-#levelEditor .le-tabs button{flex:1}
 #levelEditor .le-trigger-list{display:flex;flex-direction:column;gap:4px;max-height:225px;overflow:auto}
 #levelEditor .le-trigger-list button{justify-content:flex-start;gap:8px;text-align:left;overflow-wrap:anywhere}
 #levelEditor .le-trigger-list small{margin-left:auto;color:inherit}
-#levelEditor .le-summary ol{margin:0;padding-left:25px;font-variant-numeric:tabular-nums}
-#levelEditor .le-summary li{padding:3px 0 3px 2px}
-#levelEditor .le-summary li::marker{color:#83907e}
-#levelEditor .le-summary li>button{max-width:calc(100% - 58px);padding:3px 5px;text-align:left;justify-content:flex-start;overflow-wrap:anywhere}
-#levelEditor .le-summary li>small,#levelEditor .le-order{float:right;padding-top:2px}
-#levelEditor .le-order button{padding:2px 5px;min-height:23px}
-#levelEditor .le-summary li>span:not(.le-order){display:inline-block;padding:3px 5px}
 #levelEditor .le-coordinates{display:grid;grid-template-columns:42px 1fr 1fr 1fr;gap:5px;align-items:center;margin:8px 0}
 #levelEditor .le-coordinates label{display:block;color:#6b796b;font-size:10px;margin:0}
 #levelEditor .le-coordinates input{display:block;width:100%}
