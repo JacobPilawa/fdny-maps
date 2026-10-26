@@ -1,8 +1,8 @@
 {
-  "release": "9ac9249db1f1b15e",
+  "release": "f201ef50c98e852d",
   "asset_files": 626,
   "maps": 17,
-  "total_bytes": 123109287,
+  "total_bytes": 123109270,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,

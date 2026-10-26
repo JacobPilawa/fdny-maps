@@ -7,7 +7,8 @@ assert.equal(checkpointFile({...project,triggers:[{...project.triggers[0],label:
 for(const label of ['', 'x'.repeat(81),'bad(hint)','bad|field','line\nbreak','é'])assert.throws(()=>checkpointFile({...project,triggers:[{...project.triggers[0],label}]}));
 for(const source of ['../bad','fdny_edit',''])assert.throws(()=>checkpointFile({...project,source}));
 for(const size of [[0,120,120],[11000,120,120],[NaN,120,120]])assert.throws(()=>checkpointFile({...project,triggers:[{...project.triggers[0],size}]}));
-assert.throws(()=>checkpointFile({...project,triggers:[]}));assert.throws(()=>checkpointFile({...project,triggers:Array(33).fill(project.triggers[0])}));
+assert.equal(checkpointFile({...project,triggers:[]}),'FDNY_CHECKPOINTS_V1|training|0\n');
+assert.deepEqual(readCheckpointFile(checkpointFile({...project,triggers:[]})),{source:'training',triggers:[]});assert.throws(()=>checkpointFile({...project,triggers:Array(33).fill(project.triggers[0])}));
 assert(checkpointFile({...project,triggers:Array(32).fill({...project.triggers[0],label:'x'.repeat(80)})}).length<8192);
 // Exercise actual export metadata for all supported first-stage missions.
 const missions=JSON.parse(fs.readFileSync(new URL('../data/editor/missions.json',import.meta.url)));

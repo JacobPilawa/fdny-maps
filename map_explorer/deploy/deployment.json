@@ -1,8 +1,8 @@
 {
-  "release": "9ac9249db1f1b15e",
+  "release": "f201ef50c98e852d",
   "asset_files": 626,
   "maps": 17,
-  "total_bytes": 123109287,
+  "total_bytes": 123109270,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
@@ -635,12 +635,12 @@
     "victim-models.js"
   ],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "5d138153-0feb-451f-9d5b-787dcc067bcc",
-  "verified_live": true,
-  "verification_note": "Live HTML and edited sidebar assets match local files over HTTP. No computer use.",
   "checks": [
     "16 existing editor regression groups pass.",
     "Placement grid & camera defaults to collapsed; disclosure state survives rendering.",
-    "Keyboard shortcut help includes copy/paste, duplicate, Backspace/Delete, undo/redo and Find."
-  ]
+    "Keyboard shortcut help includes copy/paste, duplicate, Backspace/Delete, undo/redo and Find.",
+    "Empty checkpoint set round-trip; live checkpoints.js byte match"
+  ],
+  "cloudflare_version_id": "008c8734-f015-490a-9c12-77f9f0c2b52c",
+  "verified_live": true
 }
