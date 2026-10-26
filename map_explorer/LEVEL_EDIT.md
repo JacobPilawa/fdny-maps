@@ -2,11 +2,11 @@
 
 Requires an FDNYCore build with practice-checkpoint file support.
 
-1. Open **☰ → Custom Triggers**. Choose a rescue mission.
-2. **New volume (N)**: click the placement grid, or drag a footprint. **Pick floor**
+1. Open **☰ → Custom Triggers**. Use the Mission dropdown to choose a rescue mission.
+2. **New (N)**: click the placement grid, or drag a footprint. **Pick floor**
    sets its height. Use **Move (G)** and **Resize (S)** with the axis handles.
-3. Give it a label. Every placed volume is a timed practice checkpoint.
-4. **Export checkpoints** downloads `<mission>.txt`. Put it in the game's
+3. Set its **Display text**. Every placed volume is a timed practice checkpoint.
+4. **Export** downloads `<mission>.txt`. Put it in the game's
    `Checkpoints` folder beside `FDNYFirefighter.exe` (create the folder if needed).
 5. Start/restart that mission. Press **N** to enable timestamps once; FDNYCore
    saves the preference. Each native checkpoint shows `Label mm:ss:ddd` at the top center for four
@@ -21,9 +21,11 @@ is installed. No console import, custom BSP, installer or LiveSplit is involved.
 Shift faster and scroll to change speed. F returns to orbit; **Find (.)** frames
 the selected volume. Click empty space to deselect, or a placed box to select it.
 Copy/paste/duplicate and undo/redo work with their normal Ctrl/⌘ shortcuts.
-**Save project / Open project** keep editable JSON separate from the game file;
-older projects retain their volumes and labels. Exit/reopen preserves the draft
-in memory; save before reloading the page.
+**Import trigger file** reopens an exported `.txt` with its boxes and display text;
+legacy JSON projects are also accepted. The Mission dropdown switches directly
+and keeps each mission's draft in memory. Exit/reopen preserves the current draft;
+export each mission before reloading the page. **Export** at the bottom downloads
+the file used by both the editor and FDNYCore. Ctrl/⌘ S also exports.
 
 FDNYCore uses native `RCS_BoundsTrigger` contacts and the game's existing clock.
 The clock starts at the first playing frame, pauses with the game's clock, and

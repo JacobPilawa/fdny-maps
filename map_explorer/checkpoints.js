@@ -11,3 +11,17 @@ export function checkpointFile(project){
   });
   return `FDNY_CHECKPOINTS_V1|${project.source}|${rows.length}\n${rows.join('\n')}\n`;
 }
+
+// Reopen the same file installed in FDNY; reconstruct editable centers/sizes.
+export function readCheckpointFile(text){
+  if(typeof text!=='string'||text.length>=8192)throw Error('Invalid checkpoint file.');
+  const lines=text.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\n$/,'').split('\n'),header=lines.shift().split('|');
+  if(header.length!==3||header[0]!=='FDNY_CHECKPOINTS_V1'||!/^\d+$/.test(header[2])||Number(header[2])!==lines.length)throw Error('Invalid checkpoint file header or count.');
+  const project={source:header[1],triggers:lines.map((line,i)=>{
+    const fields=line.split('|');
+    if(fields.length!==7||fields.slice(0,6).some(v=>!/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(v)))throw Error('Invalid checkpoint bounds.');
+    const bounds=fields.slice(0,6).map(Number);
+    return {name:'volume'+(i+1),label:fields[6],center:[0,1,2].map(a=>Number(((bounds[a]+bounds[a+3])/2).toFixed(6))),size:[0,1,2].map(a=>Number((bounds[a+3]-bounds[a]).toFixed(6)))};
+  })};
+  checkpointFile(project);return project;
+}

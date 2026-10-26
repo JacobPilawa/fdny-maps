@@ -1,41 +1,51 @@
 #app.editor-mode{grid-template-columns:300px minmax(0,1fr);grid-template-rows:52px minmax(0,1fr)}
 #app.editor-mode #sidebar,#app.editor-mode #inspector,#app.editor-mode #overlay,#app.editor-mode #sidebarToggle,#app.editor-mode #mapSelect,#app.editor-mode header .seg,#app.editor-mode #labels,#app.editor-mode #uploadRecording,#app.editor-mode #toolsMenu{display:none!important}
 #app.editor-mode #view{grid-column:2;grid-row:2}
-#levelEditor{grid-column:1;grid-row:2;min-width:0;overflow:auto;background:#f6f8f4;border-right:1px solid #d5ded0;color:#304739;font:12px/1.45 system-ui;box-sizing:border-box}
+#levelEditor{grid-column:1;grid-row:2;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#f6f8f4;border-right:1px solid #d5ded0;color:#304739;font:12px/1.45 system-ui;box-sizing:border-box}
 #levelEditor[hidden]{display:none}
-#levelEditor .le-head{height:49px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid #d5ded0;background:#f6f8f4;position:sticky;top:0;z-index:3}
-#levelEditor button{font-size:11px;min-height:28px;padding:5px 7px;cursor:pointer;border:1px solid #d5ded0;background:#fff;color:#304739}
+#levelEditor .le-head{display:flex;flex-shrink:0;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid #d5ded0}
+#levelEditor .le-head strong{font-size:14px}
+#levelEditor .le-body{min-height:0;flex:1;overflow:auto}
+#levelEditor button{font-size:11px;min-height:28px;padding:5px 7px;cursor:pointer;border:1px solid #d5ded0;border-radius:5px;background:#fff;color:#304739}
 #levelEditor button:hover{background:#e9f0e5}
+#levelEditor button:disabled{opacity:.45;cursor:default}
 #levelEditor button[aria-pressed=true]{background:#287454;color:#fff;border-color:#287454}
-#levelEditor kbd{font:10px system-ui;opacity:.65;margin-left:auto;padding-left:8px}
+#levelEditor button:focus-visible,#levelEditor select:focus-visible,#levelEditor input:focus-visible{outline:2px solid #287454;outline-offset:2px}
+#levelEditor .le-head [data-action=close]{min-height:34px;padding:7px 10px;background:#ad3737;border-color:#ad3737;color:#fff;font-weight:600}
+#levelEditor .le-head [data-action=close]:hover{background:#8d2929}
+#levelEditor kbd{font:10px system-ui;opacity:.65;margin-left:auto;padding-left:6px}
 #levelEditor label{display:flex;gap:6px;align-items:center;margin:6px 0}
-#levelEditor select,#levelEditor input,#levelEditor textarea{min-width:0;box-sizing:border-box;border:1px solid #cbd4c8;border-radius:4px;padding:4px;color:inherit;background:#fff;font:inherit}
-#levelEditor select,#levelEditor textarea,#levelEditor label>input{flex:1;width:100%}
-#levelEditor input[type=checkbox]{flex:none;width:auto;accent-color:#287454}
-#levelEditor textarea{resize:vertical}
+#levelEditor select,#levelEditor input{min-width:0;box-sizing:border-box;border:1px solid #cbd4c8;border-radius:5px;padding:5px;color:inherit;background:#fff;font:inherit}
+#levelEditor select,#levelEditor label>input{flex:1;width:100%}
+#levelEditor .le-mission select{width:100%;min-height:42px;padding:9px 10px;font-size:13px;font-weight:600}
 #levelEditor .le-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
-#levelEditor .le-row>label,#levelEditor .le-row>select{flex:1}
-#levelEditor .le-section{padding:10px 14px;border-bottom:1px solid #dce3d8}
-#levelEditor h3{font-size:11px;font-weight:600;margin:0 0 8px;color:#52674e;display:flex;justify-content:space-between;align-items:center}
-#levelEditor h3>span{font-weight:400;color:#83907e}
-#levelEditor small,#levelEditor .le-help,#levelEditor [data-status]{color:#788673;font-size:10px}
-#levelEditor .le-help{margin:6px 0}
-#levelEditor [data-status]{margin:10px 14px}
+#levelEditor .le-row>label{flex:1}
+#levelEditor .le-section{padding:12px 14px;border-bottom:1px solid #dce3d8}
+#levelEditor h3{font-size:11px;font-weight:600;margin:0 0 9px;color:#52674e;display:flex;justify-content:space-between;align-items:center}
+#levelEditor h3>span{font-weight:400;color:#788673}
+#levelEditor .le-help,#levelEditor [data-status]{color:#6b7a65;font-size:10px}
+#levelEditor .le-help{margin:8px 0 0}
+#levelEditor [data-status]{margin:12px 14px}
 #levelEditor [data-status]:empty{display:none}
 #levelEditor [data-status].error{color:#ac3434}
-#levelEditor .le-toolbar{position:sticky;top:49px;z-index:2;background:#f6f8f4;border-bottom:1px solid #d5ded0;padding:10px 14px}
-#levelEditor .le-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-#levelEditor .le-modes button{justify-content:flex-start}
-#levelEditor .le-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:8px 0}
-#levelEditor .le-actions button{padding:5px 3px}
-#levelEditor .le-trigger-list{display:flex;flex-direction:column;gap:4px;max-height:225px;overflow:auto}
-#levelEditor .le-trigger-list button{justify-content:flex-start;gap:8px;text-align:left;overflow-wrap:anywhere}
-#levelEditor .le-trigger-list small{margin-left:auto;color:inherit}
-#levelEditor .le-coordinates{display:grid;grid-template-columns:42px 1fr 1fr 1fr;gap:5px;align-items:center;margin:8px 0}
+#levelEditor .le-modes{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#levelEditor .le-modes button{min-height:46px;padding:10px;font-size:13px;font-weight:600;justify-content:flex-start}
+#levelEditor .le-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+#levelEditor .le-actions button{min-height:26px;padding:4px 3px;font-size:10px}
+#levelEditor .le-trigger-list{display:flex;flex-direction:column;gap:4px;max-height:190px;overflow:auto}
+#levelEditor .le-trigger-list button{justify-content:flex-start;text-align:left;overflow-wrap:anywhere;flex-shrink:0}
+#levelEditor .le-import{width:100%;margin-top:9px;font-size:10px;background:transparent}
+#levelEditor .le-display-text{display:block;font-size:11px}
+#levelEditor .le-display-text input{display:block;margin-top:5px;min-height:36px;font-size:13px}
+#levelEditor .le-selected [data-action=details]{margin-top:9px;font-size:10px}
+#levelEditor .le-coordinates{display:grid;grid-template-columns:42px 1fr 1fr 1fr;gap:5px;align-items:center;margin-top:10px}
 #levelEditor .le-coordinates label{display:block;color:#6b796b;font-size:10px;margin:0}
 #levelEditor .le-coordinates input{display:block;width:100%}
 #levelEditor .le-grid .le-row+.le-row{margin-top:4px}
 #levelEditor .le-grid select{width:50px;flex:none}
+#levelEditor .le-export{flex-shrink:0;padding:12px 14px;background:#f6f8f4;border-top:1px solid #cbd8c5}
+#levelEditor .le-export button{width:100%;min-height:46px;font-size:14px;font-weight:650;background:#23744c;color:#fff;border-color:#23744c}
+#levelEditor .le-export button:hover{background:#185c3a}
 #app.editor-mode #webgl canvas{cursor:default}
-@media(max-width:650px){#app.editor-mode{grid-template-columns:250px minmax(0,1fr)}#levelEditor .le-section,#levelEditor .le-head,#levelEditor .le-toolbar{padding-left:10px;padding-right:10px}}
 #app.editor-mode #surfaceTools>span,#app.editor-mode #surfaceUndo{display:none!important}
+@media(max-width:650px){#app.editor-mode{grid-template-columns:250px minmax(0,1fr)}#levelEditor .le-section,#levelEditor .le-head,#levelEditor .le-export{padding-left:10px;padding-right:10px}}

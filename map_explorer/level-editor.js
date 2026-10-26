@@ -8,7 +8,7 @@ export class LevelEditor {
     this.panel.addEventListener('click',e=>this.click(e).catch(err=>this.status(err.message,true)));
     this.panel.addEventListener('change',e=>this.change(e).catch(err=>this.status(err.message,true)));
     document.getElementById('levelEdit').onclick=()=>{document.getElementById('toolsMenu').open=false;if(this.active)this.close();else this.open().catch(err=>this.status(err.message,true));};
-    window.addEventListener('beforeunload',e=>{if(this.project?.triggers.length){e.preventDefault();e.returnValue='';}});
+    window.addEventListener('beforeunload',e=>{if(this.project?.triggers.length||Object.entries(this.drafts||{}).some(([key,p])=>key!==this.project?.source&&p.triggers.length)){e.preventDefault();e.returnValue='';}});
     window.addEventListener('keydown',e=>this.keyDown(e),true);
     window.addEventListener('blur',()=>{this.endDrag(true);this.finishPlacement(true);});
     this.init();
@@ -55,7 +55,7 @@ export class LevelEditor {
     if(!this.active||e.target?.isContentEditable||/input|select|textarea/i.test(e.target?.tagName||''))return;
     const modifier=e.ctrlKey||e.metaKey,key=e.key.toLowerCase();let action;
     if(!modifier&&(key==='f'||(this.host.state().flying&&['w','a','s','d','q','e','shift','arrowup','arrowdown','arrowleft','arrowright','escape'].includes(key))))return;
-    if(modifier)action=({z:e.shiftKey?'redo':'undo',y:'redo',c:'copy',v:'paste',d:'duplicate',s:'save'})[key];
+    if(modifier)action=({z:e.shiftKey?'redo':'undo',y:'redo',c:'copy',v:'paste',d:'duplicate',s:'export'})[key];
     else if(!e.altKey)action=({v:'selectTool',n:'add',g:'move',s:'resize','.':'focus',delete:'delete',backspace:'delete',escape:'cancel'})[key];
     if(!action)return;e.preventDefault();e.stopImmediatePropagation();if(e.repeat&&['add','paste','duplicate','delete'].includes(action))return;
     this.command(action).catch(err=>this.status(err.message,true));
@@ -63,20 +63,42 @@ export class LevelEditor {
   render(){
     const p=this.project,t=p?.triggers[this.selected],editable=t&&t.existing_entity==null,busy=this.placing;
     const hint=busy?'Preview only · click to place, or drag a footprint. Esc cancels.':this.pickGrid?'Click a floor to set placement height.':this.tool==='move'?'Drag a box along the floor, or drag X / Y / Z arrows.':this.tool==='resize'?'Drag a face handle to resize. The opposite face stays fixed.':'Click a box to select it. Drag empty space to orbit.';
-    this.panel.innerHTML=`<div class="le-head"><strong>Custom Triggers</strong><button data-action="close">Exit</button></div>
-    ${p?`<div class="le-toolbar"><div class="le-modes"><button data-action="selectTool" aria-pressed="${!busy&&this.tool==='select'}">Select <kbd>V</kbd></button><button data-action="add" aria-pressed="${busy}" ${p.triggers.length>=32?'disabled':''}>＋ New volume <kbd>N</kbd></button><button data-action="move" aria-pressed="${!busy&&this.tool==='move'}" ${editable?'':'disabled'}>Move <kbd>G</kbd></button><button data-action="resize" aria-pressed="${!busy&&this.tool==='resize'}" ${editable?'':'disabled'}>Resize <kbd>S</kbd></button></div>
-    <div class="le-actions"><button data-action="copy" title="Copy · Ctrl/⌘ C" ${t&&!busy?'':'disabled'}>Copy</button><button data-action="paste" title="Paste · Ctrl/⌘ V" ${this.clipboard&&p.triggers.length<32?'':'disabled'}>Paste</button><button data-action="duplicate" title="Duplicate · Ctrl/⌘ D" ${t&&!busy&&p.triggers.length<32?'':'disabled'}>Duplicate</button><button data-action="delete" title="Delete · undo restores the volume" ${t&&!busy?'':'disabled'}>Delete</button></div>
-    <div class="le-row"><button data-action="undo" title="Undo · Ctrl/⌘ Z" ${this.pending||this.undoStack?.length?'':'disabled'}>↶ Undo</button><button data-action="redo" title="Redo · Ctrl/⌘ Shift Z" ${this.redoStack?.length?'':'disabled'}>↷ Redo</button><button data-action="focus" title="Find selected volume · ." ${t?'':'disabled'}>Find <kbd>.</kbd></button></div><p class="le-help">${hint}</p></div>
-    <div class="le-section le-trigger-list" role="group" aria-label="Placed volumes"><h3>Checkpoints (${p.triggers.length})</h3>${p.triggers.length?p.triggers.map((x,i)=>`<button data-action="select" data-index="${i}" aria-pressed="${i===this.selected}"><span class="le-volume-label">${escape(x.label||x.name)}</span></button>`).join(''):'<p class="le-help">No checkpoints yet. Choose New volume, then click the grid.</p>'}</div>
-    ${t&&!busy?`<div class="le-section"><h3>Selected checkpoint</h3><label>Label <input data-field="label" maxlength="80" value="${escape(t.label||t.name)}"></label><p class="le-help">Displays elapsed level time, for example 00:15:243. Each checkpoint fires once per attempt.</p><button data-action="details" aria-expanded="${!!this.details}">${this.details?'Hide':'Show'} exact values</button>
+    this.panel.innerHTML=`<div class="le-head"><strong>Custom Triggers</strong><button data-action="close">Exit editor</button></div>
+    <div class="le-body"><div class="le-section le-mission"><h3>Mission</h3>${this.missionControls()}</div>
+    ${p?`<div class="le-section"><h3>Checkpoints <span>${p.triggers.length} / 32</span></h3><div class="le-trigger-list" role="group" aria-label="Placed checkpoints">${p.triggers.length?p.triggers.map((x,i)=>`<button data-action="select" data-index="${i}" aria-pressed="${i===this.selected}"><span class="le-volume-label">${escape(x.label||x.name)}</span></button>`).join(''):'<p class="le-help">No checkpoints yet. Choose New, then click the grid.</p>'}</div><button class="le-import" data-action="import">↑ Import trigger file</button></div>
+    <div class="le-section"><h3>Tools</h3><div class="le-modes"><button data-action="selectTool" aria-pressed="${!busy&&this.tool==='select'}">Select <kbd>V</kbd></button><button data-action="add" aria-pressed="${busy}" ${p.triggers.length>=32?'disabled':''}>＋ New <kbd>N</kbd></button><button data-action="move" aria-pressed="${!busy&&this.tool==='move'}" ${editable?'':'disabled'}>Move <kbd>G</kbd></button><button data-action="resize" aria-pressed="${!busy&&this.tool==='resize'}" ${editable?'':'disabled'}>Resize <kbd>S</kbd></button></div><p class="le-help">${hint}</p></div>
+    <div class="le-section le-edit-actions"><h3>Edit actions</h3><div class="le-actions"><button data-action="copy" title="Copy · Ctrl/⌘ C" ${t&&!busy?'':'disabled'}>Copy</button><button data-action="paste" title="Paste · Ctrl/⌘ V" ${this.clipboard&&p.triggers.length<32?'':'disabled'}>Paste</button><button data-action="duplicate" title="Duplicate · Ctrl/⌘ D" ${t&&!busy&&p.triggers.length<32?'':'disabled'}>Duplicate</button><button data-action="delete" title="Delete · undo restores the volume" ${t&&!busy?'':'disabled'}>Delete</button><button data-action="undo" title="Undo · Ctrl/⌘ Z" ${this.pending||this.undoStack?.length?'':'disabled'}>↶ Undo</button><button data-action="redo" title="Redo · Ctrl/⌘ Shift Z" ${this.redoStack?.length?'':'disabled'}>↷ Redo</button><button data-action="focus" title="Find selected volume · ." ${t&&!busy?'':'disabled'}>Find <kbd>.</kbd></button></div></div>
+    ${t&&!busy?`<div class="le-section le-selected"><h3>Selected checkpoint</h3><label class="le-display-text">Display text <input data-field="label" maxlength="80" value="${escape(t.label||t.name)}"></label><p class="le-help">Appears with the elapsed time when reached.</p><button data-action="details" aria-expanded="${!!this.details}">${this.details?'Hide':'Show'} exact position and size</button>
     ${this.details?`<div class="le-coordinates">${['center','size'].map(kind=>`<span>${kind==='center'?'Position':'Size'}</span>${['X','Y','Z'].map((axis,a)=>`<label>${axis}<input type="number" step="1" ${kind==='size'?'min="8" max="10000"':''} data-vector="${kind}" data-axis="${a}" value="${t[kind][a]}"></label>`).join('')}`).join('')}</div>`:''}</div>`:''}
-    <div class="le-section le-grid"><h3>Placement & view</h3><div class="le-row"><label>Height <input data-field="gridY" aria-label="Placement height" type="number" step="${this.snap}" value="${this.gridY}"></label><button data-action="pickGrid">${this.pickGrid?'Cancel':'Pick floor'}</button></div><div class="le-row"><label>Snap <select data-field="snap">${[1,8,16,32].map(n=>`<option ${this.snap===n?'selected':''}>${n}</option>`).join('')}</select></label><button data-action="top">Top</button><button data-action="perspective">Perspective</button></div></div>
-    <div class="le-section"><h3>${escape(this.missions?.find(m=>m.key===p.source)?.title||p.source)}</h3><button data-action="mission">${this.showMission?'Cancel mission change':'Change mission…'}</button>${this.showMission?this.missionControls():''}<button data-action="existing">Use existing bounds…</button>${this.showExisting?`<div class="le-row"><select data-field="existing" aria-label="Existing trigger"><option value="">Choose a volume…</option>${this.info.triggers.map(x=>`<option value="${x.entity}">${escape(x.name)}</option>`).join('')}</select><button data-action="useExisting">Use</button></div>`:''}</div>
-    <div class="le-section le-export"><button data-action="export" ${p.triggers.length&&!busy?'':'disabled'}>Export checkpoints</button><p class="le-help">Requires the practice-checkpoint FDNYCore build. Put ${escape(p.source)}.txt in the game's Checkpoints folder, beside FDNYFirefighter.exe. Restart the mission. N toggles timestamps (saved).</p><div class="le-row"><button data-action="save">Save project</button><button data-action="import">Open project</button></div></div>`:this.missionControls()}
-    <p data-status role="status"></p>`;this.dirty=true;this.host.redraw();
+    <div class="le-section le-grid"><h3>Placement & view</h3><div class="le-row"><label>Height <input data-field="gridY" aria-label="Placement height" type="number" step="${this.snap}" value="${this.gridY}"></label><button data-action="pickGrid">${this.pickGrid?'Cancel':'Pick floor'}</button></div><div class="le-row"><label>Snap <select data-field="snap">${[1,8,16,32].map(n=>`<option ${this.snap===n?'selected':''}>${n}</option>`).join('')}</select></label><button data-action="top">Top</button><button data-action="perspective">Perspective</button></div></div>`:''}
+    <p data-status role="status"></p></div><div class="le-export"><button data-action="export" title="Download ${escape(p?.source||'mission')}.txt · Ctrl/⌘ S" ${p?.triggers.length&&!busy?'':'disabled'}>Export</button></div>`;this.dirty=true;this.host.redraw();
   }
-  missionControls(){return `<div class="le-row"><select data-field="mission" aria-label="Rescue mission"><option value="">Choose a mission…</option>${(this.missions||[]).map(m=>`<option value="${escape(m.key)}" ${this.project?.source===m.key?'selected':''}>${escape(m.title)}</option>`).join('')}</select><button data-action="load">Load</button></div>`;}
-  async load(key,project=null){if(!key)throw Error('Choose a rescue mission.');const info=this.missions?.find(m=>m.key===key)?.info;if(!info)throw Error('Choose a rescue mission.');if(project&&project.source_sha256!==info.source_sha256)throw Error('Project source map differs from this mission.');const sameView=this.host.state().data?.key===key&&this.host.state().mode==='3d';if(this.host.state().data?.key!==key)await this.host.loadStage(key);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.host.cutRoof?.();this.info=info;this.project=project||{schema:'fdny-level-edit-v1',source:key,source_sha256:info.source_sha256,triggers:[]};Object.assign(this,{selected:this.project.triggers.length?0:-1,placing:false,pending:null,pickGrid:false,showExisting:false,showMission:false,undoStack:[],redoStack:[],tool:'select',tab:'volumes',gridY:info.spawn[1]-30});this.render();if(!sameView)this.viewPreset(false);}
+  missionControls(){return `<select data-field="mission" aria-label="Mission">${!this.project?'<option value="">Choose a mission…</option>':''}${(this.missions||[]).map(m=>`<option value="${escape(m.key)}" ${this.project?.source===m.key?'selected':''}>${escape(m.title.replace(/\s*-Rescue-\s*/g,''))}</option>`).join('')}</select>`;}
+  async switchMission(key){
+    if(!key||key===this.project?.source)return;
+    this.drafts??={};if(this.project)this.drafts[this.project.source]=this.project;
+    this.cancelInteraction();await this.load(key,this.drafts[key]||null);
+  }
+  async importFile(file){
+    if(file.size>100000)throw Error('Trigger file is too large.');
+    const {checkpointFile,readCheckpointFile}=await import('./checkpoints.js'),text=await file.text();
+    let p;
+    if(/\.json$/i.test(file.name)){
+      p=JSON.parse(text);
+      if(p.schema!=='fdny-level-edit-v1'||!Array.isArray(p.triggers)||p.triggers.length>32)throw Error('Not a valid Custom Triggers project.');
+      p.triggers=p.triggers.map((t,i)=>({name:typeof t.name==='string'?t.name:'volume'+(i+1),label:t.label??t.split_label??t.name,center:t.center,size:t.size}));
+      if(p.triggers.length)checkpointFile(p);
+    }else p=readCheckpointFile(text);
+    const info=this.missions?.find(m=>m.key===p.source)?.info;if(!info)throw Error('This mission is not available in the editor.');
+    p={schema:'fdny-level-edit-v1',source_sha256:info.source_sha256,...p};
+    if(p.source_sha256!==info.source_sha256)throw Error('Project source map differs from this mission.');
+    const current=this.project?.source===p.source?this.project:this.drafts?.[p.source];
+    if(current?.triggers.length&&!confirm('Replace the checkpoints in this mission? Export first to keep them.'))return;
+    this.drafts??={};if(this.project&&this.project.source!==p.source)this.drafts[this.project.source]=this.project;
+    this.cancelInteraction();await this.load(p.source,p);this.drafts[p.source]=this.project;this.revealSelection();
+    this.status(`Imported ${p.triggers.length} checkpoint${p.triggers.length===1?'':'s'}.`);
+  }
+  async load(key,project=null){if(!key)throw Error('Choose a rescue mission.');const info=this.missions?.find(m=>m.key===key)?.info;if(!info)throw Error('Choose a rescue mission.');if(project&&project.source_sha256!==info.source_sha256)throw Error('Project source map differs from this mission.');const sameView=this.host.state().data?.key===key&&this.host.state().mode==='3d';if(this.host.state().data?.key!==key)await this.host.loadStage(key);if(this.host.state().mode!=='3d')this.host.setMode('3d');this.host.cutRoof?.();this.info=info;this.project=project||{schema:'fdny-level-edit-v1',source:key,source_sha256:info.source_sha256,triggers:[]};Object.assign(this,{selected:this.project.triggers.length?0:-1,placing:false,pending:null,pickGrid:false,undoStack:[],redoStack:[],tool:'select',tab:'volumes',gridY:info.spawn[1]-30});this.render();if(!sameView)this.viewPreset(false);}
   async click(e){const button=e.target.closest('[data-action]');if(button)return this.command(button.dataset.action,button.dataset.index,button);}
   async command(action,index,button){
     const t=this.project?.triggers[this.selected];
@@ -93,16 +115,11 @@ export class LevelEditor {
     if(action==='top'||action==='perspective'){this.viewPreset(action==='top');return;}
     if(action==='focus'){this.focus();return;}
     if(action==='pickGrid'){const pick=!this.pickGrid;this.cancelInteraction();this.pickGrid=pick;this.render();return;}
-    if(action==='details'||action==='mission'||action==='existing'){const field={details:'details',mission:'showMission',existing:'showExisting'}[action];this[field]=!this[field];this.render();return;}
-    if(action==='load'){const key=this.panel.querySelector('[data-field=mission]').value;if(key===this.project?.source){this.showMission=false;this.render();return;}if(this.project?.triggers.length&&!confirm('Switch mission? Save your project first to keep these volumes.'))return;this.cancelInteraction();return this.load(key);}
-    if(action==='useExisting'){
-      const value=this.panel.querySelector('[data-field=existing]').value;if(value==='')throw Error('Choose an existing trigger.');const original=this.info.triggers.find(x=>x.entity===Number(value));
-      if(this.project.triggers.some(x=>x.existing_entity===original.entity))throw Error('That trigger is already in this draft.');
-      this.edit(()=>{this.project.triggers.push({name:this.uniqueName(),label:original.name,center:[...original.center],size:[...original.size]});this.selected=this.project.triggers.length-1;this.showExisting=false;});this.focus();return;
-    }
-    if(action==='save'){this.download(new Blob([JSON.stringify(this.project,null,2)],{type:'application/json'}),'fdny-level-project.json');return;}
+    if(action==='details'){this.details=!this.details;this.render();return;}
     if(action==='import'){
-      const input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=async()=>{try{if(!input.files[0])return;if(input.files[0].size>100000)throw Error('Project file is too large.');const p=JSON.parse(await input.files[0].text());if(p.schema!=='fdny-level-edit-v1'||!Array.isArray(p.triggers)||p.triggers.length>32)throw Error('Not a valid Custom Triggers project.');p.triggers=p.triggers.map((t,i)=>({name:typeof t.name==='string'?t.name:'volume'+(i+1),label:t.label??t.split_label??t.name,center:t.center,size:t.size}));if(p.triggers.length){const {checkpointFile}=await import('./checkpoints.js');checkpointFile(p);}if(this.project?.triggers.length&&!confirm('Replace the current draft?'))return;this.cancelInteraction();await this.load(p.source,p);}catch(err){this.status(err.message,true);}};input.click();return;
+      const input=document.createElement('input');input.type='file';input.accept='.txt,.json';
+      input.onchange=async()=>{try{if(input.files[0])await this.importFile(input.files[0]);}catch(err){this.status(err.message,true);}};
+      input.click();return;
     }
     if(action==='export'){
       const {checkpointFile}=await import('./checkpoints.js');
@@ -119,6 +136,7 @@ export class LevelEditor {
     const label=row?.querySelector('.le-volume-label');if(label)label.textContent=t.label||t.name;
   }
   async change(e){const t=this.project?.triggers[this.selected],el=e.target;
+    if(el.dataset.field==='mission'){el.disabled=true;try{await this.switchMission(el.value);}finally{this.render();}return;}
     if(el.dataset.field==='snap'){this.snap=Number(el.value);this.render();return;}
     if(el.dataset.field==='gridY'){const y=Number(el.value);if(Number.isFinite(y)&&Math.abs(y)<=100000)this.gridY=y;this.render();return;}
     if(!t)return;

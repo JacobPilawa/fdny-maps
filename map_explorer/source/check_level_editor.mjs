@@ -5,7 +5,7 @@ import {pathToFileURL,fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const url=pathToFileURL(root+'vendor/three.module.min.js').href;
 const THREE=await import(url);
-const source=fs.readFileSync(root+'level-editor.js','utf8').replace("from 'three'",`from '${url}'`);
+const source=fs.readFileSync(root+'level-editor.js','utf8').replace("from 'three'",`from '${url}'`).replaceAll("import('./checkpoints.js')",`import('${pathToFileURL(root+'checkpoints.js').href}')`);
 const {LevelEditor}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const copy=value=>JSON.parse(JSON.stringify(value));
 const volume=(name='volume1')=>({name,center:[0,60,0],size:[120,120,120],label:name});
@@ -76,9 +76,9 @@ try{
     e.project.triggers[0].existing_entity=5;e.project.triggers[0].name='Authored hint';await e.command('duplicate');assert.equal(e.project.triggers[0].existing_entity,5);assert.equal(e.project.triggers[1].existing_entity,undefined);assert.match(e.project.triggers[1].name,/^[A-Za-z][A-Za-z0-9_]{0,39}$/);
     while(e.project.triggers.length<32)e.project.triggers.push(volume('other'+e.project.triggers.length));const before=copy(e.project);e.newVolume();await e.command('paste');assert.deepEqual(e.project,before);assert(!e.pending);
   });
-  await check('checkpoint labels undo correctly; same-mission Load preserves the project',async({editor:e})=>{
+  await check('display text edits undo correctly; reselecting the mission preserves the project',async({editor:e})=>{
     const before=copy(e.project),renders=e.renderCount;await e.change({target:{dataset:{field:'label'},value:'Renamed'}});assert.equal(e.renderCount,renders);assert.equal(e.project.triggers[0].label,'Renamed');e.history();assert.deepEqual(e.project,before);
-    e.panel.querySelector=selector=>selector==='[data-field=mission]'?{value:'training'}:null;await e.command('load');assert.deepEqual(e.project,before);
+    await e.change({target:{dataset:{field:'mission'},value:'training'}});assert.deepEqual(e.project,before);
   });
   await check('a failed project import leaves the current draft and its undo history intact',async({editor:e})=>{
     e.edit(()=>{e.project.triggers[0].label='Keep this draft';});const before=copy(e.project),history=copy(e.undoStack);
@@ -90,7 +90,10 @@ try{
     assert.equal(key('Delete',{target:{tagName:'INPUT'}}),false);assert.equal(e.project.triggers.length,1);
     assert(key('c',{ctrlKey:true}));assert(key('v',{ctrlKey:true}));assert.equal(e.project.triggers.length,2);assert(key('z',{ctrlKey:true}));assert.equal(e.project.triggers.length,1);assert(key('z',{ctrlKey:true,shiftKey:true}));assert.equal(e.project.triggers.length,2);
     assert(key('n'));assert(e.pending);assert(key('Escape'));assert.equal(e.pending,null);assert.equal(e.project.triggers.length,2);assert.equal(e.tool,'select');
-    const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','New volume','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed volumes','Export checkpoints'])assert(e.panel.innerHTML.includes(text));
+    const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','＋ New','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed checkpoints','Export','Display text','Show exact position and size','Import trigger file'])assert(e.panel.innerHTML.includes(text));
+    const html=e.panel.innerHTML;
+    assert(html.indexOf('le-mission')<html.indexOf('Placed checkpoints'));assert(html.indexOf('Placed checkpoints')<html.indexOf('le-modes'));assert(html.indexOf('le-modes')<html.indexOf('le-edit-actions'));
+    for(const old of ['Change mission','Use existing bounds','Save project','Open project','data-action="load"'])assert(!html.includes(old));
   });
   await check('flight keys pass through; entering the current mission preserves its camera',async({editor:e,state,camera})=>{
     let handled=false;
@@ -110,6 +113,24 @@ try{
     assert.deepEqual(controls.target.toArray(),[-1280,-250,4700]);
     assert(Math.abs(camera.position.distanceTo(controls.target)-Math.sqrt(300**2+500**2+500**2))<.001);
     assert.equal(e.gridY,-250);assert.equal(e.project.triggers.length,0);
+  });
+  await check('mission dropdown switches immediately and keeps drafts for each mission',async({editor:e,state})=>{
+    const training=copy(e.project);
+    e.missions=['training','bank'].map(key=>({key,title:key,info:{source_sha256:'test',spawn:[0,30,0],triggers:[]}}));
+    e.host.loadStage=async key=>{state.data.key=key;};
+    await e.change({target:{dataset:{field:'mission'},value:'bank'}});assert.equal(e.project.source,'bank');assert.equal(e.project.triggers.length,0);
+    e.edit(()=>{e.project.triggers.push(volume('bank1'));});
+    await e.change({target:{dataset:{field:'mission'},value:'training'}});assert.deepEqual(e.project,training);
+    await e.switchMission('bank');assert.equal(e.project.triggers[0].name,'bank1');
+  });
+  await check('installed checkpoint files reopen as editable volumes and bad imports preserve drafts',async({editor:e})=>{
+    e.project.triggers=[];e.selected=-1;e.missions=[{key:'training',title:'Training',info:{source_sha256:'test',spawn:[0,30,0],triggers:[]}}];
+    const text='FDNY_CHECKPOINTS_V1|training|1\n-60|0|-60|60|120|60|End of hall 1\n';
+    await e.importFile({name:'training.txt',size:text.length,text:async()=>text});
+    assert.equal(e.project.triggers.length,1);assert.equal(e.project.triggers[0].label,'End of hall 1');assert.deepEqual(e.project.triggers[0].center,[0,60,0]);
+    assert.equal(e.selected,0);assert.equal(e.project.source_sha256,'test');
+    e.edit(()=>{e.project.triggers[0].label='Keep';});const before=copy(e.project),history=copy(e.undoStack);
+    await assert.rejects(e.importFile({name:'training.txt',size:3,text:async()=>'bad'}));assert.deepEqual(e.project,before);assert.deepEqual(e.undoStack,history);
   });
   await check('map mismatch/closing hide overlays and release geometry',({editor:e,state})=>{
     e.tool='move';e.update3D();assert(e.group.visible);state.data.key='bank';e.update3D();assert.equal(e.group.visible,false);assert.equal(e.pointerClick(event()),false);state.data.key='training';e.active=false;e.update3D();assert.equal(e.group.visible,false);
