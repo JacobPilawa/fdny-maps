@@ -1,5 +1,5 @@
 {
-  "release": "f6efbc1ccfca5091",
+  "release": "16c872111a82f7b2",
   "asset_files": 626,
   "maps": 17,
   "total_bytes": 123106375,
@@ -635,11 +635,12 @@
     "victim-models.js"
   ],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "4ed3ca6b-b837-4a86-af1d-af969f870da1",
+  "cloudflare_version_id": "50eb5743-4e06-4829-a199-48c267e6fbc5",
   "verified_live": true,
-  "verification_note": "Live release and editor/export assets match local files over HTTP; no computer use.",
+  "verification_note": "Live release and editor asset match local files over HTTP; no computer use.",
   "checks": [
-    "14 editor regression groups pass, including preserved 3D camera and closer spawn framing.",
-    "Checkpoint export validation passes; bounds, labels and file format unchanged."
+    "14 existing editor regression groups pass.",
+    "Checkpoint export checks pass for all eight rescue missions.",
+    "In-game shortcut instructions use N; viewer selection shortcuts and export format unchanged."
   ]
 }

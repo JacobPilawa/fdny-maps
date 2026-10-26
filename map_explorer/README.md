@@ -6,7 +6,7 @@ Run `./start.sh`, then open http://127.0.0.1:4180 . Requires Python 3. Set `FDNY
 
 ### Custom Triggers
 
-Open **☰ → Custom Triggers** on the public site or locally. Place checkpoints on the 3D grid and move/resize them with axis handles; Fly and roof/slice controls remain available. **Export checkpoints** downloads one small `<mission>.txt` file. Put it in `Checkpoints/` beside `FDNYFirefighter.exe`, start that mission and press **V** to enable timestamp hints. Requires the new FDNYCore practice-checkpoint build. FDNYCore saves the toggle setting and displays Label + elapsed level time as `mm:ss:ddd` at the top center, once per checkpoint per attempt. No custom BSP, catalog edit, clipboard import, installer, Python runtime or LiveSplit setup is needed. See [LEVEL_EDIT.md](LEVEL_EDIT.md).
+Open **☰ → Custom Triggers** on the public site or locally. Place checkpoints on the 3D grid and move/resize them with axis handles; Fly and roof/slice controls remain available. **Export checkpoints** downloads one small `<mission>.txt` file. Put it in `Checkpoints/` beside `FDNYFirefighter.exe`, start that mission and press **N** to enable timestamp hints. Requires the new FDNYCore practice-checkpoint build. FDNYCore saves the toggle setting and displays Label + elapsed level time as `mm:ss:ddd` at the top center, once per checkpoint per attempt. No custom BSP, catalog edit, clipboard import, installer, Python runtime or LiveSplit setup is needed. See [LEVEL_EDIT.md](LEVEL_EDIT.md).
 
 ### Local gameplay recordings
 
