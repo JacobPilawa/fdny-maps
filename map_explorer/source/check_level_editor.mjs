@@ -90,8 +90,11 @@ try{
     assert.equal(key('Delete',{target:{tagName:'INPUT'}}),false);assert.equal(e.project.triggers.length,1);
     assert(key('c',{ctrlKey:true}));assert(key('v',{ctrlKey:true}));assert.equal(e.project.triggers.length,2);assert(key('z',{ctrlKey:true}));assert.equal(e.project.triggers.length,1);assert(key('z',{ctrlKey:true,shiftKey:true}));assert.equal(e.project.triggers.length,2);
     assert(key('n'));assert(e.pending);assert(key('Escape'));assert.equal(e.pending,null);assert.equal(e.project.triggers.length,2);assert.equal(e.tool,'select');
-    const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','＋ New','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed checkpoints','Export','Display text','Show exact position and size','Import trigger file'])assert(e.panel.innerHTML.includes(text));
+    const htmlRender=LevelEditor.prototype.render;e.panel={querySelector:()=>null,innerHTML:''};htmlRender.call(e);for(const text of ['Select','＋ New','Copy','Paste','Duplicate','Delete','Undo','Redo','Placed checkpoints','Export','Display text','Show exact position and size','Import trigger file','Keyboard shortcuts','Backspace / Delete','Ctrl / ⌘ V','Placement grid & camera'])assert(e.panel.innerHTML.includes(text));
     const html=e.panel.innerHTML;
+    assert.match(html,/<details[^>]*data-disclosure="placementOpen"\s*>/);
+    e.placementOpen=true;e.shortcutsOpen=true;htmlRender.call(e);
+    assert.match(e.panel.innerHTML,/<details[^>]*data-disclosure="placementOpen" open>/);
     assert(html.indexOf('le-mission')<html.indexOf('Placed checkpoints'));assert(html.indexOf('Placed checkpoints')<html.indexOf('le-modes'));assert(html.indexOf('le-modes')<html.indexOf('le-edit-actions'));
     for(const old of ['Change mission','Use existing bounds','Save project','Open project','data-action="load"'])assert(!html.includes(old));
   });

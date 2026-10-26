@@ -1,8 +1,8 @@
 {
-  "release": "a9dcddaf6e557f22",
+  "release": "9ac9249db1f1b15e",
   "asset_files": 626,
   "maps": 17,
-  "total_bytes": 123107826,
+  "total_bytes": 123109287,
   "largest_file_bytes": 5397824,
   "static_only": true,
   "worker_script": false,
@@ -635,12 +635,12 @@
     "victim-models.js"
   ],
   "url": "https://fdny-maps.piececounter.workers.dev/",
-  "cloudflare_version_id": "8fd4e8a7-da9e-4b9b-a5e3-3c8f54490847",
+  "cloudflare_version_id": "5d138153-0feb-451f-9d5b-787dcc067bcc",
   "verified_live": true,
-  "verification_note": "Live HTML and all three changed editor assets match local files over HTTP. No computer use; visual review remains manual.",
+  "verification_note": "Live HTML and edited sidebar assets match local files over HTTP. No computer use.",
   "checks": [
-    "16 editor regression groups pass, including mission draft preservation and trigger-file import.",
-    "Checkpoint export/import round-trip and malformed-file checks pass.",
-    "Single Export footer, direct mission dropdown and grouped controls verified from rendered HTML structure."
+    "16 existing editor regression groups pass.",
+    "Placement grid & camera defaults to collapsed; disclosure state survives rendering.",
+    "Keyboard shortcut help includes copy/paste, duplicate, Backspace/Delete, undo/redo and Find."
   ]
 }

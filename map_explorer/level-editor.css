@@ -49,3 +49,12 @@
 #app.editor-mode #webgl canvas{cursor:default}
 #app.editor-mode #surfaceTools>span,#app.editor-mode #surfaceUndo{display:none!important}
 @media(max-width:650px){#app.editor-mode{grid-template-columns:250px minmax(0,1fr)}#levelEditor .le-section,#levelEditor .le-head,#levelEditor .le-export{padding-left:10px;padding-right:10px}}
+
+#levelEditor details>summary{cursor:pointer;font-size:11px;font-weight:600;color:#52674e}
+#levelEditor .le-grid[open]>summary{margin-bottom:9px}
+#levelEditor .le-grid .le-help{margin-bottom:9px}
+#levelEditor .le-shortcuts{margin-top:10px}
+#levelEditor .le-shortcuts>summary{font-size:10px;font-weight:400}
+#levelEditor .le-shortcuts dl{display:grid;grid-template-columns:auto 1fr;gap:5px 10px;margin:10px 0 0;font-size:10px}
+#levelEditor .le-shortcuts dt,#levelEditor .le-shortcuts dd{margin:0}
+#levelEditor .le-shortcuts kbd{padding:0;opacity:1}

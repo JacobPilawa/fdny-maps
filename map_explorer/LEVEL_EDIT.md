@@ -3,8 +3,8 @@
 Requires an FDNYCore build with practice-checkpoint file support.
 
 1. Open **☰ → Custom Triggers**. Use the Mission dropdown to choose a rescue mission.
-2. **New (N)**: click the placement grid, or drag a footprint. **Pick floor**
-   sets its height. Use **Move (G)** and **Resize (S)** with the axis handles.
+2. **New (N)**: click the placement grid, or drag a footprint. **Placement grid & camera** is collapsed by default;
+   **Pick floor height** sets the grid height. Use **Move (G)** and **Resize (S)** with the axis handles.
 3. Set its **Display text**. Every placed volume is a timed practice checkpoint.
 4. **Export** downloads `<mission>.txt`. Put it in the game's
    `Checkpoints` folder beside `FDNYFirefighter.exe` (create the folder if needed).
@@ -21,6 +21,8 @@ is installed. No console import, custom BSP, installer or LiveSplit is involved.
 Shift faster and scroll to change speed. F returns to orbit; **Find (.)** frames
 the selected volume. Click empty space to deselect, or a placed box to select it.
 Copy/paste/duplicate and undo/redo work with their normal Ctrl/⌘ shortcuts.
+Expand **Keyboard shortcuts** under Edit actions for the full list, including
+Backspace/Delete and Find (.).
 **Import trigger file** reopens an exported `.txt` with its boxes and display text;
 legacy JSON projects are also accepted. The Mission dropdown switches directly
 and keeps each mission's draft in memory. Exit/reopen preserves the current draft;
