@@ -104,6 +104,13 @@ try{
     e.browserExport=true;e.missions=[{key:'training',info:{source_sha256:'test',spawn:[0,30,0],triggers:[],stage_finishes:['training']}}];
     await e.load('training');assert(roof);assert(camera.position.equals(position));assert(state.controls.target.equals(target));
   });
+  await check('initial placement view stays close to spawn without moving the placement grid',({editor:e,camera,controls})=>{
+    e.project.triggers=[];e.selected=-1;e.info.spawn=[-1280,-220,4700];e.gridY=-250;
+    e.viewPreset(false);
+    assert.deepEqual(controls.target.toArray(),[-1280,-250,4700]);
+    assert(Math.abs(camera.position.distanceTo(controls.target)-Math.sqrt(300**2+500**2+500**2))<.001);
+    assert.equal(e.gridY,-250);assert.equal(e.project.triggers.length,0);
+  });
   await check('map mismatch/closing hide overlays and release geometry',({editor:e,state})=>{
     e.tool='move';e.update3D();assert(e.group.visible);state.data.key='bank';e.update3D();assert.equal(e.group.visible,false);assert.equal(e.pointerClick(event()),false);state.data.key='training';e.active=false;e.update3D();assert.equal(e.group.visible,false);
   });

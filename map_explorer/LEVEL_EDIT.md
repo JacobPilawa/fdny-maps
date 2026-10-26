@@ -9,7 +9,7 @@ Requires an FDNYCore build with practice-checkpoint file support.
 4. **Export checkpoints** downloads `<mission>.txt`. Put it in the game's
    `Checkpoints` folder beside `FDNYFirefighter.exe` (create the folder if needed).
 5. Start/restart that mission. Press **V** to enable timestamps once; FDNYCore
-   saves the preference. Each native checkpoint shows `Label mm:ss:ddd` for four
+   saves the preference. Each native checkpoint shows `Label mm:ss:ddd` at the top center for four
    seconds when reached. Restarting resets the timer and checkpoint hits.
 
 Example: `Checkpoints/training.txt`. Replace that exact file to update the set,
